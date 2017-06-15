@@ -384,9 +384,9 @@ order by id,article,sizecode"
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
                 .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3).Get(out col_cutno)
-                .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5)).Get(out col_Markername)
-                .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("MarkerName", header: "Marker\r\nName", width: Widths.AnsiChars(5)).Get(out col_Markername)
+                .Text("Fabriccombo", header: "Fabric\r\nCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("FabricPanelCode", header: "Fab_Panel\r\nCode", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -406,8 +406,7 @@ order by id,article,sizecode"
                 .Text("Adduser", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true);
-
-
+            
             Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
                 .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_sizeRatio_qty);
@@ -1387,7 +1386,7 @@ order by id,article,sizecode"
                     numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
-
+            
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
             displayEachConsDownloadID.Text = downloadid;
@@ -1424,8 +1423,13 @@ order by id,article,sizecode"
             }
             #endregion
             totalDisQty();
+
+            
             this.gridSizeRatio.AutoResizeColumns();            
             this.gridQtyBreakdown.AutoResizeColumns();
+
+            detailgrid.CurrentCell = detailgrid[1, detailgrid.CurrentCell.RowIndex];
+            detailgrid.BeginEdit(true);
         }
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
