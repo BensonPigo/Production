@@ -868,7 +868,8 @@ With SubProcess  as (
                 , Seq
                 , ArtworkUnit
                 , ProductionUnit
-                , FakeID = SystemType,Seq + 'U1'
+                , SystemType
+                , FakeID = Seq + 'U1'
                 , ColumnN = RTRIM(ID) + ' ('+ArtworkUnit+')'
                 , ColumnSeq = '1'
         FROM ArtworkType WITH (NOLOCK) 
