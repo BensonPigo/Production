@@ -26,7 +26,7 @@ namespace Sci.Production.Logistic
             dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
-
+        string selectDataTable_DefaultView_Sort = "";
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -53,8 +53,45 @@ namespace Sci.Production.Logistic
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
-        }
 
+            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
+            int RowIndex = 0;
+            int ColumIndex=0;
+                gridImport.CellClick += (s, e) =>
+                {
+                         RowIndex = e.RowIndex;
+                         ColumIndex = e.ColumnIndex;
+                };
+
+                gridImport.Sorted += (s, e) =>
+                {
+
+                    if ((RowIndex == -1) & (ColumIndex == 4))
+                    {
+                        
+                        listControlBindingSource1.DataSource = null;
+                        
+                        if (selectDataTable_DefaultView_Sort == "DESC")
+                        {
+                            selectDataTable.DefaultView.Sort = "rn1 DESC";
+                            selectDataTable_DefaultView_Sort = "";
+                        }
+                        else
+                        {
+                            selectDataTable.DefaultView.Sort = "rn1 ASC";
+                            selectDataTable_DefaultView_Sort = "DESC";
+                        }
+                        listControlBindingSource1.DataSource = selectDataTable;
+                        return;
+                    }
+                   
+                  
+                };
+
+
+        //
+        }
+        DataTable selectDataTable;
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
@@ -67,7 +104,9 @@ namespace Sci.Production.Logistic
 
             sqlCmd.Append(string.Format(@"
 Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, 
-convert(int,b.CTNStartNo) as 'CTNStartNo', 
+b.CTNStartNo, 
+rn = ROW_NUMBER() over(order by b.Id,b.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
+rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, b.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
 where b.OrderId = c.Id 
@@ -98,7 +137,9 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
-            DataTable selectDataTable;
+
+            sqlCmd.Append(" order by rn");
+
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
             {
@@ -124,8 +165,9 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 //先將Grid的結構給開出來
                 string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
-convert(int,b.CTNStartNo) as 'CTNStartNo', 
-
+TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
+rn = ROW_NUMBER() over(order by b.Id,b.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
+rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, b.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
 from PackingList a WITH (NOLOCK) , 
 PackingList_Detail b WITH (NOLOCK) , 
