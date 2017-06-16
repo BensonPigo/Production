@@ -551,7 +551,7 @@ where w.ID = '{0}'", masterID);
                     if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
 
                     DataRow[] drar = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
+                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt32(drar[0]["TotalLayerMarker"]);
                 }
                 else
                 {
@@ -559,7 +559,7 @@ where w.ID = '{0}'", masterID);
                     if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
 
                     DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt32(drar[0]["TotalLayerUkey"]);
                 }
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                 
@@ -948,6 +948,7 @@ where w.ID = '{0}'", masterID);
                     string newvalue = sele.GetSelectedString();
                     dr["SizeCode"] = newvalue;
                     dr.EndEdit();
+                    redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                     cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                     updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                     totalDisQty();
@@ -973,13 +974,15 @@ where w.ID = '{0}'", masterID);
                 DataRow[] chkrow = chksize.Select(string.Format("SizeCode = '{0}'", newvalue));
                 if (chkrow.Length == 0)
                 {
-                    dr["SizeCode"] = "";
-                    return;                 
+                    e.Cancel = true;
+                    this.ShowInfo(string.Format("Size <{0}> not found", newvalue));
+                    gridSizeRatio.EditingControl.Select();
+                    return;
                 }
                 dr["SizeCode"] = newvalue;
                 dr.EndEdit();
 
-                //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                 totalDisQty();
@@ -999,13 +1002,14 @@ where w.ID = '{0}'", masterID);
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
                 DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
-                int oldvalue = Convert.ToInt16(dr["Qty"]);
-                int newvalue = Convert.ToInt16(e.FormattedValue);
+                int oldvalue = Convert.ToInt32(dr["Qty"]);
+                int newvalue = Convert.ToInt32(e.FormattedValue);
                 if (oldvalue == newvalue) return;
                 dr["Qty"] = newvalue;
                 dr.EndEdit();
                 cal_Cons(true, false);
                 //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
+                redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
 
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
@@ -1228,7 +1232,20 @@ where w.ID = '{0}'", masterID);
             };
             #endregion
         }
-        
+        //重組detailgrid的size
+        private void redetailsize(int workorderukey, int newkey)
+        {
+            DataRow[] dsr = sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1}", workorderukey, newkey));
+            string sizeqty = "";
+            foreach (DataRow dsrr in dsr)
+            {
+                sizeqty += ", "+ dsrr["SizeCode"] + "/ " + dsrr["Qty"];
+            }
+            sizeqty = sizeqty.Substring(1);
+            DataRow[] dr = ((DataTable)detailgridbs.DataSource).Select(string.Format("Ukey={0} and NewKey = {1}", workorderukey, newkey));
+            dr[0]["SizeCode"] = sizeqty;
+        }
+
         //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
         {
@@ -1611,7 +1628,7 @@ where w.ID = '{0}'", masterID);
                     }
                     else
                     {
-                        int maxno = Convert.ToInt16(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
+                        int maxno = Convert.ToInt32(wk.Compute("Max(cutno)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
                         maxcutno = maxno + 1;
                     }
 
@@ -1779,7 +1796,7 @@ where w.ID = '{0}'", masterID);
         protected override void OnDetailGridDelete()
         {
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
-            int NewKey = Convert.ToInt16(CurrentDetailData["NewKey"]);
+            int NewKey = Convert.ToInt32(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
             foreach (DataRow dr in drar)
             {
@@ -1942,7 +1959,7 @@ where w.ID = '{0}'", masterID);
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (Convert.ToInt16(dr["Qty"]) == 0 || MyUtility.Check.Empty(dr["SizeCode"]))
+                    if (Convert.ToInt32(dr["Qty"]) == 0 || MyUtility.Check.Empty(dr["SizeCode"]))
                     {
                         deledr = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}'", dr["WorkOrderUkey"], dr["NewKey"], dr["SizeCode"]));
                         if (deledr.Length > 0) deledr[0].Delete();
@@ -1954,7 +1971,7 @@ where w.ID = '{0}'", masterID);
             {
                 if (dr2.RowState != DataRowState.Deleted)
                 {
-                    if ((Convert.ToInt16(dr2["Qty"]) == 0 || MyUtility.Check.Empty(dr2["SizeCode"]) || MyUtility.Check.Empty(dr2["Article"])) && dr2["OrderID"].ToString().ToUpper() != "EXCESS")
+                    if ((Convert.ToInt32(dr2["Qty"]) == 0 || MyUtility.Check.Empty(dr2["SizeCode"]) || MyUtility.Check.Empty(dr2["Article"])) && dr2["OrderID"].ToString().ToUpper() != "EXCESS")
                     {
                         deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
                         if (deledr.Length > 0) deledr[0].Delete();
