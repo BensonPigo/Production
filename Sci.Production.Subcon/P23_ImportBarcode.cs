@@ -50,6 +50,14 @@ order by Abb";
         //從C:\temp\BUNDLEIN.TXT讀取資料
         private void btnImportfromscanner_Click(object sender, EventArgs e)
         {
+            string pcPath = "C:\\";
+            string pcPara = "+B115200 +P8 " + pcPath + "temp\\(file)";
+            string tmpFile = "C:\\temp\\BUNDLEOT.TXT";
+
+            P23_bhtprtd Bht = new P23_bhtprtd();
+            this.ShowInfo(Bht.csharpExecProtocol(this.Handle.ToInt32(), pcPara, 2, 2));
+
+
             #region 建立要讀檔的Table結構
             string selectCommand = @"Select BundleNo from Bundle_detail a WITH (NOLOCK) where 1=0";
             DataTable leftDT, tmpDataTable;
@@ -62,7 +70,6 @@ order by Abb";
             #endregion
 
             #region 單純把檔案部讀進來(不論長度 已問過Arger)
-            string tmpFile = "C:\\temp\\BUNDLEOT.TXT";
             try
             {   // Open the text file using a stream reader.
                 using (StreamReader reader = new StreamReader(tmpFile, System.Text.Encoding.UTF8))

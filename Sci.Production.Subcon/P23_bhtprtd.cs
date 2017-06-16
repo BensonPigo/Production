@@ -48,26 +48,48 @@ namespace Sci.Production.Subcon
 
     class P23_bhtprtd
     {
-        private delegate int IdxCallVB_func(int command, string Request, int RequestSize);
+        private delegate string bhtCallVB_func(int nhWnd, string pcParam, string FileNameBuf, int ProtocolType);
         DllInvoke dll;
-        IdxCallVB_func func;
+        bhtCallVB_func func;
 
         public P23_bhtprtd()
         {
-            dll = new DllInvoke(".\\bhtprtd.dll");
-            func = (IdxCallVB_func)dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));        
+            dll = new DllInvoke(".\\Bhtprtd.dll");
+            func = (bhtCallVB_func)dll.Invoke("ExecProtocol", typeof(bhtCallVB_func)); ;
         }
-        public bool IdxCall(int command, string Request, int RequestSize)
+
+        public string ExecProtocol(int nhWnd, string pcParam, string FileNameBuf, int ProtocolType)
         {
             if (func != null)
             {
-                func(command, Request, RequestSize);
-                return true;
+
+                return func(nhWnd, pcParam, FileNameBuf, ProtocolType);
             }
             else
             {
-                return false;
+                return "";
             }
         }
+
+        public string csharpExecProtocol(int nhWnd, string Options, int RcvMode, int ProtocolType)
+        {
+            string pcParam;
+            string FileNameBuf = "                                                                                                    ";
+            int CntNull;
+
+            if (RcvMode ==2)
+            {
+		        pcParam = Options + " +R";
+            }
+            else
+            {
+                pcParam = Options + " -R";
+            }
+
+
+
+            return "";
+        }
+
     }
 }
