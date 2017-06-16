@@ -26,13 +26,13 @@ namespace Sci.Production.Logistic
             dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
-        string selectDataTable_DefaultView_Sort = "";
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             TextBox a = new TextBox();
             a.Text = Sci.Env.User.Keyword;
-            this.txtcloglocationLocationNo.MDivisionObjectName=a;
+            this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
             this.gridImport.IsEditingReadOnly = false;
             this.gridImport.DataSource = listControlBindingSource1;
@@ -43,7 +43,6 @@ namespace Sci.Production.Logistic
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                 //.Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) 
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -53,45 +52,8 @@ namespace Sci.Production.Logistic
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
-
-            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
-            int RowIndex = 0;
-            int ColumIndex=0;
-                gridImport.CellClick += (s, e) =>
-                {
-                         RowIndex = e.RowIndex;
-                         ColumIndex = e.ColumnIndex;
-                };
-
-                gridImport.Sorted += (s, e) =>
-                {
-
-                    if ((RowIndex == -1) & (ColumIndex == 4))
-                    {
-                        
-                        listControlBindingSource1.DataSource = null;
-                        
-                        if (selectDataTable_DefaultView_Sort == "DESC")
-                        {
-                            selectDataTable.DefaultView.Sort = "rn1 DESC";
-                            selectDataTable_DefaultView_Sort = "";
-                        }
-                        else
-                        {
-                            selectDataTable.DefaultView.Sort = "rn1 ASC";
-                            selectDataTable_DefaultView_Sort = "DESC";
-                        }
-                        listControlBindingSource1.DataSource = selectDataTable;
-                        return;
-                    }
-                   
-                  
-                };
-
-
-        //
         }
-        DataTable selectDataTable;
+
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
@@ -102,12 +64,7 @@ namespace Sci.Production.Logistic
             }
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"
-Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, 
-b.CTNStartNo, 
-rn = ROW_NUMBER() over(order by b.Id,b.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, b.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
-c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
+            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
 where b.OrderId = c.Id 
 and a.Id = b.Id 
@@ -137,9 +94,7 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
-
-            sqlCmd.Append(" order by rn");
-
+            DataTable selectDataTable;
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
             {
@@ -164,16 +119,8 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
-TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
-rn = ROW_NUMBER() over(order by b.Id,b.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, b.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(b.CTNStartNo)), 6))),
-c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
-from PackingList a WITH (NOLOCK) , 
-PackingList_Detail b WITH (NOLOCK) , 
-Orders c WITH (NOLOCK) , 
-Country d WITH (NOLOCK) 
-where 1=0";
+                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+                                                             from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
@@ -213,7 +160,7 @@ where 1=0";
                                 MyUtility.Msg.WarningBox("Format is not correct!");
                                 return;
                             }
-                            
+
                             string sqlCmd = string.Format(@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
@@ -242,7 +189,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                                 string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                 if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
                                 {
-                                     dr["Remark"] = "The order's M is not equal to login M.";
+                                    dr["Remark"] = "The order's M is not equal to login M.";
                                 }
 
                                 sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -265,9 +212,9 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                             {
                                 dr["Remark"] = "This carton is not in packing list.";
                             }
-                            if ( dr["Remark"].ToString().Trim() != "")
+                            if (dr["Remark"].ToString().Trim() != "")
                             {
-                                dr["selected"] = 0;                                
+                                dr["selected"] = 0;
                             }
                             selectDataTable.Rows.Add(dr);
                         }
@@ -300,7 +247,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                 if (dr["Remark"].ToString().Trim() != "")
                 {
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
-                    return;                    
+                    return;
                 }
             }
 
