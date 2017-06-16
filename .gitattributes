@@ -3625,6 +3625,8 @@ Sci.Production/Properties/AssemblyInfo.cs -text
 Sci.Production/Properties/Resources.Designer.cs -text
 Sci.Production/Properties/Resources.resx -text
 Sci.Production/Resources/001_jpg.jpg -text
+Sci.Production/Resources/QA_Skewness1.png -text
+Sci.Production/Resources/QA_Skewness2.png -text
 Sci.Production/SCHEMAS.Designer.cs -text
 Sci.Production/SCHEMAS.xsc -text
 Sci.Production/SCHEMAS.xsd -text
