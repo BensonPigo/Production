@@ -5,13 +5,10 @@
 -- Description:	<Description,,>
 -- =============================================
 Create PROCEDURE [dbo].[exp_Cutting] 
-	-- Add the parameters for the stored procedure here
-	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
+
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
+
 	SET NOCOUNT ON;
 IF OBJECT_ID(N'dbo.CuttingOutput') IS NOT NULL
 BEGIN
@@ -26,20 +23,34 @@ BEGIN
   DROP TABLE CuttingOutput_Detail_Detail
 END
 
+
+
+declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
+declare @DateEnd date=CONVERT(date, GETDATE());
+declare @DateInfoName varchar(30) ='CUTTING';
+
+--新增區間資料到DateInfo name='CUTTING' DateStart=Production.System.SewLock+1, DateEnd=轉檔日期
+--確保轉出給Trade區間資料等同於DateInfo
+If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
+Begin
+	update Pms_To_Trade.dbo.dateInfo
+	set DateStart=@DateStart,
+	DateEnd=@DateEnd
+	Where Name = @DateInfoName 
+end;
+else
+Begin 
+	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@DateStart,@DateEnd);
+end;
+
 SELECT ID, cDATE, MDivisionid,MANPOWER, MANHOURS, Actoutput, ActGarment, AddName, AddDate, EditName, EditDate
 INTO CuttingOutput
  FROM Production.dbo.CuttingOutput  CUT1
 WHERE CUT1. Status != 'New' 
-AND  (CUT1.Lock  BETWEEN (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System) AND  getdate() or  CUT1.Lock IS NULL)
+AND  (CUT1.Lock  BETWEEN @DateStart AND  @DateEnd or  CUT1.Lock IS NULL)
 
---SELECT 
---CUT1. ID,CUT2.CutRef,CUT2.CuttingID,
---(select isnull(FabricCombo,'') from Production.dbo.WorkOrder where UKey = CUT2.WorkOrderUKey) as FabricCombo,
---CUT2. Cutno,CUT2. MarkerName,CUT2. Markerlength,CUT2. Layer,CUT2. Cons,
---CUT2 .UKey, CUT2. WorkOrderUkey,CUT2. Colorid
---INTO CuttingOutput_Detail
---FROM Production.dbo.CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
---WHERE CUT1. ID = CUT2.ID
+
 SELECT ID,CutRef,CuttingID,isnull(FabricCombo,'') as FabricCombo,Cutno,MarkerName,Markerlength,Layer,Cons,UKey,WorkOrderUkey,Colorid 
 INTO CuttingOutput_Detail
 FROM (
@@ -48,7 +59,6 @@ CUT1. ID,CUT2.CutRef,CUT2.CuttingID,
 (select isnull(FabricCombo,'') from Production.dbo.WorkOrder where UKey = CUT2.WorkOrderUKey) as FabricCombo,
 CUT2. Cutno,CUT2. MarkerName,CUT2. Markerlength,CUT2. Layer,CUT2. Cons,
 CUT2 .UKey, CUT2. WorkOrderUkey,CUT2. Colorid
---INTO CuttingOutput_Detail
 FROM Pms_To_Trade.dbo.CuttingOutput CUT1 , Production.dbo.CuttingOutput_Detail CUT2  
 WHERE CUT1. ID = CUT2.ID
 )as aaa
