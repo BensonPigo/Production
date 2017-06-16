@@ -20,11 +20,15 @@
     [VerticalTest1]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest1] DEFAULT ((0)) NULL,
     [VerticalTest2]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest2] DEFAULT ((0)) NULL,
     [VerticalTest3]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest3] DEFAULT ((0)) NULL,
-    [SkewnessTest1] NUMERIC(4, 2) NULL DEFAULT ((0)), 
-    [SkewnessTest2] NUMERIC(4, 2) NULL DEFAULT ((0)), 
-    [SkewnessRate] NUMERIC(6, 2) NULL DEFAULT ((0)), 
+    [SkewnessTest1]      NUMERIC (4, 2) CONSTRAINT [DF__FIR_Labor__Skewn__59BB32B5] DEFAULT ((0)) NULL,
+    [SkewnessTest2]      NUMERIC (4, 2) CONSTRAINT [DF__FIR_Labor__Skewn__5AAF56EE] DEFAULT ((0)) NULL,
+    [SkewnessTest3]      NUMERIC (4, 2) NULL,
+    [SkewnessTest4]      NUMERIC (4, 2) NULL,
+    [SkewnessRate]       NUMERIC (6, 2) CONSTRAINT [DF__FIR_Labor__Skewn__5BA37B27] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory_Wash] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 
@@ -115,4 +119,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'垂直2', @
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'垂直3', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Wash', @level2type = N'COLUMN', @level2name = N'VerticalTest3';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'偏斜度測試4', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Wash', @level2type = N'COLUMN', @level2name = N'SkewnessTest4';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'偏斜度測試3', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Wash', @level2type = N'COLUMN', @level2name = N'SkewnessTest3';
 

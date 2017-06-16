@@ -21,8 +21,11 @@
     [CrockingEncode]    BIT           CONSTRAINT [DF_FIR_Laboratory_CrockingEncode] DEFAULT ((0)) NULL,
     [HeatEncode]        BIT           CONSTRAINT [DF_FIR_Laboratory_HeatEncode] DEFAULT ((0)) NULL,
     [WashEncode]        BIT           CONSTRAINT [DF_FIR_Laboratory_WashEncode] DEFAULT ((0)) NULL,
+    [SkewnessOptionID]  VARCHAR (1)   CONSTRAINT [DF_FIR_Laboratory_SkewnessOptionID] DEFAULT ((1)) NULL,
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
