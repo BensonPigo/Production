@@ -18,8 +18,7 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
         }
-        DataTable gridData;
-        string selectDataTable_DefaultView_Sort = "";
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -42,44 +41,6 @@ namespace Sci.Production.Logistic
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto())
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto())
                 .DateTime("AddDate", header: "Create Date", width: Widths.Auto());
-
-            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
-            int RowIndex = 0;
-            int ColumIndex = 0;
-            gridReceiveDate.CellClick += (s, e) =>
-            {
-                RowIndex = e.RowIndex;
-                ColumIndex = e.ColumnIndex;
-            };
-
-            gridReceiveDate.Sorted += (s, e) =>
-            {
-
-                if ((RowIndex == -1) & (ColumIndex == 4))
-                {
-
-                    listControlBindingSource1.DataSource = null;
-
-                    if (selectDataTable_DefaultView_Sort == "DESC")
-                    {
-                        gridData.DefaultView.Sort = "rn1 DESC";
-                        selectDataTable_DefaultView_Sort = "";
-                    }
-                    else
-                    {
-                        gridData.DefaultView.Sort = "rn1 ASC";
-                        selectDataTable_DefaultView_Sort = "DESC";
-                    }
-                    listControlBindingSource1.DataSource = gridData;
-                    return;
-                }
-
-
-            };
-
-
-            //
-        
         }
 
         //Query
@@ -89,8 +50,6 @@ namespace Sci.Production.Logistic
             sqlCmd.Append(string.Format(@"select cr.ReceiveDate,cr.PackingListID,cr.OrderID,oq.Seq,cr.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.ClogLocationId,cr.AddDate
-,rn = ROW_NUMBER() over(order by pd.Id,pd.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(pd.CTNStartNo)), 6)))
-,rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, pd.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(pd.CTNStartNo)), 6)))
 from ClogReceive cr WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -114,12 +73,12 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
-            sqlCmd.Append(" order by rn");
-            
+            sqlCmd.Append(" order by cr.ReceiveDate,cr.PackingListID,cr.OrderID,cr.AddDate");
+            DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
             gridReceiveDate.AutoResizeColumns();
@@ -139,11 +98,11 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
-            objSheets.get_Range(string.Format("A5:N{0}",r+4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A5:N{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'",Sci.Env.User.Keyword), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword), out dr, null);
             objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RECEIVING REPORT";
             string d1 = "", d2 = "";
             if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
@@ -156,7 +115,7 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             }
             string drange = d1 + "~" + d2;
             objSheets.Cells[3, 13] = drange;
-            objSheets.get_Range("A1").RowHeight = 45;            
+            objSheets.get_Range("A1").RowHeight = 45;
         }
     }
 }
