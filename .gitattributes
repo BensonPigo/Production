@@ -487,6 +487,7 @@ Database/dbo/Tables/ShipPlan.sql -text
 Database/dbo/Tables/ShipTerm.sql -text
 Database/dbo/Tables/ShippingAP.sql -text
 Database/dbo/Tables/ShippingAP_Detail.sql -text
+Database/dbo/Tables/SkewnessOption.sql -text
 Database/dbo/Tables/Stocktaking.sql -text
 Database/dbo/Tables/Stocktaking_Detail.sql -text
 Database/dbo/Tables/Style.sql -text
