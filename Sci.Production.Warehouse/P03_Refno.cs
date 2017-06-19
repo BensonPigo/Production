@@ -159,33 +159,13 @@ order by ColorID, SizeSpec ,SewinLine
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+select NameEN
+from Factory
+where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dr["refno"].ToString());
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            //string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            //System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            //SaveFileDialog dlg = new SaveFileDialog();
-            //dlg.RestoreDirectory = true;
-            //dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            //dlg.Title = "Save as Excel File";
-            //dlg.FileName = "P03_Refno_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
-            //dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            //// Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            //// Get the selected file name and CopyToXls
-            //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            //{
-            //    // Open document
-            //    DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            //    //DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"P03_Refno.xltx",4); }   //XlsAutoFit(dlg.FileName, "MMDR030.xltx", 12);
-            //    //else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            //}
-            //else
-            //{
-            //    return;
-            //}
         }
 
         //private void comboM_SelectedIndexChanged(object sender, EventArgs e)
