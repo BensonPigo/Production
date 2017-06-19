@@ -62,14 +62,11 @@ namespace Sci.Production.Quality
             }
             if (EditMode)
             {
-                this.radioOption1.Enabled = true;
-                this.radioOption2.Enabled = true;
-
+                this.radioOption1.ReadOnly = false;
             }
             else
             {
-                this.radioOption1.Enabled = false;
-                this.radioOption2.Enabled = false;
+                this.radioOption1.ReadOnly = true;
                 this.txtbrand.ReadOnly = true;
             }    
 

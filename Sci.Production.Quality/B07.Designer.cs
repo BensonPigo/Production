@@ -73,7 +73,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(595, 360);
+            this.browse.Size = new System.Drawing.Size(650, 360);
             // 
             // tabs
             // 
@@ -141,9 +141,9 @@
             // 
             // radioOption1
             // 
+            this.radioOption1.AutoCheck = false;
             this.radioOption1.AutoSize = true;
-            this.radioOption1.Enabled = false;
-            this.radioOption1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioOption1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.radioOption1.Location = new System.Drawing.Point(9, 13);
             this.radioOption1.Name = "radioOption1";
             this.radioOption1.Size = new System.Drawing.Size(76, 21);
@@ -156,9 +156,9 @@
             // 
             // radioOption2
             // 
+            this.radioOption2.AutoCheck = false;
             this.radioOption2.AutoSize = true;
-            this.radioOption2.Enabled = false;
-            this.radioOption2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioOption2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.radioOption2.Location = new System.Drawing.Point(91, 13);
             this.radioOption2.Name = "radioOption2";
             this.radioOption2.Size = new System.Drawing.Size(76, 21);
@@ -194,6 +194,7 @@
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OptionID", true));
             this.radioPanel1.Location = new System.Drawing.Point(173, 58);
             this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.ReadOnly = true;
             this.radioPanel1.Size = new System.Drawing.Size(189, 48);
             this.radioPanel1.TabIndex = 10;
             // 
@@ -207,7 +208,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B07";
-            this.Text = "B07.SkewnessOption";
+            this.Text = "B07.Skewness Option";
             this.WorkAlias = "SkewnessOption";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
