@@ -49,7 +49,7 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
             #endregion
 
             #region Summary by artwork
-            sqlCmd = string.Format(@"select id.Location,ATD.ArtworkTypeID,
+            sqlCmd = string.Format(@"select id.Location,M.ArtworkTypeID,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
 round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
 from Style s WITH (NOLOCK) 
@@ -58,9 +58,10 @@ inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
 left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
-LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
+--LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where s.Ukey = {0}
-group by id.Location,ATD.ArtworkTypeID", styleUkey);
+group by id.Location,M.ArtworkTypeID
+ORDER BY id.Location,M.ArtworkTypeID", styleUkey);
             result = DBProxy.Current.Select(null, sqlCmd, out gridData2);
             if (!result)
             {
