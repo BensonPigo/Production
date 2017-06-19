@@ -59,16 +59,22 @@
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelWkno = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioOption1 = new Sci.Win.UI.RadioButton();
+            this.radioOption2 = new Sci.Win.UI.RadioButton();
+            this.pictureBox1 = new Sci.Win.UI.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
+            this.radioPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btmcont
             // 
             this.btmcont.Controls.Add(this.btnToExcel);
-            this.btmcont.Location = new System.Drawing.Point(0, 545);
-            this.btmcont.Size = new System.Drawing.Size(974, 40);
+            this.btmcont.Location = new System.Drawing.Point(0, 544);
+            this.btmcont.Size = new System.Drawing.Size(962, 41);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -78,23 +84,37 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 127);
-            this.gridcont.Size = new System.Drawing.Size(950, 408);
+            this.gridcont.Location = new System.Drawing.Point(12, 204);
+            this.gridcont.Size = new System.Drawing.Size(938, 334);
+            // 
+            // append
+            // 
+            this.append.Size = new System.Drawing.Size(80, 31);
+            // 
+            // revise
+            // 
+            this.revise.Size = new System.Drawing.Size(80, 31);
+            // 
+            // delete
+            // 
+            this.delete.Size = new System.Drawing.Size(80, 31);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(884, 5);
+            this.undo.Location = new System.Drawing.Point(872, 5);
+            this.undo.Size = new System.Drawing.Size(80, 31);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(804, 5);
+            this.save.Location = new System.Drawing.Point(792, 5);
+            this.save.Size = new System.Drawing.Size(80, 31);
             // 
             // btnToExcel
             // 
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnToExcel.Location = new System.Drawing.Point(718, 5);
+            this.btnToExcel.Location = new System.Drawing.Point(706, 5);
             this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.Size = new System.Drawing.Size(80, 31);
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
@@ -105,17 +125,16 @@
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editDescription.Location = new System.Drawing.Point(553, 67);
+            this.editDescription.Location = new System.Drawing.Point(90, 141);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
-            this.editDescription.Size = new System.Drawing.Size(320, 54);
+            this.editDescription.Size = new System.Drawing.Size(758, 57);
             this.editDescription.TabIndex = 218;
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
-            this.labelDescription.Location = new System.Drawing.Point(475, 67);
+            this.labelDescription.Location = new System.Drawing.Point(12, 141);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 25);
             this.labelDescription.TabIndex = 217;
@@ -133,7 +152,7 @@
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(825, 38);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(622, 96);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
             this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
@@ -142,7 +161,7 @@
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(825, 9);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(622, 67);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
@@ -153,7 +172,7 @@
             this.checkNA.AutoSize = true;
             this.checkNA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNA.IsSupportEditMode = false;
-            this.checkNA.Location = new System.Drawing.Point(916, 67);
+            this.checkNA.Location = new System.Drawing.Point(884, 146);
             this.checkNA.Name = "checkNA";
             this.checkNA.ReadOnly = true;
             this.checkNA.Size = new System.Drawing.Size(50, 21);
@@ -163,7 +182,7 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(886, 89);
+            this.btnEncode.Location = new System.Drawing.Point(854, 168);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 212;
@@ -283,7 +302,6 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(475, 38);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(75, 23);
@@ -292,8 +310,7 @@
             // 
             // labelLastInspectionDate
             // 
-            this.labelLastInspectionDate.Lines = 0;
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(678, 38);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(475, 96);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
             this.labelLastInspectionDate.TabIndex = 200;
@@ -301,8 +318,7 @@
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Lines = 0;
-            this.labelArriveWHDate.Location = new System.Drawing.Point(678, 9);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(475, 67);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
             this.labelArriveWHDate.TabIndex = 199;
@@ -310,7 +326,6 @@
             // 
             // labelArriveQty
             // 
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(475, 9);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
@@ -319,7 +334,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(312, 9);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(47, 23);
@@ -328,7 +342,6 @@
             // 
             // labelBrandRefno
             // 
-            this.labelBrandRefno.Lines = 0;
             this.labelBrandRefno.Location = new System.Drawing.Point(187, 96);
             this.labelBrandRefno.Name = "labelBrandRefno";
             this.labelBrandRefno.Size = new System.Drawing.Size(86, 25);
@@ -337,7 +350,6 @@
             // 
             // labelSCIRefno
             // 
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(187, 67);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(86, 23);
@@ -346,7 +358,6 @@
             // 
             // labelSupp
             // 
-            this.labelSupp.Lines = 0;
             this.labelSupp.Location = new System.Drawing.Point(187, 38);
             this.labelSupp.Name = "labelSupp";
             this.labelSupp.Size = new System.Drawing.Size(86, 23);
@@ -355,7 +366,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(187, 9);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(51, 23);
@@ -364,7 +374,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(12, 96);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(46, 23);
@@ -373,7 +382,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(12, 68);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(46, 23);
@@ -382,7 +390,6 @@
             // 
             // labelWkno
             // 
-            this.labelWkno.Lines = 0;
             this.labelWkno.Location = new System.Drawing.Point(12, 38);
             this.labelWkno.Name = "labelWkno";
             this.labelWkno.Size = new System.Drawing.Size(46, 23);
@@ -391,16 +398,64 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(12, 9);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(46, 23);
             this.labelSP.TabIndex = 189;
             this.labelSP.Text = "SP#";
             // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.radioOption1);
+            this.radioPanel1.Controls.Add(this.radioOption2);
+            this.radioPanel1.Location = new System.Drawing.Point(669, 4);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.ReadOnly = true;
+            this.radioPanel1.Size = new System.Drawing.Size(96, 57);
+            this.radioPanel1.TabIndex = 219;
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            // 
+            // radioOption1
+            // 
+            this.radioOption1.AutoCheck = false;
+            this.radioOption1.AutoSize = true;
+            this.radioOption1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioOption1.Location = new System.Drawing.Point(9, 4);
+            this.radioOption1.Name = "radioOption1";
+            this.radioOption1.Size = new System.Drawing.Size(76, 21);
+            this.radioOption1.TabIndex = 6;
+            this.radioOption1.TabStop = true;
+            this.radioOption1.Text = "Option1";
+            this.radioOption1.UseVisualStyleBackColor = true;
+            this.radioOption1.Value = "1";
+            // 
+            // radioOption2
+            // 
+            this.radioOption2.AutoCheck = false;
+            this.radioOption2.AutoSize = true;
+            this.radioOption2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioOption2.Location = new System.Drawing.Point(9, 31);
+            this.radioOption2.Name = "radioOption2";
+            this.radioOption2.Size = new System.Drawing.Size(76, 21);
+            this.radioOption2.TabIndex = 7;
+            this.radioOption2.TabStop = true;
+            this.radioOption2.Text = "Option2";
+            this.radioOption2.UseVisualStyleBackColor = true;
+            this.radioOption2.Value = "2";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(771, 4);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(163, 136);
+            this.pictureBox1.TabIndex = 220;
+            this.pictureBox1.TabStop = false;
+            // 
             // P03_Wash
             // 
-            this.ClientSize = new System.Drawing.Size(974, 585);
+            this.ClientSize = new System.Drawing.Size(962, 585);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.editDescription);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.txtsupplierSupp);
@@ -468,9 +523,14 @@
             this.Controls.SetChildIndex(this.txtsupplierSupp, 0);
             this.Controls.SetChildIndex(this.labelDescription, 0);
             this.Controls.SetChildIndex(this.editDescription, 0);
+            this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.Controls.SetChildIndex(this.pictureBox1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -509,6 +569,10 @@
         private Win.UI.Label labelStyle;
         private Win.UI.Label labelWkno;
         private Win.UI.Label labelSP;
+        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioButton radioOption1;
+        private Win.UI.RadioButton radioOption2;
+        private Win.UI.PictureBox pictureBox1;
 
     }
 }
