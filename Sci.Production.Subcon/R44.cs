@@ -218,6 +218,7 @@ left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork
 							and NewCutComb.orderID = #cur_bdltrack2.orderid
 							and NewCutComb.Article = #cur_bdltrack2.Article 
 							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
+                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2
 --order by cdate2, orderid, Article, SizeCode, FabricCombo, artwork
 
 ----準備好要印的資料
