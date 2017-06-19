@@ -22,7 +22,8 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
         }
-
+        DataTable selectDataTable;
+        string selectDataTable_DefaultView_Sort = "";
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -44,6 +45,43 @@ namespace Sci.Production.Logistic
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
+
+            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
+            int RowIndex = 0;
+            int ColumIndex = 0;
+            gridReceiveDate.CellClick += (s, e) =>
+            {
+                RowIndex = e.RowIndex;
+                ColumIndex = e.ColumnIndex;
+            };
+
+            gridReceiveDate.Sorted += (s, e) =>
+            {
+
+                if ((RowIndex == -1) & (ColumIndex == 4))
+                {
+
+                    listControlBindingSource1.DataSource = null;
+
+                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    {
+                        selectDataTable.DefaultView.Sort = "rn1 DESC";
+                        selectDataTable_DefaultView_Sort = "";
+                    }
+                    else
+                    {
+                        selectDataTable.DefaultView.Sort = "rn1 ASC";
+                        selectDataTable_DefaultView_Sort = "DESC";
+                    }
+                    listControlBindingSource1.DataSource = selectDataTable;
+                    return;
+                }
+
+
+            };
+
+
+            //
         }
 
         //Find
@@ -57,14 +95,17 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-select ID, selected,ReceiveDate,PackingListID, OrderID, CTNStartNo
+select ID, selected,ReceiveDate,PackingListID, OrderID, 
+convert(int,CTNStartNo) as 'CTNStartNo'
 	, CustPONo, StyleID, SeasonID, BrandID, Customize1, Alias, BuyerDelivery,ClogLocationId, Remark 
+    ,rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+    ,rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))	
 from
 (
 	Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, CTNStartNo
 	, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,b.ClogLocationId,'' as Remark 
-	,rn = ROW_NUMBER() over(order by b.Id,b.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-	from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
+	
+from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
 	where b.OrderId = c.Id 
 	and a.Id = b.Id 
 	and b.CTNStartNo != '' 
@@ -87,7 +128,7 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
             sqlCmd.Append(@"
 )a
 order by rn ");
-            DataTable selectDataTable;
+
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
             {
@@ -112,9 +153,14 @@ order by rn ");
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
-                                                             from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
-                DataTable selectDataTable;
+                string selectCommand = @"
+Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, 
+TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
+,0 as rn
+,0 as rn1
+, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
+
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
                 {

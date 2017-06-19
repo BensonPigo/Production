@@ -18,7 +18,8 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
         }
-
+        DataTable gridData;
+        string selectDataTable_DefaultView_Sort = "";
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -39,15 +40,59 @@ namespace Sci.Production.Logistic
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Date("BuyerDelivery", header: "Buyer Delivery")
                 .DateTime("AddDate", header: "Create Date");
+
+            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
+            int RowIndex = 0;
+            int ColumIndex = 0;
+            gridReturnDate.CellClick += (s, e) =>
+            {
+                RowIndex = e.RowIndex;
+                ColumIndex = e.ColumnIndex;
+
+            };
+
+            gridReturnDate.Sorted += (s, e) =>
+            {
+
+                if ((RowIndex == -1) & (ColumIndex == 3))
+                {
+
+                    listControlBindingSource1.DataSource = null;
+
+                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    {
+                        gridData.DefaultView.Sort = "rn1 DESC";
+                        selectDataTable_DefaultView_Sort = "";
+                    }
+                    else
+                    {
+                        gridData.DefaultView.Sort = "rn1 ASC";
+                        selectDataTable_DefaultView_Sort = "DESC";
+                    }
+                    listControlBindingSource1.DataSource = gridData;
+                    return;
+                }
+
+
+            };
+
+
+            //
         }
 
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
+            sqlCmd.Append(string.Format(@"
+select *,
+rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
+rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+from (
+select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,pd.Id,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.AddDate
+
 from ClogReturn cr WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -71,8 +116,8 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
-            sqlCmd.Append(" order by cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.AddDate");
-            DataTable gridData;
+            sqlCmd.Append(")X order by rn");
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
             {
