@@ -93,11 +93,14 @@ namespace Sci.Production.Packing
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select 1 as selected,t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,
+select *,
+rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
+rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+from (
+select 1 as selected,t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,pd.Id,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID, convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery,t.AddDate
-,rn = ROW_NUMBER() over(order by pd.Id,pd.OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(pd.CTNStartNo)), 6)))
-,rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, pd.CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(pd.CTNStartNo)), 6)))
+
 from TransferToClog t WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -121,7 +124,7 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(txtSP.Text)));
             }
-            sqlCmd.Append(@" order by rn");
+            sqlCmd.Append(@")X order by rn");
            
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
