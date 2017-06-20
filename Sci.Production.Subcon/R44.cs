@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.print.Visible = false;
-            
+
             //set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
@@ -46,13 +46,13 @@ where Junk != 1", out dtFactory);
                 MyUtility.Msg.InfoBox("Sewinbg Date can't be empty!");
                 return false;
             }
-            #endregion 
+            #endregion
             #region set Data
             Factory = comboFactory.Text;
             SewingStart = ((DateTime)dateSewingDate.Value1).ToString("yyyy-MM-dd");
             SewingEnd = ((DateTime)dateSewingDate.Value2).ToString("yyyy-MM-dd");
             SP = txtSP.Text;
-            #endregion 
+            #endregion
             return true;
         }
 
@@ -65,7 +65,7 @@ where Junk != 1", out dtFactory);
             sqlParameter.Add(new SqlParameter("@SewingEnd", SewingEnd));
             sqlParameter.Add(new SqlParameter("@SPNO", SP));
             sqlParameter.Add(new SqlParameter("@ToExcelBy", (radioByFactory.Checked) ? 1 : 0));
-            #endregion 
+            #endregion
 
             #region SQL cmd
             string strSQL = string.Format(@"
@@ -87,11 +87,13 @@ into #tsp
 from orders o
 inner join Factory f on o.FactoryID = f.ID
 where	o.Junk != 1
-		
+		-- {0} 篩選 OrderID
+		{0}
 		and not ((o.SewOffLine < @StartDate and o.SewInLine < @EndDate) or (o.SewInLine > @StartDate and o.SewInLine > @EndDate))
 		and (o.SewInLine is not null or o.SewInLine != '')
-		and (o.SewOffLine is not null or o.SewOffLine != '')		
-        and f.ID = @FactoryID
+		and (o.SewOffLine is not null or o.SewOffLine != '')	
+		-- {1} 篩選 FactoryID	
+        {1}
 --order by o.POID, o.ID, o.SewLine
 
 --取出的訂單，執行以下判斷流程 (#CutComb 儲存 整件衣服 應該裁剪的部位)
@@ -112,7 +114,7 @@ from #tsp
 inner join (
 	select	distinct #tsp.orderID
 			, b.Article
-			, wo.FabricCombo
+			, FabricCombo = occ.FabricPanelCode
 			, artwork = stuff ((select '+' + subprocessid
 								from (
 									select distinct subprocessid
@@ -123,6 +125,9 @@ inner join (
 							  ), 1, 1, '')
 	from Bundle b
 	inner join Bundle_Detail bd on b.id = bd.id
+	inner join Order_ColorCombo occ on b.POID = occ.Id 
+								   and b.Article = occ.Article
+								   and occ.FabricCode != ''
 	inner join WorkOrder wo on b.POID = wo.id
 							   and b.CutRef = wo.CutRef
 	left join Order_BOF ob on ob.Id = wo.Id 
@@ -144,9 +149,9 @@ select	b.orderid
 		, bd.SizeCode
 		, cdate2 = cDate.value
 		, b.Article
-		, wo.FabricCombo
+		, FabricCombo = wo.FabricPanelCode
 		, artwork = ArtWork.value
-		, qty = sum(isnull(bd.qty, 0))
+		, qty = min(isnull(bd.qty, 0))
 into #cur_bdltrack2
 from BundleInOut bio
 inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
@@ -177,31 +182,43 @@ outer apply(
 where	bio.SubProcessId = 'loading'
 		and ob.Kind not in ('0','3')
 	    and oec.CuttingPiece = 0	
-		
-group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricCombo, ArtWork.value
+		and cDate.value between @StartDate and @EndDate
+		--{2} 篩選 OrderID
+		{2}
+group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricPanelCode, ArtWork.value
 
 ----Step4 已收的bundle資料中找出各article/size/部位/artwork/加總數量
 ------Step5 計算sp#上線日至下線日的產出
 --------Step6 依條件日期區間，繞sewing 取得stdqty加總以及抓取備妥的成衣件數
-select	#cutcomb.FactoryID
-		, #cutcomb.orderid
-		, #cutcomb.StyleID
-		, #cur_bdltrack2.cdate2
-		, #cutcomb.SewLine
-		, #cutcomb.Article
-		, #cur_bdltrack2.SizeCode
-		, #cutcomb.FabricCombo
-		, #cutcomb.artwork
+select	NewCutComb.FactoryID
+		, NewCutComb.orderid
+		, NewCutComb.StyleID
+		, NewCutComb.cdate2
+		, NewCutComb.SewLine
+		, NewCutComb.Article
+		, NewCutComb.SizeCode
+		, NewCutComb.FabricCombo
+		, NewCutComb.artwork
 		, qty = isnull(#cur_bdltrack2.qty, 0)
-		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by #cutcomb.FactoryID, #cutcomb.orderid,  #cutcomb.Article, #cur_bdltrack2.SizeCode, #cutcomb.FabricCombo, #cutcomb.artwork
+		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by NewCutComb.FactoryID, NewCutComb.orderid,  NewCutComb.Article, #cur_bdltrack2.SizeCode, NewCutComb.FabricCombo, NewCutComb.artwork
 																    order by #cur_bdltrack2.cdate2)
 into #Min_cut
-from #cutcomb
-left join #cur_bdltrack2 on	#cutcomb.artwork = #cur_bdltrack2.artwork 
-							and #cutcomb.FabricCombo = #cur_bdltrack2.FabricCombo
-							and #cutcomb.orderID = #cur_bdltrack2.orderid
-							and #cutcomb.Article = #cur_bdltrack2.Article 
-where	#cur_bdltrack2.cdate2 between @StartDate and @EndDate
+from (
+	--組出每一天，同 OrderID, Artwork, Article, SizeCode 需要的 FabricCombe
+	select	#cutcomb.*
+			, #cur_bdltrack2.cdate2
+			, #cur_bdltrack2.SizeCode
+	from #cutcomb
+	inner join #cur_bdltrack2 on #cutcomb.orderID = #cur_bdltrack2.Orderid
+								 and #cutcomb.artwork = #cur_bdltrack2.artwork
+								 and #cutcomb.Article = #cur_bdltrack2.Article
+) NewCutComb
+left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork 
+							and NewCutComb.FabricCombo = #cur_bdltrack2.FabricCombo
+							and NewCutComb.orderID = #cur_bdltrack2.orderid
+							and NewCutComb.Article = #cur_bdltrack2.Article 
+							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
+                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2
 --order by cdate2, orderid, Article, SizeCode, FabricCombo, artwork
 
 ----準備好要印的資料
@@ -273,11 +290,11 @@ drop table #print"
                 , (SP.Empty()) ? "" : "and o.id = @SP"
                 , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
                 , (SP.Empty()) ? "" : "and b.OrderID = @SP");
-            #endregion 
+            #endregion
 
             DualResult result = DBProxy.Current.Select(null, strSQL, sqlParameter, out printData);
             if (!result)
-            {                
+            {
                 return result;
             }
             return Result.True;
@@ -302,11 +319,11 @@ drop table #print"
                 MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
-                #endregion 
+                #endregion
                 #region set CheckDate & Factory
                 worksheet.Cells[2, 2] = SewingStart + " - " + SewingEnd;
                 worksheet.Cells[2, 5] = Factory;
-                #endregion 
+                #endregion
             }
             else
             {
@@ -315,11 +332,11 @@ drop table #print"
                 MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
-                #endregion 
+                #endregion
                 #region set CheckDate & Factory
                 worksheet.Cells[2, 3] = SewingStart + " - " + SewingEnd;
                 worksheet.Cells[2, 6] = Factory;
-                #endregion 
+                #endregion
             }
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
