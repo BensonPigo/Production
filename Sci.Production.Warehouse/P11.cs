@@ -237,7 +237,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
             .Text("SizeUnit", header: "SizeUnit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //6          
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //8
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10)    //5
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)    //5
             .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Text("output", header: "Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts) //9
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
@@ -246,7 +246,6 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
 
             #region 可編輯欄位變色
             detailgrid.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["output"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion 可編輯欄位變色
         }
