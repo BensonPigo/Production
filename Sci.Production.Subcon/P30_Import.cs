@@ -108,6 +108,7 @@ where a.ApvToPurchase = 1
     and a.factoryid = '{0}'    
     and a.mdivisionid='{1}'
 	and c.Category !='M'
+    and c.Junk=0
 "
                                                                 , Env.User.Factory, Env.User.Keyword, dr_localPO["category"],dr_localPO["localsuppid"]);
 
@@ -177,6 +178,7 @@ where a.status = 'Approved'
     and d.localsuppid= '{3}'
     and a.Mdivisionid = '{1}'
 	and c.Category !='M'
+    and c.Junk=0
 and b.PurchaseQty > 0 and b.PoId =''
                                                                 "
                         , Env.User.Factory, Env.User.Keyword, dr_localPO["category"], dr_localPO["localsuppid"]);
