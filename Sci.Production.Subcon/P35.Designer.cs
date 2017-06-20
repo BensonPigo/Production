@@ -64,6 +64,8 @@
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.labelTotalQty = new Sci.Win.UI.Label();
+            this.numTotalqty = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +82,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTotalqty);
+            this.masterpanel.Controls.Add(this.labelTotalQty);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.displayVoucher);
             this.masterpanel.Controls.Add(this.labelVoucher);
@@ -155,6 +159,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelVoucher, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayVoucher, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalqty, 0);
             // 
             // detailpanel
             // 
@@ -556,12 +562,13 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(334, 49);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 6;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtpayterm_ftyTerms
             // 
@@ -617,6 +624,36 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
             this.txtsubconSupplier.TabIndex = 1;
             this.txtsubconSupplier.TextBox1Binding = "";
+            // 
+            // labelTotalQty
+            // 
+            this.labelTotalQty.Location = new System.Drawing.Point(714, 189);
+            this.labelTotalQty.Name = "labelTotalQty";
+            this.labelTotalQty.Size = new System.Drawing.Size(67, 23);
+            this.labelTotalQty.TabIndex = 52;
+            this.labelTotalQty.Text = "Total Qty";
+            // 
+            // numTotalqty
+            // 
+            this.numTotalqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalqty.IsSupportEditMode = false;
+            this.numTotalqty.Location = new System.Drawing.Point(784, 189);
+            this.numTotalqty.Name = "numTotalqty";
+            this.numTotalqty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalqty.ReadOnly = true;
+            this.numTotalqty.Size = new System.Drawing.Size(89, 23);
+            this.numTotalqty.TabIndex = 53;
+            this.numTotalqty.TabStop = false;
+            this.numTotalqty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P35
             // 
@@ -696,5 +733,7 @@
         private Win.UI.Label labelTerms;
         private Class.txtfactory txtmfactory;
         private Win.UI.DateBox dateApvDate;
+        private Win.UI.NumericBox numTotalqty;
+        private Win.UI.Label labelTotalQty;
     }
 }
