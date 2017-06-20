@@ -16,6 +16,8 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             radioOption1.Checked = true;
+            this.txtFormula.Text = "";
+            pictureBox1.ImageLocation = "";
 
         }
         protected override bool ClickSaveBefore()
@@ -25,6 +27,14 @@ namespace Sci.Production.Quality
                MyUtility.Msg.WarningBox("<Brand> cannot be empty! ");
                this.txtbrand.Focus();
                return false;
+            }
+            
+            //DataRow dr;
+            if (MyUtility.Check.Seek(string.Format("select * from SkewnessOption where brandid='{0}'",this.txtbrand.Text)))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<Brand : {0}> existed, change other one please!", this.txtbrand.Text));
+                this.txtbrand.Focus();
+                return false;
             }
             return base.ClickSaveBefore();
         }
@@ -36,17 +46,24 @@ namespace Sci.Production.Quality
             {
                 DBProxy.Current.Execute(null, string.Format(@"update SkewnessOption set OptionID='{0}' where BrandID='{1}'", radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
             }
-            //else
-            //{
-            //    DBProxy.Current.Execute(null, string.Format(@"insert into SkewnessOption (Brandid,OptionID,Junk,AddName,AddDate) values('{0}','{1}','{2}','{3}','{4}') ", this.txtbrand.Text, radioOption1.Checked ? "1" : "2",this.checkJunk.Checked,Sci.Env.User,DateTime.Now));
-            //}
+ 
 
             return base.ClickSave();
             
         }
+        protected override void ClickLocate()
+        {           
+            base.ClickLocate();
+            OnDetailEntered();
+        }
         protected override void OnDetailEntered()
         {
-            base.OnDetailEntered();
+            if (CurrentMaintain.Empty())
+            {
+                this.txtFormula.Text = "";
+                pictureBox1.ImageLocation = "";
+                return; 
+            }            
             //按鈕Shipping Mark變色
             if (MyUtility.Convert.GetString(CurrentMaintain["OptionID"]) == "1")
             {
@@ -60,6 +77,12 @@ namespace Sci.Production.Quality
                 txtFormula.Text = "100 × [ ( AA’ + DD’ ) / ( AB + CD ) ]";
                 pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
             }
+            else
+            {
+                txtFormula.Text = "";
+                pictureBox1.ImageLocation = "";
+
+            }
             if (EditMode)
             {
                 this.radioOption1.ReadOnly = false;
@@ -68,14 +91,11 @@ namespace Sci.Production.Quality
             {
                 this.radioOption1.ReadOnly = true;
                 this.txtbrand.ReadOnly = true;
-            }    
+            }
 
+            base.OnDetailEntered();
         }
-        protected override bool ClickNewBefore()
-        {
-           // CurrentMaintain["OptionID"] = radioOption1.Checked ? "1" : "2";
-            return base.ClickNewBefore();
-        }
+           
         protected override void ClickNewAfter()
         {
             this.txtbrand.ReadOnly = false;

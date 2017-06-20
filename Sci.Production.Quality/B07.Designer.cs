@@ -65,6 +65,7 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtbrand);
             this.detailcont.Size = new System.Drawing.Size(650, 322);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -78,6 +79,7 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(658, 389);
+            this.tabs.TabIndex = 0;
             // 
             // editby
             // 
@@ -100,7 +102,7 @@
             this.label1.Location = new System.Drawing.Point(93, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(74, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 4;
             this.label1.Text = "Brand";
             // 
             // label2
@@ -108,7 +110,7 @@
             this.label2.Location = new System.Drawing.Point(93, 71);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 5;
             this.label2.Text = "Option";
             // 
             // label3
@@ -116,7 +118,7 @@
             this.label3.Location = new System.Drawing.Point(93, 112);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(74, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 6;
             this.label3.Text = "Formula";
             // 
             // label4
@@ -124,7 +126,7 @@
             this.label4.Location = new System.Drawing.Point(93, 153);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(74, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 7;
             this.label4.Text = "Example";
             // 
             // checkJunk
@@ -135,7 +137,7 @@
             this.checkJunk.Location = new System.Drawing.Point(298, 33);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkJunk.TabIndex = 5;
+            this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
@@ -147,7 +149,7 @@
             this.radioOption1.Location = new System.Drawing.Point(9, 13);
             this.radioOption1.Name = "radioOption1";
             this.radioOption1.Size = new System.Drawing.Size(76, 21);
-            this.radioOption1.TabIndex = 6;
+            this.radioOption1.TabIndex = 0;
             this.radioOption1.TabStop = true;
             this.radioOption1.Text = "Option1";
             this.radioOption1.UseVisualStyleBackColor = true;
@@ -162,7 +164,7 @@
             this.radioOption2.Location = new System.Drawing.Point(91, 13);
             this.radioOption2.Name = "radioOption2";
             this.radioOption2.Size = new System.Drawing.Size(76, 21);
-            this.radioOption2.TabIndex = 7;
+            this.radioOption2.TabIndex = 1;
             this.radioOption2.TabStop = true;
             this.radioOption2.Text = "Option2";
             this.radioOption2.UseVisualStyleBackColor = true;
@@ -177,7 +179,7 @@
             this.txtFormula.Name = "txtFormula";
             this.txtFormula.ReadOnly = true;
             this.txtFormula.Size = new System.Drawing.Size(246, 23);
-            this.txtFormula.TabIndex = 8;
+            this.txtFormula.TabIndex = 3;
             // 
             // pictureBox1
             // 
@@ -196,7 +198,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
             this.radioPanel1.Size = new System.Drawing.Size(189, 48);
-            this.radioPanel1.TabIndex = 10;
+            this.radioPanel1.TabIndex = 1;
             // 
             // B07
             // 
