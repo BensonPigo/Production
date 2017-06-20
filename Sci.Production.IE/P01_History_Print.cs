@@ -70,7 +70,7 @@ order by td.Seq", MyUtility.Convert.GetString(masterData["StyleID"]), MyUtility.
             sqlCmd = string.Format(@"select isnull(m.ArtworkTypeID,'') as ArtworkTypeID,sum(td.SMV) as ttlSMV
 from TimeStudyHistory_Detail td WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
+--LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}
 group by isnull(m.ArtworkTypeID,'')", id);
             result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
