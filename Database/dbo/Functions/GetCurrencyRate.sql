@@ -1,11 +1,4 @@
-﻿USE [Production]
-GO
-/****** Object:  UserDefinedFunction [dbo].[GetCurrencyRate]    Script Date: 2017/6/19 下午 05:25:54 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER Function [dbo].[GetCurrencyRate]
+﻿CREATE Function [dbo].[GetCurrencyRate]
 (
 	  @ExchangeTypeID	VarChar(2)			--
 	 ,@FromCurrency		VarChar(3)			--
@@ -16,7 +9,7 @@ Returns TABLE
 AS
 RETURN 
 (
-    SELECT  rate = iif(ExchangeRate.value != 0, ExchangeRate.value
+	SELECT  rate = iif(ExchangeRate.value != 0, ExchangeRate.value
 											  , iif(cto.StdRate = 0, 0
 												                   , cfrom.StdRate/cto.StdRate)) 
 			, cTo.Exact
