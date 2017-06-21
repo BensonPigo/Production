@@ -106,7 +106,7 @@ Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
 left join Cutting C on O.ID=C.ID    
 Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
-Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode
+Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode and OQ.Article=OA.Article
 Where	AP.POType='O' 
 		and APD.ArtworkTypeID='PRINTING' 
 		and AP.Status <> 'New' 
