@@ -268,6 +268,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
             this.DetailSelectCommand = string.Format(@"  
 select  a.Id
         , isnull(a.FtyInventoryUkey,0) [FtyInventoryUkey]
+        , a.Poid
         , a.seq1
         , a.seq2
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
@@ -392,10 +393,7 @@ Where a.id = '{0}'", masterID);
                     MyUtility.Msg.WarningBox(string.Format(@"SP#: {0} Seq#: {1}-{2} duplicate, SP# and Seq# can't duplicate", Checkduplicate["poid"], Checkduplicate["seq1"], Checkduplicate["seq2"]));
                     return false;                        
                 }
-            }
-
-            
-
+            }         
 
             //取單號
             if (this.IsDetailInserting)
