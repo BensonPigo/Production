@@ -106,7 +106,7 @@ BEGIN
 		)
 	)C
 	where w.id = '''+@OrderID+N'''
-	order by w.FabricCombo, w.OrderID, A.Article, w.Cutno
+	order by w.FabricCombo, w.Cutno
 
 	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
 	from WorkOrder wOrder
