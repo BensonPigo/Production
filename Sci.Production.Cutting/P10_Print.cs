@@ -72,7 +72,8 @@ select a.BundleGroup [Group_right]
     ,b.Article + '\' + b.Colorid [Color]
     ,a.SizeCode [Size]
 	,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-    ,Artwork.Artwork [Artwork]
+    --,Artwork.Artwork [Artwork]
+,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
     ,a.Qty [Quantity]
     ,a.BundleNo [Barcode]
 from dbo.Bundle_Detail a WITH (NOLOCK) 
@@ -105,7 +106,8 @@ select a.BundleGroup [Group_right]
     ,b.Article + '\' + b.Colorid [Color]
     ,a.SizeCode [Size]
 	,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-    ,Artwork.Artwork [Artwork]
+    --,Artwork.Artwork [Artwork]
+    ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
     ,a.Qty [Quantity]
     ,a.BundleNo [Barcode]
 from dbo.Bundle_Detail a WITH (NOLOCK) 
@@ -142,7 +144,8 @@ order by a.BundleNo ");
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
 		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-                                                    ,Artwork.Artwork [Artwork]
+                                                   -- ,Artwork.Artwork [Artwork]
+                                                    ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
 		                                            ,a.Patterncode
@@ -170,7 +173,8 @@ order by a.BundleNo ");
                                                     ,b.Article + '\' + b.Colorid [Color]
                                                     ,a.SizeCode [Size]
 		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-                                                    ,Artwork.Artwork [Artwork]
+                                                    --,Artwork.Artwork [Artwork]
+ ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
 		                                            ,a.Patterncode
@@ -210,7 +214,7 @@ order by a.BundleNo ");
                         Color = row1["Color"].ToString(),
                         Size = row1["Size"].ToString(),
                         Desc = row1["Desc"].ToString(),
-                        Artwork = row1["Artwork"].ToString(),
+                        Artwork = row1["Artwork"].ToString(),                       
                         Quantity = row1["Quantity"].ToString(),
                         Barcode = row1["Barcode"].ToString()
                     }).ToList();

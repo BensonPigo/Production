@@ -202,7 +202,8 @@ select
     ,a.PatternCode [Cutpart]
     ,'('+a.Patterncode+')' [Patterncode]
     ,a.PatternDesc [Description]
-    ,SubProcess.SubProcess [SubProcess]
+    --,SubProcess.SubProcess [SubProcess]
+    ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     ,a.Parts [Parts]
     ,a.Qty [Qty]
     ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
@@ -245,7 +246,8 @@ select DISTINCT
     ,qq.Cutpart [Cutpart]
     ,'('+d.Patterncode+')' [Patterncode]
     ,d.PatternDesc [Description]
-    ,SubProcess.SubProcess [SubProcess]
+    --,SubProcess.SubProcess [SubProcess]
+    ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     ,d.Parts [Parts]
     ,a.Qty [Qty]
     ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
@@ -293,7 +295,8 @@ select
     ,a.PatternCode [Cutpart]
     ,'('+a.Patterncode+')' [Patterncode]
     ,a.PatternDesc [Description]
-    ,SubProcess.SubProcess [SubProcess]
+    --,SubProcess.SubProcess [SubProcess]
+    ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     ,a.Parts [Parts]
     ,a.Qty [Qty]
     ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
@@ -336,7 +339,8 @@ select DISTINCT
     ,a.PatternCode [Cutpart]
     ,'('+a.Patterncode+')' [Patterncode]
     ,a.PatternDesc [Description]
-    ,SubProcess.SubProcess [SubProcess]
+    --,SubProcess.SubProcess [SubProcess]
+    ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     ,a.Parts [Parts]
     ,a.Qty [Qty]
     ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
