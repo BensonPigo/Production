@@ -940,18 +940,25 @@ where w.ID = '{0}'", masterID);
                     DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
+                    string oldvalue = dr["SizeCode"].ToString();
+
                     sele = new SelectItem(sizeGroup, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
 
                     string newvalue = sele.GetSelectedString();
+
                     dr["SizeCode"] = newvalue;
                     dr.EndEdit();
                     redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                     cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-                    updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                     totalDisQty();
+                    DataRow[] distdrs = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), oldvalue));
+                    foreach (DataRow disdr in distdrs)
+                    {
+                        disdr["SizeCode"] = newvalue;
+                    }                   
                 }
             };
             col_sizeRatio_size.EditingControlShowing += (s, e) =>
@@ -984,8 +991,12 @@ where w.ID = '{0}'", masterID);
 
                 redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                 totalDisQty();
+                DataRow[] distdrs = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), oldvalue));
+                foreach (DataRow disdr in distdrs)
+                {
+                    disdr["SizeCode"] = newvalue;
+                }   
             };
             col_sizeRatio_qty.EditingControlShowing += (s, e) =>
             {
