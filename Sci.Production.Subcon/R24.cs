@@ -253,6 +253,7 @@ select cte.FactoryID
 ,cte.artworktypeid
 ,aa.POID
 ,aa.StyleID
+,cc.BuyerID
 ,aa.BrandID
 ,dbo.getTPEPass1(aa.SMR) smr
 ,y.order_qty
@@ -266,6 +267,7 @@ select cte.FactoryID
 from cte
 left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
+left join Brand cc on aa.BrandID=cc.id
 outer apply (
 	select isnull(sum(t.ap_amt),0.00) ap_amt
             , isnull(sum(t.ap_qty),0) ap_qty 

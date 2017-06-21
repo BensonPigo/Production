@@ -22,8 +22,8 @@
     [VerticalTest3]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest3] DEFAULT ((0)) NULL,
     [SkewnessTest1]      NUMERIC (4, 2) CONSTRAINT [DF__FIR_Labor__Skewn__59BB32B5] DEFAULT ((0)) NULL,
     [SkewnessTest2]      NUMERIC (4, 2) CONSTRAINT [DF__FIR_Labor__Skewn__5AAF56EE] DEFAULT ((0)) NULL,
-    [SkewnessTest3]      NUMERIC (4, 2) NULL,
-    [SkewnessTest4]      NUMERIC (4, 2) NULL,
+    [SkewnessTest3]      NUMERIC (4, 2) NULL DEFAULT ((0)),
+    [SkewnessTest4]      NUMERIC (4, 2) NULL DEFAULT ((0)),
     [SkewnessRate]       NUMERIC (6, 2) CONSTRAINT [DF__FIR_Labor__Skewn__5BA37B27] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory_Wash] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
