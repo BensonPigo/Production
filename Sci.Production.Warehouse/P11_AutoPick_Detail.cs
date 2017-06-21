@@ -77,7 +77,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , strpoid, strseq1, strseq2), out dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
-                this.displyUnit.Text = dr["sizeunit"].ToString();
+                this.displyUnit.Text = dr["StockUnit"].ToString();
                 this.displyQty.Text = dr["usedqty"].ToString();
                 this.displySize.Text = dr["sizespec"].ToString();
                 this.displyColorid.Text = dr["colorid"].ToString();
