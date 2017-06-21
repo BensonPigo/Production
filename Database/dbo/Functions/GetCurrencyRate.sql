@@ -5,10 +5,13 @@
 	 ,@ToCurrency		VarChar(3)			--
 	 ,@Date				Date
 )
-Returns TABLE
+Returns @rtnTable TABLE (
+	rate DECIMAL(18, 8)
+	, Exact tinyint
+)
 AS
-RETURN 
-(
+BEGIN
+	insert into @rtnTable
 	SELECT  rate = iif(ExchangeRate.value != 0, ExchangeRate.value
 											  , iif(cto.StdRate = 0, 0
 												                   , cfrom.StdRate/cto.StdRate)) 
@@ -25,4 +28,6 @@ RETURN
 		select value = isnull(ex.rate, 0)
 	) ExchangeRate
      where cFrom.ID = @fromCurrency
-);
+
+	 Return 
+END
