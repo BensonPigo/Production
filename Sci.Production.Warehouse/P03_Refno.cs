@@ -25,7 +25,6 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             dr = data;
-            //Helper.Controls.ContextMenu.Generator(myCMS).Menu("item1", onclick: (s, e) => DoMyCMS());
             gridRefNo.ContextMenuStrip = myCMS;
             this.Text += string.Format(" ({0})", dr["refno"]);
         }
@@ -34,21 +33,27 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"Select b.id
-, concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
-, b.colorid,  b.sizespec
-, c.suppid, a.sewinline
-, a.sewline, b.FinalETA
-, md.inqty - md.outqty + md.adjustqty Balance
-, b.stockunit 
+                = string.Format(@"
+Select  b.id
+        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
+        , b.colorid
+        , b.sizespec
+        , c.suppid
+        , a.sewinline
+        , a.sewline
+        , b.FinalETA
+        , md.inqty - md.outqty + md.adjustqty Balance
+        , b.stockunit 
+        , md.BLocation
 from orders a WITH (NOLOCK) 
-, po_supp_detail b WITH (NOLOCK) inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-, po_supp c WITH (NOLOCK) 
-where b.scirefno = '{0}'
-and a.id = b.id
-and a.id = c.id
-and b.seq1 = c.seq1
-and a.WhseClose is null
+     , po_supp_detail b WITH (NOLOCK) 
+inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+     , po_supp c WITH (NOLOCK) 
+where   b.scirefno = '{0}'
+        and a.id = b.id
+        and a.id = c.id
+        and b.seq1 = c.seq1
+        and a.WhseClose is null
 --and md.mdivisionid='{1}'
 order by ColorID, SizeSpec ,SewinLine
 ", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
@@ -60,91 +65,39 @@ order by ColorID, SizeSpec ,SewinLine
             }
 
             //分別加入comboboxitem
-            //comboM.Items.Clear();
             comboColor.Items.Clear();
             comboSize.Items.Clear();
-//            string s1
-//                = string.Format(@"select '' as ID union all 
-//Select distinct md.mdivisionid
-//from orders a
-//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
-//, po_supp c
-//where b.scirefno = '{0}'
-//and a.id = b.id
-//and a.id = c.id
-//and b.seq1 = c.seq1
-//and a.WhseClose is null
-//and md.mdivisionid='{1}'
-//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
-//            string s2
-//                = string.Format(@"select '' as ID union all 
-//Select distinct b.colorid
-//from orders a
-//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
-//, po_supp c
-//where b.scirefno = '{0}'
-//and a.id = b.id
-//and a.id = c.id
-//and b.seq1 = c.seq1
-//and a.WhseClose is null
-//and md.mdivisionid='{1}'
-//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
-//            string s3
-//                = string.Format(@"select '' as ID union all 
-//Select distinct b.sizespec
-//from orders a
-//, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
-//, po_supp c
-//where b.scirefno = '{0}'
-//and a.id = b.id
-//and a.id = c.id
-//and b.seq1 = c.seq1
-//and a.WhseClose is null
-//and md.mdivisionid='{1}'
-//", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
-            //List<string> dts1 = selectDataTable1.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+
             List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
             List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            //dts1.Insert(0, "All");
+
             dts2.Insert(0, "All");
             dts3.Insert(0, "All");
-            //DataTable dt1;
-            //DataTable dt2;
-            //DataTable dt3;
-            //DBProxy.Current.Select(null, s1, out dt1);
-            //DBProxy.Current.Select(null, s2, out dt2);
-            //DBProxy.Current.Select(null, s3, out dt3);
-            //if (!dts1.Empty())
-            //{
-            //    //MyUtility.Tool.SetupCombox(comboM, 1, dt1);
-            //    comboM.DataSource = dts1;
-            //}
+           
             if (!dts2.Empty())
             {
                 comboColor.DataSource = dts2;
-                //MyUtility.Tool.SetupCombox(comboColor, 1, dt2);
             }
             if (!dts2.Empty())
             {
                 comboSize.DataSource = dts3;
-                //MyUtility.Tool.SetupCombox(comboSize, 1, dt3);
             }
             //設定Grid1的顯示欄位
             MyUtility.Tool.AddMenuToPopupGridFilter(this, this.gridRefNo, null, "factoryid,colorid,sizespec");
             this.gridRefNo.IsEditingReadOnly = true;
             this.gridRefNo.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridRefNo)
-                 //.Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
                  .Text("sizespec", header: "Size", width: Widths.AnsiChars(15))
                  .Text("suppid", header: "Supp", width: Widths.AnsiChars(6))
                  .Date("sewinline", header: "Sewing Inline Date", width: Widths.AnsiChars(10))
-                  .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
-                   .Date("FinalETA", header: "FinalETA", width: Widths.AnsiChars(10))
+                 .Text("sewline", header: "Sewing Line#", width: Widths.AnsiChars(10))
+                 .Date("FinalETA", header: "FinalETA", width: Widths.AnsiChars(10))
                  .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
+                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8))
+                 .Text("BLocation", header: "Bulk Location", width: Widths.AnsiChars(10))
                  ;
         }
 
@@ -155,6 +108,7 @@ order by ColorID, SizeSpec ,SewinLine
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Excel Processing...");
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
@@ -164,17 +118,10 @@ select NameEN
 from Factory
 where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dr["refno"].ToString());
+            this.HideWaitMessage();
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);
         }
-
-        //private void comboM_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (comboM.SelectedValue == null) return;
-        //    if (comboM.SelectedValue.ToString() == comboMvalue) return;
-        //    comboMvalue = comboM.SelectedValue.ToString();
-        //    Filter();       
-        //}
 
         private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -202,7 +149,6 @@ where id = '{0}'", Sci.Env.User.Keyword));
                 IEnumerable<DataRow> query =
                     from o in selectDataTable1.AsEnumerable()
                     where
-                    //(comboMvalue != "All" ? o.Field<String>("mdivisionid") == comboMvalue : 1 == 1) &&
                     (comboColorvalue != "All" ? o.Field<String>("colorid") == comboColorvalue : 1 == 1) &&
                     (comboSizevalue != "All" ? o.Field<String>("sizespec") == comboSizevalue : 1 == 1)
                     select o;
@@ -224,19 +170,11 @@ where id = '{0}'", Sci.Env.User.Keyword));
             comboColor.Items.Clear();
             comboSize.DataSource = null;
             comboSize.Items.Clear();
-            //List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+ 
             List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
             List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            //if (!dts1.Empty())
-            //{
-            //    dts1.Insert(0, "All");
-            //    if (comboMvalue != "All")
-            //    {
-            //        dts1.Remove(comboMvalue);
-            //        dts1.Insert(0, comboMvalue);
-            //    }
-            //    comboM.DataSource = dts1;
-            //}
+
+
             if (!dts2.Empty())
             {
                 dts2.Insert(0, "All");
