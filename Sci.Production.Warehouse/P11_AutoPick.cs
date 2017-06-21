@@ -78,164 +78,268 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd;
             sqlcmd = string.Format(@";
-;WITH UNPIVOT_1
-AS
-(
-    SELECT * FROM #tmp
+;WITH UNPIVOT_1 AS (
+    SELECT * 
+    FROM #tmp
     UNPIVOT
     (
-    QTY
-    FOR SIZECODE IN ({0})
-    )
-    AS PVT
-)select *
+        QTY FOR SIZECODE IN ({0})
+    ) AS PVT
+) 
+select *
 into #tmp2
 from UNPIVOT_1 ;
+
 delete from #tmp2 where qty = 0;
 
-	declare @count as int;
-	create Table #Tmp_Order_Qty
-		(  ID Varchar(13), FactoryID Varchar(8), CustCDID Varchar(16), ZipperInsert Varchar(5)
-		 , CustPONo VarChar(30), BuyMonth VarChar(16), CountryID VarChar(2), StyleID Varchar(15)
-		 , Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8), Qty Numeric(6,0)
-		);
+declare @count as int;
+create Table #Tmp_Order_Qty
+(  
+    ID Varchar(13)
+    , FactoryID Varchar(8)
+    , CustCDID Varchar(16)
+    , ZipperInsert Varchar(5)
+    , CustPONo VarChar(30)
+    , BuyMonth VarChar(16)
+    , CountryID VarChar(2)
+    , StyleID Varchar(15)
+	, Article VarChar(8)
+    , SizeSeq VarChar(2)
+    , SizeCode VarChar(8)
+    , Qty Numeric(6,0)
+);
 
-    Insert Into #Tmp_Order_Qty
-		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
-			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
-			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
-			 , IsNull(#tmp2.Qty, 0) Qty
-		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode 
-			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article 
-			On Order_Article.ID = Orders.ID
-		  Left Join #tmp2
-			On	   #tmp2.OrderID = Orders.ID
-			   And #tmp2.SizeCode = Order_SizeCode.SizeCode
-			   And #tmp2.Article = Order_Article.Article
-		  Left Join dbo.CustCD 
-			On	   CustCD.BrandID = Orders.BrandID
-			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
-			On Factory.ID = Orders.FactoryID
-		 Where Orders.POID = '{3}'
-		   And Orders.Junk = 0
-		 --  AND Issue_Breakdown.ID = '{1}'
-		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-			--	, CountryID, StyleID, Article, Seq, SizeCode;
-
-	select @count = count(1) from #Tmp_Order_Qty;
-	if @count = 0
-	begin
-		Insert Into #Tmp_Order_Qty
-		Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
-			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
-			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
-			 , IsNull(Order_Qty.Qty, 0) Qty
-		  From dbo.Orders 
-		  Left Join dbo.Order_SizeCode 
-			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article 
-			On Order_Article.ID = Orders.ID
-		  Left Join dbo.Order_Qty 
-			On	   Order_Qty.ID = Orders.ID
-			   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
-			   And Order_Qty.Article = Order_Article.Article
-		  Left Join dbo.CustCD  
-			On	   CustCD.BrandID = Orders.BrandID
-			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory  
-			On Factory.ID = Orders.FactoryID
-		 Where Orders.POID = '{3}'
-		   And Orders.Junk = 0
-		   AND Order_Qty.ID = '{2}'
-		 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-			--	, CountryID, StyleID, Article, Seq, SizeCode;
-		select @count = count(1) from #Tmp_Order_Qty;
-		if @count = 0
+Insert Into #Tmp_Order_Qty
+Select  Orders.ID
+        , Orders.FactoryID
+        , Orders.CustCDID
+        , CustCD.ZipperInsert
+        , Orders.CustPONo
+        , Orders.BuyMonth
+        , Factory.CountryID
+        , Orders.StyleID
+	    , Order_Article.Article
+        , Order_SizeCode.Seq
+        , Order_SizeCode.SizeCode
+		, IsNull(#tmp2.Qty, 0) Qty
+From dbo.Orders
+Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
+Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
+Left Join #tmp2 On #tmp2.OrderID = Orders.ID
+			       And #tmp2.SizeCode = Order_SizeCode.SizeCode
+			       And #tmp2.Article = Order_Article.Article
+Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+			            And CustCD.ID = Orders.CustCDID
+Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+Where   Orders.POID = '{3}'
+		And Orders.Junk = 0
+		 
+select  @count = count(1) 
+from #Tmp_Order_Qty;
+	
+if @count = 0
+    begin
+	Insert Into #Tmp_Order_Qty
+	Select  Orders.ID
+            , Orders.FactoryID
+            , Orders.CustCDID
+            , CustCD.ZipperInsert
+			, Orders.CustPONo
+            , Orders.BuyMonth
+            , Factory.CountryID
+            , Orders.StyleID
+			, Order_Article.Article
+            , Order_SizeCode.Seq
+            , Order_SizeCode.SizeCode
+		    , IsNull(Order_Qty.Qty, 0) Qty
+	From dbo.Orders 
+	Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
+	Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
+	Left Join dbo.Order_Qty On Order_Qty.ID = Orders.ID
+		                       And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+			                   And Order_Qty.Article = Order_Article.Article
+	Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+			                And CustCD.ID = Orders.CustCDID
+	Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+	Where   Orders.POID = '{3}'
+	        And Orders.Junk = 0
+		    AND Order_Qty.ID = '{2}'
+		 
+	select @count = count(1) 
+    from #Tmp_Order_Qty;
+		
+    if @count = 0
 		begin
-			Insert Into #Tmp_Order_Qty
-			Select Orders.ID, Orders.FactoryID, Orders.CustCDID, CustCD.ZipperInsert
-				 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
-				 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
-				 , IsNull(Order_Qty.Qty, 0) Qty
-			  From dbo.Orders 
-			  Left Join dbo.Order_SizeCode  
-				On Order_SizeCode.ID = Orders.POID
-			  Left Join dbo.Order_Article  
-				On Order_Article.ID = Orders.ID
-			  Left Join dbo.Order_Qty 
-				On	   Order_Qty.ID = Orders.ID
-				   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
-				   And Order_Qty.Article = Order_Article.Article
-			  Left Join dbo.CustCD
-				On	   CustCD.BrandID = Orders.BrandID
-				   And CustCD.ID = Orders.CustCDID
-			  Left Join dbo.Factory 
-				On Factory.ID = Orders.FactoryID
-			 Where Orders.POID = '{3}'
-			   And Orders.Junk = 0
-			 --Order By ID, FactoryID, CustCDID, ZipperInsert, CustPONo, BuyMonth
-				--	, CountryID, StyleID, Article, Seq, SizeCode;
-		end
+		Insert Into #Tmp_Order_Qty
+		Select  Orders.ID
+                , Orders.FactoryID
+                , Orders.CustCDID
+                , CustCD.ZipperInsert
+				, Orders.CustPONo
+                , Orders.BuyMonth
+                , Factory.CountryID
+                , Orders.StyleID
+				, Order_Article.Article
+                , Order_SizeCode.Seq
+                , Order_SizeCode.SizeCode
+				, IsNull(Order_Qty.Qty, 0) Qty
+		From dbo.Orders 
+		Left Join dbo.Order_SizeCode On Order_SizeCode.ID = Orders.POID
+		Left Join dbo.Order_Article On Order_Article.ID = Orders.ID
+		Left Join dbo.Order_Qty On Order_Qty.ID = Orders.ID
+				                   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+				                   And Order_Qty.Article = Order_Article.Article
+		Left Join dbo.CustCD On CustCD.BrandID = Orders.BrandID
+				                And CustCD.ID = Orders.CustCDID
+		Left Join dbo.Factory On Factory.ID = Orders.FactoryID
+		Where   Orders.POID = '{3}'
+			    And Orders.Junk = 0			 
 	end
+end
 
-	Create Table #Tmp_BoaExpend
-		(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-		 , RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
-		 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
-		 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
-		 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
-		 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30), Keyword VarChar(Max)
-		 , Primary Key (ExpendUkey)
-		);
-	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
+Create Table #Tmp_BoaExpend (  
+    ExpendUkey BigInt Identity(1,1) Not Null
+    , ID Varchar(13)
+    , Order_BOAUkey BigInt
+	, RefNo VarChar(20)
+    , SCIRefNo VarChar(30)
+    , Article VarChar(8)
+    , ColorID VarChar(6)
+    , SuppColor NVarChar(Max)
+	, SizeCode VarChar(8)
+    , SizeSpec VarChar(15)
+    , SizeUnit VarChar(8)
+    , Remark NVarChar(Max)
+	, OrderQty Numeric(6,0)
+    , Price Numeric(8,4)
+    , UsageQty Numeric(9,2)
+    , UsageUnit VarChar(8)
+    , SysUsageQty  Numeric(9,2)
+	, BomFactory VarChar(8)
+    , BomCountry VarChar(2)
+    , BomStyle VarChar(15)
+    , BomCustCD VarChar(20)
+	, BomArticle VarChar(8)
+    , BomZipperInsert VarChar(5)
+    , BomBuymonth VarChar(10)
+    , BomCustPONo VarChar(30)
+    , Keyword VarChar(Max)
+	, Primary Key (ExpendUkey)
+);
+	
+Create NonClustered 
+Index Idx_ID on #Tmp_BoaExpend (
+    ID
+    , Order_BOAUkey
+    , ColorID
+) -- table index
 
-	Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
-	Drop Table #Tmp_Order_Qty;
-    --Select * From #Tmp_BoaExpend group by id,Order_BOAUkey,RefNo,SCIRefNo,Article,ColorID,SuppColor,SizeCode,SizeSpec,SizeUnit,Remark, OrderQty, Price, UsageQty, UsageUnit, SysUsageQty , BomZipperInsert , BomCustPONo;
+Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
+	
+Drop Table #Tmp_Order_Qty;
 
-	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
-	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
-    ,dbo.GetUnitRate(p.POUnit, p.StockUnit) as RATE ,p.StockUnit
-        into #tmpPO_supp_detail
-		from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
-	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
-	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
-	where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
+select  p.id as [poid]
+        , p.seq1
+        , p.seq2
+        , p.SCIRefno
+        , dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
+	    , p.ColorID
+        , p.SizeSpec
+        , p.Spec
+        , p.Special
+        , p.Remark
+        , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
+        , dbo.GetUnitRate(p.POUnit, p.StockUnit) as RATE 
+        , p.StockUnit
+into #tmpPO_supp_detail
+from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
+inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
+where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
 
-	;with cte2 
-	as
-	(
-		select m.*,m.InQty-m.OutQty+m.AdjustQty as [balanceqty]
-		from #tmpPO_supp_detail inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
-		and m.StockType = 'B' and Roll=''
-		where lock = 0
-	)
-	select 0 as [Selected],''as id,a.Refno,b.*,Round(isnull(sum(a.OrderQty),0.00)*b.UsedQty*b.RATE, 2) as qty,concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq,isnull(cte2.balanceqty,0) as balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
-	from #tmpPO_supp_detail b
-	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
-	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
-	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
-	 group by b.poid,b.seq1,b.seq2,a.Refno,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,b.UsedQty,b.RATE,b.StockUnit,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
-	 order by b.scirefno,b.ColorID,b.SizeSpec,b.Special,b.poid,b.seq1,b.seq2;
+;with cte2 as (
+	select  m.*
+            , m.InQty - m.OutQty + m.AdjustQty as [balanceqty]
+	from #tmpPO_supp_detail 
+    inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid 
+                                                   and m.seq1 = #tmpPO_supp_detail.seq1 
+                                                   and m.seq2 = #tmpPO_supp_detail.SEQ2
+	                                               and m.StockType = 'B' 
+                                                   and Roll=''
+	where lock = 0
+)
+select  0 as [Selected]
+        , '' as id
+        , a.Refno
+        , b.*
+        , Round (isnull (sum (a.OrderQty), 0.00) * b.UsedQty * b.RATE, 2) as qty
+        , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
+        , isnull (cte2.balanceqty, 0) as balanceqty
+        , cte2.Ukey as ftyinventoryukey
+        , cte2.StockType
+        , cte2.Roll
+        , cte2.Dyelot
+from #tmpPO_supp_detail b
+left join cte2 on cte2.poid = b.poid 
+                  and cte2.seq1 = b.seq1 
+                  and cte2.SEQ2 = b.SEQ2
+left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno 
+                              and b.poid = a.ID
+	                          and (b.SizeSpec = a.SizeSpec) 
+                              and (b.ColorID = a.ColorID)
+group by b.poid, b.seq1, b.seq2, a.Refno, b.[description]
+         , b.ColorID, b.SizeSpec, b.SCIRefno, b.Spec
+         , b.Special, b.Remark, b.UsedQty, b.RATE
+         , b.StockUnit, cte2.balanceqty, cte2.Ukey
+         , cte2.StockType, cte2.Roll, cte2.Dyelot
+order by b.scirefno, b.ColorID, b.SizeSpec, b.Special
+         , b.poid, b.seq1, b.seq2;
 
-	 with cte
-	 as(
-	 select b.poid,b.seq1,b.seq2,a.SizeCode,isnull(sum(a.OrderQty),0.00) qty 
-				from (#tmpPO_supp_detail b left join #Tmp_BoaExpend a 
-				on b.SCIRefno = a.scirefno and b.poid = a.ID and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)) 
-					group by b.poid,b.seq1,b.seq2,a.SizeCode
-	 )
-	 
-	 select z.*,isnull(cte.qty,0) as qty,isnull(cte.qty,0) as ori_qty from
-	 (select x.poid,x.seq1,x.seq2,order_sizecode.SizeCode,Order_SizeCode.Seq 
-		from dbo.order_sizecode WITH (NOLOCK) 
-			,(select distinct poid,seq1,seq2 from cte) as x
-		where Order_SizeCode.id = '{3}') z 
-	left join cte on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2
-	order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1), issueid, orderid, poid, 0, 1, Env.User.UserID, "Sewing", Env.User.Keyword);//.Replace("[", "[_")
+with cte as(
+    select  b.poid
+            , b.seq1
+            , b.seq2
+            , a.SizeCode
+            , isnull(sum(a.OrderQty),0.00) qty 
+	from (
+        #tmpPO_supp_detail b 
+        left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno 
+                                      and b.poid = a.ID 
+                                      and (b.SizeSpec = a.SizeSpec) 
+                                      and (b.ColorID = a.ColorID)
+    ) 
+	group by b.poid, b.seq1, b.seq2, a.SizeCode
+)
+select  z.*
+        , isnull (cte.qty, 0) as qty
+        , isnull (cte.qty, 0) as ori_qty 
+from (
+    select  x.poid
+            , x.seq1
+            , x.seq2
+            , order_sizecode.SizeCode
+            , Order_SizeCode.Seq 
+	from dbo.order_sizecode WITH (NOLOCK) 
+		 , (
+                select  distinct poid
+                        , seq1
+                        , seq2 
+                from cte
+         ) as x
+	where Order_SizeCode.id = '{3}'
+) z 
+left join cte on cte.SizeCode = z.SizeCode 
+                 and cte.poid = z.poid 
+                 and cte.seq1 = z.seq1 
+                 and cte.seq2 = z.seq2
+order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)
+                             , issueid
+                             , orderid
+                             , poid
+                             , 0
+                             , 1
+                             , Env.User.UserID
+                             , "Sewing", Env.User.Keyword);//.Replace("[", "[_")
 
             // 呼叫procedure，取得BOA展開結果
             try
