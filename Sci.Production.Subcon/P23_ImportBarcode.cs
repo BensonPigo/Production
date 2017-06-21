@@ -153,7 +153,6 @@ outer apply(
 	),1,1,'')
 )a
 WHERE (bda.SubprocessId  = '{0}' or bda.SubprocessId is null) 
-AND (BTD.Id LIKE 'TB%' OR BTD.Id IS NULL)
 and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
                 , comboSubprocess.Text);
             txtNumsofBundle.Text = "0";
