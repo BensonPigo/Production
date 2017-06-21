@@ -219,6 +219,7 @@ where a.ID='{0}'"
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();                
                 string newvalue = e.FormattedValue.ToString();
@@ -251,6 +252,7 @@ where a.ID='{0}'"
             };
             orlHorCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]))
                 {
@@ -283,6 +285,7 @@ where a.ID='{0}'"
             };
             orlVirCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]))
@@ -316,6 +319,7 @@ where a.ID='{0}'"
             };
             HorTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
@@ -334,6 +338,7 @@ where a.ID='{0}'"
             };
             HorTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest2"]))
                 {
@@ -352,6 +357,7 @@ where a.ID='{0}'"
             };
             HorTest3Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]))
                 {
@@ -371,6 +377,7 @@ where a.ID='{0}'"
 
             VirTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest1"]))
                 {
@@ -389,6 +396,7 @@ where a.ID='{0}'"
             };
             VirTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest2"]))
                 {
@@ -407,6 +415,7 @@ where a.ID='{0}'"
             };
             VirTest3Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest3"]))
                 {
@@ -427,6 +436,7 @@ where a.ID='{0}'"
 
             SkeTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]))
                 {
@@ -446,6 +456,7 @@ where a.ID='{0}'"
 
             SkeTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]))
                 {
@@ -464,6 +475,7 @@ where a.ID='{0}'"
             };
             SkeTest3Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]))
                 {
@@ -482,6 +494,7 @@ where a.ID='{0}'"
             };
             SkeTest4Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]))
                 {
@@ -501,6 +514,7 @@ where a.ID='{0}'"
 
             LabTechCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["inspector"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -998,6 +1012,7 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalSkeValue(DataRow dr)
         {
+            if (!EditMode) return;
             if (this.radioOption1.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
@@ -1031,6 +1046,7 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalHorRate(DataRow dr)
         {
+            if (!EditMode) return;
             if (!MyUtility.Check.Empty(dr["HorizontalOriginal"]))
             {
                 decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
@@ -1050,6 +1066,7 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalVerRate(DataRow dr)
         {
+            if (!EditMode) return;
             if (!MyUtility.Check.Empty(dr["VerticalOriginal"]))
             {
                 decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
@@ -1076,6 +1093,14 @@ where a.ID='{0}'"
                 pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
             }
             GridView_Visable();
+            if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)
+            {
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                {
+                    CalSkeValue(dr);
+                }
+            }
+           
         }
     }
 }

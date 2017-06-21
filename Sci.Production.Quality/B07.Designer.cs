@@ -150,7 +150,6 @@
             this.radioOption1.Name = "radioOption1";
             this.radioOption1.Size = new System.Drawing.Size(76, 21);
             this.radioOption1.TabIndex = 0;
-            this.radioOption1.TabStop = true;
             this.radioOption1.Text = "Option1";
             this.radioOption1.UseVisualStyleBackColor = true;
             this.radioOption1.Value = "1";
@@ -165,7 +164,6 @@
             this.radioOption2.Name = "radioOption2";
             this.radioOption2.Size = new System.Drawing.Size(76, 21);
             this.radioOption2.TabIndex = 1;
-            this.radioOption2.TabStop = true;
             this.radioOption2.Text = "Option2";
             this.radioOption2.UseVisualStyleBackColor = true;
             this.radioOption2.Value = "2";
@@ -193,7 +191,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
-            this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OptionID", true));
+            this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.radioPanel1.Location = new System.Drawing.Point(173, 58);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;

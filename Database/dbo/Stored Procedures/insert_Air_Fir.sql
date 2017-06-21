@@ -131,12 +131,12 @@ when not matched by source and t.ReceivingID=@ID then
 RAISERROR('insert_Air_Fir - Starts',0,0)
 MERGE production.dbo.fir_laboratory AS t 
 using(SELECT a.*, 
-             Isnull(c.optionid, '1') AS SkewnessOptionID 
+             Isnull(c.ID, '1') AS SkewnessOptionID 
       FROM   production.dbo.fir a 
              LEFT JOIN po b 
                     ON a.poid = b.id 
              LEFT JOIN skewnessoption c 
-                    ON c.brandid = b.brandid 
+                    ON c.brandid = b.brandid AND Junk=0
       WHERE  a.id IN (SELECT id 
                       FROM   @tempFir)) AS s 
 ON t.id = s.id 
@@ -179,7 +179,7 @@ when matched then
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID
