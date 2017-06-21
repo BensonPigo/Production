@@ -46,49 +46,61 @@ namespace Sci.Production.Subcon
         }
     }
 
-    class P23_bhtprtd
+    public class P23_bhtprtd
     {
-        private delegate string bhtCallVB_func(int nhWnd, string pcParam, string FileNameBuf, int ProtocolType);
+        private delegate int bhtCallVB_func(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType);
         DllInvoke dll;
         bhtCallVB_func func;
 
         public P23_bhtprtd()
         {
-            dll = new DllInvoke(".\\Bhtprtd.dll");
+            //設定dll黨名稱
+            dll = new DllInvoke(".\\BHT\\Bhtprtd.dll");
+            //設定dll檔內的function名稱 ExecProtocol
             func = (bhtCallVB_func)dll.Invoke("ExecProtocol", typeof(bhtCallVB_func)); ;
         }
 
-        public string ExecProtocol(int nhWnd, string pcParam, string FileNameBuf, int ProtocolType)
+        public int ExecProtocol(IntPtr nhWnd, string pcParam, StringBuilder FileNameBuf, int ProtocolType)
         {
             if (func != null)
             {
-
+                //真正執行dll的function的地方
                 return func(nhWnd, pcParam, FileNameBuf, ProtocolType);
             }
             else
             {
-                return "";
+                return 0;
             }
         }
-
-        public string csharpExecProtocol(int nhWnd, string Options, int RcvMode, int ProtocolType)
+        //
+        public string csharpExecProtocol(IntPtr nhWnd, string Options, int RcvMode, int ProtocolType)
         {
             string pcParam;
-            string FileNameBuf = "                                                                                                    ";
-            int CntNull;
+            StringBuilder FileNameBuf = new StringBuilder();
 
-            if (RcvMode ==2)
+            //Set option string
+            if (RcvMode == 2)
             {
-		        pcParam = Options + " +R";
+                pcParam = Options + " +R";
             }
             else
             {
                 pcParam = Options + " -R";
             }
+            //呼叫自定義方法，名稱命名與dll的function相同
+            int Ret = ExecProtocol(nhWnd, pcParam, FileNameBuf, ProtocolType);
+            //設定回傳訊息
+            string TransferFile = "";
+            if (Ret == 0)
+            {
+                TransferFile = " 0 : Receive Success : " + FileNameBuf.ToString().Trim();
+            }
+            else
+            {
+                TransferFile = Ret.ToString() + " : Receive Error : " + FileNameBuf.ToString().Trim();
+            }
 
-
-
-            return "";
+            return TransferFile;
         }
 
     }

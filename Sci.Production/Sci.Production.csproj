@@ -267,6 +267,12 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="BHT\Bhtprt.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BHT\Bhtprtd.lib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="SCHEMAS.xsc">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
@@ -1167,7 +1173,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Bhtprtd.dll">
+    <Content Include="BHT\BHTIr_pd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BHT\BhtpApi.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BHT\Bhtprt.bas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BHT\Bhtprtd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BHT\KEYREG.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="BHT\Ymodem_pd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="IDX_CTRL.dll">
