@@ -825,18 +825,20 @@ group by NLCode,HSCode,CustomsUnit");
             DataTable GroupNoInPOData;
             if (NotInPO.Rows.Count > 0)
             {
-                DualResult drs = MyUtility.Tool.ProcessWithDatatable(NotInPO, @"NLCode,HSCode,CustomsUnit,Type,OriUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,NoDeclare,Price",
+                try
+                {
+                    MyUtility.Tool.ProcessWithDatatable(NotInPO, @"NLCode,HSCode,CustomsUnit,Type,OriUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,NoDeclare,Price",
                         @"select NLCode,HSCode,CustomsUnit,sum(NewQty) as NewQty, sum(Price*NewQty) as Price from (
 select *,[dbo].getVNUnitTransfer(Type,OriUnit,CustomsUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
 from #tmp
 where NoDeclare = 0) a
 group by NLCode,HSCode,CustomsUnit", out GroupNoInPOData);
-                if (drs)
+                }
+                catch (Exception ex)
                 {
-                    MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + drs.ToString());
+                    MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + ex.ToString());
                     return;
-                }                    
-                
+                }
                 if (GroupNoInPOData != null)
                 {
                     foreach (DataRow dr in GroupNoInPOData.Rows)
@@ -857,8 +859,10 @@ group by NLCode,HSCode,CustomsUnit", out GroupNoInPOData);
                             findrow[0]["NewQty"] = MyUtility.Convert.GetDecimal(findrow[0]["NewQty"]) + MyUtility.Convert.GetDecimal(dr["NewQty"]);
                             findrow[0]["Price"] = MyUtility.Convert.GetDecimal(findrow[0]["Price"]) + MyUtility.Convert.GetDecimal(dr["Price"]);
                         }
-                    }                    
-                }                
+                    }
+                    
+                }
+                
             }
 
             //將資料做排序
