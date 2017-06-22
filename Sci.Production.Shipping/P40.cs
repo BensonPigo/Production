@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
             //建立NoNLCode, NotInPO, UnitNotFound的結構
             string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out NoNLCode);
-            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
+            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price  from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out NotInPO);
             sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out UnitNotFound);
@@ -825,40 +825,40 @@ group by NLCode,HSCode,CustomsUnit");
             DataTable GroupNoInPOData;
             if (NotInPO.Rows.Count > 0)
             {
-                try
-                {
-                    MyUtility.Tool.ProcessWithDatatable(NotInPO, @"NLCode,HSCode,CustomsUnit,Type,OriUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,NoDeclare,Price",
+                DualResult drs = MyUtility.Tool.ProcessWithDatatable(NotInPO, @"NLCode,HSCode,CustomsUnit,Type,OriUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,NoDeclare,Price",
                         @"select NLCode,HSCode,CustomsUnit,sum(NewQty) as NewQty, sum(Price*NewQty) as Price from (
 select *,[dbo].getVNUnitTransfer(Type,OriUnit,CustomsUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
 from #tmp
 where NoDeclare = 0) a
 group by NLCode,HSCode,CustomsUnit", out GroupNoInPOData);
-                }
-                catch (Exception ex)
+                if (drs)
                 {
-                    MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + ex.ToString());
+                    MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + drs.ToString());
                     return;
-                }
-
-                foreach (DataRow dr in GroupNoInPOData.Rows)
+                }                    
+                
+                if (GroupNoInPOData != null)
                 {
-                    DataRow[] findrow = selectedData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
-                    if (findrow.Length == 0)
+                    foreach (DataRow dr in GroupNoInPOData.Rows)
                     {
-                        DataRow newRow = selectedData.NewRow();
-                        newRow["NLCode"] = dr["NLCode"];
-                        newRow["HSCode"] = dr["HSCode"];
-                        newRow["CustomsUnit"] = dr["CustomsUnit"];
-                        newRow["NewQty"] = dr["NewQty"];
-                        newRow["Price"] = dr["Price"];
-                        selectedData.Rows.Add(newRow);
-                    }
-                    else
-                    {
-                        findrow[0]["NewQty"] = MyUtility.Convert.GetDecimal(findrow[0]["NewQty"]) + MyUtility.Convert.GetDecimal(dr["NewQty"]);
-                        findrow[0]["Price"] = MyUtility.Convert.GetDecimal(findrow[0]["Price"]) + MyUtility.Convert.GetDecimal(dr["Price"]);
-                    }
-                }
+                        DataRow[] findrow = selectedData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                        if (findrow.Length == 0)
+                        {
+                            DataRow newRow = selectedData.NewRow();
+                            newRow["NLCode"] = dr["NLCode"];
+                            newRow["HSCode"] = dr["HSCode"];
+                            newRow["CustomsUnit"] = dr["CustomsUnit"];
+                            newRow["NewQty"] = dr["NewQty"];
+                            newRow["Price"] = dr["Price"];
+                            selectedData.Rows.Add(newRow);
+                        }
+                        else
+                        {
+                            findrow[0]["NewQty"] = MyUtility.Convert.GetDecimal(findrow[0]["NewQty"]) + MyUtility.Convert.GetDecimal(dr["NewQty"]);
+                            findrow[0]["Price"] = MyUtility.Convert.GetDecimal(findrow[0]["Price"]) + MyUtility.Convert.GetDecimal(dr["Price"]);
+                        }
+                    }                    
+                }                
             }
 
             //將資料做排序
