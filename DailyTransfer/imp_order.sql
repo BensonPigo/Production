@@ -1260,6 +1260,25 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 			values(s.Id,s.UKey,s.Refno,s.SCIRefno,s.SuppID,s.Seq,s.UsedQty,s.BomTypeSize,s.BomTypeColor,s.BomTypePono,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.Description,s.FabricVer_Old,s.FabricUkey_Old)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
+
+
+----------------MNOrder_SizeSpec_OrderCombo-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
+	Merge Production.dbo.MNOrder_SizeSpec_OrderCombo as t
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec_OrderCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+		on t.ukey=s.ukey
+		when matched then 
+			update set 
+			t.[Id]=s.id
+		  ,t.[OrderComboID]=s.[OrderComboID]
+		  ,t.[SizeItem]=s.[SizeItem]
+		  ,t.[SizeCode]=s.[SizeCode]
+		  ,t.[SizeSpec]=s.[SizeSpec]		  
+		when not matched by target then
+			insert(  Id,  [OrderComboID],  [SizeItem],  [SizeCode],  [SizeSpec],ukey )			
+			values(s.Id,s.[OrderComboID],s.[SizeItem],s.[SizeCode],s.[SizeSpec],s.ukey)
+		when not matched by source and t.id in (select id from #TOrder) then
+			delete;
+
 		------------------Leo--------------------------------------
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
