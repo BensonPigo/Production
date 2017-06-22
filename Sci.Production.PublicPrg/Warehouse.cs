@@ -124,7 +124,7 @@ when matched and src.stocktype = 'B' then
 	update 
 	set target.alocation = src.location;
 
-drop Table #TmpSource";  
+drop Table #TmpSource";
                     break;
                     #endregion
                 case 2:
@@ -174,7 +174,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     #endregion
                     break;
                 case 4:
-                    #region -- Case 4 OutQty -- 合併                        
+                    #region -- Case 4 OutQty -- 合併
                     sqlcmd = @"
                     alter table #TmpSource alter column poid varchar(20)
                     alter table #TmpSource alter column seq1 varchar(3)
@@ -190,7 +190,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     #endregion
                     break;
                 case 8:
-                    #region -- Case 8 LInvQty --                        
+                    #region -- Case 8 LInvQty --
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -216,10 +216,10 @@ when not matched then
                         sqlcmd += @" set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty;";
                     }
                     sqlcmd += @";drop Table #TmpSource";
-                    #endregion                    
+                    #endregion
                     break;
                 case 16:
-                    #region -- LObQty --                    
+                    #region -- LObQty --
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -235,7 +235,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
                     #endregion
                     break;
                 case 32:
-                    #region -- AdjustQty --                    
+                    #region -- AdjustQty --
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -249,7 +249,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
 ;drop Table #TmpSource";
                     #endregion
-                    break;            
+                    break;
             }
             return sqlcmd;
         }
@@ -281,13 +281,13 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         //(整批)
-        public static string UpdateFtyInventory_IO(int type,IList<DataRow> datas, bool encoded)
+        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded)
         {
             string sqlcmd = "";
             switch (type)
             {
                 case 2:
-                    #region 更新 inqty                    
+                    #region 更新 inqty
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -336,7 +336,7 @@ drop table #tmp_L_K
                     #endregion
                     break;
                 case 4:
-                    #region 更新OutQty                    
+                    #region 更新OutQty
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -366,7 +366,7 @@ drop table #TmpSource;";
                     #endregion
                     break;
                 case 6:
-                    #region 更新OutQty with Location                    
+                    #region 更新OutQty with Location
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -414,7 +414,7 @@ drop table #tmp_L_K
                     #endregion
                     break;
                 case 8:
-                    #region 更新AdjustQty                    
+                    #region 更新AdjustQty
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
@@ -473,48 +473,33 @@ drop table #TmpSource
                     break;
             }
             return sqlcmd;
-        }       
+        }
         #endregion
         #region -- SelePoItem --
         public static string selePoItemSqlCmd = @"
 select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , p.Refno   
         , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
-        ,p.ColorID,p.FinalETA
-        ,isnull(m.InQty, 0) as InQty
-        ,p.pounit
-        ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-            ff.UsageUnit , 
-            iif(mm.IsExtensionUnit > 0 , 
-                iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-                    ff.UsageUnit , 
-                    uu.ExtensionUnit), 
-                ff.UsageUnit)) as StockUnit
-        ,isnull(m.OutQty, 0) as outQty
-        ,isnull(m.AdjustQty, 0) as AdjustQty
-        ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
-        ,isnull(m.LInvQty, 0) as LInvQty
-        ,p.fabrictype
-        ,p.seq1
-        ,p.seq2
-        ,p.scirefno
-        ,Qty = Round(p.qty * v.Ratevalue, 2)
+        , p.ColorID
+        , p.FinalETA
+        , isnull(m.InQty, 0) as InQty
+        , p.pounit
+        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
+        , isnull(m.OutQty, 0) as outQty
+        , isnull(m.AdjustQty, 0) as AdjustQty
+        , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
+        , isnull(m.LInvQty, 0) as LInvQty
+        , p.fabrictype
+        , p.seq1
+        , p.seq2
+        , p.scirefno
+        , Qty = Round (p.qty * v.Ratevalue, 2)
 from dbo.PO_Supp_Detail p WITH (NOLOCK) 
 inner join Orders o on p.id = o.id
 inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 inner join View_unitrate v on v.FROM_U = p.POUnit 
-	and v.TO_U = (
-	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-		ff.UsageUnit , 
-		iif(mm.IsExtensionUnit > 0 , 
-			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-				ff.UsageUnit , 
-				uu.ExtensionUnit), 
-			ff.UsageUnit)))
+	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
 where p.id ='{0}'";
         /// <summary>
         /// 右鍵開窗選取採購項
@@ -616,13 +601,13 @@ for xml path('') ", ukey), out dt);
         }
         #endregion
 
-        public static IList<DataRow> autopick(DataRow materials,bool isIssue=true,string stocktype = "B")
+        public static IList<DataRow> autopick(DataRow materials, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
             String sqlcmd;
             DataTable dt;
             decimal request; //需求總數
-            
+
             decimal accu_issue = 0m;
             if (isIssue)//P10 Auto Pick
             {
@@ -651,7 +636,7 @@ where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
 order by c.GroupQty DESC,a.Dyelot,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
-            else if (isIssue==false && stocktype == "B")//P28 Auto Pick
+            else if (isIssue == false && stocktype == "B")//P28 Auto Pick
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
@@ -711,7 +696,7 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
             }
             else
             {
-                DataTable findrow=null;
+                DataTable findrow = null;
                 foreach (DataRow dr2 in dt.Rows)
                 {
                     if ((decimal)dr2["running_total"] < request)
@@ -727,7 +712,7 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
                     }
                 }
 
-                if (accu_issue < request && findrow!=null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
+                if (accu_issue < request && findrow != null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
                 {
                     decimal balance = request - accu_issue;
                     //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
@@ -779,10 +764,10 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
                         }
                     }
                 }
-                
 
-                    
-                
+
+
+
             }
             return items;
         }
@@ -810,7 +795,7 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
         /// <param name="ArrivedWhseDate"></param>
         /// <param name="msg"></param>
         /// <returns>bool</returns>
-        public static bool CheckArrivedWhseDateWithEta(DateTime Eta, DateTime ArrivedWhseDate,out String msg)
+        public static bool CheckArrivedWhseDateWithEta(DateTime Eta, DateTime ArrivedWhseDate, out String msg)
         {
             msg = "";
             // 到倉日如果早於ETA 3天，則提示窗請USER再確認是否存檔。
@@ -831,10 +816,10 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
 
     public class Prgs_POSuppDetailData
     {
-        public string poid {get;set;}
-        public string seq1 {get;set;}
-        public string seq2 {get;set;}
-        public string stocktype {get;set;}
+        public string poid { get; set; }
+        public string seq1 { get; set; }
+        public string seq2 { get; set; }
+        public string stocktype { get; set; }
         public decimal qty { get; set; }
         public string location { get; set; }
     }
