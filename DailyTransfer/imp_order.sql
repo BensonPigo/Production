@@ -1185,6 +1185,25 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
+
+		-------------MNOrder_SizeSpec_OrderCombo--------MNOrder_SizeSpec_OrderCombo
+		Merge Production.dbo.MNOrder_SizeSpec_OrderCombo as t
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec_OrderCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+		on t.ukey=s.ukey
+		when matched then 
+			update set 
+			 t.id = s.id
+			,t.OrderComboID = s.OrderComboID
+			,t.SizeItem = s.SizeItem
+			,t.SizeCode = s.SizeCode
+			,t.SizeSpec = s.SizeSpec
+		when not matched by target then
+			insert(ID,OrderComboID,SizeItem,SizeCode,SizeSpec,ukey)
+			values(s.ID,s.OrderComboID,s.SizeItem,s.SizeCode,s.SizeSpec,s.ukey)
+		when not matched by source and t.id in (select id from #TOrder) then
+			delete;
+
+
 		--------------MNOrder_ColorCombo-----------------M/NOtice-Color Comb. (主料-配色表)
 
 		Merge Production.dbo.MNOrder_ColorCombo as t

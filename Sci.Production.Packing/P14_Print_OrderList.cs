@@ -61,16 +61,27 @@ namespace Sci.Production.Packing
                             }).ToList();
                 //
                 string sql = @"
-
-                select  t.TTL_Qty, 
-                        t.PackID, 
-                        t.OrderID, 
-                        t.PONo, 
-                        ttlCtn = (select count(*) from PackingList_detail pk WITH (NOLOCK) where t.PackID = pk.ID and t.OrderID = pk.OrderID and ctnQty > 0),
-                        t.Dest,
-                        t.BuyerDelivery,
-                        t.CartonNum
-                from  #Tmp t
+select  t.TTL_Qty, 
+        t.PackID, 
+        t.OrderID, 
+        t.PONo, 
+        ttlCtn = (select count(*) from PackingList_detail pk WITH (NOLOCK) where t.PackID = pk.ID and t.OrderID = pk.OrderID and ctnQty > 0),
+        a.ClogLocationId,
+        t.Dest,
+        t.BuyerDelivery,
+        t.CartonNum
+from  #Tmp t
+outer apply(
+	select ClogLocationId = stuff((
+		select concat(',',ClogLocationId)
+		from(
+			select distinct pld.ClogLocationId
+			from PackingList_Detail pld
+			where pld.ID = t.PackID and pld.ClogLocationId !=''
+		)dis
+		for xml path('')
+	),1,1,'')
+)a
             ";
 
                 DataTable k;
@@ -122,7 +133,7 @@ namespace Sci.Production.Packing
                 }
 
                 int r = ExcelTable.Rows.Count;
-                objSheets.get_Range(string.Format("A5:H{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
                 objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 1] = "Sub. TTL CTN:";
                 objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 2] = sumTTL;

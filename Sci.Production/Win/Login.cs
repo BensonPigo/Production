@@ -96,7 +96,7 @@ namespace Sci.Production.Win
             DialogResult = DialogResult.OK;
 
             //若sql_update.txt不存在，則執行SQL UPDATE
-            if (!File.Exists(flagPathFile)) this.checkUpdateSQL();
+            //if (!File.Exists(flagPathFile)) this.checkUpdateSQL();
 
             Close();
         }
