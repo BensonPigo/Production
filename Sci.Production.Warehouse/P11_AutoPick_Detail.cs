@@ -109,25 +109,93 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             #endregion
             if (combo)
             {
-                DBProxy.Current.Select(null, string.Format(@"select '' as Total,o.id, oq.article,oq.sizecode,convert(varchar,oq.qty) as qty2 from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'
-                                                        union all 
-                                                        select '' as Total,'','TTL' ,oq.sizecode ,convert(varchar,sum(oq.Qty)) qty2 from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'
-                                                        group by sizecode", poid), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode WITH (NOLOCK) where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", poid), out dtX);
-                DBProxy.Current.Select(null, string.Format(@"select sum(oq.qty) Total,oq.article,o.ID from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}' group by O.ID,Article 
-                                                         union all
-                                                         select sum(oq.qty) Total,'TTL','' from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'", poid), out dtY);
+                DBProxy.Current.Select(null, string.Format(@"
+select  '' as Total
+        , o.id
+        , oq.article
+        , oq.sizecode
+        , convert(varchar,oq.qty) as qty2 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'
+
+union all 
+select  '' as Total
+        , '' 
+        , 'TTL' 
+        , oq.sizecode 
+        , convert(varchar,sum(oq.Qty)) qty2 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'
+group by sizecode", poid), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format(@"
+select * 
+from dbo.Order_SizeCode WITH (NOLOCK) 
+where id = (
+        select poid 
+        from dbo.orders WITH (NOLOCK) 
+        where id='{0}'
+      ) 
+order by seq", poid), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"
+select  sum(oq.qty) Total
+        , oq.article
+        , o.ID 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}' group by O.ID,Article 
+
+union all
+select  sum(oq.qty) Total
+        , 'TTL'
+        , '' 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'", poid), out dtY);
             }
             else
             {
-                DBProxy.Current.Select(null, string.Format(@"select '' as Total,ID, article,sizecode,convert(varchar,qty) as qty2 from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
-                                                        union all 
-                                                        select '' as Total,'','TTL' ,sizecode ,convert(varchar,sum(qty)) qty2 from dbo.Order_Qty WITH (NOLOCK) where id='{0}' 
-                                                        group by sizecode", orderid), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode WITH (NOLOCK) where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", orderid), out dtX);
-                DBProxy.Current.Select(null, string.Format(@"select sum(qty) Total,'{0}' as ID,article from dbo.Order_Qty WITH (NOLOCK) where id = '{0}' group by article
-                                                         union all
-                                                         select sum(qty) Total,'','TTL' from dbo.Order_qty WITH (NOLOCK) where id='{0}' ", orderid), out dtY);
+                DBProxy.Current.Select(null, string.Format(@"
+select  '' as Total
+        , ID
+        , article
+        , sizecode
+        , convert(varchar,qty) as qty2 
+from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
+
+union all 
+select  '' as Total
+        , ''
+        , 'TTL' 
+        , sizecode 
+        , convert(varchar,sum(qty)) qty2 
+from dbo.Order_Qty WITH (NOLOCK) 
+where id='{0}' 
+group by sizecode", orderid), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format(@"
+select * 
+from dbo.Order_SizeCode WITH (NOLOCK) 
+where id = (
+            select poid 
+            from dbo.orders WITH (NOLOCK) 
+            where id='{0}'
+      ) 
+order by seq", orderid), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"
+select  sum(qty) Total
+        , '{0}' as ID
+        , article 
+from dbo.Order_Qty WITH (NOLOCK) 
+where id = '{0}' 
+group by article
+
+union all
+select  sum(qty) Total
+        , ''
+        , 'TTL' 
+from dbo.Order_qty WITH (NOLOCK) 
+where id='{0}' ", orderid), out dtY);
             }
             _matrix.Clear();
             _matrix.Sets(dtIssueBreakdown, dtX, dtY);
@@ -144,7 +212,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10)
                 ;
 
-            this.gridAutoPickDetail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
+            this.gridAutoPickDetail.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink; 
         }
         bool isSaved = false;
         private void btnSave_Click(object sender, EventArgs e)
