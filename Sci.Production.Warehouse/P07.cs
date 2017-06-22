@@ -763,8 +763,8 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
+            #region 更新 Po_Supp_Detail StockUnit
             string sql_UpdatePO_Supp_Detail = @";
---------20161109LEO新增回寫PO_Supp_Detail的StockUnit 
 alter table #Tmp alter column poid varchar(20)
 alter table #Tmp alter column seq1 varchar(3)
 alter table #Tmp alter column seq2 varchar(3)
@@ -777,6 +777,7 @@ when matched then
     update
     set target.StockUnit = src.StockUnit;
 ";
+            #endregion 
 
             #region Base on wkno 收料時，需回寫export
             sqlcmd4 = string.Format(@"
@@ -854,6 +855,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
                         ShowErr(result);
                         return;
                     }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
