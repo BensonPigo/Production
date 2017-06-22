@@ -90,7 +90,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
+            computeTotalIssueQty();
         }
 
         protected override void OnDetached()
