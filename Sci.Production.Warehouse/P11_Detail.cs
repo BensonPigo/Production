@@ -262,18 +262,47 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
         
         protected override bool OnGridSetup()
         {
+            #region issueQtySet
+            DataGridViewGeneratorNumericColumnSettings issueQtySet = new DataGridViewGeneratorNumericColumnSettings();
+            issueQtySet.CellValidating += (s, e) =>
+            {
+                grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = e.FormattedValue;
+                if (e.ColumnIndex == 1)
+                {
+                    computeTotalIssueQty();
+                }
+            };
+            #endregion 
+            /*
+             * 請注意 如果以後 grid 有追加欄位
+             * 1. 請確認 computTotalIssueQty => Cells 所指定的欄位是 QTY
+             * 2. 確認 issueQtySet 中 ColumnIndex 判斷的是 QTY 欄位
+            */
             Helper.Controls.Grid.Generator(this.grid)
-                //.Text("id", header: "id", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-                //.Numeric("Issue_SummaryUkey", header: "Issue_SummaryUkey", width: Widths.AnsiChars(8), integer_places: 10)    //6
-            //.Text("Issue_detailUkey", header: "Ukey", width: Widths.AnsiChars(8), iseditingreadonly: true)    //0
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(10), iseditingreadonly: true)  //1
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)    //2
-            ;     //
+            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: issueQtySet)    //2
+            ;
+            #region computTotalIssueQty
+            computeTotalIssueQty();
+            #endregion 
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }
 
+        private void computeTotalIssueQty()
+        {
+            /*
+             * 請注意 如果以後 grid 有追加欄位
+             * 請把確認 Cells 所指定的欄位是 QTY
+            */
+            decimal totalQty = 0;
+            for (int i = 0; i < grid.Rows.Count; i++)
+            {
+                totalQty += decimal.Parse(grid.Rows[i].Cells[1].Value.ToString());
+            }
+            this.displayTotalIssueQty.Value = totalQty;
+        }
     }
 }
