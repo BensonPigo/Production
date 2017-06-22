@@ -4,6 +4,9 @@
     [SizeItem]     VARCHAR (3)  NOT NULL,
     [SizeCode]     VARCHAR (8)  NOT NULL,
     [SizeSpec]     VARCHAR (15) NOT NULL,
-    [Ukey]         BIGINT       NOT NULL
+    [Ukey]         BIGINT       NOT NULL,
+    CONSTRAINT [PK_MNOrder_SizeSpec_OrderCombo] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
