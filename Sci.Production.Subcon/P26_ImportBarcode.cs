@@ -165,7 +165,7 @@ and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
                 return;
             }
             //準備新增sqlcmd 準備ID
-            string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 5, "ID", null);
+            string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 3, "ID", null);
             if (MyUtility.Check.Empty(getID))
             {
                 MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -204,6 +204,7 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')"
             }
             if (leftDT != null) leftDT.Clear();
             MyUtility.Msg.InfoBox("Create success " + getID);
+            Close();
         }
         //Close
         private void btnClose_Click(object sender, EventArgs e)

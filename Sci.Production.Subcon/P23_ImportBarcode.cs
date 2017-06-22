@@ -34,7 +34,7 @@ order by Abb";
             DBProxy.Current.Select(null, querySql2, out ToDT);
             foreach (DataRow dr in ToDT.Rows)
             {
-                EndSite.Add(dr["ID"].ToString(), dr["Abb"].ToString());
+                EndSite.Add(dr["ID"].ToString(), dr["Abb"].ToString() +"   "+ dr["ID"].ToString());
             }
             comboTo.DataSource = new BindingSource(EndSite, null);
             comboTo.ValueMember = "Key";
@@ -182,7 +182,7 @@ and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
                 return;
             }
             //準備新增sqlcmd 準備ID
-            string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
+            string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 3, "ID", null);
             if (MyUtility.Check.Empty(getID))
             {
                 MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -222,6 +222,7 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
             }
             if (leftDT != null) leftDT.Clear();
             MyUtility.Msg.InfoBox("Create success " + getID);
+            Close();
         }
         //Close
         private void btnClose_Click(object sender, EventArgs e)
