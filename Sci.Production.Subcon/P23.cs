@@ -163,14 +163,14 @@ WHERE BTD.ID = '{0}'", masterID);
                 CurrentMaintain["ID"] = getID;
             }
             //檢核BundleTrack_detail.BundleNo是否已存在
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo"))
-                {
-                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-                    return false;
-                }
-            }
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo"))
+            //    {
+            //        MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
+            //        return false;
+            //    }
+            //}
             return base.ClickSaveBefore();
         }
 
@@ -185,7 +185,7 @@ select
 	,[Body/cut#] = concat(B.FabricPanelCode , '/' , B.Cutno)
 	,bd.SizeCode
 	,bd.Qty
-	,Color = concat(b.Article,'',b.Colorid)
+	,Color = concat(b.Article,' ',b.Colorid)
 	,S.SubprocessId
 from BundleTrack_detail BTD 
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
