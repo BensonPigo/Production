@@ -249,12 +249,16 @@ select  p.id as [poid]
         , p.Special
         , p.Remark
         , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
-        , dbo.GetUnitRate(p.POUnit, p.StockUnit) as RATE 
+        , RATE = case 
+                    when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, p.StockUnit) 
+                    else dbo.GetUnitRate(p.POUnit, p.StockUnit)
+                 end
         , p.StockUnit
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
+inner join orders o With(NoLock) on p.id = o.id
 where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
 
 ;with cte2 as (
@@ -272,7 +276,7 @@ select  0 as [Selected]
         , '' as id
         , a.Refno
         , b.*
-        , Round (isnull (sum (a.OrderQty), 0.00) * b.UsedQty * b.RATE, 2) as qty
+        , Round (isnull (sum (a.OrderQty * dbo.GetDigitalValue(SizeSpecByLength.value)), 0.00) * b.UsedQty * b.RATE, 2) as qty
         , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
         , isnull (cte2.balanceqty, 0) as balanceqty
         , cte2.Ukey as ftyinventoryukey
@@ -287,6 +291,40 @@ left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno
                               and b.poid = a.ID
 	                          and (b.SizeSpec = a.SizeSpec) 
                               and (b.ColorID = a.ColorID)
+left join Fabric f on a.Refno = f.Refno
+left join Order_BOA OBOA on a.Refno = OBOA.Refno
+                            and b.poid = OBOA.id 
+outer apply (
+    --判斷副料是否已長度計算
+    -- 1. Table (Fabric).BomTypeCalculate 判斷是否已長度計算
+    -- 2. Table (Order_BOA).SizeItem_Elastic & Size Item 判斷要用哪一種長度
+    -----(1) 如果 SizeItem_Elastic 有值，則【優先】使用 SizeItem_Elastic 
+    -----(2) 使用 SizeItem
+    -- 3. Table (Order_SizeSpec).SizeSpec 取得 長度
+    -----(1) SizeSpec 可能出現 【1/4】【1''1/4】【1-1/4】需使用 GetDigitalValue 做轉換
+
+    select value = case
+                        when f.BomTypeCalculate = 1 then 
+                            case 
+                                when OBOA.SizeItem_Elastic is not null and OBOA.SizeItem_Elastic != '' then (
+                                     select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
+                                     from Order_SizeSpec oss
+                                     where oss.SizeItem = OBOA.SizeItem_Elastic
+                                           and oss.id = b.poid
+                                           and oss.SizeCode = a.SizeCode     
+                                     )
+                                when OBOA.SizeItem is not null and OBOA.SizeItem != '' then (
+                                     select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
+                                     from Order_SizeSpec oss
+                                     where oss.SizeItem = OBOA.SizeItem
+                                           and oss.id = b.poid
+                                           and oss.SizeCode = a.SizeCode   
+                                     )
+                                else '1'
+                            end
+                        else '1'
+                   end
+) SizeSpecByLength
 group by b.poid, b.seq1, b.seq2, a.Refno, b.[description]
          , b.ColorID, b.SizeSpec, b.SCIRefno, b.Spec
          , b.Special, b.Remark, b.UsedQty, b.RATE
@@ -300,19 +338,51 @@ with cte as(
             , b.seq1
             , b.seq2
             , a.SizeCode
-            , isnull(sum(a.OrderQty),0.00) qty 
-	from (
-        #tmpPO_supp_detail b 
-        left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno 
-                                      and b.poid = a.ID 
-                                      and (b.SizeSpec = a.SizeSpec) 
-                                      and (b.ColorID = a.ColorID)
-    ) 
-	group by b.poid, b.seq1, b.seq2, a.SizeCode
+            , qty = Round (isnull (sum (a.OrderQty * dbo.GetDigitalValue(SizeSpecByLength.value)), 0.00) * b.UsedQty * b.RATE, 2) 
+	from #tmpPO_supp_detail b 
+    left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno 
+                                    and b.poid = a.ID 
+                                    and (b.SizeSpec = a.SizeSpec) 
+                                    and (b.ColorID = a.ColorID)
+    left join Fabric f on a.Refno = f.Refno
+    left join Order_BOA OBOA on a.Refno = OBOA.Refno
+                                and b.poid = OBOA.id 
+    outer apply (
+        --判斷副料是否已長度計算
+        -- 1. Table (Fabric).BomTypeCalculate 判斷是否已長度計算
+        -- 2. Table (Order_BOA).SizeItem_Elastic & Size Item 判斷要用哪一種長度
+        -----(1) 如果 SizeItem_Elastic 有值，則【優先】使用 SizeItem_Elastic 
+        -----(2) 使用 SizeItem
+        -- 3. Table (Order_SizeSpec).SizeSpec 取得 長度
+        -----(1) SizeSpec 可能出現 【1/4】【1''1/4】【1-1/4】需使用 GetDigitalValue 做轉換
+
+        select value = case
+                            when f.BomTypeCalculate = 1 then 
+                                case 
+                                    when OBOA.SizeItem_Elastic is not null and OBOA.SizeItem_Elastic != '' then (
+                                            select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
+                                            from Order_SizeSpec oss
+                                            where oss.SizeItem = OBOA.SizeItem_Elastic
+                                                and oss.id = b.poid
+                                                and oss.SizeCode = a.SizeCode     
+                                            )
+                                    when OBOA.SizeItem is not null and OBOA.SizeItem != '' then (
+                                            select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
+                                            from Order_SizeSpec oss
+                                            where oss.SizeItem = OBOA.SizeItem
+                                                and oss.id = b.poid
+                                                and oss.SizeCode = a.SizeCode   
+                                            )
+                                    else '1'
+                                end
+                            else '1'
+                        end
+    ) SizeSpecByLength
+	group by b.poid, b.seq1, b.seq2, a.SizeCode, b.UsedQty, b.Rate
 )
 select  z.*
-        , isnull (cte.qty, 0) as qty
-        , isnull (cte.qty, 0) as ori_qty 
+        , qty = isnull (cte.qty, 0)
+        , ori_qty = isnull (cte.qty, 0)   
 from (
     select  x.poid
             , x.seq1
@@ -524,7 +594,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                     if (Convert.ToInt32(dr2["qty"]) != 0)
                     {
                         Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                        SumQTY += Convert.ToDecimal(dr2["qty"]) * Convert.ToDecimal(dr["UsedQty"]) * Convert.ToDecimal(dr["RATE"]);
+                        SumQTY += Convert.ToDecimal(dr2["qty"]);
                     }
                 }
                 dr["Output"] = Output;
