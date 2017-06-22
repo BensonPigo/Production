@@ -48,6 +48,8 @@
             this.labelOrderList = new Sci.Win.UI.Label();
             this.gridBreakDown = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labelTotalIssueQty = new Sci.Win.UI.Label();
+            this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -63,8 +65,19 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.labelTotalIssueQty);
+            this.btmcont.Controls.Add(this.displayTotalIssueQty);
             this.btmcont.Location = new System.Drawing.Point(0, 517);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
+            this.btmcont.Controls.SetChildIndex(this.append, 0);
+            this.btmcont.Controls.SetChildIndex(this.revise, 0);
+            this.btmcont.Controls.SetChildIndex(this.delete, 0);
+            this.btmcont.Controls.SetChildIndex(this.undo, 0);
+            this.btmcont.Controls.SetChildIndex(this.save, 0);
+            this.btmcont.Controls.SetChildIndex(this.next, 0);
+            this.btmcont.Controls.SetChildIndex(this.prev, 0);
+            this.btmcont.Controls.SetChildIndex(this.displayTotalIssueQty, 0);
+            this.btmcont.Controls.SetChildIndex(this.labelTotalIssueQty, 0);
             // 
             // append
             // 
@@ -289,6 +302,23 @@
             this.gridBreakDown.TabIndex = 111;
             this.gridBreakDown.TabStop = false;
             // 
+            // labelTotalIssueQty
+            // 
+            this.labelTotalIssueQty.Location = new System.Drawing.Point(499, 8);
+            this.labelTotalIssueQty.Name = "labelTotalIssueQty";
+            this.labelTotalIssueQty.Size = new System.Drawing.Size(99, 23);
+            this.labelTotalIssueQty.TabIndex = 118;
+            this.labelTotalIssueQty.Text = "Total Issue Qty";
+            // 
+            // displayTotalIssueQty
+            // 
+            this.displayTotalIssueQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.Location = new System.Drawing.Point(601, 8);
+            this.displayTotalIssueQty.Name = "displayTotalIssueQty";
+            this.displayTotalIssueQty.Size = new System.Drawing.Size(124, 23);
+            this.displayTotalIssueQty.TabIndex = 117;
+            // 
             // P11_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
@@ -303,6 +333,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
+            this.btmcont.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridBreakDown)).EndInit();
@@ -332,5 +363,7 @@
         private Win.UI.DisplayBox displySize;
         private Win.UI.Grid gridBreakDown;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Label labelTotalIssueQty;
+        private Win.UI.DisplayBox displayTotalIssueQty;
     }
 }

@@ -55,6 +55,8 @@
             this.gridBreakDown = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridAutoPickDetail = new Sci.Win.UI.Grid();
+            this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
+            this.labelTotalIssueQty = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -89,6 +91,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelTotalIssueQty);
+            this.groupBox2.Controls.Add(this.displayTotalIssueQty);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.btnCancel);
@@ -351,6 +355,23 @@
             this.gridAutoPickDetail.TabIndex = 0;
             this.gridAutoPickDetail.TabStop = false;
             // 
+            // displayTotalIssueQty
+            // 
+            this.displayTotalIssueQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.Location = new System.Drawing.Point(580, 20);
+            this.displayTotalIssueQty.Name = "displayTotalIssueQty";
+            this.displayTotalIssueQty.Size = new System.Drawing.Size(124, 23);
+            this.displayTotalIssueQty.TabIndex = 115;
+            // 
+            // labelTotalIssueQty
+            // 
+            this.labelTotalIssueQty.Location = new System.Drawing.Point(478, 20);
+            this.labelTotalIssueQty.Name = "labelTotalIssueQty";
+            this.labelTotalIssueQty.Size = new System.Drawing.Size(99, 23);
+            this.labelTotalIssueQty.TabIndex = 116;
+            this.labelTotalIssueQty.Text = "Total Issue Qty";
+            // 
             // P11_AutoPick_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 557);
@@ -361,6 +382,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P11_AutoPick_Detail_FormClosing);
             this.Load += new System.EventHandler(this.P11_AutoPick_Detail_Load);
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -399,5 +421,7 @@
         private Win.UI.DisplayBox displyColorid;
         private Win.UI.Button button1;
         private Win.UI.Button button2;
+        private Win.UI.Label labelTotalIssueQty;
+        private Win.UI.DisplayBox displayTotalIssueQty;
     }
 }
