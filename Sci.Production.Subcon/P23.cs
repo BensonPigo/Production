@@ -28,6 +28,7 @@ namespace Sci.Production.Subcon
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            lbl_queryfor.Text = "Sub Process";
             queryfors.SelectedIndex = 0;
             queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -111,7 +112,7 @@ where BundleNo='{0}'"
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
