@@ -26,9 +26,29 @@ BEGIN
   DROP TABLE Express_CTNData
 END
 
+declare @DateStart date= CONVERT(DATE,DATEADD(day,-30,GETDATE()));
+declare @DateEnd date=CONVERT(date, '9999-12-31');
+declare @DateInfoName varchar(30) ='FactoryExpress';
+
+--新增區間資料到DateInfo name='FactoryExpress' DateStart=轉檔日期前30天 DateEnd= 日期最大值
+--確保轉出給Trade區間資料等同於DateInfo
+If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
+Begin
+	update Pms_To_Trade.dbo.dateInfo
+	set DateStart=@DateStart,
+	DateEnd=@DateEnd
+	Where Name = @DateInfoName 
+end;
+Else
+Begin 
+	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@DateStart,@DateEnd);
+end;
+
+
 SELECT * 
 INTO Express
-FROM [Production].dbo.Express  WHERE (AddDate >= DATEADD(DAY, -30, GETDATE()) or EditDate >= DATEADD(DAY, -30, GETDATE())) ORDER BY Id
+FROM [Production].dbo.Express  WHERE (AddDate >=@DateStart  or EditDate >=@DateStart) ORDER BY Id
 
 SELECT B.* 
 INTO Express_Detail
