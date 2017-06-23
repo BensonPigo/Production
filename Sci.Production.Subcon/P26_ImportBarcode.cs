@@ -119,7 +119,7 @@ select distinct
 	,bd.PatternDesc
 	,ErrorMsg = CASE 
 		WHEN bda.SubprocessId is null THEN 'Can''t find in bundle card data'
-		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
+		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null and BTD.id like 'TC%' THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
 		ELSE ''
 		END
 from #tmp t

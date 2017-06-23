@@ -149,31 +149,7 @@ WHERE BTD.ID = '{0}'", masterID);
             this.ReloadDatas();
             return true;
         }
-
-        //protected override bool ClickSaveBefore()
-        //{            
-        //    if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-        //    {
-        //        string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
-        //        if (MyUtility.Check.Empty(getID))
-        //        {
-        //            MyUtility.Msg.WarningBox("GetID fail, please try again!");
-        //            return false;
-        //        }
-        //        CurrentMaintain["ID"] = getID;
-        //    }
-        //    //檢核BundleTrack_detail.BundleNo是否已存在
-        //    //foreach (DataRow dr in DetailDatas)
-        //    //{
-        //    //    if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo"))
-        //    //    {
-        //    //        MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-        //    //        return false;
-        //    //    }
-        //    //}
-        //    return base.ClickSaveBefore();
-        //}
-
+        
         protected override bool ClickPrint()
         {
             string sqlcmd = string.Format(@"
