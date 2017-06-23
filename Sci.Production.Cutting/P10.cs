@@ -826,12 +826,32 @@ where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}' {2}"
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    selectCommand = string.Format(@"
+                    string scount = string.Format(@"
+select distinct count(Article)
+from workorder w WITH (NOLOCK) 
+inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
+                        , CurrentMaintain["Orderid"].ToString(), keyword, sqlwhere);
+                    string count = MyUtility.GetValue.Lookup(scount, null);
+                    if (count != "0")
+                    {
+                        selectCommand = string.Format(@"
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
                         , CurrentMaintain["Orderid"].ToString(), keyword, sqlwhere);
+                    }
+                    else
+                    {
+                        selectCommand = string.Format(@"
+SELECT OA.Article , color.ColorID
+FROM Order_Article OA
+CROSS APPLY (SELECT TOP 1 ColorID FROM Order_ColorCombo OCC WHERE OCC.Id=OA.id and OCC.Article=OA.Article) color
+where OA.id = '{0}'
+ORDER BY Seq"
+                       , CurrentMaintain["Orderid"].ToString());
+                    }
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
