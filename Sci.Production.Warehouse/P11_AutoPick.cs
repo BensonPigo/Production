@@ -287,17 +287,19 @@ from #tmpPO_supp_detail b
 left join cte2 on cte2.poid = b.poid 
                   and cte2.seq1 = b.seq1 
                   and cte2.SEQ2 = b.SEQ2
-outer apply (
-    select  top 1 a.SizeCode
-            , a.OrderQty
-            , a.Refno
+left join (
+    select  distinct a.SizeCode
+            , OrderQty
+            , Refno
             , SciRefno
+            , ID
+            , SizeSpec
+            , ColorID
     from #Tmp_BoaExpend a 
-    where   b.SCIRefno = a.scirefno 
-            and b.poid = a.ID 
-            and (b.SizeSpec = a.SizeSpec) 
-            and (b.ColorID = a.ColorID)
-) Tmp_BoaExpend
+) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
+                   and b.poid = Tmp_BoaExpend.ID 
+                   and (b.SizeSpec = Tmp_BoaExpend.SizeSpec) 
+                   and (b.ColorID = Tmp_BoaExpend.ColorID)
 left join Fabric f on Tmp_BoaExpend.SCIRefno = f.SCIRefno
 outer apply (
     select top 1 SizeItem_Elastic
@@ -352,16 +354,19 @@ with cte as(
             , Tmp_BoaExpend.SizeCode
             , qty = Round (isnull (sum (Tmp_BoaExpend.OrderQty * dbo.GetDigitalValue(SizeSpecByLength.value)), 0.00) * b.UsedQty * b.RATE, 2) 
 	from #tmpPO_supp_detail b 
-    outer apply (
-        select  top 1 a.SizeCode
-                , a.OrderQty
-                , a.SciRefno
+    left join (
+        select  distinct a.SizeCode
+                , OrderQty
+                , Refno
+                , SciRefno
+                , ID
+                , SizeSpec
+                , ColorID
         from #Tmp_BoaExpend a 
-        where   b.SCIRefno = a.scirefno 
-                and b.poid = a.ID 
-                and (b.SizeSpec = a.SizeSpec) 
-                and (b.ColorID = a.ColorID)
-    ) Tmp_BoaExpend
+    ) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
+                       and b.poid = Tmp_BoaExpend.ID 
+                       and (b.SizeSpec = Tmp_BoaExpend.SizeSpec) 
+                       and (b.ColorID = Tmp_BoaExpend.ColorID)
     left join Fabric f on Tmp_BoaExpend.SCIRefno = f.SCIRefno
     outer apply (
         select top 1 SizeItem_Elastic
