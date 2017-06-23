@@ -97,7 +97,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
             _matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             _matrix.XOrder = "seq";
-            _matrix.YMap.Name = "ID";  // 對應到第三表格的 Y 欄位名稱
+            _matrix.YMap.Name = "article";  // 對應到第三表格的 Y 欄位名稱
             _matrix
                 .SetColDef("qty2", width: Widths.AnsiChars(4))  // 第三表格對應的欄位名稱
                 .AddXColDef("sizecode")                             // X 要顯示的欄位名稱, 可設定多個.
