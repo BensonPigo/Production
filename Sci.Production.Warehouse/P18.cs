@@ -821,10 +821,18 @@ alter table #Tmp alter column poid varchar(20)
 alter table #Tmp alter column seq1 varchar(3)
 alter table #Tmp alter column seq2 varchar(3)
 alter table #Tmp alter column StockUnit varchar(20)
-select distinct poid,seq1,seq2,StockUnit into #tmpD from #Tmp
+
+select  distinct poid
+        , seq1
+        , seq2
+        , StockUnit 
+into #tmpD 
+from #Tmp
+
 merge dbo.PO_Supp_Detail as target
-using #tmpD as src
-    on  target.ID =src.poid and target.seq1 = src.seq1 and target.seq2 =src.seq2 
+using #tmpD as src on   target.ID = src.poid 
+                        and target.seq1 = src.seq1 
+                        and target.seq2 =src.seq2 
 when matched then
     update
     set target.StockUnit = src.StockUnit;
