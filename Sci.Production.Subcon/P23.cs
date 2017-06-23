@@ -113,7 +113,7 @@ where BundleNo='{0}'"
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: false)
+                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
@@ -123,7 +123,8 @@ where BundleNo='{0}'"
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
 select 
-	BTD.BundleNo
+    BTD.ID
+	,BTD.BundleNo
 	,BTD.orderid
 	,S.SubprocessId
 	,BD.Patterncode
