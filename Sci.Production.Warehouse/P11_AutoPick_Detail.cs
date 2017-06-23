@@ -285,7 +285,9 @@ where id='{0}' ", orderid), out dtY);
                 //DataRowIndex = DataRowIndex - 1;//要改變原本表單的資料 要退回上一筆索引
                 P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex -1), P11Autopick.getAutoDetailDataTable(DataRowIndex-1));
             }
-            
+            #region 重新計算 Total Issue Qty
+            computeTotalIssueQty();
+            #endregion 
         }
         //上一筆
         private void button2_Click(object sender, EventArgs e)
@@ -305,7 +307,10 @@ where id='{0}' ", orderid), out dtY);
                 
                 //DataRowIndex = DataRowIndex +1;//要改變原本表單的資料 要退回上一筆索引
                 P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex +1), P11Autopick.getAutoDetailDataTable(DataRowIndex +1));                
-            }            
+            }
+            #region 重新計算 Total Issue Qty
+            computeTotalIssueQty();
+            #endregion 
         }
 
         private void P11_AutoPick_Detail_FormClosing(object sender, FormClosingEventArgs e)
