@@ -258,6 +258,9 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             }
 
             #endregion
+            #region 重新計算 Total Issue Qty
+            computeTotalIssueQty();
+            #endregion 
         }
         
         protected override bool OnGridSetup()
@@ -304,5 +307,6 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             }
             this.displayTotalIssueQty.Value = totalQty;
         }
+
     }
 }
