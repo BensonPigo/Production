@@ -32,6 +32,8 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.labelTotalIssueQty = new Sci.Win.UI.Label();
+            this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
@@ -55,8 +57,6 @@
             this.gridBreakDown = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridAutoPickDetail = new Sci.Win.UI.Grid();
-            this.displayTotalIssueQty = new Sci.Win.UI.DisplayBox();
-            this.labelTotalIssueQty = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -103,6 +103,23 @@
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
+            // 
+            // labelTotalIssueQty
+            // 
+            this.labelTotalIssueQty.Location = new System.Drawing.Point(478, 20);
+            this.labelTotalIssueQty.Name = "labelTotalIssueQty";
+            this.labelTotalIssueQty.Size = new System.Drawing.Size(99, 23);
+            this.labelTotalIssueQty.TabIndex = 116;
+            this.labelTotalIssueQty.Text = "Total Issue Qty";
+            // 
+            // displayTotalIssueQty
+            // 
+            this.displayTotalIssueQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotalIssueQty.Location = new System.Drawing.Point(580, 20);
+            this.displayTotalIssueQty.Name = "displayTotalIssueQty";
+            this.displayTotalIssueQty.Size = new System.Drawing.Size(124, 23);
+            this.displayTotalIssueQty.TabIndex = 115;
             // 
             // button1
             // 
@@ -336,7 +353,9 @@
             this.gridAutoPickDetail.AllowUserToAddRows = false;
             this.gridAutoPickDetail.AllowUserToDeleteRows = false;
             this.gridAutoPickDetail.AllowUserToResizeRows = false;
-            this.gridAutoPickDetail.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.gridAutoPickDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridAutoPickDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridAutoPickDetail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.gridAutoPickDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -345,32 +364,15 @@
             this.gridAutoPickDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridAutoPickDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridAutoPickDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAutoPickDetail.Location = new System.Drawing.Point(560, 217);
+            this.gridAutoPickDetail.Location = new System.Drawing.Point(554, 217);
             this.gridAutoPickDetail.Name = "gridAutoPickDetail";
             this.gridAutoPickDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAutoPickDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAutoPickDetail.RowTemplate.Height = 24;
             this.gridAutoPickDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAutoPickDetail.Size = new System.Drawing.Size(436, 284);
+            this.gridAutoPickDetail.Size = new System.Drawing.Size(442, 284);
             this.gridAutoPickDetail.TabIndex = 0;
             this.gridAutoPickDetail.TabStop = false;
-            // 
-            // displayTotalIssueQty
-            // 
-            this.displayTotalIssueQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayTotalIssueQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalIssueQty.Location = new System.Drawing.Point(580, 20);
-            this.displayTotalIssueQty.Name = "displayTotalIssueQty";
-            this.displayTotalIssueQty.Size = new System.Drawing.Size(124, 23);
-            this.displayTotalIssueQty.TabIndex = 115;
-            // 
-            // labelTotalIssueQty
-            // 
-            this.labelTotalIssueQty.Location = new System.Drawing.Point(478, 20);
-            this.labelTotalIssueQty.Name = "labelTotalIssueQty";
-            this.labelTotalIssueQty.Size = new System.Drawing.Size(99, 23);
-            this.labelTotalIssueQty.TabIndex = 116;
-            this.labelTotalIssueQty.Text = "Total Issue Qty";
             // 
             // P11_AutoPick_Detail
             // 
