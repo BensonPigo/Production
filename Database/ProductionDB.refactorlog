@@ -147,4 +147,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="GMTComplete" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="74ab1a5d-0306-4180-99ac-984fdf6c27d3" ChangeDateTime="06/21/2017 05:40:58">
+    <Property Name="ElementName" Value="[dbo].[SkewnessOption].[OptionID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SkewnessOption]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
 </Operations>

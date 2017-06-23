@@ -53,7 +53,7 @@ namespace Sci.Production.Quality
 	b.styleid,b.BrandID,
 	c.ExportId,c.WhseArrival,
 	d.ColorID,	
-	e.WashDate,e.Wash,e.nonWash,
+	e.WashDate,e.Wash,e.nonWash,e.SkewnessOptionID,
 	f.SuppID,
 	g.DescDetail										
 from FIR a WITH (NOLOCK) 
@@ -83,12 +83,29 @@ where a.ID='{0}'"
                 txtResult.Text = fir_dr["Wash"].ToString();
                 checkNA.Value = fir_dr["nonWash"].ToString();
                 editDescription.Text = fir_dr["DescDetail"].ToString();
+                this.radioPanel1.Value = fir_dr["SkewnessOptionID"].ToString();
+                if (fir_dr["SkewnessOptionID"].ToString() == "1")
+                {
+                    this.radioOption1.Checked = true;
+                    this.radioOption2.Checked = false;
+                }
+                else
+                {
+                    this.radioOption1.Checked = false;
+                    this.radioOption2.Checked = true;
+                }
+
+                pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? @".\Resources\QA_Skewness1.png" : @".\Resources\QA_Skewness2.png";
+
             }
             else
             {
                 txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
                 txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
             }
+
+            GridView_Visable();
+           
             return base.OnRequery();
         }
 
@@ -156,6 +173,8 @@ where a.ID='{0}'"
             DataGridViewGeneratorNumericColumnSettings VirTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings SkeTest1Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings SkeTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings SkeTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings SkeTest4Cell = new DataGridViewGeneratorNumericColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
@@ -200,8 +219,9 @@ where a.ID='{0}'"
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Roll"].ToString();
+                string oldvalue = dr["Roll"].ToString();                
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
@@ -232,6 +252,7 @@ where a.ID='{0}'"
             };
             orlHorCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]))
                 {
@@ -264,6 +285,7 @@ where a.ID='{0}'"
             };
             orlVirCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
 
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]))
@@ -297,6 +319,7 @@ where a.ID='{0}'"
             };
             HorTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
@@ -315,6 +338,7 @@ where a.ID='{0}'"
             };
             HorTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest2"]))
                 {
@@ -333,6 +357,7 @@ where a.ID='{0}'"
             };
             HorTest3Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]))
                 {
@@ -352,6 +377,7 @@ where a.ID='{0}'"
 
             VirTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest1"]))
                 {
@@ -370,6 +396,7 @@ where a.ID='{0}'"
             };
             VirTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest2"]))
                 {
@@ -388,6 +415,7 @@ where a.ID='{0}'"
             };
             VirTest3Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["VerticalTest3"]))
                 {
@@ -408,6 +436,7 @@ where a.ID='{0}'"
 
             SkeTest1Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]))
                 {
@@ -427,12 +456,13 @@ where a.ID='{0}'"
 
             SkeTest2Cell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]))
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
-                        MyUtility.Msg.InfoBox("<Skewness 1> cannot over than 100 !");
+                        MyUtility.Msg.InfoBox("<Skewness 2> cannot over than 100 !");
                         dr["SkewnessTest2"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]);
 
                     }
@@ -443,9 +473,48 @@ where a.ID='{0}'"
                 }
                 CalSkeValue(dr);
             };
+            SkeTest3Cell.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]))
+                {
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
+                    {
+                        MyUtility.Msg.InfoBox("<Skewness 3> cannot over than 100 !");
+                        dr["SkewnessTest3"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]);
+
+                    }
+                    else
+                    {
+                        dr["SkewnessTest3"] = e.FormattedValue;
+                    }
+                }
+                CalSkeValue(dr);
+            };
+            SkeTest4Cell.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]))
+                {
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
+                    {
+                        MyUtility.Msg.InfoBox("<Skewness 4> cannot over than 100 !");
+                        dr["SkewnessTest4"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]);
+
+                    }
+                    else
+                    {
+                        dr["SkewnessTest4"] = e.FormattedValue;
+                    }
+                }
+                CalSkeValue(dr);
+            };
 
             LabTechCell.CellValidating += (s, e) =>
             {
+                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["inspector"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -487,16 +556,41 @@ where a.ID='{0}'"
               .Numeric("VerticalTest3", header: "Vertical 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest3Cell)
               .Numeric("Vertical_Average", header: "Vertical Average", width: Widths.AnsiChars(6), integer_places: 2, decimal_places: 2, iseditingreadonly: true)
               .Numeric("VerticalRate", header: "Vertical Shrinkage Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
-              .Numeric("SkewnessTest1", header: "Skewness 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest1Cell)
-              .Numeric("SkewnessTest2", header: "Skewness 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest2Cell)
+                // 注意,SkewnessTest Header Name 會隨Option變動的,Function =GridView_Visable()
+              .Numeric("SkewnessTest1", header: "SkewnessTest1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest1Cell)
+              .Numeric("SkewnessTest2", header: "SkewnessTest2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest2Cell)
+              .Numeric("SkewnessTest3", header: "SkewnessTest3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest3Cell)
+              .Numeric("SkewnessTest4", header: "SkewnessTest4", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: SkeTest4Cell)
+              // ********end**************
               .Numeric("SkewnessRate", header: "Skewness Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
               .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+            GridView_Visable();
             return true;
         }
+        private void GridView_Visable()
+        {
+            if (this.radioOption1.Checked)
+            {
+                grid.Columns[15].HeaderText = "AC";
+                grid.Columns[16].HeaderText = "BD";
+                grid.Columns[17].Visible = false;
+                grid.Columns[18].Visible = false;
+            }
+            else
+            {
+                grid.Columns[15].HeaderText = "AA’";
+                grid.Columns[16].HeaderText = "DD’";
+                grid.Columns[17].HeaderText = "AB";
+                grid.Columns[18].HeaderText = "CD";
+                grid.Columns[17].Visible = true;
+                grid.Columns[18].Visible = true;
+            }
+        }
+
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)gridbs.DataSource;
@@ -629,11 +723,10 @@ where a.ID='{0}'"
                        @"insert into FIR_Laboratory_Wash
                        (ID,roll,Dyelot,Inspdate,Inspector,Result,Remark,AddDate,AddName,HorizontalRate,HorizontalOriginal,
                         HorizontalTest1,HorizontalTest2,HorizontalTest3,VerticalRate,VerticalOriginal,VerticalTest1,VerticalTest2,VerticalTest3,
-                        SkewnessTest1,SkewnessTest2,SkewnessRate)
+                        SkewnessTest1,SkewnessTest2,SkewnessTest3,SkewnessTest4,SkewnessRate)
                        values
                         (@ID,@roll,@Dyelot,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@HorizontalRate,@HorizontalOriginal,
-                        @HorizontalTest1,@HorizontalTest2,@HorizontalTest3,@VerticalRate,@VerticalOriginal,@VerticalTest1,@VerticalTest2,@VerticalTest3,
-                        @SkewnessTest1,@SkewnessTest2,@SkewnessRate)";
+                        @HorizontalTest1,@HorizontalTest2,@HorizontalTest3,@VerticalRate,@VerticalOriginal,@VerticalTest1,@VerticalTest2,@VerticalTest3,@SkewnessTest1,@SkewnessTest2,@SkewnessTest3,@SkewnessTest4,@SkewnessRate)";
                     spamAdd.Add(new SqlParameter("@id", maindr["ID"]));
                     spamAdd.Add(new SqlParameter("@roll", dr["Roll"]));
                     spamAdd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
@@ -655,6 +748,8 @@ where a.ID='{0}'"
                     spamAdd.Add(new SqlParameter("@VerticalTest3", dr["VerticalTest3"]));
                     spamAdd.Add(new SqlParameter("@SkewnessTest1", dr["SkewnessTest1"]));
                     spamAdd.Add(new SqlParameter("@SkewnessTest2", dr["SkewnessTest2"]));
+                    spamAdd.Add(new SqlParameter("@SkewnessTest3", dr["SkewnessTest3"]));
+                    spamAdd.Add(new SqlParameter("@SkewnessTest4", dr["SkewnessTest4"]));
                     spamAdd.Add(new SqlParameter("@SkewnessRate", dr["SkewnessRate"]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);
                     if (!upResult) { return upResult; }
@@ -670,7 +765,9 @@ where a.ID='{0}'"
                     HorizontalTest1=@HorizontalTest1,HorizontalTest2=@HorizontalTest2,HorizontalTest3=@HorizontalTest3,
                     VerticalRate=@VerticalRate,VerticalOriginal=@VerticalOriginal,VerticalTest1=@VerticalTest1,
                     VerticalTest2=@VerticalTest2,VerticalTest3=@VerticalTest3,
-                    SkewnessTest1=@SkewnessTest1,SkewnessTest2=@SkewnessTest2,SkewnessRate=@SkewnessRate
+                    SkewnessTest1=@SkewnessTest1,SkewnessTest2=@SkewnessTest2,
+                    SkewnessTest3=@SkewnessTest3,SkewnessTest4=@SkewnessTest4,
+                    SkewnessRate=@SkewnessRate
                     where id=@sid and Roll=@RollBefore";
                     spamUpd.Add(new SqlParameter("@id", dr["ID"]));
                     spamUpd.Add(new SqlParameter("@roll", dr["Roll"]));
@@ -693,6 +790,8 @@ where a.ID='{0}'"
                     spamUpd.Add(new SqlParameter("@VerticalTest3", dr["VerticalTest3"]));
                     spamUpd.Add(new SqlParameter("@SkewnessTest1", dr["SkewnessTest1"]));
                     spamUpd.Add(new SqlParameter("@SkewnessTest2", dr["SkewnessTest2"]));
+                    spamUpd.Add(new SqlParameter("@SkewnessTest3", dr["SkewnessTest3"]));
+                    spamUpd.Add(new SqlParameter("@SkewnessTest4", dr["SkewnessTest4"]));
                     spamUpd.Add(new SqlParameter("@SkewnessRate", dr["SkewnessRate"]));
                     spamUpd.Add(new SqlParameter("@sid", maindr["ID"]));
                     spamUpd.Add(new SqlParameter("@RollBefore", dr["Roll", DataRowVersion.Original]));
@@ -700,6 +799,15 @@ where a.ID='{0}'"
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamUpd);
                     if (!upResult) { return upResult; }
                 }
+                List<SqlParameter> spamOption = new List<SqlParameter>();
+                string updateOptionID =
+                @"update FIR_Laboratory
+                set SkewnessOptionID=@OptionID
+                where id=@ID";
+                spamOption.Add(new SqlParameter("@id", ID));
+                spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
+                upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
+                if (!upResult) { return upResult; }
             }
             return upResult;
         }
@@ -710,6 +818,7 @@ where a.ID='{0}'"
             btnEncode.Enabled = this.CanEdit && !this.EditMode;           
             btnEncode.Text = MyUtility.Convert.GetBool(maindr["WashEncode"]) ? "Amend" : "Encode";
             btnToExcel.Enabled = !this.EditMode;
+            this.radioPanel1.ReadOnly = !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
         //maindr where id,poid重新query 
@@ -903,11 +1012,25 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalSkeValue(DataRow dr)
         {
-            if (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value)
+            if (!EditMode) return;
+            if (this.radioOption1.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
                 if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
                 {
                     decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
+                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
+                }
+                else
+                {
+                    dr["SkewnessRate"] = 0;
+                    return;
+                }
+            }
+            if (this.radioOption2.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value && dr["SkewnessTest3"] != DBNull.Value && dr["SkewnessTest4"] != DBNull.Value))
+            {
+                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]) != 0)
+                {
+                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
                     dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
                 }
                 else
@@ -923,6 +1046,7 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalHorRate(DataRow dr)
         {
+            if (!EditMode) return;
             if (!MyUtility.Check.Empty(dr["HorizontalOriginal"]))
             {
                 decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
@@ -942,6 +1066,7 @@ where a.ID='{0}'"
         /// <param name="dr">current dataRow</param>
         private void CalVerRate(DataRow dr)
         {
+            if (!EditMode) return;
             if (!MyUtility.Check.Empty(dr["VerticalOriginal"]))
             {
                 decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
@@ -955,6 +1080,27 @@ where a.ID='{0}'"
             }
             decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
             dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
+        }
+
+        private void radioPanel1_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.radioPanel1.Value.ToString()=="1")
+            {
+                pictureBox1.ImageLocation = @".\Resources\QA_Skewness1.png";
+            }
+            else
+            {
+                pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
+            }
+            GridView_Visable();
+            if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)
+            {
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                {
+                    CalSkeValue(dr);
+                }
+            }
+           
         }
     }
 }

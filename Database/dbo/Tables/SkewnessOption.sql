@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SkewnessOption] (
     [BrandID]  VARCHAR (8)  NOT NULL,
-    [OptionID] VARCHAR (1)  CONSTRAINT [DF_SkewnessOption_OptionID] DEFAULT ((1)) NOT NULL,
+    [ID] VARCHAR (1)  CONSTRAINT [DF_SkewnessOption_OptionID] DEFAULT ((1)) NOT NULL,
     [Junk]     BIT          CONSTRAINT [DF_SkewnessOption_Junk] DEFAULT ((0)) NULL,
     [AddName]  VARCHAR (10) NULL,
     [AddDate]  DATETIME     NULL,

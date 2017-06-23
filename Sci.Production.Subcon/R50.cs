@@ -21,15 +21,16 @@ namespace Sci.Production.Subcon
             InitializeComponent();
         }
 
-        string Factory, BundleNO;
+        string FromBundleNO, ToBundleNO;
         DateTime? Date1, Date2;
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
             Date1 = Date.Value1;
             Date2 = Date.Value2;
-            BundleNO = txtBundleNo.Text;
-            Factory = txtfactory.Text;
+            FromBundleNO = txtFromBundleNo.Text;
+            ToBundleNO = txtToBundleNo.Text;
+            //Factory = txtfactory.Text;
 
             return base.ValidateInput();
         }
@@ -70,16 +71,21 @@ Where 1=1
                 sql.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(Date2).ToString("d")));
                 sql2.Append(string.Format("And (Convert (date, b.AddDate)  <= '{0}' Or Convert (date, b.EditDate) <= '{0}')", Convert.ToDateTime(Date2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(BundleNO))
+            if (!MyUtility.Check.Empty(FromBundleNO))
             {
-                sql.Append(string.Format("And BD.BundleNo = '{0}'", BundleNO));
-                sql2.Append(string.Format("And BD.BundleNo = '{0}'", BundleNO));
+                sql.Append(string.Format("And BD.BundleNo >= '{0}'", FromBundleNO));
+                sql2.Append(string.Format("And BD.BundleNo >= '{0}'", FromBundleNO));
             }
-            if (!MyUtility.Check.Empty(Factory))
+            if (!MyUtility.Check.Empty(ToBundleNO))
             {
-                sql.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
-                sql2.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
+                sql.Append(string.Format("And BD.BundleNo <= '{0}'", ToBundleNO));
+                sql2.Append(string.Format("And BD.BundleNo <= '{0}'", ToBundleNO));
             }
+            //if (!MyUtility.Check.Empty(Factory))
+            //{
+            //    sql.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
+            //    sql2.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
+            //}
             sql.Append(" order by o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             //預先開啟excel app

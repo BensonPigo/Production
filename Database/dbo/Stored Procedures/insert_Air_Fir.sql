@@ -129,16 +129,33 @@ when not matched by source and t.ReceivingID=@ID then
  
 -------FIR_Laboratory
 RAISERROR('insert_Air_Fir - Starts',0,0)
-Merge Production.dbo.FIR_Laboratory as t
-using( 
-select * from Production.dbo.FIR where id in (select id from @tempFir )
-) as s
-on t.id=s.id
-when not matched by target then 
-insert (id,poid,seq1,seq2,InspDeadline)
-values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline)
-when not matched by source and t.id in (select deID from @tempFir where id is null)  then
-delete ;
+MERGE production.dbo.fir_laboratory AS t 
+using(SELECT a.*, 
+             Isnull(c.ID, '1') AS SkewnessOptionID 
+      FROM   production.dbo.fir a 
+             LEFT JOIN po b 
+                    ON a.poid = b.id 
+             LEFT JOIN skewnessoption c 
+                    ON c.brandid = b.brandid AND Junk=0
+      WHERE  a.id IN (SELECT id 
+                      FROM   @tempFir)) AS s 
+ON t.id = s.id 
+WHEN NOT matched BY target THEN 
+  INSERT (id, 
+          poid, 
+          seq1, 
+          seq2, 
+          inspdeadline, 
+          skewnessoptionid) 
+  VALUES(s.id, 
+         s.poid, 
+         s.seq1, 
+         s.seq2, 
+         s.inspdeadline, 
+         s.skewnessoptionid) 
+WHEN NOT matched BY source AND t.id IN (SELECT deid FROM @tempFir WHERE id IS 
+NULL) THEN 
+  DELETE; 
 
 
 
@@ -162,7 +179,7 @@ when matched then
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,iif(len(s.Seq1)<=2,s.Seq1+' ',s.Seq1),s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID

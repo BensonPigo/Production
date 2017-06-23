@@ -6,16 +6,24 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections;       //file使用Hashtable時，必須引入這個命名空間
 
 namespace Sci.Production.Quality
 {
     public partial class B07 : Sci.Win.Tems.Input1
     {
+        Hashtable ht = new Hashtable();     
+   
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
+            //HashTabe add key,Value
+            ht.Add("Formula1", "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]");
+            ht.Add("Formula2", "100 × [ ( AA’ + DD’ ) / ( AB + CD ) ]");
+            ht.Add("Picture1", @".\Resources\QA_Skewness1.png");
+            ht.Add("Picture2", @".\Resources\QA_Skewness2.png");
+
             InitializeComponent();
-            radioOption1.Checked = true;
 
         }
         protected override bool ClickSaveBefore()
@@ -26,6 +34,14 @@ namespace Sci.Production.Quality
                this.txtbrand.Focus();
                return false;
             }
+            
+            //DataRow dr;
+            if (MyUtility.Check.Seek(string.Format("select * from SkewnessOption where brandid='{0}'",this.txtbrand.Text)) && !this.txtbrand.ReadOnly)
+            {
+                MyUtility.Msg.WarningBox(string.Format("<Brand : {0}> existed, change other one please!", this.txtbrand.Text));
+                this.txtbrand.Focus();
+                return false;
+            }
             return base.ClickSaveBefore();
         }
         protected override Ict.DualResult ClickSave()
@@ -34,51 +50,42 @@ namespace Sci.Production.Quality
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format("select * from SkewnessOption where brandid='{0}'", this.txtbrand.Text), out dr))
             {
-                DBProxy.Current.Execute(null, string.Format(@"update SkewnessOption set OptionID='{0}' where BrandID='{1}'", radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
+                DBProxy.Current.Execute(null, string.Format(@"update SkewnessOption set ID='{0}' where BrandID='{1}'", radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
             }
-            //else
-            //{
-            //    DBProxy.Current.Execute(null, string.Format(@"insert into SkewnessOption (Brandid,OptionID,Junk,AddName,AddDate) values('{0}','{1}','{2}','{3}','{4}') ", this.txtbrand.Text, radioOption1.Checked ? "1" : "2",this.checkJunk.Checked,Sci.Env.User,DateTime.Now));
-            //}
+ 
 
             return base.ClickSave();
             
         }
+        protected override void ClickLocate()
+        {           
+            base.ClickLocate();
+            OnDetailEntered();
+        }
         protected override void OnDetailEntered()
         {
-            base.OnDetailEntered();
-            //按鈕Shipping Mark變色
-            if (MyUtility.Convert.GetString(CurrentMaintain["OptionID"]) == "1")
+            if (CurrentMaintain.Empty())
             {
-                radioOption1.Checked = true;
-                txtFormula.Text = "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]";
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness1.png";
+                this.txtFormula.Text = "";
+                pictureBox1.ImageLocation = "";
+                return; 
             }
-            else if (MyUtility.Convert.GetString(CurrentMaintain["OptionID"]) == "2")
-            {
-                radioOption2.Checked = true;
-                txtFormula.Text = "100 × [ ( AA’ + DD’ ) / ( AB + CD ) ]";
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
-            }
+            txtFormula.Text = CurrentMaintain["ID"].ToString() == "1" ? ht["Formula1"].ToString() : ht["Formula2"].ToString();
+            pictureBox1.ImageLocation = CurrentMaintain["ID"].ToString() == "1" ? ht["Picture1"].ToString() : ht["Picture2"].ToString();
+                     
             if (EditMode)
             {
-                this.radioOption1.Enabled = true;
-                this.radioOption2.Enabled = true;
-
+                this.radioPanel1.ReadOnly = false;
             }
             else
             {
-                this.radioOption1.Enabled = false;
-                this.radioOption2.Enabled = false;
+                this.radioPanel1.ReadOnly = true;
                 this.txtbrand.ReadOnly = true;
-            }    
+            }
 
+            base.OnDetailEntered();
         }
-        protected override bool ClickNewBefore()
-        {
-           // CurrentMaintain["OptionID"] = radioOption1.Checked ? "1" : "2";
-            return base.ClickNewBefore();
-        }
+           
         protected override void ClickNewAfter()
         {
             this.txtbrand.ReadOnly = false;
@@ -94,13 +101,13 @@ namespace Sci.Production.Quality
         {
             if (radioOption1.Checked)
             {
-                txtFormula.Text = "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]";
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness1.png";
+                txtFormula.Text = ht["Formula1"].ToString();
+                pictureBox1.ImageLocation = ht["Picture1"].ToString();
             }
             else
             {
-                txtFormula.Text = "100 × [ ( AA’ + DD’ ) / ( AB + CD ) ]";
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
+                txtFormula.Text = ht["Formula2"].ToString();
+                pictureBox1.ImageLocation = ht["Picture2"].ToString();
             }
         }
     }
