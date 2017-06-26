@@ -15,5 +15,25 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
         }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            string sql = String.Format("select * from [MachineType_ThreadRatio] where ID='{0}'",CurrentMaintain["ID"].ToString());
+            if (MyUtility.Check.Seek(sql, null))
+            {
+                btnThreadRatio.ForeColor = Color.Blue;
+            }
+            else
+            {
+                btnThreadRatio.ForeColor = Control.DefaultForeColor;
+            }
+        }
+
+        private void btnThreadRatio_Click(object sender, EventArgs e)
+        {
+            Sci.Production.IE.B05_ThreadRatio callNextForm = new Sci.Production.IE.B05_ThreadRatio(CurrentMaintain["ID"].ToString());
+            DialogResult result = callNextForm.ShowDialog(this);
+        }
     }
 }
