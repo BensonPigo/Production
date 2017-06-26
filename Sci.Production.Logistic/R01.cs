@@ -50,16 +50,73 @@ namespace Sci.Production.Logistic
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select o.FactoryID,o.MCHandle,o.SewLine,o.ID,o.CustPONo,o.Customize1,oq.BuyerDelivery,oq.ShipmodeID,oq.Seq,o.SciDelivery,o.TotalCTN,o.ClogCTN,o.PulloutCTNQty,
-isnull((select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq),0) as CTNQty,
-isnull((select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq and ReceiveDate is not null),0) as ClogQty,
-isnull((select sum(pd.CTNQty) from PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) where p.ID = pd.ID and pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq and p.PulloutID != ''),0) as PullQty,
-isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID),0) as TtlGMTQty,
-isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID and ReceiveDate is not null),0) as TtlClogGMTQty,
-isnull((select sum(ShipQty) from Pullout p WITH (NOLOCK) ,Pullout_Detail pd WITH (NOLOCK) where pd.OrderID = o.ID and pd.ID = p.ID and p.Status <> 'New'),0) as TtlPullGMTQty,
-isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq),0) as GMTQty,
-isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq and ReceiveDate is not null),0) as ClogGMTQty,
-isnull((select sum(ShipQty) from Pullout p,Pullout_Detail pd WITH (NOLOCK) where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq and pd.ID = p.ID and p.Status <> 'New'),0) as PullGMTQty
+            sqlCmd.Append(@"
+select  o.FactoryID
+        , o.MCHandle
+        , o.SewLine
+        , o.ID
+        , o.CustPONo
+        , o.Customize1
+        , oq.BuyerDelivery
+        , oq.ShipmodeID
+        , oq.Seq
+        , o.SciDelivery
+        , o.TotalCTN
+        , o.ClogCTN
+        , o.PulloutCTNQty
+        , CTNQty = isnull ((select sum (CTNQty) 
+                            from PackingList_Detail WITH (NOLOCK) 
+                            where   OrderID = o.ID 
+                                    and OrderShipmodeSeq = oq.Seq) 
+                           , 0)
+        , ClogQty = isnull ((select sum (CTNQty) 
+                             from PackingList_Detail WITH (NOLOCK) 
+                             where  OrderID = o.ID 
+                                    and OrderShipmodeSeq = oq.Seq 
+                                    and ReceiveDate is not null)
+                           , 0)
+        , PullQty = isnull ((select sum (pd.CTNQty) 
+                             from PackingList p WITH (NOLOCK) 
+                                  , PackingList_Detail pd WITH (NOLOCK) 
+                             where  p.ID = pd.ID 
+                                    and pd.OrderID = o.ID 
+                                    and pd.OrderShipmodeSeq = oq.Seq 
+                                    and p.PulloutID != '')
+                           , 0)
+        , TtlGMTQty = isnull ((select sum(ShipQty) 
+                               from PackingList_Detail WITH (NOLOCK) 
+                               where OrderID = o.ID)
+                             , 0)
+        , TtlClogGMTQty = isnull ((select sum(ShipQty) 
+                                   from PackingList_Detail WITH (NOLOCK) 
+                                   where    OrderID = o.ID 
+                                            and ReceiveDate is not null)
+                                 , 0)
+        , TtlPullGMTQty = isnull ((select sum(ShipQty) 
+                                   from Pullout p WITH (NOLOCK) 
+                                        , Pullout_Detail pd WITH (NOLOCK) 
+                                   where    pd.OrderID = o.ID 
+                                            and pd.ID = p.ID 
+                                            and p.Status <> 'New')
+                                 , 0)
+        , GMTQty = isnull ((select sum(ShipQty) 
+                            from PackingList_Detail WITH (NOLOCK) 
+                            where   OrderID = o.ID 
+                                    and OrderShipmodeSeq = oq.Seq)
+                          , 0)
+        , ClogGMTQty = isnull ((select sum(ShipQty) 
+                                from PackingList_Detail WITH (NOLOCK) 
+                                where   OrderID = o.ID 
+                                        and OrderShipmodeSeq = oq.Seq 
+                                        and ReceiveDate is not null)
+                              , 0)
+        , PullGMTQty = isnull ((select sum(ShipQty) 
+                                from Pullout p
+                                     , Pullout_Detail pd WITH (NOLOCK) 
+                                where   pd.OrderID = o.ID 
+                                        and pd.OrderShipmodeSeq = oq.Seq 
+                                        and pd.ID = p.ID 
+                                        and p.Status <> 'New'),0)
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 where o.Category = 'B'");
