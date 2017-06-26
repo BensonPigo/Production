@@ -295,6 +295,7 @@ left join (
             , ID
             , SizeSpec
             , ColorID
+            , Article
     from #Tmp_BoaExpend a 
 ) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
                    and b.poid = Tmp_BoaExpend.ID 
@@ -362,6 +363,7 @@ with cte as(
                 , ID
                 , SizeSpec
                 , ColorID
+                , Article
         from #Tmp_BoaExpend a 
     ) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
                        and b.poid = Tmp_BoaExpend.ID 
