@@ -341,6 +341,7 @@ namespace Sci.Production.Warehouse
                     else
                     {
                         e.Cancel = true;
+                        CurrentDetailData["poid"] = "";
                         MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
                         return;
                     }
@@ -369,40 +370,38 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-//                        --select e.poid,e.seq1+e.seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
-//--,p.ColorID
-//--,(SELECT eta from dbo.export where id = e.id) as eta
-//--,p.InQty,p.pounit,p.StockUnit,p.OutQty,p.AdjustQty
-//--,p.inqty - p.OutQty + p.AdjustQty as balance
-//--,p.LInvQty
-//--,p.fabrictype
-//--,e.seq1
-//--,e.seq2
-//--from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
                         sqlcmd = string.Format(@"
-
-select e.poid,concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2) as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
-,p.ColorID
-,(SELECT eta from dbo.export WITH (NOLOCK) where id = e.id) as eta
-,M.InQty
-,p.pounit,p.StockUnit
-,M.OutQty
-,M.AdjustQty
-,M.inqty - M.OutQty + M.AdjustQty as balance
-,M.LInvQty
-,p.fabrictype
-,e.seq1
-,e.seq2
+select  e.poid
+        , seq = concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2)
+        , e.Refno
+        , [Description] = dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0)
+        , p.ColorID
+        , eta = (SELECT eta from dbo.export WITH (NOLOCK) where id = e.id)
+        , M.InQty
+        , p.pounit
+        , p.StockUnit
+        , M.OutQty
+        , M.AdjustQty
+        , BalanceQty = M.inqty - M.OutQty + M.AdjustQty
+        , M.LInvQty
+        , p.fabrictype
+        , e.seq1
+        , e.seq2
 from dbo.Export_Detail e WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
-INNER JOIN MDivisionPoDetail M WITH (NOLOCK) ON E.PoID = M.POID and e.Seq1 = M.SEQ1 and e.Seq2 = M.seq2 
-where e.PoID ='{0}' and e.id = '{1}'
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID 
+                                                and e.Seq1 = p.SEQ1 
+                                                and e.Seq2 = p.seq2
+INNER JOIN MDivisionPoDetail M WITH (NOLOCK) ON E.PoID = M.POID 
+                                                and e.Seq1 = M.SEQ1 
+                                                and e.Seq2 = M.seq2 
+where   e.PoID ='{0}' 
+        and e.id = '{1}'
 Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
 
                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
-                            , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,balanceqty,linvqty"
+                            , "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,BalanceQty,linvqty"
                             , "6,15,25,8,10,6,6,6,6,6,6", CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
                         item.Width = 1024;
                         DialogResult result = item.ShowDialog();
@@ -600,11 +599,13 @@ WHERE   StockType='{0}'
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Seq;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_poid;
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(11), settings: ts4)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(11), settings: ts4).Get(out cbb_poid)  //0
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts).Get(out cbb_Seq)  //1
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(9), iseditable: false).Get(out cbb_fabrictype)  //2
             .Numeric("shipqty", header: "Ship Qty", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 10, settings: ns)    //3
             .Numeric("weight", header: "G.W(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7)    //4
@@ -621,6 +622,8 @@ WHERE   StockType='{0}'
             ;     //
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 4;
+            cbb_Seq.MaxLength = 6;
+            cbb_poid.MaxLength = 13;
             #endregion 欄位設定
 
             cbb_fabrictype.DataSource = new BindingSource(di_fabrictype, null);

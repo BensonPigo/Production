@@ -31,7 +31,8 @@
     [RFIDLoginId]             VARCHAR (20)   NULL,
     [RFIDLoginPwd]            VARCHAR (20)   NULL,
     [RFIDTable]               VARCHAR (20)   NULL,
-    [ProphetSingleSizeDeduct] NUMERIC (3)    NULL
+    [ProphetSingleSizeDeduct] NUMERIC (3)    NULL, 
+    [PrintingSuppID]		  VARCHAR(8)	 NULL
 );
 
 
