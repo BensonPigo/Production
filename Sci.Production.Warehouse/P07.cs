@@ -364,11 +364,7 @@ where   #tmp.poid = dbo.po_supp.id
                     {
                         sqlcmd = string.Format(@"
 select  e.poid
-<<<<<<< HEAD
         , seq = concat (Ltrim (Rtrim (e.seq1)), ' ', e.Seq2)
-=======
-        , seq = concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2)
->>>>>>> master
         , e.Refno
         , [Description] = dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0)
         , p.ColorID
@@ -378,11 +374,7 @@ select  e.poid
         , p.StockUnit
         , M.OutQty
         , M.AdjustQty
-<<<<<<< HEAD
-        , balance = M.inqty - M.OutQty + M.AdjustQty
-=======
         , BalanceQty = M.inqty - M.OutQty + M.AdjustQty
->>>>>>> master
         , M.LInvQty
         , p.fabrictype
         , e.seq1
