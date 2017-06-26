@@ -122,6 +122,7 @@ select distinct
 		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null and BTD.id like 'TC%' THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
 		ELSE ''
 		END
+into #tmp2
 from #tmp t
 left join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = t.BundleNo
 left join BundleTrack_detail BTD WITH (NOLOCK) on BTD.BundleNo = t.BundleNo
@@ -136,7 +137,13 @@ outer apply(
 	),1,1,'')
 )a
 WHERE (bda.SubprocessId  = '{0}' or bda.SubprocessId is null) 
-and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
+and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)
+
+select t.BundleNo,t.BundleGroup,t.Qty,t.SubprocessId,t.Patterncode,t.PatternDesc,ErrorMsg = max(t.ErrorMsg)
+from #tmp2 t
+group by t.BundleNo,t.BundleGroup,t.Qty,t.SubprocessId,t.Patterncode,t.PatternDesc
+
+drop table #tmp,#tmp2"
                 , comboSubprocess.Text);
             txtNumsofBundle.Text = "0";
                         
