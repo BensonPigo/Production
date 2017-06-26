@@ -105,7 +105,7 @@ else
 	declare @tempFir table(id bigint,deID bigint )	
 
 RAISERROR('insert_Air_Fir - Starts',0,0)
-Merge Production.dbo.Fir as t
+Merge dbo.Fir as t
 using (
 	select * from #tempTableAll	where fabricType='F'
  ) as s
@@ -129,10 +129,10 @@ when not matched by source and t.ReceivingID=@ID then
  
 -------FIR_Laboratory
 RAISERROR('insert_Air_Fir - Starts',0,0)
-MERGE production.dbo.fir_laboratory AS t 
+MERGE dbo.fir_laboratory AS t 
 using(SELECT a.*, 
              Isnull(c.ID, '1') AS SkewnessOptionID 
-      FROM   production.dbo.fir a 
+      FROM   dbo.fir a 
              LEFT JOIN po b 
                     ON a.poid = b.id 
              LEFT JOIN skewnessoption c 
@@ -163,7 +163,7 @@ NULL) THEN
 
 declare @tempAir table(id bigint,deID bigint )	
 RAISERROR('insert_Air_Fir - Starts',0,0)
-Merge Production.dbo.Air as t
+Merge dbo.Air as t
 using (
 	select * from #tempTableAll	where fabricType='A'
  ) as s
@@ -187,9 +187,9 @@ when not matched by source and t.ReceivingID=@ID then
 
 --------------AIR_Laboratory
 RAISERROR('insert_Air_Fir - Starts',0,0)
-Merge Production.dbo.AIR_Laboratory as t
+Merge dbo.AIR_Laboratory as t
 using( 
-select * from Production.dbo.air where id in (select id from @tempAir ) 
+select * from dbo.air where id in (select id from @tempAir ) 
 ) as s
 on t.id=s.id
 when not matched by target then 
