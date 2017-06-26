@@ -43,6 +43,7 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.btnThreadRatio = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnThreadRatio);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label10);
             this.detailcont.Controls.Add(this.label9);
@@ -102,7 +104,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(30, 30);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(125, 23);
@@ -111,7 +112,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(30, 65);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(125, 23);
@@ -120,7 +120,6 @@
             // 
             // labelGroupID
             // 
-            this.labelGroupID.Lines = 0;
             this.labelGroupID.Location = new System.Drawing.Point(30, 100);
             this.labelGroupID.Name = "labelGroupID";
             this.labelGroupID.Size = new System.Drawing.Size(125, 23);
@@ -129,7 +128,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(30, 135);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(125, 23);
@@ -138,7 +136,6 @@
             // 
             // labelMachineAllowance
             // 
-            this.labelMachineAllowance.Lines = 0;
             this.labelMachineAllowance.Location = new System.Drawing.Point(30, 170);
             this.labelMachineAllowance.Name = "labelMachineAllowance";
             this.labelMachineAllowance.Size = new System.Drawing.Size(125, 23);
@@ -147,7 +144,6 @@
             // 
             // labelManualAllowance
             // 
-            this.labelManualAllowance.Lines = 0;
             this.labelManualAllowance.Location = new System.Drawing.Point(30, 205);
             this.labelManualAllowance.Name = "labelManualAllowance";
             this.labelManualAllowance.Size = new System.Drawing.Size(125, 23);
@@ -238,7 +234,6 @@
             // 
             // label9
             // 
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(212, 170);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 23);
@@ -247,7 +242,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(212, 205);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -265,6 +259,16 @@
             this.checkJunk.TabIndex = 6;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
+            // 
+            // btnThreadRatio
+            // 
+            this.btnThreadRatio.Location = new System.Drawing.Point(688, 26);
+            this.btnThreadRatio.Name = "btnThreadRatio";
+            this.btnThreadRatio.Size = new System.Drawing.Size(111, 30);
+            this.btnThreadRatio.TabIndex = 15;
+            this.btnThreadRatio.Text = "Thread Ratio";
+            this.btnThreadRatio.UseVisualStyleBackColor = true;
+            this.btnThreadRatio.Click += new System.EventHandler(this.btnThreadRatio_Click);
             // 
             // B05
             // 
@@ -312,5 +316,6 @@
         private Win.UI.Label labelGroupID;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
+        private Win.UI.Button btnThreadRatio;
     }
 }
