@@ -29,34 +29,32 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.labelFactory = new Sci.Win.UI.Label();
-            this.txtBundleNo = new Sci.Win.UI.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtToBundleNo = new Sci.Win.UI.TextBox();
+            this.txtFromBundleNo = new Sci.Win.UI.TextBox();
             this.Date = new Sci.Win.UI.DateRange();
             this.labelBundleNo = new Sci.Win.UI.Label();
             this.labelDate = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(444, 12);
-            this.print.Visible = false;
+            this.print.Location = new System.Drawing.Point(700, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(444, 48);
+            this.toexcel.Location = new System.Drawing.Point(444, 12);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(444, 84);
+            this.close.Location = new System.Drawing.Point(444, 48);
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtfactory);
-            this.panel1.Controls.Add(this.labelFactory);
-            this.panel1.Controls.Add(this.txtBundleNo);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.txtToBundleNo);
+            this.panel1.Controls.Add(this.txtFromBundleNo);
             this.panel1.Controls.Add(this.Date);
             this.panel1.Controls.Add(this.labelBundleNo);
             this.panel1.Controls.Add(this.labelDate);
@@ -65,23 +63,34 @@
             this.panel1.Size = new System.Drawing.Size(413, 113);
             this.panel1.TabIndex = 94;
             // 
-            // labelFactory
+            // label6
             // 
-            this.labelFactory.Location = new System.Drawing.Point(12, 79);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(99, 23);
-            this.labelFactory.TabIndex = 110;
-            this.labelFactory.Text = "Factory";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(254, 46);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(22, 17);
+            this.label6.TabIndex = 107;
+            this.label6.Text = "～";
             // 
-            // txtBundleNo
+            // txtToBundleNo
             // 
-            this.txtBundleNo.BackColor = System.Drawing.Color.White;
-            this.txtBundleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleNo.Location = new System.Drawing.Point(123, 43);
-            this.txtBundleNo.MaxLength = 20;
-            this.txtBundleNo.Name = "txtBundleNo";
-            this.txtBundleNo.Size = new System.Drawing.Size(132, 23);
-            this.txtBundleNo.TabIndex = 1;
+            this.txtToBundleNo.BackColor = System.Drawing.Color.White;
+            this.txtToBundleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToBundleNo.Location = new System.Drawing.Point(278, 43);
+            this.txtToBundleNo.MaxLength = 20;
+            this.txtToBundleNo.Name = "txtToBundleNo";
+            this.txtToBundleNo.Size = new System.Drawing.Size(125, 23);
+            this.txtToBundleNo.TabIndex = 99;
+            // 
+            // txtFromBundleNo
+            // 
+            this.txtFromBundleNo.BackColor = System.Drawing.Color.White;
+            this.txtFromBundleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFromBundleNo.Location = new System.Drawing.Point(123, 43);
+            this.txtFromBundleNo.MaxLength = 20;
+            this.txtFromBundleNo.Name = "txtFromBundleNo";
+            this.txtFromBundleNo.Size = new System.Drawing.Size(125, 23);
+            this.txtFromBundleNo.TabIndex = 1;
             // 
             // Date
             // 
@@ -107,28 +116,9 @@
             this.labelDate.TabIndex = 97;
             this.labelDate.Text = "Date";
             // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(430, 117);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(97, 22);
-            this.label4.TabIndex = 112;
-            this.label4.Text = "Paper Size A4";
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = true;
-            this.txtfactory.Location = new System.Drawing.Point(123, 79);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 112;
-            // 
             // R50
             // 
             this.ClientSize = new System.Drawing.Size(536, 170);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.Name = "R50";
             this.Text = "R50. Transfer Bundle Data To Printing System";
@@ -136,7 +126,6 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -147,12 +136,11 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.Label labelFactory;
-        private Win.UI.TextBox txtBundleNo;
+        private Win.UI.TextBox txtFromBundleNo;
         private Win.UI.DateRange Date;
         private Win.UI.Label labelBundleNo;
         private Win.UI.Label labelDate;
-        private Class.txtfactory txtfactory;
-        private Win.UI.Label label4;
+        private Win.UI.TextBox txtToBundleNo;
+        private System.Windows.Forms.Label label6;
     }
 }
