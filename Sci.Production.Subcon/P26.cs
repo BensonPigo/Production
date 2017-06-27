@@ -73,7 +73,7 @@ from BundleTrack_detail BTD
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
 OUTER APPLY(
 	SELECT SubprocessId = STUFF((
-		SELECT CONCAT(',',SubprocessId )
+		SELECT CONCAT('+',SubprocessId )
 		FROM Bundle_Detail_Art BDA
 		WHERE BDA.Bundleno = BTD.BundleNo
 		FOR XML PATH('')

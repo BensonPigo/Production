@@ -133,7 +133,7 @@ from BundleTrack_detail BTD
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
 OUTER APPLY(
 	SELECT SubprocessId = STUFF((
-		SELECT CONCAT(',',SubprocessId )
+		SELECT CONCAT('+',SubprocessId )
 		FROM Bundle_Detail_Art BDA
 		WHERE BDA.Bundleno = BTD.BundleNo
 		FOR XML PATH('')
@@ -204,5 +204,21 @@ order by BTD.orderid", CurrentMaintain["ID"].ToString());
             objSheets.Cells[2, 5] = CurrentMaintain["StartSite"].ToString() + "-" + fabb;
             return true;
         }
+
+        protected override bool ClickSaveBefore()
+        {
+            DataTable Dg = (DataTable)detailgridbs.DataSource;
+            for (int i = Dg.Rows.Count; i > 0; i--)
+            {
+                if (Dg.Rows[i - 1].RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(Dg.Rows[i - 1]["BundleNo"]))
+                    {
+                        Dg.Rows[i - 1].Delete();
+                    }
+                }
+            }
+            return base.ClickSaveBefore();
+        }        
     }
 }
