@@ -37,7 +37,6 @@
             this.txtNumsofBundle = new Sci.Win.UI.TextBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnCreate = new Sci.Win.UI.Button();
-            this.btnDeleteError = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -62,7 +61,7 @@
             // 
             this.btnImportfromscanner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportfromscanner.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportfromscanner.Location = new System.Drawing.Point(696, 7);
+            this.btnImportfromscanner.Location = new System.Drawing.Point(796, 7);
             this.btnImportfromscanner.Name = "btnImportfromscanner";
             this.btnImportfromscanner.Size = new System.Drawing.Size(175, 30);
             this.btnImportfromscanner.TabIndex = 6;
@@ -94,7 +93,6 @@
             this.panel2.Controls.Add(this.txtNumsofBundle);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Controls.Add(this.btnCreate);
-            this.panel2.Controls.Add(this.btnDeleteError);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 478);
@@ -136,18 +134,6 @@
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
-            // 
-            // btnDeleteError
-            // 
-            this.btnDeleteError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteError.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDeleteError.Location = new System.Drawing.Point(649, 6);
-            this.btnDeleteError.Name = "btnDeleteError";
-            this.btnDeleteError.Size = new System.Drawing.Size(169, 30);
-            this.btnDeleteError.TabIndex = 7;
-            this.btnDeleteError.Text = "Delete Error Bundle";
-            this.btnDeleteError.UseVisualStyleBackColor = true;
-            this.btnDeleteError.Click += new System.EventHandler(this.btnDeleteError_Click);
             // 
             // label1
             // 
@@ -209,7 +195,6 @@
         private Win.UI.Button btnImportfromscanner;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnCreate;
-        private Win.UI.Button btnDeleteError;
         private Win.UI.TextBox txtNumsofBundle;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
 

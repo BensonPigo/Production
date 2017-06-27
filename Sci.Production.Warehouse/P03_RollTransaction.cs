@@ -437,6 +437,10 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(dtt, "", "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+select NameEn
+from Factory
+where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dt.Rows[0]["SP"].ToString());
             objSheets.Cells[3, 4] = MyUtility.Convert.GetString(dt.Rows[0]["SEQ"].ToString());
             objSheets.Cells[3, 6] = MyUtility.Convert.GetString(dt.Rows[0]["REF"].ToString());

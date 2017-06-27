@@ -445,29 +445,29 @@ delete from #tmp2 where qty = 0;
             DataRow[] dr2 = BOA_PO.Select("Selected = 1");
             if (dr2.Length == 0)
             {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.InfoBox("Please select rows first!", "Warnning");
                 return;
             }
 
-            dr2 = BOA_PO.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("Pick Qty of selected row can't be zero!", "Warning");
-                return;
-            }
+            //dr2 = BOA_PO.Select("qty = 0 and Selected = 1");
+            //if (dr2.Length > 0)
+            //{
+            //    MyUtility.Msg.WarningBox("Pick Qty of selected row can't be zero!", "Warning");
+            //    return;
+            //}
 
-            dr2 = BOA_PO.Select("qty > balanceqty and Selected = 1");
-            if (dr2.Length > 0)
-            {
-                StringBuilder warningmsg = new StringBuilder();
-                warningmsg.Append("Pick Qty of selected row can't over Bulk Qty!" + Environment.NewLine);               
-                foreach (DataRow temp in dr2)
-                {
-                    warningmsg.Append(string.Format("<Seq> {0} {1}, <issue Qty> {2}, <Balance Qty> {3}", temp["seq1"], temp["seq2"], temp["qty"], temp["Balanceqty"])+ Environment.NewLine);
-                }
-                MyUtility.Msg.WarningBox(warningmsg.ToString(), "Warning");
-                return;
-            }
+            //dr2 = BOA_PO.Select("qty > balanceqty and Selected = 1");
+            //if (dr2.Length > 0)
+            //{
+            //    StringBuilder warningmsg = new StringBuilder();
+            //    warningmsg.Append("Pick Qty of selected row can't over Bulk Qty!" + Environment.NewLine);
+            //    foreach (DataRow temp in dr2)
+            //    {
+            //        warningmsg.Append(string.Format("<Seq> {0} {1}, <issue Qty> {2}, <Balance Qty> {3}", temp["seq1"], temp["seq2"], temp["qty"], temp["Balanceqty"]) + Environment.NewLine);
+            //    }
+            //    MyUtility.Msg.WarningBox(warningmsg.ToString(), "Warning");
+            //    return;
+            //}
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }

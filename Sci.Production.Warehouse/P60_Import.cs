@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -78,19 +79,21 @@ namespace Sci.Production.Warehouse
 
             string strSQLCmd = string.Format(@"
 select  1 as selected 
-        ,'' id
+        , '' id
         , a.id as LocalPoId
-        ,a.Category
-        ,b.OrderId 
-        ,b.Refno
-        ,b.ThreadColorID
-        ,dbo.getItemDesc(a.category,b.refno) as [Description]
-        ,b.Qty as poqty
-        ,b.Qty - b.InQty as onRoad
-        ,b.Qty - b.InQty as Qty
-        ,b.Ukey as localpo_detailUkey
-        ,b.UnitId
-        ,b.Price
+        , a.Category
+        , b.OrderId 
+        , b.Refno
+        , b.ThreadColorID
+        , dbo.getItemDesc(a.category,b.refno) as [Description]
+        , b.Qty as poqty
+        , b.Qty - b.InQty as onRoad
+        , b.Qty - b.InQty as Qty
+        , b.Ukey as localpo_detailUkey
+        , b.UnitId
+        , b.Price
+        , location = ''
+        , remark = ''
 from dbo.LocalPO a WITH (NOLOCK) 
 inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
 Where b.Qty - b.InQty >0
@@ -124,7 +127,6 @@ Where b.Qty - b.InQty >0
                 cmds.Add(sp_category);
             }
 
-
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtArtwork))
             {
@@ -132,10 +134,7 @@ Where b.Qty - b.InQty >0
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 detailBS.DataSource = dtArtwork;
             }
-            else { ShowErr(strSQLCmd, result); }
-
-            
-            
+            else { ShowErr(strSQLCmd, result); }               
         }
 
         protected override void OnFormLoaded()
@@ -158,14 +157,72 @@ Where b.Qty - b.InQty >0
                 }
             };
             #endregion 
+            #region Location Setting
+            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            locationSet.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    dr["Location"] = e.FormattedValue;
+                    string sqlcmd = @"
+select * 
+from MtlLocation
+where	Junk != 1
+		and StockType = 'B'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["Location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
 
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_qty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
-            Ict.Win.UI.DataGridViewTextBoxColumn col_remark = new Ict.Win.UI.DataGridViewTextBoxColumn();
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+
+                    }
+                    trueLocation.Sort();
+                    dr["Location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+
+                    dr["selected"] = (!String.IsNullOrEmpty(dr["Location"].ToString())) ? 1 : 0;
+
+                    gridImport.RefreshEdit();
+                }
+            };
+
+            locationSet.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
+                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", currentrow["location"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    currentrow["location"] = item.GetSelectedString();
+                    currentrow.EndEdit();
+                }
+            };
+            #endregion 
 
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = detailBS;
             Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("LocalPoId", header: "Local PO#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(12))
@@ -174,21 +231,21 @@ Where b.Qty - b.InQty >0
                 .Numeric("poqty", header: "PO Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))
                 .Text("unitid", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Numeric("price", header: "PO Price", decimal_places: 4, integer_places: 8, iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("onRoad", header: "On Road", decimal_places: 2, integer_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 6, settings: ns, width: Widths.AnsiChars(6)).Get(out col_qty)
-                .Text("remark", header: "Remark", width:Widths.AnsiChars(20)).Get(out col_remark)
-               ; 
+                .Numeric("onRoad", header: "On Road", decimal_places: 2, integer_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(6))                
+                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 6, settings: ns, width: Widths.AnsiChars(6))
+                .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet)
+                .Text("remark", header: "Remark", width:Widths.AnsiChars(20))
+               ;
 
-            col_qty.DefaultCellStyle.BackColor = Color.Pink;
-            col_remark.DefaultCellStyle.BackColor = Color.Pink;
+            gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            gridImport.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            gridImport.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
-
 
         private void btnImport_Click(object sender, EventArgs e)
         {
@@ -223,6 +280,8 @@ Where b.Qty - b.InQty >0
                     findrow[0]["onroad"] = tmp["onroad"];
                     findrow[0]["poqty"] = tmp["poqty"];
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["location"] = tmp["location"];
+                    findrow[0]["remark"] = tmp["remark"];
                 }
                 else
                 {

@@ -294,8 +294,8 @@ namespace Sci.Production.Warehouse
                                 string sql = string.Format(@"
 select  pd.fabrictype
         , pd.POUnit
-        , pd.StockUnit
-        , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, {3}), 2) as stockqty 
+        , StockUnit = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
+        , Round(dbo.GetUnitQty(pd.POUnit, dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2), {3}), 2) as stockqty 
         , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno

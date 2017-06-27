@@ -1599,6 +1599,28 @@
             <param name="datas">result DataTable of retrieve.</param>
             <returns>result of the SQL command is executed.</returns>
         </member>
+        <member name="M:Sci.Data.DBProxy.FetchTable(Sci.Data.FetchActionByTable,System.String,System.String,System.Int32,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            預期資料量很多的情況下 , 製訂每幾筆執行一次指定的動作
+            </summary>
+            <param name="doProcess">每抓到一批資料要執行的動作</param>
+            <param name="connname">連線名稱</param>
+            <param name="cmdtext">select 資料的sql command </param>
+            <param name="fetchCount">要每幾筆作一次動作</param>
+            <param name="parameters">select 資料用的sql parameters</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.FetchTable(Sci.Data.FetchActionByTable,System.Data.SqlClient.SqlConnection,System.String,System.Int32,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            預期資料量很多的情況下 , 製訂每幾筆執行一次指定的動作
+            </summary>
+            <param name="doProcess">每抓到一批資料要執行的動作</param>
+            <param name="conn">SqlConnection 物件</param>
+            <param name="cmdtext">select 資料的sql command </param>
+            <param name="fetchCount">要每幾筆作一次動作</param>
+            <param name="parameters">select 資料用的sql parameters</param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Data.SYS">
              <summary>
             Represents a strongly typed in-memory cache of data.
@@ -9065,6 +9087,13 @@
             Template used.
             </summary>
         </member>
+        <member name="M:Sci.Win.Tems.Input6._OnDetailGrid_EnterKeyPressed(System.Object,Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs)">
+            <summary>
+            當最後一Row的最後一個可編輯的Cell按下Enter時, 自動新增一筆新的Row
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <member name="M:Sci.Win.Tems.Input6.OnDetailGrid_EnterKeyPressed(System.Object,Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs)">
             <summary>
             當最後一Row的最後一個可編輯的Cell按下Enter時, 自動新增一筆新的Row
@@ -13764,6 +13793,11 @@
             每當Select 畫面顯示的時候, 將此屬性帶入[Display keyword]欄位 ,並將Grid內資料依照 keyword 篩選
             </summary>
         </member>
+        <member name="P:Sci.Win.Tools.BaseSelectItem.GridFilter">
+            <summary>
+            每當Select 畫面顯示的時候, 並將Grid內資料依照 Filter Command 篩選
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tools.BaseSelectItem.ResetFormSize_byGrid">
             <summary>
             如果 Form size沒有被外層直接指定的話, 就依照grid 各columns的 width 浮動計算form width
@@ -13897,10 +13931,10 @@
             Constructor of SelectItem.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem.OnFormLoaded">
             <summary>
             On form loaded method.
@@ -13926,9 +13960,9 @@
             Column decimal palce list.
             </summary>
         </member>
-        <member name="F:Sci.Win.Tools.SelectItem._datas">
+        <member name="F:Sci.Win.Tools.SelectItem.allDatas">
             <summary>
-            DataTable of source.
+            DataTable of source. 當GridFilter變動時, _data = allData.DefaultView.ToTable();
             </summary>
         </member>
         <member name="F:Sci.Win.Tools.SelectItem._firstcolumn">
@@ -14039,7 +14073,7 @@
             Constructor of SelectItem2.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String)">
             <summary>
             Constructor of SelectItem2 with parameters.
             </summary>
@@ -14082,11 +14116,6 @@
         <member name="F:Sci.Win.Tools.SelectItem2._coldecs">
             <summary>
             Column's Decimal place array.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.SelectItem2._datas">
-            <summary>
-            DataTable data source.
             </summary>
         </member>
         <member name="F:Sci.Win.Tools.SelectItem2._firstcolumn">

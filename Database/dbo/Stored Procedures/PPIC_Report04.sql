@@ -10,7 +10,7 @@ declare @POID varchar(13) = (select POID from MNOrder WITH (NOLOCK) where ID = @
 --Page1--------------------------------------------------------------------------------------------------------------
 --##MAKER ##STYLENO ##QTY ##SP
 --##S1_Tbl1
-exec PPIC_Report_SizeSpec @poid, @WithZ, 1
+exec PPIC_Report_SizeSpec @ID, @WithZ, 1,@ByType
 
 
 --Page2--------------------------------------------------------------------------------------------------------------

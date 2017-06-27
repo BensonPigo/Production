@@ -42,7 +42,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.btnDeleteError = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -114,7 +113,6 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.btnDeleteError);
             this.panel2.Controls.Add(this.txtNumsofBundle);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Controls.Add(this.btnCreate);
@@ -194,18 +192,6 @@
             this.grid1.TabIndex = 2;
             this.grid1.TabStop = false;
             // 
-            // btnDeleteError
-            // 
-            this.btnDeleteError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteError.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDeleteError.Location = new System.Drawing.Point(649, 6);
-            this.btnDeleteError.Name = "btnDeleteError";
-            this.btnDeleteError.Size = new System.Drawing.Size(169, 30);
-            this.btnDeleteError.TabIndex = 8;
-            this.btnDeleteError.Text = "Delete Error Bundle";
-            this.btnDeleteError.UseVisualStyleBackColor = true;
-            this.btnDeleteError.Click += new System.EventHandler(this.btnDeleteError_Click);
-            // 
             // P23_ImportBarcode
             // 
             this.ClientSize = new System.Drawing.Size(983, 520);
@@ -237,7 +223,6 @@
         private Win.UI.ComboBox comboTo;
         private Win.UI.Label label2;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button btnDeleteError;
 
     }
 }

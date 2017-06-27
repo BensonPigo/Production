@@ -239,10 +239,12 @@ where lapd.id = '{0}'"
                     numTotal.Text = amount.ToString();
                 }
 
-                decimal x = 0; decimal x1 = 0; decimal x2 = 0;
+                decimal x = 0; decimal x1 = 0; decimal x2 = 0; decimal totalqty = 0;
                 foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
                 {
                     x += (decimal)drr["amount"];
+                    if (!MyUtility.Check.Empty(drr["Qty"].ToString()))
+                        totalqty += (decimal)drr["Qty"];                  
                 }
                 x2 = x * (decimal)CurrentMaintain["VatRate"] / 100;
                 x1 += x + x2;
@@ -250,6 +252,7 @@ where lapd.id = '{0}'"
                 numAmount.Text = x.ToString();
                 numTotal.Text = x1.ToString();
                 numVat.Text = x2.ToString();
+                numTotalqty.Text = totalqty.ToString();
             }
             #endregion
 
@@ -294,7 +297,7 @@ where lapd.id = '{0}'"
             ns2.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
-                {
+                {                   
                     decimal b = MyUtility.Check.Empty(CurrentDetailData["balance"]) ? 0 : MyUtility.Convert.GetDecimal(CurrentDetailData["balance"]);
                     if ((decimal)e.FormattedValue > b)
                     {
@@ -302,6 +305,8 @@ where lapd.id = '{0}'"
                         MyUtility.Msg.WarningBox("can't over balance qty", "Warning");
                         return;
                     }
+                    CurrentDetailData["Qty"] = e.FormattedValue;
+                    CurrentDetailData.EndEdit();
                 }
             };
             #endregion
@@ -663,6 +668,7 @@ where a.id = @ID"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Terms", Terms));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", Invoice));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", numTotalqty.Text.ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_No", AC_No));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AC_Name", AC_Name));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bank_Name", Bank_Name));

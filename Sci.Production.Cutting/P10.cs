@@ -796,7 +796,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             return true;
 
         }
-
+        int at;
         private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string selectCommand, sqlwhere = "";
@@ -826,18 +826,40 @@ where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}' {2}"
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    selectCommand = string.Format(@"
+                    string scount = string.Format(@"
+select distinct count(Article)
+from workorder w WITH (NOLOCK) 
+inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
+                        , CurrentMaintain["Orderid"].ToString(), keyword, sqlwhere);
+                    string count = MyUtility.GetValue.Lookup(scount, null);
+                    if (count != "0")
+                    {
+                        selectCommand = string.Format(@"
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
                         , CurrentMaintain["Orderid"].ToString(), keyword, sqlwhere);
+                        at = 1;
+                    }
+                    else
+                    {
+                        selectCommand = string.Format(@"
+SELECT OA.Article , color.ColorID
+FROM Order_Article OA
+CROSS APPLY (SELECT TOP 1 ColorID FROM Order_ColorCombo OCC WHERE OCC.Id=OA.id and OCC.Article=OA.Article) color
+where OA.id = '{0}'
+ORDER BY Seq"
+                       , CurrentMaintain["Orderid"].ToString());
+                    }
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
 
                     CurrentMaintain["article"] = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
                     CurrentMaintain["Colorid"] = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
+                    at = 2;
                 }
             }
         }
@@ -871,17 +893,34 @@ where Article!='' and WorkorderUkey={0} and Article='{1}'"
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    sql = string.Format(@"select article from Order_Qty WITH (NOLOCK) where Id='{0}' and Article='{1}'", CurrentMaintain["Orderid"], newvalue);
-                    if (DBProxy.Current.Select(null, sql, out dtTEMP))
+                    if (at == 1)
                     {
-                        if (dtTEMP.Rows.Count == 0)
+                        sql = string.Format(@"select article from Order_Qty WITH (NOLOCK) where Id='{0}' and Article='{1}'", CurrentMaintain["Orderid"], newvalue);
+                        if (DBProxy.Current.Select(null, sql, out dtTEMP))
                         {
-                            txtArticle.Text = "";
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("<Article> can't find !!");
-                            return;
+                            if (dtTEMP.Rows.Count == 0)
+                            {
+                                txtArticle.Text = "";
+                                e.Cancel = true;
+                                MyUtility.Msg.WarningBox("<Article> can't find !!");
+                                return;
+                            }
                         }
                     }
+                    else
+                    {
+                        sql = string.Format(@"select OA.Article from Order_Article OA WITH (NOLOCK) where OA.id = '{0}'and OA.Article  ='{1}'", CurrentMaintain["Orderid"], newvalue);
+                        if (DBProxy.Current.Select(null, sql, out dtTEMP))
+                        {
+                            if (dtTEMP.Rows.Count == 0)
+                            {
+                                txtArticle.Text = "";
+                                e.Cancel = true;
+                                MyUtility.Msg.WarningBox("<Article> can't find !!");
+                                return;
+                            }
+                        }
+                    }                    
                 }
             }
 

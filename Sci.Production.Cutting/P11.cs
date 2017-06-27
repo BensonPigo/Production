@@ -867,6 +867,11 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
         private void btn_LefttoRight_Click(object sender, EventArgs e)
         {
             gridvalid();
+            //避免沒資料造成當機
+            if (patternTb.Rows.Count<1)
+            {
+                return;
+            }
             DataRow selectartDr = ((DataRowView)gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS") return;
@@ -896,10 +901,20 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                 foreach (DataRow dr in patterndr)
                 {
                     if (artdr.Length > 0)
-                    {
+                    {                       
                         foreach (DataRow dr2 in artdr)
                         {
-                            if (dr["art"].ToString().IndexOf(dr2["subprocessid"].ToString()) == -1) dr2.Delete();
+                            try
+                            {
+                                if (dr["art"].ToString().IndexOf(dr2["subprocessid"].ToString()) == -1)
+                                { dr2.Delete(); }
+                            }
+                            catch (Exception)
+                            {
+                                return;
+                                throw;
+                            }
+                         
                         }
                     }
                 }
@@ -917,7 +932,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
         private void btn_RighttoLeft_Click(object sender, EventArgs e)
         {
             gridvalid();
-            if (patternTb.Rows.Count == 0) return;
+            if (patternTb.Rows.Count == 0 || gridAllPart.Rows.Count==0) return;
             DataRow selectartDr = ((DataRowView)gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectallparteDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
 

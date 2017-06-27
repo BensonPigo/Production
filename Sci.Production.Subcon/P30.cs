@@ -322,7 +322,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                         return;
                     }
                 }
-                if (MyUtility.Check.Seek(string.Format("select FactoryID,POID,StyleID,SciDelivery,sewinline from orders  WITH (NOLOCK)  where id = '{0}'and MDivisionID='{1}' and orders.Category != 'M'", e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
+                if (MyUtility.Check.Seek(string.Format("select FactoryID,POID,StyleID,SciDelivery,sewinline from orders  WITH (NOLOCK)  where id = '{0}'and MDivisionID='{1}' and orders.Category != 'M' and orders.Junk=0", e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
                 {
                     CurrentDetailData["orderid"] = e.FormattedValue;
                     CurrentDetailData["factoryid"] = dr["FactoryID"];

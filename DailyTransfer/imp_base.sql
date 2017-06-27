@@ -543,7 +543,7 @@ where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) wh
 delete Production.dbo.Artworktype_Detail
 insert into Production.dbo.Artworktype_Detail
 select s.ArtworktypeID,s.MachineTypeID 
-from tradedb.trade.dbo.Artworktype_Detail s
+from Trade_To_Pms.dbo.Artworktype_Detail s
 
 --Artworktype1 MachineType 無多的欄位
 --AArtworkType1

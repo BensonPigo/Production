@@ -940,18 +940,25 @@ where w.ID = '{0}'", masterID);
                     DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
+                    string oldvalue = dr["SizeCode"].ToString();
+
                     sele = new SelectItem(sizeGroup, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
-
                     string newvalue = sele.GetSelectedString();
                     dr["SizeCode"] = newvalue;
                     dr.EndEdit();
+
                     redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                     cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-                    updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                     totalDisQty();
+                    DataRow[] distdrs = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), oldvalue));
+                    foreach (DataRow disdr in distdrs)
+                    {
+                        disdr["SizeCode"] = newvalue;
+                    }
+                   
                 }
             };
             col_sizeRatio_size.EditingControlShowing += (s, e) =>
@@ -984,8 +991,12 @@ where w.ID = '{0}'", masterID);
 
                 redetailsize(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
                 totalDisQty();
+                DataRow[] distdrs = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), oldvalue));
+                foreach (DataRow disdr in distdrs)
+                {
+                    disdr["SizeCode"] = newvalue;
+                }   
             };
             col_sizeRatio_qty.EditingControlShowing += (s, e) =>
             {
@@ -2075,7 +2086,7 @@ where w.ID = '{0}'", masterID);
                 #region 修改
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    updatesql = updatesql + string.Format("Update WorkOrder_SizeRatio set Qty = {0} where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode"], cId);
+                    updatesql = updatesql + string.Format("Update WorkOrder_SizeRatio set Qty = {0},SizeCode = '{4}' where WorkOrderUkey ={1} and SizeCode = '{2}' and id ='{3}';", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], cId, dr["SizeCode"]);
                 }
                 #endregion
                 #region 新增
@@ -2103,7 +2114,7 @@ where w.ID = '{0}'", masterID);
                 #region 修改
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0} where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID ='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode"], dr["Article"], dr["OrderID"], cId);
+                    updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0},SizeCode = '{6}' where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID ='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode", DataRowVersion.Original], dr["Article"], dr["OrderID"], cId, dr["SizeCode"]);
                 }
                 #endregion
                 #region 新增
@@ -2155,7 +2166,7 @@ where w.ID = '{0}'", masterID);
             base.ClickSaveAfter();
 
             foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
-           
+            OnDetailEntered();
         }
         #endregion
 
