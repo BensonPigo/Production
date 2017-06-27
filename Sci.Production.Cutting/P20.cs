@@ -474,9 +474,9 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
             else
             {
-                if (Convert.ToDecimal(MyUtility.Check.Empty(CurrentMaintain["ManHours"])) > 0)
+                if (MyUtility.Convert.GetDecimal(CurrentMaintain["ManHours"]) > 0)
                 {
-                    pph = Math.Round(ncpu / Convert.ToDecimal(CurrentMaintain["ManPower"]) / Convert.ToDecimal(MyUtility.Check.Empty(CurrentMaintain["ManHours"])), 2);
+                    pph = Math.Round(ncpu / MyUtility.Convert.GetDecimal(CurrentMaintain["ManPower"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["ManHours"]), 2);
                 }
                 else {
                     pph = 0;
