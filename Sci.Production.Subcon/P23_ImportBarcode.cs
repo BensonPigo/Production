@@ -48,11 +48,11 @@ order by Abb";
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("Orderid", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                .Text("SubprocessId", header: "Atrwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SubprocessId", header: "Atrwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Patterncode", header: "Cutpart ID", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(21), iseditingreadonly: true);
+                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(34), iseditingreadonly: true);
         }
         //從C:\temp\BUNDLEOT.TXT讀取資料
         DataTable leftDT;
@@ -156,9 +156,9 @@ outer apply(
 WHERE (bda.SubprocessId  = '{0}' or bda.SubprocessId is null) 
 and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)
 
-select t.BundleNo,t.BundleGroup,t.Qty,t.SubprocessId,t.Patterncode,t.PatternDesc,ErrorMsg = max(t.ErrorMsg)
+select t.BundleNo,t.BundleGroup,t.Qty,t.Orderid,t.SubprocessId,t.Patterncode,t.PatternDesc,ErrorMsg = max(t.ErrorMsg)
 from #tmp2 t
-group by t.BundleNo,t.BundleGroup,t.Qty,t.SubprocessId,t.Patterncode,t.PatternDesc
+group by t.BundleNo,t.BundleGroup,t.Qty,t.Orderid,t.SubprocessId,t.Patterncode,t.PatternDesc
 
 drop table #tmp,#tmp2"
                 , comboSubprocess.Text);
