@@ -176,7 +176,7 @@ where a.ID='{0}'",
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
-                    SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
+                    SelectItem item = new SelectItem(item_cmd, "15,55", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult== DialogResult.Cancel)
                     {
@@ -206,7 +206,7 @@ where a.ID='{0}'",
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
-                    SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
+                    SelectItem item = new SelectItem(item_cmd, "15,55", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -367,7 +367,7 @@ where a.ID='{0}'",
             .Text("AreaDesc", header: "Area Desc", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
             .Numeric("qty", header: "No.of Defects", width: Widths.AnsiChars(5),settings:defectQty)
-            .Text("Action", header: "Action", width: Widths.AnsiChars(10));
+            .Text("Action", header: "Action", width: Widths.AnsiChars(20));
             
         }
         protected override void ClickConfirm()
