@@ -53,6 +53,10 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -63,9 +67,9 @@
             // 
             this.panel5.Controls.Add(this.gridReceiveDate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 123);
+            this.panel5.Location = new System.Drawing.Point(10, 159);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(692, 345);
+            this.panel5.Size = new System.Drawing.Size(692, 343);
             this.panel5.TabIndex = 21;
             // 
             // gridReceiveDate
@@ -88,7 +92,7 @@
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiveDate.RowTemplate.Height = 24;
             this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridReceiveDate.Size = new System.Drawing.Size(692, 345);
+            this.gridReceiveDate.Size = new System.Drawing.Size(692, 343);
             this.gridReceiveDate.TabIndex = 10;
             this.gridReceiveDate.TabStop = false;
             // 
@@ -157,15 +161,15 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(702, 123);
+            this.panel2.Location = new System.Drawing.Point(702, 159);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 345);
+            this.panel2.Size = new System.Drawing.Size(10, 343);
             this.panel2.TabIndex = 18;
             // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSave.Location = new System.Drawing.Point(539, 88);
+            this.btnSave.Location = new System.Drawing.Point(539, 123);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -177,7 +181,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(625, 88);
+            this.btnClose.Location = new System.Drawing.Point(625, 123);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -188,15 +192,15 @@
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 123);
+            this.panel1.Location = new System.Drawing.Point(0, 159);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 345);
+            this.panel1.Size = new System.Drawing.Size(10, 343);
             this.panel1.TabIndex = 17;
             // 
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 51);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 83);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
             this.btnImportFromBarcode.TabIndex = 7;
@@ -207,7 +211,7 @@
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 468);
+            this.panel4.Location = new System.Drawing.Point(0, 502);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(712, 10);
             this.panel4.TabIndex = 20;
@@ -218,6 +222,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateTimePicker2);
+            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.dateTimePicker1);
+            this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.btnSave);
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.txtPONo);
@@ -232,7 +240,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(712, 123);
+            this.panel3.Size = new System.Drawing.Size(712, 159);
             this.panel3.TabIndex = 19;
             // 
             // shapeContainer2
@@ -246,25 +254,25 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(712, 123);
+            this.shapeContainer2.Size = new System.Drawing.Size(712, 159);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
             // lineShape5
             // 
             this.lineShape5.Name = "lineShape5";
-            this.lineShape5.X1 = 7;
-            this.lineShape5.X2 = 706;
-            this.lineShape5.Y1 = 84;
-            this.lineShape5.Y2 = 84;
+            this.lineShape5.X1 = 8;
+            this.lineShape5.X2 = 707;
+            this.lineShape5.Y1 = 119;
+            this.lineShape5.Y2 = 119;
             // 
             // lineShape4
             // 
             this.lineShape4.Name = "lineShape4";
             this.lineShape4.X1 = 7;
             this.lineShape4.X2 = 706;
-            this.lineShape4.Y1 = 46;
-            this.lineShape4.Y2 = 46;
+            this.lineShape4.Y1 = 79;
+            this.lineShape4.Y2 = 79;
             // 
             // lineShape3
             // 
@@ -272,15 +280,15 @@
             this.lineShape3.X1 = 706;
             this.lineShape3.X2 = 706;
             this.lineShape3.Y1 = 7;
-            this.lineShape3.Y2 = 84;
+            this.lineShape3.Y2 = 118;
             // 
             // lineShape2
             // 
             this.lineShape2.Name = "lineShape2";
             this.lineShape2.X1 = 6;
-            this.lineShape2.X2 = 6;
+            this.lineShape2.X2 = 7;
             this.lineShape2.Y1 = 7;
-            this.lineShape2.Y2 = 84;
+            this.lineShape2.Y2 = 117;
             // 
             // lineShape1
             // 
@@ -290,9 +298,44 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // dateTimePicker2
+            // 
+            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Location = new System.Drawing.Point(279, 47);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker2.TabIndex = 33;
+            this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(107, 46);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker1.TabIndex = 32;
+            this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(255, 49);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "～";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 46);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 30;
+            this.label1.Text = "Receive Date";
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(712, 478);
+            this.ClientSize = new System.Drawing.Size(712, 512);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -341,5 +384,9 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private Win.UI.Label label1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.Label label2;
     }
 }

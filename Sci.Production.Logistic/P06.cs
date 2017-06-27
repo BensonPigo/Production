@@ -20,26 +20,28 @@ namespace Sci.Production.Logistic
         }
         DataTable gridData;
         string selectDataTable_DefaultView_Sort = "";
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             //Grid設定
-            this.gridReturnDate.IsEditingReadOnly = true;
+            this.gridReturnDate.IsEditingReadOnly = false;
             this.gridReturnDate.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridReturnDate)
-                .Date("ReturnDate", header: "Return Date")
-                .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15))
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15))
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10))
-                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15))
-                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15))
-                .Text("Dest", header: "Destination", width: Widths.AnsiChars(20))
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
-                .Date("BuyerDelivery", header: "Buyer Delivery")
-                .DateTime("AddDate", header: "Create Date");
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .Date("ReturnDate", header: "Return Date", iseditable: false)
+                .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
+                .DateTime("AddDate", header: "Create Date", iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int RowIndex = 0;
@@ -85,11 +87,11 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select *,
-rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
+select 1 as selected,*,
+rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
 rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,pd.Id,
+select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.AddDate
 
@@ -135,8 +137,22 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         //To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
+            DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
+            if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+            //如果沒勾選資料,會跳訊息
+            DataRow[] SelectedData = ExcelTable.Select("Selected = 1");
+            if (SelectedData.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
+                return;
+            }
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(SelectedData.CopyToDataTable(), "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 

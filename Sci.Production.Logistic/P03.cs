@@ -21,6 +21,10 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             InitializeComponent();
+            dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
+            dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
+            dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
         DataTable selectDataTable;
         string selectDataTable_DefaultView_Sort = "";
@@ -87,31 +91,31 @@ namespace Sci.Production.Logistic
         //Find
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
-                MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > or <Receive Date> can not be empty!");
                 return;
             }
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-select ID, selected,ReceiveDate,PackingListID, OrderID, 
-convert(int,CTNStartNo) as 'CTNStartNo'
+select ID, selected,ReceiveDate,PackingListID, OrderID,CTNStartNo
 	, CustPONo, StyleID, SeasonID, BrandID, Customize1, Alias, BuyerDelivery,ClogLocationId, Remark 
-    ,rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+    ,rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
     ,rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))	
 from
 (
-	Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, CTNStartNo
+	Select distinct '' as ID, 0 as selected,b.ReceiveDate, a.Id as PackingListID, a.OrderID, b.CTNStartNo
 	, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,b.ClogLocationId,'' as Remark 
 	
-from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
+from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) , TransferToClog t WITH (NOLOCK)
 	where b.OrderId = c.Id 
 	and a.Id = b.Id 
 	and b.CTNStartNo != '' 
 	and b.ReceiveDate is not null
 	and c.Dest = d.ID 
 and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
+and a.id = t.PackingListID
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
@@ -124,6 +128,14 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
+            }
+            if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
+            {
+                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()));
+            }
+            if (!MyUtility.Check.Empty(this.dateTimePicker2.Text))
+            {
+                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
             sqlCmd.Append(@"
 )a
@@ -142,6 +154,7 @@ order by rn ");
                     ControlButton4Text("Cancel");
                 }
             }
+           //這邊不知道誰 少寫一段 當SQL錯誤或是斷線時 要做的處理
             listControlBindingSource1.DataSource = selectDataTable;
         }
 
