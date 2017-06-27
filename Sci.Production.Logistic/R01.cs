@@ -207,7 +207,7 @@ where o.Category = 'B'");
                 objArray[0, 10] = dr["ClogCTN"];
                 objArray[0, 11] = dr["RetCtnBySP"];
                 objArray[0, 12] = string.Format("= J{0} - K{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 13] = string.Format("=IF(Q{0}=0,0,Round(1-(M{0}/Q{0}),2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 13] = string.Format("=IF(Q{0}=0,0,Round(1-(S{0}/Q{0}),2)*100)", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 14] = string.Format("=IF(J{0}=0, 0,ROUND(K{0}/J{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 15] = dr["PulloutCTNQty"];
                 objArray[0, 16] = dr["TtlGMTQty"];
