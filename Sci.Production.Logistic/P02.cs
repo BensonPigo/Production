@@ -104,10 +104,10 @@ namespace Sci.Production.Logistic
 
             sqlCmd.Append(string.Format(@"
 select *,
-rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
+rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
 rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, 
+Select Distinct '' as ID, 0 as selected,b.TransferDate, a.Id as PackingListID, a.OrderID, 
 b.CTNStartNo, 
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
