@@ -26,7 +26,7 @@ namespace Sci.Production.Basic
             string selectCommand = string.Format(@"
 select ID,Description 
 from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
-where ATD.ArtworkTypeID = '{0}' --or ArtworkTypeDetail = '{0}'"
+where ATD.ArtworkTypeID = '{0}'"
                 , this.motherData["ID"].ToString());
             
             DataTable selectDataTable;
