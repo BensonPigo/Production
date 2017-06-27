@@ -185,7 +185,62 @@ where ID = '{0}'", CurrentMaintain["ID"].ToString()));
                 }
             };
             #endregion 
+            #region Location Setting
+            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            locationSet.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    CurrentDetailData["Location"] = e.FormattedValue;
+                    string sqlcmd = @"
+select * 
+from MtlLocation
+where	Junk != 1
+		and StockType = 'B'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["Location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
 
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["Location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+
+                    detailgrid.RefreshEdit();
+                }
+            };
+
+            locationSet.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", CurrentDetailData["location"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    CurrentDetailData["location"] = item.GetSelectedString();
+                    CurrentDetailData.EndEdit();
+                }
+            };
+            #endregion 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("localpoid", header: "Local PO", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -197,15 +252,14 @@ where ID = '{0}'", CurrentMaintain["ID"].ToString()));
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, settings: ns)
-            // 2017/03/20 暫時 移除 Location
-            //.Text("location", header: "Location", width: Widths.AnsiChars(20))
+            .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;     //
             #endregion 欄位設定
 
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
-            //detailgrid.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
@@ -500,12 +554,14 @@ join (select LocalPoId,LocalPo_detailukey
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.*
-,b.qty - b.inqty [onRoad]
-,b.Qty poqty,b.Price
-,dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
-from dbo.LocalReceiving_Detail a WITH (NOLOCK) left join dbo.LocalPO_Detail b WITH (NOLOCK) 
-on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
+            this.DetailSelectCommand = string.Format(@"
+select  a.*
+        , b.qty - b.inqty [onRoad]
+        , b.Qty poqty,b.Price
+        , dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
+from dbo.LocalReceiving_Detail a WITH (NOLOCK) 
+left join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.LocalPoId 
+                                                and b.Ukey = a.LocalPo_detailukey
 Where a.id = '{0}' ", masterID);                        
             return base.OnDetailSelectCommandPrepare(e);
         }
