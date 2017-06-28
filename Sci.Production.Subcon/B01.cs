@@ -176,22 +176,24 @@ namespace Sci.Production.Subcon
             {
                 return;
             }
-            if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
+            if (comboCartonDimension == null)
             {
-                double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
-                    double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
-                    double.Parse(CurrentMaintain["CtnHeight"].ToString()) /  1728;
-                CurrentMaintain["cbm"] = i;
-                //this.numericBox3.Text = Math.Round(i, 4).ToString();
+                if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
+                {
+                    double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
+                        double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
+                        double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1728;
+                    CurrentMaintain["cbm"] = i;
+                    //this.numericBox3.Text = Math.Round(i, 4).ToString();
+                }
+                else
+                {
+                    double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
+                        double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
+                        double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
+                    this.numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                }
             }
-            else
-            {
-                double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
-                    double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
-                    double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                this.numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
-            }
-            
         }
 
         //改變artworktype時，控制可輸入的欄位
