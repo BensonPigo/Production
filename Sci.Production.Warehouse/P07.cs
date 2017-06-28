@@ -308,12 +308,13 @@ where   #tmp.poid = dbo.po_supp.id
             DataRow dr;
             ts4.CellValidating += (s, e) =>
             {
-                if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
+                if (CurrentDetailData == null) return;
+                if (MyUtility.Check.Empty(CurrentMaintain["invno"]) && !txtInvoiceNo.Focused)
                 {
-                    e.Cancel = true;
+                    //e.Cancel = true;
                     CurrentDetailData["poid"] = "";
-                    txtInvoiceNo.Focus();
                     MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
+                    txtInvoiceNo.Focus();
                     return;
                 }
                 if (this.EditMode && e.FormattedValue.ToString() != "")
@@ -348,6 +349,7 @@ where   #tmp.poid = dbo.po_supp.id
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
+                if (CurrentDetailData == null) return;
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable poitems;
@@ -414,6 +416,7 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
             ts.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
+                if (CurrentDetailData == null) return;
                 if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
@@ -475,6 +478,7 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
+                if (CurrentDetailData == null) return;
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(CurrentDetailData["stocktype"].ToString(), CurrentDetailData["location"].ToString());
@@ -487,6 +491,7 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
 
             ts2.CellValidating += (s, e) =>
             {
+                if (CurrentDetailData == null) return;
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
@@ -533,6 +538,7 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
+                if (CurrentDetailData == null) return;
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
@@ -556,6 +562,7 @@ where   v.FROM_U ='{0}'
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
+                if (CurrentDetailData == null) return;
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
