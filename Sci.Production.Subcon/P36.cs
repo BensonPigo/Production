@@ -450,7 +450,7 @@ where id = '{4}'"
         private void btnDebitSchedule_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["handle"].ToString()), dr["ID"].ToString(), null, null);
+            var frm = new Sci.Production.Subcon.P37_DebitSchedule(Production.PublicPrg.Prgs.GetAuthority(dr["cfmname"].ToString()), dr["ID"].ToString(), null, null);
             frm.ShowDialog(this);
             this.RenewData();
 
