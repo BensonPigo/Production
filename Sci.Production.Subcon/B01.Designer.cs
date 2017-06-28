@@ -162,7 +162,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(15, 41);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(75, 23);
@@ -171,7 +170,6 @@
             // 
             // labelCone
             // 
-            this.labelCone.Lines = 0;
             this.labelCone.Location = new System.Drawing.Point(12, 25);
             this.labelCone.Name = "labelCone";
             this.labelCone.Size = new System.Drawing.Size(75, 23);
@@ -180,7 +178,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(15, 12);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -189,7 +186,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(15, 72);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(75, 23);
@@ -198,7 +194,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(15, 101);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -207,7 +202,6 @@
             // 
             // labelQuotDate
             // 
-            this.labelQuotDate.Lines = 0;
             this.labelQuotDate.Location = new System.Drawing.Point(601, 130);
             this.labelQuotDate.Name = "labelQuotDate";
             this.labelQuotDate.Size = new System.Drawing.Size(75, 23);
@@ -216,7 +210,6 @@
             // 
             // labelPrice
             // 
-            this.labelPrice.Lines = 0;
             this.labelPrice.Location = new System.Drawing.Point(334, 130);
             this.labelPrice.Name = "labelPrice";
             this.labelPrice.Size = new System.Drawing.Size(75, 23);
@@ -225,7 +218,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(15, 130);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
@@ -234,7 +226,6 @@
             // 
             // labelL
             // 
-            this.labelL.Lines = 0;
             this.labelL.Location = new System.Drawing.Point(155, 23);
             this.labelL.Name = "labelL";
             this.labelL.Size = new System.Drawing.Size(18, 23);
@@ -243,7 +234,6 @@
             // 
             // labelCartonDimension
             // 
-            this.labelCartonDimension.Lines = 0;
             this.labelCartonDimension.Location = new System.Drawing.Point(12, 23);
             this.labelCartonDimension.Name = "labelCartonDimension";
             this.labelCartonDimension.Size = new System.Drawing.Size(123, 23);
@@ -252,7 +242,6 @@
             // 
             // labelThreadTex
             // 
-            this.labelThreadTex.Lines = 0;
             this.labelThreadTex.Location = new System.Drawing.Point(586, 25);
             this.labelThreadTex.Name = "labelThreadTex";
             this.labelThreadTex.Size = new System.Drawing.Size(75, 23);
@@ -261,7 +250,6 @@
             // 
             // labelThreadType
             // 
-            this.labelThreadType.Lines = 0;
             this.labelThreadType.Location = new System.Drawing.Point(319, 25);
             this.labelThreadType.Name = "labelThreadType";
             this.labelThreadType.Size = new System.Drawing.Size(86, 23);
@@ -270,7 +258,6 @@
             // 
             // labelMeter
             // 
-            this.labelMeter.Lines = 0;
             this.labelMeter.Location = new System.Drawing.Point(192, 25);
             this.labelMeter.Name = "labelMeter";
             this.labelMeter.Size = new System.Drawing.Size(47, 23);
@@ -279,7 +266,6 @@
             // 
             // labelCBM
             // 
-            this.labelCBM.Lines = 0;
             this.labelCBM.Location = new System.Drawing.Point(12, 52);
             this.labelCBM.Name = "labelCBM";
             this.labelCBM.Size = new System.Drawing.Size(75, 23);
@@ -288,7 +274,6 @@
             // 
             // labelWeightGWg
             // 
-            this.labelWeightGWg.Lines = 0;
             this.labelWeightGWg.Location = new System.Drawing.Point(228, 55);
             this.labelWeightGWg.Name = "labelWeightGWg";
             this.labelWeightGWg.Size = new System.Drawing.Size(13, 23);
@@ -297,7 +282,6 @@
             // 
             // labelWeightGW
             // 
-            this.labelWeightGW.Lines = 0;
             this.labelWeightGW.Location = new System.Drawing.Point(12, 55);
             this.labelWeightGW.Name = "labelWeightGW";
             this.labelWeightGW.Size = new System.Drawing.Size(110, 23);
@@ -306,7 +290,6 @@
             // 
             // labelWeightofAxleg
             // 
-            this.labelWeightofAxleg.Lines = 0;
             this.labelWeightofAxleg.Location = new System.Drawing.Point(228, 86);
             this.labelWeightofAxleg.Name = "labelWeightofAxleg";
             this.labelWeightofAxleg.Size = new System.Drawing.Size(13, 23);
@@ -315,7 +298,6 @@
             // 
             // labelWeightofAxle
             // 
-            this.labelWeightofAxle.Lines = 0;
             this.labelWeightofAxle.Location = new System.Drawing.Point(12, 86);
             this.labelWeightofAxle.Name = "labelWeightofAxle";
             this.labelWeightofAxle.Size = new System.Drawing.Size(110, 23);
@@ -324,7 +306,6 @@
             // 
             // labelAccountNo
             // 
-            this.labelAccountNo.Lines = 0;
             this.labelAccountNo.Location = new System.Drawing.Point(15, 390);
             this.labelAccountNo.Name = "labelAccountNo";
             this.labelAccountNo.Size = new System.Drawing.Size(86, 23);
@@ -333,7 +314,6 @@
             // 
             // labelW
             // 
-            this.labelW.Lines = 0;
             this.labelW.Location = new System.Drawing.Point(286, 23);
             this.labelW.Name = "labelW";
             this.labelW.Size = new System.Drawing.Size(18, 23);
@@ -342,7 +322,6 @@
             // 
             // labelH
             // 
-            this.labelH.Lines = 0;
             this.labelH.Location = new System.Drawing.Point(417, 23);
             this.labelH.Name = "labelH";
             this.labelH.Size = new System.Drawing.Size(18, 23);
@@ -442,7 +421,6 @@
             // label25
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Lines = 0;
             this.label25.Location = new System.Drawing.Point(233, 52);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(326, 23);
@@ -453,7 +431,6 @@
             // label26
             // 
             this.label26.BackColor = System.Drawing.Color.Transparent;
-            this.label26.Lines = 0;
             this.label26.Location = new System.Drawing.Point(258, 55);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(302, 23);
@@ -518,7 +495,6 @@
             // 
             // labelKG
             // 
-            this.labelKG.Lines = 0;
             this.labelKG.Location = new System.Drawing.Point(767, 51);
             this.labelKG.Name = "labelKG";
             this.labelKG.Size = new System.Drawing.Size(27, 23);
@@ -527,7 +503,6 @@
             // 
             // labelCTNWeight
             // 
-            this.labelCTNWeight.Lines = 0;
             this.labelCTNWeight.Location = new System.Drawing.Point(551, 51);
             this.labelCTNWeight.Name = "labelCTNWeight";
             this.labelCTNWeight.Size = new System.Drawing.Size(110, 23);
