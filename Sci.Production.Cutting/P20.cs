@@ -401,7 +401,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
             from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
+            Where ma.cdate<'{1}' and ma.ID = a.id --and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
@@ -425,7 +425,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
             from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<='{1}' and ma.ID = a.id and ma.Status!='New' 
+            Where ma.cdate<='{1}' and ma.ID = a.id --and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
@@ -444,7 +444,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             else t1gmt = Convert.ToInt32(t1.Compute("sum(cutqty)", ""));
             if (t2.Rows.Count == 0) t2gmt = 0;
             else t2gmt = Convert.ToInt32(t2.Compute("sum(cutqty)", ""));
-            int gmt = t1gmt - t2gmt; //相減為當天的GMT數
+            int gmt = t2gmt - t1gmt; //相減為當天的GMT數
             #endregion
             string update = "";
             DataRow wipRow;
@@ -551,7 +551,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
             from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
+            Where ma.cdate<'{1}' and ma.ID = a.id --and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
