@@ -540,85 +540,84 @@ select
 from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 -------------------------------Artworktype_Detail
-delete Production.dbo.Artworktype_Detail
-insert into Production.dbo.Artworktype_Detail
-select s.ArtworktypeID,s.MachineTypeID 
-from Trade_To_Pms.dbo.Artworktype_Detail s
+merge Production.dbo.Artworktype_Detail as t
+Using Trade_TO_Pms.dbo.Artworktype_Detail as s
+on t.ArtworktypeID = s.ArtworktypeID and t.MachineTypeID = s.MachineTypeID
+when not matched by target then
+	insert(ArtworktypeID,MachineTypeID)
+	values(ArtworktypeID,MachineTypeID)
+when not matched by source then
+	delete;
 
 --Artworktype1 MachineType 無多的欄位
 --AArtworkType1
-----------------------刪除主TABLE多的資料
-Delete Production.dbo.MachineType
-from Production.dbo.MachineType as a left join Trade_To_Pms.dbo.MachineType as b
-on a.id = b.id
-where b.id is null
----------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
-UPDATE a
-SET  
-	  -- a.ID		      =b.ID
-      a.Description	=b.Description
-      ,a.DescCH		      =b.DescCH
-      ,a.ISO		      =b.ISO
-      ,a.ArtworkTypeID		      =b.ArtworkTypeID
-      ,a.ArtworkTypeDetail		      =b.ArtworkTypeDetail
-      ,a.Mold		      =b.Mold
-      ,a.RPM		      =b.RPM
-      ,a.Stitches		      =b.Stitches
-      ,a.Picture1		      =b.Picture1
-      ,a.Picture2		      =b.Picture2
-      ,a.MachineAllow		      =b.MachineAllow
-      ,a.ManAllow		      =b.ManAllow
-      ,a.MachineGroupID		      =b.MachineGroupID
-      ,a.Junk		      =b.Junk
-      ,a.AddName		      =b.AddName
-      ,a.AddDate		      =b.AddDate
-      ,a.EditName		      =b.EditName
-      ,a.EditDate		      =b.EditDate
-from Production.dbo.MachineType as a inner join Trade_To_Pms.dbo.MachineType as b ON a.id=b.id
--------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.MachineType(
+----------------------MachineType--
+--Last Ver:Mantis_5495刪除原本delete/updata/insert改使用merge作法
+merge Production.dbo.MachineType as t
+Using Trade_TO_Pms.dbo.MachineType as s
+on t.id = s.id
+when matched then
+		update set 
+		t.Description		=s.Description	
+		,t.DescCH		    =s.DescCH		    
+		,t.ISO				=s.ISO		    
+		,t.ArtworkTypeID	=s.ArtworkTypeID	
+		,t.Mold				=s.Mold		    
+		,t.RPM				=s.RPM		    
+		,t.Stitches			=s.Stitches		
+		,t.Picture1			=s.Picture1		
+		,t.Picture2			=s.Picture2		
+		,t.MachineAllow		=s.MachineAllow	
+		,t.ManAllow			=s.ManAllow		
+		,t.MachineGroupID	=s.MachineGroupID	
+		,t.Junk				=s.Junk		    
+		,t.AddName			=s.AddName		
+		,t.AddDate			=s.AddDate		
+		,t.EditName			=s.EditName		
+		,t.EditDate			=s.EditDate		
+when not matched by target then
+	insert(
 		ID
-      ,Description
-      ,DescCH
-      ,ISO
-      ,ArtworkTypeID
-      ,ArtworkTypeDetail
-      ,Mold
-      ,RPM
-      ,Stitches
-      ,Picture1
-      ,Picture2
-      ,MachineAllow
-      ,ManAllow
-      ,MachineGroupID
-      ,Junk
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-)
-select 
+		,Description
+		,DescCH
+		,ISO
+		,ArtworkTypeID
+		,Mold
+		,RPM
+		,Stitches
+		,Picture1
+		,Picture2
+		,MachineAllow
+		,ManAllow
+		,MachineGroupID
+		,Junk
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+	)
+	values(
 		ID
-      ,Description
-      ,DescCH
-      ,ISO
-      ,ArtworkTypeID
-      ,ArtworkTypeDetail
-      ,Mold
-      ,RPM
-      ,Stitches
-      ,Picture1
-      ,Picture2
-      ,MachineAllow
-      ,ManAllow
-      ,MachineGroupID
-      ,Junk
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-from Trade_To_Pms.dbo.MachineType as b WITH (NOLOCK)
-where not exists(select id from Production.dbo.MachineType as a WITH (NOLOCK) where a.id = b.id)
+		,Description
+		,DescCH
+		,ISO
+		,ArtworkTypeID
+		,Mold
+		,RPM
+		,Stitches
+		,Picture1
+		,Picture2
+		,MachineAllow
+		,ManAllow
+		,MachineGroupID
+		,Junk
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+	)
+when not matched by source then
+	delete;
 
 
 --CustCD CustCD
