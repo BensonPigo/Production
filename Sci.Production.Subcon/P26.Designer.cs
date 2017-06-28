@@ -73,6 +73,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(789, 6);
+            this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
@@ -176,7 +177,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
-            this.IsSupportLocate = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P26";

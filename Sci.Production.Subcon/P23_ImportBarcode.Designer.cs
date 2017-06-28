@@ -69,7 +69,7 @@
             this.comboTo.IsSupportUnselect = true;
             this.comboTo.Location = new System.Drawing.Point(306, 9);
             this.comboTo.Name = "comboTo";
-            this.comboTo.Size = new System.Drawing.Size(121, 24);
+            this.comboTo.Size = new System.Drawing.Size(179, 24);
             this.comboTo.TabIndex = 8;
             // 
             // label2
@@ -199,6 +199,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "P23_ImportBarcode";
+            this.Text = "ImportBarcode (Farm Out)";
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();

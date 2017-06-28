@@ -28,6 +28,7 @@ namespace Sci.Production.Subcon
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            lbl_queryfor.Text = "Sub Process";
             queryfors.SelectedIndex = 0;
             queryfors.SelectedIndexChanged += (s, e) =>
             {
@@ -111,8 +112,8 @@ where BundleNo='{0}'"
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: false)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
         }
@@ -122,7 +123,8 @@ where BundleNo='{0}'"
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
 select 
-	BTD.BundleNo
+    BTD.ID
+	,BTD.BundleNo
 	,BTD.orderid
 	,S.SubprocessId
 	,BD.Patterncode
@@ -131,7 +133,7 @@ from BundleTrack_detail BTD
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
 OUTER APPLY(
 	SELECT SubprocessId = STUFF((
-		SELECT CONCAT(',',SubprocessId )
+		SELECT CONCAT('+',SubprocessId )
 		FROM Bundle_Detail_Art BDA
 		WHERE BDA.Bundleno = BTD.BundleNo
 		FOR XML PATH('')
@@ -148,31 +150,7 @@ WHERE BTD.ID = '{0}'", masterID);
             this.ReloadDatas();
             return true;
         }
-
-        protected override bool ClickSaveBefore()
-        {            
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
-                if (MyUtility.Check.Empty(getID))
-                {
-                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
-                    return false;
-                }
-                CurrentMaintain["ID"] = getID;
-            }
-            //檢核BundleTrack_detail.BundleNo是否已存在
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo"))
-                {
-                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-                    return false;
-                }
-            }
-            return base.ClickSaveBefore();
-        }
-
+        
         protected override bool ClickPrint()
         {
             string sqlcmd = string.Format(@"
@@ -184,7 +162,7 @@ select
 	,[Body/cut#] = concat(B.FabricPanelCode , '/' , B.Cutno)
 	,bd.SizeCode
 	,bd.Qty
-	,Color = concat(b.Article,'',b.Colorid)
+	,Color = concat(b.Article,' ',b.Colorid)
 	,S.SubprocessId
 from BundleTrack_detail BTD 
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
@@ -226,5 +204,21 @@ order by BTD.orderid", CurrentMaintain["ID"].ToString());
             objSheets.Cells[2, 5] = CurrentMaintain["StartSite"].ToString() + "-" + fabb;
             return true;
         }
+
+        protected override bool ClickSaveBefore()
+        {
+            DataTable Dg = (DataTable)detailgridbs.DataSource;
+            for (int i = Dg.Rows.Count; i > 0; i--)
+            {
+                if (Dg.Rows[i - 1].RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(Dg.Rows[i - 1]["BundleNo"]))
+                    {
+                        Dg.Rows[i - 1].Delete();
+                    }
+                }
+            }
+            return base.ClickSaveBefore();
+        }        
     }
 }

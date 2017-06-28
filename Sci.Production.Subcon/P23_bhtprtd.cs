@@ -55,7 +55,7 @@ namespace Sci.Production.Subcon
         public P23_bhtprtd()
         {
             //設定dll黨名稱
-            dll = new DllInvoke(".\\BHT\\Bhtprtd.dll");
+            dll = new DllInvoke(".\\Bhtprtd.dll");
             //設定dll檔內的function名稱 ExecProtocol
             func = (bhtCallVB_func)dll.Invoke("ExecProtocol", typeof(bhtCallVB_func)); ;
         }

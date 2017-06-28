@@ -22,6 +22,7 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            lbl_queryfor.Text = "Sub Process";
             DataTable queryDT;
             string querySql = @"select '' union select Id from SubProcess where IsRFIDProcess=1";
             DBProxy.Current.Select(null, querySql, out queryDT);
@@ -53,7 +54,7 @@ namespace Sci.Production.Subcon
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ReceiveName", header: "Recv. Name", width: Widths.AnsiChars(12))
-                .Date("ReceiveDate", header: "Recv. Date", width: Widths.AnsiChars(10));
+                .DateTime("ReceiveDate", header: "Recv. Date", width: Widths.AnsiChars(20));
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -72,7 +73,7 @@ from BundleTrack_detail BTD
 LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
 OUTER APPLY(
 	SELECT SubprocessId = STUFF((
-		SELECT CONCAT(',',SubprocessId )
+		SELECT CONCAT('+',SubprocessId )
 		FROM Bundle_Detail_Art BDA
 		WHERE BDA.Bundleno = BTD.BundleNo
 		FOR XML PATH('')
@@ -89,30 +90,5 @@ WHERE BTD.ID = '{0}'", masterID);
             this.ReloadDatas();
             return true;
         }
-
-        //protected override bool ClickSaveBefore()
-        //{            
-        //    //設定ID編碼
-        //    if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-        //    {
-        //        string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 5, "ID", null);
-        //        if (MyUtility.Check.Empty(getID))
-        //        {
-        //            MyUtility.Msg.WarningBox("GetID fail, please try again!");
-        //            return false;
-        //        }
-        //        CurrentMaintain["ID"] = getID;
-        //    }
-        //    //檢核BundleTrack_detail.BundleNo是否已存在
-        //    foreach (DataRow dr in DetailDatas)
-        //    {
-        //        if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo") == false)
-        //        {
-        //            MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-        //            return false;
-        //        }
-        //    }
-        //    return base.ClickSaveBefore();
-        //}
     }
 }

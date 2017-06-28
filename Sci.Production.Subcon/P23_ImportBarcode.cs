@@ -34,7 +34,7 @@ order by Abb";
             DBProxy.Current.Select(null, querySql2, out ToDT);
             foreach (DataRow dr in ToDT.Rows)
             {
-                EndSite.Add(dr["ID"].ToString(), dr["Abb"].ToString());
+                EndSite.Add(dr["ID"].ToString(), dr["Abb"].ToString() +"   "+ dr["ID"].ToString());
             }
             comboTo.DataSource = new BindingSource(EndSite, null);
             comboTo.ValueMember = "Key";
@@ -48,11 +48,11 @@ order by Abb";
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("BundleGroup", header: "Group#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("Orderid", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                .Text("SubprocessId", header: "Atrwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SubprocessId", header: "Atrwork", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Patterncode", header: "Cutpart ID", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(21), iseditingreadonly: true);
+                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(34), iseditingreadonly: true);
         }
         //從C:\temp\BUNDLEOT.TXT讀取資料
         DataTable leftDT;
@@ -136,9 +136,10 @@ select distinct
 	,bd.PatternDesc
 	,ErrorMsg = CASE 
 		WHEN bda.SubprocessId is null THEN 'Can''t find in bundle card data'
-		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
+		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null and BTD.id like 'TB%' THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
 		ELSE ''
 		END
+into #tmp2
 from #tmp t
 left join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = t.BundleNo
 left join BundleTrack_detail BTD WITH (NOLOCK) on BTD.BundleNo = t.BundleNo
@@ -153,8 +154,13 @@ outer apply(
 	),1,1,'')
 )a
 WHERE (bda.SubprocessId  = '{0}' or bda.SubprocessId is null) 
-AND (BTD.Id LIKE 'TB%' OR BTD.Id IS NULL)
-and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
+and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)
+
+select t.BundleNo,t.BundleGroup,t.Qty,t.Orderid,t.SubprocessId,t.Patterncode,t.PatternDesc,ErrorMsg = max(t.ErrorMsg)
+from #tmp2 t
+group by t.BundleNo,t.BundleGroup,t.Qty,t.Orderid,t.SubprocessId,t.Patterncode,t.PatternDesc
+
+drop table #tmp,#tmp2"
                 , comboSubprocess.Text);
             txtNumsofBundle.Text = "0";
 
@@ -183,7 +189,7 @@ and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)"
                 return;
             }
             //準備新增sqlcmd 準備ID
-            string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
+            string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 3, "ID", null);
             if (MyUtility.Check.Empty(getID))
             {
                 MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -223,6 +229,7 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
             }
             if (leftDT != null) leftDT.Clear();
             MyUtility.Msg.InfoBox("Create success " + getID);
+            Close();
         }
         //Close
         private void btnClose_Click(object sender, EventArgs e)
