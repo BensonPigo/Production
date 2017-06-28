@@ -17,30 +17,30 @@ namespace Sci.Production.Warehouse
     public partial class P11_AutoPick : Sci.Win.Subs.Base
     {
         StringBuilder sbSizecode;
-        string poid, issueid, cutplanid,orderid;
-        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size,dtIssueBreakDown;
+        string poid, issueid, cutplanid, orderid;
+        public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size, dtIssueBreakDown;
         bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode,bool _combo)
-        {            
+        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode, bool _combo)
+        {
             InitializeComponent();
             poid = _poid;
             issueid = _issueid;
             cutplanid = _cutplanid;
             orderid = _orderid;
             dtIssueBreakDown = _dtIssueBreakDown;
-            sbSizecode=_sbSizecode;
+            sbSizecode = _sbSizecode;
             combo = _combo;
             this.Text += string.Format(" ({0})", poid);
-           
+
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            if (dtIssueBreakDown == null )
+            if (dtIssueBreakDown == null)
             {
                 MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
                 this.Close();
@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                 foreach (DataColumn dc in dtIssueBreakDown.Columns)
                 {
                     if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
-                        sum += (Decimal)dr[dc];                 
+                        sum += (Decimal)dr[dc];
                 }
             }
 
@@ -66,9 +66,9 @@ namespace Sci.Production.Warehouse
 
             //POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
             SqlConnection sqlConnection = null;
-          //  SqlCommand sqlCmd = null;
+            //  SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
-           // SqlDataAdapter sqlDataAdapter = null;
+            // SqlDataAdapter sqlDataAdapter = null;
             DataTable[] result = null;
 
             BOA = null;
@@ -238,13 +238,16 @@ Exec dbo.BoaExpend '{3}', {4}, {5}, '{6}',0,1;
 
 Drop Table #Tmp_Order_Qty;
 
-select  p.id as [poid]
+--BoAExpend SizeSpec 與 Po_Supp_Detail SizeSpec 意義不同，因此比對時 Po_Supp_Detail 也需要展開
+select	distinct p.id as [poid]
         , p.seq1
         , p.seq2
+        , p.Refno
         , p.SCIRefno
         , dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	    , p.ColorID
-        , p.SizeSpec
+		, SizeSpec = iif(os.SizeSpec is null or os.SizeSpec = '', '', os.SizeSpec)
+        , PoSizeSpec = p.SizeSpec
         , p.Spec
         , p.Special
         , p.Remark
@@ -254,161 +257,100 @@ select  p.id as [poid]
                     else dbo.GetUnitRate(p.POUnit, p.StockUnit)
                  end
         , p.StockUnit
+        , f.BomTypeCalculate
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 inner join orders o With(NoLock) on p.id = o.id
+left join order_boa ob With(NoLock) on p.id = ob.id
+                                       and p.SciRefno = ob.SciRefno                                       
+outer apply (
+    select value = case 
+						when f.BomTypeCalculate != 1 then ''
+                        when ob.SizeItem_Elastic != '' and ob.SizeItem is not null then ob.SizeItem_Elastic
+                        when ob.SizeItem != '' and ob.SizeItem is not null then ob.SizeItem
+                        else ''
+                   end
+) SizeItem
+left join Order_SizeSpec os on	os.Id = p.ID
+								and os.SizeItem = SizeItem.value
 where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
 
-;with cte2 as (
-	select  m.*
-            , m.InQty - m.OutQty + m.AdjustQty as [balanceqty]
-	from #tmpPO_supp_detail 
-    inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid 
-                                                   and m.seq1 = #tmpPO_supp_detail.seq1 
-                                                   and m.seq2 = #tmpPO_supp_detail.SEQ2
-	                                               and m.StockType = 'B' 
-                                                   and Roll=''
-	where lock = 0
-)
-select  0 as [Selected]
-        , '' as id
-        , Tmp_BoaExpend.Refno
-        , b.*
-        , Round (isnull (sum (Tmp_BoaExpend.OrderQty * dbo.GetDigitalValue(SizeSpecByLength.value)), 0.00) * b.UsedQty * b.RATE, 2) as qty
-        , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
-        , isnull (cte2.balanceqty, 0) as balanceqty
-        , cte2.Ukey as ftyinventoryukey
-        , cte2.StockType
-        , cte2.Roll
-        , cte2.Dyelot
-from #tmpPO_supp_detail b
-left join cte2 on cte2.poid = b.poid 
-                  and cte2.seq1 = b.seq1 
-                  and cte2.SEQ2 = b.SEQ2
-left join (
-    select  distinct a.SizeCode
-            , OrderQty
-            , Refno
-            , SciRefno
-            , ID
-            , SizeSpec
-            , ColorID
-            , Article
-    from #Tmp_BoaExpend a 
-) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
-                   and b.poid = Tmp_BoaExpend.ID 
-                   and (b.SizeSpec = Tmp_BoaExpend.SizeSpec) 
-                   and (b.ColorID = Tmp_BoaExpend.ColorID)
-left join Fabric f on Tmp_BoaExpend.SCIRefno = f.SCIRefno
-outer apply (
-    select top 1 SizeItem_Elastic
-            , SizeItem
-    from Order_BOA OBOA 
-    where   Tmp_BoaExpend.SCIRefno = OBOA.SCIRefno
-            and b.poid = OBOA.id 
-) OBOA
-outer apply (
-    --判斷副料是否已長度計算
-    -- 1. Table (Fabric).BomTypeCalculate 判斷是否已長度計算
-    -- 2. Table (Order_BOA).SizeItem_Elastic & Size Item 判斷要用哪一種長度
-    -----(1) 如果 SizeItem_Elastic 有值，則【優先】使用 SizeItem_Elastic 
-    -----(2) 使用 SizeItem
-    -- 3. Table (Order_SizeSpec).SizeSpec 取得 長度
-    -----(1) SizeSpec 可能出現 【1/4】【1''1/4】【1-1/4】需使用 GetDigitalValue 做轉換
+--計算 FtyInventory 庫存量
+--因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
+--因此計算庫存量時，必須先加總 【需求量】 後，再尋找 【庫存量】
+--※顯示時，SizeSpec = Po_Supp_Detail.SizeSpec
+--※計算時，SizeSpec = #TmpPo_Supp_Detail.SizeSpec
+select  x.*
+        , [balanceqty] = isnull(Fty.InQty - Fty.OutQty + Fty.AdjustQty, 0)
+        , ftyinventoryukey = Fty.Ukey 
+        , Fty.StockType
+        , Fty.Roll
+        , Fty.Dyelot
+from (
+    select  0 as [Selected]
+            , '' as id
+            , b.Refno
+            , b.poid
+            , b.seq1
+            , b.seq2
+            , b.[description]
+            , b.ColorID
+            , SizeSpec = isnull(b.PoSizeSpec, '')
+            , b.SCIRefno
+            , b.Spec
+            , b.Special
+            , b.Remark
+            , b.UsedQty
+            , b.RATE
+            , b.StockUnit
+            , Round (isnull (sum (1.0 * tb.OrderQty * SizeSpec.value), 0.00) * b.UsedQty * b.RATE, 2) as qty
+            , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
+    from #tmpPO_supp_detail b
+    left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
+                                   and b.poid = tb.ID 
+                                   and (b.SizeSpec = isnull(tb.SizeSpec, ''))
+                                   and (b.ColorID = tb.ColorID)
+    outer apply (
+        select value = case
+                            when b.BomTypeCalculate != 1 then 1
+                            else dbo.GetDigitalValue(tb.SizeSpec)
+                        end
+    ) SizeSpec
+    group by b.poid, b.seq1, b.seq2, b.Refno, b.[description]
+             , b.ColorID, b.PoSizeSpec, b.SCIRefno, b.Spec
+             , b.Special, b.Remark, b.UsedQty, b.RATE
+             , b.StockUnit
+) x
+left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
+                                                and Fty.seq1 = x.seq1 
+											    and Fty.seq2 = x.seq2
+											    and Fty.StockType = 'B' 
+											    and Fty.Roll=''
+order by x.scirefno, x.ColorID, x.SizeSpec, x.Special
+         , x.poid, x.seq1, x.seq2;
 
-    select value = case
-                        when f.BomTypeCalculate = 1 then 
-                            case 
-                                when OBOA.SizeItem_Elastic is not null and OBOA.SizeItem_Elastic != '' then (
-                                     select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
-                                     from Order_SizeSpec oss
-                                     where oss.SizeItem = OBOA.SizeItem_Elastic
-                                           and oss.id = b.poid
-                                           and oss.SizeCode = Tmp_BoaExpend.SizeCode     
-                                     )
-                                when OBOA.SizeItem is not null and OBOA.SizeItem != '' then (
-                                     select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
-                                     from Order_SizeSpec oss
-                                     where oss.SizeItem = OBOA.SizeItem
-                                           and oss.id = b.poid
-                                           and oss.SizeCode = Tmp_BoaExpend.SizeCode   
-                                     )
-                                else '1'
-                            end
-                        else '1'
-                   end
-) SizeSpecByLength
-group by b.poid, b.seq1, b.seq2, Tmp_BoaExpend.Refno, b.[description]
-         , b.ColorID, b.SizeSpec, b.SCIRefno, b.Spec
-         , b.Special, b.Remark, b.UsedQty, b.RATE
-         , b.StockUnit, cte2.balanceqty, cte2.Ukey
-         , cte2.StockType, cte2.Roll, cte2.Dyelot
-order by b.scirefno, b.ColorID, b.SizeSpec, b.Special
-         , b.poid, b.seq1, b.seq2;
-
+--因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
+--計算數量時，必須根據 Poid, Seq, SizeCode 群組
 with cte as(
     select  b.poid
             , b.seq1
             , b.seq2
-            , Tmp_BoaExpend.SizeCode
-            , qty = Round (isnull (sum (Tmp_BoaExpend.OrderQty * dbo.GetDigitalValue(SizeSpecByLength.value)), 0.00) * b.UsedQty * b.RATE, 2) 
+            , tb.SizeCode
+            , qty = Round (sum (isnull (1.0 * tb.OrderQty * SizeSpec.value, 0.00) * b.UsedQty * b.RATE), 2) 
 	from #tmpPO_supp_detail b 
-    left join (
-        select  distinct a.SizeCode
-                , OrderQty
-                , Refno
-                , SciRefno
-                , ID
-                , SizeSpec
-                , ColorID
-                , Article
-        from #Tmp_BoaExpend a 
-    ) Tmp_BoaExpend on b.SCIRefno = Tmp_BoaExpend.scirefno 
-                       and b.poid = Tmp_BoaExpend.ID 
-                       and (b.SizeSpec = Tmp_BoaExpend.SizeSpec) 
-                       and (b.ColorID = Tmp_BoaExpend.ColorID)
-    left join Fabric f on Tmp_BoaExpend.SCIRefno = f.SCIRefno
+    left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
+                                   and b.poid = tb.ID 
+                                   and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
+                                   and (b.ColorID = tb.ColorID)
     outer apply (
-        select top 1 SizeItem_Elastic
-               , SizeItem
-        from Order_BOA OBOA 
-        where   Tmp_BoaExpend.SCIRefno = OBOA.SCIRefno
-                and b.poid = OBOA.id 
-    ) OBOA
-    outer apply (
-        --判斷副料是否已長度計算
-        -- 1. Table (Fabric).BomTypeCalculate 判斷是否已長度計算
-        -- 2. Table (Order_BOA).SizeItem_Elastic & Size Item 判斷要用哪一種長度
-        -----(1) 如果 SizeItem_Elastic 有值，則【優先】使用 SizeItem_Elastic 
-        -----(2) 使用 SizeItem
-        -- 3. Table (Order_SizeSpec).SizeSpec 取得 長度
-        -----(1) SizeSpec 可能出現 【1/4】【1''1/4】【1-1/4】需使用 GetDigitalValue 做轉換
-
         select value = case
-                            when f.BomTypeCalculate = 1 then 
-                                case 
-                                    when OBOA.SizeItem_Elastic is not null and OBOA.SizeItem_Elastic != '' then (
-                                            select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
-                                            from Order_SizeSpec oss
-                                            where oss.SizeItem = OBOA.SizeItem_Elastic
-                                                and oss.id = b.poid
-                                                and oss.SizeCode = Tmp_BoaExpend.SizeCode     
-                                            )
-                                    when OBOA.SizeItem is not null and OBOA.SizeItem != '' then (
-                                            select iif (oss.SizeSpec = '' and oss.SizeSpec is null, '1', oss.SizeSpec)
-                                            from Order_SizeSpec oss
-                                            where oss.SizeItem = OBOA.SizeItem
-                                                and oss.id = b.poid
-                                                and oss.SizeCode = Tmp_BoaExpend.SizeCode   
-                                            )
-                                    else '1'
-                                end
-                            else '1'
-                        end
-    ) SizeSpecByLength
-	group by b.poid, b.seq1, b.seq2, Tmp_BoaExpend.SizeCode, b.UsedQty, b.Rate
+                            when b.BomTypeCalculate != 1 then 1
+                            else dbo.GetDigitalValue(tb.SizeSpec)
+                       end
+    ) SizeSpec
+    group by b.poid, b.seq1, b.seq2, tb.SizeCode
 )
 select  z.*
         , qty = isnull (cte.qty, 0)
@@ -469,7 +411,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                     , new DataColumn[] { BOA_PO_Size.Columns["Poid"], BOA_PO_Size.Columns["seq1"], BOA_PO_Size.Columns["seq2"] }
                     );
                     dataSet.Relations.Add(relation);
-                    
+
 
                     foreach (DataRow dr in BOA_PO.Rows)
                     {
@@ -492,17 +434,17 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
-                            var Output="";
+                            var Output = "";
                             foreach (DataRow dr2 in drs)
                             {
-                                if (Convert.ToInt32(dr2["qty"]) != 0)
-                                    Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00")+", ";
+                                if (Convert.ToDecimal(dr2["qty"]) != 0)
+                                    Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
                                 tmp.ImportRow(dr2);
                             }
                             dr["Output"] = Output;
                         }
 
-                       // tmp.AcceptChanges();
+                        // tmp.AcceptChanges();
 
                         if (tmp.Rows.Count > 0)
                         {
@@ -543,7 +485,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
             this.listControlBindingSource1.DataSource = BOA_PO;
             this.gridAutoPick.DataSource = listControlBindingSource1;
-            
+
             this.gridAutoPick.AutoResizeColumns();
 
             #region --Pick Qty 開窗--
@@ -553,23 +495,23 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 BOA_PO.AcceptChanges();//先做初始設定，再透過Detail來控制UNDO OR SAVE
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex,e.ColumnIndex,this);
-                
+                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex, e.ColumnIndex, this);
+
                 //DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
                 //dictionaryDatasAcceptChanges();
                 //tmpDt.AcceptChanges();
                 dictionaryDatasAcceptChanges();
-               
+
                 DialogResult DResult = frm.ShowDialog(this);
 
                 //dictionaryDatasRejectChanges();
 
-                
+
             };
             #endregion
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
-            {              
+            {
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"])) return;
@@ -603,7 +545,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
             gridAutoPick.Columns["qty"].Frozen = true;  //Qty
-            gridAutoPick.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             gridAutoPick.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             #endregion
 
@@ -614,7 +555,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             //target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
             //    .Sum(r => r.Field<decimal>("qty"));
             DataTable tmpDt = source;
-            DataRow dr=target;
+            DataRow dr = target;
             if (tmpDt != null)
             {
                 var Output = "";
@@ -637,11 +578,11 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-          //  dictionaryDatasRejectChanges();
+            //  dictionaryDatasRejectChanges();
             this.Close();
         }
 
-      
+
 
         private void btnPick_Click(object sender, EventArgs e)
         {
@@ -770,7 +711,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
         public DataTable getAutoDetailDataTable(int RowIndex)
         {
             DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
-           // tmpDt.AcceptChanges();
+            // tmpDt.AcceptChanges();
             return tmpDt;
         }
 
@@ -797,15 +738,15 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             {
                 //if (item.Value != null)
                 //{
-                    item.Value.RejectChanges();
+                item.Value.RejectChanges();
                 //}
             }
         }
         public void dictionaryDatasAcceptChanges()
         {
             //批次RejectChanges
-            var d=dictionaryDatas.AsEnumerable().ToList();
-            for (int i = 0; i < d.Count; i++)             
+            var d = dictionaryDatas.AsEnumerable().ToList();
+            for (int i = 0; i < d.Count; i++)
             {
                 d[i].Value.AcceptChanges();
             }
@@ -814,10 +755,10 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             {
                 //if (item.Value != null) { 
                 item.Value.AcceptChanges();
-               // }
+                // }
             }
         }
-      
-       
+
+
     }
 }
