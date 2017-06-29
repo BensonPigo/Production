@@ -246,12 +246,12 @@ select	distinct p.id as [poid]
         , p.SCIRefno
         , dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	    , p.ColorID
-		, SizeSpec = iif(os.SizeSpec is null or os.SizeSpec = '', '', os.SizeSpec)
+		, SizeSpec = ISNULL (iif (f.BomTypeCalculate = 1, os.SizeSpec, p.SizeSpec), '')
         , PoSizeSpec = p.SizeSpec
         , p.Spec
         , p.Special
         , p.Remark
-        , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
+        , IIF ( p.UsedQty = 0.0000, 0, p.UsedQty ) as UsedQty  
         , RATE = case 
                     when f.BomTypeCalculate = 1 then dbo.GetUnitRate(o.SizeUnit, p.StockUnit) 
                     else dbo.GetUnitRate(p.POUnit, p.StockUnit)
@@ -264,10 +264,10 @@ inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 inner join orders o With(NoLock) on p.id = o.id
 left join order_boa ob With(NoLock) on p.id = ob.id
-                                       and p.SciRefno = ob.SciRefno                                       
+                                       and p.SciRefno = ob.SciRefno      
+                                       and f.BomTypeCalculate = 1
 outer apply (
     select value = case 
-						when f.BomTypeCalculate != 1 then ''
                         when ob.SizeItem_Elastic != '' and ob.SizeItem is not null then ob.SizeItem_Elastic
                         when ob.SizeItem != '' and ob.SizeItem is not null then ob.SizeItem
                         else ''
@@ -278,8 +278,9 @@ left join Order_SizeSpec os on	os.Id = p.ID
 where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
 
 --計算 FtyInventory 庫存量
---因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
---因此計算庫存量時，必須先加總 【需求量】 後，再尋找 【庫存量】
+--因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開，把多餘的先做排除，再尋找 【庫存量】
+--【需求量】計算放 SQL 外，在記錄 output 時順便計算
+----計算的原則是【每一個 SizeCode 先四捨五入後再加總】
 --※顯示時，SizeSpec = Po_Supp_Detail.SizeSpec
 --※計算時，SizeSpec = #TmpPo_Supp_Detail.SizeSpec
 select  x.*
@@ -289,7 +290,7 @@ select  x.*
         , Fty.Roll
         , Fty.Dyelot
 from (
-    select  0 as [Selected]
+    select  distinct 0 as [Selected]
             , '' as id
             , b.Refno
             , b.poid
@@ -305,23 +306,13 @@ from (
             , b.UsedQty
             , b.RATE
             , b.StockUnit
-            , Round (isnull (sum (1.0 * tb.OrderQty * SizeSpec.value), 0.00) * b.UsedQty * b.RATE, 2) as qty
+            , Qty = 0.00
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
     from #tmpPO_supp_detail b
     left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
                                    and b.poid = tb.ID 
                                    and (b.SizeSpec = isnull(tb.SizeSpec, ''))
                                    and (b.ColorID = tb.ColorID)
-    outer apply (
-        select value = case
-                            when b.BomTypeCalculate != 1 then 1
-                            else dbo.GetDigitalValue(tb.SizeSpec)
-                        end
-    ) SizeSpec
-    group by b.poid, b.seq1, b.seq2, b.Refno, b.[description]
-             , b.ColorID, b.PoSizeSpec, b.SCIRefno, b.Spec
-             , b.Special, b.Remark, b.UsedQty, b.RATE
-             , b.StockUnit
 ) x
 left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
@@ -424,27 +415,34 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         tmp.ColumnsStringAdd("sizecode");
                         tmp.ColumnsDecimalAdd("qty");
                         tmp.ColumnsDecimalAdd("ori_qty");
-                        //
-                        if (Convert.ToInt32(dr["qty"]) != 0)
-                        {
-                            dr["Selected"] = 1;
-                        }
 
-                        //
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
+                            //Qty 在這邊計算原因：細項中每一個 SizeCode 的數量都有做四捨五入
+                            //若在組 SQL 時就先將數量做加總，四捨五入後的結果會有差異
+                            #region 計算每一個項的 Output & Qty
                             var Output = "";
+                            Decimal TotalQty = 0;
                             foreach (DataRow dr2 in drs)
                             {
                                 if (Convert.ToDecimal(dr2["qty"]) != 0)
+                                {
                                     Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                                    TotalQty += Convert.ToDecimal(dr2["qty"]);
+                                }
                                 tmp.ImportRow(dr2);
                             }
                             dr["Output"] = Output;
+                            dr["Qty"] = Math.Round(TotalQty, 2);
+                            #endregion 
                         }
 
-                        // tmp.AcceptChanges();
+                        //若數量有大於零才勾選
+                        if (Convert.ToDouble(dr["qty"]) != 0)
+                        {
+                            dr["Selected"] = 1;
+                        }
 
                         if (tmp.Rows.Count > 0)
                         {
@@ -455,17 +453,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                             dictionaryDatas.Add(dr, new DataTable());
                         }
                     }
-                    //
-                    //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-                    //{
-                    //    DataRow tmp;
-                    //    tmp = item.Key;
-                    //    tmp.AcceptChanges();
-
-                    //}
-                    //
-
-
                     var tmp2 = dictionaryDatas.Count;
                 }
 
@@ -477,8 +464,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             }
             finally
             {
-                //sqlCmd.Dispose();
-                //sqlDataAdapter.Dispose();
                 dataSet.Dispose();
                 sqlConnection.Close();
             }
@@ -497,16 +482,9 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex, e.ColumnIndex, this);
 
-                //DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
-                //dictionaryDatasAcceptChanges();
-                //tmpDt.AcceptChanges();
                 dictionaryDatasAcceptChanges();
 
                 DialogResult DResult = frm.ShowDialog(this);
-
-                //dictionaryDatasRejectChanges();
-
-
             };
             #endregion
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
@@ -552,8 +530,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         public void sum_subDetail(DataRow target, DataTable source)
         {
-            //target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
-            //    .Sum(r => r.Field<decimal>("qty"));
             DataTable tmpDt = source;
             DataRow dr = target;
             if (tmpDt != null)
@@ -562,7 +538,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 Decimal SumQTY = 0;
                 foreach (DataRow dr2 in tmpDt.ToList())
                 {
-                    if (Convert.ToInt32(dr2["qty"]) != 0)
+                    if (Convert.ToDecimal(dr2["qty"]) != 0)
                     {
                         Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
                         SumQTY += Convert.ToDecimal(dr2["qty"]);
@@ -578,7 +554,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            //  dictionaryDatasRejectChanges();
             this.Close();
         }
 
@@ -593,27 +568,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 MyUtility.Msg.InfoBox("Please select rows first!", "Warnning");
                 return;
             }
-
-            //dr2 = BOA_PO.Select("qty = 0 and Selected = 1");
-            //if (dr2.Length > 0)
-            //{
-            //    MyUtility.Msg.WarningBox("Pick Qty of selected row can't be zero!", "Warning");
-            //    return;
-            //}
-
-            //dr2 = BOA_PO.Select("qty > balanceqty and Selected = 1");
-            //if (dr2.Length > 0)
-            //{
-            //    StringBuilder warningmsg = new StringBuilder();
-            //    warningmsg.Append("Pick Qty of selected row can't over Bulk Qty!" + Environment.NewLine);
-            //    foreach (DataRow temp in dr2)
-            //    {
-            //        warningmsg.Append(string.Format("<Seq> {0} {1}, <issue Qty> {2}, <Balance Qty> {3}", temp["seq1"], temp["seq2"], temp["qty"], temp["Balanceqty"]) + Environment.NewLine);
-            //    }
-            //    MyUtility.Msg.WarningBox(warningmsg.ToString(), "Warning");
-            //    return;
-            //}
-
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
@@ -711,7 +665,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
         public DataTable getAutoDetailDataTable(int RowIndex)
         {
             DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
-            // tmpDt.AcceptChanges();
             return tmpDt;
         }
 
@@ -736,10 +689,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             //批次RejectChanges
             foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
             {
-                //if (item.Value != null)
-                //{
                 item.Value.RejectChanges();
-                //}
             }
         }
         public void dictionaryDatasAcceptChanges()
@@ -753,9 +703,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             return;
             foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
             {
-                //if (item.Value != null) { 
                 item.Value.AcceptChanges();
-                // }
             }
         }
 
