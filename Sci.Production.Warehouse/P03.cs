@@ -191,6 +191,7 @@ namespace Sci.Production.Warehouse
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //0
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //1
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
+            .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
@@ -226,7 +227,7 @@ namespace Sci.Production.Warehouse
             ;
             #endregion
 
-            gridMaterialStatus.Columns[7].Frozen = true;  //Fabric Type
+            gridMaterialStatus.Columns[8].Frozen = true;  //Fabric Type
             gridMaterialStatus.Columns[1].Width = 40;
             gridMaterialStatus.Columns[2].Width = 40;
         }
@@ -247,18 +248,18 @@ namespace Sci.Production.Warehouse
                 {
                     if (dr["ThirdCountry"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells[3].Style.BackColor = Color.DeepPink;
+                        gridMaterialStatus.Rows[i].Cells[4].Style.BackColor = Color.DeepPink;
                     }
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells[6].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells[7].Style.BackColor = Color.Orange;
                     }
 
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
                     if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
                     {
-                        gridMaterialStatus.Rows[i].Cells[16].Style.ForeColor = Color.Red;
+                        gridMaterialStatus.Rows[i].Cells[17].Style.ForeColor = Color.Red;
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
@@ -337,6 +338,7 @@ from(
                     , a.id
                     , a.seq1
                     , a.seq2
+					, Orders.StyleID
                     , b.SuppID
                     , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
                     , [eta] = substring(convert(varchar, a.eta, 101),1,5)
@@ -421,6 +423,7 @@ from(
                     , a.id
                     , a.seq1
                     , a.seq2
+					, o.StyleID
                     , b.SuppID
                     , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
                     , substring(convert(varchar, a.eta, 101),1,5) as eta
