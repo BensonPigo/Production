@@ -297,9 +297,10 @@ namespace Sci.Production.Cutting
                                 size = size + sizeDr["SizeCode"].ToString() + ",";
                                 Ratio = Ratio + MyUtility.Convert.GetDouble(sizeDr["Qty"]).ToString() + ",";
                             }
+                            double unit = Convert.ToDouble(SizeArry[0]["yds"]) * 0.9144;
                             worksheet.Cells[nRow, 1] = SizeArry[0]["MarkerName"].ToString();
                             worksheet.Cells[nRow, 4] = SizeArry[0]["MarkerNo"].ToString();
-                            worksheet.Cells[nRow, 6] = SizeArry[0]["MarkerLength"].ToString() + "\n" + SizeArry[0]["yds"].ToString();
+                            worksheet.Cells[nRow, 6] = SizeArry[0]["MarkerLength"].ToString() + "\n" + SizeArry[0]["yds"].ToString() + "Y (" + unit + "M)";
                         }
 
                         worksheet.Cells[nRow, 10] = size;
@@ -589,9 +590,10 @@ Cutplanid, str_PIVOT);
                         Ratio = Ratio + MyUtility.Convert.GetDouble(sizeDr["Qty"]).ToString() + ",";
                     }
                     #endregion
+                    double unit = Convert.ToDouble(WorkorderArry[0]["yds"]) * 0.9144;
                     worksheet.Cells[12, 1] = WorkorderArry[0]["MarkerName"].ToString();
                     worksheet.Cells[12, 4] = WorkorderArry[0]["MarkerNo"].ToString();
-                    worksheet.Cells[12, 6] = WorkorderArry[0]["MarkerLength"].ToString() + "\n" + WorkorderArry[0]["yds"].ToString();
+                    worksheet.Cells[12, 6] = WorkorderArry[0]["MarkerLength"].ToString() + "\n" + WorkorderArry[0]["yds"].ToString() + "Y (" + unit + "M)" ;
                     worksheet.Cells[12, 10] = size;
                     worksheet.Cells[12, 12] = Ratio;
                     int l = 11;
