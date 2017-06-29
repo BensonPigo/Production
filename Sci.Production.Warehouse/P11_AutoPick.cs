@@ -275,7 +275,10 @@ outer apply (
 ) SizeItem
 left join Order_SizeSpec os on	os.Id = p.ID
 								and os.SizeItem = SizeItem.value
-where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
+where   p.id = '{3}' 
+        and p.FabricType = 'A' 
+        and m.IssueType = '{7}'
+        and p.junk != 1
 
 --計算 FtyInventory 庫存量
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開，把多餘的先做排除，再尋找 【庫存量】
@@ -318,7 +321,7 @@ left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
 											    and Fty.seq2 = x.seq2
 											    and Fty.StockType = 'B' 
-											    and Fty.Roll=''
+											    and Fty.Roll = ''
 order by x.scirefno, x.ColorID, x.SizeSpec, x.Special
          , x.poid, x.seq1, x.seq2;
 
@@ -372,7 +375,8 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                              , 0
                              , 1
                              , Env.User.UserID
-                             , "Sewing", Env.User.Keyword);//.Replace("[", "[_")
+                             , "Sewing"
+                             , Env.User.Keyword);//.Replace("[", "[_")
 
             // 呼叫procedure，取得BOA展開結果
             try
