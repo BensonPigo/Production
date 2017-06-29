@@ -13,6 +13,7 @@ using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using System.Linq;
+using System.Collections;       //file使用Hashtable時，必須引入這個命名空間
 
 namespace Sci.Production.Quality
 {
@@ -21,6 +22,7 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
         private string ID;
+        private Hashtable ht = new Hashtable();
 
 
         public P03_Wash(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -29,6 +31,11 @@ namespace Sci.Production.Quality
             InitializeComponent();
             maindr = mainDr;
             ID = id.Trim();
+            //抓取當下.exe執行位置路徑
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            ht.Add("Picture1", path + "QA_Skewness1.png");
+            ht.Add("Picture2", path + "QA_Skewness2.png");
+ 
 
         }
         //編輯事件觸發     
@@ -95,7 +102,7 @@ where a.ID='{0}'"
                     this.radioOption2.Checked = true;
                 }
 
-                pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? @".\Resources\QA_Skewness1.png" : @".\Resources\QA_Skewness2.png";
+                pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? ht["Picture1"].ToString() : ht["Picture2"].ToString(); ;
 
             }
             else
@@ -1086,11 +1093,11 @@ where a.ID='{0}'"
         {
             if (this.radioPanel1.Value.ToString()=="1")
             {
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness1.png";
+                pictureBox1.ImageLocation = ht["Picture1"].ToString();
             }
             else
             {
-                pictureBox1.ImageLocation = @".\Resources\QA_Skewness2.png";
+                pictureBox1.ImageLocation = ht["Picture2"].ToString();
             }
             GridView_Visable();
             if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)

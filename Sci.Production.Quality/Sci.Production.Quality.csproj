@@ -328,11 +328,6 @@
     <Compile Include="P01_Continuity.Designer.cs">
       <DependentUpon>P01_Continuity.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -525,10 +520,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>

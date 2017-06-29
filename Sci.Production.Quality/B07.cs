@@ -8,22 +8,25 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections;       //file使用Hashtable時，必須引入這個命名空間
 
+
 namespace Sci.Production.Quality
 {
     public partial class B07 : Sci.Win.Tems.Input1
     {
-        Hashtable ht = new Hashtable();     
-   
+        Hashtable ht = new Hashtable();
+    
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             //HashTabe add key,Value
             ht.Add("Formula1", "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]");
             ht.Add("Formula2", "100 × [ ( AA’ + DD’ ) / ( AB + CD ) ]");
-            ht.Add("Picture1", @".\Resources\QA_Skewness1.png");
-            ht.Add("Picture2", @".\Resources\QA_Skewness2.png");
+            //抓取當下.exe執行位置路徑 同抓取Excle範本檔路徑
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
+            ht.Add("Picture1", path + "QA_Skewness1.png");
+            ht.Add("Picture2", path + "QA_Skewness2.png");
 
-            InitializeComponent();
+             InitializeComponent();
 
         }
         protected override bool ClickSaveBefore()
