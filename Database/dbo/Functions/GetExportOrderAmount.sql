@@ -5,11 +5,11 @@ CREATE FUNCTION [dbo].[GetExportOrderAmount]
 	@APDate date,
 	@RateType varchar(2)
 )
-RETURNS DECIMAL(18, 2) 
+RETURNS DECIMAL(18, 4) 
 BEGIN
-	DECLARE @return DECIMAL(18, 2), @immediateRate DECIMAL(18, 8)
+	DECLARE @return DECIMAL(18, 4), @immediateRate DECIMAL(18, 8)
 	
-	select @return = round(sum(Amount),2) 
+	select @return = round(sum(Amount),4) 
 	from (
 		SELECT Price * (Foc + Qty) * dbo.GetFinanceRate(@RateType,@APDate,(Select CurrencyID from Supp where ID = Export_Detail.SuppID),'USD') / iif(Export_Detail.UnitID = 'P',100,iif(Export_Detail.UnitID = 'PX',1000,1)) as Amount 
 		FROM EXPORT_dETAIL 
