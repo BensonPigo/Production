@@ -68,7 +68,7 @@ namespace Sci.Production.Subcon
             #region sqlcmd
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-Select distinct
+Select DISTINCT
     [Bundleno] = bd.BundleNo,
     [Cut Ref#] = b.CutRef,
     [SP#] = b.Orderid,
@@ -93,23 +93,22 @@ Select distinct
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing
 
-    from Bundle b WITH (NOLOCK) 
-    inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-    inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-    inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-    inner join SubProcess s WITH (NOLOCK) on s.Id = bda.SubprocessId 
-    left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
-    outer apply(
-	        select sub= stuff((
-		        Select distinct concat('+', bda.SubprocessId)
-		        from Bundle_Detail_Art bda WITH (NOLOCK) 
-		        where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-		        for xml path('')
-	        ),1,1,'')
-    ) as sub
+from Bundle b WITH (NOLOCK) 
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
+left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
+outer apply(
+	    select sub= stuff((
+		    Select distinct concat('+', bda.SubprocessId)
+		    from Bundle_Detail_Art bda WITH (NOLOCK) 
+		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+		    for xml path('')
+	    ),1,1,'')
+) as sub
 
-    where 1=1
-    and (s.IsRFIDDefault = '1' or s.Id = bda.SubprocessId) 
+where 1=1
             ");
             #endregion
             #region Append畫面上的條件
