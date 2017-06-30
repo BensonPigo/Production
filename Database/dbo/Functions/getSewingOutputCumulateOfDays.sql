@@ -11,29 +11,29 @@ RETURNS TABLE
 AS
 RETURN 
 (
-	select cumulate = IIF(Count(w.Date)=0,1,Count(w.Date))
-	from WorkHour w WITH (NOLOCK)
-	where w.FactoryID = @factory
-	and w.SewingLineID = @sewingline
-	and w.Date <= @outputdate
-	and w.Date > 
-	(
-		select max(w.Date)
+	with stmp as (
+		select distinct s.OutputDate
+		from SewingOutput s WITH (NOLOCK)
+		inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+		left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+		left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+		where (o.StyleID = @style or mo.StyleID = @style)
+		and s.SewingLineID = @sewingline
+		and s.OutputDate between dateadd(day,-90,@outputdate) and  @outputdate
+		and s.FactoryID = @factory
+	), wtmp as(
+		select top 360 w.Hours, w.Date
 		from WorkHour w WITH (NOLOCK)
-		outer apply(
-			select OutputDate
-			from SewingOutput s
-			left join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-			left join  Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
-			left join  MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId 
-			where (o.StyleID = @style or mo.StyleID = @style)
-			and s.SewingLineID = w.SewingLineID
-			and s.FactoryID = w.FactoryID
-			and s.OutputDate = w.Date 
-		)a
 		where w.FactoryID = @factory
 		and w.SewingLineID = @sewingline
-		and w.Date between dateadd(day,-180,@outputdate) and  @outputdate
-		and(w.Hours = 0 or a.OutputDate is null)
+		and w.Date between dateadd(day,-90,@outputdate) and  @outputdate
 	)
+	select cumulate = IIF(Count(1)=0, 1, Count(1))
+	from stmp s
+	where s.OutputDate >(
+							select date = max(Date)
+							from wtmp w 
+							left join stmp s on s.OutputDate = w.Date
+							where s.OutputDate is null
+						)
 )
