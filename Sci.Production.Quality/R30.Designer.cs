@@ -165,7 +165,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(239, 17);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
@@ -198,7 +197,6 @@
             // 
             // labelInspected
             // 
-            this.labelInspected.Lines = 0;
             this.labelInspected.Location = new System.Drawing.Point(12, 213);
             this.labelInspected.Name = "labelInspected";
             this.labelInspected.Size = new System.Drawing.Size(105, 23);
@@ -207,7 +205,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(12, 185);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(105, 23);
@@ -216,7 +213,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(12, 157);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(105, 23);
@@ -225,7 +221,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(12, 129);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(105, 23);
@@ -234,7 +229,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(12, 101);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(105, 23);
@@ -243,7 +237,6 @@
             // 
             // labelInspectionDate
             // 
-            this.labelInspectionDate.Lines = 0;
             this.labelInspectionDate.Location = new System.Drawing.Point(12, 73);
             this.labelInspectionDate.Name = "labelInspectionDate";
             this.labelInspectionDate.Size = new System.Drawing.Size(105, 23);
@@ -252,7 +245,6 @@
             // 
             // labelBuyerdelivery
             // 
-            this.labelBuyerdelivery.Lines = 0;
             this.labelBuyerdelivery.Location = new System.Drawing.Point(12, 45);
             this.labelBuyerdelivery.Name = "labelBuyerdelivery";
             this.labelBuyerdelivery.Size = new System.Drawing.Size(105, 23);
@@ -261,7 +253,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(12, 17);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(105, 23);
@@ -270,7 +261,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(444, 126);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 22);
@@ -283,7 +273,7 @@
             this.Controls.Add(this.label10);
             this.Controls.Add(this.panel1);
             this.Name = "R30";
-            this.Text = "R30.Material Detection List";
+            this.Text = "R30.Metal Detection List";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
