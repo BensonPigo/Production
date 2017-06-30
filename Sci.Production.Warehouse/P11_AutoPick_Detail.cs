@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using System.Threading;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -77,7 +78,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , strpoid, strseq1, strseq2), out dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
-                this.displyUnit.Text = dr["sizeunit"].ToString();
+                this.displyUnit.Text = dr["StockUnit"].ToString();
                 this.displyQty.Text = dr["usedqty"].ToString();
                 this.displySize.Text = dr["sizespec"].ToString();
                 this.displyColorid.Text = dr["colorid"].ToString();
@@ -96,7 +97,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
             _matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             _matrix.XOrder = "seq";
-            _matrix.YMap.Name = "ID";  // 對應到第三表格的 Y 欄位名稱
+            _matrix.YMap.Name = "article";  // 對應到第三表格的 Y 欄位名稱
             _matrix
                 .SetColDef("qty2", width: Widths.AnsiChars(4))  // 第三表格對應的欄位名稱
                 .AddXColDef("sizecode")                             // X 要顯示的欄位名稱, 可設定多個.
@@ -109,42 +110,129 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             #endregion
             if (combo)
             {
-                DBProxy.Current.Select(null, string.Format(@"select '' as Total,o.id, oq.article,oq.sizecode,convert(varchar,oq.qty) as qty2 from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'
-                                                        union all 
-                                                        select '' as Total,'','TTL' ,oq.sizecode ,convert(varchar,sum(oq.Qty)) qty2 from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'
-                                                        group by sizecode", poid), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode WITH (NOLOCK) where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", poid), out dtX);
-                DBProxy.Current.Select(null, string.Format(@"select sum(oq.qty) Total,oq.article,o.ID from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}' group by O.ID,Article 
-                                                         union all
-                                                         select sum(oq.qty) Total,'TTL','' from dbo.Orders o WITH (NOLOCK) inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID where o.POID = '{0}'", poid), out dtY);
+                DBProxy.Current.Select(null, string.Format(@"
+select  '' as Total
+        , o.id
+        , oq.article
+        , oq.sizecode
+        , convert(varchar,oq.qty) as qty2 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'
+
+union all 
+select  '' as Total
+        , '' 
+        , 'TTL' 
+        , oq.sizecode 
+        , convert(varchar,sum(oq.Qty)) qty2 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'
+group by sizecode", poid), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format(@"
+select * 
+from dbo.Order_SizeCode WITH (NOLOCK) 
+where id = (
+        select poid 
+        from dbo.orders WITH (NOLOCK) 
+        where id='{0}'
+      ) 
+order by seq", poid), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"
+select  sum(oq.qty) Total
+        , oq.article
+        , o.ID 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}' group by O.ID,Article 
+
+union all
+select  sum(oq.qty) Total
+        , 'TTL'
+        , '' 
+from dbo.Orders o WITH (NOLOCK) 
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
+where o.POID = '{0}'", poid), out dtY);
             }
             else
             {
-                DBProxy.Current.Select(null, string.Format(@"select '' as Total,ID, article,sizecode,convert(varchar,qty) as qty2 from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
-                                                        union all 
-                                                        select '' as Total,'','TTL' ,sizecode ,convert(varchar,sum(qty)) qty2 from dbo.Order_Qty WITH (NOLOCK) where id='{0}' 
-                                                        group by sizecode", orderid), out dtIssueBreakdown);
-                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode WITH (NOLOCK) where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", orderid), out dtX);
-                DBProxy.Current.Select(null, string.Format(@"select sum(qty) Total,'{0}' as ID,article from dbo.Order_Qty WITH (NOLOCK) where id = '{0}' group by article
-                                                         union all
-                                                         select sum(qty) Total,'','TTL' from dbo.Order_qty WITH (NOLOCK) where id='{0}' ", orderid), out dtY);
+                DBProxy.Current.Select(null, string.Format(@"
+select  '' as Total
+        , ID
+        , article
+        , sizecode
+        , convert(varchar,qty) as qty2 
+from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
+
+union all 
+select  '' as Total
+        , ''
+        , 'TTL' 
+        , sizecode 
+        , convert(varchar,sum(qty)) qty2 
+from dbo.Order_Qty WITH (NOLOCK) 
+where id='{0}' 
+group by sizecode", orderid), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format(@"
+select * 
+from dbo.Order_SizeCode WITH (NOLOCK) 
+where id = (
+            select poid 
+            from dbo.orders WITH (NOLOCK) 
+            where id='{0}'
+      ) 
+order by seq", orderid), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"
+select  sum(qty) Total
+        , '{0}' as ID
+        , article 
+from dbo.Order_Qty WITH (NOLOCK) 
+where id = '{0}' 
+group by article
+
+union all
+select  sum(qty) Total
+        , ''
+        , 'TTL' 
+from dbo.Order_qty WITH (NOLOCK) 
+where id='{0}' ", orderid), out dtY);
             }
             _matrix.Clear();
             _matrix.Sets(dtIssueBreakdown, dtX, dtY);
             ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             
             this.gridAutoPickDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridAutoPickDetail.DataSource = gridbs;
+            #region issueQtySet
+            DataGridViewGeneratorNumericColumnSettings issueQtySet = new DataGridViewGeneratorNumericColumnSettings();
+            issueQtySet.CellValidating += (s, e) =>
+            {
+                gridAutoPickDetail.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = e.FormattedValue;
+                if (e.ColumnIndex == 1)
+                {
+                    computeTotalIssueQty();
+                }
+            };
+            #endregion 
+            /*
+             * 請注意 如果以後 gridAutoPickDetail 有追加欄位
+             * 1. 請確認 computTotalIssueQty => Cells 所指定的欄位是 QTY
+             * 2. 確認 issueQtySet 中 ColumnIndex 判斷的是 QTY 欄位
+            */
             Helper.Controls.Grid.Generator(this.gridAutoPickDetail)
                 .Text("sizecode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10)
+                .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: issueQtySet)
                 ;
-
-            this.gridAutoPickDetail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
+            #region computTotalIssueQty
+            computeTotalIssueQty();
+            #endregion 
+            this.gridAutoPickDetail.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink; 
         }
         bool isSaved = false;
         private void btnSave_Click(object sender, EventArgs e)
@@ -155,8 +243,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
 
                 //DataRowIndex//要改變原本表單的資料 要現在的索引
-                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex), P11Autopick.getAutoDetailDataTable(DataRowIndex));
-            
+                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex), P11Autopick.getAutoDetailDataTable(DataRowIndex));         
 
             //
             P11Autopick.BOA_PO.AcceptChanges();
@@ -167,13 +254,6 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            //foreach (DataRow dr in dt_detail.Rows)
-            //{
-            //    dr["qty"] = decimal.Parse(dr["ori_qty"].ToString());
-            //}
-            //dt_detail.AcceptChanges();
-            //this.Close();
-            //dt_detail.RejectChanges
             P11Autopick.BOA_PO.RejectChanges();
             this.Close();
         }
@@ -185,8 +265,7 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
 
             DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
-            SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
-           
+            SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());           
         }
         //下一筆
         private void button1_Click(object sender, EventArgs e)
@@ -206,7 +285,9 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 //DataRowIndex = DataRowIndex - 1;//要改變原本表單的資料 要退回上一筆索引
                 P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex -1), P11Autopick.getAutoDetailDataTable(DataRowIndex-1));
             }
-            
+            #region 重新計算 Total Issue Qty
+            computeTotalIssueQty();
+            #endregion 
         }
         //上一筆
         private void button2_Click(object sender, EventArgs e)
@@ -225,10 +306,11 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
                 
                 //DataRowIndex = DataRowIndex +1;//要改變原本表單的資料 要退回上一筆索引
-                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex +1), P11Autopick.getAutoDetailDataTable(DataRowIndex +1));
-                
+                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex +1), P11Autopick.getAutoDetailDataTable(DataRowIndex +1));                
             }
-            
+            #region 重新計算 Total Issue Qty
+            computeTotalIssueQty();
+            #endregion 
         }
 
         private void P11_AutoPick_Detail_FormClosing(object sender, FormClosingEventArgs e)
@@ -242,8 +324,18 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             this.gridbs.DataSource = null;
         }
 
-
-
-        
+        private void computeTotalIssueQty()
+        {
+            /*
+             * 請注意 如果以後 gridAutoPickDetail 有追加欄位
+             * 請把確認 Cells 所指定的欄位是 QTY
+            */
+            decimal totalQty = 0;
+            for (int i = 0; i < gridAutoPickDetail.Rows.Count; i++)
+            {
+                totalQty += decimal.Parse(gridAutoPickDetail.Rows[i].Cells[1].Value.ToString());
+            }
+            this.displayTotalIssueQty.Value = totalQty;
+        }
     }
 }

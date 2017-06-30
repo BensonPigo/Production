@@ -525,7 +525,7 @@ where ROW_NUMBER_D =1
             }
             else
             {
-                ShowErr(sqlcmd, result);
+                ShowErr(result);
             }
             this.HideWaitMessage();
         }
