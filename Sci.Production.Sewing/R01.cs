@@ -446,7 +446,7 @@ order by ArtworkTypeID
                 objArray[0, 11] = dr["QAQty"];
                 objArray[0, 12] = dr["TotalCPU"];
                 objArray[0, 13] = dr["CPUSewer"];
-                objArray[0, 14] = dr["EFF"];
+                objArray[0, 14] = string.Format("=ROUND((M{0}/(G{0}*3600/1400))*100,1)", insertRow);
                 objArray[0, 15] = dr["RFT"];
                 objArray[0, 16] = dr["CumulateDate"];
                 objArray[0, 17] = dr["InlineQty"];
