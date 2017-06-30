@@ -166,7 +166,8 @@ IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS 
 IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate) as CPUPrice,
 IIF(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,
 ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0) as TargetQty,
-QAQty,IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty as TotalCPU,
+QAQty
+,ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty,2) as TotalCPU,
 IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,
 (IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0) as CPUSewer,
 ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,
