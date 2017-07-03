@@ -503,13 +503,13 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonCrocking"]))//判斷有勾選可Encode
                 {
-                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
+                    //至少檢驗一卷 並且出現在FIR_Laboratory_Crocking.Roll
                     DataTable rolldt;
                     string cmd = string.Format(
                         @"Select roll from Receiving_Detail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
-                        (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
+                        (Select distinct dyelot from FIR_Laboratory_Crocking b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult;
                     if (dResult = DBProxy.Current.Select(null, cmd, out rolldt))
