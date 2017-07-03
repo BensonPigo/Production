@@ -379,6 +379,7 @@ group by sizeCode"
                 }
                 else
                 {
+                    MyUtility.Msg.WarningBox(string.Format("<CutPart: {0} >  can't found!", e.FormattedValue));
                     dr["PatternCode"] = "";
                     dr["PatternDesc"] = "";
                     dr["art"] = "";
@@ -470,6 +471,7 @@ group by sizeCode"
                 }
                 else
                 {
+                    MyUtility.Msg.WarningBox(string.Format("<CutPart: {0} >  can't found!", e.FormattedValue));
                     dr["Sel"] = 0;
                     dr["PatternCode"] = "";
                     dr["PatternDesc"] = "";
