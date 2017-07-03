@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
             gridTable.Rows.Clear();  //開始查詢前先清空資料
             string estcutdate = dateEstCutDate.Text;
             string cutcellid = txtCutCell.Text;
-            string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
+            string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and a.CutRef != ''  and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
             if (!MyUtility.Check.Empty(cutcellid))
             {
                 sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
@@ -117,6 +117,7 @@ namespace Sci.Production.Cutting
         public List<String> importedIDs = new List<string>();
         private void btnImport_Click(object sender, EventArgs e)
         {
+            if (gridTable.Rows.Count == 0) return;
             importedIDs.Clear();
             DataRow[] importay;
             string insertheader = "";
