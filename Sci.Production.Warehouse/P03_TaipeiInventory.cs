@@ -48,6 +48,10 @@ FROM (
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , UseFactory = isnull ((select FactoryID 
+                                    from orders
+                                    where id = inv.Seq70Poid)
+                                   , '')
             , case inv.type 
                 when '3' then inv.TransferFactory 
                 else inv.FactoryID 
@@ -84,6 +88,10 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , UseFactory = isnull ((select FactoryID 
+                                    from orders
+                                    where id = inv.Seq70Poid)
+                                   , '')
             , case inv.type 
                 when '3' then inv.FactoryID 
                 else inv.FactoryID 
@@ -120,6 +128,10 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , UseFactory = isnull ((select FactoryID 
+                                    from orders
+                                    where id = inv.Seq70Poid)
+                                   , '')
             , case inv.type 
                 when '3' then inv.FactoryID 
                 else inv.FactoryID 
@@ -141,7 +153,7 @@ FROM (
 			and inv.type in (4)    
 ) TMP 
 GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
-            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey "
+            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory"
                                                 , dr["id"].ToString()
                                                 , dr["seq1"].ToString()
                                                 , dr["seq2"].ToString());
@@ -165,17 +177,18 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
             this.gridTaipeiInventoryList.IsEditingReadOnly = true;
             this.gridTaipeiInventoryList.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.gridTaipeiInventoryList)
-                 .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
-                 .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8))
-                 .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
-                 .Date("confirmdate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("confirmhandle", header: "Handle", width: Widths.AnsiChars(20))
-                 .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
-                 .Numeric("Allocated", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
-                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
-                  .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
-                  .Text("ReasonEN", header: "Reason", width: Widths.AnsiChars(60))
-                 ;
+                .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
+                .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8))
+                .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
+                .Date("confirmdate", header: "Date", width: Widths.AnsiChars(10))
+                .Text("confirmhandle", header: "Handle", width: Widths.AnsiChars(20))
+                .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                .Numeric("Allocated", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
+                .Text("UseFactory", header: "Use for Factory", width: Widths.AnsiChars(6))
+                .Text("ReasonEN", header: "Reason", width: Widths.AnsiChars(60))
+            ;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
