@@ -46,8 +46,7 @@ namespace Sci.Production.Warehouse
                         MyUtility.Msg.WarningBox("< SP# > or < Ref# > or < Location > can't be empty!!");
                         txtSPNo.Focus();
                         return;
-                    }
-                        
+                    }                        
                     else
                     {
                         // 建立可以符合回傳的Cursor
