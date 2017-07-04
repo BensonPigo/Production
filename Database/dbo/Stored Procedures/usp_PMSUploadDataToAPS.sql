@@ -344,7 +344,7 @@ from
 	,[XSize] = sdd.SizeCode
 	,[Qty] = sdd.QAQty
 	,[Workers] = s.Manpower
-	,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
+	,[Hours] = round( (cast(sdd.QAQty as float) / cast(sd.QAQty as float)) * sd.WorkHour , 3)
 	from SewingOutput s
 	inner join SewingOutput_Detail sd on s.ID = sd.ID
 	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
