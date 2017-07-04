@@ -202,12 +202,14 @@ inner join (
 *		排除
 *			1. Order_BOF.Kind = 0 (表Other) 
 *			2. Order_BOF.Kind = 3 (表Polyfill)的資料
-*			3. 外裁項 (Order_EachCons.CuttingPiece == 0) 【0 代表非外裁項】
+*			3. 外裁項 【Bundle_Detail 不會出現外裁項的資料】
+*		BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差
 */
 select	b.orderid
 		, bd.SizeCode
 		, cdate2 = cDate.value
 		, b.Article
+		, bd.BundleGroup
 		, FabricCombo = wo.FabricPanelCode
 		, PatternCode = bd.Patterncode
 		, artwork = isnull(ArtWork.value, '')
@@ -220,11 +222,6 @@ inner join WorkOrder wo on b.POID = wo.id
 						   and b.CutRef = wo.CutRef
 left join Order_BOF ob on ob.Id = wo.Id 
 						  and ob.FabricCode = wo.FabricCode
-left join Order_EachCons oec on oec.ID = ob.ID 
-							    and oec.MarkerName = wo.Markername 
-							    and oec.FabricCombo = wo.FabricCombo 
-							    and oec.FabricPanelCode = wo.FabricPanelCode 
-							    and oec.FabricCode = wo.FabricCode
 inner join #tsp on b.Orderid = #tsp.orderID
 outer apply (
 	select value = stuff ((	select '+' + subprocessid
@@ -240,12 +237,10 @@ outer apply(
 	select value = CONVERT(char(10), bio.InComing, 120)
 ) cDate
 where	bio.SubProcessId = 'loading'
-		and ob.Kind not in ('0','3')
-	    and oec.CuttingPiece = 0	
-		and cDate.value between @StartDate and @EndDate
+		and ob.Kind not in ('0','3')		
 		--{2} 篩選 OrderID
 		{2}
-group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode;
+group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup;
 
 /*
 *	根據每一個 OrderID 取得 SewInDate  日期展開至 EndDate
@@ -315,11 +310,12 @@ select	NewCutComb.FactoryID
 		, NewCutComb.SewLine
 		, NewCutComb.Article
 		, NewCutComb.SizeCode
+		, NewCutComb.BundleGroup
 		, NewCutComb.FabricCombo
 		, NewCutComb.PatternCode
 		, NewCutComb.artwork
 		, qty = isnull(#cur_bdltrack2.qty, 0)
-		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by NewCutComb.FactoryID, NewCutComb.orderid,  NewCutComb.Article, NewCutComb.SizeCode, NewCutComb.FabricCombo, NewCutComb.PatternCode, NewCutComb.artwork
+		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by NewCutComb.FactoryID, NewCutComb.orderid,  NewCutComb.Article, NewCutComb.SizeCode, NewCutComb.BundleGroup, NewCutComb.FabricCombo, NewCutComb.PatternCode, NewCutComb.artwork
 																    order by NewCutComb.cdate2)
 into #Min_cut
 from (
@@ -329,11 +325,19 @@ from (
 */
 	select	distinct #cutcomb.*
 			, cdate2 = #CBDate.SewDate
-			, #cur_bdltrack2.SizeCode
+			, SizeCode = SizeCode.value
+			, BundleGroup = BundleGroup.value
 	from #cutcomb
-	inner join #cur_bdltrack2 on #cutcomb.orderID = #cur_bdltrack2.Orderid
-								 and #cutcomb.artwork = #cur_bdltrack2.artwork
-								 and #cutcomb.Article = #cur_bdltrack2.Article
+	outer apply (
+		select distinct value = SizeCode
+		from #cur_bdltrack2 
+		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
+	) SizeCode
+	outer apply (
+		select distinct value = BundleGroup
+		from #cur_bdltrack2 
+		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
+	) BundleGroup
 	inner join #CBDate on #cutcomb.orderID = #CBDate.OrderID
 ) NewCutComb 
 left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork 
@@ -342,7 +346,8 @@ left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork
 							and NewCutComb.orderID = #cur_bdltrack2.orderid
 							and NewCutComb.Article = #cur_bdltrack2.Article 
 							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
-                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2							
+                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2	
+							and NewCutComb.BundleGroup = #cur_bdltrack2.BundleGroup;						
 --order by cdate2, orderid, Article, SizeCode, FabricCombo, PatternCode, artwork
 
 /*
@@ -351,7 +356,7 @@ left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork
 select	FactoryID
 		, SP
 		, StyleID
-		, SewingDate
+		, SewingDate = DateAdd(day, 1 ,SewingDate)
 		, Line
 		, AccuStd
 		, AccuLoad = AccuLoading
@@ -367,15 +372,28 @@ from (
 	from (
 /*
 *		依照【日期, SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
+*		判斷 BundleGroup
+*			第一次群組判斷最小數量需要加上 BundleGroup
+*			第二次群組加總所有成衣數量		
 */
-		select	FactoryID
+		select FactoryID
 				, orderID
 				, StyleID
 				, cdate2
 				, SewLine
 				, Article, SizeCode
-				, MinLoadingQty = min(AccuLoadingQty)
-		from #Min_cut 
+				, MinLoadingQty = sum (MinLoadingQty)
+		from (
+			select	FactoryID
+					, orderID
+					, StyleID
+					, cdate2
+					, SewLine
+					, Article, SizeCode
+					, MinLoadingQty = min(AccuLoadingQty)
+			from #Min_cut 
+			group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode, BundleGroup
+		)w
 		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
 	)x 
 	outer apply(
