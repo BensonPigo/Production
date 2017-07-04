@@ -41,9 +41,9 @@ namespace Sci.Production.Warehouse
             switch (radioPanel1.Value)
             {
                 case "1":
-                    if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(locationid))
+                    if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(locationid) && MyUtility.Check.Empty(refno))
                     {
-                        MyUtility.Msg.WarningBox("< SP# > or < Location > can't be empty!!");
+                        MyUtility.Msg.WarningBox("< SP# > or < Ref# > or < Location > can't be empty!!");
                         txtSPNo.Focus();
                         return;
                     }
