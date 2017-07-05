@@ -173,6 +173,7 @@ with tmpOrders as (
             , o.ClogLastReceiveDate
             , o.IsMixMarker
             , o.GFR
+            ,oq.Seq
     from Orders o WITH (NOLOCK) 
     left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
     OUTER APPLY(
@@ -503,7 +504,7 @@ tmpFilterZone as (
             , t.IsMixMarker
             , t.GFR
     from tmpListPoCombo t
-    inner join Order_QtyShip oq WITH (NOLOCK) on t.ID = oq.Id
+    inner join Order_QtyShip oq WITH (NOLOCK) on t.ID = oq.Id and t.Seq=oq.Seq
 )
 select  t.* 
         , ModularParent = isnull (s.ModularParent, '')
