@@ -65,7 +65,6 @@
             this.chk_export = new System.Windows.Forms.CheckBox();
             this.btnGetExportDataPath = new Sci.Win.UI.Button();
             this.btnGetImportDataPath = new Sci.Win.UI.Button();
-            this.checkDeleteFile = new Sci.Win.UI.CheckBox();
             this.displayExportDataPath = new Sci.Win.UI.DisplayBox();
             this.labelExportDataPath = new Sci.Win.UI.Label();
             this.displayImportDataPath = new Sci.Win.UI.DisplayBox();
@@ -150,7 +149,6 @@
             // 
             // labelRgCode
             // 
-            this.labelRgCode.Lines = 0;
             this.labelRgCode.Location = new System.Drawing.Point(300, 37);
             this.labelRgCode.Name = "labelRgCode";
             this.labelRgCode.Size = new System.Drawing.Size(66, 21);
@@ -170,7 +168,6 @@
             // 
             // labelImportDataFileName
             // 
-            this.labelImportDataFileName.Lines = 0;
             this.labelImportDataFileName.Location = new System.Drawing.Point(10, 37);
             this.labelImportDataFileName.Name = "labelImportDataFileName";
             this.labelImportDataFileName.Size = new System.Drawing.Size(124, 21);
@@ -179,7 +176,6 @@
             // 
             // labelFtpPwd
             // 
-            this.labelFtpPwd.Lines = 0;
             this.labelFtpPwd.Location = new System.Drawing.Point(480, 10);
             this.labelFtpPwd.Name = "labelFtpPwd";
             this.labelFtpPwd.Size = new System.Drawing.Size(90, 21);
@@ -188,7 +184,6 @@
             // 
             // labelFtpID
             // 
-            this.labelFtpID.Lines = 0;
             this.labelFtpID.Location = new System.Drawing.Point(300, 10);
             this.labelFtpID.Name = "labelFtpID";
             this.labelFtpID.Size = new System.Drawing.Size(66, 21);
@@ -197,7 +192,6 @@
             // 
             // labelFtpIP
             // 
-            this.labelFtpIP.Lines = 0;
             this.labelFtpIP.Location = new System.Drawing.Point(10, 10);
             this.labelFtpIP.Name = "labelFtpIP";
             this.labelFtpIP.Size = new System.Drawing.Size(66, 21);
@@ -236,7 +230,6 @@
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(671, 120);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(152, 21);
@@ -271,7 +264,6 @@
             // label3
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(377, 120);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(306, 21);
@@ -292,7 +284,6 @@
             // 
             // labelEmailPwd
             // 
-            this.labelEmailPwd.Lines = 0;
             this.labelEmailPwd.Location = new System.Drawing.Point(383, 37);
             this.labelEmailPwd.Name = "labelEmailPwd";
             this.labelEmailPwd.Size = new System.Drawing.Size(94, 21);
@@ -312,7 +303,6 @@
             // 
             // labelEmailID
             // 
-            this.labelEmailID.Lines = 0;
             this.labelEmailID.Location = new System.Drawing.Point(383, 10);
             this.labelEmailID.Name = "labelEmailID";
             this.labelEmailID.Size = new System.Drawing.Size(94, 21);
@@ -321,7 +311,6 @@
             // 
             // labelCcAddress
             // 
-            this.labelCcAddress.Lines = 0;
             this.labelCcAddress.Location = new System.Drawing.Point(383, 64);
             this.labelCcAddress.Name = "labelCcAddress";
             this.labelCcAddress.Size = new System.Drawing.Size(94, 21);
@@ -340,7 +329,6 @@
             // 
             // labelContent
             // 
-            this.labelContent.Lines = 0;
             this.labelContent.Location = new System.Drawing.Point(10, 120);
             this.labelContent.Name = "labelContent";
             this.labelContent.Size = new System.Drawing.Size(94, 21);
@@ -359,7 +347,6 @@
             // 
             // labelToAddress
             // 
-            this.labelToAddress.Lines = 0;
             this.labelToAddress.Location = new System.Drawing.Point(10, 64);
             this.labelToAddress.Name = "labelToAddress";
             this.labelToAddress.Size = new System.Drawing.Size(94, 21);
@@ -389,7 +376,6 @@
             // 
             // labelSendfrom
             // 
-            this.labelSendfrom.Lines = 0;
             this.labelSendfrom.Location = new System.Drawing.Point(10, 37);
             this.labelSendfrom.Name = "labelSendfrom";
             this.labelSendfrom.Size = new System.Drawing.Size(94, 21);
@@ -409,7 +395,6 @@
             // 
             // labelMailserver
             // 
-            this.labelMailserver.Lines = 0;
             this.labelMailserver.Location = new System.Drawing.Point(10, 10);
             this.labelMailserver.Name = "labelMailserver";
             this.labelMailserver.Size = new System.Drawing.Size(94, 21);
@@ -424,7 +409,6 @@
             this.panelPath.Controls.Add(this.chk_export);
             this.panelPath.Controls.Add(this.btnGetExportDataPath);
             this.panelPath.Controls.Add(this.btnGetImportDataPath);
-            this.panelPath.Controls.Add(this.checkDeleteFile);
             this.panelPath.Controls.Add(this.displayExportDataPath);
             this.panelPath.Controls.Add(this.labelExportDataPath);
             this.panelPath.Controls.Add(this.displayImportDataPath);
@@ -479,17 +463,6 @@
             this.btnGetImportDataPath.UseVisualStyleBackColor = true;
             this.btnGetImportDataPath.Click += new System.EventHandler(this.btnGetImportDataPath_Click);
             // 
-            // checkDeleteFile
-            // 
-            this.checkDeleteFile.AutoSize = true;
-            this.checkDeleteFile.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkDeleteFile.Location = new System.Drawing.Point(10, 72);
-            this.checkDeleteFile.Name = "checkDeleteFile";
-            this.checkDeleteFile.Size = new System.Drawing.Size(197, 19);
-            this.checkDeleteFile.TabIndex = 6;
-            this.checkDeleteFile.Text = "Delete file from exporting folder";
-            this.checkDeleteFile.UseVisualStyleBackColor = true;
-            // 
             // displayExportDataPath
             // 
             this.displayExportDataPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -502,7 +475,6 @@
             // 
             // labelExportDataPath
             // 
-            this.labelExportDataPath.Lines = 0;
             this.labelExportDataPath.Location = new System.Drawing.Point(10, 45);
             this.labelExportDataPath.Name = "labelExportDataPath";
             this.labelExportDataPath.Size = new System.Drawing.Size(154, 21);
@@ -521,7 +493,6 @@
             // 
             // labelImportDataPath
             // 
-            this.labelImportDataPath.Lines = 0;
             this.labelImportDataPath.Location = new System.Drawing.Point(10, 11);
             this.labelImportDataPath.Name = "labelImportDataPath";
             this.labelImportDataPath.Size = new System.Drawing.Size(154, 21);
@@ -663,7 +634,6 @@
         private Sci.Win.UI.Label labelExportDataPath;
         private Sci.Win.UI.Button btnGetExportDataPath;
         private Sci.Win.UI.Button btnGetImportDataPath;
-        private Sci.Win.UI.CheckBox checkDeleteFile;
         private Sci.Win.UI.Button btnUpdate;
         private Sci.Win.UI.Button btnTestFTP;
         private Sci.Win.UI.Button BtnTestMail;
