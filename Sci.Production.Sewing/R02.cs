@@ -153,20 +153,40 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈全部Sewing output data SQL
-            sqlCmd.Append(string.Format(@"with tmpSewingDetail
-as (
-select s.OutputDate,s.Category,s.Shift,s.SewingLineID,IIF(sd.QAQty=0,s.Manpower,s.Manpower*sd.QAQty) as ActManPower,
-s.Team,sd.OrderId,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Category,'') as OrderCategory,
-o.LocalOrder,s.FactoryID,isnull(o.ProgramID,'') as OrderProgram,isnull(mo.ProgramID,'') as MockupProgram,
-isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
-isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,isnull(sl.Rate,100)/100 as Rate,
-(select StdTMS from System WITH (NOLOCK) ) as StdTMS
-from SewingOutput s WITH (NOLOCK) 
+            sqlCmd.Append(string.Format(@"
+select 
+	s.OutputDate
+	,s.Category
+	,s.Shift
+	,s.SewingLineID
+	,[ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+	,s.Team
+	,sd.OrderId
+	,sd.ComboType
+	,sd.WorkHour
+	,sd.QAQty
+	,sd.InlineQty
+	,[OrderCategory] = isnull(o.Category,'')
+	,o.LocalOrder
+	,s.FactoryID
+	,[OrderProgram] = isnull(o.ProgramID,'') 
+	,[MockupProgram] = isnull(mo.ProgramID,'')
+	,[OrderCPU] = isnull(o.CPU,0)
+	,[OrderCPUFactor] = isnull(o.CPUFactor,0)
+	,[MockupCPU] = isnull(mo.Cpu,0)
+	,[MockupCPUFactor] = isnull(mo.CPUFactor,0)
+	,[OrderStyle] = isnull(o.StyleID,'')
+	,[MockupStyle] = isnull(mo.StyleID,'')
+	,[Rate] = isnull(sl.Rate,100)/100
+	,System.StdTMS
+INTO #tmpSewingDetail
+from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-where s.OutputDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+where s.OutputDate between '{0}' and '{1}'"
+                , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
             {
                 sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'",line1));
@@ -181,22 +201,19 @@ where s.OutputDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString(
             }
 
             sqlCmd.Append(@"
-),
-tmpSewingGroup
-as (
 select OutputDate,Category,Shift,SewingLineID,Sum(ActManPower) as ActManPower1,Team,OrderId,ComboType,
 sum(WorkHour) as WorkHour,sum(QAQty) as QAQty,sum(InlineQty) as InlineQty,OrderCategory,
 LocalOrder,FactoryID,OrderProgram,MockupProgram,OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,
 MockupStyle,Rate,StdTMS,IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
-from tmpSewingDetail
+INTO #tmpSewingGroup
+from #tmpSewingDetail
 group by OutputDate,Category,Shift,SewingLineID,Team,OrderId,ComboType,OrderCategory,LocalOrder,
 FactoryID,OrderProgram,MockupProgram,
 OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,MockupStyle,Rate,StdTMS
-),
-tmp1stFilter
-as (
+
 select t.*,isnull(w.Holiday,0) as Holiday,IIF(isnull(QAQty,0)=0,ActManPower1,(ActManPower1/QAQty)) as ActManPower
-from tmpSewingGroup t
+INTO #tmp1stFilter
+from #tmpSewingGroup t
 left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
 where 1 = 1");
             if (excludeSubconin == 1)
@@ -204,23 +221,20 @@ where 1 = 1");
                 sqlCmd.Append(" and t.LastShift <> 'I'");
             }
             sqlCmd.Append(@"
-),
-tmp2ndFilter
-as (
 select * 
-from tmp1stFilter t
+into #tmp2ndFilter
+from #tmp1stFilter t
 where 1 = 1");
             if (excludeHolday == 1)
             {
                 sqlCmd.Append(" and Holiday = 0");
             }
             sqlCmd.Append(@"
-)
 select OutputDate,IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In'))) as Shift,
 Team,SewingLineID,OrderId,IIF(Category='M',MockupStyle,OrderStyle) as Style,QAQty,ActManPower,
 IIF(Category='M',MockupProgram,OrderProgram) as Program,
 WorkHour,StdTMS,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,Category,LastShift,ComboType,FactoryID
-from tmp2ndFilter");
+from #tmp2ndFilter");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out SewOutPutData);
             if (!result)
@@ -286,7 +300,8 @@ as (
 	) d
 	group by OutputDate
 )
-select q.OutputDate,q.QAQty,tc.TotalCPU,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
+select q.OutputDate,q.QAQty,TotalCPU = round(tc.TotalCPU,2)
+,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
 IIF(q.ManHour = 0,0,Round(isnull(tc.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
 IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
 IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
@@ -295,7 +310,8 @@ left join tmpTtlCPU tc on tc.OutputDate = q.OutputDate
 left join tmpSubconInCPU ic on ic.OutputDate = q.OutputDate
 left join tmpSubconOutCPU oc on oc.OutputDate = q.OutputDate
 left join tmpTtlManPower mp on mp.OutputDate = q.OutputDate
-order by q.OutputDate",
+order by q.OutputDate"
+,
                         out printData);
                     #endregion
                 }
@@ -350,7 +366,9 @@ from (
 ) a
 group by SewingLineID
 )
-select q.SewingLineID,q.QAQty,tc.TotalCPU,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
+select q.SewingLineID,q.QAQty
+,TotalCPU = round(tc.TotalCPU,2)
+,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
 IIF(q.ManHour = 0,0,Round(isnull(tc.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
 IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
 IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
@@ -563,8 +581,12 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("Fm:{0}",factoryName);
-            worksheet.Cells[3, 1] = string.Format("{0} Monthly CMP Report, MTH:{1} ({2}{3}) {4}",
-                MyUtility.Check.Empty(factory) ? "All Factory" : factory, Convert.ToDateTime(date1).ToString("yyyy/MM"), excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday", excludeSubconin == 0 ? ", Subcon-In" : "", reportType == 0 ? "" : "By Sewing Line");
+            worksheet.Cells[3, 1] = string.Format("{0} Monthly CMP Report, MTH:{1} (Excluded Subcon-Out,{2}{3}) {4}"
+                , MyUtility.Check.Empty(factory) ? "All Factory" : factory
+                , Convert.ToDateTime(date1).ToString("yyyy/MM")
+                , excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday"
+                , excludeSubconin == 0 ? ", Subcon-In" : ""
+                , reportType == 0 ? "" : "By Sewing Line");
             worksheet.Cells[4, 3] = excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
 
             int insertRow = 5;
@@ -580,7 +602,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 objArray[0, 6] = dr[6];
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
-                objArray[0, 9] = dr[9];
+                objArray[0, 9] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,2)", insertRow);
                 objArray[0, 10] = "";
                 worksheet.Range[String.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
                 insertRow++;
@@ -600,7 +622,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 7] = string.Format("=ROUND(I{0}/H{0},2)", MyUtility.Convert.GetString(insertRow));
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,2)", MyUtility.Convert.GetString(insertRow));
+            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,2)",insertRow);
             insertRow++;
             worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["QAQty"]);
             worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["TotalCPU"]);
@@ -608,7 +630,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["AvgWorkHour"]);
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManPower"]);
             worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["Eff"]);
+            worksheet.Cells[insertRow, 10] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,2)", insertRow);
             
             //CPU Factor
             insertRow = insertRow + 2;
