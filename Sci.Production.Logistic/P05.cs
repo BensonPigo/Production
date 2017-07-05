@@ -88,50 +88,100 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select 1 as selected
-,ReceiveDate,PackingListID,OrderID,Seq,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery
-,[SCI Delivery],Qty,[TTQty],[Rec Qty],[Ret Qty]
-,[Bal Qty]=CASE WHEN ([TTQty] - [Rec Qty] + [Ret Qty]) is null then 0 else ([TTQty] - [Rec Qty] + [Ret Qty]) END
-,[%] = CASE WHEN TTQty =0 then 0 WHEN ([TTQty] - [Rec Qty] + [Ret Qty]) is null then 0 ELSE round(1- (([TTQty] - [Rec Qty] + [Ret Qty]) / TTQty),2) * 100 END
-,ClogLocationId,AddDate
-,rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+select  1 as selected
+        , ReceiveDate
+        , PackingListID
+        , OrderID
+        , Seq
+        , CTNStartNo
+        , StyleID
+        , BrandID
+        , Customize1
+        , CustPONo
+        , Dest
+        , FactoryID
+        , BuyerDelivery
+        , [SCI Delivery]
+        , Qty
+        , [TTQty] = isnull (TTQty, 0)
+        , [Rec Qty]
+        , [Ret Qty]
+        , [Bal Qty] = CASE 
+                          WHEN ([TTQty] - [Rec Qty] + [Ret Qty]) is null then 0 
+                          else ([TTQty] - [Rec Qty] + [Ret Qty]) 
+                      END
+        , [%] = CASE 
+                    WHEN TTQty = 0 then 0 
+                    WHEN ([TTQty] - [Rec Qty] + [Ret Qty]) is null then 0 
+                    ELSE round(1- (([TTQty] - [Rec Qty] + [Ret Qty]) / TTQty),2) * 100 
+                END
+        , ClogLocationId
+        , AddDate
+        , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+        , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-select cr.ReceiveDate,cr.PackingListID,cr.OrderID,oq.Seq,cr.CTNStartNo,
-isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery
---
-,[SCI Delivery]=o.SciDelivery
-,o.Qty
-,[TTQty]=(select sum(CTNQty) from PackingList_Detail where PackingListID=cr.PackingListID and OrderID = cr.OrderID)
-,[Rec Qty]=(select count(*) from ClogReceive where PackingListID=pd.ID and OrderID = pd.OrderID)
-,[Ret Qty]=(select count(*) from ClogReturn where PackingListID=pd.ID and OrderID = pd.OrderID)
-,cr.ClogLocationId,cr.AddDate
-,pd.Id
-from ClogReceive cr WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
-left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    select  cr.ReceiveDate
+            , cr.PackingListID
+            , cr.OrderID
+            , oq.Seq
+            , cr.CTNStartNo
+            , isnull(o.StyleID,'') as StyleID
+            , isnull(o.BrandID,'') as BrandID
+            , isnull(o.Customize1,'') as Customize1
+            , isnull(o.CustPONo,'') as CustPONo
+            , isnull(c.Alias,'') as Dest
+            , isnull(o.FactoryID,'') as FactoryID
+            , oq.BuyerDelivery
+            , [SCI Delivery] = o.SciDelivery
+            , o.Qty
+            , [TTQty] = (select sum (isnull(pld.CTNQty, 0)) 
+                         from PackingList_Detail pld
+                         where  pld.ID = cr.PackingListID 
+                                and pld.OrderID = cr.OrderID)
+            , [Rec Qty] = ( select count(*) 
+                            from ClogReceive CReceive
+                            where   CReceive.PackingListID = pd.ID 
+                                    and CReceive.OrderID = pd.OrderID)
+            , [Ret Qty] = ( select count(*) 
+                            from ClogReturn CReturn
+                            where   CReturn.PackingListID = pd.ID 
+                                    and CReturn.OrderID = pd.OrderID)
+            , cr.ClogLocationId
+            , cr.AddDate
+            , pd.Id
+    from ClogReceive cr WITH (NOLOCK) 
+    left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
+    left join Country c WITH (NOLOCK) on o.Dest = c.ID
+    left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID 
+                                                     and pd.OrderID = cr.OrderID 
+                                                     and pd.CTNStartNo = cr.CTNStartNo 
+                                                     and pd.CTNQty > 0
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
+                                                and oq.Seq = pd.OrderShipmodeSeq
+    where   cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(dateReceiveDate.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(dateReceiveDate.Value1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateReceiveDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(dateReceiveDate.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(dateReceiveDate.Value2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
+                sqlCmd.Append(string.Format(@" 
+            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
             }
             if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
+                sqlCmd.Append(string.Format(@" 
+            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
-            sqlCmd.Append(")X order by rn");
+            sqlCmd.Append(@"
+) X order by rn");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
