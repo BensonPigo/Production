@@ -80,12 +80,7 @@ namespace Sci.Production.Logistic
                     listControlBindingSource1.DataSource = selectDataTable;
                     return;
                 }
-
-
             };
-
-
-            //
         }
 
         //Find
@@ -99,46 +94,81 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-select ID, selected,ReceiveDate,PackingListID, OrderID,CTNStartNo
-	, CustPONo, StyleID, SeasonID, BrandID, Customize1, Alias, BuyerDelivery,ClogLocationId, Remark 
-    ,rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-    ,rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))	
-from
-(
-	Select distinct '' as ID, 0 as selected,b.ReceiveDate, a.Id as PackingListID, a.OrderID, b.CTNStartNo
-	, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,b.ClogLocationId,'' as Remark 
-	
-from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) , TransferToClog t WITH (NOLOCK)
-	where b.OrderId = c.Id 
-	and a.Id = b.Id 
-	and b.CTNStartNo != '' 
-	and b.ReceiveDate is not null
-	and c.Dest = d.ID 
-and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
-and a.id = t.PackingListID
+select  ID
+        , selected
+        , ReceiveDate
+        , PackingListID
+        , OrderID
+        , CTNStartNo
+	    , CustPONo
+        , StyleID
+        , SeasonID
+        , BrandID
+        , Customize1
+        , Alias
+        , BuyerDelivery
+        , ClogLocationId
+        , Remark 
+        , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
+        , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
+from (
+    Select  distinct '' as ID
+            , 0 as selected
+            , b.ReceiveDate
+            , a.Id as PackingListID
+            , a.OrderID
+            , b.CTNStartNo
+	        , c.CustPONo
+            , c.StyleID
+            , c.SeasonID
+            , c.BrandID
+            , c.Customize1
+            , d.Alias
+            , c.BuyerDelivery
+            , b.ClogLocationId
+            , '' as Remark 
+    from PackingList a WITH (NOLOCK) 
+         , PackingList_Detail b WITH (NOLOCK) 
+         , Orders c WITH (NOLOCK) 
+         , Country d WITH (NOLOCK) 
+         , TransferToClog t WITH (NOLOCK)
+	where   b.OrderId = c.Id 
+	        and a.Id = b.Id 
+	        and b.CTNStartNo != '' 
+	        and b.ReceiveDate is not null
+	        and c.Dest = d.ID 
+            and a.MDivisionID = '{0}' 
+            and (a.Type = 'B' or a.Type = 'L') 
+            and c.MDivisionID = '{0}'
+            and a.id = t.PackingListID
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(@" 
+            and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(@" 
+            and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(@" 
+            and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(@" 
+            and b.ReceiveDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(@" 
+            and b.ReceiveDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
             sqlCmd.Append(@"
-)a
+) a
 order by rn ");
 
             DualResult selectResult;
