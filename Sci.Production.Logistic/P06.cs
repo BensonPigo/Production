@@ -85,6 +85,7 @@ namespace Sci.Production.Logistic
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading...");
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
 select  1 as selected
@@ -144,6 +145,7 @@ from (
                 MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
+            this.HideWaitMessage();
         }
 
         //Close
@@ -163,6 +165,7 @@ from (
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
+            
             //如果沒勾選資料,會跳訊息
             foreach (DataRow Dr in ExcelTable.Rows)
             {
@@ -177,6 +180,9 @@ from (
                 MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
                 return;
             }
+
+            this.ShowWaitMessage("Excel Processing...");
+
             /*
              * 輸出的資料中
              * 1. Selected，此欄位是為了判斷是否需要列印
@@ -188,7 +194,7 @@ from (
             PrintDT.Columns.Remove("rn1");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P06.xltx", 3, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 
@@ -212,11 +218,9 @@ from (
 
             objSheets.Cells[2, 4] = drange;
             objSheets.get_Range("A1").RowHeight = 45;
-
-            ////
-
-            //bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", xltfile: "Logistic_P06.xltx", headerRow: 1);
-            //if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            objApp.Visible = true;
+            
+            this.HideWaitMessage();
         }
 
     }

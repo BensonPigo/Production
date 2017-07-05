@@ -86,6 +86,7 @@ namespace Sci.Production.Logistic
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading...");
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
 select  1 as selected
@@ -190,6 +191,7 @@ from (
             }
             listControlBindingSource1.DataSource = gridData;
             gridReceiveDate.AutoResizeColumns();
+            this.HideWaitMessage();
         }
 
         //Close
@@ -200,29 +202,50 @@ from (
 
         //To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
-        {
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); //預先開啟excel app
-            //這邊處理吐進去的資料
+        {       
             DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
+            DataTable PrintDT = ExcelTable.Clone();
+
+            //判斷是否有資料
             if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
+
             //如果沒勾選資料,會跳訊息
-            DataRow[] SelectedData = ExcelTable.Select("Selected = 1");
-            if (SelectedData.Length == 0)
+            foreach (DataRow Dr in ExcelTable.Rows)
+            {
+                if (Dr["Selected"].EqualString("1"))
+                {
+                    PrintDT.ImportRow(Dr);
+                }
+            }
+
+            if (PrintDT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
                 return;
             }
-            //將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
-            //
-            MyUtility.Excel.CopyToXls(SelectedData.CopyToDataTable(), "", "Logistic_P05.xltx", 4, true, null, objApp);// 將datatable copy to excel
+
+            this.ShowWaitMessage("Excel Processing...");
+
+            /*
+             * 輸出的資料中
+             * 1. Selected，此欄位是為了判斷是否需要列印
+             * 2. rn，此欄位是為了 SQL 排序
+             * 3. rn1，同上
+             */
+            PrintDT.Columns.Remove("Selected");
+            PrintDT.Columns.Remove("rn");
+            PrintDT.Columns.Remove("rn1");
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P05.xltx", 4, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
-            objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A5:U{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
             DataRow dr;
@@ -240,6 +263,9 @@ from (
             string drange = d1 + "~" + d2;
             objSheets.Cells[3, 13] = drange;
             objSheets.get_Range("A1").RowHeight = 45;
+            objApp.Visible = true;
+
+            this.HideWaitMessage();
         }
     }
 }
