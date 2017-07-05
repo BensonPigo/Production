@@ -306,24 +306,51 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                 }
             }
 
+            foreach (DataRow dr in selectedData)
+            {
+                dr["ClogLocationId"] = this.txtcloglocationLocationNo.Text.Trim();
+            }
+
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
             //組要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
-                insertCmds.Add(string.Format(@"insert into ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,ClogLocationId, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}','{4}',GETDATE());", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+                insertCmds.Add(string.Format(@"
+insert into ClogReceive (
+    ReceiveDate
+    , MDivisionID
+    , PackingListID
+    , OrderID
+    , CTNStartNo
+    , ClogLocationId
+    , AddDate
+) values (
+    GETDATE()
+    , '{0}'
+    , '{1}'
+    , '{2}'
+    , '{3}'
+    , '{4}'
+    , GETDATE()
+);", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
                 //要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(@"update PackingList_Detail 
-set ReceiveDate = GETDATE(), ClogLocationId = '{3}', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+                updateCmds.Add(string.Format(@"
+update PackingList_Detail 
+set ReceiveDate = GETDATE()
+    , ClogLocationId = '{3}'
+    , ReturnDate = null 
+where   ID = '{0}' 
+        and OrderID = '{1}' 
+        and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
             }
 
             //Update Orders的資料
             DataTable selectData = null;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"select distinct OrderID
+                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"
+select distinct OrderID
 from #tmp a
 where a.Selected = 1", out selectData);
             }
