@@ -113,7 +113,7 @@ select  ID
         , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
 from (
     Select  distinct '' as ID
-            , 0 as selected
+            , 1 as selected
             , b.ReceiveDate
             , a.Id as PackingListID
             , a.OrderID

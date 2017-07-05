@@ -74,13 +74,7 @@ namespace Sci.Production.Logistic
                     listControlBindingSource1.DataSource = gridData;
                     return;
                 }
-
-
             };
-
-
-            //
-
         }
 
         //Query
@@ -132,21 +126,21 @@ from (
             , isnull(o.CustPONo,'') as CustPONo
             , isnull(c.Alias,'') as Dest
             , isnull(o.FactoryID,'') as FactoryID
-            , oq.BuyerDelivery
+            , o.BuyerDelivery
             , [SCI Delivery] = o.SciDelivery
-            , o.Qty
+            , oq.Qty
             , [TTQty] = (select sum (isnull(pld.CTNQty, 0)) 
                          from PackingList_Detail pld
                          where  pld.ID = cr.PackingListID 
                                 and pld.OrderID = cr.OrderID)
             , [Rec Qty] = ( select count(*) 
                             from ClogReceive CReceive
-                            where   CReceive.PackingListID = pd.ID 
-                                    and CReceive.OrderID = pd.OrderID)
+                            where   CReceive.PackingListID = cr.PackingListID 
+                                    and CReceive.OrderID = cr.OrderID)
             , [Ret Qty] = ( select count(*) 
                             from ClogReturn CReturn
-                            where   CReturn.PackingListID = pd.ID 
-                                    and CReturn.OrderID = pd.OrderID)
+                            where   CReturn.PackingListID = cr.PackingListID 
+                                    and CReturn.OrderID = cr.OrderID)
             , cr.ClogLocationId
             , cr.AddDate
             , pd.Id
@@ -244,7 +238,7 @@ from (
             MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P05.xltx", 4, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
+            int r = PrintDT.Rows.Count;
             objSheets.get_Range(string.Format("A5:U{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;

@@ -198,7 +198,7 @@ from (
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 
-            int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
+            int r = PrintDT.Rows.Count;
             objSheets.get_Range(string.Format("A4:L{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             DataRow dr;
