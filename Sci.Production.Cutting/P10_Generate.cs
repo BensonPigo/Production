@@ -24,7 +24,7 @@ namespace Sci.Production.Cutting
         DataTable detailTb, alltmpTb, bundle_detail_artTb, qtyTb;
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
         DataTable f_codeTb;
-
+        DataTable garmentarRC;
         public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
             InitializeComponent();
@@ -218,9 +218,12 @@ group by sizeCode"
             pdr["parts"] = npart;
             patternTb.Rows.Add(pdr);
 
-
-            #region Create Qtytb
-            #endregion
+            garmentarRC = null;
+            garmentarRC = garmentTb.Clone();
+            foreach (DataRow gdr in garmentar)
+            {
+                garmentarRC.ImportRow(gdr);
+            }
         }
         //當bundle_allPart, bundle_art 存在時的對應資料
         public void exist_Table_Query()
@@ -327,7 +330,7 @@ group by sizeCode"
                 {
                     SelectItem sele;
 
-                    sele = new SelectItem(garmentTb, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
+                    sele = new SelectItem(garmentarRC, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -355,7 +358,8 @@ group by sizeCode"
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode) return;
-                DataRow[] gemdr = garmentTb.Select(string.Format("PatternCode ='{0}'", patcode), "");
+
+                DataRow[] gemdr = garmentarRC.Select(string.Format("PatternCode ='{0}'", patcode), "");
                 if (gemdr.Length > 0)
                 {
                     dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
@@ -372,6 +376,14 @@ group by sizeCode"
                     dr["art"] = art;
                     dr["parts"] = 1;
 
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<CutPart: {0} >  can't found!", e.FormattedValue));
+                    dr["PatternCode"] = "";
+                    dr["PatternDesc"] = "";
+                    dr["art"] = "";
+                    dr["Parts"] = 0;
                 }
                 dr.EndEdit();
             };
@@ -426,7 +438,7 @@ group by sizeCode"
 
                     SelectItem sele;
 
-                    sele = new SelectItem(garmentTb, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
+                    sele = new SelectItem(garmentarRC, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -439,6 +451,35 @@ group by sizeCode"
                     caltotalpart();
                 }
             };
+
+            patterncell2.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Parts"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+
+                DataRow[] gemdr = garmentarRC.Select(string.Format("PatternCode ='{0}'", newvalue), "");
+                if (gemdr.Length > 0)
+                {
+                    dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
+                    dr["PatternCode"] = (gemdr[0]["PatternCode"]).ToString();
+                    dr["Annotation"] = (gemdr[0]["Annotation"]).ToString();
+                    dr["parts"] = 1;
+                    dr.EndEdit();
+                    calAllPart();
+                    caltotalpart();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<CutPart: {0} >  can't found!", e.FormattedValue));
+                    dr["Sel"] = 0;
+                    dr["PatternCode"] = "";
+                    dr["PatternDesc"] = "";
+                    dr["Annotation"] = "";
+                    dr["Parts"] = 0;
+                }
+            };
+            
             partsCell2.CellValidating += (s, e) =>
             {
                 DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
@@ -447,7 +488,7 @@ group by sizeCode"
                 dr["Parts"] = newvalue;
                 dr.EndEdit();
                 calAllPart();
-                caltotalpart();
+                caltotalpart();                
             };
             #endregion
 

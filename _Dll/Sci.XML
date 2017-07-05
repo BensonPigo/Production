@@ -1762,6 +1762,65 @@
             <param name="data">destination datarow</param>
             <param name="new">source datarow</param>
         </member>
+        <member name="M:Sci.Utility.Excel.ExcelCOM.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Edward : DataTable快速寫入WorkSheet
+                 create : 2016-04-21 12:20:00
+            </summary>
+            <param name="dt">DataTable</param>
+            <param name="sheet">WorkSheet</param>
+            <param name="firstRow">開始列、開始列為1</param>
+            <param name="firstCol">開始欄、開始欄為1</param>
+            <param name="AddHead">是否加入Table Header</param>
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelCOM.WriteTable(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            將dataTable資料轉 , 填在 Excel 上
+            </summary>
+            <param name="data"></param>
+            <param name="sheet"></param>
+            <param name="firstRow"></param>
+            <param name="firstCol"></param>
+            <param name="AddHead"></param>
+            <param name="wantedColumns"></param>
+            <param name="AllowRangeTransferToString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelCOM.WriteGrid(System.Windows.Forms.DataGridView,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            將Grid顯示資料轉為 dataTable, 填在 Excel 上
+            </summary>
+            <param name="grid"></param>
+            <param name="sheet"></param>
+            <param name="firstRow"></param>
+            <param name="firstCol"></param>
+            <param name="AddHead"></param>
+            <param name="wantedColumns"></param>
+            <param name="AllowRangeTransferToString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelCOM.ConvertGrid2Table(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@,System.Int32,System.Int32)">
+            <summary>
+            將Grid顯示資料轉為 DataTable , 並只取出顯示的Grid 欄位 , Table未顯示在Grid上的欄位不轉
+            </summary>
+            <param name="grid"></param>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Excel.ExcelCOM.ConvertGrid2Table_byInnerTable(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@)">
+            <summary>
+            將Grid顯示資料轉為 DataTable , 並只取出顯示的Grid 欄位 , Table未顯示在Grid上的欄位不轉
+            </summary>
+            <param name="grid"></param>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Sci.Utility.Excel.ExcelCOM.RealHeaderNames">
+            <summary>
+            使用Grid to Excel的時後, Grid 的Header Text是可以重複的 , 但是DataTable column 名稱無法重複
+            所以將 DataTable Column 重編後 , 放在此物件的 Key , 而Value是 Grid HeaderText
+            </summary>
+        </member>
         <member name="T:Sci.Utils">
             <summary>
             Public method utilities.
@@ -14697,6 +14756,11 @@
             Property of row header width.
             </summary>
         </member>
+        <member name="P:Sci.Win.UI.Grid.IsSupportCancelSorting">
+            <summary>
+            支援在Grid 左上角Header的空白方框按滑鼠右鍵可清除排序
+            </summary>
+        </member>
         <member name="M:Sci.Win.UI.Grid.EnsureStyle">
             <summary>
             Ensure column color style.
@@ -14770,6 +14834,11 @@
         <member name="P:Sci.Win.UI.Grid.SupportEditMode">
             <summary>
             Property of advance Editmode.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.UI.Grid.CurrentDataRow">
+            <summary>
+            回傳 CurrentRow 的 DataRow
             </summary>
         </member>
         <member name="T:Sci.Win.UI.GridIcon">

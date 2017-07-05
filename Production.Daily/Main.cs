@@ -308,14 +308,7 @@ namespace Production.Daily
                 return new DualResult(false, "You can't setup the path using by \\ (UNC),pls mapping for a disk then can do it");
             }
             #endregion
-            #region 若有勾選[Delete file from exporting folder]，則先刪除local之資料匣中所有檔案((上傳時))
-            if (this.checkDeleteFile.Checked)
-            {
-                Directory.Delete(exportDataPath, true);
-                Directory.CreateDirectory(exportDataPath);
-            }
-            #endregion
-
+            
             result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
             if (!result) { return result; }
 
@@ -960,7 +953,6 @@ Region      Succeeded       Message
             return true;
         }
         
-
         //刪除目錄下所有檔案
         private static void DeleteDirectory(string fileName)
         {
@@ -984,8 +976,6 @@ Region      Succeeded       Message
             }
 
         }
-
-       
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
