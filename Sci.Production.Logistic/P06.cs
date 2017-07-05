@@ -87,38 +87,56 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select 1 as selected,*,
-rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+select  1 as selected
+        , *
+        , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
+        , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
 from (
-select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
-isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.AddDate
-
-from ClogReturn cr WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
-left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    select  cr.ReturnDate
+            , cr.PackingListID
+            , cr.OrderID
+            , cr.CTNStartNo
+            , isnull (o.StyleID, '') as StyleID
+            , isnull (o.BrandID, '') as BrandID
+            , isnull (o.Customize1, '') as Customize1
+            , isnull (o.CustPONo, '') as CustPONo
+            , isnull (c.Alias, '') as Dest
+            , isnull (o.FactoryID, '') as FactoryID
+            , oq.BuyerDelivery
+            , cr.AddDate
+    from ClogReturn cr WITH (NOLOCK) 
+    left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
+    left join Country c WITH (NOLOCK) on o.Dest = c.ID
+    left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID 
+                                                     and pd.OrderID = cr.OrderID 
+                                                     and pd.CTNStartNo = cr.CTNStartNo 
+                                                     and pd.CTNQty > 0
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
+                                                and oq.Seq = pd.OrderShipmodeSeq
+    where   cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateReturnDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and cr.ReturnDate >= '{0}'", Convert.ToDateTime(dateReturnDate.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+            and cr.ReturnDate >= '{0}'", Convert.ToDateTime(dateReturnDate.Value1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateReturnDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and cr.ReturnDate <= '{0}'", Convert.ToDateTime(dateReturnDate.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+            and cr.ReturnDate <= '{0}'", Convert.ToDateTime(dateReturnDate.Value2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
+                sqlCmd.Append(string.Format(@" 
+            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
             }
             if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
+                sqlCmd.Append(string.Format(@" 
+            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
-            sqlCmd.Append(")X order by rn");
+            sqlCmd.Append(@"
+) X order by rn");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
@@ -138,21 +156,39 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
+            DataTable PrintDT = ExcelTable.Clone();
+            
             if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
             //如果沒勾選資料,會跳訊息
-            DataRow[] SelectedData = ExcelTable.Select("Selected = 1");
-            if (SelectedData.Length == 0)
+            foreach (DataRow Dr in ExcelTable.Rows)
+            {
+                if (Dr["Selected"].EqualString("1"))
+                {
+                    PrintDT.ImportRow(Dr);
+                }
+            }
+            
+            if (PrintDT.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
                 return;
             }
+            /*
+             * 輸出的資料中
+             * 1. Selected，此欄位是為了判斷是否需要列印
+             * 2. rn，此欄位是為了 SQL 排序
+             * 3. rn1，同上
+             */
+            PrintDT.Columns.Remove("Selected");
+            PrintDT.Columns.Remove("rn");
+            PrintDT.Columns.Remove("rn1");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(SelectedData.CopyToDataTable(), "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 
