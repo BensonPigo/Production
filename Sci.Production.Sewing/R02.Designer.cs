@@ -66,7 +66,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(13, 12);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(80, 23);
@@ -75,7 +74,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(13, 48);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(80, 23);
@@ -84,7 +82,6 @@
             // 
             // labelHoliday
             // 
-            this.labelHoliday.Lines = 0;
             this.labelHoliday.Location = new System.Drawing.Point(13, 84);
             this.labelHoliday.Name = "labelHoliday";
             this.labelHoliday.Size = new System.Drawing.Size(80, 23);
@@ -93,7 +90,6 @@
             // 
             // labelSubconIn
             // 
-            this.labelSubconIn.Lines = 0;
             this.labelSubconIn.Location = new System.Drawing.Point(13, 120);
             this.labelSubconIn.Name = "labelSubconIn";
             this.labelSubconIn.Size = new System.Drawing.Size(80, 23);
@@ -102,7 +98,6 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
             this.labelReportType.Location = new System.Drawing.Point(13, 156);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(80, 23);
@@ -111,7 +106,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 192);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
@@ -120,7 +114,6 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Lines = 0;
             this.labelOrderBy.Location = new System.Drawing.Point(13, 228);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(80, 23);
@@ -147,7 +140,6 @@
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(198, 12);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(21, 23);
@@ -171,7 +163,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(141, 48);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(21, 23);
@@ -251,10 +242,9 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(13, 266);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(264, 52);
+            this.label10.Size = new System.Drawing.Size(307, 52);
             this.label10.TabIndex = 9;
             this.label10.Text = "** The value in this report are all excluded subcon-out, unless the column with \"" +
     "included subcon-out\".";
