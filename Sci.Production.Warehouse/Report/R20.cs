@@ -148,7 +148,6 @@ inner join Inventory inv on o.ID = inv.POID
 inner join Po_Supp_Detail psd on inv.POID = psd.id 
                                  and inv.seq1 = psd.seq1 
                                  and inv.seq2 = psd.seq2
-left join Fabric_Supp fs on inv.SCIRefno = fs.SCIRefno
 left join InventoryRefno invRef on inv.InventoryRefnoID = invRef.ID
 left join MDivisionPoDetail mpd on inv.POID = mpd.POID and inv.Seq2 = mpd.Seq1 and inv.Seq2 = mpd.Seq2
 {0}", (filte.Count > 0) ? "Where " + filte.JoinToString("\n\r and ") : "");
