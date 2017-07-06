@@ -55,25 +55,26 @@ namespace Sci.Production.Logistic
 
             gridReceiveDate.Sorted += (s, e) =>
             {
-
-                if ((RowIndex == -1) & (ColumIndex == 4))
+                #region 如果準備排序的欄位 = "CTNStartNo" 則用以下方法排序
+                if ((RowIndex == -1) && (gridData.Columns[ColumIndex].ColumnName.ToString().EqualString("CTNStartNo")))
                 {
 
                     listControlBindingSource1.DataSource = null;
 
                     if (selectDataTable_DefaultView_Sort == "DESC")
                     {
-                        gridData.DefaultView.Sort = "rn1 DESC";
+                        gridData.DefaultView.Sort = "rn DESC";
                         selectDataTable_DefaultView_Sort = "";
                     }
                     else
                     {
-                        gridData.DefaultView.Sort = "rn1 ASC";
+                        gridData.DefaultView.Sort = "rn ASC";
                         selectDataTable_DefaultView_Sort = "DESC";
                     }
                     listControlBindingSource1.DataSource = gridData;
                     return;
                 }
+                #endregion 
             };
         }
 
@@ -112,8 +113,7 @@ select  1 as selected
                 END
         , ClogLocationId
         , AddDate
-        , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-        , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+        , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
     select  cr.ReceiveDate
             , cr.PackingListID
@@ -176,7 +176,8 @@ from (
             and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
             sqlCmd.Append(@"
-) X order by rn");
+) X 
+order by PackingListID, OrderID, rn");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
@@ -228,11 +229,9 @@ from (
              * 輸出的資料中
              * 1. Selected，此欄位是為了判斷是否需要列印
              * 2. rn，此欄位是為了 SQL 排序
-             * 3. rn1，同上
              */
             PrintDT.Columns.Remove("Selected");
             PrintDT.Columns.Remove("rn");
-            PrintDT.Columns.Remove("rn1");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(PrintDT, "", "Logistic_P05.xltx", 4, false, null, objApp);// 將datatable copy to excel
@@ -248,11 +247,11 @@ from (
             string d1 = "", d2 = "";
             if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
             {
-                d1 = Convert.ToDateTime(dateReceiveDate.Value1).ToString("d");
+                d1 = Convert.ToDateTime(dateReceiveDate.Value1).ToString("yyyy/MM/dd");
             }
             if (!MyUtility.Check.Empty(dateReceiveDate.Value2))
             {
-                d2 = Convert.ToDateTime(dateReceiveDate.Value2).ToString("d");
+                d2 = Convert.ToDateTime(dateReceiveDate.Value2).ToString("yyyy/MM/dd");
             }
             string drange = d1 + "~" + d2;
             objSheets.Cells[3, 13] = drange;
