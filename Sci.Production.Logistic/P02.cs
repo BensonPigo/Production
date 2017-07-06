@@ -26,7 +26,7 @@ namespace Sci.Production.Logistic
             dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
-
+        string selectDataTable_DefaultView_Sort = "";
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -43,6 +43,7 @@ namespace Sci.Production.Logistic
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                //.Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) 
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -52,8 +53,45 @@ namespace Sci.Production.Logistic
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
-        }
 
+            // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
+            int RowIndex = 0;
+            int ColumIndex = 0;
+            gridImport.CellClick += (s, e) =>
+            {
+                RowIndex = e.RowIndex;
+                ColumIndex = e.ColumnIndex;
+            };
+
+            gridImport.Sorted += (s, e) =>
+            {
+
+                if ((RowIndex == -1) & (ColumIndex == 4))
+                {
+
+                    listControlBindingSource1.DataSource = null;
+
+                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    {
+                        selectDataTable.DefaultView.Sort = "rn1 DESC";
+                        selectDataTable_DefaultView_Sort = "";
+                    }
+                    else
+                    {
+                        selectDataTable.DefaultView.Sort = "rn1 ASC";
+                        selectDataTable_DefaultView_Sort = "DESC";
+                    }
+                    listControlBindingSource1.DataSource = selectDataTable;
+                    return;
+                }
+
+
+            };
+
+
+            //
+        }
+        DataTable selectDataTable;
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
@@ -64,7 +102,14 @@ namespace Sci.Production.Logistic
             }
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
+            sqlCmd.Append(string.Format(@"
+select *,
+rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
+rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+from (
+Select Distinct '' as ID, 0 as selected,b.TransferDate, a.Id as PackingListID, a.OrderID, 
+b.CTNStartNo, 
+c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
 where b.OrderId = c.Id 
 and a.Id = b.Id 
@@ -94,7 +139,9 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
-            DataTable selectDataTable;
+
+            sqlCmd.Append(")X order by rn");
+
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
             {
@@ -119,8 +166,16 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
-                                                             from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
+                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
+TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
+0 as rn,
+0 as rn1,
+c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+from PackingList a WITH (NOLOCK) , 
+PackingList_Detail b WITH (NOLOCK) , 
+Orders c WITH (NOLOCK) , 
+Country d WITH (NOLOCK) 
+where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
@@ -251,24 +306,51 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                 }
             }
 
+            foreach (DataRow dr in selectedData)
+            {
+                dr["ClogLocationId"] = this.txtcloglocationLocationNo.Text.Trim();
+            }
+
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
             //組要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
-                insertCmds.Add(string.Format(@"insert into ClogReceive(ReceiveDate,MDivisionID,PackingListID,OrderID,CTNStartNo,ClogLocationId, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}','{4}',GETDATE());", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+                insertCmds.Add(string.Format(@"
+insert into ClogReceive (
+    ReceiveDate
+    , MDivisionID
+    , PackingListID
+    , OrderID
+    , CTNStartNo
+    , ClogLocationId
+    , AddDate
+) values (
+    GETDATE()
+    , '{0}'
+    , '{1}'
+    , '{2}'
+    , '{3}'
+    , '{4}'
+    , GETDATE()
+);", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
                 //要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(@"update PackingList_Detail 
-set ReceiveDate = GETDATE(), ClogLocationId = '{3}', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+                updateCmds.Add(string.Format(@"
+update PackingList_Detail 
+set ReceiveDate = GETDATE()
+    , ClogLocationId = '{3}'
+    , ReturnDate = null 
+where   ID = '{0}' 
+        and OrderID = '{1}' 
+        and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
             }
 
             //Update Orders的資料
             DataTable selectData = null;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"select distinct OrderID
+                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"
+select distinct OrderID
 from #tmp a
 where a.Selected = 1", out selectData);
             }
