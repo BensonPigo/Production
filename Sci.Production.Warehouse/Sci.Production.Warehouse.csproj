@@ -91,6 +91,8 @@
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -991,6 +993,12 @@
     <Compile Include="Report\R20.Designer.cs">
       <DependentUpon>R20.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R21.Designer.cs">
+      <DependentUpon>R21.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R40.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1534,6 +1542,9 @@
     <EmbeddedResource Include="Report\R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R21.resx">
+      <DependentUpon>R21.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R40.resx">
       <DependentUpon>R40.cs</DependentUpon>
     </EmbeddedResource>
@@ -1570,6 +1581,10 @@
     <ProjectReference Include="..\Sci.Production.Shipping\Sci.Production.Shipping.csproj">
       <Project>{558a6ae9-f802-4d9b-bad4-73fdf0a33326}</Project>
       <Name>Sci.Production.Shipping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Tools\Sci.Production.Tools.csproj">
+      <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
+      <Name>Sci.Production.Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
