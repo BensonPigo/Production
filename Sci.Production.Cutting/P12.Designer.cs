@@ -115,9 +115,10 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM.Location = new System.Drawing.Point(642, 49);
             this.txtfactoryByM.FilteMDivision = true;
+            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IssupportJunk = false;
+            this.txtfactoryByM.Location = new System.Drawing.Point(642, 49);
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 98;
