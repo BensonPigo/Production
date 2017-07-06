@@ -184,8 +184,8 @@ and o.category != 'M'
                 .Date("sewinline", header: "Sewinline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SciDelivery", iseditingreadonly: true)
                 .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //5
-                .Numeric("coststitch)", header: "Cost(Pcs/Stitch)", iseditingreadonly: true)
-                .Numeric("Stitch", header: "Stitch", iseditable: true, iseditingreadonly: true)    //7
+                .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(Pcs/Stitch)", iseditingreadonly: true)
+                .Numeric("Stitch", header: "Pcs/" + Environment.NewLine + "Stitch", iseditable: true, iseditingreadonly: true)    //7
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true) //10
