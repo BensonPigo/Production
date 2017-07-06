@@ -172,6 +172,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(892, 182);
+            this.gridicon.TabIndex = 11;
             // 
             // refresh
             // 
@@ -232,7 +233,7 @@
             this.labelDestination.Location = new System.Drawing.Point(20, 98);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(82, 23);
-            this.labelDestination.TabIndex = 1;
+            this.labelDestination.TabIndex = 24;
             this.labelDestination.Text = "Destination ";
             // 
             // labelAuditDate
@@ -240,7 +241,7 @@
             this.labelAuditDate.Location = new System.Drawing.Point(20, 13);
             this.labelAuditDate.Name = "labelAuditDate";
             this.labelAuditDate.Size = new System.Drawing.Size(82, 23);
-            this.labelAuditDate.TabIndex = 2;
+            this.labelAuditDate.TabIndex = 21;
             this.labelAuditDate.Text = "Audit Date";
             // 
             // labelSP
@@ -248,7 +249,7 @@
             this.labelSP.Location = new System.Drawing.Point(20, 41);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(82, 23);
-            this.labelSP.TabIndex = 3;
+            this.labelSP.TabIndex = 22;
             this.labelSP.Text = "SP# ";
             // 
             // labelStyle
@@ -256,7 +257,7 @@
             this.labelStyle.Location = new System.Drawing.Point(20, 70);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(82, 23);
-            this.labelStyle.TabIndex = 4;
+            this.labelStyle.TabIndex = 23;
             this.labelStyle.Text = "Style ";
             // 
             // labelFactory
@@ -264,7 +265,7 @@
             this.labelFactory.Location = new System.Drawing.Point(20, 126);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(82, 23);
-            this.labelFactory.TabIndex = 5;
+            this.labelFactory.TabIndex = 25;
             this.labelFactory.Text = "Factory ";
             // 
             // labelRemark
@@ -272,7 +273,7 @@
             this.labelRemark.Location = new System.Drawing.Point(20, 182);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(82, 23);
-            this.labelRemark.TabIndex = 6;
+            this.labelRemark.TabIndex = 27;
             this.labelRemark.Text = "Remark ";
             // 
             // labelSQR
@@ -280,7 +281,7 @@
             this.labelSQR.Location = new System.Drawing.Point(20, 154);
             this.labelSQR.Name = "labelSQR";
             this.labelSQR.Size = new System.Drawing.Size(82, 23);
-            this.labelSQR.TabIndex = 7;
+            this.labelSQR.TabIndex = 26;
             this.labelSQR.Text = "SQR ";
             // 
             // labelPO
@@ -288,7 +289,7 @@
             this.labelPO.Location = new System.Drawing.Point(269, 13);
             this.labelPO.Name = "labelPO";
             this.labelPO.Size = new System.Drawing.Size(90, 23);
-            this.labelPO.TabIndex = 8;
+            this.labelPO.TabIndex = 28;
             this.labelPO.Text = "PO# ";
             // 
             // labelOrderQty
@@ -296,7 +297,7 @@
             this.labelOrderQty.Location = new System.Drawing.Point(269, 41);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(90, 23);
-            this.labelOrderQty.TabIndex = 9;
+            this.labelOrderQty.TabIndex = 29;
             this.labelOrderQty.Text = "Order Q\'ty ";
             // 
             // labelInspectQty
@@ -304,7 +305,7 @@
             this.labelInspectQty.Location = new System.Drawing.Point(269, 70);
             this.labelInspectQty.Name = "labelInspectQty";
             this.labelInspectQty.Size = new System.Drawing.Size(90, 23);
-            this.labelInspectQty.TabIndex = 10;
+            this.labelInspectQty.TabIndex = 30;
             this.labelInspectQty.Text = "Inspect Q\'ty ";
             // 
             // labelDefectsQty
@@ -312,7 +313,7 @@
             this.labelDefectsQty.Location = new System.Drawing.Point(269, 98);
             this.labelDefectsQty.Name = "labelDefectsQty";
             this.labelDefectsQty.Size = new System.Drawing.Size(90, 23);
-            this.labelDefectsQty.TabIndex = 11;
+            this.labelDefectsQty.TabIndex = 31;
             this.labelDefectsQty.Text = "Defects Qty ";
             // 
             // labelLine
@@ -320,7 +321,7 @@
             this.labelLine.Location = new System.Drawing.Point(269, 126);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(90, 23);
-            this.labelLine.TabIndex = 12;
+            this.labelLine.TabIndex = 32;
             this.labelLine.Text = "Line# ";
             // 
             // labelTeam
@@ -328,7 +329,7 @@
             this.labelTeam.Location = new System.Drawing.Point(269, 154);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(90, 23);
-            this.labelTeam.TabIndex = 13;
+            this.labelTeam.TabIndex = 33;
             this.labelTeam.Text = "Team ";
             // 
             // labelGarmentOutput
@@ -336,7 +337,7 @@
             this.labelGarmentOutput.Location = new System.Drawing.Point(519, 13);
             this.labelGarmentOutput.Name = "labelGarmentOutput";
             this.labelGarmentOutput.Size = new System.Drawing.Size(112, 23);
-            this.labelGarmentOutput.TabIndex = 14;
+            this.labelGarmentOutput.TabIndex = 34;
             this.labelGarmentOutput.Text = "Garment Output ";
             // 
             // labelInspectionStage
@@ -344,7 +345,7 @@
             this.labelInspectionStage.Location = new System.Drawing.Point(519, 43);
             this.labelInspectionStage.Name = "labelInspectionStage";
             this.labelInspectionStage.Size = new System.Drawing.Size(112, 23);
-            this.labelInspectionStage.TabIndex = 15;
+            this.labelInspectionStage.TabIndex = 35;
             this.labelInspectionStage.Text = "Inspection Stage";
             // 
             // labelCFA
@@ -352,7 +353,7 @@
             this.labelCFA.Location = new System.Drawing.Point(519, 72);
             this.labelCFA.Name = "labelCFA";
             this.labelCFA.Size = new System.Drawing.Size(112, 23);
-            this.labelCFA.TabIndex = 16;
+            this.labelCFA.TabIndex = 36;
             this.labelCFA.Text = "CFA ";
             // 
             // labelShift
@@ -360,7 +361,7 @@
             this.labelShift.Location = new System.Drawing.Point(519, 99);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(112, 23);
-            this.labelShift.TabIndex = 17;
+            this.labelShift.TabIndex = 37;
             this.labelShift.Text = "Shift ";
             // 
             // labelResult
@@ -368,7 +369,7 @@
             this.labelResult.Location = new System.Drawing.Point(519, 131);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(112, 23);
-            this.labelResult.TabIndex = 18;
+            this.labelResult.TabIndex = 38;
             this.labelResult.Text = "Result ";
             // 
             // txtSP
@@ -379,7 +380,7 @@
             this.txtSP.Location = new System.Drawing.Point(105, 41);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(141, 23);
-            this.txtSP.TabIndex = 2;
+            this.txtSP.TabIndex = 1;
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             // 
             // txtStyle
@@ -391,7 +392,7 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.ReadOnly = true;
             this.txtStyle.Size = new System.Drawing.Size(141, 23);
-            this.txtStyle.TabIndex = 21;
+            this.txtStyle.TabIndex = 12;
             // 
             // txtDestination
             // 
@@ -402,7 +403,7 @@
             this.txtDestination.Name = "txtDestination";
             this.txtDestination.ReadOnly = true;
             this.txtDestination.Size = new System.Drawing.Size(141, 23);
-            this.txtDestination.TabIndex = 22;
+            this.txtDestination.TabIndex = 13;
             // 
             // txtFactory
             // 
@@ -414,7 +415,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.ReadOnly = true;
             this.txtFactory.Size = new System.Drawing.Size(141, 23);
-            this.txtFactory.TabIndex = 23;
+            this.txtFactory.TabIndex = 14;
             // 
             // txtRemark
             // 
@@ -424,7 +425,7 @@
             this.txtRemark.Location = new System.Drawing.Point(105, 182);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(645, 23);
-            this.txtRemark.TabIndex = 11;
+            this.txtRemark.TabIndex = 2;
             // 
             // txtPO
             // 
@@ -435,7 +436,7 @@
             this.txtPO.Name = "txtPO";
             this.txtPO.ReadOnly = true;
             this.txtPO.Size = new System.Drawing.Size(144, 23);
-            this.txtPO.TabIndex = 26;
+            this.txtPO.TabIndex = 16;
             // 
             // comboInspectionStage
             // 
@@ -447,7 +448,7 @@
             this.comboInspectionStage.Location = new System.Drawing.Point(634, 38);
             this.comboInspectionStage.Name = "comboInspectionStage";
             this.comboInspectionStage.Size = new System.Drawing.Size(121, 24);
-            this.comboInspectionStage.TabIndex = 5;
+            this.comboInspectionStage.TabIndex = 7;
             this.comboInspectionStage.SelectedIndexChanged += new System.EventHandler(this.comboInspectionStage_SelectedIndexChanged);
             // 
             // comboResult
@@ -468,7 +469,7 @@
             this.dateAuditDate.Location = new System.Drawing.Point(105, 10);
             this.dateAuditDate.Name = "dateAuditDate";
             this.dateAuditDate.Size = new System.Drawing.Size(141, 23);
-            this.dateAuditDate.TabIndex = 1;
+            this.dateAuditDate.TabIndex = 0;
             // 
             // label19
             // 
@@ -488,7 +489,7 @@
             this.comboTeam.Location = new System.Drawing.Point(362, 156);
             this.comboTeam.Name = "comboTeam";
             this.comboTeam.Size = new System.Drawing.Size(121, 24);
-            this.comboTeam.TabIndex = 9;
+            this.comboTeam.TabIndex = 5;
             // 
             // txtInspectionStage
             // 
@@ -499,7 +500,7 @@
             this.txtInspectionStage.Name = "txtInspectionStage";
             this.txtInspectionStage.ReadOnly = true;
             this.txtInspectionStage.Size = new System.Drawing.Size(241, 23);
-            this.txtInspectionStage.TabIndex = 12;
+            this.txtInspectionStage.TabIndex = 19;
             // 
             // numGarmentOutput
             // 
@@ -519,7 +520,7 @@
             0,
             0});
             this.numGarmentOutput.Size = new System.Drawing.Size(121, 23);
-            this.numGarmentOutput.TabIndex = 3;
+            this.numGarmentOutput.TabIndex = 6;
             this.numGarmentOutput.Value = new decimal(new int[] {
             0,
             0,
@@ -545,7 +546,7 @@
             0,
             0});
             this.numInspectQty.Size = new System.Drawing.Size(144, 23);
-            this.numInspectQty.TabIndex = 4;
+            this.numInspectQty.TabIndex = 3;
             this.numInspectQty.Value = new decimal(new int[] {
             0,
             0,
@@ -572,7 +573,7 @@
             0});
             this.numDefectsQty.ReadOnly = true;
             this.numDefectsQty.Size = new System.Drawing.Size(144, 23);
-            this.numDefectsQty.TabIndex = 45;
+            this.numDefectsQty.TabIndex = 18;
             this.numDefectsQty.Value = new decimal(new int[] {
             0,
             0,
@@ -604,7 +605,7 @@
             0});
             this.numSQR.ReadOnly = true;
             this.numSQR.Size = new System.Drawing.Size(141, 23);
-            this.numSQR.TabIndex = 46;
+            this.numSQR.TabIndex = 15;
             this.numSQR.Value = new decimal(new int[] {
             0,
             0,
@@ -630,7 +631,7 @@
             0});
             this.numOrderQty.ReadOnly = true;
             this.numOrderQty.Size = new System.Drawing.Size(141, 23);
-            this.numOrderQty.TabIndex = 47;
+            this.numOrderQty.TabIndex = 17;
             this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
@@ -645,7 +646,7 @@
             this.labConfirm.Location = new System.Drawing.Point(821, 4);
             this.labConfirm.Name = "labConfirm";
             this.labConfirm.Size = new System.Drawing.Size(0, 31);
-            this.labConfirm.TabIndex = 4;
+            this.labConfirm.TabIndex = 12;
             // 
             // txtdropdownlistShift
             // 
@@ -657,7 +658,7 @@
             this.txtdropdownlistShift.Location = new System.Drawing.Point(634, 98);
             this.txtdropdownlistShift.Name = "txtdropdownlistShift";
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlistShift.TabIndex = 8;
+            this.txtdropdownlistShift.TabIndex = 9;
             this.txtdropdownlistShift.Type = "SewingOutput_Shift";
             // 
             // txtsewingline
@@ -669,7 +670,7 @@
             this.txtsewingline.Location = new System.Drawing.Point(362, 126);
             this.txtsewingline.Name = "txtsewingline";
             this.txtsewingline.Size = new System.Drawing.Size(77, 23);
-            this.txtsewingline.TabIndex = 7;
+            this.txtsewingline.TabIndex = 4;
             // 
             // txtuserCFA
             // 
@@ -678,13 +679,15 @@
             this.txtuserCFA.Location = new System.Drawing.Point(634, 72);
             this.txtuserCFA.Name = "txtuserCFA";
             this.txtuserCFA.Size = new System.Drawing.Size(265, 23);
-            this.txtuserCFA.TabIndex = 6;
+            this.txtuserCFA.TabIndex = 8;
             this.txtuserCFA.TextBox1Binding = "";
             // 
             // P21
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 650);
+            this.DefaultControl = "txtSP";
+            this.DefaultControlForEdit = "txtSP";
             this.ExpressQuery = true;
             this.GridAlias = "CFA_Detail";
             this.IsSupportConfirm = true;
