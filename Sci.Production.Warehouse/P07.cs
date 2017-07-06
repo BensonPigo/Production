@@ -1177,7 +1177,7 @@ where id = '{0}'"
                     CurrentMaintain["third"] = 0;
                     this.dateETA.Enabled = false;
                     string selCom = string.Format(@"
-select  a.poid
+select a.poid
         , a.seq1
         , a.seq2
         , a.Qty + a.Foc as shipqty
@@ -1195,10 +1195,11 @@ select  a.poid
         , '' as remark
         , '' as location
 from dbo.Export_Detail a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id 
-                                                 and a.Seq1 = b.SEQ1 
-                                                 and a.Seq2 = b.SEQ2
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
+                                                 and a.Seq1 = b.SEQ1    
+                                                 and a.Seq2 = b.SEQ2    
 inner join orders c WITH (NOLOCK) on c.id = a.poid
+inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U=dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
 where a.id='{0}'
 order by a.poid, a.seq1, a.seq2, b.FabricType
 ", CurrentMaintain["exportid"]);
