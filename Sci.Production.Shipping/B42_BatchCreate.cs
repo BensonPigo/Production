@@ -129,7 +129,8 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
                 return;
             }
-            DataTable GroupData, gridData;
+            DataTable GroupData, gridData, MidDetailData;
+            DataTable[] GandM;
             StringBuilder sqlCmd = new StringBuilder();
             string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
             #region 組撈所有明細SQL
@@ -155,7 +156,7 @@ where 1=1", contractID));
 
             if (!MyUtility.Check.Empty(txtstyle.Text))
             {
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'",txtstyle.Text));
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", txtstyle.Text));
             }
             if (!MyUtility.Check.Empty(comboCategory.Text))
             {
@@ -163,7 +164,7 @@ where 1=1", contractID));
             }
             if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand.Text));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", txtbrand.Text));
             }
             sqlCmd.Append(@"
 group by o.StyleUkey,oqd.SizeCode,oqd.Article,o.Category,o.StyleID,o.SeasonID,o.BrandID,isnull(s.CPU,0),isnull(s.CTNQty,0)
@@ -296,6 +297,10 @@ into #tmpFinalFixDeclare
 from #tmpFixDeclare
 where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)
 
+
+select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey
+into #tlast
+from(
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID from #tmpFinalFixDeclare
 union
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(Qty) as Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
@@ -306,39 +311,41 @@ select * from #tmpBOAData
 union all
 select * from #tmpLocalData) a
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
+)x
 
-drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate
+select t.*,Waste
+from #tlast t left join VNContract_Detail v with(nolock) on id = @vncontractid and v.NLCode = t.NLCode
+drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate,#tlast
 ");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out AllDetailData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox(string.Format("Query detail data fail.\r\n{0}",result.ToString()));
+                MyUtility.Msg.WarningBox(string.Format("Query detail data fail.\r\n{0}", result.ToString()));
                 return;
             }
             #region 整理出依Style,Season Group的資料
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(AllDetailData, "StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey",
+                MyUtility.Tool.ProcessWithDatatable(AllDetailData, "",
                     @"
-alter table #tmp alter column StyleID		varchar(500)
-alter table #tmp alter column SeasonID		varchar(500)
-alter table #tmp alter column OrderBrandID	varchar(500)
-alter table #tmp alter column Category		varchar(500)
-alter table #tmp alter column SizeCode		varchar(500)
-alter table #tmp alter column Article		varchar(500)
-alter table #tmp alter column GMTQty		varchar(500)
-alter table #tmp alter column SCIRefno		varchar(500)
-alter table #tmp alter column Refno			varchar(500)
-alter table #tmp alter column BrandID		varchar(500)
-alter table #tmp alter column NLCode		varchar(500)
-alter table #tmp alter column HSCode		varchar(500)
-alter table #tmp alter column CustomsUnit	varchar(500)
---alter table #tmp alter column Qty			varchar(500)
-alter table #tmp alter column LocalItem		varchar(500)
-alter table #tmp alter column StyleCPU		varchar(500)
-alter table #tmp alter column StyleUKey		varchar(500)
+alter table #tmp alter column StyleID		varchar(100)
+alter table #tmp alter column SeasonID		varchar(100)
+alter table #tmp alter column OrderBrandID	varchar(100)
+alter table #tmp alter column Category		varchar(100)
+alter table #tmp alter column SizeCode		varchar(100)
+alter table #tmp alter column Article		varchar(100)
+alter table #tmp alter column GMTQty		varchar(100)
+alter table #tmp alter column SCIRefno		varchar(100)
+alter table #tmp alter column Refno			varchar(100)
+alter table #tmp alter column BrandID		varchar(100)
+alter table #tmp alter column NLCode		varchar(100)
+alter table #tmp alter column HSCode		varchar(100)
+alter table #tmp alter column CustomsUnit	varchar(100)
+alter table #tmp alter column LocalItem		varchar(100)
+alter table #tmp alter column StyleCPU		varchar(100)
+alter table #tmp alter column StyleUKey		varchar(100)
 
 select StyleID,SeasonID,OrderBrandID,Category,Article,SizeCode,NLCode,SUM(Qty) as Qty,CustomsUnit into #tmpSumConsData
 from #tmp
@@ -490,7 +497,24 @@ END
 CLOSE cursor_tmpBasic
 DEALLOCATE cursor_tmpBasic
 
-select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode", out GroupData);
+select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
+
+select distinct id = ''
+,NLCode
+,t.HSCode
+,UnitID = t.CustomsUnit
+,Qty = sum(t.Qty) over(partition by t.StyleUkey,t.SizeCode,t.Article,t.NLCode,t.Category)
+,UserCreate = 0
+,x.StyleUkey
+,x.SizeCode
+,t.Article
+,t.Waste
+,Deleted = 0
+from #tmp t,@tempCombColor x
+where t.StyleUKey = x.StyleUkey 
+and t.Article = SUBSTRING(x.Article,0, CHARINDEX(',',x.Article)) 
+and t.SizeCode = x.SizeCode and t.Category = x.Category
+", out GandM);
             }
             catch (Exception ex)
             {
@@ -498,7 +522,8 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
                 return;
             }
             #endregion
-
+            GroupData = GandM[0];
+            MidDetailData = GandM[1];
             //撈出每個Consumption一定都要有的NLCode
             DataTable NecessaryItem;
             result = DBProxy.Current.Select(null, string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where NecessaryItem = 1 and ID = '{0}'", contractID), out NecessaryItem);
@@ -510,20 +535,20 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
 
             gridData = (DataTable)listControlBindingSource1.DataSource;
             gridData.Clear();
-            string colorway,lackNLCode;
+            string colorway, lackNLCode;
             foreach (DataRow dr in GroupData.Rows)
             {
                 colorway = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
                 //找出是否有空白的NL Code
-                DataRow[] findData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = ''",
-                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"])));
+                DataRow[] findData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '' and Category = '{3}'",
+                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Category"])));
 
                 //找出是否有缺料
                 lackNLCode = "";
                 foreach (DataRow lack in NecessaryItem.Rows)
                 {
-                    DataRow[] findLackData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '{3}'",
-                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(lack["NLCode"])));
+                    DataRow[] findLackData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '{3}' and Category = '{4}'",
+                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(lack["NLCode"]), MyUtility.Convert.GetString(dr["Category"])));
                     if (findLackData.Length <= 0)
                     {
                         lackNLCode = lackNLCode + MyUtility.Convert.GetString(lack["NLCode"]) + ",";
@@ -552,41 +577,42 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             }
 
             #region 組出中間層資料
-            result = DBProxy.Current.Select(null, "select *,0 as StyleUkey,'' as SizeCode, '' as Article,0.0 as Waste, 0 as Deleted from VNConsumption_Detail WITH (NOLOCK) where 1 = 0", out MidDetailData);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Prepare detail structure fail!!");
-                return;
-            }
-            foreach (DataRow dr in gridData.Rows)
-            {
-                string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
-                DataRow[] selectedData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article));
-                for (int i = 0; i < selectedData.Length; i++)
-                {
-                    DataRow[] finddata = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article, MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
+            ///////////////////
+            //result = DBProxy.Current.Select(null, "select *,0 as StyleUkey,'' as SizeCode, '' as Article,0.0 as Waste, 0 as Deleted from VNConsumption_Detail WITH (NOLOCK) where 1 = 0", out MidDetailData);
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox("Prepare detail structure fail!!");
+            //    return;
+            //}
+            //foreach (DataRow dr in gridData.Rows)
+            //{
+            //    string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
+            //    DataRow[] selectedData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article));
+            //    for (int i = 0; i < selectedData.Length; i++)
+            //    {
+            //        DataRow[] finddata = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article, MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
 
-                    if (finddata.Length > 0)
-                    {
-                        finddata[0]["Qty"] = MyUtility.Convert.GetDecimal(finddata[0]["Qty"]) + MyUtility.Convert.GetDecimal(selectedData[i]["Qty"]);
-                    }
-                    else
-                    {
-                        DataRow newrow = MidDetailData.NewRow();
-                        newrow["NLCode"] = selectedData[i]["NLCode"];
-                        newrow["HSCode"] = selectedData[i]["HSCode"];
-                        newrow["UnitID"] = selectedData[i]["CustomsUnit"];
-                        newrow["Qty"] = selectedData[i]["Qty"];
-                        newrow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", contractID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]))));
-                        newrow["UserCreate"] = 0;
-                        newrow["StyleUKey"] = dr["StyleUKey"];
-                        newrow["SizeCode"] = dr["SizeCode"];
-                        newrow["Article"] = article;
-                        newrow["Deleted"] = 0;
-                        MidDetailData.Rows.Add(newrow);
-                    }
-                }
-            }
+            //        if (finddata.Length > 0)
+            //        {
+            //            finddata[0]["Qty"] = MyUtility.Convert.GetDecimal(finddata[0]["Qty"]) + MyUtility.Convert.GetDecimal(selectedData[i]["Qty"]);
+            //        }
+            //        else
+            //        {
+            //            DataRow newrow = MidDetailData.NewRow();
+            //            newrow["NLCode"] = selectedData[i]["NLCode"];
+            //            newrow["HSCode"] = selectedData[i]["HSCode"];
+            //            newrow["UnitID"] = selectedData[i]["CustomsUnit"];
+            //            newrow["Qty"] = selectedData[i]["Qty"];
+            //            newrow["Waste"] = selectedData[i]["Waste"];
+            //            newrow["UserCreate"] = 0;
+            //            newrow["StyleUKey"] = dr["StyleUKey"];
+            //            newrow["SizeCode"] = dr["SizeCode"];
+            //            newrow["Article"] = article;
+            //            newrow["Deleted"] = 0;
+            //            MidDetailData.Rows.Add(newrow);
+            //        }
+            //    }
+            //}
             #endregion
 
             listControlBindingSource1.DataSource = gridData;
@@ -600,7 +626,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             DualResult result = DBProxy.Current.Select(null, "select VNContractID,MAX(CustomSP) as CustomSP from VNConsumption WITH (NOLOCK) group by VNContractID", out CustomSP);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query data fail, please try again.\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query data fail, please try again.\r\n" + result.ToString());
                 return;
             }
 
@@ -611,7 +637,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
                     DataRow[] findCustom = CustomSP.Select(string.Format("VNContractID = '{0}'", MyUtility.Convert.GetString(dr["VNContractID"])));
                     if (findCustom.Length > 0)
                     {
-                        string lastCustomsp = "SP"+(MyUtility.Convert.GetInt(MyUtility.Convert.GetString(findCustom[0]["CustomSP"]).Substring(2)) + 1).ToString("000000");
+                        string lastCustomsp = "SP" + (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(findCustom[0]["CustomSP"]).Substring(2)) + 1).ToString("000000");
                         findCustom[0]["CustomSP"] = lastCustomsp;
                         dr["CustomSP"] = lastCustomsp;
                     }
@@ -682,7 +708,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
                 }
             }
         }
-        
+
         //Create
         private void btnCreate_Click(object sender, EventArgs e)
         {
@@ -769,7 +795,7 @@ Values ('{0}','{1}');", newID, str.ToString()));
                     }
 
                     DataRow[] selectedData = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))));
-                   
+
                     for (int i = 0; i < selectedData.Length; i++)
                     {
                         insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail (ID,NLCode,HSCode,UnitID,Qty,UserCreate)
