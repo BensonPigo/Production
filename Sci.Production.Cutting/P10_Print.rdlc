@@ -69,6 +69,10 @@
           <DataField>Size</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="SizeSpec">
+          <DataField>SizeSpec</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="SP">
           <DataField>SP</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1050,6 +1054,36 @@
                                 <PaddingTop>2pt</PaddingTop>
                                 <PaddingBottom>2pt</PaddingBottom>
                                 <WritingMode>Rotate270</WritingMode>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="Textbox29">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!SizeSpec.Value</Value>
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox14</rd:DefaultName>
+                              <Top>4.91974cm</Top>
+                              <Left>3.11845cm</Left>
+                              <Height>0.46743cm</Height>
+                              <Width>2.05021cm</Width>
+                              <ZIndex>31</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
                           </ReportItems>

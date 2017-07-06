@@ -19,6 +19,7 @@ namespace Sci.Production.Cutting
         public string Parts { get; set; }
         public string Color { get; set; }
         public string Size { get; set; }
+        public string SizeSpec { get; set; }
         public string Desc { get; set; }
         public string Artwork { get; set; }
         public string Quantity { get; set; }
