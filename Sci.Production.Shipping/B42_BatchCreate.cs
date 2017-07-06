@@ -207,7 +207,8 @@ and f.NoDeclare = 0
 tmpBOFNewQty
 as (
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type,
-([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty as NewQty
+([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue)
+,iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty) as NewQty
 from tmpBOFRateData
 ),
 tmpBOFData
@@ -271,7 +272,7 @@ from tmpLocalPO
 tmpPrepareRate
 as (
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,StyleCPU,StyleUKey,
-Refno,Qty/OrderQty as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,Description,Type,SuppID,
+Refno,iif(OrderQty=0.000,0.000,Qty/OrderQty) as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,Description,Type,SuppID,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
