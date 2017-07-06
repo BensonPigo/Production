@@ -96,7 +96,12 @@ from Factory f WITH (NOLOCK) where Zone <> ''", out zone);
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            string seperCmd = "";
             #region 組SQL
+            if (seperate)
+            {
+                seperCmd = " ,oq.Seq";
+            }
             sqlCmd.Append(@"
 with tmpOrders as (
     select  o.ID
@@ -172,9 +177,9 @@ with tmpOrders as (
             , o.CPUFactor
             , o.ClogLastReceiveDate
             , o.IsMixMarker
-            , o.GFR
-            ,oq.Seq
-    from Orders o WITH (NOLOCK) 
+            , o.GFR "
+            + seperCmd +     
+    @" from Orders o WITH (NOLOCK) 
     left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
     OUTER APPLY(
         SELECT  Name 
@@ -682,7 +687,7 @@ order by t.ID");
             else
             {
                 sqlCmd.Append(@"
-select  t.*
+select distinct t.*
         , ModularParent = isnull (s.ModularParent, '')  
         , CPUAdjusted = isnull(s.CPUAdjusted * 100, 0)  
         , DestAlias = isnull (c.Alias, '') 
