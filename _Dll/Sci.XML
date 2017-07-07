@@ -13990,6 +13990,13 @@
             Constructor of SelectItem.
             </summary>
         </member>
+        <member name="M:Sci.Win.Tools.SelectItem.Grid_KeyDown(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Grid 按Enter後就等同於在 [Select]點Click的效果
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String,System.String)" -->
