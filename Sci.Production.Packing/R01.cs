@@ -148,73 +148,55 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 FROM #TMP T
 outer apply(
 	select colorway = stuff((
-		select concat('/',c.Article)
-		from
-		(
-			select distinct pld2.Article
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.Article)
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )c2
 outer apply(
 	select Color = stuff((
-		select concat('/',c.Color )
-		from
-		(
-			select distinct pld2.Color  
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.Color )
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )c3
 outer apply(
 	select Size = stuff((
-		select concat('/',c.SizeCode )
-		from
-		(
-			select distinct pld2.SizeCode  
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.SizeCode )
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )c4
 outer apply(
 	select QtyPerCTN = stuff((
-		select concat('/',c.QtyPerCTN)
-		from
-		(
-			select distinct pld2.QtyPerCTN  
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.QtyPerCTN)
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )c5
 outer apply(
 	select ScanQty = stuff((
-		select concat('/',c.ScanQty)
-		from
-		(
-			select distinct pld2.ScanQty  
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.ScanQty)
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo 
 		for xml path('')
 	),1,1,'')
 )c6
 outer apply(
 	select Barcode = stuff((
-		select concat('/',c.Barcode)
-		from
-		(
-			select distinct pld2.Barcode  
-			from PackingList_Detail pld2 with (nolock)
-			where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
-		)c
+		select concat('/',pld2.Barcode)
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = t.[Packing#] and pld2.OrderID = t.[SP#] and pld2.CTNStartNo = t.[CTN#]
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
 		for xml path('')
 	),1,1,'')
 )c7
@@ -283,12 +265,13 @@ select Customize1 = stuff((
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[2, 2] = _sp1 + "~" + _sp2;
             worksheet.Cells[2, 5] = _packingno1 + "~" + _packingno2;
-            worksheet.Cells[2, 8] = _packingno1 + "~" + _packingno2;
-            worksheet.Cells[2, 11] = _scandate1 + "~" + _scandate1;
+            worksheet.Cells[2, 8] = _bdate1 + "~" + _bdate2;
+            worksheet.Cells[2, 11] = _scandate1 + "~" + _scandate2;
             worksheet.Cells[2, 14] = _po1 + "~" + _po2;
             worksheet.Cells[2, 16] = _brand;
             worksheet.Cells[2, 18] = _factory;
             worksheet.Cells[2, 20] = rdbtnDetail.Checked ? "Complete" : (rdbtnSummary.Checked ? "Not Complete" : "ALL");
+            worksheet.Cells[3, 8] = _columnname;
             MyUtility.Excel.CopyToXls(_printData, "", reportname, 3, showExcel: true, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
