@@ -900,6 +900,11 @@ where w.ID = '{0}'", masterID);
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}", dr["SCIRefno"]));
+                    if (MyUtility.Check.Empty(chkwidth))
+                    {
+                        
+                    }
                 }
             };
             col_cutcell.CellValidating += (s, e) =>
