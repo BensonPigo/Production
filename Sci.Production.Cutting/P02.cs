@@ -900,10 +900,13 @@ where w.ID = '{0}'", masterID);
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}", dr["SCIRefno"]));
-                    if (MyUtility.Check.Empty(chkwidth))
+
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                    if (!MyUtility.Check.Empty(chkwidth))
                     {
-                        
+                        decimal width_CM = decimal.Parse(chkwidth);
+                        if (width_CM > 180)
+                             MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
                     }
                 }
             };
@@ -931,6 +934,14 @@ where w.ID = '{0}'", masterID);
                 }
 
                 dr["cutCellid"] = newvalue;
+
+                string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                if (!MyUtility.Check.Empty(chkwidth))
+                {
+                    decimal width_CM = decimal.Parse(chkwidth);
+                    if (width_CM > 180)
+                        MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                }
                 dr.EndEdit();
             };
             #endregion
