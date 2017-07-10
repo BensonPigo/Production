@@ -51,6 +51,7 @@
             // radioFabric
             // 
             this.radioFabric.AutoSize = true;
+            this.radioFabric.Checked = true;
             this.radioFabric.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioFabric.Location = new System.Drawing.Point(12, 17);
             this.radioFabric.Name = "radioFabric";
@@ -68,7 +69,6 @@
             this.radioAccessory.Name = "radioAccessory";
             this.radioAccessory.Size = new System.Drawing.Size(91, 21);
             this.radioAccessory.TabIndex = 202;
-            this.radioAccessory.TabStop = true;
             this.radioAccessory.Text = "Accessory";
             this.radioAccessory.UseVisualStyleBackColor = true;
             // 
@@ -80,7 +80,6 @@
             this.radioOther.Name = "radioOther";
             this.radioOther.Size = new System.Drawing.Size(62, 21);
             this.radioOther.TabIndex = 203;
-            this.radioOther.TabStop = true;
             this.radioOther.Text = "Other";
             this.radioOther.UseVisualStyleBackColor = true;
             // 
@@ -92,7 +91,6 @@
             this.radioThread.Name = "radioThread";
             this.radioThread.Size = new System.Drawing.Size(72, 21);
             this.radioThread.TabIndex = 204;
-            this.radioThread.TabStop = true;
             this.radioThread.Text = "Thread";
             this.radioThread.UseVisualStyleBackColor = true;
             // 
