@@ -160,6 +160,7 @@ namespace Sci.Production.Tools
             DBProxy.Current.DefaultModuleName = comboBox2.SelectedValue2.ToString();
             DualResult result;
             DataTable dtPass1;
+            DataRow drpass1;
             string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
             if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
             {
@@ -167,11 +168,18 @@ namespace Sci.Production.Tools
                 MyUtility.Msg.ErrorBox(result.ToString());
                 return;
             }
+            if (!MyUtility.Check.Seek(cmd, out drpass1))
+            {
+                MyUtility.Msg.WarningBox("Account does not exist!");
+                comboBox2.Text = "";
+                comboFactory.Text = "";
+                return;
+            }
 
             Dictionary<String, String> factoryOption = new Dictionary<String, String>();
             string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
             if (factories.Length > 0)
-            {
+            {      
                 for (int i = 0; i < factories.Length; i++)
                 {
                     factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
