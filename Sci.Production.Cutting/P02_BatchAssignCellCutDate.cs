@@ -50,6 +50,15 @@ namespace Sci.Production.Cutting
                     DialogResult result = S.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = S.GetSelectedString();
+
+                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                    if (!MyUtility.Check.Empty(chkwidth))
+                    {
+                        decimal width_CM = decimal.Parse(chkwidth);
+                        if (width_CM > 180)
+                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                    }
                 }
             };
             Cell.CellValidating += (s, e) =>
@@ -76,8 +85,15 @@ namespace Sci.Production.Cutting
                     MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     return;
                 }
-
                 dr["Cutcellid"] = newvalue;
+                
+                string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                if (!MyUtility.Check.Empty(chkwidth))
+                {
+                    decimal width_CM = decimal.Parse(chkwidth);
+                    if (width_CM > 180)
+                        MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                }
                 dr.EndEdit();
             };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
@@ -168,9 +184,16 @@ namespace Sci.Production.Cutting
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
                     //  detaildr[0]["Cutcellid"] = cell;
                     dr["Cutcellid"] = cell;
+
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                    if (!MyUtility.Check.Empty(chkwidth))
+                    {
+                        decimal width_CM = decimal.Parse(chkwidth);
+                        if (width_CM > 180)
+                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                    }
                 }
             }
-
         }
 
         private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)
