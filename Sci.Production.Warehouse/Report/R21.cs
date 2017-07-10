@@ -99,11 +99,20 @@ select
 	,[Out Qty] = round(fi.OutQty,2)
 	,[Adjust Qty] = round(fi.AdjustQty,2)
 	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
-	,[Location] = fid.MtlLocationID
+	,[Location] = f.MtlLocationID
 from Orders o with (nolock)
 inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-left join FtyInventory_Detail fid with (nolock) on fid.Ukey = fi.Ukey 
+outer apply
+(
+	select MtlLocationID = stuff(
+	(
+		select concat(',',MtlLocationID)
+		from FtyInventory_Detail fid with (nolock) 
+		where fid.Ukey = fi.Ukey
+		for xml path('')
+	),1,1,'')
+)f
 where 1=1
 ");
                 #endregion
