@@ -36,6 +36,8 @@
             this.txtAccount = new Sci.Win.UI.TextBox();
             this.labelPassword = new Sci.Win.UI.Label();
             this.labelAccount = new Sci.Win.UI.Label();
+            this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // comboFactory
@@ -44,15 +46,14 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(121, 86);
+            this.comboFactory.Location = new System.Drawing.Point(121, 103);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(131, 24);
             this.comboFactory.TabIndex = 97;
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(9, 87);
+            this.labelFactory.Location = new System.Drawing.Point(9, 104);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(109, 23);
             this.labelFactory.TabIndex = 100;
@@ -62,7 +63,7 @@
             // btnExit
             // 
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnExit.Location = new System.Drawing.Point(260, 123);
+            this.btnExit.Location = new System.Drawing.Point(258, 154);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(80, 30);
             this.btnExit.TabIndex = 99;
@@ -73,7 +74,7 @@
             // btnLogin
             // 
             this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnLogin.Location = new System.Drawing.Point(174, 123);
+            this.btnLogin.Location = new System.Drawing.Point(172, 154);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(80, 30);
             this.btnLogin.TabIndex = 98;
@@ -85,7 +86,7 @@
             // 
             this.txtPassword.BackColor = System.Drawing.Color.White;
             this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPassword.Location = new System.Drawing.Point(121, 54);
+            this.txtPassword.Location = new System.Drawing.Point(121, 71);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.ShortcutsEnabled = false;
@@ -96,7 +97,7 @@
             // 
             this.txtAccount.BackColor = System.Drawing.Color.White;
             this.txtAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtAccount.Location = new System.Drawing.Point(121, 22);
+            this.txtAccount.Location = new System.Drawing.Point(121, 39);
             this.txtAccount.Name = "txtAccount";
             this.txtAccount.ShortcutsEnabled = false;
             this.txtAccount.Size = new System.Drawing.Size(131, 23);
@@ -104,8 +105,7 @@
             // 
             // labelPassword
             // 
-            this.labelPassword.Lines = 0;
-            this.labelPassword.Location = new System.Drawing.Point(9, 54);
+            this.labelPassword.Location = new System.Drawing.Point(9, 71);
             this.labelPassword.Name = "labelPassword";
             this.labelPassword.Size = new System.Drawing.Size(109, 23);
             this.labelPassword.TabIndex = 94;
@@ -114,17 +114,41 @@
             // 
             // labelAccount
             // 
-            this.labelAccount.Lines = 0;
-            this.labelAccount.Location = new System.Drawing.Point(9, 22);
+            this.labelAccount.Location = new System.Drawing.Point(9, 39);
             this.labelAccount.Name = "labelAccount";
             this.labelAccount.Size = new System.Drawing.Size(109, 23);
             this.labelAccount.TabIndex = 95;
             this.labelAccount.Text = "Account";
             this.labelAccount.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.Color.White;
+            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Location = new System.Drawing.Point(121, 9);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(131, 24);
+            this.comboBox2.TabIndex = 104;
+            this.comboBox2.Visible = false;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(9, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(109, 23);
+            this.label4.TabIndex = 103;
+            this.label4.Text = "DataBase";
+            this.label4.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.label4.Visible = false;
+            // 
             // SwitchFactory
             // 
-            this.ClientSize = new System.Drawing.Size(352, 165);
+            this.ClientSize = new System.Drawing.Size(352, 194);
+            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.btnExit);
@@ -146,6 +170,8 @@
             this.Controls.SetChildIndex(this.btnExit, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.comboBox2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -161,5 +187,7 @@
         private Win.UI.TextBox txtAccount;
         private Win.UI.Label labelPassword;
         private Win.UI.Label labelAccount;
+        private Win.UI.ComboBox comboBox2;
+        private Win.UI.Label label4;
     }
 }

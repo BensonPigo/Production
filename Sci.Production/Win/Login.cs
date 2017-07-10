@@ -16,6 +16,10 @@ using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+
 
 namespace Sci.Production.Win
 {
@@ -33,6 +37,29 @@ namespace Sci.Production.Win
             exit.Click += exit_Click;
 
             //Sci.Production.SCHEMAS.PASS1Row data;
+
+            if (DBProxy.Current.DefaultModuleName == "bin" || DBProxy.Current.DefaultModuleName == "x86")
+            {
+                //Assembly a = typeof(Module1).Assembly;
+                label4.Visible = true;
+                comboBox2.Visible = true;
+                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+                var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
+                Dictionary<String, String> SystemOption = new Dictionary<String, String>();
+                if (hasConnectionNamedQuery.Count > 0)
+                {
+                    for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
+                    {
+                        if (hasConnectionNamedQuery[i].Contains("Tradedb_"))
+                        {
+                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("Tradedb_", "").Trim().ToUpper());
+                        }
+                    }
+                    comboBox2.ValueMember = "Key";
+                    comboBox2.DisplayMember = "Value";
+                    comboBox2.DataSource = new BindingSource(SystemOption, null);
+                }
+            }
         }
 
 
@@ -288,6 +315,13 @@ Script
             string subject = "Auto Update SQL ERROR";
             Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, receiver, "", subject, "", desc, true, true);
             mail.ShowDialog();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedValue == null) return;
+            DBProxy.Current.DefaultModuleName = comboBox2.SelectedValue2.ToString();
+            act_Validated(null, null);
         }
 
 

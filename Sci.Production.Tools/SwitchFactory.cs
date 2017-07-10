@@ -10,11 +10,13 @@ using Ict;
 using Sci.Data;
 using System.IO;
 using System.Configuration;
+using System.Xml.Linq;
 
 namespace Sci.Production.Tools
 {
     public partial class SwitchFactory : Sci.Win.Tems.QueryForm
     {
+        string OriginalDatasource;
         public SwitchFactory(ToolStripMenuItem menuitem) : base(menuitem)
         {
             InitializeComponent();
@@ -38,6 +40,32 @@ namespace Sci.Production.Tools
                 MyUtility.Msg.WarningBox("Please close all processing forms first!");
                 Close();
                 return;
+            }
+
+            if (DBProxy.Current.DefaultModuleName == "bin" || DBProxy.Current.DefaultModuleName == "x86" || DBProxy.Current.DefaultModuleName.Contains("Tradedb_"))
+            {
+                OriginalDatasource = DBProxy.Current.DefaultModuleName;
+                //Assembly a = typeof(Module1).Assembly;
+                label4.Visible = true;
+                comboBox2.Visible = true;
+                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+                var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
+                Dictionary<String, String> SystemOption = new Dictionary<String, String>();
+                if (hasConnectionNamedQuery.Count > 0)
+                {
+                    for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
+                    {
+                        if (hasConnectionNamedQuery[i].Contains("Tradedb_"))
+                        {
+                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("Tradedb_", "").Trim().ToUpper());
+                        }
+                    }
+                    comboBox2.ValueMember = "Key";
+                    comboBox2.DisplayMember = "Value";
+                    string tempDatabase = DBProxy.Current.DefaultModuleName;
+                    comboBox2.DataSource = new BindingSource(SystemOption, null);
+                    comboBox2.SelectedValue = tempDatabase;
+                }
             }
 
             DualResult result;
@@ -119,7 +147,39 @@ namespace Sci.Production.Tools
         {
 
             this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            if (DBProxy.Current.DefaultModuleName == "bin" || DBProxy.Current.DefaultModuleName == "x86" || DBProxy.Current.DefaultModuleName.Contains("Tradedb_"))
+            {
+                DBProxy.Current.DefaultModuleName = OriginalDatasource;
+            }
             Close();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedValue == null) return;
+            DBProxy.Current.DefaultModuleName = comboBox2.SelectedValue2.ToString();
+            DualResult result;
+            DataTable dtPass1;
+            string cmd = string.Format("SELECT ID, Factory FROM Pass1 WHERE ID = '{0}'", Sci.Env.User.UserID);
+            if (!(result = DBProxy.Current.Select(null, cmd, out dtPass1)))
+            {
+                Close();
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+
+            Dictionary<String, String> factoryOption = new Dictionary<String, String>();
+            string[] factories = dtPass1.Rows[0]["Factory"].ToString().Split(new char[] { ',' });
+            if (factories.Length > 0)
+            {
+                for (int i = 0; i < factories.Length; i++)
+                {
+                    factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
+                }
+                comboFactory.ValueMember = "Key";
+                comboFactory.DisplayMember = "Value";
+                comboFactory.DataSource = new BindingSource(factoryOption, null);
+            }
         }
     }
 }
