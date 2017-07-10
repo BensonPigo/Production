@@ -983,7 +983,6 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 return;
             }
             //將要Copy的資料塞進DataTable中
-            int newIndex = lastIndex;
             int currentCellindex = this.detailgrid.CurrentCell.RowIndex;
             foreach (DataRow dr in listDr)
             {
