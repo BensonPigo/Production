@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("All", "All");
             comboBox1_RowSource.Add("F", "Fabric");
-            comboBox1_RowSource.Add("A", "Accessories");
+            comboBox1_RowSource.Add("A", "Accessory");
             cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
             cmbMaterialType.ValueMember = "Key";
             cmbMaterialType.DisplayMember = "Value";
@@ -102,7 +102,7 @@ select
 	,[Location] = fid.MtlLocationID
 from Orders o with (nolock)
 inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
-left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq1 = psd.SEQ2
+left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join FtyInventory_Detail fid with (nolock) on fid.Ukey = fi.Ukey 
 where 1=1
 ");
@@ -115,9 +115,9 @@ where 1=1
 select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
-	,[SP#] = psd.SEQ1
-	,[Seq1] = psd.SEQ2 
-	,[Seq2] = psd.FabricType
+	,[SP#] = psd.id
+	,[Seq1] = psd.SEQ1
+	,[Seq2] = psd.SEQ2
 	,[Material Type] = psd.FabricType
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
@@ -129,8 +129,8 @@ select
 	,[Program] = o.ProgramID
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
-	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
-	,[Ship Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty)
+	,[Purchase Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty),2)
+	,[Ship Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty),2)
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
 	,[Adjust Qty] = round(mpd.AdjustQty,2)
