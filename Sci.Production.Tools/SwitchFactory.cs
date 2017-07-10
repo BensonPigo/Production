@@ -171,8 +171,8 @@ namespace Sci.Production.Tools
             if (!MyUtility.Check.Seek(cmd, out drpass1))
             {
                 MyUtility.Msg.WarningBox("Account does not exist!");
-                comboBox2.Text = "";
                 comboFactory.Text = "";
+                comboFactory.DataSource = null;
                 return;
             }
 
