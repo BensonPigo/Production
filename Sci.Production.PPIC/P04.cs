@@ -308,6 +308,8 @@ namespace Sci.Production.PPIC
             callNextForm.ShowDialog(this);
             //按鈕變色
             btnTMSCost.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_TMSCost WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
+            RenewData();
+            OnDetailEntered();
         }
 
         //Std. GSD
