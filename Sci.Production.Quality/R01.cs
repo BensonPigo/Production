@@ -242,7 +242,8 @@ namespace Sci.Production.Quality
 	IIF(L.nonWash=1,'Y',' ' )[N/A Wash Shrinkage],
 	LW.Wash,LW.WashDate,
 	V.Result AS RESULT3,
-	CFD.Result AS RESULT4
+	CFD.Result AS RESULT4,
+    ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
     inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
 			    from dbo.Receiving R WITH (NOLOCK) 
@@ -250,7 +251,7 @@ from dbo.FIR F WITH (NOLOCK)
                 + RWhere+ @" 
 			    ) t
     on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,LocalMR from dbo.Orders o WITH (NOLOCK) "
                 + OWhere+ @"
 		        ) O on O.poid = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
@@ -284,7 +285,10 @@ OUTER APPLY(
 OUTER APPLY(
          select distinct cd.Result from dbo.ColorFastness CF WITH (NOLOCK) inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
-        )CFD" + sqlWhere) + @" 
+        )CFD
+Outer apply(
+	select (id+' - '+ name + ' #'+extno) LocalMR from Pass1 where id=o.LocalMR
+) ps1 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 t.ExportId,t.InvNo,t.WhseArrival,
@@ -293,7 +297,7 @@ F.Refno,P.ColorID,C.WeaveTypeID,O.Category
 F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
-LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash
+LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR
 ORDER BY POID,SEQ";
             #endregion
             return base.ValidateInput();
@@ -318,15 +322,9 @@ ORDER BY POID,SEQ";
                 return false;
             } 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R01.xltx");
-
+            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new Utility.Excel.SaveXltReportCls.xltRptTable(dt);
             string d1 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
             string d3 = (MyUtility.Check.Empty(DateSCIStart)) ? "" : Convert.ToDateTime(DateSCIStart).ToString("yyyy/MM/dd");
@@ -346,8 +344,9 @@ ORDER BY POID,SEQ";
             xl.dicDatas.Add("##Cate", Category);
             xl.dicDatas.Add("##supp", Supp);
             xl.dicDatas.Add("##Over", Over);
-            xl.dicDatas.Add("##body", dt);
+            xl.dicDatas.Add("##body", dt1);
             Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
+            dt1.ShowHeader = false;
             xl.Save();
             wks.Columns.AutoFit();
             return true;
