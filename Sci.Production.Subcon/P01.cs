@@ -224,12 +224,7 @@ where a.id = '{0}'", masterID);
         {
             base.OnDetailEntered();
             dateApproveDate.ReadOnly = true;
-            #region --動態unit header --
-            artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
-            if (artworkunit == "") artworkunit = "PCS";
-            this.detailgrid.Columns[6].HeaderText = "Cost"+ Environment.NewLine+"(" + artworkunit + ")";
-            this.detailgrid.Columns[7].HeaderText = artworkunit;
-            #endregion
+            ChangeDetailHeader();
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
@@ -562,22 +557,6 @@ where a.id = '{0}'", masterID);
             ReloadDatas();
         }
 
-        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
-        {
-            Production.Class.txtartworktype_fty o;
-            o = (Production.Class.txtartworktype_fty)sender;
-
-            if ((o.Text != o.OldValue) && this.EditMode)
-            {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();
-            }
-        }
-
         //print
         protected override bool ClickPrint()
         {
@@ -587,5 +566,25 @@ where a.id = '{0}'", masterID);
             return true;
         }
 
+        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
+        {
+            Production.Class.txtartworktype_fty o;
+            o = (Production.Class.txtartworktype_fty)sender;
+
+            if ((o.Text != o.OldValue) && this.EditMode)
+            {
+                ((DataTable)detailgridbs.DataSource).Rows.Clear();
+            }
+            ChangeDetailHeader();
+        }
+        private void ChangeDetailHeader()
+        {
+            #region --動態unit header --
+            artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", txtartworktype_ftyArtworkType.Text)).ToString().Trim();
+            if (artworkunit == "") artworkunit = "PCS";
+            this.detailgrid.Columns["coststitch"].HeaderText = "Cost" + Environment.NewLine + "(" + artworkunit + ")";
+            this.detailgrid.Columns["stitch"].HeaderText = artworkunit;
+            #endregion
+        }
     }
 }

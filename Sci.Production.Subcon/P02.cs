@@ -199,7 +199,7 @@ namespace Sci.Production.Subcon
             #endregion
 
             return base.ClickSaveBefore();
-        }
+        }   
 
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
@@ -229,12 +229,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            #region --動態unit header --
-            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
-            if (artworkunit == "") artworkunit = "PCS";
-            this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
-            this.detailgrid.Columns[7].HeaderText = artworkunit;
-            #endregion
+            ChangeDetailHeader();
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
@@ -348,7 +343,7 @@ namespace Sci.Production.Subcon
             #endregion
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts4)  //0
+            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts4)  //0f
             .Text("Style", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)   //1
             .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //2
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
@@ -472,9 +467,29 @@ namespace Sci.Production.Subcon
             }
             var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P02");
             frm.ShowDialog(this);
+            frm.Dispose();
             this.RenewData();
+            #region add Style,sewinline,scidelivery
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            if (!dt.Columns.Contains("Style")) dt.Columns.Add("Style", typeof(String));
+            if (!dt.Columns.Contains("sewinline")) dt.Columns.Add("sewinline", typeof(DateTime));
+            if (!dt.Columns.Contains("scidelivery")) dt.Columns.Add("scidelivery", typeof(DateTime));
+            foreach (DataRow dr_detail in dt.Rows)
+            {
+                DataTable order_dt;
+                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", dr_detail["orderid"].ToString()), out order_dt);
+                if (order_dt.Rows.Count == 0)
+                    break;
+                dr_detail["style"] = order_dt.Rows[0]["styleid"].ToString();
+                dr_detail["sewinline"] = order_dt.Rows[0]["sewinline"];
+                dr_detail["scidelivery"] = order_dt.Rows[0]["scidelivery"];
+
+            }
+            #endregion
+
         }
 
+        
         //Special Record
         private void btnSpecialRecord_Click(object sender, EventArgs e)
         {
@@ -489,6 +504,23 @@ namespace Sci.Production.Subcon
             var frm = new Sci.Production.Subcon.P01_SpecialRecord(dr, (DataTable)detailgridbs.DataSource, "P02");
             frm.ShowDialog(this);
             this.RenewData();
+            #region add Style,sewinline,scidelivery
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            if (!dt.Columns.Contains("Style")) dt.Columns.Add("Style", typeof(String));
+            if (!dt.Columns.Contains("sewinline")) dt.Columns.Add("sewinline", typeof(DateTime));
+            if (!dt.Columns.Contains("scidelivery")) dt.Columns.Add("scidelivery", typeof(DateTime));
+            foreach (DataRow dr_detail in dt.Rows)
+            {
+                DataTable order_dt;
+                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", dr_detail["orderid"].ToString()), out order_dt);
+                if (order_dt.Rows.Count == 0)
+                    break;
+                dr_detail["style"] = order_dt.Rows[0]["styleid"].ToString();
+                dr_detail["sewinline"] = order_dt.Rows[0]["sewinline"];
+                dr_detail["scidelivery"] = order_dt.Rows[0]["scidelivery"];
+
+            }
+            #endregion
             detailgridbs.EndEdit();
         }
 
@@ -510,6 +542,7 @@ namespace Sci.Production.Subcon
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
             }
+            ChangeDetailHeader();
         }
 
         //print
@@ -609,6 +642,16 @@ namespace Sci.Production.Subcon
             frm.Show();
 
             return true;
+        }
+
+        private void ChangeDetailHeader()
+        {
+            #region --動態unit header --
+            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", txtartworktype_ftyArtworkType.Text)).ToString().Trim();
+            if (artworkunit == "") artworkunit = "PCS";
+            this.detailgrid.Columns["coststitch"].HeaderText = "Cost(" + artworkunit + ")";
+            this.detailgrid.Columns["stitch"].HeaderText = artworkunit;
+            #endregion
         }
     }
 }
