@@ -585,12 +585,13 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(327, 14);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserApproveName
             // 
@@ -626,7 +627,6 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 5;
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
             // 
             // txtsubconSupplier
             // 
