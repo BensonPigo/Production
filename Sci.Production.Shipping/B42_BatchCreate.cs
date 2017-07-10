@@ -136,9 +136,8 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(string.Format(@"Declare @vncontractid varchar(15)
 set @vncontractid = '{0}';
 
-with tmpAllStyle
-as (
 select o.StyleUkey,oqd.SizeCode,oqd.Article,o.Category,o.StyleID,o.SeasonID,o.BrandID as OrderBrandID,sum(oqd.Qty) as GMTQty,isnull(s.CPU,0) as StyleCPU,isnull(s.CTNQty,0) as CTNQty
+into #tmpAllStyle
 from Order_QtyShip oq WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on oq.ID = o.ID
 inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
@@ -168,12 +167,11 @@ where 1=1", contractID));
             }
             sqlCmd.Append(@"
 group by o.StyleUkey,oqd.SizeCode,oqd.Article,o.Category,o.StyleID,o.SeasonID,o.BrandID,isnull(s.CPU,0),isnull(s.CTNQty,0)
-),
-tmpMarkerData
-as (
+
 select ts.*,sm.MarkerName,sm.FabricPanelCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
-from tmpAllStyle ts
+into #tmpMarkerData
+from #tmpAllStyle ts
 inner join Style_MarkerList sm WITH (NOLOCK) on sm.StyleUkey = ts.StyleUkey
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = ts.SizeCode
 inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
@@ -181,142 +179,135 @@ left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_Mark
 left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and (sma.Article is null or sma.Article = ts.Article) and sc.Article = ts.Article
 and CHARINDEX('+',sm.MarkerLength) > 0
-),
-tmpFabricCode
-as (
+
 select t.StyleID,t.SeasonID,t.OrderBrandID,t.Category,t.SizeCode,t.Article,t.GMTQty,t.markerYDS,t.Width,t.Qty, IIF(t.QTFabricCode is null, sb.SCIRefno, sb1.SCIRefno) as SCIRefNo,
 IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk,t.StyleCPU,t.StyleUKey
-from tmpMarkerData t
+into #tmpFabricCode
+from #tmpMarkerData t
 left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
 left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
-),
-tmpBOFRateData
-as (
+
 select t.StyleID,t.SeasonID,t.OrderBrandID,t.Category,t.SizeCode,t.Article,t.GMTQty,t.StyleCPU,t.StyleUKey,
 t.markerYDS,'YDS' as UsageUnit,t.Qty,f.SCIRefno,f.Refno,f.BrandID,f.NLCode,f.HSCode,f.CustomsUnit,f.Width,f.Type,
 f.PcsWidth,f.PcsLength,f.PcsKg,f.Description,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
-from tmpFabricCode t
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),0) as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),0) as M2UnitRate
+into #tmpBOFRateData
+from #tmpFabricCode t
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = t.SCIRefno
 where (t.SuppIDBulk <> 'FTY' or t.SuppIDBulk <> 'FTY-C')
 and f.NoDeclare = 0
-),
-tmpBOFNewQty
-as (
-select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type,
-([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue)
-,iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty) as NewQty
-from tmpBOFRateData
-),
-tmpBOFData
-as (
+
+select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey
+,Description,IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type
+,([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),iif(Qty=0.000,0.000,IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty) as NewQty
+into #tmpBOFNewQty
+from #tmpBOFRateData
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem,StyleCPU,StyleUKey,Description,Type,'' as SuppID
-from tmpBOFNewQty
+into #tmpBOFData
+from #tmpBOFNewQty
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,Type
-),
-tmpBOA
-as (
+
 select t.*,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
 sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID,
 f.Description
-from tmpAllStyle t
+into #tmpBOA
+from #tmpAllStyle t
 inner join Style_BOA sb WITH (NOLOCK) on  t.StyleUkey = sb.StyleUkey
 left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.PatternPanel = sb.PatternPanel and sc.Article = t.Article
 left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 where sb.IsCustCD <> 2
 and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
-),
-tmpBOAPrepareData
-as (
-select t.*,IIF(t.BomTypeCalculate = 1,(select isnull(dbo.GetDigitalValue(SizeSpec),0) from Style_SizeSpec where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = t.SizeCode),ConsPC) as SizeSpec,
+
+select t.*,IIF(t.BomTypeCalculate = 1
+				,isnull(dbo.GetDigitalValue(s.SizeSpec),0)
+				,ConsPC) as SizeSpec,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = t.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
-from tmpBOA t
+into #tmpBOAPrepareData
+from #tmpBOA t
+outer apply(
+	select SizeSpec
+	from Style_SizeSpec 
+	where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = t.SizeCode 
+)S
 where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or t.BomTypeColor = 1) and t.ColorID is not null)
-),
-tmpBOANewQty
-as (
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,IIF(Type = 'F','Fabric',IIF(Type = 'A','Accessory','')) as Type,
 [dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
-from tmpBOAPrepareData
-),
-tmpBOAData
-as (
+into #tmpBOANewQty
+from #tmpBOAPrepareData
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(ISNULL(NewQty,0)) as Qty, 0 as LocalItem,StyleCPU,StyleUKey,Description,Type, '' as SuppID
-from tmpBOANewQty
+into #tmpBOAData
+from #tmpBOANewQty
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,Type
-),
-tmpLocalPO
-as (
+
 select t.*,ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty,isnull(vd.Waste,0) as Waste,
 li.Description,li.Category as Type,li.LocalSuppid as SuppID
-from tmpAllStyle t
+into #tmpLocalPO
+from #tmpAllStyle t
 inner join LocalPO_Detail ld WITH (NOLOCK) on ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = t.StyleUkey and Category = t.Category order by BuyerDelivery,ID)
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = @vncontractid and vd.NLCode = li.NLCode
 where li.NoDeclare = 0
-),
-tmpConeToM
-as (
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,StyleCPU,StyleUKey,
 Refno,IIF(UnitId = 'CONE',Qty*MeterToCone,Qty) as Qty,OrderQty, IIF(UnitId = 'CONE','M',UnitId) as UnitId,Waste,
 NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Description,Type,SuppID
-from tmpLocalPO
-),
-tmpPrepareRate
-as (
+into #tmpConeToM
+from #tmpLocalPO
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,StyleCPU,StyleUKey,
 Refno,iif(OrderQty=0.000,0.000,Qty/OrderQty) as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,Description,Type,SuppID,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
-from tmpConeToM
-),
-tmpLocalNewQty
-as (
+into #tmpPrepareRate
+from #tmpConeToM
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,Refno as SCIRefno,Refno,'' as BrandID,NLCode,HSCode,CustomsUnit,Waste,StyleCPU,StyleUKey,Description,Type,SuppID,
 [dbo].getVNUnitTransfer('',UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
-from tmpPrepareRate
-),
-tmpLocalData
-as (
+into #tmpLocalNewQty
+from #tmpPrepareRate
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,
 CustomsUnit,sum(isnull(NewQty,0)-(isnull(NewQty,0)*isnull(Waste,0))) as Qty, 1 as LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
-from tmpLocalNewQty
+into #tmpLocalData
+from #tmpLocalNewQty
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StyleCPU,StyleUKey,Description,Type,SuppID
-),
-tmpFixDeclare
-as (
+
 select t.StyleID,t.SeasonID,t.OrderBrandID,t.Category,t.SizeCode,t.Article,t.GMTQty,vfd.* ,sa.TissuePaper as ArticleTissuePaper,t.CTNQty,t.StyleCPU,t.StyleUKey
+into #tmpFixDeclare
 from VNFixedDeclareItem vfd WITH (NOLOCK) 
-left join tmpAllStyle t on 1 = 1
+left join #tmpAllStyle t on 1 = 1
 left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = t.StyleUkey and sa.Article = t.Article
-),
-tmpFinalFixDeclare
-as (
+
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,'' as SCIRefno,'' as Refno,'' as BrandID,'' as SuppID,
 NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty,0 as LocalItem,StyleCPU,StyleUKey,'' as Description,'' as Type
-from tmpFixDeclare
+into #tmpFinalFixDeclare
+from #tmpFixDeclare
 where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)
-)
 
-select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID from tmpFinalFixDeclare
+select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID from #tmpFinalFixDeclare
 union
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(Qty) as Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
 from (
-select * from tmpBOFData
+select * from #tmpBOFData
 union all
-select * from tmpBOAData
+select * from #tmpBOAData
 union all
-select * from tmpLocalData) a
+select * from #tmpLocalData) a
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
+
+drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate
 ");
             #endregion
 
@@ -330,7 +321,26 @@ group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno
             try
             {
                 MyUtility.Tool.ProcessWithDatatable(AllDetailData, "StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey",
-                    @"select StyleID,SeasonID,OrderBrandID,Category,Article,SizeCode,NLCode,SUM(Qty) as Qty,CustomsUnit into #tmpSumConsData
+                    @"
+alter table #tmp alter column StyleID		varchar(500)
+alter table #tmp alter column SeasonID		varchar(500)
+alter table #tmp alter column OrderBrandID	varchar(500)
+alter table #tmp alter column Category		varchar(500)
+alter table #tmp alter column SizeCode		varchar(500)
+alter table #tmp alter column Article		varchar(500)
+alter table #tmp alter column GMTQty		varchar(500)
+alter table #tmp alter column SCIRefno		varchar(500)
+alter table #tmp alter column Refno			varchar(500)
+alter table #tmp alter column BrandID		varchar(500)
+alter table #tmp alter column NLCode		varchar(500)
+alter table #tmp alter column HSCode		varchar(500)
+alter table #tmp alter column CustomsUnit	varchar(500)
+--alter table #tmp alter column Qty			varchar(500)
+alter table #tmp alter column LocalItem		varchar(500)
+alter table #tmp alter column StyleCPU		varchar(500)
+alter table #tmp alter column StyleUKey		varchar(500)
+
+select StyleID,SeasonID,OrderBrandID,Category,Article,SizeCode,NLCode,SUM(Qty) as Qty,CustomsUnit into #tmpSumConsData
 from #tmp
 group by StyleID,SeasonID,OrderBrandID,Category,Article,SizeCode,NLCode,CustomsUnit;
 
