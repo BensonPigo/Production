@@ -984,13 +984,14 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
             //將要Copy的資料塞進DataTable中
             int newIndex = lastIndex;
+            int currentCellindex = this.detailgrid.CurrentCell.RowIndex;
             foreach (DataRow dr in listDr)
             {
                 DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
                 newRow.ItemArray = dr.ItemArray;
-                ((DataTable)detailgridbs.DataSource).Rows.InsertAt(newRow, ++newIndex);
+                currentCellindex++;
+                ((DataTable)detailgridbs.DataSource).Rows.InsertAt(newRow, currentCellindex);
             }
-
             int seq = MyUtility.Convert.GetInt(lastRow["Seq"]);
             for (int i = lastIndex + 1; i < DetailDatas.Count; i++)
             {
