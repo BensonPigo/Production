@@ -159,6 +159,10 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
         {
             listControlBindingSource1.EndEdit();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dtGridBS1))
+            {
+                return;
+            }
             if (dtGridBS1.Rows.Count==0)return;
             DataRow[] dr2 = dtGridBS1.Select("UnitPrice = 0 and Selected = 1");
             
