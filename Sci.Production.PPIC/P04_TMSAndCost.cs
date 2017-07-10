@@ -309,5 +309,16 @@ select * from UpdateData", KeyValue1);
 
             return Result.True;
         }
+        protected override void OnSaveAfter()
+        {
+            base.OnSaveAfter();
+            NoConfirmInClose = true;
+            Close();
+        }
+        bool NoConfirmInClose = false;
+        protected override bool NeedUserClosingConfirm()
+        {
+            return NoConfirmInClose? false : base.NeedUserClosingConfirm();
+        }
     }
 }
