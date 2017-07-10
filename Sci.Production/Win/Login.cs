@@ -321,7 +321,9 @@ Script
         {
             if (comboBox2.SelectedValue == null) return;
             DBProxy.Current.DefaultModuleName = comboBox2.SelectedValue2.ToString();
-            act_Validated(null, null);
+            act.Text = "";
+            pwd.Text = "";
+            comboBox1.DataSource = null;
         }
 
 
