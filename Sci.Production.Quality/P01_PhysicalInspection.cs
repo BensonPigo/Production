@@ -770,8 +770,6 @@ Where DetailUkey = {15};",
 
             #endregion
 
-
-
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Physical_Inspection_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             excel.Visible = false;
@@ -817,7 +815,7 @@ Where DetailUkey = {15};",
             #region FIR_Physical
             #region 表頭
 
-            excel.Cells[1, 2] = this.displaySP.Text;
+            excel.Cells[1, 2] = this.displaySP.Text + "-" + displaySEQ.Text;
             excel.Cells[1, 4] = this.displayColor.Text;
             excel.Cells[1, 6] = this.displayStyle.Text;
             excel.Cells[1, 8] = dt1.Rows[0]["SeasonID"];
@@ -885,7 +883,7 @@ Where DetailUkey = {15};",
                     {
                         excel.Cells[15 + (i * 8), ii] = "Defect";
 
-                    }
+                    }                    
                 }
                 for (int ii = 1; ii <= dtRowCount * 2; ii++)
                 {
@@ -899,10 +897,11 @@ Where DetailUkey = {15};",
                         excel.Cells[16 + (i * 8), ii] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
                     }
                 }
+                
                 //變色 titile
-                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Interior.color = Color.Pink;
+                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Interior.colorindex = 38;
                 worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Borders.LineStyle = 1;
-
+                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[17 + (i * 8), 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
                 DualResult dcResult;
@@ -936,7 +935,7 @@ from FIR_Physical a WITH (NOLOCK)
 left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
 left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
 left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
-where a.ID='{0}' and a.Roll='{1}'", textID.Text, dt.Rows[i]["roll"].ToString()), out dtcombo))
+where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[rowcount-1].Cells["Roll"].Value.ToString()), out dtcombo))
                 {
                     if (dtcombo.Rows.Count < 1)
                     {
@@ -947,8 +946,7 @@ where a.ID='{0}' and a.Roll='{1}'", textID.Text, dt.Rows[i]["roll"].ToString()),
                         excel.Cells[19 + (i * 8), 1] = "Shad bond";
                         excel.Cells[20 + (i * 8), 1] = "Weight";
                         excel.Cells[21 + (i * 8), 1] = "Moisture";
-                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
-                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
+
                     }
                     else
                     {
@@ -961,20 +959,24 @@ where a.ID='{0}' and a.Roll='{1}'", textID.Text, dt.Rows[i]["roll"].ToString()),
                         excel.Cells[21 + (i * 8), 1] = "Moisture";
 
 
-                        excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[0]["Result_c"].ToString();
-                        excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[0]["Remark_c"].ToString();
-                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[0]["Name_c"].ToString();
+                        excel.Cells[18 + (i * 8), 2] = dtcombo.Rows[0]["Result_c"].ToString();
+                        excel.Cells[18 + (i * 8), 3] = dtcombo.Rows[0]["Remark_c"].ToString();
+                        excel.Cells[18 + (i * 8), 4] = dtcombo.Rows[0]["Name_c"].ToString();
 
-                        excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[0]["Result_s"].ToString();
-                        excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Remark_s"].ToString();
-                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Name_s"].ToString();
+                        excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[0]["Result_s"].ToString();
+                        excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[0]["Remark_s"].ToString();
+                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[0]["Name_s"].ToString();
 
-                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result_w"].ToString();
-                        excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[0]["Remark_w"].ToString();
-                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Name_w"].ToString();
-                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
-                        worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
-                    }
+                        excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[0]["Result_w"].ToString();
+                        excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Remark_w"].ToString();
+                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Name_w"].ToString();
+
+                    }                   
+                    worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
+
+                    worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Font.Bold = true;
+                    worksheet.Range[excel.Cells[18 + (i * 8), 1], excel.Cells[21 + (i * 8), 1]].Font.Bold = true;                    
                 }
             }
 
