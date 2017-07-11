@@ -93,7 +93,7 @@ namespace Sci.Production.Logistic
         }
         DataTable selectDataTable;
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void find()
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
@@ -156,6 +156,11 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
                 }
             }
             listControlBindingSource1.DataSource = selectDataTable;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            find();
         }
 
         //Import From Barcode
@@ -395,6 +400,7 @@ where a.Selected = 1", out selectData);
                     return;
                 }
             }
+            find();
         }
 
         //Cancel
