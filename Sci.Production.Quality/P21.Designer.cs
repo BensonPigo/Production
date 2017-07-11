@@ -686,7 +686,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 650);
-            this.DefaultControl = "txtSP";
+            this.DefaultControl = "dateAuditDate";
             this.DefaultControlForEdit = "txtSP";
             this.ExpressQuery = true;
             this.GridAlias = "CFA_Detail";
