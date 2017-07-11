@@ -12,10 +12,10 @@ BEGIN
 	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
 	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
 
-		--LEO新增 @OldDate(TransferDate)
-		       -- @dToDay(UpdateDate)
-			   DELETE FROM Trade_To_Pms.dbo.DateInfo
-			   WHERE NAME='imp_Order_OldDate' or NAME='imp_Order_dToDay'
+	--LEO新增 @OldDate(TransferDate)
+	-- @dToDay(UpdateDate)
+	DELETE FROM Trade_To_Pms.dbo.DateInfo
+	WHERE NAME='imp_Order_OldDate' or NAME='imp_Order_dToDay'
 
 	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
                     VALUES  ('imp_Order_OldDate',@OldDate , @OldDate),
@@ -29,18 +29,19 @@ BEGIN
 
 ------------------TempTable -------------
 	--TempOrder
-	select a.*,
-	CAST( '' as varchar(8)) as FTY_Group,
-	cast (null as date) as SDPDate,
-	cast(0 as bit) as PulloutComplete,
-	cast('' as varchar(10) ) as MCHandle,
-	cast(null as date) as MDClose
+	select	a.*,
+			CAST( '' as varchar(8)) as FTY_Group,
+			cast (null as date) as SDPDate,
+			cast(0 as bit) as PulloutComplete,
+			cast('' as varchar(10) ) as MCHandle,
+			cast(null as date) as MDClose
 	into #TOrder
 	from Trade_To_Pms.dbo.Orders a WITH (NOLOCK)
 	inner join Production.dbo.Factory b WITH (NOLOCK) on a.FactoryID=b.ID
 
 	update #TOrder
-	set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup) , MDivisionID=b.MDivisionID
+	set		FTY_Group = IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup) 
+			, MDivisionID=b.MDivisionID
 	from #TOrder a
 	inner join Production.dbo.Factory b on a.FactoryID=b.id
 
@@ -52,15 +53,19 @@ BEGIN
 			, a.MDivisionID = f.MDivisionID
 		from Production.dbo.WorkOrder a
 		inner join #TOrder b on a.ID = b.ID
-		inner join Production.dbo.Orders c on b.ID = c.ID and a.FactoryID != b.FTY_Group
+		inner join Production.dbo.Orders c on b.ID = c.ID 
+											  and a.FactoryID != b.FTY_Group
 		left join Production.dbo.Factory f on b.FTY_Group = f.ID
-		where 	b.qty > 0 and b.IsForecast = '0'
+		where 	b.qty > 0 
+				and b.IsForecast = '0'
 
 		--delete cutting
 		delete b
 		from #TOrder a 		
-		inner join Production.dbo.Cutting b on a.id=b.ID and b.FactoryID<>a.FTY_Group
-		where a.qty > 0 and a.IsForecast = '0'
+		inner join Production.dbo.Cutting b on a.id = b.ID 
+											   and b.FactoryID <> a.FTY_Group
+		where	a.qty > 0 
+				and a.IsForecast = '0'
 
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
 		--如果買家到貨日不是工廠放假日,SDDate=BuyerDelivery
@@ -72,14 +77,21 @@ BEGIN
 		set a.SDPDate = DATEADD(day,-1, a.BuyerDelivery) 
 		from #TOrder  a
 		inner join Production.dbo.Factory b on a.FactoryID=b.ID
-		inner join Production.dbo.Holiday c on b.id=c.factoryid and c.HolidayDate=a.BuyerDelivery
+		inner join Production.dbo.Holiday c on b.id=c.factoryid 
+											   and c.HolidayDate=a.BuyerDelivery
 
 		
 		-- 調整#TOrder not matched
 		update t
-		set t.MCHandle = (select localMR from Production.dbo.Style where BrandID=t.BrandID and id=t.styleid and SeasonID=t.SeasonID ),
-		t.PulloutComplete =iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null)   ,0,1),
-		t.MDClose = iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null) ,t.MDClose,convert(date,getdate()))                                                                                             
+		set		t.MCHandle = (select localMR 
+							  from Production.dbo.Style 
+							  where BrandID = t.BrandID 
+									and id=t.styleid 
+									and SeasonID=t.SeasonID )
+				, t.PulloutComplete = iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null), 0, 1)
+				, t.MDClose = iif((t.GMTComplete='P' OR t.GMTComplete='' or t.GMTComplete is null) 
+				, t.MDClose
+				, convert(date,getdate()))                                                                                             
 		from #TOrder as t
 		left join Production.dbo.Orders as s1 on t.ID=s1.ID
 		where s1.ID is null
@@ -87,8 +99,11 @@ BEGIN
 ----------------取得 BuyerDelivery & SciDelivery 日期在 Trade 給的日期範圍中 Orders 的資料------------------------
 	select * into #tmpOrders 
 	from Production.dbo.Orders a WITH (NOLOCK)
-	where (a.BuyerDelivery between @Odate_s and @Odate_e or a.SciDelivery between @Odate_s and @Odate_e)
-		and a.LocalOrder = 0
+	where	(
+				a.BuyerDelivery between @Odate_s and @Odate_e 
+				or a.SciDelivery between @Odate_s and @Odate_e
+			)
+			and a.LocalOrder = 0
 				
 ---------------------OrderComparisonList (1.Insert, 2.Delete, 3.ChangeFactory, 4.ChangeData, 5.NoChange)-----------------
 		----1.Insert 記錄 Trade 有 PMS 沒有的資料 (NewOrder = 1) 
@@ -104,7 +119,7 @@ BEGIN
 				t.NewOrder				= 1
 				, t.OrderID				= s.ID
 				, t.OriginalStyleID		= s.StyleID
-				, t.NewQty = s.Qty
+				, t.NewQty				= s.Qty
 				, t.NewBuyerDelivery	= s.BuyerDelivery
 				, t.NewSCIDelivery		= s.SCIDelivery
 				, t.MDivisionID			= s.MDivisionID
@@ -112,8 +127,13 @@ BEGIN
 				, t.UpdateDate			= @dToDay--寫入到IMP MOCKUPORDER
 				, t.TransferDate		= @OldDate--寫入到IMP MOCKUPORDER
 		when not matched by target then
-			insert(NewOrder, OrderID, OriginalStyleID, NewQty, NewBuyerDelivery, NewSCIDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
-			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+			insert (
+				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
+				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
+			) values (
+				1				, s.ID			, s.StyleID			, s.Qty		, s.BuyerDelivery
+				, s.SCIDelivery	, s.MDivisionID	, s.FactoryID		, @dToDay	, @OldDate
+			);
 
 		----2.Delete 記錄 Trade 沒有 PMS 有的資料 (DeleteOrder = 1)
 		Merge Production.dbo.OrderComparisonList as t
@@ -136,8 +156,13 @@ BEGIN
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
 		when not matched by target then
-			insert(DeleteOrder, OrderID, OriginalStyleID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
-			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+			insert (
+				DeleteOrder				, OrderID		, OriginalStyleID	, OriginalQty	, OriginalBuyerDelivery
+				, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate	, TransferDate
+			) values (
+				1						, s.ID			, s.StyleID			, s.Qty			, s.BuyerDelivery
+				, s.SCIDelivery			, s.MDivisionID	, s.FactoryID		, @dToDay		, @OldDate
+			);
 
 		----3.ChangeFactory 記錄換工廠
 		--------3.1.Delete 舊工廠的資料，資料帶入 PMS.Orders
@@ -163,8 +188,15 @@ BEGIN
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
 		when not matched by target then
-			insert(DeleteOrder, TransferToFactory, OrderID, OriginalStyleID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
-			values(1, s.Transfer2Factroy, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+			insert (
+				DeleteOrder				, TransferToFactory		, OrderID		, OriginalStyleID	, OriginalQty
+				, OriginalBuyerDelivery	, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate
+				, TransferDate
+			) values (
+				1						, s.Transfer2Factroy	, s.ID			, s.StyleID			, s.Qty
+				, s.BuyerDelivery		, s.SCIDelivery			, s.MDivisionID	, s.FactoryID		, @dToDay
+				, @OldDate
+			);
 
 		 -------3.2.New 新工廠的資料，資料帶入 Trade.Orders
 	    Merge Production.dbo.OrderComparisonList as t
@@ -187,8 +219,13 @@ BEGIN
 				, t.UpdateDate			= @dToday
 				, t.TransferDate		= @OldDate
 		when not matched by target then
-			insert(NewOrder, OrderID, OriginalStyleID, NewQty, NewBuyerDelivery, NewSCIDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
-			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+			insert (
+				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
+				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
+			) values (
+				1				, s.ID			, s.StyleID			, s.Qty		, s.BuyerDelivery
+				, s.SCIDelivery	, s.MDivisionID	, s.FactoryID		, @dToDay	, @OldDate
+			);
 
 		----4.ChangeData 記錄資料異動
 		-------IIF => 如果 PMS & Trade 某一欄位相同，則新舊都存入 Null 代表沒有變動，
@@ -266,18 +303,32 @@ BEGIN
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
 		when not matched by target then 
-			insert(OrderID, FactoryID, MDivisionID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, OriginalStyleID, OriginalCMPQDate, OriginalEachConsApv, OriginalMnorderApv, OriginalSMnorderApv, OriginalLETA
-					, NewQty, NewBuyerDelivery, NewSciDelivery, NewStyleID, NewCMPQDate, NewEachConsApv, NewMnorderApv, NewSMnorderApv, NewLETA, KPILETA, MnorderApv2, JunkOrder, UpdateDate, TransferDate)
-			values(s.ID, s.FactoryID, s.MDivisionID, s.O_Qty, s.O_BuyerDelivery, s.O_SciDelivery, s.O_Style, s.O_CMPQDate, s.O_EachConsApv, s.O_MnorderApv, s.O_SMnorderApv, s.O_LETA
-					, s.N_Qty, s.N_BuyerDelivery, s.N_SciDelivery, s.N_Style, s.N_CMPQDate, s.N_EachConsApv, s.N_MnorderApv, s.N_SMNorderApv, s.N_LETA, s.N_KPILETA, s.N_MnorderApv2, s.N_Junk, @dToday, @OldDate);
+			insert (
+				OrderID					, FactoryID			, MDivisionID		, OriginalQty			, OriginalBuyerDelivery
+				, OriginalSciDelivery	, OriginalStyleID	, OriginalCMPQDate	, OriginalEachConsApv	, OriginalMnorderApv
+				, OriginalSMnorderApv	, OriginalLETA		, NewQty			, NewBuyerDelivery		, NewSciDelivery
+				, NewStyleID			, NewCMPQDate		, NewEachConsApv	, NewMnorderApv			, NewSMnorderApv
+				, NewLETA				, KPILETA			, MnorderApv2		, JunkOrder				, UpdateDate
+				, TransferDate
+			) values (
+				s.ID					, s.FactoryID		, s.MDivisionID		, s.O_Qty				, s.O_BuyerDelivery
+				, s.O_SciDelivery		, s.O_Style			, s.O_CMPQDate		, s.O_EachConsApv		, s.O_MnorderApv
+				, s.O_SMnorderApv		, s.O_LETA			, s.N_Qty			, s.N_BuyerDelivery		, s.N_SciDelivery
+				, s.N_Style				, s.N_CMPQDate		, s.N_EachConsApv	, s.N_MnorderApv		, s.N_SMNorderApv
+				, s.N_LETA				, s.N_KPILETA		, s.N_MnorderApv2	, s.N_Junk				, @dToday
+				, @OldDate
+			);
 
         ----5.No Change!
 		Merge Production.dbo.OrderComparisonList as t
 		Using Production.dbo.Factory as s
 		on t.factoryid=s.id and UpdateDate =@dToDay
 		when not matched by Target then 
-			insert(OrderId,    UpdateDate,  TransferDate, MDivisionID  , FactoryID)
-			values('No Change!',@dToDay,    @OldDate,     s.MDivisionID, s.ID);
+			insert (
+				OrderId			, UpdateDate	, TransferDate	, MDivisionID  , FactoryID
+			) values (
+				'No Change!'	, @dToDay		, @OldDate		, s.MDivisionID, s.ID
+			);
 -----------------------------------------------------------------------------------------------------------
 ---------------------Order--------------------------------------
 		--------------Order.id= AOrder.id  if eof()
@@ -288,130 +339,182 @@ BEGIN
 		on t.id=s.id
 		when matched then 
 		update set
-				t.ProgramID = s.    ProgramID ,
-				t.ProjectID = s.    ProjectID ,
-				t.Category = s.    Category ,
-				t.OrderTypeID = s.    OrderTypeID ,
-				t.BuyMonth = s.    BuyMonth ,
-				t.Dest = s.       Dest ,
-				t.Model = s.       Model ,
-				t.HsCode1 = s.       HsCode1 ,
-				t.HsCode2 = s.       HsCode2 ,
-				t.PayTermARID = s.       PayTermARID ,
-				t.ShipTermID = s.       ShipTermID ,
-				t.ShipModeList = s.       ShipModeList ,
-				t.PoPrice = s.       PoPrice ,
-				t.CFMPrice = s.       CFMPrice ,
-				t.CurrencyID = s.       CurrencyID ,
-				t.Commission = s.       Commission ,
-				t.BrandAreaCode = s.       BrandAreaCode ,
-				t.BrandFTYCode = s.       BrandFTYCode ,
-				t.CTNQty = s.       CTNQty ,
-				t.CustCDID = s.       CustCDID ,
-				t.CustPONo = s.       CustPONo ,
-				t.Customize1 = s.       Customize1 ,
-				t.Customize2 = s.       Customize2 ,
-				t.Customize3 = s.       Customize3 ,
-				t.CMPUnit = s.       CMPUnit ,
-				t.CMPPrice = s.       CMPPrice ,
-				t.CMPQDate = s.       CMPQDate ,
-				t.CMPQRemark = s.       CMPQRemark ,
-				t.EachConsApv = s.       EachConsApv ,
-				t.MnorderApv = s.       MnorderApv ,
-				t.CRDDate = s.       CRDDate ,
-				t.InitialPlanDate = s.       InitialPlanDate ,
-				t.PlanDate = s.       PlanDate ,
-				t.FirstProduction = s.       FirstProduction ,
-				t.FirstProductionLock = s.       FirstProductionLock ,
-				t.OrigBuyerDelivery = s.       OrigBuyerDelivery ,
-				t.ExCountry = s.       ExCountry ,
-				t.InDCDate = s.       InDCDate ,
-				t.CFMShipment = s.       CFMShipment ,
-				t.PFETA = s.       PFETA ,
-				t.PackLETA = s.       PackLETA ,
-				t.LETA = s.       LETA ,
-				t.MRHandle = s.       MRHandle ,
-				t.SMR = s.       SMR ,
-				t.ScanAndPack = s.       ScanAndPack ,
-				t.VasShas = s.       VasShas ,
-				t.SpecialCust = s.       SpecialCust ,
-				t.TissuePaper = s.       TissuePaper ,
-				t.Packing = s.       Packing ,
-				--t.SDPDate = s.SDPDate, --工廠交期只需要INSERT填預設值,不須UPDATE
-				t.MarkFront = s.       MarkFront ,
-				t.MarkBack = s.       MarkBack ,
-				t.MarkLeft = s.       MarkLeft ,
-				t.MarkRight = s.       MarkRight ,
-				t.Label = s.       Label ,
-				t.OrderRemark = s.       OrderRemark ,
-				t.ArtWorkCost = s.       ArtWorkCost ,
-				t.StdCost = s.       StdCost ,
-				t.CtnType = s.       CtnType ,
-				t.FOCQty = s.       FOCQty ,
-				t.SMnorderApv = s.       SMnorderApv ,
-				t.FOC = s.       FOC ,
-				t.MnorderApv2 = s.       MnorderApv2 ,
-				t.Packing2 = s.       Packing2 ,
-				t.SampleReason = s.       SampleReason ,
-				t.RainwearTestPassed = s.       RainwearTestPassed ,
-				t.SizeRange = s.       SizeRange ,
-				t.MTLComplete = s.       MTLComplete ,
-				t.SpecialMark = s.       SpecialMark ,
-				t.OutstandingRemark = iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingRemark,s.OutstandingRemark),
-				t.OutstandingInCharge = iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingInCharge,s.OutstandingInCharge),
-				t.OutstandingDate =  iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingDate,s.OutstandingDate),
-				t.OutstandingReason = iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingReason,s.OutstandingReason),
-				t.StyleUkey = s.       StyleUkey ,
-				t.POID = s.       POID ,
-				t.IsNotRepeatOrMapping = s.       IsNotRepeatOrMapping ,
-				t.SplitOrderId = s.       SplitOrderId ,
-				t.FtyKPI = s.       FtyKPI ,
-				t.EditName = iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditName, s.EditName) ,
-				t.EditDate = iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditDate, s.EditDate) ,
-				t.IsForecast = s.       IsForecast ,
-				t.PulloutComplete =iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,1,t.PulloutComplete),
-				t.PFOrder = s.       PFOrder ,
-				t.KPILETA = s.       KPILETA ,
-				t.MTLETA = s.       MTLETA ,
-				t.SewETA = s.       SewETA ,
-				t.PackETA = s.       PackETA ,
-				t.MTLExport = s.       MTLExport ,
-				t.DoxType = s.       DoxType ,
-				t.FtyGroup = s.       FTY_Group ,
-				t.MDivisionID = s.       MDivisionID ,
-				t.KPIChangeReason = s.       KPIChangeReason ,
-				t.MDClose = iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,@dToDay,t.MDClose),
-				t.CPUFactor = s.       CPUFactor ,
-				t.SizeUnit = s.       SizeUnit ,
-				t.CuttingSP = s.       CuttingSP ,
-				t.IsMixMarker = s.       IsMixMarker ,
-				t.EachConsSource = s.       EachConsSource ,
-				t.KPIEachConsApprove = s.       KPIEachConsApprove ,
-				t.KPICmpq = s.       KPICmpq ,
-				t.KPIMNotice = s.       KPIMNotice ,
-				t.GMTComplete  = s.       GMTComplete  ,
-				t.GFR = s.       GFR	,
-				t.FactoryID=s.FactoryID,
-				t.BrandID=s.BrandID, 
-				t.StyleID=s.StyleID, 
-				t.SeasonID=s.SeasonID, 
-				t.BuyerDelivery=s.BuyerDelivery,
-				t. SciDelivery=s.SciDelivery, 
-				t.CFMDate=s.CFMDate, 
-				t.Junk=s.Junk,
-				t.CdCodeID=s.CdCodeID, 
-				t.CPU=s.CPU, 
-				t.Qty=s.Qty, 
-				t.StyleUnit=s.StyleUnit, 				
-				t.AddName=s.AddName, 
-				t.AddDate=s.AddDate,
-				t.PulloutDate=s.PulloutDate,
-				t.InspDate=s.InspDate
+				t.ProgramID				= s.ProgramID ,
+				t.ProjectID				= s.ProjectID ,
+				t.Category				= s.Category ,
+				t.OrderTypeID			= s.OrderTypeID ,
+				t.BuyMonth				= s.BuyMonth ,
+				t.Dest					= s.Dest ,
+				t.Model					= s.Model ,
+				t.HsCode1				= s.HsCode1 ,
+				t.HsCode2				= s.HsCode2 ,
+				t.PayTermARID			= s.PayTermARID ,
+				t.ShipTermID			= s.ShipTermID ,
+				t.ShipModeList			= s.ShipModeList ,
+				t.PoPrice				= s.PoPrice ,
+				t.CFMPrice				= s.CFMPrice ,
+				t.CurrencyID			= s.CurrencyID ,
+				t.Commission			= s.Commission ,
+				t.BrandAreaCode			= s.BrandAreaCode ,
+				t.BrandFTYCode			= s.BrandFTYCode ,
+				t.CTNQty				= s.CTNQty ,
+				t.CustCDID				= s.CustCDID ,
+				t.CustPONo				= s.CustPONo ,
+				t.Customize1			= s.Customize1 ,
+				t.Customize2			= s.Customize2 ,
+				t.Customize3			= s.Customize3 ,
+				t.CMPUnit				= s.CMPUnit ,
+				t.CMPPrice				= s.CMPPrice ,
+				t.CMPQDate				= s.CMPQDate ,
+				t.CMPQRemark			= s.CMPQRemark ,
+				t.EachConsApv			= s.EachConsApv ,
+				t.MnorderApv			= s.MnorderApv ,
+				t.CRDDate				= s.CRDDate ,
+				t.InitialPlanDate		= s.InitialPlanDate ,
+				t.PlanDate				= s.PlanDate ,
+				t.FirstProduction		= s.FirstProduction ,
+				t.FirstProductionLock	= s.FirstProductionLock ,
+				t.OrigBuyerDelivery		= s.OrigBuyerDelivery ,
+				t.ExCountry				= s.ExCountry ,
+				t.InDCDate				= s.InDCDate ,
+				t.CFMShipment			= s.CFMShipment ,
+				t.PFETA					= s.PFETA ,
+				t.PackLETA				= s.PackLETA ,
+				t.LETA					= s.LETA ,
+				t.MRHandle				= s.MRHandle ,
+				t.SMR					= s.SMR ,
+				t.ScanAndPack			= s.ScanAndPack ,
+				t.VasShas				= s.VasShas ,
+				t.SpecialCust			= s.SpecialCust ,
+				t.TissuePaper			= s.TissuePaper ,
+				t.Packing				= s.Packing ,
+				--t.SDPDate				= s.SDPDate, --工廠交期只需要INSERT填預設值,不須UPDATE
+				t.MarkFront				= s.MarkFront ,
+				t.MarkBack				= s.MarkBack ,
+				t.MarkLeft				= s.MarkLeft ,
+				t.MarkRight				= s.MarkRight ,
+				t.Label					= s.Label ,
+				t.OrderRemark			= s.OrderRemark ,
+				t.ArtWorkCost			= s.ArtWorkCost ,
+				t.StdCost				= s.StdCost ,
+				t.CtnType				= s.CtnType ,
+				t.FOCQty				= s.FOCQty ,
+				t.SMnorderApv			= s.SMnorderApv ,
+				t.FOC					= s.FOC ,
+				t.MnorderApv2			= s.MnorderApv2 ,
+				t.Packing2				= s.Packing2 ,
+				t.SampleReason			= s.SampleReason ,
+				t.RainwearTestPassed	= s.RainwearTestPassed ,
+				t.SizeRange				= s.SizeRange ,
+				t.MTLComplete			= s.MTLComplete ,
+				t.SpecialMark			= s.SpecialMark ,
+				t.OutstandingRemark		= iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingRemark,s.OutstandingRemark),
+				t.OutstandingInCharge	= iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingInCharge,s.OutstandingInCharge),
+				t.OutstandingDate		= iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingDate,s.OutstandingDate),
+				t.OutstandingReason		= iif((s.OutstandingDate <= t.OutstandingDate AND s.OutstandingDate is null) OR (s.OutstandingDate is not null  AND s.OutstandingDate <= t.OutstandingDate),t.OutstandingReason,s.OutstandingReason),
+				t.StyleUkey				= s.StyleUkey ,
+				t.POID					= s.POID ,
+				t.OrderComboID			= s.OrderComboID,
+				t.IsNotRepeatOrMapping	= s.IsNotRepeatOrMapping ,
+				t.SplitOrderId			= s.SplitOrderId ,
+				t.FtyKPI				= s.FtyKPI ,
+				t.EditName				= iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditName, s.EditName) ,
+				t.EditDate				= iif((s.EditDate <= t.EditDate AND s.EditDate is null) OR (s.EditDate is not null AND s.EditDate <= t.EditDate),t.EditDate, s.EditDate) ,
+				t.IsForecast			= s.IsForecast ,
+				t.PulloutComplete		= iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,1,t.PulloutComplete),
+				t.PFOrder				= s.PFOrder ,
+				t.KPILETA				= s.KPILETA ,
+				t.MTLETA				= s.MTLETA ,
+				t.SewETA				= s.SewETA ,
+				t.PackETA				= s.PackETA ,
+				t.MTLExport				= s.MTLExport ,
+				t.DoxType				= s.DoxType ,
+				t.FtyGroup				= s.FTY_Group ,
+				t.MDivisionID			= s.MDivisionID ,
+				t.KPIChangeReason		= s.KPIChangeReason ,
+				t.MDClose				= iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,@dToDay,t.MDClose),
+				t.CPUFactor				= s.CPUFactor ,
+				t.SizeUnit				= s.SizeUnit ,
+				t.CuttingSP				= s.CuttingSP ,
+				t.IsMixMarker			= s.IsMixMarker ,
+				t.EachConsSource		= s.EachConsSource ,
+				t.KPIEachConsApprove	= s.KPIEachConsApprove ,
+				t.KPICmpq				= s.KPICmpq ,
+				t.KPIMNotice			= s.KPIMNotice ,
+				t.GMTComplete			= s.GMTComplete  ,
+				t.GFR					= s.GFR	,
+				t.FactoryID				= s.FactoryID,
+				t.BrandID				= s.BrandID, 
+				t.StyleID				= s.StyleID, 
+				t.SeasonID				= s.SeasonID, 
+				t.BuyerDelivery			= s.BuyerDelivery,
+				t. SciDelivery			= s.SciDelivery, 
+				t.CFMDate				= s.CFMDate, 
+				t.Junk					= s.Junk,
+				t.CdCodeID				= s.CdCodeID, 
+				t.CPU					= s.CPU, 
+				t.Qty					= s.Qty, 
+				t.StyleUnit				= s.StyleUnit, 				
+				t.AddName				= s.AddName, 
+				t.AddDate				= s.AddDate,
+				t.PulloutDate			= s.PulloutDate,
+				t.InspDate				= s.InspDate
 		when not matched by target then
-insert(ID,	 BrandID,   ProgramID,   StyleID,   SeasonID,   ProjectID,     Category,   OrderTypeID,   
-BuyMonth,   Dest,   Model,   HsCode1,   HsCode2,   PayTermARID,   ShipTermID,   ShipModeList,   CdCodeID,   CPU,   Qty,   StyleUnit,   PoPrice,   CFMPrice,   CurrencyID,   Commission,   FactoryID,   BrandAreaCode,   BrandFTYCode,   CTNQty,   CustCDID,   CustPONo,   Customize1,   Customize2,   Customize3,   CFMDate,   BuyerDelivery,   SciDelivery,   SewOffLine,   CutInLine,   CutOffLine,   PulloutDate,   CMPUnit,   CMPPrice,   CMPQDate,  CMPQRemark,    EachConsApv,   MnorderApv,   CRDDate,   InitialPlanDate,   PlanDate,   FirstProduction,   FirstProductionLock,   OrigBuyerDelivery,   ExCountry,   InDCDate,   CFMShipment,   PFETA,   PackLETA,   LETA,   MRHandle,   SMR,   ScanAndPack,   VasShas,   SpecialCust,   TissuePaper,   Junk,   Packing,   MarkFront,   MarkBack,   MarkLeft,   MarkRight,   Label,   OrderRemark,   ArtWorkCost,   StdCost,   CtnType,   FOCQty,   SMnorderApv,   FOC,   MnorderApv2,   Packing2,   SampleReason,   RainwearTestPassed,   SizeRange,   MTLComplete,   SpecialMark,   OutstandingRemark,   OutstandingInCharge,   OutstandingDate,   OutstandingReason,   StyleUkey,   POID,   IsNotRepeatOrMapping,   SplitOrderId,   FtyKPI,   AddName,   AddDate,   EditName,   EditDate,   IsForecast,GMTComplete,      PFOrder,    InspDate,   KPILETA,   MTLETA,   SewETA,   PackETA,   MTLExport,   DoxType,   FtyGroup,    MDivisionID,   MCHandle,     KPIChangeReason,  MDClose,   CPUFactor,   SizeUnit,   CuttingSP,   IsMixMarker,   EachConsSource,   KPIEachConsApprove,   KPICmpq,   KPIMNotice,   GFR,SDPDate ,PulloutComplete,SewINLINE)
-values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Category ,s.OrderTypeID ,
-s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,s.ShipModeList ,s.CdCodeID ,s.CPU ,s.Qty ,s.StyleUnit ,s.PoPrice ,s.CFMPrice ,s.CurrencyID ,s.Commission ,s.FactoryID ,s.BrandAreaCode ,s.BrandFTYCode ,s.CTNQty ,s.CustCDID ,s.CustPONo ,s.Customize1 ,s.Customize2 ,s.Customize3 ,s.CFMDate ,s.BuyerDelivery ,s.SciDelivery ,s.SewOffLine ,s.CutInLine ,s.CutOffLine ,s.PulloutDate ,s.CMPUnit ,s.CMPPrice ,s.CMPQDate ,s.CMPQRemark ,s.EachConsApv ,s.MnorderApv ,s.CRDDate ,s.InitialPlanDate ,s.PlanDate ,s.FirstProduction ,s.FirstProductionLock ,s.OrigBuyerDelivery ,s.ExCountry ,s.InDCDate ,s.CFMShipment ,s.PFETA ,s.PackLETA ,s.LETA ,s.MRHandle ,s.SMR ,s.ScanAndPack ,s.VasShas ,s.SpecialCust ,s.TissuePaper ,s.Junk ,s.Packing ,s.MarkFront ,s.MarkBack ,s.MarkLeft ,s.MarkRight ,s.Label ,s.OrderRemark ,s.ArtWorkCost ,s.StdCost ,s.CtnType ,s.FOCQty ,s.SMnorderApv ,s.FOC ,s.MnorderApv2 ,s.Packing2 ,s.SampleReason ,s.RainwearTestPassed ,s.SizeRange ,s.MTLComplete ,s.SpecialMark ,s.OutstandingRemark ,s.OutstandingInCharge ,s.OutstandingDate ,s.OutstandingReason ,s.StyleUkey ,s.POID ,s.IsNotRepeatOrMapping ,s.SplitOrderId ,s.FtyKPI ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.IsForecast,s.GMTComplete ,s.PFOrder ,s.InspDate ,s.KPILETA ,s.MTLETA ,s.SewETA ,s.PackETA ,s.MTLExport ,s.DoxType ,s.FTY_Group ,s.MDivisionID ,S.MCHandle ,s.KPIChangeReason , S.MDClose ,s.CPUFactor ,s.SizeUnit ,s.CuttingSP ,s.IsMixMarker ,s.EachConsSource ,s.KPIEachConsApprove ,s.KPICmpq ,s.KPIMNotice ,s.GFR,s.SDPDate ,s.PulloutComplete,s.SewINLINE)
+		insert (
+			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
+			, ProjectID				, Category				, OrderTypeID			, BuyMonth				, Dest
+			, Model					, HsCode1				, HsCode2				, PayTermARID			, ShipTermID
+			, ShipModeList			, CdCodeID				, CPU					, Qty					, StyleUnit
+			, PoPrice				, CFMPrice				, CurrencyID			, Commission			, FactoryID
+			, BrandAreaCode			, BrandFTYCode			, CTNQty				, CustCDID				, CustPONo
+			, Customize1			, Customize2			, Customize3			, CFMDate				, BuyerDelivery
+			, SciDelivery			, SewOffLine			, CutInLine				, CutOffLine			, PulloutDate
+			, CMPUnit				, CMPPrice				, CMPQDate				, CMPQRemark			, EachConsApv
+			, MnorderApv			, CRDDate				, InitialPlanDate		, PlanDate				, FirstProduction
+			, FirstProductionLock	, OrigBuyerDelivery		, ExCountry				, InDCDate				, CFMShipment
+			, PFETA					, PackLETA				, LETA					, MRHandle				, SMR
+			, ScanAndPack			, VasShas				, SpecialCust			, TissuePaper			, Junk
+			, Packing				, MarkFront				, MarkBack				, MarkLeft				, MarkRight
+			, Label					, OrderRemark			, ArtWorkCost			, StdCost				, CtnType
+			, FOCQty				, SMnorderApv			, FOC					, MnorderApv2			, Packing2
+			, SampleReason			, RainwearTestPassed	, SizeRange				, MTLComplete			, SpecialMark
+			, OutstandingRemark		, OutstandingInCharge	, OutstandingDate		, OutstandingReason		, StyleUkey
+			, POID					, OrderComboID			, IsNotRepeatOrMapping	, SplitOrderId			, FtyKPI				
+			, AddName				, AddDate				, EditName				, EditDate				, IsForecast			
+			, GMTComplete			, PFOrder				, InspDate				, KPILETA				, MTLETA				
+			, SewETA				, PackETA				, MTLExport				, DoxType				, FtyGroup				
+			, MDivisionID			, MCHandle				, KPIChangeReason		, MDClose				, CPUFactor				
+			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
+			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
+			, SewINLINE
+		) values (
+			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
+			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
+			, s.Model				, s.HsCode1				, s.HsCode2				, s.PayTermARID			, s.ShipTermID 
+			, s.ShipModeList		, s.CdCodeID			, s.CPU					, s.Qty					, s.StyleUnit 
+			, s.PoPrice				, s.CFMPrice			, s.CurrencyID			, s.Commission			, s.FactoryID 
+			, s.BrandAreaCode		, s.BrandFTYCode		, s.CTNQty				, s.CustCDID			, s.CustPONo 
+			, s.Customize1			, s.Customize2			, s.Customize3			, s.CFMDate				, s.BuyerDelivery 
+			, s.SciDelivery			, s.SewOffLine			, s.CutInLine			, s.CutOffLine			, s.PulloutDate 
+			, s.CMPUnit				, s.CMPPrice			, s.CMPQDate			, s.CMPQRemark			, s.EachConsApv 
+			, s.MnorderApv			, s.CRDDate				, s.InitialPlanDate		, s.PlanDate			, s.FirstProduction 
+			, s.FirstProductionLock , s.OrigBuyerDelivery	, s.ExCountry			, s.InDCDate			, s.CFMShipment 
+			, s.PFETA				, s.PackLETA			, s.LETA				, s.MRHandle			, s.SMR 
+			, s.ScanAndPack			, s.VasShas				, s.SpecialCust			, s.TissuePaper			, s.Junk 
+			, s.Packing				, s.MarkFront			, s.MarkBack			, s.MarkLeft			, s.MarkRight 
+			, s.Label				, s.OrderRemark			, s.ArtWorkCost			, s.StdCost				, s.CtnType 
+			, s.FOCQty				, s.SMnorderApv			, s.FOC					, s.MnorderApv2			, s.Packing2 
+			, s.SampleReason		, s.RainwearTestPassed	, s.SizeRange			, s.MTLComplete			, s.SpecialMark 
+			, s.OutstandingRemark	, s.OutstandingInCharge , s.OutstandingDate		, s.OutstandingReason	, s.StyleUkey 
+			, s.POID				, s.OrderComboID		, s.IsNotRepeatOrMapping, s.SplitOrderId		, s.FtyKPI
+			, s.AddName 			, s.AddDate				, s.EditName			, s.EditDate			, s.IsForecast			
+			, s.GMTComplete 		, s.PFOrder				, s.InspDate			, s.KPILETA				, s.MTLETA				
+			, s.SewETA				, s.PackETA				, s.MTLExport			, s.DoxType				, s.FTY_Group			
+			, s.MDivisionID 		, S.MCHandle			, s.KPIChangeReason		, S.MDClose				, s.CPUFactor			
+			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
+			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		
+			, s.SewINLINE
+		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
 	--------------Order_Qty--------------------------Qty BreakDown
@@ -421,17 +524,22 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 	on t.id=s.id AND T.ARTICLE=S.ARTICLE AND t.sizeCode=s.sizeCode
 	when matched then
 		update set
-		t.Qty = s.		 Qty ,
-		t.AddName = s.	     AddName ,
-		t.AddDate = s.	     AddDate ,
-		t.EditName = s.	      EditName ,
-		t.EditDate = s.	      EditDate ,
-		t.OriQty = s.OriQty
+			t.Qty		= s.Qty ,
+			t.AddName	= s.AddName ,
+			t.AddDate	= s.AddDate ,
+			t.EditName	= s.EditName ,
+			t.EditDate	= s.EditDate ,
+			t.OriQty	= s.OriQty
 	when not matched by target then 
-		insert(ID ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate,OriQty )
-		values(s.ID ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate,s.OriQty )
+		insert (
+			ID			, Article	, SizeCode		, Qty		,AddName 
+			, AddDate	, EditName	, EditDate		, OriQty 
+		) values (
+			s.ID		, s.Article	, s.SizeCode	, s.Qty		,s.AddName 
+			,s.AddDate	, s.EditName, s.EditDate	, s.OriQty 
+		)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then
-	delete;
+		delete;
 
 	----------Order_QtyShip--------------
 	Merge Production.dbo.Order_QtyShip as t
@@ -439,19 +547,24 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 	on t.id=s.id and t.seq=s.seq
 		when matched then 
 		update set
-		t.ShipmodeID = s.       ShipmodeID ,
-		t.BuyerDelivery = s.       BuyerDelivery ,
-		t.FtyKPI = s.       FtyKPI ,
-		t.ReasonID = s.       ReasonID ,
-		t.Qty = s.       Qty ,
-		t.AddName = s.       AddName ,
-		t.AddDate = s.       AddDate ,
-		t.EditName = s.       EditName ,
-		t.EditDate = s.       EditDate,
-		t.OriQty = s.OriQty
+			t.ShipmodeID	= s.ShipmodeID ,
+			t.BuyerDelivery = s.BuyerDelivery ,
+			t.FtyKPI		= s.FtyKPI ,
+			t.ReasonID		= s.ReasonID ,
+			t.Qty			= s.Qty ,
+			t.AddName		= s.AddName ,
+			t.AddDate		= s.AddDate ,
+			t.EditName		= s.EditName ,
+			t.EditDate		= s.EditDate,
+			t.OriQty		= s.OriQty
 	when not matched by target then
-		insert(  Id ,  Seq ,  ShipmodeID ,  BuyerDelivery ,  FtyKPI ,  ReasonID ,  Qty ,  AddName ,  AddDate ,  EditName ,  EditDate,OriQty )
-		values(s.Id ,s.Seq ,s.ShipmodeID ,s.BuyerDelivery ,s.FtyKPI ,s.ReasonID ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.OriQty)
+		insert  (  
+			Id		, Seq		, ShipmodeID	, BuyerDelivery		, FtyKPI		, ReasonID 
+			, Qty	, AddName	, AddDate		, EditName			, EditDate		, OriQty 
+		) values (
+			s.Id	, s.Seq		, s.ShipmodeID	, s.BuyerDelivery	, s.FtyKPI		, s.ReasonID 
+			, s.Qty	, s.AddName	, s.AddDate		, s.EditName		, s.EditDate	,s.OriQty
+		)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 	delete;
 
@@ -461,19 +574,24 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then
 			update set
-			t.id=s.id,
-			t.Seq = s.Seq ,
-			t.Article = s.Article ,
-			t.SizeCode = s.SizeCode ,
-			t.Qty = s.Qty ,
-			t.AddName = s.AddName ,
-			t.AddDate = s.AddDate ,
-			t.EditName = s.EditName ,
-			t.EditDate = s.EditDate ,
-			t.OriQty=s.OriQty
+				t.id		= s.id,
+				t.Seq		= s.Seq ,
+				t.Article	= s.Article ,
+				t.SizeCode	= s.SizeCode ,
+				t.Qty		= s.Qty ,
+				t.AddName	= s.AddName ,
+				t.AddDate	= s.AddDate ,
+				t.EditName	= s.EditName ,
+				t.EditDate	= s.EditDate ,
+				t.OriQty	= s.OriQty
 		when not matched by target then 
-			insert (Id ,Seq ,Article ,SizeCode ,Qty ,AddName ,AddDate ,EditName ,EditDate ,Ukey,OriQty )
-			values (s.Id ,s.Seq ,s.Article ,s.SizeCode ,s.Qty ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.Ukey ,s.OriQty)
+			insert (
+				Id			, Seq			, Article		, SizeCode		, Qty	, AddName 
+				, AddDate	, EditName		, EditDate		, Ukey			, OriQty 
+			) values (
+				s.Id		, s.Seq			, s.Article		, s.SizeCode	, s.Qty	, s.AddName 
+				, s.AddDate	, s.EditName	, s.EditDate	, s.Ukey		, s.OriQty
+			)
 		when not matched by source  AND T.ID IN (SELECT ID FROM #Torder) then 
 		delete;
 
@@ -483,18 +601,23 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when Matched then
 			update set			
-			t.POPrice = s.POPrice ,
-			t.QuotCost = s.QuotCost ,
-			t.DestPrice = s.DestPrice ,
-			t.AddName = s.AddName ,
-			t.AddDate = s.AddDate ,
-			t.EditName = s.EditName ,
-			t.EditDate = s.EditDate 
+				t.POPrice	= s.POPrice ,
+				t.QuotCost	= s.QuotCost ,
+				t.DestPrice	= s.DestPrice ,
+				t.AddName	= s.AddName ,
+				t.AddDate	= s.AddDate ,
+				t.EditName	= s.EditName ,
+				t.EditDate	= s.EditDate 
 		when not Matched by target then
-			insert(Id ,Article ,SizeCode ,POPrice ,QuotCost ,DestPrice ,AddName ,AddDate ,EditName ,EditDate )
-			values(s.Id ,s.Article ,s.SizeCode ,s.POPrice ,s.QuotCost ,s.DestPrice ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate )
+			insert (
+				Id				, Article	, SizeCode		, POPrice		, QuotCost 
+				, DestPrice		, AddName	, AddDate		, EditName		, EditDate 
+			) values (
+				s.Id			, s.Article	, s.SizeCode	, s.POPrice		, s.QuotCost 
+				, s.DestPrice	, s.AddName	, s.AddDate		, s.EditName	, s.EditDate 
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
-				delete;
+			delete;
 
 		--------------Order_TmsCost-----TMS & Cost
 		Merge  Production.dbo.Order_TmsCost as t
@@ -502,30 +625,57 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.ArtworkTypeID=s.ArtworkTypeID
 		when matched then 
 			update set			
-			t.Seq= s.Seq,
-			t.Qty= s.Qty,
-			t.ArtworkUnit= s.ArtworkUnit,
-			t.TMS= s.TMS,
-			t.Price= s.Price,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate		
+				t.Seq			= s.Seq,
+				t.Qty			= s.Qty,
+				t.ArtworkUnit	= s.ArtworkUnit,
+				t.TMS			= s.TMS,
+				t.Price			= s.Price,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate		
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
-		delete;
+			delete;
 
 		------------------  insert Order_TmsCost
-			INSERT INTO Production.dbo.Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,InhouseOSP,LocalSuppID,AddName,AddDate,EditName,EditDate)
-		SELECT A.ID,A.ArtworkTypeID,A.Seq,A.Qty,A.ArtworkUnit,A.TMS,A.Price,C.InhouseOSP,
-		IIF(C.InhouseOSP='O',
-			(SELECT top 1 t.LocalSuppId FROM Production.dbo.Style_Artwork_Quot T WITH (NOLOCK)
-			inner join  production.dbo.Style_Artwork a WITH (NOLOCK) on t.Ukey=a.Ukey
-			inner join Trade_To_Pms.DBO.Order_TmsCost  b WITH (NOLOCK) on a.ArtworkTypeID=b.ArtworkTypeID
-			WHERE T.Ukey IN (SELECT A.Ukey 
-			FROM Production.dbo.Style A	WITH (NOLOCK)
-			INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) ),
-			(SELECT LocalSuppID FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID=A.ID)),
-			A.AddName,A.AddDate,A.EditName,A.EditDate 
+		INSERT INTO Production.dbo.Order_TmsCost (
+			ID
+			, ArtworkTypeID
+			, Seq
+			, Qty
+			, ArtworkUnit
+			, TMS
+			, Price
+			, InhouseOSP
+			, LocalSuppID
+			, AddName
+			, AddDate
+			, EditName
+			, EditDate
+		)
+		SELECT	A.ID
+				, A.ArtworkTypeID
+				, A.Seq
+				, A.Qty
+				, A.ArtworkUnit
+				, A.TMS
+				, A.Price
+				, C.InhouseOSP
+				, IIF(C.InhouseOSP='O', (SELECT top 1 t.LocalSuppId 
+										 FROM Production.dbo.Style_Artwork_Quot T WITH (NOLOCK)
+										 inner join  production.dbo.Style_Artwork a WITH (NOLOCK) on t.Ukey=a.Ukey
+										 inner join Trade_To_Pms.DBO.Order_TmsCost  b WITH (NOLOCK) on a.ArtworkTypeID=b.ArtworkTypeID
+										 WHERE	T.Ukey IN (SELECT A.Ukey 	
+														   FROM Production.dbo.Style A	WITH (NOLOCK)
+														   INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) 
+										)
+									  , (SELECT LocalSuppID 
+										 FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID=A.ID)
+					 )
+				, A.AddName
+				, A.AddDate
+				, A.EditName
+				, A.EditDate 
 		FROM Trade_To_Pms.dbo.Order_TmsCost A WITH (NOLOCK)
 		INNER JOIN #TOrder B ON A.ID=B.ID
 		INNER JOIN Production.dbo.ArtworkType C WITH (NOLOCK) ON A.ArtworkTypeID=C.ID
@@ -541,11 +691,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 			delete
 		when matched then
 			update set
-			t.Seq= s.Seq,
-			t.SizeGroup= s.SizeGroup
+				t.Seq		= s.Seq,
+				t.SizeGroup	= s.SizeGroup
 		When not matched by target then 
-			insert(Id,Seq,SizeGroup,SizeCode,ukey)
-			values(s.Id,s.Seq,s.SizeGroup,s.SizeCode,s.ukey);
+			insert (
+				Id		, Seq	, SizeGroup		, SizeCode		, ukey
+			) values (
+				s.Id	, s.Seq	, s.SizeGroup	, s.SizeCode	, s.ukey
+			);
 
 		----------------Order_Sizeitem------------------------------尺寸表 Size Spec(存量法資料)
 		Merge Production.dbo.Order_Sizeitem as t
@@ -553,11 +706,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set 			
-			t.SizeUnit= s.SizeUnit,
-			t.SizeDesc= s.Description
+				t.SizeUnit	= s.SizeUnit,
+				t.SizeDesc	= s.Description
 		when not matched by Target then
-			insert(Id,SizeItem,SizeUnit,SizeDesc,ukey)
-			values(s.Id,s.SizeItem,s.SizeUnit,s.Description,s.ukey)
+			insert (
+				Id		, SizeItem		, SizeUnit		, SizeDesc		, ukey
+			) values (
+				s.Id	, s.SizeItem	, s.SizeUnit	, s.Description	, s.ukey
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 	
@@ -567,29 +723,62 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on  t.ukey=s.ukey
 		when matched then 
 			update set
-			t.SizeSpec= s.SizeSpec
+				t.SizeSpec	= s.SizeSpec
 		when not matched by target then
-			insert(Id,SizeItem,SizeCode,SizeSpec,ukey)
-			values(s.Id,s.SizeItem,s.SizeCode,s.SizeSpec,s.ukey)
+			insert (
+				Id		, SizeItem		, SizeCode		, SizeSpec		, ukey
+			) values (
+				s.Id	, s.SizeItem	, s.SizeCode	, s.SizeSpec	, s.ukey
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
-------------Order_ColorCombo---------------(主料配色表)
+		-------------Order_SizeSpec_OrderCombo--------------------------------
+		Merge Production.dbo.Order_SizeSpec_OrderCombo as t
+		Using (
+			select a.*
+			from Trade_To_Pms.dbo.Order_SizeSpec_OrderCombo a With (NoLock)
+			inner join #TOrder b on a.id = b.id 
+		) as s on t.ukey = s.ukey
+		when matched then 
+			update set
+				t.Id				= s.Id
+				, t.OrderComboID	= s.OrderComboID
+				, t.SizeItem		= s.SizeItem
+				, t.SizeCode		= s.SizeCode
+				, t.SizeSpec		= s.SizeSpec
+		when not matched by target then
+			insert (
+				Id		, OrderComboID		, SizeItem		, SizeCode		, SizeSpec
+				, Ukey
+			) values (
+				s.Id	, s.OrderComboID	, s.SizeItem	, s.SizeCode	, s.SizeSpec
+				, s.Ukey
+			)
+		when not matched by source and T.id in (Select ID From #Torder) then 
+			delete;
+
+		------------Order_ColorCombo---------------(主料配色表)
 		Merge Production.dbo.Order_ColorCombo as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set
-			t.ColorID= s.ColorID,
-			t.FabricCode= s.FabricCode,
-			t.PatternPanel= s.PatternPanel,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.ColorID		= s.ColorID,
+				t.FabricCode	= s.FabricCode,
+				t.PatternPanel	= s.PatternPanel,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate
 		when not matched by target then 
-			insert(Id,Article,ColorID,FabricCode,FabricPanelCode,PatternPanel,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Article,s.ColorID,s.FabricCode,s.FabricPanelCode,s.PatternPanel,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id					, Article	, ColorID	, FabricCode	, FabricPanelCode
+				, PatternPanel		, AddName	, AddDate	, EditName		, EditDate
+			) values (
+				s.Id				, s.Article	, s.ColorID	, s.FabricCode	, s.FabricPanelCode
+				, s.PatternPanel	, s.AddName	, s.AddDate	, s.EditName	, s.EditDate
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 			
@@ -600,36 +789,46 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set
-			t.PatternPanel= s.PatternPanel,
-			t.FabricCode= s.FabricCode,
-			t.FabricPanelCode= s.FabricPanelCode,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate,
-			t.Order_BOFUkey= s.Order_BOFUkey
+				t.PatternPanel		= s.PatternPanel,
+				t.FabricCode		= s.FabricCode,
+				t.FabricPanelCode	= s.FabricPanelCode,
+				t.AddName			= s.AddName,
+				t.AddDate			= s.AddDate,
+				t.EditName			= s.EditName,
+				t.EditDate			= s.EditDate,
+				t.Order_BOFUkey		= s.Order_BOFUkey
 		when not matched by target then 
-			insert(Id,PatternPanel,FabricCode,FabricPanelCode,AddName,AddDate,EditName,EditDate,Order_BOFUkey)
-			values(s.Id,s.PatternPanel,s.FabricCode,s.FabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Order_BOFUkey)
+			insert (
+				Id			, PatternPanel		, FabricCode	, FabricPanelCode	, AddName
+				, AddDate	, EditName			, EditDate		, Order_BOFUkey
+			) values (
+				s.Id		, s.PatternPanel	, s.FabricCode	, s.FabricPanelCode	, s.AddName
+				, s.AddDate	, s.EditName		, s.EditDate	, s.Order_BOFUkey
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
 -------------Order_FabricCode_QT-----------------
-		  Merge Production.dbo.Order_FabricCode_QT as t
-  Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-  on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode and t.seqno=s.seqno
-  when matched then 
-   update set
-   t.QTFabricPanelCode= s.QTFabricPanelCode,
-   t.AddName= s.AddName,
-   t.AddDate= s.AddDate,
-   t.EditName= s.EditName,
-   t.EditDate= s.EditDate
-  when not matched by target then 
-   insert(Id,FabricPanelCode,SeqNO,QTFabricPanelCode,AddName,AddDate,EditName,EditDate)
-   values(s.Id,s.FabricPanelCode,s.SeqNO,s.QTFabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
-  when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
-   delete;
+	Merge Production.dbo.Order_FabricCode_QT as t
+	Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+	on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode and t.seqno=s.seqno
+	when matched then 
+	update set
+		t.QTFabricPanelCode	= s.QTFabricPanelCode,
+		t.AddName			= s.AddName,
+		t.AddDate			= s.AddDate,
+		t.EditName			= s.EditName,
+		t.EditDate			= s.EditDate
+	when not matched by target then 
+		insert (
+			Id			, FabricPanelCode	, SeqNO		, QTFabricPanelCode		, AddName
+			, AddDate	, EditName			, EditDate
+		) values (
+			s.Id		, s.FabricPanelCode	, s.SeqNO	, s.QTFabricPanelCode	, s.AddName
+			, s.AddDate	, s.EditName		, s.EditDate
+		)
+	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+		delete;
 
 		-------------Order_Bof -----------------------Bill of Fabric
 
@@ -638,27 +837,36 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
-			t.id=s.id,
-			t.FabricCode= s.FabricCode,
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.SuppID= s.SuppID,
-			t.ConsPC= s.ConsPC,
-			t.Seq1= s.Seq1,
-			t.Kind= s.Kind,
-			t.Remark= s.Remark,
-			t.LossType= s.LossType,
-			t.LossPercent= s.LossPercent,
-			t.RainwearTestPassed= s.RainwearTestPassed,
-			t.HorizontalCutting= s.HorizontalCutting,
-			t.ColorDetail= s.ColorDetail,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.id					= s.id,
+				t.FabricCode			= s.FabricCode,
+				t.Refno					= s.Refno,
+				t.SCIRefno				= s.SCIRefno,
+				t.SuppID				= s.SuppID,
+				t.ConsPC				= s.ConsPC,
+				t.Seq1					= s.Seq1,
+				t.Kind					= s.Kind,
+				t.Remark				= s.Remark,
+				t.LossType				= s.LossType,
+				t.LossPercent			= s.LossPercent,
+				t.RainwearTestPassed	= s.RainwearTestPassed,
+				t.HorizontalCutting		= s.HorizontalCutting,
+				t.ColorDetail			= s.ColorDetail,
+				t.AddName				= s.AddName,
+				t.AddDate				= s.AddDate,
+				t.EditName				= s.EditName,
+				t.EditDate				= s.EditDate
 		when not matched by target then 
-			insert(Id,FabricCode,Refno,SCIRefno,SuppID,ConsPC,Seq1,Kind,Ukey,Remark,LossType,LossPercent,RainwearTestPassed,HorizontalCutting,ColorDetail,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.FabricCode,s.Refno,s.SCIRefno,s.SuppID,s.ConsPC,s.Seq1,s.Kind,s.Ukey,s.Remark,s.LossType,s.LossPercent,s.RainwearTestPassed,s.HorizontalCutting,s.ColorDetail,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id				, FabricCode	, Refno					, SCIRefno				, SuppID
+				, ConsPC		, Seq1			, Kind					, Ukey					, Remark
+				, LossType		, LossPercent	, RainwearTestPassed	, HorizontalCutting		, ColorDetail
+				, AddName		, AddDate		, EditName				, EditDate
+			) values (
+				s.Id			, s.FabricCode	, s.Refno				, s.SCIRefno			, s.SuppID
+				, s.ConsPC		, s.Seq1		, s.Kind				, s.Ukey				, s.Remark
+				, s.LossType	, s.LossPercent	, s.RainwearTestPassed	, s.HorizontalCutting	, s.ColorDetail
+				, s.AddName		, s.AddDate		, s.EditName			, s.EditDate
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -670,26 +878,35 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set
-			t.Id= s.Id,
-			t.Order_BOFUkey= s.Order_BOFUkey,
-			t.ColorId= s.ColorId,
-			t.SuppColor= s.SuppColor,
-			t.OrderQty= s.OrderQty,
-			t.Price= s.Price,
-			t.UsageQty= s.UsageQty,
-			t.UsageUnit= s.UsageUnit,
-			t.Width= s.Width,
-			t.SysUsageQty= s.SysUsageQty,
-			t.QTFabricPanelCode= s.QTFabricPanelCode,
-			t.Remark= s.Remark,
-			t.OrderIdList= s.OrderIdList,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.Id				= s.Id,
+				t.Order_BOFUkey		= s.Order_BOFUkey,
+				t.ColorId			= s.ColorId,
+				t.SuppColor			= s.SuppColor,
+				t.OrderQty			= s.OrderQty,
+				t.Price				= s.Price,
+				t.UsageQty			= s.UsageQty,
+				t.UsageUnit			= s.UsageUnit,
+				t.Width				= s.Width,
+				t.SysUsageQty			= s.SysUsageQty,
+				t.QTFabricPanelCode	= s.QTFabricPanelCode,
+				t.Remark			= s.Remark,
+				t.OrderIdList		= s.OrderIdList,
+				t.AddName			= s.AddName,
+				t.AddDate			= s.AddDate,
+				t.EditName			= s.EditName,
+				t.EditDate	= s.EditDate
 		when not matched by target then 
-			insert(  Id,  Order_BOFUkey,  ColorId,  SuppColor,  OrderQty,  Price,  UsageQty,  UsageUnit,  Width,  SysUsageQty,  QTFabricPanelCode,  Remark,  OrderIdList,  AddName,  AddDate,  EditName,  EditDate,UKEY)
-			values(s.Id,s.Order_BOFUkey,s.ColorId,s.SuppColor,s.OrderQty,s.Price,s.UsageQty,s.UsageUnit,s.Width,s.SysUsageQty,s.QTFabricPanelCode,s.Remark,s.OrderIdList,s.AddName,s.AddDate,s.EditName,s.EditDate,s.UKEY)
+			insert ( 
+				Id						, Order_BOFUkey		, ColorId		, SuppColor		, OrderQty
+				, Price					, UsageQty			, UsageUnit		, Width			, SysUsageQty
+				, QTFabricPanelCode		, Remark			, OrderIdList	, AddName		, AddDate
+				, EditName				, EditDate			, UKEY
+			) values (
+				s.Id					, s.Order_BOFUkey	, s.ColorId		, s.SuppColor	, s.OrderQty
+				, s.Price				, s.UsageQty		, s.UsageUnit	, s.Width		, s.SysUsageQty
+				, s.QTFabricPanelCode	, s.Remark			, s.OrderIdList	, s.AddName		, s.AddDate
+				, s.EditName			, s.EditDate		, s.UKEY
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -700,39 +917,80 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set
-			t.id=s.id,
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.SuppID= s.SuppID,
-			t.Seq= s.Seq1,
-			t.ConsPC= s.ConsPC,
-			t.BomTypeSize= s.BomTypeSize,
-			t.BomTypeColor= s.BomTypeColor,			
-			t.PatternPanel= s.PatternPanel,
-			t.SizeItem= s.SizeItem,
-			t.BomTypeZipper= s.BomTypeZipper,
-			t.Remark= s.Remark,
-			t.ProvidedPatternRoom= s.ProvidedPatternRoom,
-			t.ColorDetail= s.ColorDetail,
-			t.isCustCD= s.isCustCD,
-			t.lossType= s.lossType,
-			t.LossPercent= s.LossPercent,
-			t.LossQty= s.LossQty,
-			t.LossStep= s.LossStep,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate,
-			t.SizeItem_Elastic= s.SizeItem_Elastic,
-			t.BomTypePo= s.BomTypePo,
-			t.Keyword=s.Keyword,
-			t.Seq1 = s.Seq1
+				t.id					= s.id,
+				t.Refno					= s.Refno,
+				t.SCIRefno				= s.SCIRefno,
+				t.SuppID				= s.SuppID,
+				t.Seq					= s.Seq1,
+				t.ConsPC				= s.ConsPC,
+				t.BomTypeSize			= s.BomTypeSize,
+				t.BomTypeColor			= s.BomTypeColor,
+				t.FabricPanelCode		= s.FabricPanelCode,
+				t.PatternPanel			= s.PatternPanel,
+				t.SizeItem				= s.SizeItem,
+				t.BomTypeZipper			= s.BomTypeZipper,
+				t.Remark				= s.Remark,
+				t.ProvidedPatternRoom	= s.ProvidedPatternRoom,
+				t.ColorDetail			= s.ColorDetail,
+				t.isCustCD				= s.isCustCD,
+				t.lossType				= s.lossType,
+				t.LossPercent			= s.LossPercent,
+				t.LossQty				= s.LossQty,
+				t.LossStep				= s.LossStep,
+				t.AddName				= s.AddName,
+				t.AddDate				= s.AddDate,
+				t.EditName				= s.EditName,
+				t.EditDate				= s.EditDate,
+				t.SizeItem_Elastic		= s.SizeItem_Elastic,
+				t.BomTypePo				= s.BomTypePo,
+				t.Keyword				= s.Keyword,
+				t.Seq1					= s.Seq1
 		when not matched by target then
-			insert(Id,Ukey,Refno,SCIRefno,SuppID,Seq,ConsPC,BomTypeSize,PatternPanel,SizeItem,BomTypeZipper,Remark,ProvidedPatternRoom,ColorDetail,isCustCD,lossType,LossPercent,LossQty,LossStep,AddName,AddDate,EditName,EditDate,SizeItem_Elastic,BomTypePo,Keyword,Seq1)			
-			values(s.Id,s.Ukey,s.Refno,s.SCIRefno,s.SuppID,s.Seq1,s.ConsPC,s.BomTypeSize,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.ProvidedPatternRoom,s.ColorDetail,s.isCustCD,s.lossType,s.LossPercent,s.LossQty,s.LossStep,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SizeItem_Elastic,s.BomTypePo,s.Keyword,s.Seq1)
+			insert (
+				Id					, Ukey				, Refno					, SCIRefno				, SuppID
+				, Seq				, ConsPC			, BomTypeSize			, FabricPanelCode		, PatternPanel			
+				, SizeItem			, BomTypeZipper		, Remark				, ProvidedPatternRoom	, ColorDetail			
+				, isCustCD			, lossType			, LossPercent			, LossQty				, LossStep				
+				, AddName			, AddDate			, EditName				, EditDate				, SizeItem_Elastic		
+				, BomTypePo			, Keyword			, Seq1
+			) values (
+				s.Id				, s.Ukey			, s.Refno				, s.SCIRefno			, s.SuppID
+				, s.Seq1			, s.ConsPC			, s.BomTypeSize			, s.FabricPanelCode		, s.PatternPanel		
+				, s.SizeItem		, s.BomTypeZipper	, s.Remark				, s.ProvidedPatternRoom	, s.ColorDetail			
+				, s.isCustCD		, s.lossType		, s.LossPercent			, s.LossQty				, s.LossStep			
+				, s.AddName			, s.AddDate			, s.EditName			, s.EditDate			, s.SizeItem_Elastic	
+				, s.BomTypePo		, s.Keyword			, s.Seq1
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
-
+		
+		-----------------Order_BoA_Article----------------
+		Merge Production.dbo.Order_BoA_Article as t
+		Using (
+			select a.* 
+			from Trade_To_Pms.dbo.Order_BoA_Article a With (NoLock)
+			inner join #Torder b on a.id = b.id
+		) as s on t.ukey = s.ukey
+		when matched then
+			update set
+				t.Id				= s.Id
+				, t.Order_BoAUkey	= s.Order_BoAUkey
+				, t.Article			= s.Article
+				, t.AddName			= s.AddName
+				, t.AddDate			= s.AddDate
+				, t.EditName		= s.EditName
+				, t.EditDate		= s.EditDate
+		when not matched then 
+			insert (
+				Id				, Order_BoaUkey		, Article	, AddName	, AddDate
+				, EditName		, EditDate			, Ukey
+			) values (
+				s.Id			, s.Order_BoaUkey	, s.Article	, s.AddName	, s.AddDate
+				, s.EditName	, s.EditDate		, s.Ukey
+			)		
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;		
+						
 		-----------------Order_BOA_Expend----------------Bill of accessory -用量展開
 		Merge Production.dbo.Order_BOA_Expend as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend a WITH (NOLOCK)	
@@ -740,33 +998,44 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set
-			t.id=s.id,
-			t.Order_BOAUkey= s.Order_BOAUkey,
-			t.OrderQty= s.OrderQty,
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.Price= s.Price,
-			t.UsageQty= s.UsageQty,
-			t.UsageUnit= s.UsageUnit,
-			t.Article= s.Article,
-			t.ColorId= s.ColorId,
-			t.SuppColor= s.SuppColor,
-			t.SizeCode= s.SizeCode,
-			t.Sizespec= s.Sizespec,
-			t.SizeUnit= s.SizeUnit,
-			t.OrderIdList= s.OrderIdList,
-			t.SysUsageQty= s.SysUsageQty,
-			t.Remark= s.Remark,			
-			t.BomZipperInsert= s.BomZipperInsert,			
-			t.BomCustPONo= s.BomCustPONo,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate,
-			t.Keyword = s.Keyword
+				t.id				= s.id,
+				t.Order_BOAUkey		= s.Order_BOAUkey,
+				t.OrderQty			= s.OrderQty,
+				t.Refno				= s.Refno,
+				t.SCIRefno			= s.SCIRefno,
+				t.Price				= s.Price,
+				t.UsageQty			= s.UsageQty,
+				t.UsageUnit			= s.UsageUnit,
+				t.Article			= s.Article,
+				t.ColorId			= s.ColorId,
+				t.SuppColor			= s.SuppColor,
+				t.SizeCode			= s.SizeCode,
+				t.Sizespec			= s.Sizespec,
+				t.SizeUnit			= s.SizeUnit,
+				t.OrderIdList		= s.OrderIdList,
+				t.SysUsageQty		= s.SysUsageQty,
+				t.Remark			= s.Remark,			
+				t.BomZipperInsert	= s.BomZipperInsert,			
+				t.BomCustPONo		= s.BomCustPONo,
+				t.AddName			= s.AddName,
+				t.AddDate			= s.AddDate,
+				t.EditName			= s.EditName,
+				t.EditDate			= s.EditDate,
+				t.Keyword			= s.Keyword
 		when not matched by target then
-			insert(Id,UKEY,Order_BOAUkey,OrderQty,Refno,SCIRefno,Price,UsageQty,UsageUnit,Article,ColorId,SuppColor,SizeCode,Sizespec,SizeUnit,OrderIdList,SysUsageQty,Remark,BomZipperInsert,BomCustPONo,AddName,AddDate,EditName,EditDate,Keyword)			
-			values(s.Id,s.UKEY,s.Order_BOAUkey,s.OrderQty,s.Refno,s.SCIRefno,s.Price,s.UsageQty,s.UsageUnit,s.Article,s.ColorId,s.SuppColor,s.SizeCode,s.Sizespec,s.SizeUnit,s.OrderIdList,s.SysUsageQty,s.Remark,s.BomZipperInsert,s.BomCustPONo,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Keyword)
+			insert (
+				Id				, UKEY			, Order_BOAUkey		, OrderQty			, Refno
+				, SCIRefno		, Price			, UsageQty			, UsageUnit			, Article
+				, ColorId		, SuppColor		, SizeCode			, Sizespec			, SizeUnit
+				, OrderIdList	, SysUsageQty	, Remark			, BomZipperInsert	, BomCustPONo
+				, AddName		, AddDate		, EditName			, EditDate			, Keyword
+			) values (
+				s.Id			, s.UKEY		, s.Order_BOAUkey	, s.OrderQty		, s.Refno
+				, s.SCIRefno	, s.Price		, s.UsageQty		, s.UsageUnit		, s.Article
+				, s.ColorId		, s.SuppColor	, s.SizeCode		, s.Sizespec		, s.SizeUnit
+				, s.OrderIdList	, s.SysUsageQty	, s.Remark			, s.BomZipperInsert	, s.BomCustPONo
+				, s.AddName		, s.AddDate		, s.EditName		, s.EditDate		, s.Keyword
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -777,40 +1046,55 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
-			t.id=s.id,
-			t.Seq= s.Seq,
-			t.MarkerName= s.MarkerName,
-			t.FabricCode= s.FabricCode,
-			t.FabricCombo= s.FabricCombo,
-			t.FabricPanelCode= s.FabricPanelCode,
-			t.isQT= s.isQT,
-			t.MarkerLength= s.MarkerLength,
-			t.ConsPC= s.ConsPC,
-			t.Cuttingpiece= s.Cuttingpiece,
-			t.ActCuttingPerimeter= s.ActCuttingPerimeter,
-			t.StraightLength= s.StraightLength,
-			t.CurvedLength= s.CurvedLength,
-			t.Efficiency= s.Efficiency,
-			t.Remark= s.Remark,
-			t.MixedSizeMarker= s.MixedSizeMarker,
-			t.MarkerNo= s.MarkerNo,
-			t.MarkerUpdate= s.MarkerUpdate,
-			t.MarkerUpdateName= s.MarkerUpdateName,
-			t.AllSize= s.AllSize,
-			t.PhaseID= s.PhaseID,
-			t.SMNoticeID= s.SMNoticeID,
-			t.MarkerVersion= s.MarkerVersion,
-			t.Direction= s.Direction,
-			t.CuttingWidth= s.CuttingWidth,
-			t.Width= s.Width,
-			t.Type= s.Type,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.id					=s.id,
+				t.Seq					= s.Seq,
+				t.MarkerName			= s.MarkerName,
+				t.FabricCode			= s.FabricCode,
+				t.FabricCombo			= s.FabricCombo,
+				t.FabricPanelCode		= s.FabricPanelCode,
+				t.isQT					= s.isQT,
+				t.MarkerLength			= s.MarkerLength,
+				t.ConsPC				= s.ConsPC,
+				t.Cuttingpiece			= s.Cuttingpiece,
+				t.ActCuttingPerimeter	= s.ActCuttingPerimeter,
+				t.StraightLength		= s.StraightLength,
+				t.CurvedLength			= s.CurvedLength,
+				t.Efficiency			= s.Efficiency,
+				t.Remark				= s.Remark,
+				t.MixedSizeMarker		= s.MixedSizeMarker,
+				t.MarkerNo				= s.MarkerNo,
+				t.MarkerUpdate			= s.MarkerUpdate,
+				t.MarkerUpdateName		= s.MarkerUpdateName,
+				t.AllSize				= s.AllSize,
+				t.PhaseID				= s.PhaseID,
+				t.SMNoticeID			= s.SMNoticeID,
+				t.MarkerVersion			= s.MarkerVersion,
+				t.Direction				= s.Direction,
+				t.CuttingWidth			= s.CuttingWidth,
+				t.Width					= s.Width,
+				t.Type					= s.Type,
+				t.AddName				= s.AddName,
+				t.AddDate				= s.AddDate,
+				t.EditName				= s.EditName,
+				t.EditDate				= s.EditDate
 		when not matched by target then
-			insert(Id,Ukey,Seq,MarkerName,FabricCode,FabricCombo,FabricPanelCode,isQT,MarkerLength,ConsPC,Cuttingpiece,ActCuttingPerimeter,StraightLength,CurvedLength,Efficiency,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,Type,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCode,s.FabricCombo,s.FabricPanelCode,s.isQT,s.MarkerLength,s.ConsPC,s.Cuttingpiece,s.ActCuttingPerimeter,s.StraightLength,s.CurvedLength,s.Efficiency,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.Type,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id					, Ukey					, Seq				, MarkerName		, FabricCode
+				, FabricCombo		, FabricPanelCode		, isQT				, MarkerLength		, ConsPC
+				, Cuttingpiece		, ActCuttingPerimeter	, StraightLength	, CurvedLength		, Efficiency
+				, Remark			, MixedSizeMarker		, MarkerNo			, MarkerUpdate		, MarkerUpdateName
+				, AllSize			, PhaseID				, SMNoticeID		, MarkerVersion		, Direction
+				, CuttingWidth		, Width					, Type				, AddName			, AddDate
+				, EditName			, EditDate
+			) values (
+				s.Id				, s.Ukey				, s.Seq				, s.MarkerName		, s.FabricCode
+				, s.FabricCombo		, s.FabricPanelCode		, s.isQT			, s.MarkerLength	, s.ConsPC
+				, s.Cuttingpiece	, s.ActCuttingPerimeter	, s.StraightLength	, s.CurvedLength	, s.Efficiency
+				, s.Remark			, s.MixedSizeMarker		, s.MarkerNo		, s.MarkerUpdate	, s.MarkerUpdateName
+				, s.AllSize			, s.PhaseID				, s.SMNoticeID		, s.MarkerVersion	, s.Direction
+				, s.CuttingWidth	, s.Width				, s.Type			, s.AddName			, s.AddDate
+				, s.EditName		, s.EditDate
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -820,12 +1104,15 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.order_MarkerListUkey=s.order_MarkerListUkey and t.sizecode=s.sizecode
 		when matched then 
 			update set
-			t.id=s.id,
-			t.SizeCode= s.SizeCode,
-			t.Qty= s.Qty
+				t.id		= s.id,
+				t.SizeCode	= s.SizeCode,
+				t.Qty		= s.Qty
 		when not matched by target then
-			insert(Order_MarkerListUkey,Id,SizeCode,Qty)
-			values(s.Order_MarkerListUkey,s.Id,s.SizeCode,s.Qty)
+			insert (
+				Order_MarkerListUkey	, Id	, SizeCode		, Qty
+			) values (
+				s.Order_MarkerListUkey	, s.Id	, s.SizeCode	, s.Qty
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -835,25 +1122,34 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
-			t.id=s.id,
-			t.ArtworkTypeID= s.ArtworkTypeID,
-			t.Article= s.Article,
-			t.PatternCode= s.PatternCode,
-			t.PatternDesc= s.PatternDesc,
-			t.ArtworkID= s.ArtworkID,
-			t.ArtworkName= s.ArtworkName,
-			t.Qty= s.Qty,
-			t.TMS= s.TMS,
-			t.Price= s.Price,
-			t.Cost= s.Cost,
-			t.Remark= s.Remark,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.id			=s.id,
+				t.ArtworkTypeID	= s.ArtworkTypeID,
+				t.Article		= s.Article,
+				t.PatternCode	= s.PatternCode,
+				t.PatternDesc	= s.PatternDesc,
+				t.ArtworkID		= s.ArtworkID,
+				t.ArtworkName	= s.ArtworkName,
+				t.Qty			= s.Qty,
+				t.TMS			= s.TMS,
+				t.Price			= s.Price,
+				t.Cost			= s.Cost,
+				t.Remark		= s.Remark,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.EditName		= s.EditName,
+				t.EditDate		= s.EditDate
 		when not matched by target then 
-			insert(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,Qty,TMS,Price,Cost,Remark,Ukey,AddName,AddDate,EditName,EditDate)
-			values(s.ID,s.ArtworkTypeID,s.Article,s.PatternCode,s.PatternDesc,s.ArtworkID,s.ArtworkName,s.Qty,s.TMS,s.Price,s.Cost,s.Remark,s.Ukey,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				ID				, ArtworkTypeID		, Article	, PatternCode	, PatternDesc
+				, ArtworkID		, ArtworkName		, Qty		, TMS			, Price
+				, Cost			, Remark			, Ukey		, AddName		, AddDate
+				, EditName		, EditDate
+			) values (
+				s.ID			, s.ArtworkTypeID	, s.Article	, s.PatternCode	, s.PatternDesc
+				, s.ArtworkID	, s.ArtworkName		, s.Qty		, s.TMS			, s.Price
+				, s.Cost		, s.Remark			, s.Ukey	, s.AddName		, s.AddDate
+				, s.EditName	, s.EditDate
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -864,43 +1160,58 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey	
 		when matched then 
 			update set 
-			t.Id=					s.Id,
-			t.Seq=					s.Seq,
-			t.MarkerName=			s.MarkerName,
-			t.FabricCombo=			s.FabricCombo,
-			t.MarkerLength=		replace(s.MarkerLength,'Ｙ','Y'),
-			t.FabricPanelCode=			s.FabricPanelCode,
-			t.ConsPC= s.ConsPC,
-			t.CuttingPiece= s.CuttingPiece,
-			t.ActCuttingPerimeter=	replace(s.ActCuttingPerimeter,'Yd','Y'),
-			t.StraightLength=	replace(s.StraightLength,'Yd','Y'),
-			t.FabricCode= s.FabricCode,
-			t.CurvedLength=		replace(s.CurvedLength,'Yd','Y'),
-			t.Efficiency= s.Efficiency,
-			t.Article= s.Article,
-			t.Remark= s.Remark,
-			t.MixedSizeMarker= s.MixedSizeMarker,
-			t.MarkerNo= s.MarkerNo,
-			t.MarkerUpdate= s.MarkerUpdate,
-			t.MarkerUpdateName= s.MarkerUpdateName,
-			t.AllSize= s.AllSize,
-			t.PhaseID= s.PhaseID,
-			t.SMNoticeID= s.SMNoticeID,
-			t.MarkerVersion= s.MarkerVersion,
-			t.Direction= s.Direction,
-			t.CuttingWidth= s.CuttingWidth,
-			t.Width= s.Width,
-			t.TYPE= s.TYPE,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate,
-			t.isQT= s.isQT,
-			t.MarkerDownloadID= s.MarkerDownloadID,
-			t.OrderCUkey_Old= s.OrderCUkey_Old
+				t.Id					= s.Id,
+				t.Seq					= s.Seq,
+				t.MarkerName			= s.MarkerName,
+				t.FabricCombo			= s.FabricCombo,
+				t.MarkerLength			= replace(s.MarkerLength,'Ｙ','Y'),
+				t.FabricPanelCode		= s.FabricPanelCode,
+				t.ConsPC				= s.ConsPC,
+				t.CuttingPiece			= s.CuttingPiece,
+				t.ActCuttingPerimeter	= replace(s.ActCuttingPerimeter,'Yd','Y'),
+				t.StraightLength		= replace(s.StraightLength,'Yd','Y'),
+				t.FabricCode			= s.FabricCode,
+				t.CurvedLength			= replace(s.CurvedLength,'Yd','Y'),
+				t.Efficiency			= s.Efficiency,
+				t.Article				= s.Article,
+				t.Remark				= s.Remark,
+				t.MixedSizeMarker		= s.MixedSizeMarker,
+				t.MarkerNo				= s.MarkerNo,
+				t.MarkerUpdate			= s.MarkerUpdate,
+				t.MarkerUpdateName		= s.MarkerUpdateName,
+				t.AllSize				= s.AllSize,
+				t.PhaseID				= s.PhaseID,
+				t.SMNoticeID			= s.SMNoticeID,
+				t.MarkerVersion			= s.MarkerVersion,
+				t.Direction				= s.Direction,
+				t.CuttingWidth			= s.CuttingWidth,
+				t.Width					= s.Width,
+				t.TYPE					= s.TYPE,
+				t.AddName				= s.AddName,
+				t.AddDate				= s.AddDate,
+				t.EditName				= s.EditName,
+				t.EditDate				= s.EditDate,
+				t.isQT					= s.isQT,
+				t.MarkerDownloadID		= s.MarkerDownloadID,
+				t.OrderCUkey_Old		= s.OrderCUkey_Old
 		when not matched by target then 
-			insert(Id,Ukey,Seq,MarkerName,FabricCombo,MarkerLength,FabricPanelCode,ConsPC,CuttingPiece,ActCuttingPerimeter,StraightLength,FabricCode,CurvedLength,Efficiency,Article,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,TYPE,AddName,AddDate,EditName,EditDate,isQT,MarkerDownloadID,OrderCUkey_Old)
-			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCombo,s.MarkerLength,s.FabricPanelCode,s.ConsPC,s.CuttingPiece,s.ActCuttingPerimeter,s.StraightLength,s.FabricCode,s.CurvedLength,s.Efficiency,s.Article,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.TYPE,s.AddName,s.AddDate,s.EditName,s.EditDate,s.isQT,s.MarkerDownloadID,s.OrderCUkey_Old)
+			insert (
+				Id					, Ukey				, Seq				, MarkerName			, FabricCombo
+				, MarkerLength		, FabricPanelCode	, ConsPC			, CuttingPiece			, ActCuttingPerimeter
+				, StraightLength	, FabricCode		, CurvedLength		, Efficiency			, Article
+				, Remark			, MixedSizeMarker	, MarkerNo			, MarkerUpdate			, MarkerUpdateName
+				, AllSize			, PhaseID			, SMNoticeID		, MarkerVersion			, Direction
+				, CuttingWidth		, Width				, TYPE				, AddName				, AddDate
+				, EditName			, EditDate			, isQT				, MarkerDownloadID		, OrderCUkey_Old
+			) values (
+				s.Id				, s.Ukey			, s.Seq				, s.MarkerName			, s.FabricCombo
+				, s.MarkerLength	, s.FabricPanelCode	, s.ConsPC			, s.CuttingPiece		, s.ActCuttingPerimeter
+				, s.StraightLength	, s.FabricCode		, s.CurvedLength	, s.Efficiency			, s.Article
+				, s.Remark			, s.MixedSizeMarker	, s.MarkerNo		, s.MarkerUpdate		, s.MarkerUpdateName
+				, s.AllSize			, s.PhaseID			, s.SMNoticeID		, s.MarkerVersion		, s.Direction
+				, s.CuttingWidth	, s.Width			, s.TYPE			, s.AddName				, s.AddDate
+				, s.EditName		, s.EditDate		, s.isQT			, s.MarkerDownloadID	, s.OrderCUkey_Old
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
@@ -910,12 +1221,15 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.Order_EachConsUkey=s.Order_EachConsUkey and t.sizecode=s.sizecode	
 		when matched then 
 			update set 
-			t.Id= s.Id,
-			t.SizeCode= s.SizeCode,
-			t.Qty= s.Qty
+				t.Id		= s.Id,
+				t.SizeCode	= s.SizeCode,
+				t.Qty		= s.Qty
 		when not matched by target then 
-			insert(Order_EachConsUkey,Id,SizeCode,Qty)
-			values(s.Order_EachConsUkey,s.Id,s.SizeCode,s.Qty)
+			insert (
+				Order_EachConsUkey		, Id	, SizeCode		, Qty
+			) values (
+				s.Order_EachConsUkey	, s.Id	, s.SizeCode	, s.Qty
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
@@ -925,19 +1239,24 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
-			t.Id= s.Id,
-			t.Order_EachConsUkey= s.Order_EachConsUkey,
-			t.Ukey= s.Ukey,
-			t.ColorID= s.ColorID,
-			t.CutQty= s.CutQty,
-			t.Layer= s.Layer,
-			t.Orderqty= s.Orderqty,
-			t.SizeList= s.SizeList,
-			t.Variance= s.Variance,
-			t.YDS= s.YDS
+				t.Id					= s.Id,
+				t.Order_EachConsUkey	= s.Order_EachConsUkey,
+				t.Ukey					= s.Ukey,
+				t.ColorID				= s.ColorID,
+				t.CutQty				= s.CutQty,
+				t.Layer					= s.Layer,
+				t.Orderqty				= s.Orderqty,
+				t.SizeList				= s.SizeList,
+				t.Variance				= s.Variance,
+				t.YDS					= s.YDS
 		when not matched by target then 
-			insert(Id,Order_EachConsUkey,Ukey,ColorID,CutQty,Layer,Orderqty,SizeList,Variance,YDS)
-			values(s.Id,s.Order_EachConsUkey,s.Ukey,s.ColorID,s.CutQty,s.Layer,s.Orderqty,s.SizeList,s.Variance,s.YDS)
+			insert (
+				Id			, Order_EachConsUkey	, Ukey			, ColorID		, CutQty
+				, Layer		, Orderqty				, SizeList		, Variance		, YDS
+			) values (
+				s.Id		, s.Order_EachConsUkey	, s.Ukey		, s.ColorID		, s.CutQty
+				, s.Layer	, s.Orderqty			, s.SizeList	, s.Variance	, s.YDS
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 		
@@ -947,38 +1266,48 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
-			t.Id= s.Id,
-			t.Order_EachCons_ColorUkey= s.Order_EachCons_ColorUkey,
-			t.Article= s.Article,
-			t.ColorID= s.ColorID,
-			t.SizeCode= s.SizeCode,
-			t.Orderqty= s.Orderqty,
-			t.Layer= s.Layer,
-			t.CutQty= s.CutQty,
-			t.Variance= s.Variance
+				t.Id						= s.Id,
+				t.Order_EachCons_ColorUkey	= s.Order_EachCons_ColorUkey,
+				t.Article					= s.Article,
+				t.ColorID					= s.ColorID,
+				t.SizeCode					= s.SizeCode,
+				t.Orderqty					= s.Orderqty,
+				t.Layer						= s.Layer,
+				t.CutQty					= s.CutQty,
+				t.Variance					= s.Variance
 		when not matched by target then 
-			insert(Id,Order_EachCons_ColorUkey,Article,ColorID,SizeCode,Orderqty,Layer,CutQty,Variance,Ukey)
-			values(s.Id,s.Order_EachCons_ColorUkey,s.Article,s.ColorID,s.SizeCode,s.Orderqty,s.Layer,s.CutQty,s.Variance,s.Ukey)
+			insert (
+				Id				, Order_EachCons_ColorUkey		, Article		, ColorID		, SizeCode
+				, Orderqty		, Layer							, CutQty		, Variance		, Ukey
+			) values (
+				s.Id			, s.Order_EachCons_ColorUkey	, s.Article		, s.ColorID		, s.SizeCode
+				, s.Orderqty	, s.Layer						, s.CutQty		, s.Variance	, s.Ukey
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
 		----------Order_EachCons_PatternPanel---------------PatternPanel
-			Merge Production.dbo.Order_EachCons_PatternPanel as t
+		Merge Production.dbo.Order_EachCons_PatternPanel as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.FabricPanelCode=s.FabricPanelCode
 		When matched then 
 			update set 
-			t.Id= s.Id,
-			--t.PatternPanel= s.PatternPanel,
-			--t.Order_EachConsUkey= s.Order_EachConsUkey,
-			--t.FabricPanelCode= s.FabricPanelCode,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.Id					= s.Id,
+				--t.PatternPanel		= s.PatternPanel,
+				--t.Order_EachConsUkey	= s.Order_EachConsUkey,
+				--t.FabricPanelCode		= s.FabricPanelCode,
+				t.AddName				= s.AddName,
+				t.AddDate				= s.AddDate,
+				t.EditName				= s.EditName,
+				t.EditDate				= s.EditDate
 		when not matched by target then 
-			insert(Id,PatternPanel,Order_EachConsUkey,FabricPanelCode,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.PatternPanel,s.Order_EachConsUkey,s.FabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id			, PatternPanel		, Order_EachConsUkey	, FabricPanelCode	, AddName
+				, AddDate	, EditName			, EditDate
+			) values (
+				s.Id		, s.PatternPanel	, s.Order_EachConsUkey	, s.FabricPanelCode	, s.AddName
+				, s.AddDate	, s.EditName		, s.EditDate
+			)
 		when not matched by source and t.id in (select id from #TOrder) then 
 			delete;
 
@@ -989,11 +1318,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.article=s.article
 		when matched then 
 			update set 
-			t.Seq= s.Seq,
-			t.TissuePaper= s.TissuePaper
+				t.Seq			= s.Seq,
+				t.TissuePaper	= s.TissuePaper
 		when not matched by target then
-			insert(id,Seq,Article,TissuePaper)
-			values(s.id,s.Seq,s.Article,s.TissuePaper)
+			insert (
+				id		, Seq	, Article	, TissuePaper
+			) values (
+				s.id	, s.Seq	, s.Article	, s.TissuePaper
+			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
@@ -1004,13 +1336,16 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
-			t.id=s.id,
-			t.Order_BOAUkey= s.Order_BOAUkey,
-			t.KeyWordID= s.KeyWordID,
-			t.Relation=s.Relation
+				t.id			= s.id,
+				t.Order_BOAUkey	= s.Order_BOAUkey,
+				t.KeyWordID		= s.KeyWordID,
+				t.Relation		= s.Relation
 		when not matched by target then
-			insert(ID,Ukey,Order_BOAUkey,KeyWordID,Relation)
-			values(s.ID,s.Ukey,s.Order_BOAUkey,s.KeyWordID,s.Relation)
+			insert (
+				ID		, Ukey		, Order_BOAUkey		, KeyWordID		, Relation
+			) values (
+				s.ID	, s.Ukey	, s.Order_BOAUkey	, s.KeyWordID	, s.Relation
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 	
@@ -1021,17 +1356,22 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
 		when matched then 
 			update set 
-			t.id=s.id,
-			t.CustCDID= s.CustCDID,
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.id		= s.id,
+				t.CustCDID	= s.CustCDID,
+				t.Refno		= s.Refno,
+				t.SCIRefno	= s.SCIRefno,
+				t.AddName	= s.AddName,
+				t.AddDate	= s.AddDate,
+				t.EditName	= s.EditName,
+				t.EditDate	= s.EditDate
 		when not matched by target then
-			insert(Id,Order_BOAUkey,CustCDID,Refno,SCIRefno,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Order_BOAUkey,s.CustCDID,s.Refno,s.SCIRefno,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id			, Order_BOAUkey		, CustCDID		, Refno		, SCIRefno
+				, AddName	, AddDate			, EditName		, EditDate
+			) values (
+				s.Id		, s.Order_BOAUkey	, s.CustCDID	, s.Refno	, s.SCIRefno
+				, s.AddName	, s.AddDate			, s.EditName	, s.EditDate
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1041,16 +1381,21 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.Ukey=s.Ukey
 		when matched then 
 			update set 
-			t.id=s.id,
-			t.NewSciDelivery= s.NewSciDelivery,
-			t.OldSciDelivery= s.OldSciDelivery,
-			t.LETA= s.LETA,
-			t.Remark= s.Remark,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate
+				t.id				= s.id,
+				t.NewSciDelivery	= s.NewSciDelivery,
+				t.OldSciDelivery	= s.OldSciDelivery,
+				t.LETA				= s.LETA,
+				t.Remark			= s.Remark,
+				t.AddName			= s.AddName,
+				t.AddDate			= s.AddDate
 		when not matched by target then
-			insert(Id,NewSciDelivery,OldSciDelivery,LETA,Remark,AddName,AddDate,Ukey)
-			values(s.Id,s.NewSciDelivery,s.OldSciDelivery,s.LETA,s.Remark,s.AddName,s.AddDate,s.Ukey)
+			insert (
+				Id			, NewSciDelivery	, OldSciDelivery	, LETA		, Remark
+				, AddName	, AddDate			, Ukey
+			) values (
+				s.Id		, s.NewSciDelivery	, s.OldSciDelivery	, s.LETA	, s.Remark
+				, s.AddName	, s.AddDate			, s.Ukey
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 		----------------Order_QtyCTN------------Qty breakdown per Carton
@@ -1059,16 +1404,21 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when matched then 
 			update set 
-			t.Article= s.Article,
-			t.SizeCode= s.SizeCode,
-			t.Qty= s.Qty,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.Article	= s.Article,
+				t.SizeCode	= s.SizeCode,
+				t.Qty		= s.Qty,
+				t.AddName	= s.AddName,
+				t.AddDate	= s.AddDate,
+				t.EditName	= s.EditName,
+				t.EditDate	= s.EditDate
 		when not matched by target then
-			insert(Id,Article,SizeCode,Qty,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Article,s.SizeCode,s.Qty,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				Id			, Article		, SizeCode		, Qty	, AddName
+				, AddDate	, EditName		, EditDate
+			) values (
+				s.Id		, s.Article		, s.SizeCode	, s.Qty	, s.AddName
+				, s.AddDate	, s.EditName	, s.EditDate
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1078,52 +1428,70 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id
 		when matched then 
 			update set 
-			t.BrandID= s.BrandID,
-			t.ProgramID= s.ProgramID,
-			t.StyleID= s.StyleID,
-			t.SeasonID= s.SeasonID,
-			t.Qty= s.Qty,
-			t.OrderUnit= s.OrderUnit,
-			t.FactoryID= s.FactoryID,
-			t.CTNQty= s.CTNQty,
-			t.CustCDID= s.CustCDID,
-			t.CustPONO= s.CustPONO,
-			t.Customize1= s.Customize1,
-			t.BuyerDelivery= s.BuyerDelivery,
-			t.MRHandle= s.MRHandle,
-			t.SMR= s.SMR,
-			t.PACKING= s.PACKING,
-			t.Packing2= s.Packing2,
-			t.MarkBack= s.MarkBack,
-			t.MarkFront= s.MarkFront,
-			t.MarkLeft= s.MarkLeft,
-			t.MarkRight= s.MarkRight,
-			t.Label= s.Label,
-			t.SizeRange= s.SizeRange,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.POID =s.POID,
-			t.OrderComboID = s.OrderComboID
+				t.BrandID		= s.BrandID,
+				t.ProgramID		= s.ProgramID,
+				t.StyleID		= s.StyleID,
+				t.SeasonID		= s.SeasonID,
+				t.Qty			= s.Qty,
+				t.OrderUnit		= s.OrderUnit,
+				t.FactoryID		= s.FactoryID,
+				t.CTNQty		= s.CTNQty,
+				t.CustCDID		= s.CustCDID,
+				t.CustPONO		= s.CustPONO,
+				t.Customize1	= s.Customize1,
+				t.BuyerDelivery	= s.BuyerDelivery,
+				t.MRHandle		= s.MRHandle,
+				t.SMR			= s.SMR,
+				t.PACKING		= s.PACKING,
+				t.Packing2		= s.Packing2,
+				t.MarkBack		= s.MarkBack,
+				t.MarkFront		= s.MarkFront,
+				t.MarkLeft		= s.MarkLeft,
+				t.MarkRight		= s.MarkRight,
+				t.Label			= s.Label,
+				t.SizeRange		= s.SizeRange,
+				t.AddName		= s.AddName,
+				t.AddDate		= s.AddDate,
+				t.POID			= s.POID,
+				t.OrderComboID	= s.OrderComboID	
 		when not matched by target then
-			insert(ID,BrandID,ProgramID,StyleID,SeasonID,Qty,OrderUnit,FactoryID,CTNQty,CustCDID,CustPONO,Customize1,BuyerDelivery,MRHandle,SMR,PACKING,Packing2,MarkBack,MarkFront,MarkLeft,MarkRight,Label,SizeRange,AddName,AddDate,POID,OrderComboID)
-			values(s.ID,s.BrandID,s.ProgramID,s.StyleID,s.SeasonID,s.Qty,s.OrderUnit,s.FactoryID,s.CTNQty,s.CustCDID,s.CustPONO,s.Customize1,s.BuyerDelivery,s.MRHandle,s.SMR,s.PACKING,s.Packing2,s.MarkBack,s.MarkFront,s.MarkLeft,s.MarkRight,s.Label,s.SizeRange,s.AddName,s.AddDate,s.POID,s.OrderComboID);
-		
+			insert (
+				ID				, BrandID		, ProgramID			, StyleID		, SeasonID
+				, Qty			, OrderUnit		, FactoryID			, CTNQty		, CustCDID
+				, CustPONO		, Customize1	, BuyerDelivery		, MRHandle		, SMR
+				, PACKING		, Packing2		, MarkBack			, MarkFront		, MarkLeft
+				, MarkRight		, Label			, SizeRange			, AddName		, AddDate
+				, POID			, OrderComboID
+			) values (
+				s.ID			, s.BrandID		, s.ProgramID		, s.StyleID		, s.SeasonID
+				, s.Qty			, s.OrderUnit	, s.FactoryID		, s.CTNQty		, s.CustCDID
+				, s.CustPONO	, s.Customize1	, s.BuyerDelivery	, s.MRHandle	, s.SMR
+				, s.PACKING		, s.Packing2	, s.MarkBack		, s.MarkFront	, s.MarkLeft
+				, s.MarkRight	, s.Label		, s.SizeRange		, s.AddName		, s.AddDate
+				, s.POID		, s.OrderComboID
+			);
+		 
 		----------------MNOrder_Qty---------------------------M/NOtice Qty breakdown
 		Merge Production.dbo.MNOrder_Qty as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Qty a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when matched then 
 			update set 
-			t.Article= s.Article,
-			t.SizeCode= s.SizeCode,
-			t.Qty= s.Qty,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+				t.Article	= s.Article,
+				t.SizeCode	= s.SizeCode,
+				t.Qty		= s.Qty,
+				t.AddName	= s.AddName,
+				t.AddDate	= s.AddDate,
+				t.EditName	= s.EditName,
+				t.EditDate	= s.EditDate
 		when not matched by target then
-			insert(ID,Article,SizeCode,Qty,AddName,AddDate,EditName,EditDate)
-			values(s.ID,s.Article,s.SizeCode,s.Qty,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert (
+				ID			, Article		, SizeCode		, Qty		, AddName
+				, AddDate	, EditName		, EditDate
+			) values (
+				s.ID		, s.Article		, s.SizeCode	, s.Qty		, s.AddName
+				, s.AddDate	, s.EditName	, s.EditDate
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1133,13 +1501,18 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.colorid=s.colorid and t.seqno=s.seqno
 		when matched then 
 			update set 
-			t.ColorName= s.ColorName,
-			t.Seqno= s.Seqno,
-			t.ColorMultiple= s.ColorMultiple,
-			t.ColorMultipleName= s.ColorMultipleName
+				t.ColorName			= s.ColorName,
+				t.Seqno				= s.Seqno,
+				t.ColorMultiple		= s.ColorMultiple,
+				t.ColorMultipleName	= s.ColorMultipleName
 		when not matched by target then
-			insert(ID,ColorID,ColorName,Seqno,ColorMultiple,ColorMultipleName)
-			values(s.ID,s.ColorID,s.ColorName,s.Seqno,s.ColorMultiple,s.ColorMultipleName)
+			insert (
+				ID						, ColorID		, ColorName		, Seqno		, ColorMultiple
+				, ColorMultipleName
+			) values (
+				s.ID					, s.ColorID		, s.ColorName	, s.Seqno	, s.ColorMultiple
+				, s.ColorMultipleName
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1149,11 +1522,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.SizeCode=s.SizeCode 
 		when matched then 
 			update set 
-			t.Seq= s.Seq,
-			t.SizeGroup= s.SizeGroup
+				t.Seq		= s.Seq,
+				t.SizeGroup	= s.SizeGroup
 		when not matched by target then
-			insert(Id,Seq,SizeGroup,SizeCode)
-			values(s.Id,s.Seq,s.SizeGroup,s.SizeCode)
+			insert (
+				Id		, Seq		, SizeGroup		, SizeCode
+			) values (
+				s.Id	, s.Seq		, s.SizeGroup	, s.SizeCode
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1163,11 +1539,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.SizeItem=s.SizeItem 
 		when matched then 
 			update set 
-			t.SizeDesc= s.SizeDesc,
-			t.SizeUnit= s.SizeUnit
+				t.SizeDesc	= s.SizeDesc,
+				t.SizeUnit	= s.SizeUnit
 		when not matched by target then
-			insert(ID,SizeItem,SizeDesc,SizeUnit)
-			values(s.ID,s.SizeItem,s.SizeDesc,s.SizeUnit)
+			insert (
+				ID		, SizeItem		, SizeDesc		, SizeUnit
+			) values (
+				s.ID	, s.SizeItem	, s.SizeDesc	, s.SizeUnit
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1178,10 +1557,13 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.SizeItem=s.SizeItem and t.SizeCode=s.SizeCode and t.ukey=s.ukey
 		when matched then 
 			update set 
-			t.SizeSpec= s.SizeSpec
+				t.SizeSpec	= s.SizeSpec
 		when not matched by target then
-			insert(ID,SizeItem,SizeCode,SizeSpec,ukey)
-			values(s.ID,s.SizeItem,s.SizeCode,s.SizeSpec,s.ukey)
+			insert (
+				ID		, SizeItem		, SizeCode		, SizeSpec		, ukey
+			) values (
+				s.ID	, s.SizeItem	, s.SizeCode	, s.SizeSpec	, s.ukey
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1192,14 +1574,19 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
-			 t.id = s.id
-			,t.OrderComboID = s.OrderComboID
-			,t.SizeItem = s.SizeItem
-			,t.SizeCode = s.SizeCode
-			,t.SizeSpec = s.SizeSpec
+				 t.id			= s.id
+				,t.OrderComboID = s.OrderComboID
+				,t.SizeItem		= s.SizeItem
+				,t.SizeCode		= s.SizeCode
+				,t.SizeSpec		= s.SizeSpec
 		when not matched by target then
-			insert(ID,OrderComboID,SizeItem,SizeCode,SizeSpec,ukey)
-			values(s.ID,s.OrderComboID,s.SizeItem,s.SizeCode,s.SizeSpec,s.ukey)
+			insert (
+				ID		, OrderComboID		, SizeItem		, SizeCode		, SizeSpec
+				, ukey
+			) values (
+				s.ID	, s.OrderComboID	, s.SizeItem	, s.SizeCode	, s.SizeSpec
+				, s.ukey
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1211,12 +1598,17 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.Article=s.Article and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set 
-			t.ColorID= s.ColorID,
-			t.FabricCode= s.FabricCode,
-			t.PatternPanel= s.PatternPanel
+				t.ColorID		= s.ColorID,
+				t.FabricCode	= s.FabricCode,
+				t.PatternPanel	= s.PatternPanel
 		when not matched by target then
-			insert(ID,Article,ColorID,FabricCode,PatternPanel,FabricPanelCode)
-			values(s.ID,s.Article,s.ColorID,s.FabricCode,s.PatternPanel,s.FabricPanelCode)
+			insert (
+				ID					, Article		, ColorID		, FabricCode	, PatternPanel
+				, FabricPanelCode
+			) values (
+				s.ID				, s.Article		, s.ColorID		, s.FabricCode	, s.PatternPanel
+				, s.FabricPanelCode
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1226,11 +1618,14 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set 
-			t.PatternPanel= s.PatternPanel,
-			t.FabricCode= s.FabricCode
+				t.PatternPanel	= s.PatternPanel,
+				t.FabricCode	= s.FabricCode
 		when not matched by target then
-			insert(ID,PatternPanel,FabricCode,FabricPanelCode)
-			values(s.ID,s.PatternPanel,s.FabricCode,s.FabricPanelCode)
+			insert (
+				ID		, PatternPanel		, FabricCode	, FabricPanelCode
+			) values (
+				s.ID	, s.PatternPanel	, s.FabricCode	, s.FabricPanelCode
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1240,15 +1635,20 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.id=s.id and t.FabricCode=s.FabricCode
 		when matched then 
 			update set 
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.SuppID= s.SuppID,
-			t.Description= s.Description,
-			t.FabricUkey_Old= s.FabricUkey_Old,
-			t.FabricVer_OLd = s.FabricVer_OLd 
+				t.Refno				= s.Refno,
+				t.SCIRefno			= s.SCIRefno,
+				t.SuppID			= s.SuppID,
+				t.Description		= s.Description,
+				t.FabricUkey_Old	= s.FabricUkey_Old,
+				t.[FabricVer_OLd ]		= s.FabricVer_OLd 
 		when not matched by target then
-			insert(  ID,  FabricCode,  Refno,  SCIRefno,  SuppID,  Description,  FabricUkey_Old,  FabricVer_OLd )
-			values(s.ID,s.FabricCode,s.Refno,s.SCIRefno,s.SuppID,s.Description,s.FabricUkey_Old,s.FabricVer_OLd )
+			insert (  
+				ID				, FabricCode		, Refno				, SCIRefno		, SuppID
+				, Description	, FabricUkey_Old	, [FabricVer_OLd ]
+			) values (
+				s.ID			, s.FabricCode		, s.Refno			, s.SCIRefno	, s.SuppID
+				, s.Description	, s.FabricUkey_Old	, s.FabricVer_OLd 
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1258,25 +1658,34 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
-			t.id=s.id,
-			t.Refno= s.Refno,
-			t.SCIRefno= s.SCIRefno,
-			t.SuppID= s.SuppID,
-			t.Seq= s.Seq,
-			t.UsedQty= s.UsedQty,
-			t.BomTypeSize= s.BomTypeSize,
-			t.BomTypeColor= s.BomTypeColor,
-			t.BomTypePono= s.BomTypePono,
-			t.PatternPanel= s.PatternPanel,
-			t.SizeItem= s.SizeItem,
-			t.BomTypeZipper= s.BomTypeZipper,
-			t.Remark= s.Remark,
-			t.Description= s.Description,
-			t.FabricVer_Old= s.FabricVer_Old,
-			t.FabricUkey_Old= s.FabricUkey_Old
+				t.id				= s.id,
+				t.Refno				= s.Refno,
+				t.SCIRefno			= s.SCIRefno,
+				t.SuppID			= s.SuppID,
+				t.Seq				= s.Seq,
+				t.UsedQty			= s.UsedQty,
+				t.BomTypeSize		= s.BomTypeSize,
+				t.BomTypeColor		= s.BomTypeColor,
+				t.BomTypePono		= s.BomTypePono,
+				t.PatternPanel		= s.PatternPanel,
+				t.SizeItem			= s.SizeItem,
+				t.BomTypeZipper		= s.BomTypeZipper,
+				t.Remark			= s.Remark,
+				t.Description		= s.Description,
+				t.FabricVer_Old		= s.FabricVer_Old,
+				t.FabricUkey_Old	= s.FabricUkey_Old
 		when not matched by target then
-			insert(  Id,  UKey,  Refno,  SCIRefno,  SuppID,  Seq,  UsedQty,  BomTypeSize,  BomTypeColor,  BomTypePono,  PatternPanel,  SizeItem,  BomTypeZipper,  Remark,  Description,  FabricVer_Old,  FabricUkey_Old )			
-			values(s.Id,s.UKey,s.Refno,s.SCIRefno,s.SuppID,s.Seq,s.UsedQty,s.BomTypeSize,s.BomTypeColor,s.BomTypePono,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.Description,s.FabricVer_Old,s.FabricUkey_Old)
+			insert (  
+				Id					, UKey				, Refno				, SCIRefno			, SuppID
+				, Seq				, UsedQty			, BomTypeSize		, BomTypeColor		, BomTypePono
+				, PatternPanel		, SizeItem			, BomTypeZipper		, Remark			, Description
+				, FabricVer_Old		, FabricUkey_Old 
+			) values (
+				s.Id				, s.UKey			, s.Refno			, s.SCIRefno		, s.SuppID
+				, s.Seq				, s.UsedQty			, s.BomTypeSize		, s.BomTypeColor	, s.BomTypePono
+				, s.PatternPanel	, s.SizeItem		, s.BomTypeZipper	, s.Remark			, s.Description
+				, s.FabricVer_Old	, s.FabricUkey_Old
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
@@ -1287,14 +1696,19 @@ s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
-			t.[Id]=s.id
-		  ,t.[OrderComboID]=s.[OrderComboID]
-		  ,t.[SizeItem]=s.[SizeItem]
-		  ,t.[SizeCode]=s.[SizeCode]
-		  ,t.[SizeSpec]=s.[SizeSpec]		  
+				t.[Id]				= s.id
+				, t.[OrderComboID]	= s.[OrderComboID]
+				, t.[SizeItem]		= s.[SizeItem]
+				, t.[SizeCode]		= s.[SizeCode]
+				, t.[SizeSpec]		= s.[SizeSpec]		  
 		when not matched by target then
-			insert(  Id,  [OrderComboID],  [SizeItem],  [SizeCode],  [SizeSpec],ukey )			
-			values(s.Id,s.[OrderComboID],s.[SizeItem],s.[SizeCode],s.[SizeSpec],s.ukey)
+			insert (  
+				Id		, [OrderComboID]	, [SizeItem]	, [SizeCode]	, [SizeSpec]
+				, ukey 
+			) values (
+				s.Id	, s.[OrderComboID]	, s.[SizeItem]	, s.[SizeCode]	, s.[SizeSpec]
+				, s.ukey
+			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 

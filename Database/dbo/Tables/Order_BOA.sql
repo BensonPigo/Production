@@ -9,6 +9,7 @@
     [BomTypeSize]         BIT            CONSTRAINT [DF_Order_BOA_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]        BIT            CONSTRAINT [DF_Order_BOA_BomTypeColor] DEFAULT ((0)) NULL,
     [BomTypePono]         BIT            CONSTRAINT [DF_Order_BOA_BomTypePono] DEFAULT ((0)) NULL,
+    [FabricPanelCode]     VARCHAR (2)    NULL,
     [PatternPanel]        VARCHAR (2)    CONSTRAINT [DF_Order_BOA_PatternPanel] DEFAULT ('') NULL,
     [SizeItem]            VARCHAR (3)    CONSTRAINT [DF_Order_BOA_SizeItem] DEFAULT ('') NULL,
     [BomTypeZipper]       BIT            CONSTRAINT [DF_Order_BOA_BomTypeZipper] DEFAULT ((0)) NULL,
@@ -28,9 +29,11 @@
     [BomTypeFactory]      BIT            NULL,
     [BomTypePo]           BIT            NULL,
     [Keyword]             VARCHAR (MAX)  NULL,
-    [Seq1] VARCHAR(3) NULL, 
+    [Seq1]                VARCHAR (3)    NULL,
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
