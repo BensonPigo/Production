@@ -91,6 +91,7 @@
     [OutstandingReason]    VARCHAR (5)    CONSTRAINT [DF_Orders_OutstandingReason] DEFAULT ('') NULL,
     [StyleUkey]            BIGINT         CONSTRAINT [DF_Orders_StyleUkey] DEFAULT ((0)) NULL,
     [POID]                 VARCHAR (13)   CONSTRAINT [DF_Orders_POID] DEFAULT ('') NULL,
+    [OrderComboID]         VARCHAR (13)   NULL,
     [IsNotRepeatOrMapping] BIT            CONSTRAINT [DF_Orders_IsProPhet] DEFAULT ((0)) NULL,
     [SplitOrderId]         VARCHAR (13)   CONSTRAINT [DF_Orders_SplitOrderId] DEFAULT ('') NULL,
     [FtyKPI]               DATETIME       NULL,
@@ -143,10 +144,12 @@
     [KPIEachConsApprove]   DATE           NULL,
     [KPICmpq]              DATE           NULL,
     [KPIMNotice]           DATE           NULL,
-    [GMTComplete]         VARCHAR (1)    DEFAULT ('') NULL,
-    [GFR]                  BIT            DEFAULT ((0)) NULL,
+    [GMTComplete]          VARCHAR (1)    CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3] DEFAULT ('') NULL,
+    [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

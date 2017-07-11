@@ -201,30 +201,23 @@ Create Table #Tmp_BoaExpend (
     ExpendUkey BigInt Identity(1,1) Not Null
     , ID Varchar(13)
     , Order_BOAUkey BigInt
-	, RefNo VarChar(20)
+    , RefNo VarChar(20)
     , SCIRefNo VarChar(30)
     , Article VarChar(8)
     , ColorID VarChar(6)
     , SuppColor NVarChar(Max)
-	, SizeCode VarChar(8)
+    , SizeCode VarChar(8)
     , SizeSpec VarChar(15)
     , SizeUnit VarChar(8)
     , Remark NVarChar(Max)
-	, OrderQty Numeric(6,0)
-    , Price Numeric(8,4)
+    , OrderQty Numeric(6,0)
     , UsageQty Numeric(9,2)
     , UsageUnit VarChar(8)
     , SysUsageQty  Numeric(9,2)
-	, BomFactory VarChar(8)
-    , BomCountry VarChar(2)
-    , BomStyle VarChar(15)
-    , BomCustCD VarChar(20)
-	, BomArticle VarChar(8)
     , BomZipperInsert VarChar(5)
-    , BomBuymonth VarChar(10)
     , BomCustPONo VarChar(30)
-    , Keyword VarChar(Max)
-	, Primary Key (ExpendUkey)
+    , OrderList VarChar(max)
+    , Primary Key (ExpendUkey)
 );
 	
 Create NonClustered 
@@ -377,7 +370,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                              , Env.User.UserID
                              , "Sewing"
                              , Env.User.Keyword);//.Replace("[", "[_")
-
             // 呼叫procedure，取得BOA展開結果
             try
             {
