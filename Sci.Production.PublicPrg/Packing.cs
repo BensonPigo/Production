@@ -1064,18 +1064,51 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             articleSizeTtlShipQty = null;
             printGroupData = null;
             clipData = null;
-            specialInstruction = MyUtility.GetValue.Lookup(string.Format("select top 1 isnull(o.Packing,'') as Packing from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) where pd.ID = '{0}' and pd.OrderID = o.ID", PackingListID));
+            specialInstruction = MyUtility.GetValue.Lookup (string.Format (@"
+select top 1 Packing = isnull(o.Packing, '') 
+from PackingList_Detail pd WITH (NOLOCK) 
+     , Orders o WITH (NOLOCK) 
+where   pd.ID = '{0}' 
+        and pd.OrderID = o.ID", PackingListID));
 
-            string sqlCmd = string.Format(@"select pd.OrderID,isnull(o.StyleID,'') as StyleID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,p.CTNQty,isnull(c.Alias,'') as DestAlias,pd.Article,pd.Color,
-pd.SizeCode,pd.CTNStartNo,pd.QtyPerCTN,pd.ShipQty,pd.CTNQty,isnull(o.Packing,'') as PackInstruction,pd.Seq,
-isnull(os.SizeSpec,'') as SizeSpec,(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = p.ID and Article = pd.Article and SizeCode = pd.SizeCode) as TtlShipQty,
-(select Qty from Order_QtyShip_Detail WITH (NOLOCK) where Id = pd.OrderID and Seq = pd.OrderShipmodeSeq and Article = pd.Article and SizeCode = pd.SizeCode) as OQty
+            string sqlCmd = string.Format(@"
+select  pd.OrderID
+        , StyleID = isnull(o.StyleID,'')
+        , Customize1 = isnull(o.Customize1,'')
+        , CustPONo = isnull(o.CustPONo,'')
+        , p.CTNQty
+        , DestAlias = isnull(c.Alias,'')
+        , pd.Article
+        , pd.Color
+        , pd.SizeCode
+        , pd.CTNStartNo
+        , pd.QtyPerCTN
+        , pd.ShipQty
+        , pd.CTNQty
+        , PackInstruction = isnull(o.Packing,'')
+        , pd.Seq
+        , SizeSpec = isnull(os.SizeSpec,'')
+        , TtlShipQty = (select sum(ShipQty) 
+                        from PackingList_Detail WITH (NOLOCK) 
+                        where   Id = p.ID 
+                                and Article = pd.Article 
+                                and SizeCode = pd.SizeCode)
+        , OQty = (select Qty 
+                  from Order_QtyShip_Detail WITH (NOLOCK) 
+                  where Id = pd.OrderID 
+                        and Seq = pd.OrderShipmodeSeq 
+                        and Article = pd.Article 
+                        and SizeCode = pd.SizeCode)
+        , Factory = o.FtyGroup
+        , BuyerDelivery = Convert(date, o.BuyerDelivery, 120)
+        , CustCD = o.CustCDID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
+left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
+                                              and SizeItem = 'S01' 
+                                              and os.SizeCode = pd.SizeCode
 where p.ID = '{0}'
 order by pd.Seq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -1087,7 +1120,7 @@ order by pd.Seq", PackingListID);
             sqlCmd = string.Format(@"
 select  distinct pd.RefNo
         , li.Description
-        , STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4) as Dimension
+        , Dimension = STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4)
         , li.CtnUnit
 from PackingList_Detail pd WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
@@ -1099,12 +1132,19 @@ where pd.ID = '{0}'", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select distinct oa.Seq as Seq1,os.Seq as Seq2, isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
+            sqlCmd = string.Format(@"
+select  distinct Seq1 = oa.Seq 
+        , Seq2 = os.Seq
+        , Article = isnull(oq.Article, '')
+        , SizeCode = isnull(oq.SizeCode, '')
+        , Qty = isnull(oq.Qty,0)
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join Order_QtyCTN oq WITH (NOLOCK) on o.ID = oq.Id
-left join Order_Article oa WITH (NOLOCK) on o.ID = oa.id and oq.Article = oa.Article
-left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and oq.SizeCode = os.SizeCode
+left join Order_Article oa WITH (NOLOCK) on  o.ID = oa.id 
+                                             and oq.Article = oa.Article
+left join Order_SizeCode os WITH (NOLOCK) on  o.POID = os.Id 
+                                              and oq.SizeCode = os.SizeCode
 where pd.ID = '{0}'", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out qtyCtn);
             if (!result)
@@ -1112,22 +1152,53 @@ where pd.ID = '{0}'", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select Article,SizeCode,sum(ShipQty) as TtlShipQty from PackingList_Detail WITH (NOLOCK) where ID = '{0}' group by Article,SizeCode", PackingListID);
+            sqlCmd = string.Format(@"
+select  Article
+        , SizeCode
+        , TtlShipQty = sum(ShipQty) 
+from PackingList_Detail WITH (NOLOCK) 
+where ID = '{0}' 
+group by Article, SizeCode", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out articleSizeTtlShipQty);
             if (!result)
             {
                 return result;
             }
 
-            sqlCmd = string.Format(@"select a.*,(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = a.ID and Article = a.Article and SizeCode = a.SizeCode) as TtlShipQty,
-(select Qty from Order_QtyShip_Detail WITH (NOLOCK) where Id = a.OrderID and Seq = a.OrderShipmodeSeq and Article = a.Article and SizeCode = a.SizeCode) as OQty
+            sqlCmd = string.Format(@"
+select  a.*
+        , TtlShipQty = (select sum(ShipQty) 
+                        from PackingList_Detail WITH (NOLOCK) 
+                        where   Id = a.ID 
+                                and Article = a.Article 
+                                and SizeCode = a.SizeCode)
+        , OQty = (select Qty 
+                  from Order_QtyShip_Detail WITH (NOLOCK) 
+                  where Id = a.OrderID 
+                        and Seq = a.OrderShipmodeSeq 
+                        and Article = a.Article 
+                        and SizeCode = a.SizeCode)
 from (
-select pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,'') as SizeSpec,pd.QtyPerCTN,pd.CTNQty,min(pd.Seq) as MinSeq,max(pd.Seq) as MaxSeq
-from PackingList_Detail pd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
-where pd.ID = '{0}'
-group by pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,''),pd.QtyPerCTN,pd.CTNQty) a
+    select  pd.ID
+            , pd.OrderID
+            , pd.OrderShipmodeSeq
+            , pd.Article
+            , pd.Color
+            , pd.SizeCode
+            , SizeSpec = isnull(os.SizeSpec,'')
+            , pd.QtyPerCTN
+            , pd.CTNQty
+            , MinSeq = min(pd.Seq)
+            , MaxSeq = max(pd.Seq)
+    from PackingList_Detail pd WITH (NOLOCK) 
+    left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+    left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
+                                                  and SizeItem = 'S01' 
+                                                  and os.SizeCode = pd.SizeCode
+    where pd.ID = '{0}'
+    group by pd.ID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.Color
+             , pd.SizeCode, isnull(os.SizeSpec,''), pd.QtyPerCTN, pd.CTNQty
+) a
 order by a.MinSeq", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out printGroupData);
             if (!result)
@@ -1135,12 +1206,18 @@ order by a.MinSeq", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select isnull(c.PKey,'') as PKey,isnull(c.TableName,'') as TableName,isnull(c.SourceFile,'') as SourceFile, YEAR(c.AddDate) as Year, MONTH(c.AddDate) as Month 
-from Clip c WITH (NOLOCK) , PackingList p WITH (NOLOCK) 
-where p.ID = '{0}'
-and c.TableName = 'CustCD' 
-and c.UniqueKey = p.BrandID+p.CustCDID
-and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
+            sqlCmd = string.Format(@"
+select  PKey = isnull(c.PKey,'')
+        , TableName = isnull(c.TableName,'') 
+        , SourceFile = isnull(c.SourceFile,'')
+        , Year = YEAR(c.AddDate)
+        , Month  = MONTH (c.AddDate)
+from Clip c WITH (NOLOCK) 
+     , PackingList p WITH (NOLOCK) 
+where   p.ID = '{0}'
+        and c.TableName = 'CustCD' 
+        and c.UniqueKey = p.BrandID+p.CustCDID
+        and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out clipData);
             return result;
         }
@@ -1170,15 +1247,18 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = NameEN;
-            worksheet.Cells[3+1, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[3+1, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["Factory"]);
+            worksheet.Cells[3+1, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+            worksheet.Cells[4, 3] = PrintData.Rows[0]["BuyerDelivery"];
+            worksheet.Cells[3+1, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
             worksheet.Cells[3+1, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[3+1, 9] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[3+1, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[3+1, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[3+1, 10] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[4, 12] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCD"]);
             worksheet.Cells[3+1, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
             worksheet.Cells[3+1, 18] = OrderQty;
             worksheet.Cells[3+1, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
-            worksheet.Cells[3+1, 21] = "=R3-T3";
+            worksheet.Cells[3+1, 21] = "=R4-T4";
 
             int groupRec = PrintGroupData.Rows.Count, excelRow = 5, printRec = 1, printCtnCount = 0;
 
@@ -1413,8 +1493,10 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
 select  pd.ID
         , pd.OrderID
         , pd.CTNStartNo
-        , (select CTNQty from PackingList WITH (NOLOCK) where ID = pd.ID) as CTNQty
-        , isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'') as PONo
+        , CTNQty = (select CTNQty 
+                    from PackingList WITH (NOLOCK) 
+                    where ID = pd.ID)
+        , PONo = isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'')
 from PackingList_Detail pd WITH (NOLOCK) 
 where pd.CTNQty > 0");
             if (!MyUtility.Check.Empty(packingListID))
