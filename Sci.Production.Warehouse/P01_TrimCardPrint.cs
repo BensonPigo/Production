@@ -45,7 +45,11 @@ namespace Sci.Production.Warehouse
                 ShowErr("Please select an item !!");
                 return false;
             }
+            return true;            
+        }
 
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
             DualResult result = Result.True;
             if (dtPrint != null) dtPrint.Rows.Clear();
 
@@ -172,38 +176,17 @@ and not ob.SuppID = 'fty-c'
                 #endregion
             }
             #endregion
+            return Result.True;            
+        }
 
-            
-            if (dtPrint != null && dtPrint.Rows.Count > 0)
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            if (dtPrint.Rows.Count == 0)
             {
-                return true;
-            }
-            else
-            {
-                SetCount(0);
                 MessageBox.Show("Data not found!!");
                 return false;
             }
-        }
-
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
-        {
-            e.Report.ReportDataSource = dtPrint;
-
-            try
-            {
-                //顯示筆數
-                SetCount(dtPrint.Rows.Count);
-                return transferToExcel();
-            }
-            catch (Exception ex)
-            {
-                return new DualResult(false, "data loading error.", ex);
-            }     
-        }
-
-        private DualResult transferToExcel()
-        {
+            SetCount(dtPrint.Rows.Count);
             DualResult result = Result.True;
             //decimal intRowsCount = dtPrint.Rows.Count;
             //int page = Convert.ToInt16(Math.Ceiling(intRowsCount / 4));
@@ -518,16 +501,10 @@ and not ob.SuppID = 'fty-c'
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
+
+                this.HideWaitMessage();
                 //Marshal.FinalReleaseComObject(winword);
             }
-
         }
-
-        protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            return true;
-        }
-
-
     }
 }
