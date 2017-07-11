@@ -99,6 +99,7 @@ namespace Sci.Production.Cutting
 
         void detailgrid_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(detailgrid.CurrentCell)) return;
             detailgrid.CurrentCell = detailgrid[detailgrid.CurrentCell.ColumnIndex, detailgrid.CurrentCell.RowIndex];
             detailgrid.BeginEdit(true);
         }
@@ -301,7 +302,7 @@ Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
             
             #region 建立要使用右鍵開窗Grid
             string settbsql = string.Format(@"
-Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
+Select a.id, a.article, a.sizecode, a.qty,  isnull(balc.minQty-a.qty,0) as balance, c.workorder_Distribute_Qty
 From Order_Qty a WITH (NOLOCK)
 inner join orders b WITH (NOLOCK) on a.id = b.id 
 outer apply
@@ -310,6 +311,12 @@ outer apply
     from workorder_Distribute WD WITH (NOLOCK) 
     where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode
 ) c
+outer apply (
+	select min(qty) as minQty
+	from Workorder wo WITH (NOLOCK) , workorder_Distribute wd WITH (NOLOCK) , Order_fabriccode ofb WITH (NOLOCK) 
+	Where wo.id = '{0}' and wo.ukey = wd.workorderukey and wo.Id  = ofb.id and wo.FabricPanelCode = ofb.FabricPanelCode 
+	and wd.article =a.Article and SizeCode=a.SizeCode
+) balc
 Where b.cuttingsp ='{0}'
 order by id,article,sizecode"
                 , masterID);
@@ -318,14 +325,14 @@ order by id,article,sizecode"
             artTb = qtybreakTb.DefaultView.ToTable(true, "article");
             spTb = qtybreakTb.DefaultView.ToTable(true, "id");            
 
-            // 若訂單數量超過裁切分配數量，則更新balance
-            foreach (DataRow dr2 in qtybreakTb.Rows)
-            {
-                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]))
-                {
-                    dr2["balance"] = MyUtility.Convert.GetDecimal(dr2["qty"]) - MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]);
-                }
-            }
+            //// 若訂單數量超過裁切分配數量，則更新balance
+            //foreach (DataRow dr2 in qtybreakTb.Rows)
+            //{
+            //    if (MyUtility.Convert.GetDecimal(dr2["qty"]) > MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]))
+            //    {
+            //        dr2["balance"] = MyUtility.Convert.GetDecimal(dr2["qty"]) - MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]);
+            //    }
+            //}
             //用來檢查size是否存在
             string sqlsizechk = string.Format(@"
 select distinct w.SizeCode
@@ -1399,6 +1406,7 @@ where w.ID = '{0}'", masterID);
             {
                 sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
                 distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
+                gridDistributetoSPNo.SelectRowTo(0);               
             }
             if (MyUtility.Convert.GetString(CurrentDetailData["Ukey"]) == "0")
             {
@@ -2263,6 +2271,30 @@ where w.ID = '{0}'", masterID);
             base.ClickUndo();
             RenewData();
             OnDetailEntered();
+        }
+        private void gridDistributetoSPNo_SelectionChanged(object sender, EventArgs e)
+        {
+            //更換qtybreakdown index
+            DataRow SpNoRow = gridDistributetoSPNo.GetDataRow(gridDistributetoSPNo.GetSelectedRowIndex());
+            if (MyUtility.Check.Empty(SpNoRow)) return;
+            string Article = SpNoRow["Article"].ToString();
+            string SizeCode = SpNoRow["SizeCode"].ToString();
+            int rowIndex = 0;
+
+            if (!MyUtility.Check.Empty(distqtyTb) || distqtyTb.Rows.Count > 1)
+            {
+                for (int rIdx = 0; rIdx < gridQtyBreakdown.Rows.Count; rIdx++)
+                {
+                    DataGridViewRow dvr = gridQtyBreakdown.Rows[rIdx];
+                    DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+                    if (row["article"].ToString() == Article && row["SizeCode"].ToString() == SizeCode)
+                    {
+                        rowIndex = rIdx;
+                        break;
+                    }
+                }
+                gridQtyBreakdown.SelectRowTo(rowIndex);
+            }   
         }
     }
 }
