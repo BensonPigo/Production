@@ -103,7 +103,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(12, 15);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(40, 23);
@@ -121,7 +120,6 @@
             // 
             // labelPO
             // 
-            this.labelPO.Lines = 0;
             this.labelPO.Location = new System.Drawing.Point(196, 15);
             this.labelPO.Name = "labelPO";
             this.labelPO.Size = new System.Drawing.Size(40, 23);
@@ -130,7 +128,6 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Lines = 0;
             this.labelPackID.Location = new System.Drawing.Point(433, 15);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(52, 23);
