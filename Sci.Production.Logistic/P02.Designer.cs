@@ -282,7 +282,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(92, 23);
             this.label1.TabIndex = 18;
-            this.label1.Text = "Receive Date";
+            this.label1.Text = "Transfer Date";
             // 
             // txtcloglocationLocationNo
             // 
