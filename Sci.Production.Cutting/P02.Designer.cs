@@ -195,8 +195,8 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
@@ -565,8 +565,8 @@
             // 
             // label17
             // 
-            this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Lines = 0;
+            this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Location = new System.Drawing.Point(140, 2);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(16, 23);
@@ -692,8 +692,8 @@
             // 
             // labelSizeRatio
             // 
-            this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
             this.labelSizeRatio.Lines = 0;
+            this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
             this.labelSizeRatio.Location = new System.Drawing.Point(1, 267);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(71, 12);
@@ -812,6 +812,7 @@
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
+            this.gridDistributetoSPNo.SelectionChanged += new System.EventHandler(this.gridDistributetoSPNo_SelectionChanged);
             // 
             // distributeMenuStrip
             // 
@@ -868,8 +869,8 @@
             // 
             // labelDistributetoSPNo
             // 
-            this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
             this.labelDistributetoSPNo.Lines = 0;
+            this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
             this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 403);
             this.labelDistributetoSPNo.Name = "labelDistributetoSPNo";
             this.labelDistributetoSPNo.Size = new System.Drawing.Size(112, 15);
@@ -909,8 +910,8 @@
             // 
             // labelQtyBreakdown
             // 
-            this.labelQtyBreakdown.BackColor = System.Drawing.Color.Transparent;
             this.labelQtyBreakdown.Lines = 0;
+            this.labelQtyBreakdown.BackColor = System.Drawing.Color.Transparent;
             this.labelQtyBreakdown.Location = new System.Drawing.Point(1, 543);
             this.labelQtyBreakdown.Name = "labelQtyBreakdown";
             this.labelQtyBreakdown.Size = new System.Drawing.Size(112, 11);
@@ -920,9 +921,9 @@
             // 
             // downloadid_Text
             // 
+            this.downloadid_Text.Lines = 0;
             this.downloadid_Text.BackColor = System.Drawing.Color.Transparent;
             this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.downloadid_Text.Lines = 0;
             this.downloadid_Text.Location = new System.Drawing.Point(82, 61);
             this.downloadid_Text.Name = "downloadid_Text";
             this.downloadid_Text.Size = new System.Drawing.Size(186, 23);
@@ -1142,11 +1143,12 @@
             // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(1012, 775);
             this.ExpressQuery = true;
+            this.ClientSize = new System.Drawing.Size(1012, 775);
             this.DefaultControlForEdit = "numMarkerLengthY";
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
             this.GridAlias = "WorkOrder";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
