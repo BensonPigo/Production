@@ -42,9 +42,7 @@ namespace Sci.Production.Packing
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
-
-        //Find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void Find()
         {
             if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtPO.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
@@ -126,6 +124,11 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                 ControlButton4Text("Close");
             }
             listControlBindingSource1.DataSource = selectDataTable;
+        }
+        //Find
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            Find();
         }
 
         //Import From Barcode
@@ -358,6 +361,7 @@ where a.Selected = 1", out selectData);
                     return;
                 }
             }
+            Find();
         }
 
         //Close/Cancel
