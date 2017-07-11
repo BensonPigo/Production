@@ -48,7 +48,7 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            StartSPNo = textStartSP.Text;
+            StartSPNo = textStartSP.Text ;
             EndSPNo = textEndSP.Text;
             MDivision = txtMdivision1.Text;
             Factory = txtfactory1.Text;
@@ -99,11 +99,20 @@ select
 	,[Out Qty] = round(fi.OutQty,2)
 	,[Adjust Qty] = round(fi.AdjustQty,2)
 	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
-	,[Location] = fid.MtlLocationID
+	,[Location] = f.MtlLocationID
 from Orders o with (nolock)
 inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-left join FtyInventory_Detail fid with (nolock) on fid.Ukey = fi.Ukey 
+outer apply
+(
+	select MtlLocationID = stuff(
+	(
+		select concat(',',MtlLocationID)
+		from FtyInventory_Detail fid with (nolock) 
+		where fid.Ukey = fi.Ukey
+		for xml path('')
+	),1,1,'')
+)f
 where 1=1
 ");
                 #endregion
@@ -152,7 +161,7 @@ where 1=1
             if (!MyUtility.Check.Empty(StartSPNo))
                 sqlcmd.Append(string.Format(" and psd.id >= '{0}'", StartSPNo));
             if (!MyUtility.Check.Empty(EndSPNo))
-                sqlcmd.Append(string.Format(" and psd.id <= '{0}'", EndSPNo));
+                sqlcmd.Append(string.Format(" and (psd.id <= '{0}' or psd.id like '{0}%')", EndSPNo));
             if (!MyUtility.Check.Empty(MDivision))
                 sqlcmd.Append(string.Format(" and o.MDivisionID = '{0}'", MDivision));
             if (!MyUtility.Check.Empty(Factory))
@@ -160,7 +169,7 @@ where 1=1
             if (!MyUtility.Check.Empty(StartRefno))
                 sqlcmd.Append(string.Format(" and psd.Refno >= '{0}'", StartRefno));
             if (!MyUtility.Check.Empty(EndRefno))
-                sqlcmd.Append(string.Format(" and psd.Refno <= '{0}'", EndRefno));
+                sqlcmd.Append(string.Format(" and (psd.Refno <= '{0}' or psd.Refno like '{0}%')", EndRefno));
             if (!MyUtility.Check.Empty(Color))
                 sqlcmd.Append(string.Format(" and psd.ColorID = '{0}'", Color));
 
