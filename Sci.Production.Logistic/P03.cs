@@ -82,9 +82,7 @@ namespace Sci.Production.Logistic
                 }
             };
         }
-
-        //Find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void find()
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
@@ -184,10 +182,13 @@ order by rn ");
                     ControlButton4Text("Cancel");
                 }
             }
-           //這邊不知道誰 少寫一段 當SQL錯誤或是斷線時 要做的處理
             listControlBindingSource1.DataSource = selectDataTable;
         }
-
+        //Find
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            find();
+        }
         //Import From Barcode
         private void btnImportFromBarcode_Click(object sender, EventArgs e)
         {
@@ -385,6 +386,7 @@ where a.Selected = 1", out selectData);
                     return;
                 }
             }
+            find();
         }
 
         //Cancel
