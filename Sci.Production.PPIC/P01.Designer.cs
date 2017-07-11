@@ -277,6 +277,8 @@
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
+            this.labeOrderCombo = new Sci.Win.UI.Label();
+            this.displayOrderCombo = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -293,6 +295,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.labeOrderCombo);
+            this.detailcont.Controls.Add(this.displayOrderCombo);
             this.detailcont.Controls.Add(this.txtmfactory);
             this.detailcont.Controls.Add(this.displayBuyMonth);
             this.detailcont.Controls.Add(this.checkIsMixMarker);
@@ -2080,8 +2084,8 @@
             // 
             this.lineShape4.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.lineShape4.Name = "lineShape4";
-            this.lineShape4.X1 = 4;
-            this.lineShape4.X2 = 991;
+            this.lineShape4.X1 = 0;
+            this.lineShape4.X2 = 987;
             this.lineShape4.Y1 = 474;
             this.lineShape4.Y2 = 474;
             // 
@@ -2874,7 +2878,7 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Location = new System.Drawing.Point(4, 448);
+            this.labelPaymentTerm.Location = new System.Drawing.Point(153, 421);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(90, 21);
             this.labelPaymentTerm.TabIndex = 119;
@@ -2882,7 +2886,7 @@
             // 
             // labelSpecialMark
             // 
-            this.labelSpecialMark.Location = new System.Drawing.Point(4, 479);
+            this.labelSpecialMark.Location = new System.Drawing.Point(4, 447);
             this.labelSpecialMark.Name = "labelSpecialMark";
             this.labelSpecialMark.Size = new System.Drawing.Size(75, 21);
             this.labelSpecialMark.TabIndex = 120;
@@ -2890,7 +2894,7 @@
             // 
             // labelPOCombo
             // 
-            this.labelPOCombo.Location = new System.Drawing.Point(4, 506);
+            this.labelPOCombo.Location = new System.Drawing.Point(4, 479);
             this.labelPOCombo.Name = "labelPOCombo";
             this.labelPOCombo.Size = new System.Drawing.Size(75, 21);
             this.labelPOCombo.TabIndex = 121;
@@ -2910,7 +2914,7 @@
             // 
             this.displaySpecialMark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySpecialMark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySpecialMark.Location = new System.Drawing.Point(83, 479);
+            this.displaySpecialMark.Location = new System.Drawing.Point(83, 447);
             this.displaySpecialMark.Name = "displaySpecialMark";
             this.displaySpecialMark.Size = new System.Drawing.Size(424, 21);
             this.displaySpecialMark.TabIndex = 60;
@@ -2920,7 +2924,7 @@
             this.editPOCombo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editPOCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editPOCombo.IsSupportEditMode = false;
-            this.editPOCombo.Location = new System.Drawing.Point(83, 506);
+            this.editPOCombo.Location = new System.Drawing.Point(83, 479);
             this.editPOCombo.Multiline = true;
             this.editPOCombo.Name = "editPOCombo";
             this.editPOCombo.ReadOnly = true;
@@ -3038,7 +3042,7 @@
             // 
             this.txtpaytermar1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
             this.txtpaytermar1.DisplayBox1Binding = "";
-            this.txtpaytermar1.Location = new System.Drawing.Point(98, 446);
+            this.txtpaytermar1.Location = new System.Drawing.Point(247, 419);
             this.txtpaytermar1.Name = "txtpaytermar1";
             this.txtpaytermar1.Size = new System.Drawing.Size(311, 23);
             this.txtpaytermar1.TabIndex = 59;
@@ -3103,6 +3107,23 @@
             this.txttpeuser2.Name = "txttpeuser2";
             this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser2.TabIndex = 6;
+            // 
+            // labeOrderCombo
+            // 
+            this.labeOrderCombo.Location = new System.Drawing.Point(4, 539);
+            this.labeOrderCombo.Name = "labeOrderCombo";
+            this.labeOrderCombo.Size = new System.Drawing.Size(75, 21);
+            this.labeOrderCombo.TabIndex = 120;
+            this.labeOrderCombo.Text = "OrderCombo";
+            // 
+            // displayOrderCombo
+            // 
+            this.displayOrderCombo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayOrderCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayOrderCombo.Location = new System.Drawing.Point(83, 539);
+            this.displayOrderCombo.Name = "displayOrderCombo";
+            this.displayOrderCombo.Size = new System.Drawing.Size(424, 21);
+            this.displayOrderCombo.TabIndex = 60;
             // 
             // P01
             // 
@@ -3384,5 +3405,7 @@
         private Win.UI.Button btnBacktoPPICMasterList;
         private Class.txtfactory txtmfactory;
         private Win.UI.Button btnEachCons;
+        private Win.UI.Label labeOrderCombo;
+        private Win.UI.DisplayBox displayOrderCombo;
     }
 }
