@@ -296,6 +296,10 @@ into #tmpFinalFixDeclare
 from #tmpFixDeclare
 where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)
 
+
+select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey
+into #tlast
+from(
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID from #tmpFinalFixDeclare
 union
 select StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(Qty) as Qty,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
@@ -306,8 +310,11 @@ select * from #tmpBOAData
 union all
 select * from #tmpLocalData) a
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
+)x
 
-drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate
+select *,Waste
+from #tlast t left join VNContract_Detail v with(nolock) on id = @vncontractid and v.NLCode = t.NLCode
+drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate,#tlast
 ");
             #endregion
 
@@ -322,23 +329,23 @@ drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tm
             {
                 MyUtility.Tool.ProcessWithDatatable(AllDetailData, "StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey",
                     @"
-alter table #tmp alter column StyleID		varchar(500)
-alter table #tmp alter column SeasonID		varchar(500)
-alter table #tmp alter column OrderBrandID	varchar(500)
-alter table #tmp alter column Category		varchar(500)
-alter table #tmp alter column SizeCode		varchar(500)
-alter table #tmp alter column Article		varchar(500)
-alter table #tmp alter column GMTQty		varchar(500)
-alter table #tmp alter column SCIRefno		varchar(500)
-alter table #tmp alter column Refno			varchar(500)
-alter table #tmp alter column BrandID		varchar(500)
-alter table #tmp alter column NLCode		varchar(500)
-alter table #tmp alter column HSCode		varchar(500)
-alter table #tmp alter column CustomsUnit	varchar(500)
---alter table #tmp alter column Qty			varchar(500)
-alter table #tmp alter column LocalItem		varchar(500)
-alter table #tmp alter column StyleCPU		varchar(500)
-alter table #tmp alter column StyleUKey		varchar(500)
+alter table #tmp alter column StyleID		varchar(100)
+alter table #tmp alter column SeasonID		varchar(100)
+alter table #tmp alter column OrderBrandID	varchar(100)
+alter table #tmp alter column Category		varchar(100)
+alter table #tmp alter column SizeCode		varchar(100)
+alter table #tmp alter column Article		varchar(100)
+alter table #tmp alter column GMTQty		varchar(100)
+alter table #tmp alter column SCIRefno		varchar(100)
+alter table #tmp alter column Refno			varchar(100)
+alter table #tmp alter column BrandID		varchar(100)
+alter table #tmp alter column NLCode		varchar(100)
+alter table #tmp alter column HSCode		varchar(100)
+alter table #tmp alter column CustomsUnit	varchar(100)
+--alter table #tmp alter column Qty			varchar(100)
+alter table #tmp alter column LocalItem		varchar(100)
+alter table #tmp alter column StyleCPU		varchar(100)
+alter table #tmp alter column StyleUKey		varchar(100)
 
 select StyleID,SeasonID,OrderBrandID,Category,Article,SizeCode,NLCode,SUM(Qty) as Qty,CustomsUnit into #tmpSumConsData
 from #tmp
@@ -552,6 +559,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             }
 
             #region 組出中間層資料
+            ///////////////////
             result = DBProxy.Current.Select(null, "select *,0 as StyleUkey,'' as SizeCode, '' as Article,0.0 as Waste, 0 as Deleted from VNConsumption_Detail WITH (NOLOCK) where 1 = 0", out MidDetailData);
             if (!result)
             {
@@ -577,7 +585,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
                         newrow["HSCode"] = selectedData[i]["HSCode"];
                         newrow["UnitID"] = selectedData[i]["CustomsUnit"];
                         newrow["Qty"] = selectedData[i]["Qty"];
-                        newrow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", contractID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]))));
+                        newrow["Waste"] = selectedData[i]["Waste"];
                         newrow["UserCreate"] = 0;
                         newrow["StyleUKey"] = dr["StyleUKey"];
                         newrow["SizeCode"] = dr["SizeCode"];
