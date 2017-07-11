@@ -36,6 +36,7 @@ namespace Sci.Production.Cutting
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
             this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
             {
                 DualResult DR; DataTable DT; SelectItem S;
@@ -57,7 +58,10 @@ namespace Sci.Production.Cutting
                     {
                         decimal width_CM = decimal.Parse(chkwidth);
                         if (width_CM > 180)
+                        {
                             MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                            cellchk = false;
+                        }
                     }
                 }
             };
@@ -86,14 +90,20 @@ namespace Sci.Production.Cutting
                     return;
                 }
                 dr["Cutcellid"] = newvalue;
-                
-                string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                if (!MyUtility.Check.Empty(chkwidth))
+
+                if (cellchk)
                 {
-                    decimal width_CM = decimal.Parse(chkwidth);
-                    if (width_CM > 180)
-                        MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                    if (!MyUtility.Check.Empty(chkwidth))
+                    {
+                        decimal width_CM = decimal.Parse(chkwidth);
+                        if (width_CM > 180)
+                        {
+                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                        }
+                    }
                 }
+                cellchk = true;
                 dr.EndEdit();
             };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
@@ -176,6 +186,7 @@ namespace Sci.Production.Cutting
 
         private void btnBatchUpdateEstCutCell_Click(object sender, EventArgs e)
         {
+            bool cellschk = false;
             string cell = txtCell2.Text;
             foreach (DataRow dr in curTb.Rows)
             {
@@ -190,10 +201,14 @@ namespace Sci.Production.Cutting
                     {
                         decimal width_CM = decimal.Parse(chkwidth);
                         if (width_CM > 180)
-                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                            cellschk = true;
                     }
                 }
             }
+            if (cellschk)
+            {
+                MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+            }                
         }
 
         private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)

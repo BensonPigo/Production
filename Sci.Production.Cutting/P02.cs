@@ -886,6 +886,7 @@ where w.ID = '{0}'", masterID);
                     e.CellStyle.ForeColor = Color.Red;
                 }
             };
+            bool cellchk = true;
             col_cutcell.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
@@ -906,7 +907,10 @@ where w.ID = '{0}'", masterID);
                     {
                         decimal width_CM = decimal.Parse(chkwidth);
                         if (width_CM > 180)
-                             MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                        {
+                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                            cellchk = false;
+                        }
                     }
                 }
             };
@@ -934,14 +938,19 @@ where w.ID = '{0}'", masterID);
                 }
 
                 dr["cutCellid"] = newvalue;
-
-                string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                if (!MyUtility.Check.Empty(chkwidth))
+                if (cellchk)
                 {
-                    decimal width_CM = decimal.Parse(chkwidth);
-                    if (width_CM > 180)
-                        MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
+                    if (!MyUtility.Check.Empty(chkwidth))
+                    {
+                        decimal width_CM = decimal.Parse(chkwidth);
+                        if (width_CM > 180)
+                        {
+                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting"); 
+                        }
+                    }
                 }
+                cellchk = true;
                 dr.EndEdit();
             };
             #endregion
