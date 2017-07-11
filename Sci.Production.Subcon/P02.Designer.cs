@@ -97,7 +97,7 @@
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 182);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -128,13 +128,13 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 229);
+            this.detailpanel.Location = new System.Drawing.Point(0, 182);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 295);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(897, 210);
+            this.gridicon.Location = new System.Drawing.Point(897, 147);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
@@ -143,7 +143,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 295);
             // 
             // detail2
             // 
@@ -399,12 +399,13 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(347, 14);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserApproveName
             // 
@@ -462,7 +463,7 @@
             this.DefaultFilter = "POTYPE=\'I\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,artworkid,patterncode";
+            this.GridUniqueKey = "ID,orderID,ArtworkId,PatternCode,ArtworkTypeID";
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;

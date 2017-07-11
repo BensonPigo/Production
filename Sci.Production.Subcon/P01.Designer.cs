@@ -121,7 +121,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 212);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -164,13 +164,13 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 229);
+            this.detailpanel.Location = new System.Drawing.Point(0, 212);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 265);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(890, 210);
+            this.gridicon.Location = new System.Drawing.Point(894, 175);
             this.gridicon.TabIndex = 11;
             // 
             // refresh
@@ -179,7 +179,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 265);
             // 
             // detail2
             // 
