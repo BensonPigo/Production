@@ -47,21 +47,23 @@
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.comboLocal = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(425, 12);
+            this.print.Location = new System.Drawing.Point(408, 12);
             this.print.TabIndex = 9;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(425, 48);
+            this.toexcel.Location = new System.Drawing.Point(408, 48);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(425, 84);
+            this.close.Location = new System.Drawing.Point(408, 84);
             this.close.TabIndex = 11;
             // 
             // labelSewingOutputDate
@@ -106,7 +108,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 192);
+            this.labelM.Location = new System.Drawing.Point(13, 223);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(128, 23);
             this.labelM.TabIndex = 99;
@@ -114,7 +116,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 228);
+            this.labelFactory.Location = new System.Drawing.Point(13, 259);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(128, 23);
             this.labelFactory.TabIndex = 100;
@@ -122,7 +124,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(13, 264);
+            this.labelCategory.Location = new System.Drawing.Point(13, 295);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(128, 23);
             this.labelCategory.TabIndex = 101;
@@ -132,7 +134,7 @@
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label9.Location = new System.Drawing.Point(13, 326);
+            this.label9.Location = new System.Drawing.Point(13, 357);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(286, 23);
             this.label9.TabIndex = 8;
@@ -191,7 +193,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(145, 192);
+            this.comboM.Location = new System.Drawing.Point(145, 223);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(80, 24);
             this.comboM.TabIndex = 5;
@@ -202,7 +204,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(145, 228);
+            this.comboFactory.Location = new System.Drawing.Point(145, 259);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 6;
@@ -213,7 +215,7 @@
             this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlistCategory.FormattingEnabled = true;
             this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(145, 264);
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(145, 295);
             this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
             this.txtdropdownlistCategory.Size = new System.Drawing.Size(143, 24);
             this.txtdropdownlistCategory.TabIndex = 7;
@@ -225,22 +227,41 @@
             this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboLocal.FormattingEnabled = true;
             this.comboLocal.IsSupportUnselect = true;
-            this.comboLocal.Location = new System.Drawing.Point(145, 299);
+            this.comboLocal.Location = new System.Drawing.Point(145, 330);
             this.comboLocal.Name = "comboLocal";
             this.comboLocal.Size = new System.Drawing.Size(80, 24);
             this.comboLocal.TabIndex = 102;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(13, 299);
+            this.label1.Location = new System.Drawing.Point(13, 330);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(128, 23);
             this.label1.TabIndex = 103;
             this.label1.Text = "Local Order";
             // 
+            // labelStyle
+            // 
+            this.labelStyle.Location = new System.Drawing.Point(13, 191);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(128, 23);
+            this.labelStyle.TabIndex = 98;
+            this.labelStyle.Text = "Style";
+            // 
+            // txtstyle
+            // 
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(145, 191);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 104;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(517, 381);
+            this.ClientSize = new System.Drawing.Size(517, 391);
+            this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.comboLocal);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtdropdownlistCategory);
@@ -255,6 +276,7 @@
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelSCIDelivery);
@@ -273,6 +295,7 @@
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
@@ -287,6 +310,7 @@
             this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.comboLocal, 0);
+            this.Controls.SetChildIndex(this.txtstyle, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -313,5 +337,7 @@
         private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.ComboBox comboLocal;
         private Win.UI.Label label1;
+        private Win.UI.Label labelStyle;
+        private Class.txtstyle txtstyle;
     }
 }
