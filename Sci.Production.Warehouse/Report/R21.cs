@@ -146,8 +146,8 @@ select
 	,[Color] = psd.ColorID
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
-	,[Purchase Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty),2)
-	,[Ship Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty),2)
+	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
+	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
 	,[Adjust Qty] = round(mpd.AdjustQty,2)
@@ -166,6 +166,12 @@ outer apply
 	from Fabric f with (nolock)
 	where f.SCIRefno = psd.SCIRefno
 )d
+outer apply
+(
+	select RateValue
+	from Unit_Rate WITH (NOLOCK) 
+	where UnitFrom = psd.PoUnit and UnitTo = psd.StockUnit
+)r
 where 1=1
 ");
                 #endregion
