@@ -407,34 +407,38 @@ namespace Sci.Production.Quality
             DataRow dr;
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select distinct sewinglineid from Rft WITH (NOLOCK) where OrderID='{0}'", this.txtSP.Text), "10", this.txtLine.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
+FROM SewingSchedule SS WITH (NOLOCK)
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
+where SS.OrderID='{0}' and SL.FactoryID='{1}'", this.txtSP.Text,Sci.Env.User.Factory), "5,20,10", this.txtLine.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLine.Text = item.GetSelectedString();
-            string sqlcmd = string.Format(
-                    @"select a.id,b.ID,b.SewingCell from Rft a WITH (NOLOCK) 
-                    inner join SewingLine b on a.SewinglineID=b.ID
-                    where orderid = '{0}' and b.ID='{1}' and b.factoryID='{2}'", this.txtSP.Text, this.txtLine.Text, Sci.Env.User.Factory);
-            if (MyUtility.Check.Seek(sqlcmd,out dr))
+
+            if (MyUtility.Check.Seek(string.Format(
+@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", Sci.Env.User.Factory, item.GetSelectedString()), out dr))
             {
                 this.displayCell.Text = dr["sewingcell"].ToString();
             }
             else
             {
                 this.displayCell.Text = "";
-            }            
+            }                 
         }
 
         private void txtLine_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtLine.Text;
+            if (MyUtility.Check.Empty(this.txtLine.Text)) this.displayCell.Text = "";
             DataRow dr;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLine.OldValue)
             {
                 if (!MyUtility.Check.Seek(string.Format(
-                    @"select a.id,b.ID,b.SewingCell from Rft a WITH (NOLOCK) 
-                    inner join SewingLine b on a.SewinglineID=b.ID
-                    where orderid = '{0}' and b.ID='{1}' and b.factoryID='{2}'", this.txtSP.Text, textValue,Sci.Env.User.Factory),out dr))
+@"SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory,sl.SewingCell
+FROM SewingSchedule SS WITH (NOLOCK)
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
+where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID='{2}'", this.txtSP.Text, Sci.Env.User.Factory,this.txtLine.Text), out dr))
                 {
                     this.txtLine.Text = "";
                     this.displayCell.Text = "";
