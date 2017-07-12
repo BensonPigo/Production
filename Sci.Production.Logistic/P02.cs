@@ -107,13 +107,14 @@ select *,
 rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
 rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-Select Distinct '' as ID, 0 as selected,b.TransferDate, a.Id as PackingListID, a.OrderID, 
+Select Distinct '' as ID, 0 as selected,b.TransferDate, a.Id as PackingListID, b.OrderID, 
 b.CTNStartNo, 
 c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
 where b.OrderId = c.Id 
 and a.Id = b.Id 
 and b.CTNStartNo != '' 
+and b.CTNQty = 1
 and b.TransferDate is not null
 and b.ReceiveDate is null
 and c.Dest = d.ID 
