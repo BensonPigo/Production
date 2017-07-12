@@ -21,11 +21,10 @@ namespace Sci.Production.Cutting
         DualResult result;
         DataRow CurrentDataRow;
         public P10_Print(DataRow row)
-        { 
-           InitializeComponent();
-          this.CurrentDataRow = row;
-         toexcel.Enabled = false;
-           
+        {
+            InitializeComponent();
+            this.CurrentDataRow = row;
+            toexcel.Enabled = false;
         }
 
         string Bundle_Card;
@@ -38,7 +37,7 @@ namespace Sci.Production.Cutting
             Extend_All_Parts = checkExtendAllParts.Checked.ToString();
             return base.ValidateInput();
         }
-        DataTable dtt; 
+        DataTable dtt;
         DataTable dt;
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -47,8 +46,8 @@ namespace Sci.Production.Cutting
                 #region report
                 DataRow row = this.CurrentDataRow;
                 string id = row["ID"].ToString();
-                
-                List<SqlParameter> pars = new List<SqlParameter>(); 
+
+                List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 if (checkExtendAllParts.Checked)
                     pars.Add(new SqlParameter("@extend", "1"));
@@ -141,7 +140,7 @@ outer apply
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
 order by x.[Barcode]");
-                        #endregion
+                    #endregion
                 }
                 else  //沒勾[Extend All Parts]
                 {
@@ -223,9 +222,9 @@ order by x.[Barcode]");
                 ReportDefinition report = e.Report;
                 if (!result)
                 {
-                 return result;
+                    return result;
                 }
-               
+
                 // 傳 list 資料            
                 List<P10_PrintData> data = dt.AsEnumerable()
                     .Select(row1 => new P10_PrintData()
@@ -241,17 +240,17 @@ order by x.[Barcode]");
                         Parts = row1["Parts"].ToString(),
                         Color = row1["Color"].ToString(),
                         Size = row1["Size"].ToString(),
-                        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "("+row1["SizeSpec"].ToString()+")",
+                        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
                         Desc = row1["Desc"].ToString(),
-                        Artwork = row1["Artwork"].ToString(),                       
+                        Artwork = row1["Artwork"].ToString(),
                         Quantity = row1["Quantity"].ToString(),
                         Barcode = row1["Barcode"].ToString()
                     }).ToList();
 
                 e.Report.ReportDataSource = data;
-                 
-                
-               #endregion
+
+
+                #endregion
             }
             else
             {
@@ -270,7 +269,7 @@ order by x.[Barcode]");
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
-select [Bundle_ID],[SP],[POID],[Style],[Line],[Cell],[Cut],[Item],[Article_Color],[Group],[Bundle],[Size],[SizeSpec],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
 		,b.Orderid [SP]
@@ -348,7 +347,7 @@ order by x.[Bundle]");
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
-select [Bundle_ID],[SP],[POID],[Style],[Line],[Cell],[Cut],[Item],[Article_Color],[Group],[Bundle],[Size],[SizeSpec],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
 			,b.Orderid [SP]
@@ -429,9 +428,9 @@ order by x.[Bundle]");
                 #endregion
             }
 
-            return result; 
+            return result;
         }
-        
+
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -440,9 +439,29 @@ order by x.[Bundle]");
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app                         
-            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[1,1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'",CurrentDataRow["ID"].ToString().Substring(0,3)));
+            objSheets.Cells[3, 1] = "To Line: " + CurrentDataRow["sewinglineid"].ToString();
+            objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
+            objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
+            objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
+            objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
+            objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
+            objSheets.Cells[4, 1] = "SP#: " + CurrentDataRow["Orderid"].ToString();
+            objSheets.Cells[4, 4] = "Style#: " + MyUtility.GetValue.Lookup(string.Format("Select Styleid from Orders WITH (NOLOCK) Where id='{0}'", CurrentDataRow["Orderid"].ToString()));
+            objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
+            objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
+            objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
+            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            objSheets.get_Range("D1:D1").ColumnWidth = 11;
+            objSheets.get_Range("E1:E1").Columns.AutoFit();
+            objSheets.get_Range("G1:H1").ColumnWidth = 9;
+            objSheets.get_Range("I1:L1").ColumnWidth = 15;
+
+
+            objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count+5)].Borders.Weight = 2;//設定全框線
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
@@ -451,7 +470,7 @@ order by x.[Bundle]");
         private void radioPanel1_Paint(object sender, PaintEventArgs e)
         {
 
-            if ( radioBundleCard.Checked==true)
+            if (radioBundleCard.Checked == true)
             {
                 print.Enabled = true;
                 toexcel.Enabled = false;
@@ -463,6 +482,6 @@ order by x.[Bundle]");
             }
 
         }
-      
+
     }
 }
