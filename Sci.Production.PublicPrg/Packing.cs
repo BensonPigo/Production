@@ -1248,17 +1248,17 @@ where   p.ID = '{0}'
             string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = NameEN;
             worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["Factory"]);
-            worksheet.Cells[3+1, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[4, 3] = PrintData.Rows[0]["BuyerDelivery"];
-            worksheet.Cells[3+1, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[3+1, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[3+1, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[3+1, 10] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
-            worksheet.Cells[4, 12] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCD"]);
-            worksheet.Cells[3+1, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
-            worksheet.Cells[3+1, 18] = OrderQty;
-            worksheet.Cells[3+1, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
-            worksheet.Cells[3+1, 21] = "=R4-T4";
+            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+            worksheet.Cells[4, 4] = PrintData.Rows[0]["BuyerDelivery"];
+            worksheet.Cells[4, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[4, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[4, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[4, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[4, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCD"]);
+            worksheet.Cells[4, 16] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
+            worksheet.Cells[4, 18] = OrderQty;
+            worksheet.Cells[4, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
+            worksheet.Cells[4, 21] = "=R4-T4";
 
             int groupRec = PrintGroupData.Rows.Count, excelRow = 5, printRec = 1, printCtnCount = 0;
 
