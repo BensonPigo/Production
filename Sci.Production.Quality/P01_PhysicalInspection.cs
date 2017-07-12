@@ -901,7 +901,8 @@ Where DetailUkey = {15};",
                 //變色 titile
                 worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Interior.colorindex = 38;
                 worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Borders.LineStyle = 1;
-                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[17 + (i * 8), 10]].Font.Bold = true;
+                worksheet.Range[excel.Cells[15 + (i * 8), 1], excel.Cells[15 + (i * 8), 10]].Font.Bold = true;
+                worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
                 DualResult dcResult;
