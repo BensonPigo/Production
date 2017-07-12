@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ict;
+using System.Configuration;
 
 namespace Sci.Production
 {
@@ -24,74 +25,91 @@ namespace Sci.Production
             Sci.Env.AppInit();
             DBProxy.Current.DefaultTimeout = 300;  //加長時間為5分鐘，避免timeout
 
-            //Logs.UI.LogInfo(string.Format("args = [{0}]", "         -----------xxx"));
-            //args = new string[] { "userid:'MIS'", "formName:'Sci.Trade.Basic.B03,Sci.Trade.Basic'", "menuName:'B03. Country'", "args:''" };
+            bool ClearTaipeiServer = true;
             if (args != null && args.Length != 0)
             {
-                DirectOpenForm(args);
+                foreach (string arg in args)
+                {
+                    if (arg.Contains("TaipeiServer:'true'"))
+                    {
+                        ClearTaipeiServer = false;
+                    }
+                }
             }
-            else
+            if (ClearTaipeiServer && DBProxy.Current.DefaultModuleName != "bin" && DBProxy.Current.DefaultModuleName != "x86")
             {
+                ConfigurationManager.AppSettings["TaipeiServer"] = "";
+            }
+
+
+            //Logs.UI.LogInfo(string.Format("args = [{0}]", "         -----------xxx"));
+            //args = new string[] { "userid:'MIS'", "formName:'Sci.Trade.Basic.B03,Sci.Trade.Basic'", "menuName:'B03. Country'", "args:''" };
+            //if (args != null && args.Length != 0)
+            //{
+            //    DirectOpenForm(args);
+            //}
+            //else
+            //{
 
                 Application.Run(new Main());
-            }
+            //}
 
             Sci.Env.AppShutdown();
         }
 
-        public static void DirectOpenForm(string[] args)
-        {
+        //public static void DirectOpenForm(string[] args)
+        //{
 
-            //args = new string[] { "userid:C6001305", "factoryID:FA2", "formName:Sci.Sample.Basic.B10,Sci.Sample.Basic", "menuName:B09. Supplier (Taiwan)", "args:" };
+        //    //args = new string[] { "userid:C6001305", "factoryID:FA2", "formName:Sci.Sample.Basic.B10,Sci.Sample.Basic", "menuName:B09. Supplier (Taiwan)", "args:" };
             
-            string userid = "";
-            string factoryID = "";
-            string formName = "";
-            string menuName = "";
-            string arguments = "";
+        //    string userid = "";
+        //    string factoryID = "";
+        //    string formName = "";
+        //    string menuName = "";
+        //    string arguments = "";
             
-            foreach (string arg in args)
-            {
-                var strArg = arg.Split(new char[] { ':' }, 2);
-                if (strArg[0].EqualString("userid"))
-                {
-                    userid = strArg[1];
-                }
-                else if (strArg[0].EqualString("factoryID"))
-                {
-                    factoryID = strArg[1];
-                }
-                else if (strArg[0].EqualString("formName"))
-                {
-                    formName = strArg[1];
-                }
-                else if (strArg[0].EqualString("menuName"))
-                {
-                    menuName = strArg[1];
-                }
-                else if (strArg[0].EqualString("args"))
-                {
-                    arguments = strArg[1];
-                }
-            }
+        //    foreach (string arg in args)
+        //    {
+        //        var strArg = arg.Split(new char[] { ':' }, 2);
+        //        if (strArg[0].EqualString("userid"))
+        //        {
+        //            userid = strArg[1];
+        //        }
+        //        else if (strArg[0].EqualString("factoryID"))
+        //        {
+        //            factoryID = strArg[1];
+        //        }
+        //        else if (strArg[0].EqualString("formName"))
+        //        {
+        //            formName = strArg[1];
+        //        }
+        //        else if (strArg[0].EqualString("menuName"))
+        //        {
+        //            menuName = strArg[1];
+        //        }
+        //        else if (strArg[0].EqualString("args"))
+        //        {
+        //            arguments = strArg[1];
+        //        }
+        //    }
 
-            List<System.Data.SqlClient.SqlParameter> sqlPars = new List<System.Data.SqlClient.SqlParameter>();
-            sqlPars.Add(new System.Data.SqlClient.SqlParameter("@UserID", userid));
-            System.Data.DataTable data;
-            var result1 = Sci.Data.DBProxy.Current.Select("", "select id,password from dbo.Pass1 where id = @UserID", sqlPars, out data);
-            UserInfo userInfo = new UserInfo();
-            var result = Sci.Production.Win.Login.UserLogin(userid, data.Rows[0]["Password"].ToString(), factoryID, userInfo);
-            Env.User = userInfo;
-            var menuItem = new ToolStripMenuItem(menuName);
-            Type typeofControl = Type.GetType(formName);
-            var arrArg = string.IsNullOrWhiteSpace(arguments) ? new Object[1] { menuItem } : new Object[2] { menuItem, arguments };
-            Form formClass = (Form)Activator.CreateInstance(typeofControl, arrArg);
+        //    List<System.Data.SqlClient.SqlParameter> sqlPars = new List<System.Data.SqlClient.SqlParameter>();
+        //    sqlPars.Add(new System.Data.SqlClient.SqlParameter("@UserID", userid));
+        //    System.Data.DataTable data;
+        //    var result1 = Sci.Data.DBProxy.Current.Select("", "select id,password from dbo.Pass1 where id = @UserID", sqlPars, out data);
+        //    UserInfo userInfo = new UserInfo();
+        //    var result = Sci.Production.Win.Login.UserLogin(userid, data.Rows[0]["Password"].ToString(), factoryID, userInfo);
+        //    Env.User = userInfo;
+        //    var menuItem = new ToolStripMenuItem(menuName);
+        //    Type typeofControl = Type.GetType(formName);
+        //    var arrArg = string.IsNullOrWhiteSpace(arguments) ? new Object[1] { menuItem } : new Object[2] { menuItem, arguments };
+        //    Form formClass = (Form)Activator.CreateInstance(typeofControl, arrArg);
 
-            Application.Run(formClass); //load Trade 
-            Sci.Env.AppShutdown();
-            return;
+        //    Application.Run(formClass); //load Trade 
+        //    Sci.Env.AppShutdown();
+        //    return;
 
-        }
+        //}
     }
 
     //static class Program
