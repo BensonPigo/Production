@@ -38,7 +38,7 @@ namespace Sci.Production.Win
 
             //Sci.Production.SCHEMAS.PASS1Row data;
 
-            if (DBProxy.Current.DefaultModuleName == "bin" || DBProxy.Current.DefaultModuleName == "x86")
+            if (ConfigurationManager.AppSettings["TaipeiServer"] != "")
             {
                 //Assembly a = typeof(Module1).Assembly;
                 label4.Visible = true;
@@ -46,13 +46,18 @@ namespace Sci.Production.Win
                 XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
                 var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
                 Dictionary<String, String> SystemOption = new Dictionary<String, String>();
-                if (hasConnectionNamedQuery.Count > 0)
+                string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
+                if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
                 {
-                    for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
+                    foreach (string strSever in strSevers)
                     {
-                        if (hasConnectionNamedQuery[i].Contains("Tradedb_"))
+                        for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
                         {
-                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("Tradedb_", "").Trim().ToUpper());
+                            if (strSever == hasConnectionNamedQuery[i])
+                            {
+                                SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("Tradedb_", "").Trim().ToUpper());
+                                break;
+                            }
                         }
                     }
                     comboBox2.ValueMember = "Key";
