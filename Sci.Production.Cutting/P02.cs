@@ -312,10 +312,13 @@ outer apply
     where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode
 ) c
 outer apply (
-	select min(qty) as minQty
+select min(qty) as minQty from (
+	select FabricCombo,sum(qty) qty --min(qty) as minQty
 	from Workorder wo WITH (NOLOCK) , workorder_Distribute wd WITH (NOLOCK) , Order_fabriccode ofb WITH (NOLOCK) 
 	Where wo.id = '{0}' and wo.ukey = wd.workorderukey and wo.Id  = ofb.id and wo.FabricPanelCode = ofb.FabricPanelCode 
-	and wd.article =a.Article and SizeCode=a.SizeCode
+	and wd.article =a.Article and wd.SizeCode=a.SizeCode and wd.OrderID=a.ID
+	group by FabricCombo
+	) a
 ) balc
 Where b.cuttingsp ='{0}'
 order by id,article,sizecode"
@@ -2279,6 +2282,7 @@ where w.ID = '{0}'", masterID);
             if (MyUtility.Check.Empty(SpNoRow)) return;
             string Article = SpNoRow["Article"].ToString();
             string SizeCode = SpNoRow["SizeCode"].ToString();
+            string SpNo = SpNoRow["Orderid"].ToString();
             int rowIndex = 0;
 
             if (!MyUtility.Check.Empty(distqtyTb) || distqtyTb.Rows.Count > 1)
@@ -2287,7 +2291,7 @@ where w.ID = '{0}'", masterID);
                 {
                     DataGridViewRow dvr = gridQtyBreakdown.Rows[rIdx];
                     DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
-                    if (row["article"].ToString() == Article && row["SizeCode"].ToString() == SizeCode)
+                    if (row["article"].ToString() == Article && row["SizeCode"].ToString() == SizeCode && row["id"].ToString() == SpNo)
                     {
                         rowIndex = rIdx;
                         break;
