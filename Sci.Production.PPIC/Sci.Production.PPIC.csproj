@@ -534,6 +534,12 @@
     <Compile Include="R08.Designer.cs">
       <DependentUpon>R08.cs</DependentUpon>
     </Compile>
+    <Compile Include="R09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R09.Designer.cs">
+      <DependentUpon>R09.cs</DependentUpon>
+    </Compile>
     <Compile Include="SCIControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -742,6 +748,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R08.resx">
       <DependentUpon>R08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R09.resx">
+      <DependentUpon>R09.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
