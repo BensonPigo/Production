@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Sci.Production.Basic;
-
+using System.Configuration;
 using Ict;
 using Ict.Win;
 using System.Diagnostics;
@@ -118,9 +118,10 @@ namespace Sci.Production
 
             // 產生Menu
             foreach (DataRow dr in dtMenu.Rows)
-            {
+            {               
                 if (!MyUtility.Check.Empty(dr["ForMISOnly"]) && !Sci.Env.User.IsMIS) continue;
                 if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
+                if (dr["MenuName"].ToString().Contains("Centralized") && ConfigurationManager.AppSettings["TaipeiServer"] == "") continue;
 
                 menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
                 progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;

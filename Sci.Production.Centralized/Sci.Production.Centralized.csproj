@@ -117,6 +117,60 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Packing_B01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Packing_B01.Designer.cs">
+      <DependentUpon>Packing_B01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cutting_B01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cutting_B01.Designer.cs">
+      <DependentUpon>Cutting_B01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cutting_B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cutting_B04.Designer.cs">
+      <DependentUpon>Cutting_B04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B03.Designer.cs">
+      <DependentUpon>IE_B03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IE_B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IE_B04.Designer.cs">
+      <DependentUpon>IE_B04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PPIC_B01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PPIC_B01.Designer.cs">
+      <DependentUpon>PPIC_B01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PPIC_B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PPIC_B02.Designer.cs">
+      <DependentUpon>PPIC_B02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WH_B03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_B03.Designer.cs">
+      <DependentUpon>WH_B03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WH_B04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_B04.Designer.cs">
+      <DependentUpon>WH_B04.cs</DependentUpon>
+    </Compile>
     <Compile Include="WH_B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +178,35 @@
       <DependentUpon>WH_B01.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Packing_B01.resx">
+      <DependentUpon>Packing_B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Cutting_B01.resx">
+      <DependentUpon>Cutting_B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Cutting_B04.resx">
+      <DependentUpon>Cutting_B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B03.resx">
+      <DependentUpon>IE_B03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IE_B04.resx">
+      <DependentUpon>IE_B04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PPIC_B01.resx">
+      <DependentUpon>PPIC_B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PPIC_B02.resx">
+      <DependentUpon>PPIC_B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WH_B03.resx">
+      <DependentUpon>WH_B03.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WH_B04.resx">
+      <DependentUpon>WH_B04.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="WH_B01.resx">
       <DependentUpon>WH_B01.cs</DependentUpon>
       <SubType>Designer</SubType>
