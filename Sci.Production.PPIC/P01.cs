@@ -183,7 +183,7 @@ namespace Sci.Production.PPIC
                 txttpeuser4.DisplayBox1Binding = "";
             }
             #endregion
-            #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
+            #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
             System.Data.DataTable OrdersData;
             sqlCmd = string.Format(@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList,
@@ -219,6 +219,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 displayActPullout.Value = "";
                 numGarmentLT.Value = 0;
             }
+
+            displayOrderCombo.Value = MyUtility.GetValue.Lookup(string.Format("Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             #endregion
             bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
             btnMCHandleCFM.Enabled = CurrentMaintain != null && dataType == "1" && lConfirm && !EditMode;
