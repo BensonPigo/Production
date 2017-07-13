@@ -59,7 +59,7 @@ where   MDivisionID = '{0}'
             }
             else
             {
-                MyUtility.Msg.InfoBox("");
+                MyUtility.Msg.InfoBox("[Updated Date] or [SP#] must enter one!");
                 return false;
             }
             #endregion             
