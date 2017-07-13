@@ -48,3 +48,5 @@ Sci.Production.Warehouse/obj
 Sci.Production.Centralized/bin
 Sci.Production.Centralized/obj
 Database/ProductionDB.dbmdl
+Database/bin/Debug/
+Database/obj/Debug/

@@ -55,9 +55,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Report2012.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Report2012.resources">
-      <HintPath>..\_Dll\en\Ict.Report2012.resources.dll</HintPath>
-    </Reference>
     <Reference Include="Ict.resources">
       <HintPath>..\_Dll\en\Ict.resources.dll</HintPath>
     </Reference>

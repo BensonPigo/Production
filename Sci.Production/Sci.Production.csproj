@@ -97,10 +97,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Report2012.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Report2012.resources, Version=1.0.1701.1900, Culture=en, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_Dll\en\Ict.Report2012.resources.dll</HintPath>
-    </Reference>
     <Reference Include="Ict.resources">
       <HintPath>..\_Dll\en\Ict.resources.dll</HintPath>
     </Reference>
@@ -207,6 +203,7 @@
     <Reference Include="System.Transactions">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq">
       <Private>True</Private>
     </Reference>
@@ -1115,6 +1112,10 @@
     <ProjectReference Include="..\Sci.Production.Basic\Sci.Production.Basic.csproj">
       <Project>{da40e123-cd22-4656-8b3e-a27953ae7d34}</Project>
       <Name>Sci.Production.Basic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Centralized\Sci.Production.Centralized.csproj">
+      <Project>{1fd12ded-5fdb-4875-ad0a-431c7d531342}</Project>
+      <Name>Sci.Production.Centralized</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
