@@ -690,11 +690,11 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 d[i].Value.RejectChanges();
             }
             return;
-            //批次RejectChanges
-            foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            {
-                item.Value.RejectChanges();
-            }
+            ////批次RejectChanges
+            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            //{
+            //    item.Value.RejectChanges();
+            //}
         }
         public void dictionaryDatasAcceptChanges()
         {
@@ -705,12 +705,10 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                 d[i].Value.AcceptChanges();
             }
             return;
-            foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
-            {
-                item.Value.AcceptChanges();
-            }
+            //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            //{
+            //    item.Value.AcceptChanges();
+            //}
         }
-
-
     }
 }
