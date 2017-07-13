@@ -313,178 +313,206 @@ namespace Sci.Production.Tools
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Msg.QuestionBox("Do you want to do it ?") == DialogResult.Yes)
-            {
-                DataTable dtPass0 = null;
-                DataTable dtPass1 = null;
-                DataTable dtPass2 = null;
-                ITableSchema tsPass1 = null;
-                ITableSchema tsPass2 = null;
-                DataRow newRow = null;
-                DataRow[] drs = null;
-                bool different = false;
-
-                if (!(result = DBProxy.Current.Select(null, "SELECT PKey, ID FROM Pass0", out dtPass0)))
+            {                
+                try
                 {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
-                if (!(result = DBProxy.Current.Select(null, "SELECT * FROM Pass1", out dtPass1)))
-                {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
-                if (!(result = DBProxy.Current.Select(null, "SELECT * FROM Pass2", out dtPass2)))
-                {
-                    MyUtility.Msg.ErrorBox(result.ToString());
-                    return;
-                }
-                if (!(result = DBProxy.Current.GetTableSchema(null, "Pass1", out tsPass1)))
-                {
-                    MessageBox.Show(result.ToString());
-                    return;
-                }
-                if (!(result = DBProxy.Current.GetTableSchema(null, "Pass2", out tsPass2)))
-                {
-                    MessageBox.Show(result.ToString());
-                    return;
-                }
-
-                // 更新Pass1的Position
-                foreach (DataRow drPass0 in dtPass0.Rows)
-                {
-                    drs = dtPass1.Select(string.Format("FKPass0 = {0}", (Int64)drPass0["PKey"]));
-                    foreach (DataRow dr in drs)
+                    //執行批次修改Pass1 Position && Pass2 
+                    DualResult dResult;
+                    dResult = DBProxy.Current.Execute(null, "exec Update_PassFunction");
+                    if (!dResult.IsEmpty)
                     {
-                        if (drPass0["ID"].ToString() != dr["Position"].ToString())
-                        {
-                            dr["Position"] = drPass0["ID"].ToString();
-                        }
+                        MyUtility.Msg.ErrorBox("Update pass2 failed, Pleaes re-try");
+                        return;
                     }
-                }
-
-                 GetMenuData();
-
-                // 刪除Pass2內不存在於Menu的資料
-                IList<DataRow> listPass2 = dtPass2.ToList<DataRow>();
-                foreach (DataRow drPass2 in listPass2)
-                {
-                    drs = dtDetailMenu.Select(string.Format("PKey = {0}", (Int64)drPass2["FKMenu"]));
-                    if (drs.Length == 0)
+                    else
                     {
-                        drPass2.Delete();
-                    }
-                }
-
-                // 新增Menu有但不存在於Pass2的資料 / 維護BarPrompt及權限設定與Menu同步
-                foreach (DataRow drPass0 in dtPass0.Rows)
-                {
-                    DataRow[] dt = dtPass2.Select(string.Format("FKPass0 = {0}", (Int64)drPass0["PKey"]));
-                    foreach (DataRow drDetailMenu in dtDetailMenu.Rows)
-                    {
-                        drs = dt.CopyToDataTable().Select(string.Format("FKMenu = {0}", (Int64)drDetailMenu["PKey"]));
-                        if (drs.Length > 0)
-                        {
-                            foreach (DataRow dr in drs)
-                            {
-                                if (dr["MenuName"].ToString() != drDetailMenu["MenuName"].ToString()) dr["MenuName"] = drDetailMenu["MenuName"].ToString();
-                                if (dr["BarPrompt"].ToString() != drDetailMenu["BarPrompt"].ToString()) dr["BarPrompt"] = drDetailMenu["BarPrompt"].ToString();
-                                if (!(bool)drDetailMenu["CanNew"] && (bool)dr["CanNew"]) dr["CanNew"] = 0;
-                                if (!(bool)drDetailMenu["CanEdit"] && (bool)dr["CanEdit"]) dr["CanEdit"] = 0;
-                                if (!(bool)drDetailMenu["CanDelete"] && (bool)dr["CanDelete"]) dr["CanDelete"] = 0;
-                                if (!(bool)drDetailMenu["CanPrint"] && (bool)dr["CanPrint"]) dr["CanPrint"] = 0;
-                                if (!(bool)drDetailMenu["CanConfirm"] && (bool)dr["CanConfirm"]) dr["CanConfirm"] = 0;
-                                if (!(bool)drDetailMenu["CanUnConfirm"] && (bool)dr["CanUnConfirm"]) dr["CanUnConfirm"] = 0;
-                                if (!(bool)drDetailMenu["CanSend"] && (bool)dr["CanSend"]) dr["CanSend"] = 0;
-                                if (!(bool)drDetailMenu["CanRecall"] && (bool)dr["CanRecall"]) dr["CanRecall"] = 0;
-                                if (!(bool)drDetailMenu["CanCheck"] && (bool)dr["CanCheck"]) dr["CanCheck"] = 0;
-                                if (!(bool)drDetailMenu["CanUnCheck"] && (bool)dr["CanUnCheck"]) dr["CanUnCheck"] = 0;
-                                if (!(bool)drDetailMenu["CanClose"] && (bool)dr["CanClose"]) dr["CanClose"] = 0;
-                                if (!(bool)drDetailMenu["CanUnClose"] && (bool)dr["CanUnClose"]) dr["CanUnClose"] = 0;
-                                if (!(bool)drDetailMenu["CanReceive"] && (bool)dr["CanReceive"]) dr["CanReceive"] = 0;
-                                if (!(bool)drDetailMenu["CanReturn"] && (bool)dr["CanReturn"]) dr["CanReturn"] = 0;
-                                if (!(bool)drDetailMenu["CanJunk"] && (bool)dr["CanJunk"]) dr["CanJunk"] = 0;
-                            }
-                        }
-                        else
-                        {
-                            newRow = dtPass2.NewRow();
-                            newRow["FKPass0"] = (Int64)drPass0["PKey"];
-                            newRow["FKMenu"] = (Int64)drDetailMenu["PKey"];
-                            newRow["MenuName"] = drDetailMenu["MenuName"].ToString();
-                            newRow["BarPrompt"] = drDetailMenu["BarPrompt"].ToString();
-                            newRow["CanNew"] = (bool)drDetailMenu["CanNew"];
-                            newRow["CanEdit"] = (bool)drDetailMenu["CanEdit"];
-                            newRow["CanDelete"] = (bool)drDetailMenu["CanDelete"];
-                            newRow["CanPrint"] = (bool)drDetailMenu["CanPrint"];
-                            newRow["CanConfirm"] = (bool)drDetailMenu["CanConfirm"];
-                            newRow["CanUnConfirm"] = (bool)drDetailMenu["CanUnConfirm"];
-                            newRow["CanSend"] = (bool)drDetailMenu["CanSend"];
-                            newRow["CanRecall"] = (bool)drDetailMenu["CanRecall"];
-                            newRow["CanCheck"] = (bool)drDetailMenu["CanCheck"];
-                            newRow["CanUnCheck"] = (bool)drDetailMenu["CanUnCheck"];
-                            newRow["CanClose"] = (bool)drDetailMenu["CanClose"];
-                            newRow["CanUnClose"] = (bool)drDetailMenu["CanUnClose"];
-                            newRow["CanReceive"] = (bool)drDetailMenu["CanReceive"];
-                            newRow["CanReturn"] = (bool)drDetailMenu["CanReturn"];
-                            newRow["CanJunk"] = (bool)drDetailMenu["CanJunk"];
-                            dtPass2.Rows.Add(newRow);
-                        }
-                    }
-                }
-
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
-                {
-                    try
-                    {
-                        // 更新Pass1異動
-                        foreach (DataRow drPass1 in dtPass1.Rows)
-                        {
-                            if (drPass1.RowState == DataRowState.Modified)
-                            {
-                                result = DBProxy.Current.UpdateByChanged(null, tsPass1, drPass1, out different);
-                            }
-                            if (!result.IsEmpty)
-                            {
-                                _transactionscope.Dispose();
-                                MyUtility.Msg.ErrorBox("Update pass1 failed, Pleaes re-try");
-                                return;
-                            }
-                        }
-
-                        // 更新Pass2異動
-                        foreach (DataRow drPass2 in dtPass2.Rows)
-                        {
-                            if (drPass2.RowState == DataRowState.Deleted)
-                            {
-                                result = DBProxy.Current.Delete(null, tsPass2, drPass2);
-                            }
-                            if (drPass2.RowState == DataRowState.Added)
-                            {
-                                result = DBProxy.Current.Insert(null, tsPass2, drPass2);
-                            }
-                            if (drPass2.RowState == DataRowState.Modified)
-                            {
-                                result = DBProxy.Current.UpdateByChanged(null, tsPass2, drPass2, out different);
-                            }
-
-                            if (!result.IsEmpty)
-                            {
-                                _transactionscope.Dispose();
-                                MyUtility.Msg.ErrorBox("Update pass2 failed, Pleaes re-try");
-                                return;
-                            }
-                        }
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Update successful");
                     }
-                    catch (Exception ex)
-                    {
-                        _transactionscope.Dispose();
-                        MyUtility.Msg.ErrorBox("Update transaction error.\n" + ex);
-                    }
                 }
+                catch (Exception ex)
+                {
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+
+                #region old Code
+                //DataTable dtPass0 = null;
+                //DataTable dtPass1 = null;
+                //DataTable dtPass2 = null;
+                //ITableSchema tsPass1 = null;
+                //ITableSchema tsPass2 = null;
+                ////DataRow newRow = null;
+                ////DataRow[] drs = null;
+                ////bool different = false;
+
+                //if (!(result = DBProxy.Current.Select(null, "SELECT PKey, ID FROM Pass0", out dtPass0)))
+                //{
+                //    MyUtility.Msg.ErrorBox(result.ToString());
+                //    return;
+                //}
+                //if (!(result = DBProxy.Current.Select(null, "SELECT * FROM Pass1", out dtPass1)))
+                //{
+                //    MyUtility.Msg.ErrorBox(result.ToString());
+                //    return;
+                //}
+                //if (!(result = DBProxy.Current.Select(null, "SELECT * FROM Pass2", out dtPass2)))
+                //{
+                //    MyUtility.Msg.ErrorBox(result.ToString());
+                //    return;
+                //}
+                //if (!(result = DBProxy.Current.GetTableSchema(null, "Pass1", out tsPass1)))
+                //{
+                //    MessageBox.Show(result.ToString());
+                //    return;
+                //}
+                //if (!(result = DBProxy.Current.GetTableSchema(null, "Pass2", out tsPass2)))
+                //{
+                //    MessageBox.Show(result.ToString());
+                //    return;
+                //}
+                //// 更新Pass1的Position
+                //foreach (DataRow drPass0 in dtPass0.Rows)
+                //{
+                //    drs = dtPass1.Select(string.Format("FKPass0 = {0}", (Int64)drPass0["PKey"]));
+                //    foreach (DataRow dr in drs)
+                //    {
+                //        if (drPass0["ID"].ToString() != dr["Position"].ToString())
+                //        {
+                //            dr["Position"] = drPass0["ID"].ToString();
+                //        }
+                //    }
+                //}
+
+                // GetMenuData();
+
+                //// 刪除Pass2內不存在於Menu的資料
+                //IList<DataRow> listPass2 = dtPass2.ToList<DataRow>();
+                //foreach (DataRow drPass2 in listPass2)
+                //{
+                //    drs = dtDetailMenu.Select(string.Format("PKey = {0}", (Int64)drPass2["FKMenu"]));
+                //    if (drs.Length == 0)
+                //    {
+                //        drPass2.Delete();
+                //    }
+                //}
+
+                //// 新增Menu有但不存在於Pass2的資料 / 維護BarPrompt及權限設定與Menu同步
+                //foreach (DataRow drPass0 in dtPass0.Rows)
+                //{
+                //    //DataRow[] dt = dtPass2.Select(string.Format("FKPass0 = {0}", (Int64)drPass0["PKey"]));
+                //    foreach (DataRow drDetailMenu in dtDetailMenu.Rows)
+                //    {
+                //        drs = dtPass2.Select(string.Format("FKPass0 = {0} AND FKMenu = {1}", (Int64)drPass0["PKey"], (Int64)drDetailMenu["PKey"]));
+                //       // drs = dt.CopyToDataTable().Select(string.Format("FKMenu = {0}", (Int64)drDetailMenu["PKey"]));
+                //        if (drs.Length > 0)
+                //        {
+                //            foreach (DataRow dr in drs)
+                //            {
+                //                if (dr["MenuName"].ToString() != drDetailMenu["MenuName"].ToString()) dr["MenuName"] = drDetailMenu["MenuName"].ToString();
+                //                if (dr["BarPrompt"].ToString() != drDetailMenu["BarPrompt"].ToString()) dr["BarPrompt"] = drDetailMenu["BarPrompt"].ToString();
+                //                if (!(bool)drDetailMenu["CanNew"] && (bool)dr["CanNew"]) dr["CanNew"] = 0;
+                //                if (!(bool)drDetailMenu["CanEdit"] && (bool)dr["CanEdit"]) dr["CanEdit"] = 0;
+                //                if (!(bool)drDetailMenu["CanDelete"] && (bool)dr["CanDelete"]) dr["CanDelete"] = 0;
+                //                if (!(bool)drDetailMenu["CanPrint"] && (bool)dr["CanPrint"]) dr["CanPrint"] = 0;
+                //                if (!(bool)drDetailMenu["CanConfirm"] && (bool)dr["CanConfirm"]) dr["CanConfirm"] = 0;
+                //                if (!(bool)drDetailMenu["CanUnConfirm"] && (bool)dr["CanUnConfirm"]) dr["CanUnConfirm"] = 0;
+                //                if (!(bool)drDetailMenu["CanSend"] && (bool)dr["CanSend"]) dr["CanSend"] = 0;
+                //                if (!(bool)drDetailMenu["CanRecall"] && (bool)dr["CanRecall"]) dr["CanRecall"] = 0;
+                //                if (!(bool)drDetailMenu["CanCheck"] && (bool)dr["CanCheck"]) dr["CanCheck"] = 0;
+                //                if (!(bool)drDetailMenu["CanUnCheck"] && (bool)dr["CanUnCheck"]) dr["CanUnCheck"] = 0;
+                //                if (!(bool)drDetailMenu["CanClose"] && (bool)dr["CanClose"]) dr["CanClose"] = 0;
+                //                if (!(bool)drDetailMenu["CanUnClose"] && (bool)dr["CanUnClose"]) dr["CanUnClose"] = 0;
+                //                if (!(bool)drDetailMenu["CanReceive"] && (bool)dr["CanReceive"]) dr["CanReceive"] = 0;
+                //                if (!(bool)drDetailMenu["CanReturn"] && (bool)dr["CanReturn"]) dr["CanReturn"] = 0;
+                //                if (!(bool)drDetailMenu["CanJunk"] && (bool)dr["CanJunk"]) dr["CanJunk"] = 0;       
+                //            }
+                //        }
+                //        else
+                //        {
+                //            newRow = dtPass2.NewRow();
+                //            newRow["FKPass0"] = (Int64)drPass0["PKey"];
+                //            newRow["FKMenu"] = (Int64)drDetailMenu["PKey"];
+                //            newRow["MenuName"] = drDetailMenu["MenuName"].ToString();
+                //            newRow["BarPrompt"] = drDetailMenu["BarPrompt"].ToString();
+                //            newRow["CanNew"] = (bool)drDetailMenu["CanNew"];
+                //            newRow["CanEdit"] = (bool)drDetailMenu["CanEdit"];
+                //            newRow["CanDelete"] = (bool)drDetailMenu["CanDelete"];
+                //            newRow["CanPrint"] = (bool)drDetailMenu["CanPrint"];
+                //            newRow["CanConfirm"] = (bool)drDetailMenu["CanConfirm"];
+                //            newRow["CanUnConfirm"] = (bool)drDetailMenu["CanUnConfirm"];
+                //            newRow["CanSend"] = (bool)drDetailMenu["CanSend"];
+                //            newRow["CanRecall"] = (bool)drDetailMenu["CanRecall"];
+                //            newRow["CanCheck"] = (bool)drDetailMenu["CanCheck"];
+                //            newRow["CanUnCheck"] = (bool)drDetailMenu["CanUnCheck"];
+                //            newRow["CanClose"] = (bool)drDetailMenu["CanClose"];
+                //            newRow["CanUnClose"] = (bool)drDetailMenu["CanUnClose"];
+                //            newRow["CanReceive"] = (bool)drDetailMenu["CanReceive"];
+                //            newRow["CanReturn"] = (bool)drDetailMenu["CanReturn"];
+                //            newRow["CanJunk"] = (bool)drDetailMenu["CanJunk"];
+                //            dtPass2.Rows.Add(newRow);
+                //        }
+                //    }
+                //}
+
+                //TransactionScope _transactionscope = new TransactionScope();
+                //using (_transactionscope)
+                //{
+                //    try
+                //    {
+                //        // 更新Pass1異動
+                //        foreach (DataRow drPass1 in dtPass1.Rows)
+                //        {
+                //            if (drPass1.RowState == DataRowState.Modified)
+                //            {
+                //                result = DBProxy.Current.UpdateByChanged(null, tsPass1, drPass1, out different);
+                //            }
+                //            if (!result.IsEmpty)
+                //            {
+                //                _transactionscope.Dispose();
+                //                MyUtility.Msg.ErrorBox("Update pass1 failed, Pleaes re-try");
+                //                return;
+                //            }
+                //        }
+                //        int count = 0;
+                //        // 更新Pass2異動
+                //        foreach (DataRow drPass2 in dtPass2.Rows)
+                //        {
+                //            if (drPass2.RowState == DataRowState.Deleted)
+                //            {
+                //                result = DBProxy.Current.Delete(null, tsPass2, drPass2);
+                //                count++;
+                //            }
+                //            if (drPass2.RowState == DataRowState.Added)
+                //            {
+                //                result = DBProxy.Current.Insert(null, tsPass2, drPass2);
+                //                count++;
+                //            }
+                //            if (drPass2.RowState == DataRowState.Modified)
+                //            {
+                //                result = DBProxy.Current.UpdateByChanged(null, tsPass2, drPass2, out different);
+                //                count++;
+                //            }
+
+                //            if (!result.IsEmpty)
+                //            {
+                //                MyUtility.Msg.InfoBox("連線數: "+count);
+                //                _transactionscope.Dispose();
+                //                MyUtility.Msg.ErrorBox("Update pass2 failed, Pleaes re-try");
+                //                return;
+                //            }
+                //        }
+                //        _transactionscope.Complete();
+                //        _transactionscope.Dispose();
+                //        MyUtility.Msg.InfoBox("Update successful");
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        _transactionscope.Dispose();
+                //        MyUtility.Msg.ErrorBox("Update transaction error.\n" + ex);
+                //    }
+                //}
+                #endregion
+
                 ReloadDatas();
             }
         }
