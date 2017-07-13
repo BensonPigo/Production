@@ -372,9 +372,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.49418cm</Top>
+                          <Top>0.52946cm</Top>
                           <Left>14.91526cm</Left>
-                          <Height>0.59118cm</Height>
+                          <Height>0.5559cm</Height>
                           <Width>2.03257cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
@@ -404,9 +404,9 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Total</rd:DefaultName>
-                          <Top>0.49418cm</Top>
+                          <Top>0.52946cm</Top>
                           <Left>16.94785cm</Left>
-                          <Height>0.59118cm</Height>
+                          <Height>0.5559cm</Height>
                           <Width>3.47356cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
@@ -427,6 +427,7 @@
                         </Border>
                       </Style>
                     </Rectangle>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
