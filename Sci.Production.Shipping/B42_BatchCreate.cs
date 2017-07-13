@@ -129,7 +129,8 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
                 return;
             }
-            DataTable GroupData, gridData;
+            DataTable GroupData, gridData, MidDetailData;
+            DataTable[] GandM;
             StringBuilder sqlCmd = new StringBuilder();
             string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
             #region 組撈所有明細SQL
@@ -312,7 +313,7 @@ select * from #tmpLocalData) a
 group by StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem,StyleCPU,StyleUKey,Description,Type,SuppID
 )x
 
-select *,Waste
+select t.*,Waste
 from #tlast t left join VNContract_Detail v with(nolock) on id = @vncontractid and v.NLCode = t.NLCode
 drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tmpBOFData,#tmpBOFNewQty,#tmpBOFRateData,#tmpConeToM,#tmpFabricCode,#tmpFinalFixDeclare,#tmpFixDeclare,#tmpLocalData,#tmpLocalNewQty,#tmpLocalPO,#tmpMarkerData,#tmpPrepareRate,#tlast
 ");
@@ -327,7 +328,7 @@ drop table #tmpAllStyle,#tmpBOA,#tmpBOAData,#tmpBOANewQty,#tmpBOAPrepareData,#tm
             #region 整理出依Style,Season Group的資料
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(AllDetailData, "StyleID,SeasonID,OrderBrandID,Category,SizeCode,Article,GMTQty,SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,Qty,LocalItem,StyleCPU,StyleUKey",
+                MyUtility.Tool.ProcessWithDatatable(AllDetailData, "",
                     @"
 alter table #tmp alter column StyleID		varchar(100)
 alter table #tmp alter column SeasonID		varchar(100)
@@ -342,7 +343,6 @@ alter table #tmp alter column BrandID		varchar(100)
 alter table #tmp alter column NLCode		varchar(100)
 alter table #tmp alter column HSCode		varchar(100)
 alter table #tmp alter column CustomsUnit	varchar(100)
---alter table #tmp alter column Qty			varchar(100)
 alter table #tmp alter column LocalItem		varchar(100)
 alter table #tmp alter column StyleCPU		varchar(100)
 alter table #tmp alter column StyleUKey		varchar(100)
@@ -497,7 +497,24 @@ END
 CLOSE cursor_tmpBasic
 DEALLOCATE cursor_tmpBasic
 
-select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode", out GroupData);
+select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
+
+select distinct id = ''
+,NLCode
+,t.HSCode
+,UnitID = t.CustomsUnit
+,Qty = sum(t.Qty) over(partition by t.StyleUkey,t.SizeCode,t.Article,t.NLCode,t.Category)
+,UserCreate = 0
+,x.StyleUkey
+,x.SizeCode
+,t.Article
+,t.Waste
+,Deleted = 0
+from #tmp t,@tempCombColor x
+where t.StyleUKey = x.StyleUkey 
+and t.Article = SUBSTRING(x.Article,0, CHARINDEX(',',x.Article)) 
+and t.SizeCode = x.SizeCode and t.Category = x.Category
+", out GandM);
             }
             catch (Exception ex)
             {
@@ -505,7 +522,8 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
                 return;
             }
             #endregion
-
+            GroupData = GandM[0];
+            MidDetailData = GandM[1];
             //撈出每個Consumption一定都要有的NLCode
             DataTable NecessaryItem;
             result = DBProxy.Current.Select(null, string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where NecessaryItem = 1 and ID = '{0}'", contractID), out NecessaryItem);
@@ -522,15 +540,15 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             {
                 colorway = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
                 //找出是否有空白的NL Code
-                DataRow[] findData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = ''",
-                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"])));
+                DataRow[] findData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '' and Category = '{3}'",
+                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Category"])));
 
                 //找出是否有缺料
                 lackNLCode = "";
                 foreach (DataRow lack in NecessaryItem.Rows)
                 {
-                    DataRow[] findLackData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '{3}'",
-                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(lack["NLCode"])));
+                    DataRow[] findLackData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = '{3}' and Category = '{4}'",
+                    MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(lack["NLCode"]), MyUtility.Convert.GetString(dr["Category"])));
                     if (findLackData.Length <= 0)
                     {
                         lackNLCode = lackNLCode + MyUtility.Convert.GetString(lack["NLCode"]) + ",";
@@ -560,41 +578,41 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
 
             #region 組出中間層資料
             ///////////////////
-            result = DBProxy.Current.Select(null, "select *,0 as StyleUkey,'' as SizeCode, '' as Article,0.0 as Waste, 0 as Deleted from VNConsumption_Detail WITH (NOLOCK) where 1 = 0", out MidDetailData);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Prepare detail structure fail!!");
-                return;
-            }
-            foreach (DataRow dr in gridData.Rows)
-            {
-                string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
-                DataRow[] selectedData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article));
-                for (int i = 0; i < selectedData.Length; i++)
-                {
-                    DataRow[] finddata = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article, MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
+            //result = DBProxy.Current.Select(null, "select *,0 as StyleUkey,'' as SizeCode, '' as Article,0.0 as Waste, 0 as Deleted from VNConsumption_Detail WITH (NOLOCK) where 1 = 0", out MidDetailData);
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox("Prepare detail structure fail!!");
+            //    return;
+            //}
+            //foreach (DataRow dr in gridData.Rows)
+            //{
+            //    string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
+            //    DataRow[] selectedData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article));
+            //    for (int i = 0; i < selectedData.Length; i++)
+            //    {
+            //        DataRow[] finddata = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article, MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
 
-                    if (finddata.Length > 0)
-                    {
-                        finddata[0]["Qty"] = MyUtility.Convert.GetDecimal(finddata[0]["Qty"]) + MyUtility.Convert.GetDecimal(selectedData[i]["Qty"]);
-                    }
-                    else
-                    {
-                        DataRow newrow = MidDetailData.NewRow();
-                        newrow["NLCode"] = selectedData[i]["NLCode"];
-                        newrow["HSCode"] = selectedData[i]["HSCode"];
-                        newrow["UnitID"] = selectedData[i]["CustomsUnit"];
-                        newrow["Qty"] = selectedData[i]["Qty"];
-                        newrow["Waste"] = selectedData[i]["Waste"];
-                        newrow["UserCreate"] = 0;
-                        newrow["StyleUKey"] = dr["StyleUKey"];
-                        newrow["SizeCode"] = dr["SizeCode"];
-                        newrow["Article"] = article;
-                        newrow["Deleted"] = 0;
-                        MidDetailData.Rows.Add(newrow);
-                    }
-                }
-            }
+            //        if (finddata.Length > 0)
+            //        {
+            //            finddata[0]["Qty"] = MyUtility.Convert.GetDecimal(finddata[0]["Qty"]) + MyUtility.Convert.GetDecimal(selectedData[i]["Qty"]);
+            //        }
+            //        else
+            //        {
+            //            DataRow newrow = MidDetailData.NewRow();
+            //            newrow["NLCode"] = selectedData[i]["NLCode"];
+            //            newrow["HSCode"] = selectedData[i]["HSCode"];
+            //            newrow["UnitID"] = selectedData[i]["CustomsUnit"];
+            //            newrow["Qty"] = selectedData[i]["Qty"];
+            //            newrow["Waste"] = selectedData[i]["Waste"];
+            //            newrow["UserCreate"] = 0;
+            //            newrow["StyleUKey"] = dr["StyleUKey"];
+            //            newrow["SizeCode"] = dr["SizeCode"];
+            //            newrow["Article"] = article;
+            //            newrow["Deleted"] = 0;
+            //            MidDetailData.Rows.Add(newrow);
+            //        }
+            //    }
+            //}
             #endregion
 
             listControlBindingSource1.DataSource = gridData;
