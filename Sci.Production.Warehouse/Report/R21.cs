@@ -74,17 +74,18 @@ select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
-	,[Seq1] = psd.SEQ1
-	,[Seq2] = psd.SEQ2
-	,[Material Type] = psd.FabricType
-	,[Refno] = psd.Refno
-	,[SCI Refno] = psd.SCIRefno
-	,[Color] = psd.ColorID
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
 	,[Project] = o.ProjectID
 	,[Program] = o.ProgramID
+	,[Seq1] = psd.SEQ1
+	,[Seq2] = psd.SEQ2
+	,[Material Type] = psd.FabricType
+	,[Refno] = psd.Refno
+	,[SCI Refno] = psd.SCIRefno
+	,[Description] = d.Description
+	,[Color] = psd.ColorID
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
@@ -113,6 +114,12 @@ outer apply
 		for xml path('')
 	),1,1,'')
 )f
+outer apply
+(
+	select Description 
+	from Fabric f with (nolock)
+	where f.SCIRefno = psd.SCIRefno
+)d
 where 1=1
 ");
                 #endregion
@@ -125,21 +132,22 @@ select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
-	,[Seq1] = psd.SEQ1
-	,[Seq2] = psd.SEQ2
-	,[Material Type] = psd.FabricType
-	,[Refno] = psd.Refno
-	,[SCI Refno] = psd.SCIRefno
-	,[Color] = psd.ColorID
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
 	,[Project] = o.ProjectID
 	,[Program] = o.ProgramID
+	,[Seq1] = psd.SEQ1
+	,[Seq2] = psd.SEQ2
+	,[Material Type] = psd.FabricType
+	,[Refno] = psd.Refno
+	,[SCI Refno] = psd.SCIRefno
+    ,[Description] = d.Description
+	,[Color] = psd.ColorID
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
-	,[Purchase Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty),2)
-	,[Ship Qty] = round(dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty),2)
+	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
+	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
 	,[Adjust Qty] = round(mpd.AdjustQty,2)
@@ -152,6 +160,18 @@ select
 from Orders o with (nolock)
 inner join PO_Supp_Detail psd with (nolock) on psd.id = o.id
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
+outer apply
+(
+	select Description 
+	from Fabric f with (nolock)
+	where f.SCIRefno = psd.SCIRefno
+)d
+outer apply
+(
+	select RateValue
+	from Unit_Rate WITH (NOLOCK) 
+	where UnitFrom = psd.PoUnit and UnitTo = psd.StockUnit
+)r
 where 1=1
 ");
                 #endregion
