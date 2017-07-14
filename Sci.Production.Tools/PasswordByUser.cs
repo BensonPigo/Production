@@ -71,7 +71,31 @@ namespace Sci.Production.Tools
             comboLanguage.ValueMember = "Key";
             comboLanguage.DisplayMember = "Value";
         }
- 
+
+        protected override void SearchGridColumns()
+        {
+            DataRow[] sdr = ((DataTable)gridbs.DataSource).Select(string.Format("Name like '%{0}%'", locatefor.Text));
+            DataTable dt;
+
+            if (sdr.Length == 1)
+            {
+                base.SearchGridColumns();
+            }
+            else if (sdr.Length > 1)
+            {
+                dt = ((DataTable)gridbs.DataSource).Clone();
+                foreach (DataRow dr in sdr)
+                {
+                    dt.ImportRow(dr);
+                }
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name", "15,20", this.Text, "ID,Name");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) return;
+                locatefor.Text = item.GetSelectedString();
+                base.SearchGridColumns();
+            }
+        }
+
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
