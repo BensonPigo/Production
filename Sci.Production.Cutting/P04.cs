@@ -172,18 +172,17 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
             #region 表身
             string marker2sql = string.Format(
-            @"Select b.Orderid,b.MarkerName,sum(b.Layer) as layer,
-            b.MarkerNo,a.WorkOrderUkey,b.fabricCombo,
-            (
-                Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where a.WorkOrderUkey =c.WorkOrderUkey            
-                For XML path('')
-            ) as SizeRatio
-            From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
-            Where a.workorderukey = b.ukey and a.id = '{0}'
-			Group by b.Orderid,b.MarkerName,b.MarkerNo,
-                b.fabricCombo,a.WorkOrderUkey", CurrentMaintain["ID"]);
+            @"Select distinct b.Orderid,b.MarkerName,layer = sum(b.Layer) over (partition by b.Orderid,b.MarkerName,b.MarkerNo,b.fabricCombo,c.Width) ,
+b.MarkerNo,b.fabricCombo,
+(
+    Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
+    From WorkOrder_SizeRatio c WITH (NOLOCK) 
+    Where a.WorkOrderUkey =c.WorkOrderUkey            
+    For XML path('')
+) as SizeRatio
+,c.Width
+From WorkOrder b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK)
+Where a.workorderukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey", CurrentMaintain["ID"]);
             #endregion
             DataTable markerTb;
 
@@ -194,10 +193,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 {
                     insert_mark2 = insert_mark2 + string.Format(
                     @"Insert into MarkerReq_Detail      
-                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,WorkOrderUkey) 
+                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,CuttingWidth) 
                     Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}');",
                         reqid, dr["OrderID"], dr["SizeRatio"], dr["MarkerName"],
-                        dr["Layer"], dr["FabricCombo"], dr["MarkerNo"], dr["WorkOrderUkey"]);
+                        dr["Layer"], dr["FabricCombo"], dr["MarkerNo"], dr["Width"]);
                 }
             }
             else
