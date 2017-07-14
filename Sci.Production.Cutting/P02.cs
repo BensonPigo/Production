@@ -2287,6 +2287,7 @@ where w.ID = '{0}'", masterID);
             OnDetailEntered();
         }
 
+
         private void gridDistributetoSPNo_SelectionChanged(object sender, EventArgs e)
         {
             //更換qtybreakdown index
