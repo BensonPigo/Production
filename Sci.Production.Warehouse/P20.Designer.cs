@@ -50,6 +50,8 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.gridTransactionID = new Sci.Win.UI.Grid();
             this.gridRoll = new Sci.Win.UI.Grid();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -74,14 +76,14 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 613);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 48);
+            this.panel2.Size = new System.Drawing.Size(1004, 48);
             this.panel2.TabIndex = 0;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(916, 11);
+            this.btnClose.Location = new System.Drawing.Point(912, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -95,6 +97,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboFactory);
+            this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Controls.Add(this.txtColorID);
             this.panel3.Controls.Add(this.txtRefNo);
             this.panel3.Controls.Add(this.label2);
@@ -108,7 +112,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1008, 41);
+            this.panel3.Size = new System.Drawing.Size(1004, 41);
             this.panel3.TabIndex = 1;
             // 
             // txtColorID
@@ -117,7 +121,7 @@
             this.txtColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtColorID.IsSupportEditMode = false;
             this.txtColorID.IsSupportSytsemContextMenu = false;
-            this.txtColorID.Location = new System.Drawing.Point(635, 9);
+            this.txtColorID.Location = new System.Drawing.Point(633, 9);
             this.txtColorID.MaxLength = 13;
             this.txtColorID.Name = "txtColorID";
             this.txtColorID.Size = new System.Drawing.Size(58, 23);
@@ -129,7 +133,7 @@
             this.txtRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRefNo.IsSupportEditMode = false;
             this.txtRefNo.IsSupportSytsemContextMenu = false;
-            this.txtRefNo.Location = new System.Drawing.Point(436, 9);
+            this.txtRefNo.Location = new System.Drawing.Point(434, 9);
             this.txtRefNo.MaxLength = 13;
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(134, 23);
@@ -137,7 +141,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(573, 9);
+            this.label2.Location = new System.Drawing.Point(571, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 23);
             this.label2.TabIndex = 19;
@@ -145,7 +149,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(355, 9);
+            this.label1.Location = new System.Drawing.Point(353, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 18;
@@ -154,7 +158,7 @@
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(286, 9);
+            this.txtSeq.Location = new System.Drawing.Point(284, 9);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
@@ -168,7 +172,7 @@
             this.checkQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkQty.IsSupportEditMode = false;
-            this.checkQty.Location = new System.Drawing.Point(803, 11);
+            this.checkQty.Location = new System.Drawing.Point(929, 10);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
             this.checkQty.TabIndex = 5;
@@ -178,7 +182,7 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Location = new System.Drawing.Point(224, 9);
+            this.labelSeq.Location = new System.Drawing.Point(222, 9);
             this.labelSeq.Name = "labelSeq";
             this.labelSeq.Size = new System.Drawing.Size(59, 23);
             this.labelSeq.TabIndex = 17;
@@ -190,7 +194,7 @@
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSPNo.IsSupportEditMode = false;
             this.txtSPNo.IsSupportSytsemContextMenu = false;
-            this.txtSPNo.Location = new System.Drawing.Point(87, 9);
+            this.txtSPNo.Location = new System.Drawing.Point(85, 9);
             this.txtSPNo.MaxLength = 13;
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(134, 23);
@@ -198,7 +202,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(9, 9);
+            this.labelSPNo.Location = new System.Drawing.Point(7, 9);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
             this.labelSPNo.TabIndex = 13;
@@ -207,7 +211,7 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(708, 5);
+            this.btnQuery.Location = new System.Drawing.Point(694, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 4;
@@ -229,7 +233,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1008, 572);
+            this.splitContainer1.Size = new System.Drawing.Size(1004, 572);
             this.splitContainer1.SplitterDistance = 175;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -253,7 +257,7 @@
             this.gridStockList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridStockList.RowTemplate.Height = 24;
             this.gridStockList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridStockList.Size = new System.Drawing.Size(1008, 175);
+            this.gridStockList.Size = new System.Drawing.Size(1004, 175);
             this.gridStockList.TabIndex = 1;
             this.gridStockList.TabStop = false;
             // 
@@ -271,7 +275,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridRoll);
-            this.splitContainer2.Size = new System.Drawing.Size(1008, 393);
+            this.splitContainer2.Size = new System.Drawing.Size(1004, 393);
             this.splitContainer2.SplitterDistance = 244;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -295,7 +299,7 @@
             this.gridTransactionID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransactionID.RowTemplate.Height = 24;
             this.gridTransactionID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridTransactionID.Size = new System.Drawing.Size(1008, 244);
+            this.gridTransactionID.Size = new System.Drawing.Size(1004, 244);
             this.gridTransactionID.TabIndex = 6;
             this.gridTransactionID.TabStop = false;
             // 
@@ -319,13 +323,33 @@
             this.gridRoll.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRoll.RowTemplate.Height = 24;
             this.gridRoll.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridRoll.Size = new System.Drawing.Size(1008, 145);
+            this.gridRoll.Size = new System.Drawing.Size(1004, 145);
             this.gridRoll.TabIndex = 8;
             this.gridRoll.TabStop = false;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(842, 8);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(83, 24);
+            this.comboFactory.TabIndex = 113;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(778, 9);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(61, 23);
+            this.labelFactory.TabIndex = 112;
+            this.labelFactory.Text = "Factory";
+            // 
             // P20
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 661);
+            this.ClientSize = new System.Drawing.Size(1004, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
@@ -378,5 +402,7 @@
         private Win.UI.TextBox txtRefNo;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.Label labelFactory;
     }
 }
