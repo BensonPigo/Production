@@ -74,7 +74,7 @@ namespace Sci.Production.Tools
 
         protected override void SearchGridColumns()
         {
-            DataRow[] sdr = ((DataTable)gridbs.DataSource).Select(string.Format("Name like '%{0}%'", locatefor.Text));
+            DataRow[] sdr = ((DataTable)gridbs.DataSource).Select(string.Format("Name like '%{0}%' or ID like '%{0}%'", locatefor.Text));
             DataTable dt;
 
             if (sdr.Length == 1)
