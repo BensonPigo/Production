@@ -35,6 +35,9 @@
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtCellNo = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
+            this.labelCuttingWidth = new Sci.Win.UI.Label();
+            this.textCuttingWidth = new Sci.Win.UI.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,11 +52,14 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.textCuttingWidth);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtCellNo);
             this.detailcont.Controls.Add(this.labelCellNo);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayM);
+            this.detailcont.Controls.Add(this.labelCuttingWidth);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Size = new System.Drawing.Size(826, 392);
@@ -88,19 +94,17 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(70, 57);
             this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(78, 23);
+            this.labelM.Size = new System.Drawing.Size(92, 23);
             this.labelM.TabIndex = 0;
             this.labelM.Text = "M";
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(70, 167);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(78, 23);
+            this.labelDescription.Size = new System.Drawing.Size(92, 23);
             this.labelDescription.TabIndex = 1;
             this.labelDescription.Text = "Description";
             // 
@@ -109,7 +113,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(315, 59);
+            this.checkJunk.Location = new System.Drawing.Point(338, 59);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 3;
@@ -118,10 +122,9 @@
             // 
             // labelCellNo
             // 
-            this.labelCellNo.Lines = 0;
             this.labelCellNo.Location = new System.Drawing.Point(70, 112);
             this.labelCellNo.Name = "labelCellNo";
-            this.labelCellNo.Size = new System.Drawing.Size(78, 23);
+            this.labelCellNo.Size = new System.Drawing.Size(92, 23);
             this.labelCellNo.TabIndex = 8;
             this.labelCellNo.Text = "Cell No";
             // 
@@ -130,7 +133,7 @@
             this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
             this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayM.Location = new System.Drawing.Point(151, 57);
+            this.displayM.Location = new System.Drawing.Point(174, 57);
             this.displayM.Name = "displayM";
             this.displayM.Size = new System.Drawing.Size(64, 23);
             this.displayM.TabIndex = 0;
@@ -140,7 +143,7 @@
             this.txtCellNo.BackColor = System.Drawing.Color.White;
             this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCellNo.Location = new System.Drawing.Point(151, 112);
+            this.txtCellNo.Location = new System.Drawing.Point(174, 112);
             this.txtCellNo.Name = "txtCellNo";
             this.txtCellNo.Size = new System.Drawing.Size(43, 23);
             this.txtCellNo.TabIndex = 1;
@@ -150,10 +153,37 @@
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(151, 167);
+            this.txtDescription.Location = new System.Drawing.Point(174, 167);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(172, 23);
             this.txtDescription.TabIndex = 2;
+            // 
+            // labelCuttingWidth
+            // 
+            this.labelCuttingWidth.Location = new System.Drawing.Point(70, 217);
+            this.labelCuttingWidth.Name = "labelCuttingWidth";
+            this.labelCuttingWidth.Size = new System.Drawing.Size(92, 23);
+            this.labelCuttingWidth.TabIndex = 1;
+            this.labelCuttingWidth.Text = "Cutting Width";
+            // 
+            // textCuttingWidth
+            // 
+            this.textCuttingWidth.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CuttingWidth", true));
+            this.textCuttingWidth.BackColor = System.Drawing.Color.White;
+            this.textCuttingWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textCuttingWidth.Location = new System.Drawing.Point(174, 217);
+            this.textCuttingWidth.Name = "textCuttingWidth";
+            this.textCuttingWidth.Size = new System.Drawing.Size(64, 23);
+            this.textCuttingWidth.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(244, 220);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(36, 17);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "(cm)";
             // 
             // B02
             // 
@@ -190,5 +220,8 @@
         private Win.UI.TextBox txtDescription;
         private Win.UI.TextBox txtCellNo;
         private Win.UI.DisplayBox displayM;
+        private System.Windows.Forms.Label label1;
+        private Win.UI.TextBox textCuttingWidth;
+        private Win.UI.Label labelCuttingWidth;
     }
 }

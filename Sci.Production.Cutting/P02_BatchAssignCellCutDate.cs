@@ -9,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Sci.Production.Cutting
 {
@@ -17,6 +18,7 @@ namespace Sci.Production.Cutting
         private DataTable curTb;
         private DataTable detailTb;
         private DataTable sp;
+
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
             InitializeComponent();
@@ -30,7 +32,6 @@ namespace Sci.Production.Cutting
 
             MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
         }
-
 
         private void gridsetup()
         {
@@ -53,16 +54,10 @@ namespace Sci.Production.Cutting
                     e.EditingControl.Text = S.GetSelectedString();
 
                     DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                    if (!MyUtility.Check.Empty(chkwidth))
-                    {
-                        decimal width_CM = decimal.Parse(chkwidth);
-                        if (width_CM > 180)
-                        {
-                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
-                            cellchk = false;
-                        }
-                    }
+
+                    showMsgCheckCuttingWidth(e.EditingControl.Text, dr["SciRefno"].ToString());
+
+                    cellchk = false;
                 }
             };
             Cell.CellValidating += (s, e) =>
@@ -74,6 +69,15 @@ namespace Sci.Production.Cutting
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
                 DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+
+                // 不可輸入空白
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    MyUtility.Msg.WarningBox("Cell can't be empty.");
+                    e.Cancel = true;
+                    return;
+                }
+
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -93,17 +97,12 @@ namespace Sci.Production.Cutting
 
                 if (cellchk)
                 {
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                    if (!MyUtility.Check.Empty(chkwidth))
-                    {
-                        decimal width_CM = decimal.Parse(chkwidth);
-                        if (width_CM > 180)
-                        {
-                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
-                        }
-                    }
+                    showMsgCheckCuttingWidth(dr["CutcellID"].ToString(), dr["SciRefno"].ToString());
                 }
-                cellchk = true;
+                else
+                {
+                    cellchk = true;
+                }
                 dr.EndEdit();
             };
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
@@ -154,6 +153,7 @@ namespace Sci.Production.Cutting
         {
             filter();
         }
+
         private void filter()
         {
             string sp = txtSPNo.Text;
@@ -186,28 +186,37 @@ namespace Sci.Production.Cutting
 
         private void btnBatchUpdateEstCutCell_Click(object sender, EventArgs e)
         {
-            bool cellschk = false;
+            List<string> warningMsg = new List<string>();
             string cell = txtCell2.Text;
+
+            // 不可輸入空白
+            if (cell.Empty())
+            {
+                MyUtility.Msg.WarningBox("Cell can't be empty.");
+                return;
+            }
+
             foreach (DataRow dr in curTb.Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
                 if (dr["Sel"].ToString() == "True")
                 {
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
                     //  detaildr[0]["Cutcellid"] = cell;
                     dr["Cutcellid"] = cell;
-
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                    if (!MyUtility.Check.Empty(chkwidth))
+                    dr.EndEdit();
+                    string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
+                    if (!strMsg.Empty())
                     {
-                        decimal width_CM = decimal.Parse(chkwidth);
-                        if (width_CM > 180)
-                            cellschk = true;
+                        warningMsg.Add(strMsg);
                     }
                 }
             }
-            if (cellschk)
+            if (warningMsg.Count > 0)
             {
-                MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
+                MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
             }                
         }
 
@@ -220,6 +229,9 @@ namespace Sci.Production.Cutting
             };
             foreach (DataRow dr in curTb.Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
                 if (dr["Sel"].ToString() == "True")
                 {
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
@@ -306,6 +318,57 @@ namespace Sci.Production.Cutting
             if (result == DialogResult.Cancel) { return; }
             txtSPNo.Text = sele.GetSelectedString();
             filter();
+        }
+
+        /// <summary>
+        /// 確認【布】寬是否會超過【裁桌】的寬度
+        /// 若是 CutCell 取得寬度為 0 ，則不顯示訊息
+        /// return Msg
+        /// </summary>
+        /// <param name="strCutCellID">CutCellID</param>
+        /// <param name="strSCIRefno">SciRefno</param>
+        private string checkCuttingWidth(string strCutCellID, string strSCIRefno)
+        {
+            string chkwidth = MyUtility.GetValue.Lookup(string.Format(@"
+select width_cm = width*2.54 
+from Fabric 
+where SCIRefno = '{0}'", strSCIRefno));
+            string strCuttingWidth = MyUtility.GetValue.Lookup(string.Format(@"
+select cuttingWidth = isnull (cuttingWidth, 0) 
+from CutCell 
+where   id = '{0}'
+        and MDivisionID = '{1}'", strCutCellID, Sci.Env.User.Keyword));
+            if (!chkwidth.Empty() && !strCuttingWidth.Empty())
+            {
+                decimal width_CM = decimal.Parse(chkwidth);
+                decimal decCuttingWidth = decimal.Parse(strCuttingWidth);
+                if (decCuttingWidth == 0)
+                {
+                    return "";
+                }
+
+                if (width_CM > decCuttingWidth)
+                {
+                    return string.Format("fab width greater than cutting cell {0}, please check it.", strCutCellID);
+                }                
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 確認【布】寬是否會超過【裁桌】的寬度
+        /// 若是 CutCell 取得寬度為 0 ，則不顯示訊息
+        /// Show Msg
+        /// </summary>
+        /// <param name="strCutCellID">CutCellID</param>
+        /// <param name="strSCIRefno">SciRefno</param>
+        private void showMsgCheckCuttingWidth(string strCutCellID, string strSCIRefno)
+        {
+            string Msg = checkCuttingWidth(strCutCellID, strSCIRefno);
+            if (!Msg.Empty())
+            {
+                MyUtility.Msg.WarningBox(Msg);
+            }
         }
     }
 }

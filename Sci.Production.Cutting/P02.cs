@@ -127,7 +127,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     default:
                         this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
                         break;
-                }
+                }               
                 this.ReloadDatas();
             };
         }
@@ -894,24 +894,24 @@ where w.ID = '{0}'", masterID);
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
+                    // 若 cutref != empty 則不可編輯
+                    if (!dr["Cutplanid"].ToString().Empty())
+                    {
+                        return;
+                    }
+
                     SelectItem sele;
                     DataTable cellTb;
                     DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
                     sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
+                    dr["cutCellid"] = sele.GetSelectedString();
+                    dr.EndEdit();
 
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                    if (!MyUtility.Check.Empty(chkwidth))
-                    {
-                        decimal width_CM = decimal.Parse(chkwidth);
-                        if (width_CM > 180)
-                        {
-                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting");
-                            cellchk = false;
-                        }
-                    }
+                    checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                    cellchk = false;
                 }
             };
             col_cutcell.CellValidating += (s, e) =>
@@ -920,8 +920,18 @@ where w.ID = '{0}'", masterID);
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
+                // 不可輸入空白
+                if (e.FormattedValue.ToString().Empty())
+                {
+                    MyUtility.Msg.WarningBox("Cell can't be empty.");
+                    e.Cancel = true;
+                    return;
+                }
+
                 string oldvalue = dr["cutcellid"].ToString();
-                string newvalue = e.FormattedValue.ToString();
+                string newvalue = e.FormattedValue.ToString();               
+                
                 if (oldvalue == newvalue) return;
 
                 DataTable cellTb;
@@ -938,19 +948,14 @@ where w.ID = '{0}'", masterID);
                 }
 
                 dr["cutCellid"] = newvalue;
-                if (cellchk)
+                if (!cellchk)
                 {
-                    string chkwidth = MyUtility.GetValue.Lookup(string.Format("select width_cm = width*2.54 from Fabric where SCIRefno = '{0}'", dr["SCIRefno"]));
-                    if (!MyUtility.Check.Empty(chkwidth))
-                    {
-                        decimal width_CM = decimal.Parse(chkwidth);
-                        if (width_CM > 180)
-                        {
-                            MyUtility.Msg.WarningBox("fab width greater than auto cutting, assign to manual cutting"); 
-                        }
-                    }
+                    cellchk = true;
                 }
-                cellchk = true;
+                else
+                {
+                    checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                }
                 dr.EndEdit();
             };
             #endregion
@@ -1268,6 +1273,7 @@ where w.ID = '{0}'", masterID);
             };
             #endregion
         }
+        
         //重組detailgrid的size
         private void redetailsize(int workorderukey, int newkey)
         {
@@ -1509,6 +1515,7 @@ where w.ID = '{0}'", masterID);
             this.gridQtyBreakdown.AutoResizeColumns();
 
         }
+
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
         {
@@ -1829,6 +1836,7 @@ where w.ID = '{0}'", masterID);
             }
             flag = false;
         }
+
         protected override void OnDetailGridDelete()
         {
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
@@ -2216,6 +2224,7 @@ where w.ID = '{0}'", masterID);
 
             return base.ClickPrint();
         }
+
         //編輯時，將[SORT_NUM]賦予流水號
         protected override void ClickEditAfter()
         {
@@ -2230,6 +2239,7 @@ where w.ID = '{0}'", masterID);
             this.detailgridbs.ResumeBinding();
             this.detailgrid.SelectRowTo(0);
         }
+
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
@@ -2238,6 +2248,7 @@ where w.ID = '{0}'", masterID);
             Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
+
         //PatternPanel
         private void btnPatternPanel_Click(object sender, EventArgs e)
         {
@@ -2263,6 +2274,39 @@ where w.ID = '{0}'", masterID);
             base.ClickUndo();
             RenewData();
             OnDetailEntered();
+        }
+
+        /// <summary>
+        /// 確認【布】寬是否會超過【裁桌】的寬度
+        /// 若是 CutCell 取得寬度為 0 ，則不顯示訊息
+        /// </summary>
+        /// <param name="strCutCellID">CutCellID</param>
+        /// <param name="strSCIRefno">SciRefno</param>
+        private void checkCuttingWidth(string strCutCellID, string strSCIRefno)
+        {
+            string chkwidth = MyUtility.GetValue.Lookup(string.Format(@"
+select width_cm = width*2.54 
+from Fabric 
+where SCIRefno = '{0}'", strSCIRefno));
+            string strCuttingWidth = MyUtility.GetValue.Lookup(string.Format(@"
+select cuttingWidth = isnull (cuttingWidth, 0) 
+from CutCell 
+where   id = '{0}'
+        and MDivisionID = '{1}'", strCutCellID, Sci.Env.User.Keyword));
+            if (!chkwidth.Empty() && !strCuttingWidth.Empty())
+            {
+                decimal width_CM = decimal.Parse(chkwidth);
+                decimal decCuttingWidth = decimal.Parse(strCuttingWidth);
+                if (decCuttingWidth == 0)
+                {
+                    return;
+                }
+
+                if (width_CM > decCuttingWidth)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("fab width greater than cutting cell {0}, please check it.", strCutCellID));
+                }
+            }
         }
     }
 }
