@@ -33,6 +33,8 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.txtColorID = new Sci.Win.UI.TextBox();
             this.txtRefNo = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -50,8 +52,6 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.gridTransactionID = new Sci.Win.UI.Grid();
             this.gridRoll = new Sci.Win.UI.Grid();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.labelFactory = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -115,13 +115,33 @@
             this.panel3.Size = new System.Drawing.Size(1004, 41);
             this.panel3.TabIndex = 1;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(736, 8);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(83, 24);
+            this.comboFactory.TabIndex = 113;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(672, 9);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(61, 23);
+            this.labelFactory.TabIndex = 112;
+            this.labelFactory.Text = "Factory";
+            // 
             // txtColorID
             // 
             this.txtColorID.BackColor = System.Drawing.Color.White;
             this.txtColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtColorID.IsSupportEditMode = false;
             this.txtColorID.IsSupportSytsemContextMenu = false;
-            this.txtColorID.Location = new System.Drawing.Point(633, 9);
+            this.txtColorID.Location = new System.Drawing.Point(611, 9);
             this.txtColorID.MaxLength = 13;
             this.txtColorID.Name = "txtColorID";
             this.txtColorID.Size = new System.Drawing.Size(58, 23);
@@ -136,12 +156,12 @@
             this.txtRefNo.Location = new System.Drawing.Point(434, 9);
             this.txtRefNo.MaxLength = 13;
             this.txtRefNo.Name = "txtRefNo";
-            this.txtRefNo.Size = new System.Drawing.Size(134, 23);
+            this.txtRefNo.Size = new System.Drawing.Size(112, 23);
             this.txtRefNo.TabIndex = 2;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(571, 9);
+            this.label2.Location = new System.Drawing.Point(549, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 23);
             this.label2.TabIndex = 19;
@@ -211,7 +231,7 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(694, 5);
+            this.btnQuery.Location = new System.Drawing.Point(825, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 4;
@@ -326,26 +346,6 @@
             this.gridRoll.Size = new System.Drawing.Size(1004, 145);
             this.gridRoll.TabIndex = 8;
             this.gridRoll.TabStop = false;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(842, 8);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(83, 24);
-            this.comboFactory.TabIndex = 113;
-            // 
-            // labelFactory
-            // 
-            this.labelFactory.Location = new System.Drawing.Point(778, 9);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(61, 23);
-            this.labelFactory.TabIndex = 112;
-            this.labelFactory.Text = "Factory";
             // 
             // P20
             // 
