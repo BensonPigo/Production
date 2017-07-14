@@ -14,7 +14,7 @@ BEGIN
 --1.更新Pass1.Position
 update Pass1
 set Pass1.Position=pass0.ID
-from machine.dbo.Pass1 
+from dbo.Pass1 
 inner join pass0  on Pass1.FKPass0=pass0.PKey 
 
 --更新Pass2 
@@ -24,7 +24,7 @@ Pass2.FKMenu=MenuDetail.Pkey
 2.如果MenuDetail 未開放的功能,權限Pass2也需要與 MenuDetail相同
 */
 Begin 
-	Merge Machine.dbo.Pass2 as T
+	Merge dbo.Pass2 as T
 	using (SELECT Menu.MenuName, Menu.MenuNo, MenuDetail.*
 	FROM Menu, MenuDetail
 	WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.ForMISOnly = 0 AND MenuDetail.ObjectCode = 0) as S
