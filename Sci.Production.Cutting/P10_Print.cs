@@ -446,6 +446,8 @@ order by x.[Bundle]");
             objSheets.Cells[3, 1] = "To Line: " + CurrentDataRow["sewinglineid"].ToString();
             objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
             objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
+            objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString()=="" ? ""
+                : MyUtility.GetValue.Lookup(string.Format(@"select MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
             objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
             objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
             objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
