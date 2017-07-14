@@ -22,8 +22,13 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.ActiveControl = txtSPNo;
-        }
 
+            string sqlCmd = @"select '' ID union Select Distinct ID from Factory where junk = 0";
+            DataTable Factory;
+            DBProxy.Current.Select(null, sqlCmd, out Factory);
+            MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
+            comboFactory.Text = "";
+        }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -123,6 +128,8 @@ namespace Sci.Production.Warehouse
             Refno = txtRefNo.Text;
             string ColorID;
             ColorID = txtColorID.Text;
+            string factory;
+            factory = comboFactory.Text;
 
             #region -- SQL Command --
             StringBuilder sqlcmd = new StringBuilder();
@@ -163,6 +170,8 @@ where f.Junk = 0 ");
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
                 sqlcmd.Append(" and b.ColorID = @ColorID");
+            if (!MyUtility.Check.Empty(factory))
+                sqlcmd.Append(" and i.FactoryID = @factory");
 
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@";
@@ -217,6 +226,8 @@ from (
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
                 sqlcmd.Append(" and b.ColorID = @ColorID");
+            if (!MyUtility.Check.Empty(factory))
+                sqlcmd.Append(" and i.FactoryID = @factory");
 
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@"
@@ -255,6 +266,9 @@ from (
                 sqlcmd.Append(" and i.Refno = @Refno");
             if (!MyUtility.Check.Empty(ColorID))
                 sqlcmd.Append(" and b.ColorID = @ColorID");
+            if (!MyUtility.Check.Empty(factory))
+                sqlcmd.Append(" and i.FactoryID = @factory");
+
             sqlcmd.Append(@" 
 ) tmp
 order by InventoryUkey,ConfirmDate,ID");
@@ -303,6 +317,10 @@ where   stocktype='I'");
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@ColorID";
             sp5.Value = ColorID;
+            
+            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
+            sp6.ParameterName = "@factory";
+            sp6.Value = factory;
 
             IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
             paras.Add(sp1);
@@ -310,10 +328,11 @@ where   stocktype='I'");
             paras.Add(sp3);
             paras.Add(sp4);
             paras.Add(sp5);
+            paras.Add(sp6);
             #endregion
             this.ShowWaitMessage("Data Loading....");
             DataSet data;
-            DBProxy.Current.DefaultTimeout = 1200;
+            DBProxy.Current.DefaultTimeout = 3000;
             try
             {              
                 if (!SQL.Selects("", sqlcmd.ToString(), out data, paras))
@@ -346,9 +365,9 @@ where   stocktype='I'");
                 MyUtility.Msg.WarningBox("qty > 0 Data not found!!");
             }
 
-            dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "Convert(InputQty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(InputQty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
-            dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "Convert(OutputQty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(OutputQty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
-            dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Convert(Qty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(Qty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
+            dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "Convert(InputQty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(InputQty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
+            dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "Convert(OutputQty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(OutputQty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
+            dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Convert(Qty * rate * 100, 'System.Int64') / 100.0 + iif(Convert(Qty * rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
             //dtTpeIventory.Columns.Add("Balance", typeof(decimal), "InputQty - OutputQty");
             dtTpeIventory.DefaultView.Sort="POID,SEQ1,SEQ2";
             dtTpeIventory.TableName = "dtTpeIventory";
@@ -361,9 +380,9 @@ where   stocktype='I'");
                 , new DataColumn[] { dtInvtrans.Columns["InventoryUkey"] }
                 );
             data.Relations.Add(relation);
-
-            dtInvtrans.Columns.Add("qty_unit", typeof(decimal), "Convert(Qty * parent.rate * 100, 'System.Int32') / 100.0 + iif(Convert(Qty * parent.rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
-            dtInvtrans.Columns.Add("running_total_unit", typeof(decimal), "Convert(running_total * parent.rate * 100, 'System.Int32') / 100.0 + iif(Convert(running_total * parent.rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
+            
+            dtInvtrans.Columns.Add("qty_unit", typeof(decimal), "Convert(Qty * parent.rate * 100, 'System.Int64') / 100.0 + iif(Convert(Qty * parent.rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
+            dtInvtrans.Columns.Add("running_total_unit", typeof(decimal), "Convert(running_total * parent.rate * 100, 'System.Int64') / 100.0 + iif(Convert(running_total * parent.rate * 1000, 'System.Int64') % 10 >= 5, 0.01, 0)");
 
             bindingSource1.DataSource = data;
             bindingSource1.DataMember = "dtTpeIventory";
