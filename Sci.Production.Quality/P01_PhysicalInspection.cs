@@ -104,6 +104,7 @@ namespace Sci.Production.Quality
             dateArriveWHDate.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
             dateLastInspectionDate.Value = MyUtility.Convert.GetDate(maindr["physicalDate"]);
             displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+            displaydescDetail.Text = MyUtility.GetValue.Lookup("descDetail", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             displaySEQ.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
             displaySP.Text = maindr["POID"].ToString();
             displayWKNo.Text = maindr["Exportid"].ToString();
