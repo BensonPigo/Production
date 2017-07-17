@@ -64,6 +64,12 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -73,6 +79,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.dateBox2);
+            this.panel1.Controls.Add(this.txtuser1);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtfactoryByM);
             this.panel1.Controls.Add(this.dateBox1);
@@ -100,7 +112,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 86);
+            this.panel1.Size = new System.Drawing.Size(1008, 108);
             this.panel1.TabIndex = 0;
             // 
             // label1
@@ -375,7 +387,7 @@
             this.panel3.Controls.Add(this.btnBundleCard);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 368);
+            this.panel3.Location = new System.Drawing.Point(0, 510);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 52);
             this.panel3.TabIndex = 1;
@@ -384,9 +396,9 @@
             // 
             this.panel5.Controls.Add(this.grid1);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(0, 86);
+            this.panel5.Location = new System.Drawing.Point(0, 108);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1008, 282);
+            this.panel5.Size = new System.Drawing.Size(1008, 402);
             this.panel5.TabIndex = 10;
             // 
             // grid1
@@ -417,13 +429,62 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 282);
+            this.grid1.Size = new System.Drawing.Size(1008, 402);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(5, 79);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(99, 21);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Bundle creator";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(410, 79);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(129, 21);
+            this.label3.TabIndex = 101;
+            this.label3.Text = "Bundle ctrated Date";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(675, 79);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(38, 21);
+            this.label4.TabIndex = 102;
+            this.label4.Text = "Cut#";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(107, 79);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 103;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // dateBox2
+            // 
+            this.dateBox2.Location = new System.Drawing.Point(542, 79);
+            this.dateBox2.Name = "dateBox2";
+            this.dateBox2.Size = new System.Drawing.Size(130, 23);
+            this.dateBox2.TabIndex = 4;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(716, 79);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.TabIndex = 104;
+            // 
             // P12
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 420);
+            this.ClientSize = new System.Drawing.Size(1008, 562);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
@@ -479,5 +540,11 @@
         private Win.UI.Grid grid1;
         private Win.UI.Label label1;
         private Class.txtfactory txtfactoryByM;
+        private Win.UI.TextBox textBox1;
+        private Win.UI.DateBox dateBox2;
+        private Class.txtuser txtuser1;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
     }
 }
