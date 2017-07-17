@@ -52,6 +52,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -88,9 +90,9 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(906, 26);
+            this.btnQuery.Location = new System.Drawing.Point(918, 25);
             this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(90, 30);
+            this.btnQuery.Size = new System.Drawing.Size(84, 30);
             this.btnQuery.TabIndex = 7;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
@@ -146,7 +148,6 @@
             // 
             // label2
             // 
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(47, 20);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 23);
@@ -155,6 +156,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cmbMaterialType);
+            this.groupBox1.Controls.Add(this.labelMaterialType);
             this.groupBox1.Controls.Add(this.txtSeq);
             this.groupBox1.Controls.Add(this.txtDyelot);
             this.groupBox1.Controls.Add(this.radioPanel1);
@@ -188,9 +191,9 @@
             this.txtDyelot.BackColor = System.Drawing.Color.White;
             this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDyelot.IsSupportEditMode = false;
-            this.txtDyelot.Location = new System.Drawing.Point(823, 29);
+            this.txtDyelot.Location = new System.Drawing.Point(667, 29);
             this.txtDyelot.Name = "txtDyelot";
-            this.txtDyelot.Size = new System.Drawing.Size(70, 23);
+            this.txtDyelot.Size = new System.Drawing.Size(60, 23);
             this.txtDyelot.TabIndex = 6;
             // 
             // radioPanel1
@@ -232,19 +235,17 @@
             // 
             // labelDyelot
             // 
-            this.labelDyelot.Lines = 0;
-            this.labelDyelot.Location = new System.Drawing.Point(745, 29);
+            this.labelDyelot.Location = new System.Drawing.Point(613, 29);
             this.labelDyelot.Name = "labelDyelot";
-            this.labelDyelot.Size = new System.Drawing.Size(75, 23);
+            this.labelDyelot.Size = new System.Drawing.Size(51, 23);
             this.labelDyelot.TabIndex = 9;
             this.labelDyelot.Text = "Dyelot";
             // 
             // labelRef
             // 
-            this.labelRef.Lines = 0;
-            this.labelRef.Location = new System.Drawing.Point(346, 29);
+            this.labelRef.Location = new System.Drawing.Point(331, 29);
             this.labelRef.Name = "labelRef";
-            this.labelRef.Size = new System.Drawing.Size(75, 23);
+            this.labelRef.Size = new System.Drawing.Size(40, 23);
             this.labelRef.TabIndex = 3;
             this.labelRef.Text = "Ref#";
             // 
@@ -253,9 +254,9 @@
             this.txtLocation.BackColor = System.Drawing.Color.White;
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocation.IsSupportEditMode = false;
-            this.txtLocation.Location = new System.Drawing.Point(642, 29);
+            this.txtLocation.Location = new System.Drawing.Point(542, 29);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(91, 23);
+            this.txtLocation.Size = new System.Drawing.Size(68, 23);
             this.txtLocation.TabIndex = 5;
             // 
             // txtTransactionID
@@ -274,15 +275,14 @@
             this.txtRef.BackColor = System.Drawing.Color.White;
             this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRef.IsSupportEditMode = false;
-            this.txtRef.Location = new System.Drawing.Point(424, 29);
+            this.txtRef.Location = new System.Drawing.Point(374, 29);
             this.txtRef.Name = "txtRef";
-            this.txtRef.Size = new System.Drawing.Size(122, 23);
+            this.txtRef.Size = new System.Drawing.Size(87, 23);
             this.txtRef.TabIndex = 4;
             // 
             // labelLocation
             // 
-            this.labelLocation.Lines = 0;
-            this.labelLocation.Location = new System.Drawing.Point(564, 29);
+            this.labelLocation.Location = new System.Drawing.Point(464, 29);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(75, 23);
             this.labelLocation.TabIndex = 7;
@@ -320,6 +320,25 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 370);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // labelMaterialType
+            // 
+            this.labelMaterialType.Location = new System.Drawing.Point(730, 29);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
+            this.labelMaterialType.TabIndex = 10;
+            this.labelMaterialType.Text = "Material Type";
+            // 
+            // cmbMaterialType
+            // 
+            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
+            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbMaterialType.FormattingEnabled = true;
+            this.cmbMaterialType.IsSupportUnselect = true;
+            this.cmbMaterialType.Location = new System.Drawing.Point(821, 28);
+            this.cmbMaterialType.Name = "cmbMaterialType";
+            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
+            this.cmbMaterialType.TabIndex = 11;
             // 
             // P26_Import
             // 
@@ -368,5 +387,7 @@
         private Win.UI.RadioButton radioSPNo;
         private Win.UI.RadioPanel radioPanel1;
         private Class.txtSeq txtSeq;
+        private Win.UI.Label labelMaterialType;
+        private Win.UI.ComboBox cmbMaterialType;
     }
 }

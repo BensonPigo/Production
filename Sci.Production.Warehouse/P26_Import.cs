@@ -26,6 +26,14 @@ namespace Sci.Production.Warehouse
             dr_master = master;
             dt_detail = detail;
             this.EditMode = true;
+
+            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("", "All");
+            comboBox1_RowSource.Add("F", "Fabric");
+            comboBox1_RowSource.Add("A", "Accessory");
+            cmbMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            cmbMaterialType.ValueMember = "Key";
+            cmbMaterialType.DisplayMember = "Value";
         }
 
         //Button Query
@@ -37,7 +45,7 @@ namespace Sci.Production.Warehouse
             String locationid = this.txtLocation.Text.TrimEnd();
             String dyelot = this.txtDyelot.Text.TrimEnd();
             String transid = this.txtTransactionID.Text.TrimEnd();
-
+            String MaterialType = this.cmbMaterialType.SelectedValue.ToString();
             switch (radioPanel1.Value)
             {
                 case "1":
@@ -103,6 +111,11 @@ where   A.StockType='{0}'
                         {
                             strSQLCmd.Append(string.Format(@" 
         and a.dyelot='{0}' ", dyelot));
+                        }
+                        if (!MyUtility.Check.Empty(MaterialType))
+                        {
+                            strSQLCmd.Append(string.Format(@" 
+        and p1.FabricType='{0}' ", MaterialType));
                         }
                     }
                     break;
