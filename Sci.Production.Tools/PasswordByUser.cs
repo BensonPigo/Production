@@ -94,6 +94,10 @@ namespace Sci.Production.Tools
                 locatefor.Text = item.GetSelectedString();
                 base.SearchGridColumns();
             }
+            else
+            {
+                base.SearchGridColumns();
+            }
         }
 
         protected override bool OnGridSetup()
