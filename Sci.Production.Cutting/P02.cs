@@ -904,7 +904,6 @@ where w.ID = '{0}'", masterID);
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    // 若 cutref != empty 則不可編輯
                     if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
                     SelectItem sele;
                     DataTable cellTb;
