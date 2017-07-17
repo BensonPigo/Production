@@ -49,6 +49,8 @@ namespace Sci.Production.Quality
             }
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("Approval", "Approval");
+            comboBox1_RowSource.Add("N/A", "N/A");
             comboBox1_RowSource.Add("Pass", "Pass");
             comboBox1_RowSource.Add("Fail", "Fail");
             comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
@@ -76,7 +78,7 @@ namespace Sci.Production.Quality
                     return;
                 }
                 else
-                {
+                {                   
                     #region  寫入實體Table Amend
                     updatesql1 = string.Format(
                     "Update Air set Status = 'New',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
@@ -144,6 +146,11 @@ namespace Sci.Production.Quality
                     }
                 }
                 #region  寫入實體Table Encode
+                if (comboResult.SelectedValue.ToString() == "Approval")
+                {
+                    MyUtility.Msg.InfoBox("<Result> Can not be Approval.");
+                    return;
+                }
                 updatesql = string.Format(
                 "Update Air set Status = 'Confirmed',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
                 loginID, id);
@@ -332,7 +339,7 @@ namespace Sci.Production.Quality
                                 if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
                                 {
                                     _transactionscope.Dispose();
-
+                                    MyUtility.Msg.WarningBox("Update Fail!!");
                                     return;
                                 }
                                 _transactionscope.Complete();
