@@ -16,11 +16,20 @@ namespace Sci.Production.Packing
     {
         DataRow masterData;
         int orderQty;
+        bool SP_Multiple = false;
         string reportType, ctn1, ctn2, specialInstruction;
         DataTable printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, qtyBDown;
         public P03_Print(DataRow MasterData, int OrderQty)
         {
             InitializeComponent();
+
+            //如果是多訂單一起裝箱就不列印
+            SP_Multiple = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct OrderID+OrderShipmodeSeq) from PackingList_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(MasterData["ID"])))) > 1;
+            if (SP_Multiple)
+            {
+                radioPackingGuideReport.Visible = false;                
+            }
+
             masterData = MasterData;
             orderQty = OrderQty;
             radioPackingListReportFormA.Checked = true;
@@ -238,7 +247,10 @@ namespace Sci.Production.Packing
             this.ShowWaitMessage("Data Loading....");
             if (reportType == "1" || reportType == "2")
             {
-                PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
+                if (SP_Multiple)
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport_Multiple.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
+                else
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
             }
             else if (reportType == "3")
             {
