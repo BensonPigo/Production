@@ -49,21 +49,24 @@ namespace Sci.Production.Quality
             
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
-                @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,
-                ArriveQty,InspDeadline,Result,
-                PhysicalEncode,WeightEncode,ShadeBondEncode,ContinuityEncode,
-                NonPhysical,Physical,TotalInspYds,PhysicalDate,Physical,
-                NonWeight, Weight,WeightDate,Weight,
-                NonShadebond,Shadebond,ShadebondDate,shadebond,
-                NonContinuity,Continuity,ContinuityDate,Continuity,
-                a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
-                c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
-                (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
-                (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
-                c.ExportID as Wkno
-                From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                Where a.poid='{0}' order by seq1,seq2  ", masterID);
+@"Select a.id,a.poid,a.SEQ1,a.SEQ2,Receivingid,a.Refno,a.SCIRefno,Suppid,
+ArriveQty,InspDeadline,Result,
+PhysicalEncode,WeightEncode,ShadeBondEncode,ContinuityEncode,
+NonPhysical,Physical,TotalInspYds,PhysicalDate,Physical,
+NonWeight, Weight,WeightDate,Weight,
+NonShadebond,Shadebond,ShadebondDate,shadebond,
+NonContinuity,Continuity,ContinuityDate,Continuity,
+a.Status,ReplacementReportID,(a.seq1+a.seq2) as seq,
+(Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
+c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
+d.ColorID,
+(Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
+c.ExportID as Wkno
+,cn.name
+From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+left join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+outer apply(select name from color  WITH (NOLOCK) where id = d.colorid)cn
+Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -221,6 +224,7 @@ namespace Sci.Production.Quality
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(26), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("name", header: "Color Name", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(10), integer_places: 10,decimal_places:2,iseditingreadonly:true)
                 .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)

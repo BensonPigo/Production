@@ -63,6 +63,7 @@
             this.textID = new Sci.Win.UI.TextBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
+            this.displaydescDetail = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -304,9 +305,9 @@
             // labelResult
             // 
             this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelResult.Location = new System.Drawing.Point(463, 71);
+            this.labelResult.Location = new System.Drawing.Point(730, 70);
             this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(75, 23);
+            this.labelResult.Size = new System.Drawing.Size(50, 23);
             this.labelResult.TabIndex = 124;
             this.labelResult.Text = "Result";
             // 
@@ -315,7 +316,7 @@
             this.checkNonInspection.AutoSize = true;
             this.checkNonInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkNonInspection.IsSupportEditMode = false;
-            this.checkNonInspection.Location = new System.Drawing.Point(752, 69);
+            this.checkNonInspection.Location = new System.Drawing.Point(848, 99);
             this.checkNonInspection.Name = "checkNonInspection";
             this.checkNonInspection.ReadOnly = true;
             this.checkNonInspection.Size = new System.Drawing.Size(121, 21);
@@ -325,7 +326,7 @@
             // 
             // btnApprove
             // 
-            this.btnApprove.Location = new System.Drawing.Point(783, 129);
+            this.btnApprove.Location = new System.Drawing.Point(879, 126);
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(90, 30);
             this.btnApprove.TabIndex = 127;
@@ -335,7 +336,7 @@
             // 
             // btnEncode
             // 
-            this.btnEncode.Location = new System.Drawing.Point(783, 93);
+            this.btnEncode.Location = new System.Drawing.Point(783, 126);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(90, 30);
             this.btnEncode.TabIndex = 128;
@@ -395,7 +396,7 @@
             this.displayResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayResult.Location = new System.Drawing.Point(541, 72);
+            this.displayResult.Location = new System.Drawing.Point(783, 71);
             this.displayResult.Name = "displayResult";
             this.displayResult.Size = new System.Drawing.Size(101, 21);
             this.displayResult.TabIndex = 132;
@@ -427,9 +428,20 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
             this.dateArriveWHDate.TabIndex = 139;
             // 
+            // displaydescDetail
+            // 
+            this.displaydescDetail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaydescDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaydescDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaydescDetail.Location = new System.Drawing.Point(448, 71);
+            this.displaydescDetail.Name = "displaydescDetail";
+            this.displaydescDetail.Size = new System.Drawing.Size(279, 21);
+            this.displaydescDetail.TabIndex = 140;
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.displaydescDetail);
             this.Controls.Add(this.dateArriveWHDate);
             this.Controls.Add(this.dateLastInspectionDate);
             this.Controls.Add(this.textID);
@@ -508,6 +520,7 @@
             this.Controls.SetChildIndex(this.textID, 0);
             this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
             this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
+            this.Controls.SetChildIndex(this.displaydescDetail, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -553,5 +566,6 @@
         private Win.UI.TextBox textID;
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
+        private Win.UI.DisplayBox displaydescDetail;
     }
 }
