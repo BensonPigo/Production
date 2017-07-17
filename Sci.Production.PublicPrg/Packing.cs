@@ -556,24 +556,57 @@ order by a.Seq", packingListID);
             printData = null;
             ctnDim = null;
             qtyBDown = null;
-            string sqlCmd = string.Format(@"with tmpGroup
-as
-(
-select OrderID,OrderShipmodeSeq,Article,Color,SizeCode,QtyPerCTN,NW,GW,NNW,NWPerPcs,min(Seq) as MinSeq, max(Seq) as MaxSeq 
-from PackingList_Detail WITH (NOLOCK) 
-where ID = '{0}'
-group by OrderID,OrderShipmodeSeq,Article,Color,SizeCode,QtyPerCTN,NW,GW,NNW,NWPerPcs
+            string sqlCmd = string.Format(@"
+with tmpGroup as (
+    select  OrderID
+            , OrderShipmodeSeq
+            , Article
+            , Color
+            , SizeCode
+            , QtyPerCTN
+            , NW
+            , GW
+            , NNW
+            , NWPerPcs
+            , min(Seq) as MinSeq
+            , max(Seq) as MaxSeq 
+    from PackingList_Detail WITH (NOLOCK) 
+    where ID = '{0}'
+    group by OrderID, OrderShipmodeSeq, Article, Color, SizeCode, QtyPerCTN
+             , NW, GW, NNW, NWPerPcs
 )
-select t.*,o.StyleID,o.Customize1,o.CustPONo,c.Alias,oq.EstPulloutDate,os.SizeSpec,isnull(o.MarkFront,'') as MarkFront,
-isnull(o.MarkBack,'') as MarkBack,isnull(o.MarkLeft,'') as MarkLeft,isnull(o.MarkRight,'') as MarkRight,
-(select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where Id = '{0}' and ReceiveDate is not null) as InClogQty,
-(select CTNStartNo from PackingList_Detail WITH (NOLOCK) where ID = '{0}' and Seq = t.MinSeq) as CTNStartNo,
-(select CTNStartNo from PackingList_Detail WITH (NOLOCK) where ID = '{0}' and Seq = t.MaxSeq) as CTNEndNo
+select  t.*
+        , o.StyleID
+        , o.Customize1
+        , o.CustPONo
+        , c.Alias
+        , oq.EstPulloutDate
+        , os.SizeSpec
+        , MarkFront = isnull(o.MarkFront,'')
+        , MarkBack = isnull(o.MarkBack,'')
+        , MarkLeft = isnull(o.MarkLeft,'')
+        , MarkRight = isnull(o.MarkRight,'')
+        , InClogQty = (select sum(CTNQty) 
+                       from PackingList_Detail WITH (NOLOCK) 
+                       where  Id = '{0}' 
+                                and ReceiveDate is not null)
+        , CTNStartNo = (select CTNStartNo 
+                        from PackingList_Detail WITH (NOLOCK) 
+                        where  ID = '{0}' 
+                               and Seq = t.MinSeq) 
+        , CTNEndNo = (select CTNStartNo 
+                      from PackingList_Detail WITH (NOLOCK) 
+                      where  ID = '{0}' 
+                             and Seq = t.MaxSeq) 
+        , SciDelivery = iif(o.SciDelivery = '', null, o.SciDelivery)
 from tmpGroup t
-left join Orders o WITH (NOLOCK) on o.ID = t.OrderID
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = t.OrderID and oq.Seq = t.OrderShipmodeSeq
-left join Country c WITH (NOLOCK) on c.ID = o.Dest
-left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = t.SizeCode
+left join Orders o WITH (NOLOCK) on  o.ID = t.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = t.OrderID 
+                                             and oq.Seq = t.OrderShipmodeSeq
+left join Country c WITH (NOLOCK) on  c.ID = o.Dest
+left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
+                                              and SizeItem = 'S01' 
+                                              and os.SizeCode = t.SizeCode
 order by MinSeq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
@@ -847,94 +880,168 @@ select * from @tempQtyBDown", PackingListID, ReportType);
         /// <returns></returns>
         public static void PackingListToExcel_PackingListReport(string XltxName, DataRow PLdr, string ReportType, DataTable PrintData, DataTable CtnDim, DataTable QtyBDown)
         {
+            #region Check Multiple
+            bool boolMultiple = XltxName.EqualString("\\Packing_P03_PackingListReport_Multiple.xltx") ? true : false;
+            #endregion
+            #region Column & Row Index
+            int bodyRowIndex            = (boolMultiple) ? 7    : 9
+                , bodyRowStartIndex     = (boolMultiple) ? 7    : 9
+                , bodyRowEndIndex       = (boolMultiple) ? 29   : 31
+                , titleMRow             = 1                         , titleMColumn              = 1
+                , titlePakingListNoRow  = 3                         , titlePakingListNoColumn   = 3
+                , titleSciDeliveryRow   = 3                         , titleSciDeliveryColumn    = (boolMultiple) ? 18 : 14
+                , titleSPRow            = 5                         , titleSPColumn             = 1
+                , titleStyleRow         = 5                         , titleStyleColumn          = 3
+                , titleOrderNoRow       = 5                         , titleOrderNoColumn        = 6
+                , titlePoNoRow          = 5                         , titlePoNoColumn           = 10
+                , titleInvoiceRow       = 5                         , titleInvoiceColumn        = (boolMultiple) ? 1 : 13
+                , titleCustCDRow        = (boolMultiple) ? 5 : 7    , titleCustCDColumn         = (boolMultiple) ? 4 : 1
+                , titleShipModeRow      = (boolMultiple) ? 5 : 7    , titleShipModeColumn       = (boolMultiple) ? 7 : 3
+                , titleInClogRow        = (boolMultiple) ? 5 : 7    , titleInClogColumn         = (boolMultiple) ? 10 : 6
+                , titleDestinationRow   = (boolMultiple) ? 5 : 7    , titleDestinationColumn    = (boolMultiple) ? 14 : 10
+                , titleShipmentDateRow  = (boolMultiple) ? 5 : 7    , titleShipmentDateColumn   = (boolMultiple) ? 18 : 13
+                , bodySPColumn          = 1
+                , bodyStyleColumn       = 2
+                , bodyOrderNoColumn     = 3
+                , bodyPoNoColumn        = 4
+                , bodyCtn1Column        = (boolMultiple) ? 5 : 1
+                , bodyCtn2Column        = (boolMultiple) ? 6 : 2
+                , bodyCtnsColumn        = (boolMultiple) ? 7 : 3
+                , bodyColorColumn       = (boolMultiple) ? 8 : 4
+                , bodySizeColumn        = (boolMultiple) ? 9 : 5
+                , bodyCustSizeColumn    = (boolMultiple) ? 10 : 6
+                , bodyPcCtnsColumn      = (boolMultiple) ? 11 : 7
+                , bodyQtyColumn         = (boolMultiple) ? 12 : 8
+                , bodyNWColumn          = (boolMultiple) ? 13 : 9
+                , bodyGWColumn          = (boolMultiple) ? 14 : 10
+                , bodyNNWColumn         = (boolMultiple) ? 15 : 11
+                , bodyNWPcsColumn       = (boolMultiple) ? 16 : 12
+                , bodyTTLNWColumn       = (boolMultiple) ? 17 : 13
+                , bodyTTLGWColumn       = (boolMultiple) ? 18 : 14
+                , bodyTTLNNWColumn      = (boolMultiple) ? 19 : 15
+                , SippingMarkBDColumn   = (boolMultiple) ? 11 : 8
+                ;
+            #endregion
+            #region workRange
+            string strWorkRange = (boolMultiple) ? "A6:A6" : "A8:A8"
+                    , strColumnsRange = (boolMultiple) ? "A{0}:S{0}" : "A{0}:O{0}";
+            #endregion
+            #region Get Sci Delivery
+            DataRow[] getMinDelivery = PrintData.Select("SciDelivery = min(SciDelivery)");
+            string strSciDelivery = "";
+            if (getMinDelivery.Length > 0)
+                strSciDelivery = string.Format("{0:yyyy/MM/dd}", getMinDelivery[0]["SciDelivery"]);
+            #endregion
+
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
-            worksheet.Cells[1, 1] = NameEN;
-            worksheet.Cells[2+1, 3] = MyUtility.Convert.GetString(PLdr["ID"]);
-            worksheet.Cells[4+1, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[4+1, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[4+1, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[4+1, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[4+1, 13] = MyUtility.Convert.GetString(PLdr["INVNo"]);
-            worksheet.Cells[6+1, 1] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
-            worksheet.Cells[6+1, 3] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
-            worksheet.Cells[6+1, 6] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
-            worksheet.Cells[6+1, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
-            worksheet.Cells[6+1, 13] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
+            #region Set Title
+            // 單筆SP 限定
+            if (!boolMultiple)
+            {
+                worksheet.Cells[titleSPRow, titleSPColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+                worksheet.Cells[titleStyleRow, titleStyleColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+                worksheet.Cells[titleOrderNoRow, titleOrderNoColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+                worksheet.Cells[titlePoNoRow, titlePoNoColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            }
+            worksheet.Cells[titleMRow, titleMColumn] = NameEN;
+            worksheet.Cells[titlePakingListNoRow, titlePakingListNoColumn] = MyUtility.Convert.GetString(PLdr["ID"]);
+            worksheet.Cells[titleSciDeliveryRow, titleSciDeliveryColumn] = strSciDelivery;
+            worksheet.Cells[titleInvoiceRow, titleInvoiceColumn] = MyUtility.Convert.GetString(PLdr["INVNo"]);
+            worksheet.Cells[titleCustCDRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
+            worksheet.Cells[titleShipModeRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
+            worksheet.Cells[titleInClogRow, titleInClogColumn] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
+            worksheet.Cells[titleDestinationRow, titleDestinationColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
+            worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
+            #endregion
 
+            #region Set Body
             //當要列印的筆數超過22筆，就要插入Row，因為範本只留22筆記錄的空間
             if (PrintData.Rows.Count > 22)
             {
                 for (int i = 1; i <= PrintData.Rows.Count - 22; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A10:A10", Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(strWorkRange, Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
 
-            int excelRow = 9;
             string ctnStartNo = "XXXXXX";
             foreach (DataRow dr in PrintData.Rows)
             {
                 int ctns = MyUtility.Convert.GetInt(dr["CTNEndNo"]) - MyUtility.Convert.GetInt(dr["CTNStartNo"]) + 1;
                 if (ctnStartNo != MyUtility.Convert.GetString(dr["CTNStartNo"]))
-                {
-                    worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["CTNStartNo"]);
-                    worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(ctns);
-                    worksheet.Cells[excelRow, 9] = MyUtility.Convert.GetString(dr["NW"]);
-                    worksheet.Cells[excelRow, 10] = MyUtility.Convert.GetString(dr["GW"]);
-                    worksheet.Cells[excelRow, 11] = MyUtility.Convert.GetString(dr["NNW"]);
-                    worksheet.Cells[excelRow, 13] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["NW"]) * ctns);
-                    worksheet.Cells[excelRow, 14] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["GW"]) * ctns);
-                    worksheet.Cells[excelRow, 15] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["NNW"]) * ctns);
+                {                                  
+                    worksheet.Cells[bodyRowIndex, bodyCtn1Column] = MyUtility.Convert.GetString(dr["CTNStartNo"]);
+                    worksheet.Cells[bodyRowIndex, bodyCtnsColumn] = MyUtility.Convert.GetString(ctns);
+                    worksheet.Cells[bodyRowIndex, bodyNWColumn] = MyUtility.Convert.GetString(dr["NW"]);
+                    worksheet.Cells[bodyRowIndex, bodyGWColumn] = MyUtility.Convert.GetString(dr["GW"]);
+                    worksheet.Cells[bodyRowIndex, bodyNNWColumn] = MyUtility.Convert.GetString(dr["NNW"]);
+                    worksheet.Cells[bodyRowIndex, bodyTTLNWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["NW"]) * ctns);
+                    worksheet.Cells[bodyRowIndex, bodyTTLGWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["GW"]) * ctns);
+                    worksheet.Cells[bodyRowIndex, bodyTTLNNWColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["NNW"]) * ctns);
+
+                    // 多筆 SP 限定
+                    if (boolMultiple)
+                    {
+                        worksheet.Cells[bodyRowIndex, bodySPColumn] = dr["OrderID"].ToString();
+                        worksheet.Cells[bodyRowIndex, bodyStyleColumn] = dr["StyleID"].ToString();
+                        worksheet.Cells[bodyRowIndex, bodyOrderNoColumn] = dr["Customize1"].ToString();
+                        worksheet.Cells[bodyRowIndex, bodyPoNoColumn] = dr["CustPONo"].ToString();
+                    }
 
                     if (MyUtility.Convert.GetString(dr["CTNStartNo"]) != MyUtility.Convert.GetString(dr["CTNEndNo"]))
                     {
-                        worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["CTNEndNo"]);
+                        worksheet.Cells[bodyRowIndex, bodyCtn2Column] = MyUtility.Convert.GetString(dr["CTNEndNo"]);
                     }
                 }
-                worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
-                worksheet.Cells[excelRow, 5] = MyUtility.Convert.GetString(dr["SizeCode"]);
-                worksheet.Cells[excelRow, 6] = MyUtility.Convert.GetString(dr["SizeSpec"]);
-                worksheet.Cells[excelRow, 7] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
-                worksheet.Cells[excelRow, 8] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctns);
-                worksheet.Cells[excelRow, 12] = MyUtility.Check.Empty(dr["NWPerPcs"]) ? "" : MyUtility.Convert.GetString(dr["NWPerPcs"]);
+                worksheet.Cells[bodyRowIndex, bodyColorColumn] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
+                worksheet.Cells[bodyRowIndex, bodySizeColumn] = MyUtility.Convert.GetString(dr["SizeCode"]);
+                worksheet.Cells[bodyRowIndex, bodyCustSizeColumn] = MyUtility.Convert.GetString(dr["SizeSpec"]);
+                worksheet.Cells[bodyRowIndex, bodyPcCtnsColumn] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
+                worksheet.Cells[bodyRowIndex, bodyQtyColumn] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dr["QtyPerCTN"]) * ctns);
+                worksheet.Cells[bodyRowIndex, bodyNWPcsColumn] = MyUtility.Check.Empty(dr["NWPerPcs"]) ? "" : MyUtility.Convert.GetString(dr["NWPerPcs"]);
 
                 ctnStartNo = MyUtility.Convert.GetString(dr["CTNStartNo"]);
-                excelRow++;
+                bodyRowIndex++;
             }
 
-            worksheet.Range[String.Format("A{0}:O{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[String.Format("A{0}:O{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
-            worksheet.Cells[excelRow, 2] = "Total";
-            if (excelRow > 8)
+            worksheet.Range[String.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[String.Format(strColumnsRange, bodyRowIndex)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
+            worksheet.Cells[bodyRowIndex, 2] = "Total";
+            if (bodyRowIndex >= bodyRowStartIndex)
             {
-                worksheet.Cells[excelRow, 3] = string.Format("=SUM(C8:C{0})", MyUtility.Convert.GetString(excelRow - 1));
-                worksheet.Cells[excelRow, 8] = string.Format("=SUM(H8:H{0})", MyUtility.Convert.GetString(excelRow - 1));
-                worksheet.Cells[excelRow, 13] = string.Format("=SUM(M8:M{0})", MyUtility.Convert.GetString(excelRow - 1));
-                worksheet.Cells[excelRow, 14] = string.Format("=SUM(N8:N{0})", MyUtility.Convert.GetString(excelRow - 1));
-                worksheet.Cells[excelRow, 15] = string.Format("=SUM(O8:O{0})", MyUtility.Convert.GetString(excelRow - 1));
+                worksheet.Cells[bodyRowIndex, bodyCtnsColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex ,bodyCtnsColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
+                worksheet.Cells[bodyRowIndex, bodyQtyColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyQtyColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
+                worksheet.Cells[bodyRowIndex, bodyTTLNWColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyTTLNWColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
+                worksheet.Cells[bodyRowIndex, bodyTTLGWColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyTTLGWColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
+                worksheet.Cells[bodyRowIndex, bodyTTLNNWColumn] = string.Format("=SUM(INDIRECT(ADDRESS({0},{1})):INDIRECT(ADDRESS({2},{1})))", bodyRowStartIndex, bodyTTLNNWColumn, MyUtility.Convert.GetString(bodyRowIndex - 1));
             }
-            if (excelRow <= 31)
+            if (bodyRowIndex <= bodyRowEndIndex)
             {
-                excelRow = 31;
+                bodyRowIndex = bodyRowEndIndex;
             }
+            #endregion 
 
             //Carton Dimension:
-            excelRow++;
+            bodyRowIndex++;
             StringBuilder ctnDimension = new StringBuilder();
 
             foreach (DataRow dr in CtnDim.Rows)
             {
-                ctnDimension.Append(string.Format("{0} - {1} - {2} {3}, (CTN#:{4}){5}  \r\n",
-                    MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]),
-                    MyUtility.Check.Empty(dr["Ctn"]) ? "" : MyUtility.Convert.GetString(dr["Ctn"]).Substring(0, MyUtility.Convert.GetString(dr["Ctn"]).Length - 1),
-                    ReportType == "1" ? ", ttlCBM:" + MyUtility.Convert.GetString(dr["TtlCBM"]) : ""));
+                ctnDimension.Append(string.Format("{0} - {1} - {2} {3}, (CTN#:{4}){5}  \r\n"
+                    , MyUtility.Convert.GetString(dr["RefNo"])
+                    , MyUtility.Convert.GetString(dr["Description"])
+                    , MyUtility.Convert.GetString(dr["Dimension"])
+                    , MyUtility.Convert.GetString(dr["CtnUnit"])
+                    , MyUtility.Check.Empty(dr["Ctn"]) ? "" : MyUtility.Convert.GetString(dr["Ctn"]).Substring(0, MyUtility.Convert.GetString(dr["Ctn"]).Length - 1)
+                    , ReportType == "1" ? ", ttlCBM:" + MyUtility.Convert.GetString(dr["TtlCBM"]) : ""));
             }
+            
             string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
             string[] cdsab = cds.Split('\r');
             int cdsi = 0;
@@ -953,40 +1060,40 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             cdsi += cdsab.Length - 1;
             for (int i = 1; i <= cdsi; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
+                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[bodyRowIndex, System.Type.Missing];
                 rangeRowCD.RowHeight = 16.5 * (i + 1);
-                
-            }            
-            worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
+
+            }
+            worksheet.Cells[bodyRowIndex, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
 
             //Remarks
-            excelRow++;
-            worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(PLdr["Remark"]);
+            bodyRowIndex++;
+            worksheet.Cells[bodyRowIndex, 3] = MyUtility.Convert.GetString(PLdr["Remark"]);
 
             // Color/Size Breakdown
-            excelRow = excelRow + 2;
+            bodyRowIndex = bodyRowIndex + 2;
             if (QtyBDown.Rows.Count > 5)
             {
-                Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow))).EntireRow;
+                Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(bodyRowIndex))).EntireRow;
                 for (int i = 1; i <= QtyBDown.Rows.Count - 5; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                 }
             }
             foreach (DataRow dr in QtyBDown.Rows)
             {
-                worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["DataList"]);
-                excelRow++;
+                worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(dr["DataList"]);
+                bodyRowIndex++;
             }
 
 
             //Shipment mark
-            excelRow = excelRow + 3;
-            worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkFront"]);
-                      
-            worksheet.Cells[excelRow, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkBack"]);
-                        
+            bodyRowIndex = bodyRowIndex + 3;
+            worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkFront"]);
+
+            worksheet.Cells[bodyRowIndex, SippingMarkBDColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkBack"]);
+
             string[] marks = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkFront"]).Split('\r');
             string[] marks2 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkBack"]).Split('\r');
             int m = marks.Length + formarks(marks);
@@ -998,14 +1105,14 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             {
                 for (int i = 0; i < add; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
                 }
             }
-            excelRow = excelRow + add + 13;
+            bodyRowIndex = bodyRowIndex + add + 13;
 
-            worksheet.Cells[excelRow , 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]);
-            worksheet.Cells[excelRow , 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]);
+            worksheet.Cells[bodyRowIndex, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]);
+            worksheet.Cells[bodyRowIndex, SippingMarkBDColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]);
 
             string[] marks3 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]).Split('\r');
             string[] marks4 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]).Split('\r');
@@ -1018,11 +1125,12 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             {
                 for (int i = 0; i < add2; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
                 }
             }
             //MyUtility.Msg.WaitClear();
+            excel.Columns.AutoFit();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
         }

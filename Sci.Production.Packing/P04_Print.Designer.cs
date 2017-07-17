@@ -86,17 +86,16 @@
             this.radioPackingGuideReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioPackingGuideReport.Location = new System.Drawing.Point(13, 11);
             this.radioPackingGuideReport.Name = "radioPackingGuideReport";
-            this.radioPackingGuideReport.Size = new System.Drawing.Size(165, 21);
+            this.radioPackingGuideReport.Size = new System.Drawing.Size(149, 21);
             this.radioPackingGuideReport.TabIndex = 0;
             this.radioPackingGuideReport.TabStop = true;
-            this.radioPackingGuideReport.Text = "Packing Guide Report";
+            this.radioPackingGuideReport.Text = "Packing List Report";
             this.radioPackingGuideReport.UseVisualStyleBackColor = true;
             this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.radioPackingGuideReport_CheckedChanged);
             // 
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(154, 86);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 23);
@@ -118,7 +117,6 @@
             // 
             // labelCTN
             // 
-            this.labelCTN.Lines = 0;
             this.labelCTN.Location = new System.Drawing.Point(47, 86);
             this.labelCTN.Name = "labelCTN";
             this.labelCTN.Size = new System.Drawing.Size(43, 23);
