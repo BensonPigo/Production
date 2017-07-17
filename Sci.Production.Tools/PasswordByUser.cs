@@ -74,6 +74,10 @@ namespace Sci.Production.Tools
 
         protected override void SearchGridColumns()
         {
+            if (locatefor.Text.Trim() == "")
+            {
+                return;
+            }
             DataRow[] sdr = ((DataTable)gridbs.DataSource).Select(string.Format("Name like '%{0}%' or ID like '%{0}%'", locatefor.Text));
             DataTable dt;
 
