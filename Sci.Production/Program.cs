@@ -33,6 +33,8 @@ namespace Sci.Production
                     if (arg.Contains("TaipeiServer:'true'"))
                     {
                         ClearTaipeiServer = false;
+                        //若是傳送參數則排除,Tradedb_TSR防止使用者修改到資料
+                        ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["TaipeiServer"].ToString().Replace(",Tradedb_TSR", "");
                     }
                 }
             }
