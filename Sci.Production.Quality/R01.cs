@@ -251,7 +251,7 @@ from dbo.FIR F WITH (NOLOCK)
                 + RWhere+ @" 
 			    ) t
     on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,LocalMR from dbo.Orders o WITH (NOLOCK) "
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK)  "
                 + OWhere+ @"
 		        ) O on O.poid = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
@@ -287,7 +287,10 @@ OUTER APPLY(
         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
         )CFD
 Outer apply(
-	select (id+' - '+ name + ' #'+extno) LocalMR from Pass1 where id=o.LocalMR
+	select (A.id+' - '+ A.name + ' #'+A.extno) LocalMR 
+    from orders od 
+    inner join pass1 a on a.id=od.LocalMR 
+    where od.id=o.POID
 ) ps1 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
