@@ -97,6 +97,7 @@ namespace Sci.Production.Tools
             else
             {
                 base.SearchGridColumns();
+
             }
         }
 
