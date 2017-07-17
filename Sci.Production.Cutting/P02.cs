@@ -904,13 +904,7 @@ where w.ID = '{0}'", masterID);
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-
-                    // 若 cutref != empty 則不可編輯
-                    if (!dr["Cutplanid"].ToString().Empty())
-                    {
-                        return;
-                    }
-
+                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
                     SelectItem sele;
                     DataTable cellTb;
                     DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
