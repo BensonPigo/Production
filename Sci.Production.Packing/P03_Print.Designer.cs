@@ -58,16 +58,16 @@
             this.radioPanel1.Controls.Add(this.radioPackingGuideReport);
             this.radioPanel1.Controls.Add(this.radioPackingListReportFormB);
             this.radioPanel1.Controls.Add(this.radioPackingListReportFormA);
-            this.radioPanel1.Location = new System.Drawing.Point(13, 13);
+            this.radioPanel1.Location = new System.Drawing.Point(13, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(401, 142);
+            this.radioPanel1.Size = new System.Drawing.Size(401, 102);
             this.radioPanel1.TabIndex = 94;
             // 
             // radioBarcodePrint
             // 
             this.radioBarcodePrint.AutoSize = true;
             this.radioBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBarcodePrint.Location = new System.Drawing.Point(16, 120);
+            this.radioBarcodePrint.Location = new System.Drawing.Point(3, 77);
             this.radioBarcodePrint.Name = "radioBarcodePrint";
             this.radioBarcodePrint.Size = new System.Drawing.Size(112, 21);
             this.radioBarcodePrint.TabIndex = 3;
@@ -80,7 +80,7 @@
             // 
             this.radioPackingGuideReport.AutoSize = true;
             this.radioPackingGuideReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioPackingGuideReport.Location = new System.Drawing.Point(16, 84);
+            this.radioPackingGuideReport.Location = new System.Drawing.Point(3, 54);
             this.radioPackingGuideReport.Name = "radioPackingGuideReport";
             this.radioPackingGuideReport.Size = new System.Drawing.Size(165, 21);
             this.radioPackingGuideReport.TabIndex = 2;
@@ -92,7 +92,7 @@
             // 
             this.radioPackingListReportFormB.AutoSize = true;
             this.radioPackingListReportFormB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioPackingListReportFormB.Location = new System.Drawing.Point(16, 48);
+            this.radioPackingListReportFormB.Location = new System.Drawing.Point(3, 27);
             this.radioPackingListReportFormB.Name = "radioPackingListReportFormB";
             this.radioPackingListReportFormB.Size = new System.Drawing.Size(288, 21);
             this.radioPackingListReportFormB.TabIndex = 1;
@@ -104,7 +104,7 @@
             // 
             this.radioPackingListReportFormA.AutoSize = true;
             this.radioPackingListReportFormA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioPackingListReportFormA.Location = new System.Drawing.Point(16, 12);
+            this.radioPackingListReportFormA.Location = new System.Drawing.Point(3, 0);
             this.radioPackingListReportFormA.Name = "radioPackingListReportFormA";
             this.radioPackingListReportFormA.Size = new System.Drawing.Size(381, 21);
             this.radioPackingListReportFormA.TabIndex = 0;
@@ -116,7 +116,7 @@
             // 
             this.txtCTNEnd.BackColor = System.Drawing.Color.White;
             this.txtCTNEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNEnd.Location = new System.Drawing.Point(181, 158);
+            this.txtCTNEnd.Location = new System.Drawing.Point(166, 113);
             this.txtCTNEnd.Name = "txtCTNEnd";
             this.txtCTNEnd.Size = new System.Drawing.Size(56, 23);
             this.txtCTNEnd.TabIndex = 98;
@@ -124,8 +124,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(158, 158);
+            this.label2.Location = new System.Drawing.Point(143, 113);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 23);
             this.label2.TabIndex = 97;
@@ -139,15 +138,14 @@
             // 
             this.txtCTNStart.BackColor = System.Drawing.Color.White;
             this.txtCTNStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNStart.Location = new System.Drawing.Point(98, 158);
+            this.txtCTNStart.Location = new System.Drawing.Point(83, 113);
             this.txtCTNStart.Name = "txtCTNStart";
             this.txtCTNStart.Size = new System.Drawing.Size(56, 23);
             this.txtCTNStart.TabIndex = 96;
             // 
             // labelCTN
             // 
-            this.labelCTN.Lines = 0;
-            this.labelCTN.Location = new System.Drawing.Point(51, 158);
+            this.labelCTN.Location = new System.Drawing.Point(36, 113);
             this.labelCTN.Name = "labelCTN";
             this.labelCTN.Size = new System.Drawing.Size(43, 23);
             this.labelCTN.TabIndex = 95;
@@ -155,7 +153,7 @@
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(521, 220);
+            this.ClientSize = new System.Drawing.Size(521, 164);
             this.Controls.Add(this.txtCTNEnd);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCTNStart);
