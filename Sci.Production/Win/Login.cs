@@ -16,7 +16,6 @@ using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
