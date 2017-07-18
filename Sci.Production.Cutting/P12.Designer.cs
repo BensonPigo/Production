@@ -31,6 +31,12 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtCutno = new Sci.Win.UI.TextBox();
+            this.dateBundlecreatedDate = new Sci.Win.UI.DateBox();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.lbCutno = new Sci.Win.UI.Label();
+            this.lbBundlecreatedDate = new Sci.Win.UI.Label();
+            this.lbBundlecreator = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.dateBox1 = new Sci.Win.UI.DateBox();
@@ -64,12 +70,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -79,12 +79,12 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.dateBox2);
+            this.panel1.Controls.Add(this.txtCutno);
+            this.panel1.Controls.Add(this.dateBundlecreatedDate);
             this.panel1.Controls.Add(this.txtuser1);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.lbCutno);
+            this.panel1.Controls.Add(this.lbBundlecreatedDate);
+            this.panel1.Controls.Add(this.lbBundlecreator);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtfactoryByM);
             this.panel1.Controls.Add(this.dateBox1);
@@ -114,6 +114,55 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 108);
             this.panel1.TabIndex = 0;
+            // 
+            // txtCutno
+            // 
+            this.txtCutno.BackColor = System.Drawing.Color.White;
+            this.txtCutno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutno.Location = new System.Drawing.Point(716, 79);
+            this.txtCutno.Name = "txtCutno";
+            this.txtCutno.Size = new System.Drawing.Size(100, 23);
+            this.txtCutno.TabIndex = 104;
+            // 
+            // dateBundlecreatedDate
+            // 
+            this.dateBundlecreatedDate.Location = new System.Drawing.Point(542, 79);
+            this.dateBundlecreatedDate.Name = "dateBundlecreatedDate";
+            this.dateBundlecreatedDate.Size = new System.Drawing.Size(130, 23);
+            this.dateBundlecreatedDate.TabIndex = 4;
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(107, 79);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 103;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // lbCutno
+            // 
+            this.lbCutno.Location = new System.Drawing.Point(675, 79);
+            this.lbCutno.Name = "lbCutno";
+            this.lbCutno.Size = new System.Drawing.Size(38, 21);
+            this.lbCutno.TabIndex = 102;
+            this.lbCutno.Text = "Cut#";
+            // 
+            // lbBundlecreatedDate
+            // 
+            this.lbBundlecreatedDate.Location = new System.Drawing.Point(410, 79);
+            this.lbBundlecreatedDate.Name = "lbBundlecreatedDate";
+            this.lbBundlecreatedDate.Size = new System.Drawing.Size(129, 21);
+            this.lbBundlecreatedDate.TabIndex = 101;
+            this.lbBundlecreatedDate.Text = "Bundle created Date";
+            // 
+            // lbBundlecreator
+            // 
+            this.lbBundlecreator.Location = new System.Drawing.Point(5, 79);
+            this.lbBundlecreator.Name = "lbBundlecreator";
+            this.lbBundlecreator.Size = new System.Drawing.Size(99, 21);
+            this.lbBundlecreator.TabIndex = 100;
+            this.lbBundlecreator.Text = "Bundle creator";
             // 
             // label1
             // 
@@ -433,55 +482,6 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(5, 79);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 21);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "Bundle creator";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(410, 79);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(129, 21);
-            this.label3.TabIndex = 101;
-            this.label3.Text = "Bundle ctrated Date";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(675, 79);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(38, 21);
-            this.label4.TabIndex = 102;
-            this.label4.Text = "Cut#";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(107, 79);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 103;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // dateBox2
-            // 
-            this.dateBox2.Location = new System.Drawing.Point(542, 79);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 4;
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(716, 79);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 104;
-            // 
             // P12
             // 
             this.ClientSize = new System.Drawing.Size(1008, 562);
@@ -540,11 +540,11 @@
         private Win.UI.Grid grid1;
         private Win.UI.Label label1;
         private Class.txtfactory txtfactoryByM;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateBox dateBox2;
+        private Win.UI.TextBox txtCutno;
+        private Win.UI.DateBox dateBundlecreatedDate;
         private Class.txtuser txtuser1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
+        private Win.UI.Label lbCutno;
+        private Win.UI.Label lbBundlecreatedDate;
+        private Win.UI.Label lbBundlecreator;
     }
 }
