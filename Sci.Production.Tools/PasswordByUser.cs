@@ -92,7 +92,12 @@ namespace Sci.Production.Tools
                 {
                     dt.ImportRow(dr);
                 }
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name", "15,20", this.Text, "ID,Name");
+                dt.Columns.Add("lastTime");
+                foreach (DataRow dr in dt.Rows)
+                {
+                    dr["lastTime"] = MyUtility.Check.Empty(dr["LastLoginTime"])?"":((DateTime)MyUtility.Convert.GetDate(dr["LastLoginTime"])).ToString("yyyy/MM/dd HH:mm:ss");
+                }
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "ID,Name,lastTime", "15,20,20", this.Text, "ID,Name,Last Login Time");
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) return;
                 locatefor.Text = item.GetSelectedString();
@@ -115,7 +120,8 @@ namespace Sci.Production.Tools
                 .Text("ID", header: "User ID", width: Widths.AnsiChars(10))
                 .Text("NAME", header: "Name", width: Widths.AnsiChars(20))
                 .Text("PASSWORD", header: "Password", width: Widths.AnsiChars(10), settings: ts)
-                .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1));
+                .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1))
+                .DateTime("LastLoginTime", header: "Last Login Time", width: Widths.AnsiChars(20));
             return true;
         }
 

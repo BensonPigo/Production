@@ -20,6 +20,7 @@
     [AddDate]    DATETIME      NULL,
     [EditName]   VARCHAR (10)  CONSTRAINT [DF_Pass1_EditName] DEFAULT ('') NULL,
     [EditDate]   DATETIME      NULL,
+    [LastLoginTime] DATETIME NULL, 
     CONSTRAINT [PK_Pass1_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

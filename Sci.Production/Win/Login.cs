@@ -233,6 +233,12 @@ namespace Sci.Production.Win
                 Sci.Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
             }
             #endregion
+            #region 寫入登入時間
+            if (!(result = DBProxy.Current.Execute(null, string.Format("update pass1 set LastLoginTime = GETDATE() where id = '{0}'", userid))))
+            {
+                return result;
+            }
+            #endregion
             return result;
         }
 
