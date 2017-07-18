@@ -48,10 +48,7 @@ FROM (
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
-            , UseFactory = isnull ((select FactoryID 
-                                    from orders
-                                    where id = inv.Seq70Poid)
-                                   , '')
+            , [UseFactory] = inv.TransferFactory
             , case inv.type 
                 when '3' then inv.TransferFactory 
                 else inv.FactoryID 
@@ -88,10 +85,7 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
-            , UseFactory = isnull ((select FactoryID 
-                                    from orders
-                                    where id = inv.Seq70Poid)
-                                   , '')
+            , [UseFactory] = inv.TransferFactory
             , case inv.type 
                 when '3' then inv.FactoryID 
                 else inv.FactoryID 
@@ -128,10 +122,7 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
-            , UseFactory = isnull ((select FactoryID 
-                                    from orders
-                                    where id = inv.Seq70Poid)
-                                   , '')
+            , [UseFactory] = inv.TransferFactory
             , case inv.type 
                 when '3' then inv.FactoryID 
                 else inv.FactoryID 
