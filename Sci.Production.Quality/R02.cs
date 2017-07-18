@@ -214,7 +214,7 @@ PS.SizeSpec,
 	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
 	                   ,IIF(A.Status='Confirmed',A.Defect,NULL)[Defect Type]
-	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
+	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date],a.Remark
 	                   ,AIRL_Encode.OvenEncode
 ,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
