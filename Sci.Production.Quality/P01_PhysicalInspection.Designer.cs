@@ -175,7 +175,7 @@
             this.displaySEQ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displaySEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySEQ.Location = new System.Drawing.Point(295, 12);
+            this.displaySEQ.Location = new System.Drawing.Point(283, 12);
             this.displaySEQ.Name = "displaySEQ";
             this.displaySEQ.Size = new System.Drawing.Size(55, 21);
             this.displaySEQ.TabIndex = 107;
@@ -183,7 +183,7 @@
             // labelSEQ
             // 
             this.labelSEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ.Location = new System.Drawing.Point(217, 11);
+            this.labelSEQ.Location = new System.Drawing.Point(205, 11);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
             this.labelSEQ.TabIndex = 106;
@@ -192,7 +192,7 @@
             // labelSupplier
             // 
             this.labelSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSupplier.Location = new System.Drawing.Point(217, 41);
+            this.labelSupplier.Location = new System.Drawing.Point(205, 41);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
             this.labelSupplier.TabIndex = 108;
@@ -201,7 +201,7 @@
             // labelBrandRefno
             // 
             this.labelBrandRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrandRefno.Location = new System.Drawing.Point(217, 71);
+            this.labelBrandRefno.Location = new System.Drawing.Point(205, 71);
             this.labelBrandRefno.Name = "labelBrandRefno";
             this.labelBrandRefno.Size = new System.Drawing.Size(75, 23);
             this.labelBrandRefno.TabIndex = 110;
@@ -212,9 +212,9 @@
             this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIRefno.Location = new System.Drawing.Point(295, 102);
+            this.displaySCIRefno.Location = new System.Drawing.Point(283, 102);
             this.displaySCIRefno.Name = "displaySCIRefno";
-            this.displaySCIRefno.Size = new System.Drawing.Size(186, 21);
+            this.displaySCIRefno.Size = new System.Drawing.Size(147, 21);
             this.displaySCIRefno.TabIndex = 111;
             // 
             // displaySCIRefno1
@@ -222,15 +222,15 @@
             this.displaySCIRefno1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySCIRefno1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displaySCIRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIRefno1.Location = new System.Drawing.Point(484, 101);
+            this.displaySCIRefno1.Location = new System.Drawing.Point(436, 101);
             this.displaySCIRefno1.Name = "displaySCIRefno1";
-            this.displaySCIRefno1.Size = new System.Drawing.Size(293, 21);
+            this.displaySCIRefno1.Size = new System.Drawing.Size(303, 21);
             this.displaySCIRefno1.TabIndex = 112;
             // 
             // labelSCIRefno
             // 
             this.labelSCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSCIRefno.Location = new System.Drawing.Point(217, 101);
+            this.labelSCIRefno.Location = new System.Drawing.Point(205, 101);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
             this.labelSCIRefno.TabIndex = 113;
@@ -241,7 +241,7 @@
             this.displayBrandRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBrandRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBrandRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBrandRefno.Location = new System.Drawing.Point(295, 71);
+            this.displayBrandRefno.Location = new System.Drawing.Point(283, 71);
             this.displayBrandRefno.Name = "displayBrandRefno";
             this.displayBrandRefno.Size = new System.Drawing.Size(147, 21);
             this.displayBrandRefno.TabIndex = 114;
@@ -251,7 +251,7 @@
             this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColor.Location = new System.Drawing.Point(541, 12);
+            this.displayColor.Location = new System.Drawing.Point(529, 12);
             this.displayColor.Name = "displayColor";
             this.displayColor.Size = new System.Drawing.Size(101, 21);
             this.displayColor.TabIndex = 115;
@@ -259,7 +259,7 @@
             // labelColor
             // 
             this.labelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelColor.Location = new System.Drawing.Point(463, 11);
+            this.labelColor.Location = new System.Drawing.Point(451, 11);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
             this.labelColor.TabIndex = 116;
@@ -268,7 +268,7 @@
             // labelArriveQty
             // 
             this.labelArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveQty.Location = new System.Drawing.Point(463, 41);
+            this.labelArriveQty.Location = new System.Drawing.Point(451, 41);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
             this.labelArriveQty.TabIndex = 117;
@@ -279,7 +279,7 @@
             this.displayArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayArriveQty.Location = new System.Drawing.Point(541, 42);
+            this.displayArriveQty.Location = new System.Drawing.Point(529, 42);
             this.displayArriveQty.Name = "displayArriveQty";
             this.displayArriveQty.Size = new System.Drawing.Size(101, 21);
             this.displayArriveQty.TabIndex = 118;
@@ -287,7 +287,7 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Location = new System.Drawing.Point(657, 11);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(742, 10);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(123, 23);
             this.labelArriveWHDate.TabIndex = 120;
@@ -296,7 +296,7 @@
             // labelLastInspectionDate
             // 
             this.labelLastInspectionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(657, 41);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(742, 40);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(123, 23);
             this.labelLastInspectionDate.TabIndex = 121;
@@ -305,9 +305,9 @@
             // labelResult
             // 
             this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelResult.Location = new System.Drawing.Point(730, 70);
+            this.labelResult.Location = new System.Drawing.Point(742, 69);
             this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(50, 23);
+            this.labelResult.Size = new System.Drawing.Size(123, 23);
             this.labelResult.TabIndex = 124;
             this.labelResult.Text = "Result";
             // 
@@ -385,7 +385,7 @@
             // txtsupplier
             // 
             this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(295, 41);
+            this.txtsupplier.Location = new System.Drawing.Point(283, 41);
             this.txtsupplier.Name = "txtsupplier";
             this.txtsupplier.Size = new System.Drawing.Size(147, 23);
             this.txtsupplier.TabIndex = 109;
@@ -396,7 +396,7 @@
             this.displayResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayResult.Location = new System.Drawing.Point(783, 71);
+            this.displayResult.Location = new System.Drawing.Point(868, 70);
             this.displayResult.Name = "displayResult";
             this.displayResult.Size = new System.Drawing.Size(101, 21);
             this.displayResult.TabIndex = 132;
@@ -414,7 +414,7 @@
             // 
             // dateLastInspectionDate
             // 
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(783, 42);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(868, 41);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
             this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
@@ -422,7 +422,7 @@
             // 
             // dateArriveWHDate
             // 
-            this.dateArriveWHDate.Location = new System.Drawing.Point(783, 13);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(868, 12);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
@@ -433,9 +433,9 @@
             this.displaydescDetail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaydescDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displaydescDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaydescDetail.Location = new System.Drawing.Point(448, 71);
+            this.displaydescDetail.Location = new System.Drawing.Point(436, 71);
             this.displaydescDetail.Name = "displaydescDetail";
-            this.displaydescDetail.Size = new System.Drawing.Size(279, 21);
+            this.displaydescDetail.Size = new System.Drawing.Size(303, 21);
             this.displaydescDetail.TabIndex = 140;
             // 
             // P01_PhysicalInspection
