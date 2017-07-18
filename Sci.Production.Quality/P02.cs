@@ -127,7 +127,7 @@ namespace Sci.Production.Quality
                 .Text("unit", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: detail_Int)
-                .Text("RejectQty", header: "Rehect Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("RejectQty", header: "Reject Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("defect", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
