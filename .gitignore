@@ -50,3 +50,6 @@ Sci.Production.Centralized/obj
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
 Database/obj/Debug/
+Production.Daily/bin/
+Production.Daily/obj/
+*.user
