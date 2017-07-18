@@ -129,7 +129,7 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
                 return;
             }
-            DataTable GroupData, gridData, MidDetailData;
+            DataTable GroupData, gridData;
             DataTable[] GandM;
             StringBuilder sqlCmd = new StringBuilder();
             string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
