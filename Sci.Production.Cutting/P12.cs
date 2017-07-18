@@ -104,8 +104,8 @@ namespace Sci.Production.Cutting
             Sort_by = comboSortBy.SelectedIndex.ToString();
             Extend = checkExtendAllParts.Checked.ToString();
             Addname = txtuser1.TextBox1.Text;
-            AddDate = dateBox2.Value;
-            Cutno = textBox1.Text;
+            AddDate = dateBundlecreatedDate.Value;
+            Cutno = txtCutno.Text;
 
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = ""; string sb = "";
@@ -145,7 +145,7 @@ namespace Sci.Production.Cutting
             }
             if (!this.txtSize.Text.Empty())
             {
-                sqlWheres.Add("a.SizeCode  =@Size");
+                sqlWheres.Add("a.SizeCode =@Size");
                 lis.Add(new SqlParameter("@Size", size));
             }
 
@@ -156,12 +156,12 @@ namespace Sci.Production.Cutting
             }
             if (!MyUtility.Check.Empty(Addname))
             {
-                sqlWheres.Add(" b.AddName=@AddName");
+                sqlWheres.Add(" b.AddName = @AddName");
                 lis.Add(new SqlParameter("@AddName", Addname));
             }
-            if (!this.dateBox2.Value.Empty())
+            if (!this.dateBundlecreatedDate.Value.Empty())
             {
-                sqlWheres.Add(" b.AddDate=@AddDate");
+                sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
                 lis.Add(new SqlParameter("@AddDate", AddDate));
             }
             if (!MyUtility.Check.Empty(Cutno))
