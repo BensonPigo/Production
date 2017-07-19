@@ -55,7 +55,6 @@ namespace Sci.Production.Warehouse
             //SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
 
             DoSubForm = subform;
-
         }
 
         public P11(ToolStripMenuItem menuitem, string transID)
@@ -74,15 +73,86 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
-
             #region -- outqty 開窗 --
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
+                #region DoSubForm & subform 參數設定
                 DoSubForm.IsSupportDelete = false;
                 DoSubForm.IsSupportNew = false;
-                subform.parentData = this.CurrentDetailData;
-                OpenSubDetailPage();
+
+                subform.master = CurrentMaintain;
+                subform.combo = checkByCombo.Checked;
+                #endregion 
+                #region keep SubDt
+                /*
+                 * 如果要實現 Reject 第三層
+                 * 必須先 keep 原始資料
+                 */
+                Dictionary<DataRow, DataTable> originSub = new Dictionary<DataRow, DataTable>();
+                foreach (DataRow dr in DetailDatas)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        DataTable subDt;
+                        GetSubDetailDatas(dr, out subDt);
+                        DataTable keepDt = subDt.Clone();
+
+                        foreach (DataRow subDr in subDt.Rows)
+                        {
+                            keepDt.ImportRow(subDr);
+                        }
+                        originSub.Add(dr, keepDt);
+                    }
+                }
+                #endregion
+                base.OpenSubDetailPage();
+                #region Final
+                DataTable FinalSubDt;
+                GetSubDetailDatas(out FinalSubDt);
+                if (!subform.isSave)
+                {
+                    /*
+                     * 第三層做 undo 則實現 Reject
+                     * 將進入第三層前 keep 的資料，重新塞回第三層
+                     */
+                    foreach (DataRow dr in DetailDatas)
+                    {
+                        if (dr.RowState != DataRowState.Deleted)
+                        {
+                            DataTable originDt = originSub[dr];
+                            DataTable unchangeSubDt;
+                            GetSubDetailDatas(dr, out unchangeSubDt);
+                            for (int i = 0; i < unchangeSubDt.Rows.Count; i++)
+                            {
+                                unchangeSubDt.Rows[i]["Qty"] = originDt.Rows[i]["Qty"];
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * 更新 output & qty
+                 */
+                foreach (DataRow dr in DetailDatas)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        GetSubDetailDatas(dr, out FinalSubDt);
+                        dr["output"] = string.Join(", ",
+                            FinalSubDt.AsEnumerable()
+                                 .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+                                 .Select(row => row["SizeCode"].ToString() + "*" + Convert.ToDecimal(row["qty"]).ToString("0.00"))
+
+                        );
+
+                        dr["qty"] = Math.Round(FinalSubDt.AsEnumerable()
+                                                    .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+                                                    .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
+                                                    , 2);
+                    }
+                }        
+                #endregion
             };
             #endregion
             //DoSubForm
@@ -94,29 +164,51 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable bulkItems;
-                    string sqlcmd = string.Format(@"select a.*,
-CASE b.FabricType WHEN 'A' THEN 'Accessory' WHEN 'F' THEN 'Fabric'  WHEN 'O' THEN 'Other' END AS FabricType
-,b.SCIRefno,f.MtlTypeID,m.IssueType,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description],b.StockUnit
-,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
-                         from dbo.issue WITH (NOLOCK) 
-                         inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
-                         where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
-                                and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
-                                and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
-,balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
-                        from dbo.ftyinventory FI WITH (NOLOCK) 
-                        where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-                                and a.roll = fi.roll and a.stocktype = fi.stocktype)
-                    ,0.00)
+                    string sqlcmd = string.Format(@"
+select  a.*
+        , FabricType = CASE b.FabricType 
+                            WHEN 'A' THEN 'Accessory' 
+                            WHEN 'F' THEN 'Fabric'  
+                            WHEN 'O' THEN 'Other' 
+                       END
+        , b.SCIRefno
+        , f.MtlTypeID
+        , m.IssueType
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
+        , b.Colorid
+        , b.SizeSpec
+        , b.UsedQty
+        , b.SizeUnit
+        , dbo.Getlocation(a.ukey) [location]
+        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+        , b.StockUnit
+        , [accu_issue] = isnull(( select sum(Issue_Detail.qty) 
+                                  from dbo.issue WITH (NOLOCK) 
+                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                                  where Issue.type = 'B' 
+                                        and Issue.Status = 'Confirmed' 
+                                        and issue.id != a.POId 
+                                        and Issue_Detail.poid = a.poid 
+                                        and Issue_Detail.seq1 = a.seq1 
+                                        and Issue_Detail.seq2 = a.seq2
+                                        and Issue_Detail.roll = a.roll 
+                                        and Issue_Detail.stocktype = a.stocktype),0.00) 
+        , balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
+                                 from dbo.ftyinventory FI WITH (NOLOCK) 
+                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                             ,0.00)
 from dbo.ftyinventory a WITH (NOLOCK) 
 inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-where lock=0 and inqty-outqty+adjustqty > 0 
-and poid='{1}' and stocktype='B'
-and b.FabricType='A'
-and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
+where   lock=0 
+        and inqty-outqty+adjustqty > 0 
+        and poid='{1}' 
+        and stocktype='B'
+        and b.FabricType='A'
+        and m.IssueType='Sewing' 
+order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
                     IList<DataRow> x;
                     DualResult result2;
                     if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out bulkItems)))
@@ -208,7 +300,6 @@ from dbo.ftyinventory a WITH (NOLOCK)
 inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id = a.POID 
                                                  and b.seq1 = a.seq1 
                                                  and b.seq2 = a.Seq2
-inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where   poid = '{0}' 
         and a.seq1 = '{1}' 
@@ -267,15 +358,6 @@ where   poid = '{0}'
             detailgrid.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["output"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion 可編輯欄位變色
-        }
-
-        protected override void OpenSubDetailPage()
-        {
-            subform.master = CurrentMaintain;
-            subform.parentData = this.CurrentDetailData;
-            subform.combo = checkByCombo.Checked;
-            base.OpenSubDetailPage();
-
         }
 
         //寫明細撈出的sql command
@@ -384,8 +466,7 @@ Where a.id = '{0}'", masterID);
             DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
-            #region 必輸檢查
-
+            #region 表頭 必輸檢查
             if (MyUtility.Check.Empty(txtOrderID.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Request# > or < Order ID >  can't be empty!", "Warning");
@@ -398,10 +479,26 @@ Where a.id = '{0}'", masterID);
                 dateIssueDate.Focus();
                 return false;
             }
-
             #endregion 必輸檢查
-
-            //DataTable detaildata = (DataTable)detailgridbs.DataSource;
+            #region 表身不可出現 Qty = 0 的資料
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (dr["Qty"].ToString().Empty() || dr["Qty"].EqualDecimal(0))
+                {
+                    dr.Delete();
+                }
+            }
+            #endregion 
+            #region 表身 必輸檢查
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (dr["Seq"].ToString().Empty())
+                {
+                    MyUtility.Msg.WarningBox("Seq can't be empty.");
+                    return false;
+                }
+            }
+            #endregion
 
             foreach (DataRow Checkduplicate in DetailDatas)
             {
@@ -483,8 +580,24 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 //MyUtility.Msg.InfoBox("Save completed!!");
             }
 
-            //刪除第三層qty為0的資料
+
             DataTable subDT;
+            
+            //將需新增的資料狀態更改為新增
+            foreach (DataRow dr in DetailDatas)
+            {
+                GetSubDetailDatas(dr, out subDT);
+                foreach (DataRow temp in subDT.Rows)
+                {
+                    if (temp["isvirtual"].ToString() == "1" && Convert.ToDecimal(temp["QTY"].ToString()) > 0)
+                    {
+                        temp.AcceptChanges();
+                        temp.SetAdded();
+                    }
+                }
+            }
+
+            //刪除第三層qty為0的資料
             foreach (DataRow dr in DetailDatas)
             {
                 if (GetSubDetailDatas(dr, out subDT))
