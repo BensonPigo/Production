@@ -2856,6 +2856,245 @@ when not matched by target then
 when not matched by source then 
 	delete;	
 
+
+--------CutReason---------------
+
+Merge Production.dbo.CutReason as t
+Using Trade_To_Pms.dbo.CutReason as s
+on t.Type=s.Type and t.ID=s.ID 
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
+--------IEReason---------------
+
+Merge Production.dbo.IEReason as t
+Using Trade_To_Pms.dbo.IEReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
+
+--------PackingReason---------------
+
+Merge Production.dbo.PackingReason as t
+Using Trade_To_Pms.dbo.PackingReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
+--------PPICReason---------------
+
+Merge Production.dbo.PPICReason as t
+Using Trade_To_Pms.dbo.PPICReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.TypeForUse= s.TypeForUse,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,TypeForUse
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.TypeForUse,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;	
+
+
+--------SubProcess---------------
+
+Merge Production.dbo.SubProcess as t
+Using Trade_To_Pms.dbo.SubProcess as s
+on t.ID=s.ID
+when matched then
+	update set
+	t.ArtworkTypeId= s.ArtworkTypeId,
+	t.IsSelection= s.IsSelection,
+	t.IsRFIDProcess= s.IsRFIDProcess,
+	t.IsRFIDDefault= s.IsRFIDDefault,
+	t.ShowSeq= s.ShowSeq,
+	t.Junk= s.Junk,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate,
+	t.BCSDate= s.BCSDate
+when not matched by target then
+	insert(ID
+	,ArtworkTypeId
+	,IsSelection
+	,IsRFIDProcess
+	,IsRFIDDefault
+	,ShowSeq
+	,Junk
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,BCSDate
+	)
+	values(s.ID,
+	s.ArtworkTypeId,
+	s.IsSelection,
+	s.IsRFIDProcess,
+	s.IsRFIDDefault,
+	s.ShowSeq,
+	s.Junk,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate,
+	s.BCSDate)
+when not matched by source then 
+	delete;	
+
+
+--------WhseReason---------------
+
+Merge Production.dbo.WhseReason as t
+Using Trade_To_Pms.dbo.WhseReason as s
+on t.Type=s.Type and t.ID=s.ID
+when matched then
+	update set
+	t.Description= s.Description,
+	t.Remark= s.Remark,
+	t.Junk= s.Junk,
+	t.ActionCode= s.ActionCode,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate,
+	t.No= s.No
+when not matched by target then
+	insert(Type
+	,ID
+	,Description
+	,Remark
+	,Junk
+	,ActionCode
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,No
+	)
+	values(s.Type,
+	s.ID,
+	s.Description,
+	s.Remark,
+	s.Junk,
+	s.ActionCode,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate,
+	s.No)
+when not matched by source then 
+	delete;	
+
 END
 
 
