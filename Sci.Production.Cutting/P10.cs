@@ -708,7 +708,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey, null);
+    new Sci.Production.PublicForm.GarmentList(ukey, null, txtCutRef.Text);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }

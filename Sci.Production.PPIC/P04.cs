@@ -376,7 +376,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         //Garment List
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(MyUtility.Convert.GetString(CurrentMaintain["Ukey"]),null);
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(MyUtility.Convert.GetString(CurrentMaintain["Ukey"]),null,null);
             callNextForm.ShowDialog(this);
         }
 
