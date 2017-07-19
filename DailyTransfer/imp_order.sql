@@ -260,7 +260,7 @@ BEGIN
 						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
 				from #tmpOrders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
-				where	isnull(A.QTY, 0) != isnull(B.QTY, 0) 
+				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
 						OR isnull(A.BuyerDelivery, '') != isnull(B.BuyerDelivery, '')
 						OR isnull(A.StyleID, '') != isnull(B.StyleID, '') 
 						OR isnull(A.EachConsApv, '') != isnull(B.EachConsApv, '') 
@@ -272,6 +272,7 @@ BEGIN
 						OR isnull(A.Junk, '') != isnull(B.Junk, '') 
 						OR isnull(A.KPILETA, '') != isnull(B.KPILETA, '')
 						OR isnull(A.LETA, '') != isnull(B.LETA, '')	
+						)
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
 		when matched then 
@@ -329,6 +330,16 @@ BEGIN
 			) values (
 				'No Change!'	, @dToDay		, @OldDate		, s.MDivisionID, s.ID
 			);
+		----------不變動上面規則，再補styleid
+		Merge Production.dbo.OrderComparisonList as t
+		Using (	select a.* 
+				from Trade_To_Pms.dbo.Orders a
+				left join #tmpOrders b on a.ID = b.ID
+				where a.FactoryID in (select ID from Production.dbo.Factory)) as s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then
+			update set 
+			t.OriginalStyleID	= s.StyleID;
 -----------------------------------------------------------------------------------------------------------
 ---------------------Order--------------------------------------
 		--------------Order.id= AOrder.id  if eof()
