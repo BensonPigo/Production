@@ -27,7 +27,6 @@ namespace Sci.Production.Logistic
         IList<string> comboBox2_RowSource5 = new List<string>();
         IList<string> comboBox3_RowSource = new List<string>();
         BindingSource comboxbs1, comboxbs2, comboxbs3;
-        string selectDataTable_DefaultView_Sort = "";
 
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -99,37 +98,6 @@ namespace Sci.Production.Logistic
                 .Numeric("ShipQty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10)).Get(out col_location)
                 .Text("Remark", header: "Reamrks", width: Widths.AnsiChars(10), settings: ts);
-
-            int RowIndex = 0;
-            int ColumIndex = 0;
-            gridPackID.CellClick += (s, e) =>
-            {
-                RowIndex = e.RowIndex;
-                ColumIndex = e.ColumnIndex;
-            };
-
-            gridPackID.Sorted += (s, e) =>
-            {
-
-                if ((RowIndex == -1) & (ColumIndex == 4))
-                {
-
-                    listControlBindingSource1.DataSource = null;
-
-                    if (selectDataTable_DefaultView_Sort == "DESC")
-                    {
-                        gridData.DefaultView.Sort = "rn1 DESC";
-                        selectDataTable_DefaultView_Sort = "";
-                    }
-                    else
-                    {
-                        gridData.DefaultView.Sort = "rn1 ASC";
-                        selectDataTable_DefaultView_Sort = "DESC";
-                    }
-                    listControlBindingSource1.DataSource = gridData;
-                    return;
-                }
-            };
         }
 
         //Query
@@ -146,8 +114,7 @@ namespace Sci.Production.Logistic
 
             sqlCmd.Append(string.Format(@"
 select *,
-    rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-    , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
+rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
     select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
     (select sum(QtyPerCTN) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
