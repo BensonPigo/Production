@@ -64,16 +64,15 @@ namespace Sci.Production.Warehouse
         {
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"
-select  *
-        , concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq
-        , dbo.getmtldesc(id,seq1,seq2,2,0) [description]
+select  p.*
+        , concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
+        , dbo.getmtldesc(p.id, p.seq1, p.seq2, 2,0) [description]
         , (select orderid+',' from (select orderid 
                                     from dbo.po_supp_detail_orderlist WITH (NOLOCK) 
-                                    where   id=po_supp_detail.id 
-                                            and seq1=po_supp_detail.seq1 
-                                            and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist]
-        , dbo.GetUnitRate(po_supp_detail.POUnit, po_supp_detail.StockUnit) RATE 
-from dbo.po_supp_detail WITH (NOLOCK) 
+                                    where   id = p.id 
+                                            and seq1 = p.seq1 
+                                            and seq2 = p.seq2)t for xml path('')) [orderlist]
+from dbo.po_supp_detail p WITH (NOLOCK) 
 where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , strpoid, strseq1, strseq2), out dr))
             {
