@@ -87,7 +87,7 @@ namespace Sci.Production.Logistic
             Helper.Controls.Grid.Generator(this.gridPackID)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 //.Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -112,21 +112,25 @@ namespace Sci.Production.Logistic
 
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
-(select sum(QtyPerCTN) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
-(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
-substring((select cast(Article as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
-substring((select cast(Color as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
-substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
+            sqlCmd.Append(string.Format(@"
+select *,
+rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-	  select distinct  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
-	  from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) 
-	  where (a.Type = 'B' or a.Type = 'L')
-	  and a.ID = b.ID
-	  and b.ReceiveDate is not null
-	  and b.CTNQty = 1
-	  and b.OrderID = c.ID
-	  and c.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+    select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
+    (select sum(QtyPerCTN) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
+    (select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
+    substring((select cast(Article as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
+    substring((select cast(Color as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
+    substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
+    from (
+	      select distinct  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
+	      from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) 
+	      where (a.Type = 'B' or a.Type = 'L')
+	      and a.ID = b.ID
+	      and b.ReceiveDate is not null
+	      and b.CTNQty = 1
+	      and b.OrderID = c.ID
+	      and c.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
@@ -164,7 +168,7 @@ from (
                 sqlCmd.Append(string.Format(" and c.CustPONo <= '{0}'", this.txtPONoEnd.Text));
             }
             #endregion
-            sqlCmd.Append(") d");
+            sqlCmd.Append(") d)X order by rn");
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
