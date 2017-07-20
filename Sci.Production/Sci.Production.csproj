@@ -281,6 +281,9 @@
     <None Include="SCHEMAS.xss">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
+    <None Include="XLT\Centralized_R14_Transportation_Cost_Air_Freight.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_P01_ColorCombo_SizeBreakdown.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
