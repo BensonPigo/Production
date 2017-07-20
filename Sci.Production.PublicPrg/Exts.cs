@@ -8,7 +8,7 @@ using System.Data;
 using Ict;
 namespace Sci.Production.Prg
 {
-    internal static class ProjExts
+    public static class ProjExts
     {
         public static T Val<T>(this DataRow row, string name)
         {
