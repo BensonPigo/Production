@@ -319,26 +319,25 @@ order by ID,OrderID";
                     DataTable DropDownLists;
                     DataTable kpiCodes = new DataTable();
                     #region--先從Trade撈 DropDownList 、Factory資料
-                    //連Trade DropDownList資料(為了Detail報表要顯示完整名稱的Category)
-                    #region--連Trade DropDownList資料
-                    result = DBProxy.Current.Select("","select id,Name,type from DropDownList   ",out DropDownLists);
+                    #region--連Trade DropDownList資料(為了Detail報表要顯示完整名稱的Category)
+                    result = DBProxy.Current.SelectByConn(conn, "select id,Name,type from DropDownList   ", out DropDownLists);
                     if (!result) { return result; }
-                 
-                     //執行DropDownLists要寫入暫存#tmpDropDownList提供tsql_LoadData(要將從Trade撈到的Factory及DropDownLists加入到tsql_LoadData，設定的變數中)使用，
-                    result = MyUtility.Tool.ProcessWithDatatable(DropDownLists,"id,Name,type","Select 1",out kpiCodes,"#tmpDropDownList",conn);
+
+                    //執行DropDownLists要寫入暫存#tmpDropDownList提供tsql_LoadData(要將從Trade撈到的Factory及DropDownLists加入到tsql_LoadData，設定的變數中)使用 
+                    result = MyUtility.Tool.ProcessWithDatatable(DropDownLists, "id,Name,type", "Select 1", out kpiCodes, "#tmpDropDownList", conn);
                     if (!result) { return result; }
                     #endregion
 
                     #region --連Trade Factory資料(取得KpiCode)
-                    result = DBProxy.Current.Select("","select id,KpiCode from Factory  ",out Factorys);
+                    result = DBProxy.Current.SelectByConn(conn, "select id,KpiCode from Factory  ", out Factorys);
                     if (!result) { return result; }
 
                     //執行tsql_LoadData抓Query資料，將從Trade撈到的Factory及DropDownLists加入到tsql_LoadData中設定的變數中，最後並list出有哪些KpiCode
-                    result = MyUtility.Tool.ProcessWithDatatable(Factorys,"ID,KpiCode",tsql_LoadData,out kpiCodes,"#tmpFactory",conn);
+                    result = MyUtility.Tool.ProcessWithDatatable(Factorys, "ID,KpiCode", tsql_LoadData, out kpiCodes, "#tmpFactory", conn);
                     if (!result) { return result; }
                     #endregion
-
                     #endregion
+
                     //沒有資料就繼續跑下一個連線，直到所有連線都跑完
                     if (0 == kpiCodes.Rows.Count) { continue; }
                     
@@ -436,35 +435,54 @@ order by BrandID
             //1.產生第一列表頭資料
             //2.表頭資料依照FactorySort排序
             #region --撈出Factory的KpiCode及FactorySort，依照FactorySort做排序
-            string tsql_Factory = @"select distinct  KpiCode.KpiCode,max(FactorySort) as FactorySort 
- from  Factory
- outer apply(select  iif(KpiCode='',Factory.ID,KpiCode) as KpiCode) as KpiCode
- group by KpiCode.KpiCode order by FactorySort
-";
-            DataTable dt_factory = new DataTable();
-            result=DBProxy.Current.Select("",tsql_Factory,out dt_factory);
-            if (!result) { return result; }
+            for (int i = 0; i < connectionString.Count; i++)
+            {
+                string conString = connectionString[i];
 
-            //如果kpicode資料中有None，將dt_factory新增None的資料
-            foreach (string kpicode in kpiCode_All.Values)
-            {
-                if (kpicode == "None") 
+                //跳提示視窗顯示跑到第幾筆連線
+                this.SetLoadingText(
+                    string.Format("Load data from connection {0}/{1} "
+                   , (i + 1), connectionString.Count));
+                SqlConnection conn;
+                using (conn = new SqlConnection(conString))
                 {
-                    dt_factory.Rows.Add("None","100");
-                }
-            }
-            foreach (DataRow row in dt_factory.Rows)
-            {
-                foreach (string kpicode in kpiCode_All.Values)
-                {
-                    //如果row["KpiCode"]等於跨表撈出kpicode時，傳表頭資料到dt_All
-                    if (row["KpiCode"].ToString() == kpicode)
+                    string tsql_Factory = @"
+select  distinct  KpiCode.KpiCode
+        , max(FactorySort) as FactorySort 
+from  Factory
+outer apply(
+    select  iif(KpiCode='',Factory.ID,KpiCode) as KpiCode
+) as KpiCode
+group by KpiCode.KpiCode 
+order by FactorySort
+";
+                    DataTable dt_factory = new DataTable();
+                    result = DBProxy.Current.SelectByConn(conn, tsql_Factory, out dt_factory);
+                    if (!result) { return result; }
+
+                    //如果kpicode資料中有None，將dt_factory新增None的資料
+                    foreach (string kpicode in kpiCode_All.Values)
                     {
-                        dt_All.ColumnsDecimalAdd(row["KpiCode"].ToString());
+                        if (kpicode == "None")
+                        {
+                            dt_factory.Rows.Add("None", "100");
+                        }
+                    }
+                    foreach (DataRow row in dt_factory.Rows)
+                    {
+                        foreach (string kpicode in kpiCode_All.Values)
+                        {
+                            //如果row["KpiCode"]等於跨表撈出kpicode時將表頭資料傳到dt_All
+                            if (row["KpiCode"].ToString() == kpicode && !dt_All.Columns.Contains(kpicode))
+                            {
+                                dt_All.ColumnsDecimalAdd(row["KpiCode"].ToString());
+                            }
+                        }
                     }
                 }
             }
             #endregion
+
 
             //1.產生表身資料-Dt_All
             //2.表身資料依照 KpiCode 及BrandID 將金額填入DataTable
@@ -578,7 +596,7 @@ order by BrandID
 
             #region --匯出Excel
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("GarmentExport_R13_Transportation_Cost_Garment_Export_fee.xltx");
+            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R13_Transportation_Cost_Garment_Export_fee.xltx");
             xl.boOpenFile = true;
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
             xdt_All.ShowHeader = true;
