@@ -1,0 +1,542 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+using System.Reflection;
+using Microsoft.Office.Interop.Excel;
+
+using Sci.Data;
+using Ict;
+using Ict.Win;
+using Sci.Production.Class.Commons;
+using Sci.Win;
+using System.Xml.Linq;
+using System.Configuration;
+using System.Linq;
+using System.Data.SqlClient;
+//from trade  planning R14
+namespace Sci.Production.Centralized
+{
+    public partial class R03 : Sci.Win.Tems.PrintForm
+    {
+        string temfile;
+        Microsoft.Office.Interop.Excel.Application excel = null;
+
+        string gstrMRTeam = "", gstrCategory = "";
+        System.Data.DataTable gdtData1, gdtData2, gdtData3, gdtData4, gdtData5, gdtData6, gdtData7, gdtData8, gdtData9;
+        System.Data.DataTable gdtData;
+        public R03()
+        {
+            InitializeComponent();
+        }
+
+        public R03(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            EditMode = true;
+            print.Visible = false;
+            
+        }
+
+        protected override void OnFormLoaded()
+        {
+            this.Text = PrivUtils.getVersion(this.Text);
+            DualResult result;
+            base.OnFormLoaded();
+            comboBox2.SelectedIndex = 0;
+
+            #region 取得 MR Team 資料
+            System.Data.DataTable dt_ref = null;
+            string sql = @"select * from Department WITH (NOLOCK) where Department.Type = 'MR'";
+            result = DBProxy.Current.Select("Trade", sql, out dt_ref);
+            if (dt_ref != null && dt_ref.Rows.Count > 0)
+            {
+                comboBox1.Add("ALL", "");
+                for (int j = 0; j < dt_ref.Rows.Count; j++)
+                {
+                    DataRow dr2 = dt_ref.Rows[j];
+                    comboBox1.Add(dr2["Name"].ToString(), dr2["ID"].ToString());
+                }
+                comboBox1.SelectedIndex = 0;
+            }
+            #endregion
+        }
+
+        protected override bool OnToExcel(Win.ReportDefinition report)
+        {
+            DualResult result = Result.True;
+            if (excel == null) return true; 
+            gdtData1 = null; gdtData2 = null; gdtData3 = null; gdtData4 = null; 
+            gdtData5 = null; gdtData6 = null; gdtData7 = null; gdtData8 = null; gdtData9 = null;
+            return true;
+        }
+
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
+        {
+            #region --由Factory.PmsPath抓各個連線路徑
+            this.SetLoadingText("Load connections... ");
+            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
+            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            List<string> connectionString = new List<string>();
+            foreach (string ss in strSevers)
+            {
+                var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                connectionString.Add(Connections);
+
+            }
+            if (null == connectionString || connectionString.Count == 0)
+            {
+                return new DualResult(false, "no connection loaded.");
+            }
+            #endregion
+            
+            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+            DualResult result = new DualResult(true);
+            try
+            {
+                string strSQL = @"
+Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.BrandID , Orders.FactoryID, 
+Orders.POID , Orders.Category, Orders.CdCodeID , Orders.CPU, 
+CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
+Orders.BuyerDelivery, Orders.SCIDelivery, 
+SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
+QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty  
+, TotalCPUOut  = Round(((SELECT  dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty ) * ((SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU),6) 
+, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
+, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
+, STYLE.ModularParent, STYLE.CPUAdjusted
+FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
+Where SewingOutput_Detail.OrderID = Orders.ID 
+And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
+And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
+";
+                if (dateRange1.Value1.HasValue)
+                    strSQL += string.Format(" and SewingOutput.OutputDate >= '{0}'", ((DateTime)dateRange1.Value1).ToString("yyyy-MM-dd"));
+                if (dateRange1.Value2.HasValue)
+                    strSQL += string.Format(" and SewingOutput.OutputDate <= '{0}'", ((DateTime)dateRange1.Value2).ToString("yyyy-MM-dd"));
+                if (dateRange2.Value1.HasValue)
+                    strSQL += string.Format(" and Orders.BuyerDelivery  >= '{0}'", ((DateTime)dateRange2.Value1).ToString("yyyy-MM-dd"));
+                if (dateRange2.Value2.HasValue)
+                    strSQL += string.Format(" and Orders.BuyerDelivery  <= '{0}'", ((DateTime)dateRange2.Value2).ToString("yyyy-MM-dd"));
+                if (dateRange3.Value1.HasValue)
+                    strSQL += string.Format(" and Orders.SCIDelivery  >= '{0}'", ((DateTime)dateRange3.Value1).ToString("yyyy-MM-dd"));
+                if (dateRange3.Value2.HasValue)
+                    strSQL += string.Format(" and Orders.SCIDelivery  <= '{0}'", ((DateTime)dateRange3.Value2).ToString("yyyy-MM-dd"));
+                if (txtSeason1.Text != "")
+                    strSQL += string.Format(" AND Orders.SeasonID = '{0}' ", txtSeason1.Text);
+                if (txtBrand1.Text != "")
+                    strSQL += string.Format(" AND Orders.BrandID = '{0}' ", txtBrand1.Text);
+                if (gstrMRTeam != "")
+                    strSQL += string.Format(" AND Brand.MRTeam = '{0}' ", gstrMRTeam);
+                if (txtCentralizedFactory1.Text != "")
+                    strSQL += string.Format(" AND Orders.FactoryID = '{0}' ", txtCentralizedFactory1.Text);
+                if (gstrCategory != "")
+                {
+                    if (gstrCategory == "BS")
+                        strSQL += " AND Orders.Category IN ( 'B', 'S') ";
+                    else
+                        strSQL += string.Format(" AND Orders.Category = '{0}' ", gstrCategory);
+                }
+                if (txtCountry1.TextBox1.Text != "")
+                    strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
+                #region 1.	By Factory
+                string strFactory = string.Format(@" Select FactoryID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D , 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
+                                                                                         FROM ({0} ) AAA  Group BY FactoryID order by FactoryID ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strFactory, null, out gdtData);
+                    if(gdtData1 ==null)gdtData1 = gdtData.Clone();
+                    gdtData1.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }
+                #endregion 1.	By Factory
+
+                #region 2.	By Brand
+                string strBrand = string.Format(@" Select BrandID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D, 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
+                                                                                         FROM ({0} ) AAA  Group BY BrandID order by BrandID ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strBrand, null, out gdtData);
+                    if (gdtData2 == null) gdtData2 = gdtData.Clone();
+                    gdtData2.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }          
+                #endregion 2.	By Brand
+                #region 3.	By Brand + Factory
+                string strFBrand = string.Format(@" Select BrandID AS A, FactoryID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E , 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G  
+                                                                                         FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strFBrand, null, out gdtData);
+                    if (gdtData3 == null) gdtData3 = gdtData.Clone();
+                    gdtData3.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }      
+                #endregion 3.	By Brand + Factory
+
+                #region 4.	By Style
+                string strStyle = string.Format(@" Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F, Sum(QARate) AS G, Sum(TotalCPUOut) AS H, SUM(TotalManHour) AS I, 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS J, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS K
+                                                                                         , ModularParent AS L, CPUAdjusted AS M
+                                                                                         FROM ({0} ) AAA  Group BY StyleID, BrandID, CDCodeID,SeasonID,  CDDesc, StyleDesc , ModularParent, CPUAdjusted  order by StyleID, BrandID, CDCodeID,SeasonID ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strStyle, null, out gdtData);
+                    if (gdtData4 == null) gdtData4 = gdtData.Clone();
+                    gdtData4.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }      
+                #endregion 4.	By Style
+
+                #region 5.	By CD
+                string strCdCodeID = string.Format(@" Select CdCodeID AS A, CDDesc AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G 
+                                                                                         FROM ({0} ) AAA  Group BY CdCodeID, CDDesc order by  CdCodeID", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strCdCodeID, null, out gdtData);
+                    if (gdtData5 == null) gdtData5 = gdtData.Clone();
+                    gdtData5.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }
+                #endregion 5.	By CD
+
+                #region 6.	By Factory Line
+                string strFactoryLine = string.Format(@" Select FactoryID AS A, SewingLineID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G 
+                                                                                         FROM ({0} ) AAA  Group BY FactoryID, SewingLineID order by FactoryID, SewingLineID ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strFactoryLine, null, out gdtData);
+                    if (gdtData6 == null) gdtData6 = gdtData.Clone();
+                    gdtData6.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }
+                #endregion 6.	By Factory Line
+
+                #region 7.	By Factory, Brand , CDCode
+                string strFBCDCode = string.Format(@" Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, Sum(QARate) AS E, Sum(TotalCPUOut) AS F, SUM(TotalManHour) AS G, 
+                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS H, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS I 
+                                                                                         FROM ({0} ) AAA  Group BY BrandID, FactoryID, CdCodeID, CDDesc order by BrandID, FactoryID,  CdCodeID", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strFBCDCode, null, out gdtData);
+                    if (gdtData7 == null) gdtData7 = gdtData.Clone();
+                    gdtData7.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }
+                #endregion 7.	By Factory, Brand , CDCode
+
+                #region 8.	By PO Combo
+                string strPOCombo = string.Format(@" Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
+                                                                                         , ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS L, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS M 
+                                                                                         FROM ({0} ) AAA  Group BY POID, StyleID, BrandID,  CdCodeID, CDDesc, StyleDesc, SeasonID , ProgramID order by POID, StyleID, BrandID,  CdCodeID , SeasonID", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strPOCombo, null, out gdtData);
+                    if (gdtData8 == null) gdtData8 = gdtData.Clone();
+                    gdtData8.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }
+                #endregion 8.	By PO Combo
+                
+                #region 9.	By Program
+                string strProgram = string.Format(@" Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
+                                                                                         , ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS L, 
+                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS M 
+                                                                                         FROM ({0} ) AAA  Group BY ProgramID, StyleID, FactoryID, BrandID,  CdCodeID, SeasonID,  CDDesc, StyleDesc order by  ProgramID, StyleID, FactoryID, BrandID, CdCodeID, SeasonID  ", strSQL);
+                foreach (string conString in connectionString)
+                {
+                    SqlConnection conn = new SqlConnection(conString);
+                    result = DBProxy.Current.SelectByConn(conn, strProgram, null, out gdtData);
+                    if (gdtData9 == null) gdtData9 = gdtData.Clone();
+                    gdtData9.Merge(gdtData);
+                    if (!result)
+                        return result;
+                }        
+                #endregion 9.	By Program
+
+                if (((gdtData1 != null) && (gdtData1.Rows.Count > 0)) || ((gdtData2 != null) && (gdtData2.Rows.Count > 0)) || ((gdtData3 != null) && (gdtData3.Rows.Count > 0))
+                     || ((gdtData4 != null) && (gdtData4.Rows.Count > 0)) || ((gdtData5 != null) && (gdtData5.Rows.Count > 0)) || ((gdtData6 != null) && (gdtData6.Rows.Count > 0))
+                     || ((gdtData7 != null) && (gdtData7.Rows.Count > 0)) || ((gdtData8 != null) && (gdtData8.Rows.Count > 0)) || ((gdtData9 != null) && (gdtData9.Rows.Count > 0)))
+                {
+                    if (!(result = transferToExcel()))
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    return new DualResult(false, "Datas not found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, "data loading error.", ex);
+            }
+            return result;
+        }
+
+        private DualResult transferToExcel()
+        {
+            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+            DualResult result = Result.True;
+            string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            temfile = strPath + @"\Centralized-R03.Prod. Efficiency Analysis Report.xltx";
+
+            try
+            {
+                if (!(result = PrivUtils.Excels.CreateExcel(temfile, out excel))) return result;
+                Microsoft.Office.Interop.Excel.Worksheet wsSheet;
+                #region 1.	By Factory
+                int intRowsCount = gdtData1.Rows.Count;
+                int intRowsStart = 2;//匯入起始位置
+                int rownum = intRowsStart; //每筆資料匯入之位置 
+                int intColumns = 6;//匯入欄位數
+                if ((gdtData1 != null) && (gdtData1.Rows.Count > 0))
+                {
+                    wsSheet = excel.ActiveWorkbook.Worksheets[1];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData1.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData1.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:F{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 1.	By Factory
+
+                #region 2.	By Brand
+                if ((gdtData2 != null) && (gdtData2.Rows.Count > 0))
+                {
+                    intColumns = 6;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[2];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData2.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData2.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:F{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 2.	By Brand
+
+                #region 3.	By Brand-Factory
+                if ((gdtData3 != null) && (gdtData3.Rows.Count > 0))
+                {
+                    intColumns = 7;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[3];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData3.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData3.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 3.	By Brand-Factory
+
+                #region 4.	By Style
+                if ((gdtData4 != null) && (gdtData4.Rows.Count > 0))
+                {
+                    intColumns = 13;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[4];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData4.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData4.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:M{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 4.	By Style
+
+                #region 5.	By CD
+                if ((gdtData5 != null) && (gdtData5.Rows.Count > 0))
+                {
+                    intColumns = 7;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[5];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData5.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData5.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 5.	By CD
+
+                #region 6.	By Factory Line
+                if ((gdtData6 != null) && (gdtData6.Rows.Count > 0))
+                {
+                    intColumns = 7;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[6];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData6.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData6.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 6.	By Factory Line
+
+                #region 7.	By Brand-Factory-CD
+                if ((gdtData7 != null) && (gdtData7.Rows.Count > 0))
+                {
+                    intColumns = 9;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[7];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData7.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData7.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:I{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 7.	By Brand-Factory-CD
+
+                #region 8.	By PO Combo
+                if ((gdtData8 != null) && (gdtData8.Rows.Count > 0))
+                {
+                    intColumns = 13;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[8];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData8.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData8.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:M{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 8.	By PO Combo
+
+                #region 9.	By Program
+                if ((gdtData9 != null) && (gdtData9.Rows.Count > 0))
+                {
+                    intColumns = 13;//匯入欄位數
+                    wsSheet = excel.ActiveWorkbook.Worksheets[9];
+                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    for (int intIndex = 0; intIndex < gdtData9.Rows.Count; intIndex++)
+                    {
+                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
+                        {
+                            objArray[0, intIndex_C] = gdtData9.Rows[intIndex][aryAlpha[intIndex_C]];
+                        }
+                        wsSheet.Range[String.Format("A{0}:M{0}", intIndex + rownum)].Value2 = objArray;
+                    }
+                    //欄寬調整  
+                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                }
+                #endregion 9.	By Program
+                excel.Visible = true;
+            }
+            catch (Exception ex)
+            {
+               if (null != excel) { excel.DisplayAlerts = false; excel.Quit(); }
+                return new DualResult(false, "Export excel error.", ex);
+            }
+            return result;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            gstrMRTeam = (comboBox1.SelectedIndex == -1 ? "" : comboBox1.SelectedValue2.ToString());
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            gstrCategory = "";
+            switch (comboBox2.SelectedIndex)
+            {
+                case 0:
+                    gstrCategory = "B";
+                    break;
+                case 1:
+                    gstrCategory = "S";
+                    break;
+                case 2:
+                    gstrCategory = "BS";
+                    break;
+            }
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
