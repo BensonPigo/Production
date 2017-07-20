@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
         public P10(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
-
+            InitializeComponent();
             this.DefaultFilter = string.Format("Type='A' and id='{0}'", transID);
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
