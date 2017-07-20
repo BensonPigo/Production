@@ -281,6 +281,9 @@
     <None Include="SCHEMAS.xss">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
+    <None Include="XLT\Centralized_R13_Transportation_Cost_Garment_Export_fee.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_P01_ColorCombo_SizeBreakdown.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
