@@ -126,10 +126,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exts.cs" />
     <Compile Include="Logistic.cs" />
     <Compile Include="Packing.cs" />
     <Compile Include="Planning.cs" />
     <Compile Include="PPIC.cs" />
+    <Compile Include="PrivUtils.cs" />
     <Compile Include="Shipping.cs" />
     <Compile Include="System.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
