@@ -296,14 +296,10 @@ order by ID,OrderID";
                 var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
                 connectionString.Add(Connections);
             }
-
-            //result = DBProxy.Current.Select("",tsql_GetConnectionString,out dt_Connections);
-            //if (!result) { return result; }
             if (null == connectionString || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
             }
-            //connectionString = dt_Connections.AsEnumerable().Select(row => row["PmsPath"].ToString().Trim()).ToList();
             #endregion
 
             #region --依各個連線抓該連線的DB資料,並且將抓取到的資料合併到 dt_Tmp(DataTable)
