@@ -281,6 +281,18 @@
     <None Include="SCHEMAS.xss">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
+    <None Include="XLT\Centralized_R20_製成品進銷存明細表_CPUDetail.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Centralized_R20_製成品進銷存明細表_CPUTotal.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Centralized_R20_製成品進銷存明細表_FOBDetail.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Centralized_R20_製成品進銷存明細表_FOBTotal.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_P01_ColorCombo_SizeBreakdown.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
