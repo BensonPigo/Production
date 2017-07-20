@@ -1030,7 +1030,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             if (CutRefTb.Rows.Count == 0) return;
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null);
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null, selectDr["Cutref"].ToString());
             callNextForm.ShowDialog(this);
         }
 

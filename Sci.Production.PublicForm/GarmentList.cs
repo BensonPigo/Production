@@ -17,20 +17,24 @@ namespace Sci.Production.PublicForm
         private string id;
         private DataTable headertb;
         private string patternukey;
-        public GarmentList(string ukey,string cid)
+        private string _cutref;
+        public GarmentList(string ukey,string cid,string cutref)
         {
             InitializeComponent();
             Styleyukey = ukey;
             id = cid;
+            _cutref = cutref;
             requery();
             gridSetup();
             this.gridGarment.AutoResizeColumns();
         }
         private void requery()
         {
-            
+            string patidsql ;
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            string patidsql = String.Format(
+            if (MyUtility.Check.Empty(_cutref))
+            {
+                patidsql = String.Format(
                             @"SELECT ukey
                               FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
                               WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
@@ -41,6 +45,19 @@ namespace Sci.Production.PublicForm
                                 where styleukey = '{0}' and Status = 'Completed'
                               )
              ", Styleyukey);
+            }
+            else
+            {
+                patidsql = String.Format(
+                            @"select top 1 Ukey 
+from Pattern 
+where PatternNo = (select substring(MarkerNo,1,9)+'N' from WorkOrder where CutRef = '{0}')
+and Status = 'Completed'
+order by ActFinDate Desc
+             ", _cutref);
+            }
+            
+
             patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             #region 找ArticleGroup 當Table Header
