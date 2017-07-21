@@ -189,6 +189,19 @@
             this.comboShipmodeShipmodeID.TabIndex = 5;
             this.comboShipmodeShipmodeID.UseFunction = "";
             // 
+            // 
+            // 
+            this.txtCountryImportCountry.TextBox1.BackColor = System.Drawing.Color.White;
+            this.txtCountryImportCountry.TextBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtCountryImportCountry.TextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtCountryImportCountry.TextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCountryImportCountry.TextBox1.Location = new System.Drawing.Point(0, 0);
+            this.txtCountryImportCountry.TextBox1.MaxLength = 2;
+            this.txtCountryImportCountry.TextBox1.Name = "textBox1";
+            this.txtCountryImportCountry.TextBox1.Size = new System.Drawing.Size(30, 23);
+            this.txtCountryImportCountry.TextBox1.TabIndex = 0;
+            this.txtCountryImportCountry.TextBox1Binding = "";
+            // 
             // txtForwarder
             // 
             this.txtForwarder.BackColor = System.Drawing.Color.White;
@@ -213,6 +226,7 @@
             this.comboRateTypeID.TabIndex = 7;
             // 
             // R12
+            // R21
             // 
             this.ClientSize = new System.Drawing.Size(520, 223);
             this.Controls.Add(this.comboRateTypeID);
