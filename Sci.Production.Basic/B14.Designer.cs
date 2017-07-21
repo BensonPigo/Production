@@ -57,6 +57,8 @@
             this.editMachineID = new Sci.Win.UI.EditBox();
             this.numSubprocessBCSLeadTime = new Sci.Win.UI.NumericBox();
             this.numStdLTDayb41stCutDateBaseOnSubProcess = new Sci.Win.UI.NumericBox();
+            this.labelPostSewingDays = new Sci.Win.UI.Label();
+            this.numericPostSewingDays = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -67,10 +69,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(832, 455);
+            this.detail.Size = new System.Drawing.Size(832, 490);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericPostSewingDays);
+            this.detailcont.Controls.Add(this.labelPostSewingDays);
             this.detailcont.Controls.Add(this.numStdLTDayb41stCutDateBaseOnSubProcess);
             this.detailcont.Controls.Add(this.numSubprocessBCSLeadTime);
             this.detailcont.Controls.Add(this.editMachineID);
@@ -100,12 +104,12 @@
             this.detailcont.Controls.Add(this.labelClassify);
             this.detailcont.Controls.Add(this.labelArtworkType);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(832, 403);
+            this.detailcont.Size = new System.Drawing.Size(832, 438);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 403);
+            this.detailbtm.Location = new System.Drawing.Point(0, 438);
             this.detailbtm.Size = new System.Drawing.Size(832, 52);
             // 
             // browse
@@ -114,7 +118,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(840, 484);
+            this.tabs.Size = new System.Drawing.Size(840, 519);
             // 
             // createby
             // 
@@ -137,7 +141,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(27, 10);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(110, 23);
@@ -146,7 +149,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(27, 40);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(110, 23);
@@ -155,7 +157,6 @@
             // 
             // labelClassify
             // 
-            this.labelClassify.Lines = 0;
             this.labelClassify.Location = new System.Drawing.Point(27, 70);
             this.labelClassify.Name = "labelClassify";
             this.labelClassify.Size = new System.Drawing.Size(110, 23);
@@ -164,7 +165,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(27, 100);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(110, 23);
@@ -173,7 +173,6 @@
             // 
             // labelProductionunit
             // 
-            this.labelProductionunit.Lines = 0;
             this.labelProductionunit.Location = new System.Drawing.Point(27, 130);
             this.labelProductionunit.Name = "labelProductionunit";
             this.labelProductionunit.Size = new System.Drawing.Size(110, 23);
@@ -182,7 +181,6 @@
             // 
             // labelInHouseOSP
             // 
-            this.labelInHouseOSP.Lines = 0;
             this.labelInHouseOSP.Location = new System.Drawing.Point(27, 160);
             this.labelInHouseOSP.Name = "labelInHouseOSP";
             this.labelInHouseOSP.Size = new System.Drawing.Size(110, 23);
@@ -191,7 +189,6 @@
             // 
             // labelSubprocessBCSLeadTime
             // 
-            this.labelSubprocessBCSLeadTime.Lines = 0;
             this.labelSubprocessBCSLeadTime.Location = new System.Drawing.Point(27, 190);
             this.labelSubprocessBCSLeadTime.Name = "labelSubprocessBCSLeadTime";
             this.labelSubprocessBCSLeadTime.Size = new System.Drawing.Size(110, 46);
@@ -199,7 +196,6 @@
             // 
             // labelStdLTDayb41stCutDateBaseOnSubProcess
             // 
-            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Lines = 0;
             this.labelStdLTDayb41stCutDateBaseOnSubProcess.Location = new System.Drawing.Point(27, 243);
             this.labelStdLTDayb41stCutDateBaseOnSubProcess.Name = "labelStdLTDayb41stCutDateBaseOnSubProcess";
             this.labelStdLTDayb41stCutDateBaseOnSubProcess.Size = new System.Drawing.Size(110, 69);
@@ -207,8 +203,7 @@
             // 
             // labelMachineID
             // 
-            this.labelMachineID.Lines = 0;
-            this.labelMachineID.Location = new System.Drawing.Point(27, 319);
+            this.labelMachineID.Location = new System.Drawing.Point(27, 357);
             this.labelMachineID.Name = "labelMachineID";
             this.labelMachineID.Size = new System.Drawing.Size(110, 23);
             this.labelMachineID.TabIndex = 8;
@@ -216,8 +211,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
-            this.labelRemark.Location = new System.Drawing.Point(27, 373);
+            this.labelRemark.Location = new System.Drawing.Point(27, 411);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(110, 23);
             this.labelRemark.TabIndex = 9;
@@ -225,7 +219,6 @@
             // 
             // labelAbbr
             // 
-            this.labelAbbr.Lines = 0;
             this.labelAbbr.Location = new System.Drawing.Point(238, 10);
             this.labelAbbr.Name = "labelAbbr";
             this.labelAbbr.Size = new System.Drawing.Size(40, 23);
@@ -277,7 +270,7 @@
             this.displayRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Remark", true));
             this.displayRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRemark.Location = new System.Drawing.Point(144, 373);
+            this.displayRemark.Location = new System.Drawing.Point(144, 411);
             this.displayRemark.Name = "displayRemark";
             this.displayRemark.Size = new System.Drawing.Size(380, 23);
             this.displayRemark.TabIndex = 10;
@@ -406,7 +399,7 @@
             // 
             this.editMachineID.BackColor = System.Drawing.Color.White;
             this.editMachineID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editMachineID.Location = new System.Drawing.Point(144, 319);
+            this.editMachineID.Location = new System.Drawing.Point(144, 357);
             this.editMachineID.Multiline = true;
             this.editMachineID.Name = "editMachineID";
             this.editMachineID.Size = new System.Drawing.Size(380, 46);
@@ -459,9 +452,37 @@
             0,
             0});
             // 
+            // labelPostSewingDays
+            // 
+            this.labelPostSewingDays.Location = new System.Drawing.Point(27, 322);
+            this.labelPostSewingDays.Name = "labelPostSewingDays";
+            this.labelPostSewingDays.Size = new System.Drawing.Size(110, 23);
+            this.labelPostSewingDays.TabIndex = 18;
+            this.labelPostSewingDays.Text = "Post Sewing Days";
+            // 
+            // numericPostSewingDays
+            // 
+            this.numericPostSewingDays.BackColor = System.Drawing.Color.White;
+            this.numericPostSewingDays.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PostSewingDays", true));
+            this.numericPostSewingDays.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericPostSewingDays.Location = new System.Drawing.Point(144, 322);
+            this.numericPostSewingDays.Name = "numericPostSewingDays";
+            this.numericPostSewingDays.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericPostSewingDays.Size = new System.Drawing.Size(36, 23);
+            this.numericPostSewingDays.TabIndex = 19;
+            this.numericPostSewingDays.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // B14
             // 
-            this.ClientSize = new System.Drawing.Size(840, 517);
+            this.ClientSize = new System.Drawing.Size(840, 552);
             this.DefaultControlForEdit = "comboInHouseOSP";
             this.DefaultOrder = "Seq";
             this.EnableGridJunkColor = true;
@@ -517,5 +538,7 @@
         private Win.UI.EditBox editMachineID;
         private Win.UI.NumericBox numStdLTDayb41stCutDateBaseOnSubProcess;
         private Win.UI.NumericBox numSubprocessBCSLeadTime;
+        private Win.UI.NumericBox numericPostSewingDays;
+        private Win.UI.Label labelPostSewingDays;
     }
 }
