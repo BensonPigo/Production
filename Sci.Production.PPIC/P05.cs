@@ -381,6 +381,7 @@ set     EstPulloutDate = {0}
         , OutstandingReason = '{3}'
         , OutstandingRemark = '{4}'
         , EditName = '{5}'
+        , OutstandingInCharge='{5}'
         , EditDate = GETDATE() 
 where ID = '{6}' and Seq = '{7}'"
 , MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
@@ -414,6 +415,58 @@ where ID = '{6}' and Seq = '{7}'"
                         updateCmds.Add(string.Format("update Orders set ReadyDate = {0},PulloutDate = {1} where ID = '{2}'",
                             MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            dr["Id"].ToString()));
+                    }
+                }
+
+                if (updateCmds.Count != 0)
+                {
+                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Save Fail!" + result.ToString());
+                        return;
+                    }
+                }
+                /*
+                 *避免user忘記更新EstPulloutDate,自動update EstPulloutDate and Order.PulloutDate
+                 */
+                foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"select 1 from Order_QtyShip where id='{0}' and seq='{1}' and  EstPulloutDate is null", dr["ID"].ToString(), dr["Seq"].ToString())))
+                    {
+                        updateCmds.Add(string.Format(@"
+                        update Order_QtyShip 
+                        set     EstPulloutDate = {0}
+                                , EditName = '{1}'
+                                , EditDate = GETDATE() 
+                        where ID = '{2}' and Seq = '{3}'"
+                        , MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
+                        , Sci.Env.User.UserID
+                        , dr["ID"].ToString()
+                        , dr["Seq"].ToString()));
+                        allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
+                    }
+                }
+                if (allSP.Length != 0)
+                {
+                    DataTable GroupData;
+                    try
+                    {
+                        MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Id,ReadyDate,EstPulloutDate",
+                            string.Format("select id,min(EstPulloutDate) as EstPulloutDate from #tmp where Id in ({0}) group by Id", allSP.ToString().Substring(0, allSP.ToString().Length - 1)),
+                            out GroupData);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErr("Save error.", ex);
+                        return;
+                    }
+
+                    foreach (DataRow dr in GroupData.Rows)
+                    {
+                        updateCmds.Add(string.Format("update Orders set  EditName= '{0}', PulloutDate = {1} where ID = '{2}'",
+                        Sci.Env.User.UserID, MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
                             dr["Id"].ToString()));
                     }
                 }
