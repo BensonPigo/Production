@@ -159,6 +159,26 @@ order by FactoryID
             List<string> connectionString = new List<string>(); //←主要是要重組 List connectionString 
             foreach (string ss in strSevers)
             {
+                //判斷工廠的欄位選項是否有值,有值代表只需要撈單獨一個System
+                if (!MyUtility.Check.Empty(txtCentralizedFactory1.Text))
+                {
+                    //只取:後的FactoryID 
+                    string[] m = ss.Split(new char[] { ':' });
+                    if (m.Count() > 1)
+                    {
+                        //判斷是否有同畫面上的工廠名稱
+                        string[] mFactory = m[1].Split(new char[] { ',' });
+                        //如果不同,就換下一個System,直到相同為止才跳出去
+                        if (!mFactory.AsEnumerable().Any(f => f.EqualString(txtCentralizedFactory1.Text.ToString())))
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
                 var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
             connectionString.Add(Connections);
             }
