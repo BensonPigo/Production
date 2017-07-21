@@ -858,7 +858,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Globals!PageNumber</Value>
+                  <Value>=Globals.PageNumber &amp; "/" &amp; Globals.TotalPages</Value>
                   <Style />
                 </TextRun>
               </TextRuns>

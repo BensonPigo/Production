@@ -134,7 +134,7 @@
             // IE_B03
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultControl = "displayID";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultFilter = "Type = \'LM\'";

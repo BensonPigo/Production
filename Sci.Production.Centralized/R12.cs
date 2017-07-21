@@ -10,25 +10,25 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
-using System.Xml.Linq;
 using System.Configuration;
+using System.Xml.Linq;
 
 namespace Sci.Production.Centralized
 {
-    internal partial class R14 : Sci.Win.Tems.PrintForm
+    public partial class R12 : Sci.Win.Tems.PrintForm
     {
         DataTable dt_All;
         DataTable dt_Tmp;
         DataTable dt_detail, dt_detail_All;
+
         String tsql_Detail;
         String tsql_LoadData;
-        String tsql_GetConnectionString;
-        public R14(ToolStripMenuItem menuitem)
+
+        public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
         }
-
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -42,17 +42,17 @@ namespace Sci.Production.Centralized
         protected override bool ValidateInput()
         {
             #region --檢查查詢條件
-            if (!this.datePulloutDate1.Value.Empty() != !this.datePulloutDate2.Value.Empty())
+            if (!this.dateShipDate1.Value.Empty() != !this.dateShipDate2.Value.Empty())
             {
-                if (datePulloutDate1.Value.Empty())
+                if (dateShipDate1.Value.Empty())
                 {
-                    MyUtility.Msg.ErrorBox("[Begin Pullout Date] can not be empty");
-                    datePulloutDate1.Focus();
+                    MyUtility.Msg.ErrorBox("[Begin Ship Date] can not be empty");
+                    dateShipDate1.Focus();
                 }
-                if (datePulloutDate2.Value.Empty())
+                if (dateShipDate2.Value.Empty())
                 {
-                    MyUtility.Msg.ErrorBox("[End Pullout Date] can not be empty");
-                    datePulloutDate2.Focus();
+                    MyUtility.Msg.ErrorBox("[End Ship Date] can not be empty");
+                    dateShipDate2.Focus();
                 }
                 return false;
             }
@@ -76,64 +76,54 @@ namespace Sci.Production.Centralized
                 MyUtility.Msg.ErrorBox("Exchange Rate Type can not be empty !!");
                 dateApproveDate2.Focus();
                 return false;
+
             }
             #endregion
 
-            bool Pullout_Date = false, Approve_Date = false;
+            bool Ship_Date = false, Approve_Date = false;
             string sqlWhere = "";
             List<string> sqlWheres = new List<string>();
 
             #region --查詢條件
-            if (!this.datePulloutDate1.Value.Empty() && !this.datePulloutDate2.Value.Empty())
+            if (!this.dateShipDate1.Value.Empty() && !this.dateShipDate2.Value.Empty())
             {
-                sqlWheres.Add(string.Format("Pullout_Detail.PulloutDate between '{0}' and '{1}' "
-                   , ((DateTime)this.datePulloutDate1.Value).ToShortDateString()
-                   , ((DateTime)this.datePulloutDate2.Value).ToShortDateString()));
-                Pullout_Date = true;
-            }
+                sqlWheres.Add(string.Format("fe.PortArrival between '{0}' and '{1}' "
+                   , ((DateTime)this.dateShipDate1.Value).ToShortDateString()
+                   , ((DateTime)this.dateShipDate2.Value).ToShortDateString()));
 
+                Ship_Date = true;
+            }
             if (!this.dateApproveDate1.Value.Empty() && !this.dateApproveDate2.Value.Empty())
             {
                 sqlWheres.Add(string.Format("ShippingAP.ApvDate between '{0}' and '{1}' "
                    , ((DateTime)this.dateApproveDate1.Value).ToShortDateString()
                    , ((DateTime)this.dateApproveDate2.Value).ToShortDateString()));
+
                 Approve_Date = true;
             }
-            //[Pullout Date] and [Approve Date] 一定要有一個是必填
-            if (!Pullout_Date && !Approve_Date)
+            //[Ship Date] and [Approve Date] 一定要有一個是必填
+            if (!Ship_Date && !Approve_Date)
             {
-                MyUtility.Msg.ErrorBox("[Pullout Date] and [Approve Date] one of the inputs must be selected");
-                datePulloutDate1.Focus();
+                MyUtility.Msg.ErrorBox("[Ship Date] and [Approve Date] one of the inputs must be selected");
+                dateShipDate1.Focus();
                 return false;
             }
-            if (!this.txtBrandBrandID.Text.Empty())
+            if (!this.txtCountryImportCountry.TextBox1.Text.Empty())
             {
-                sqlWheres.Add(string.Format("GMTBooking.BrandID = '{0}'", this.txtBrandBrandID.Text));
-            }
-            if (!this.txtCustCDCustCDID.Text.Empty())
-            {
-                sqlWheres.Add(string.Format("GMTBooking.CustCDID = '{0}'", this.txtCustCDCustCDID.Text));
-            }
-            if (!this.txtCountryDest.TextBox1.Text.Empty())
-            {
-                sqlWheres.Add(string.Format("GMTBooking.Dest = '{0}'", this.txtCountryDest.TextBox1.Text));
+                sqlWheres.Add(string.Format("fe.ImportCountry = '{0}'", this.txtCountryImportCountry.TextBox1.Text));
             }
             if (!this.comboShipmodeShipmodeID.Text.Empty())
             {
-                sqlWheres.Add(string.Format("GMTBooking.ShipmodeID = '{0}'", this.comboShipmodeShipmodeID.Text));
+                sqlWheres.Add(string.Format("fe.ShipmodeID = '{0}'", this.comboShipmodeShipmodeID.Text));
             }
             if (!this.txtForwarder.Text.Empty())
             {
-                sqlWheres.Add(string.Format("GMTBooking.Forwarder = '{0}'", this.txtForwarder.Text));
+                sqlWheres.Add(string.Format("fe.Forwarder = '{0}'", this.txtForwarder.Text));
             }
-            #endregion
 
+            #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
 
-            //連線的SQL語法
-            tsql_GetConnectionString = @"select distinct PmsPath from Factory where IsSCI = 1 and PmsPath <> '' ";
-
-            //判斷是不是要列印Detail報表明細資料
             if (this.checkExportDetail.Checked == true)
             {
                 Transportation_list(sqlWhere);
@@ -146,89 +136,144 @@ namespace Sci.Production.Centralized
             return base.ValidateInput();
         }
 
-        //先撈出報表Detail資料，再展成報表Summary
         #region -- summary Detail SQl
-
-        //抓Transportation_list sql Function 資料 完成Sheep2
         public void Transportation_list(string sqlWhere)
         {
             tsql_LoadData = string.Format(@"
-select GMTBooking.ID,
-		dbo.Getrate('{0}',ShareExpense.CurrencyID,'USD',gmtbooking.InvDate) as Rate,
-		ShareExpense.Amount * dbo.Getrate('{0}',ShareExpense.CurrencyID,'USD',gmtbooking.InvDate) as Amount,AccountID,
-		(Pullout_Detail.ID) as PulloutID,Pullout_Detail.PulloutDate,Pullout_Detail.PackingListID,
-		GMTBooking.BrandID,GMTBooking.CustCDID,GMTBooking.Dest,GMTBooking.ETD,GMTBooking.ShipModeID,
-		GMTBooking.TotalGW,GMTBooking.TotalCBM,Pullout_Detail.OrderID,PackingList.CTNQty,PackingList.GW,PackingList.CBM,Pullout_Detail.ShipQty
-		into #temp1
-from Pullout_Detail 
-inner join ShareExpense on Pullout_Detail.INVNo = ShareExpense.InvNo 
-inner join ShippingAP on ShareExpense.ShippingAPID = ShippingAP.ID 
-inner join GMTBooking on gmtbooking.ID = pullout_detail.INVNo
-inner join PackingList on PackingList.ID = Pullout_Detail.PackingListID
-Where ShippingAP.Type = 'EXPORT' and ShippingAP.subType <> 'SISTER FACTORY TRANSFER' and ", this.comboRateTypeID.Text) + sqlWhere +
+select  WkNo = s.Invno
+        , Amount = s.Amount * dbo.Getrate('{0}', s.CurrencyID, 'USD', ShippingAP.ApvDate)
+        , AccountID
+        , ShippingAP.ApvDate
+into #temp
+from ShareExpense as s 
+left join ShippingAP on ShippingAP.id = s.ShippingAPID  
+left join FtyExport as fe on s.InvNo = fe.ID 
+where   ShippingAP.Type = 'EXPORT' 
+        And ShippingAP.subType = 'SISTER FACTORY TRANSFER'
+        and " + sqlWhere +
 @"
-select * 
-into #temp3 
-from (
-	select distinct OrderID,ID,
-		   PulloutID,PulloutDate,BrandID,CustCDID,Dest,ETD,ShipModeID,TotalGW,TotalCBM,ShipQty,CTNQty,GW,CBM
-	from #temp1 
-) as tt
-outer apply (select
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID = '61022001'),0) as Fee01,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID = '61022002'),0) as Fee02,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID = '61022003'),0) as Fee03,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID = '61022004'),0) as Fee04,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID = '61022005'),0) as Fee05,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and ( AccountID LIKE'6105%' OR AccountID = '59121111')),0) as FeeAir,
-	         isnull((select sum(Amount) from #temp1 where ID = tt.ID and OrderID = tt.OrderID and AccountID not in('61022001','61022002','61022003','61022004','61022005','59121111')AND AccountID NOT LIKE '6105%'),0) as Feeother
-) as s
-outer apply (select Feeother+Fee01+Fee02+Fee03+Fee04+Fee05+FeeAir as FeeAmo) s2
-order by ID,OrderID
+select  Wkno
+        , Fee01 = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID = '61022001'), 0)
+        , Fee02 = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID = '61022002'), 0)
+        , Fee03 = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID = '61022003'), 0)
+        , Fee04 = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID = '61022004'), 0)
+        , Fee05 = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID = '61012005'), 0)
+        , other = isnull((select sum(round(Amount,4)) from #Temp where Wkno = Data.WKNo and AccountID not in('61022001', '61022002', '61022003', '61022004', '61012005')), 0)
+into #temp2
+from #temp as Data 
+where amount <> 0
+group by Wkno
 
-select query.ID,o.BrandID,DropDownList.Name as Category,query.OrderID,o.BuyerDelivery,o.Qty,o.CustCDID,o.Dest,query.ShipModeID,PL = '',
-       query.PulloutID,query.PulloutDate,query.ShipQty,query.CTNQty,query.GW,query.CBM,gmForwarder.Forwarder,
-	   BL = '',
-	   isnull(round(query.Fee01*Ship.ShipAmount,2),0) as Fee01,
-	   isnull(round(query.Fee02*Ship.ShipAmount,2),0) as Fee02,
-	   isnull(round(query.Fee03*Ship.ShipAmount,2),0) as Fee03,
-	   isnull(round(query.Fee04*Ship.ShipAmount,2),0) as Fee04,
-	   isnull(round(query.Fee05*Ship.ShipAmount,2),0) as Fee05,
-	   isnull(round(query.Feeother*Ship.ShipAmount,2),0) as Feeother,
-	   isnull(round(query.FeeAir*Ship.ShipAmount,2),0) as FeeAir,
-	   isnull(Working.WorkAmount,0) as feeAmount,FeeAmo,
-       iif( isnull(f.KpiCode,'') = '',o.FactoryID,f.KpiCode) as KpiCode,
-       o.FactoryID
-into #test
-from #temp3 AS query
-left join Orders as o ON query.OrderID = o.ID 
+select  query.WkNo
+        , fed.poid
+        , sp.Qty
+        , Fee01 = sum(Round(iif(sp.cnts<>0,(query.Fee01/sp.cnts),(query.Fee01)), 2))
+        , Fee02 = sum(Round(iif(sp.cnts<>0,(query.Fee02/sp.cnts),(query.Fee02)), 2))
+        , Fee03 = sum(Round(iif(sp.cnts<>0,(query.Fee03/sp.cnts),(query.Fee03)), 2))
+        , Fee04 = sum(Round(iif(sp.cnts<>0,(query.Fee04/sp.cnts),(query.Fee04)), 2))
+        , Fee05 = sum(Round(iif(sp.cnts<>0,(query.Fee05/sp.cnts),(query.Fee05)), 2))
+        , other = sum(Round(iif(sp.cnts<>0,(query.other/sp.cnts),(query.other)), 2))
+        , feeAmount = sum(Round(iif(sp.cnts<>0,(working.workingAmount/sp.cnts),(working.workingAmount)), 2))
+into #queryAmount
+from #temp2 as query
+left join FtyExport_Detail as fed on fed.ID = query.WkNo 
+outer apply (
+    select  cnts = count(poid)
+            , Qty = sum(Qty)
+    from FtyExport_Detail 
+    where ID = query.WkNo
+) as sp
+outer apply(
+    select  workingAmount = Fee01 + Fee02 + Fee03 + Fee04 + Fee05 + other
+) as working
+group by query.wkno, fed.poid, sp.Qty
+
+select  query.WkNo
+        , FactoryID = isnull(o.FactoryID,'None')
+        , Brand = iif (isnull (o.BrandID, '') = '', '', BrandID)
+        , Category = DropDownList.Name
+        , o.ID
+        , BuyerDelivery = FORMAT(o.BuyerDelivery,'yyyy-MM-dd')
+        , qy = (o.Qty)
+        , o.CustCDID
+        , fe.ImportPort
+        , fe.ShipModeID
+        , [pl#] = ''
+        , [pulloutID] = ' '
+        , PortArrival = FORMAT (fe.PortArrival, 'yyyy-MM-dd')
+        , query.Qty
+        , ctn = ''
+        , fe.WeightKg
+        , fe.Cbm
+        , Forwarder = fe.Forwarder + '-' + suppData.Name
+        , fe.Blno
+        , Fee01
+        , Fee02
+        , Fee03
+        , Fee04
+        , Fee05
+        , other
+        , feeAmount
+        , KpiCode = iif(isnull(f.KpiCode,'')='','None',f.KpiCode) 
+into #data
+from #queryAmount as query
+left join FtyExport as fe on fe.id = query.WkNo
+left join (
+    select  id
+            , name 
+    from LocalSupp --以前舊版supp, localsupp是放在同一個Table
+    
+    union
+    select  id
+            , name = supp.AbbEN 
+    from supp
+) as suppData on fe.Forwarder = suppData.ID
+left join Orders as o on o.ID = query.POID
 left join #tmpFactory as f on f.ID = o.FactoryID
-left join #tmpDropDownList as DropDownList on DropDownList.ID = o.Category and DropDownList.Type = 'Category' 
-outer apply(select (GMTBooking.Forwarder + '-' + LocalSupp.Name) as Forwarder
-			From GMTBooking inner join LocalSupp on GMTBooking.Forwarder = LocalSupp.ID
-			where GMTBooking.ID = query.ID) as gmForwarder
-outer apply(select iif(query.ShipModeID = 'A/P',iif(query.TotalGW = 0,0,(query.GW/query.TotalGW)),iif(query.TotalCBM = 0,0,(query.CBM/query.TotalCBM))) as ShipAmount ) as Ship
-outer apply(select isnull(round(query.Fee01*Ship.ShipAmount,2),0)+ 
-                   isnull(round(query.Fee02*Ship.ShipAmount,2),0)+
-                   isnull(round(query.Fee03*Ship.ShipAmount,2),0)+
-                   isnull(round(query.Fee04*Ship.ShipAmount,2),0)+
-                   isnull(round(query.Fee05*Ship.ShipAmount,2),0)+
-                   isnull(round(query.Feeother*Ship.ShipAmount,2),0)+
-                   isnull(round(query.FeeAir*Ship.ShipAmount,2),0) as WorkAmount) as Working
-where isnull(round(query.FeeAir*Ship.ShipAmount,2),0)<>0 and (iif( isnull(f.KpiCode,'') = '',o.FactoryID,f.KpiCode)) is not null
-drop table #temp1
-drop table #temp3
+left join #tmpDropDownList as DropDownList on  DropDownList.ID = o.Category 
+                                               and DropDownList.Type = 'Category' 
+order by query.WkNo
 
-select distinct KpiCode from #test group by KpiCode order by KpiCode";
+drop table #temp
+drop table #temp2
+drop table #queryAmount
+
+select distinct KpiCode 
+from #data 
+order by KpiCode
+ ", this.comboRateTypeID.Text);
         }
 
         public void Transportation_Detail(string sqlWhere)
         {
-            tsql_Detail = @"
-select ID,FactoryID,BrandID,Category,OrderID,BuyerDelivery,Qty,CustCDID,Dest,ShipModeID,PL,PulloutID,PulloutDate,ShipQty,CTNQty,GW,CBM,Forwarder,BL,
-       Fee01,Fee02,Fee03,Fee04,Fee05,Feeother,FeeAir,feeAmount,FeeAmo
-from #test
-order by ID,OrderID";
+            tsql_Detail = @" 
+select  WkNo
+        , FactoryID
+        , Brand
+        , Category
+        , ID
+        , BuyerDelivery
+        , qy
+        , CustCDID
+        , ImportPort
+        , ShipModeID
+        , [pl#] = ''
+        , [pulloutID] = ' '
+        , PortArrival
+        , Qty
+        , ctn=''
+        , WeightKg
+        , Cbm
+        , Forwarder
+        , Blno
+        , Fee01
+        , Fee02
+        , Fee03
+        , Fee04
+        , Fee05
+        , other
+        , feeAmount
+from #data";
         }
         #endregion
 
@@ -242,27 +287,30 @@ order by ID,OrderID";
             SortedList<string, string> kpiCode_All = new SortedList<string, string>();
             Dictionary<string, Dictionary<string, decimal>> brand_FtyAmt = new Dictionary<string, Dictionary<string, decimal>>();
 
-            #region --由Factory.PmsPath抓各個連線路徑
+            #region --抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
             List<string> connectionString = new List<string>();
             foreach (string ss in strSevers)
             {
-                var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[]{':'})[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
                 connectionString.Add(Connections);
             }
+
+
             if (null == connectionString || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
             }
-            #endregion
 
+            #endregion
 
             #region --依各個連線抓該連線的DB資料,並且將抓取到的資料合併到 dt_Tmp(DataTable)
             for (int i = 0; i < connectionString.Count; i++)
             {
                 string conString = connectionString[i];
+
                 //跳提示視窗顯示跑到第幾筆連線
                 this.SetLoadingText(
                     string.Format("Load data from connection {0}/{1} "
@@ -276,12 +324,11 @@ order by ID,OrderID";
                     DataTable kpiCodes = new DataTable();
 
                     #region--先從Trade撈 DropDownList 、Factory資料
-                    //連Trade DropDownList資料(為了Detail報表要顯示完整名稱的Category)
-                    #region--連Trade DropDownList資料
+                    #region--連Trade DropDownList資料(為了Detail報表要顯示完整名稱的Category)
                     result = DBProxy.Current.SelectByConn(conn, "select id,Name,type from DropDownList   ", out DropDownLists);
                     if (!result) { return result; }
 
-                    //執行DropDownLists要寫入暫存#tmpDropDownList提供tsql_LoadData(要將從Trade撈到的Factory及DropDownLists加入到tsql_LoadData，設定的變數中)使用
+                    //執行DropDownLists要寫入暫存#tmpDropDownList提供tsql_LoadData(要將從Trade撈到的Factory及DropDownLists加入到tsql_LoadData，設定的變數中)使用 
                     result = MyUtility.Tool.ProcessWithDatatable(DropDownLists, "id,Name,type", "Select 1", out kpiCodes, "#tmpDropDownList", conn);
                     if (!result) { return result; }
                     #endregion
@@ -299,17 +346,21 @@ order by ID,OrderID";
                     //沒有資料就繼續跑下一個連線，直到所有連線都跑完
                     if (0 == kpiCodes.Rows.Count) { continue; }
 
-                    // 用KpiCode重組Pivot的Tsql
                     #region --將KpiCode組到listSummary(Pivot SQL變數上)，並執行listSummary(pivot)
+                    // 用KpiCode重組Pivot的Tsql
                     string listSummary =
-@"select BrandID,{0}
+@"select Brand,{0}
 
 from (
-	select BrandID,KpiCode,feeAmount = SUM(feeAmount) from #test group by BrandID,KpiCode
+	select  Brand
+            , KpiCode
+            , feeAmount = SUM(feeAmount) 
+    from #data 
+    group by Brand,KpiCode
 ) a pivot
 	(sum(feeAmount) for KpiCode in ({1})
 ) b
-order by BrandID
+order by Brand
 ";
                     List<String> ftyAmt = new List<string>();
                     List<String> ftyList = new List<string>();
@@ -317,23 +368,24 @@ order by BrandID
                     {
                         string kpiCode = kpi["KpiCode"].ToString().Trim();
                         if (!kpiCode_All.ContainsKey(kpiCode)) { kpiCode_All.Add(kpiCode, kpiCode); }
-                        ftyAmt.Add("[" + kpiCode + "] = isnull([" + kpiCode + "],0)");
+                        ftyAmt.Add("[" + kpiCode + "]=isnull([" + kpiCode + "],0)");
                         ftyList.Add("[" + kpiCode + "]");
                     }
                     listSummary = string.Format(listSummary
                        , string.Join(",", ftyAmt)
                        , string.Join(",", ftyList));
-
-                    // 執行pivot
                     result = DBProxy.Current.SelectByConn(conn, listSummary, out dt_Tmp);
                     if (!result) { return result; }
+                    if (null == dt_Tmp || dt_Tmp.Rows.Count == 0)
+                    {
+                        return new DualResult(false, "Data not found.");
+                    }
                     foreach (DataRow brandData in dt_Tmp.Rows)
                     {
-                        string brand = brandData["BrandID"].ToString().Trim();
+                        string brand = brandData["Brand"].ToString().Trim();
                         Dictionary<string, decimal> brand_Fty;
                         if (brand_FtyAmt.ContainsKey(brand)) { brand_Fty = brand_FtyAmt[brand]; }
                         else { brand_Fty = new Dictionary<string, decimal>(); brand_FtyAmt.Add(brand, brand_Fty); }
-
                         foreach (DataRow kpi in kpiCodes.Rows)
                         {
                             string kpiCode = kpi["KpiCode"].ToString().Trim();
@@ -345,11 +397,10 @@ order by BrandID
                             if (brand_Fty.ContainsKey(kpiCode)) { brand_Fty.Set(kpiCode, Amt); }
                             else { brand_Fty.Add(kpiCode, Amt); }
                         }
-
                     }
                     #endregion
 
-                    //判斷是不是要列印Detail明細資料
+                    #region --判斷是不是要列印Detail明細資料
                     if (this.checkExportDetail.Checked == true)
                     {
                         DualResult result2 = DBProxy.Current.SelectByConn(conn, tsql_Detail, out dt_detail);
@@ -360,16 +411,16 @@ order by BrandID
                         }
                         else
                         {
-                            dt_detail_All.Merge(dt_detail);//如果dt_detail_All有資料時，將資料Merge上去
+                            dt_detail_All.Merge(dt_detail);
                         }
                     }
+                    #endregion
                 }
             }
             #endregion
 
             dt_All = new DataTable();
-            dt_All.ColumnsStringAdd("BrandID");
-
+            dt_All.ColumnsStringAdd("Brand");
             //1.產生第一列表頭資料
             //2.表頭資料依照FactorySort排序
             #region --撈出Factory的KpiCode及FactorySort，依照FactorySort做排序
@@ -420,7 +471,7 @@ order by FactorySort
                 }
             }
             #endregion
-            
+
             //1.產生表身資料-Dt_All
             //2.表身資料依照 KpiCode 及BrandID 將金額填入DataTable
             #region--依照工廠及品牌將金額填入dt_All(最後要ToExcel的DataTable)
@@ -428,7 +479,7 @@ order by FactorySort
             {
                 Dictionary<string, decimal> ftyAmt = brand_FtyAmt[brandID];
                 DataRow row = dt_All.NewRow();
-                row["BrandID"] = brandID;
+                row["Brand"] = brandID;
                 foreach (string kpiCode in ftyAmt.Keys)
                 {
                     row[kpiCode] = ftyAmt[kpiCode];
@@ -456,7 +507,6 @@ order by FactorySort
             dt_All.Columns.Add("TTLAMT", typeof(Decimal));//typeof(Decimal)是設定欄位格式
             dt_All.Columns.Add("TTLPER", typeof(Decimal));
             int startIndex = 1;
-
             #region --計算總Total
             //for dt每一列
             for (int rowIdx = 0; rowIdx < dt_All.Rows.Count; rowIdx++)
@@ -467,13 +517,9 @@ order by FactorySort
                 {
                     TTAMT += Convert.ToDecimal(dt_All.Rows[rowIdx][colIdx]);
                 }
-                if (null == dt_All || dt_All.Rows.Count == 0)
-                {
-                    return new DualResult(false, "Data not found");
-                }
+
                 dt_All.Rows[rowIdx]["TTLAMT"] = TTAMT;
             }
-
             #endregion
 
             #region --最後一列Total
@@ -495,26 +541,16 @@ order by FactorySort
             dt_All.Rows.Add(totalrow);
             #endregion
 
-            #region --算最後一個欄位的百分比
             //算TTLPER
             for (int i = 0; i < dt_All.Rows.Count; i++)
             {
-                //TTColumnAMT為0時不做計算，直接帶0
-                if (TTColumnAMT == 0)
-                {
-                    dt_All.Rows[i]["TTLPER"] = 0;
-                }
-                else
-                {
-                    decimal ttlamt = Convert.ToDecimal(dt_All.Rows[i]["TTLAMT"]);
-                    dt_All.Rows[i]["TTLPER"] = decimal.Round((ttlamt / TTColumnAMT) * 100, 2);
-                }
-
+                decimal ttlamt = Convert.ToDecimal(dt_All.Rows[i]["TTLAMT"]);
+                dt_All.Rows[i]["TTLPER"] = TTColumnAMT == 0 ? 0 : decimal.Round((ttlamt / TTColumnAMT) * 100, 2);
             }
-            #endregion
             #endregion
             return Result.True;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region --判斷DataTable有沒有資料
@@ -542,19 +578,18 @@ order by FactorySort
             #endregion
 
             #region --匯出Excel
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R14_Transportation_Cost_Air_Freight.xltx");
+            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer.xltx");
             xl.boOpenFile = true;
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
             xdt_All.ShowHeader = true;
             xdt_All.HeaderColor = Color.FromArgb(216, 228, 188);
-
-            xl.dicDatas.Add("##R14UPRLLIST", xdt_All);
+            xl.dicDatas.Add("##R21UPRLLIST", xdt_All);
 
             if (this.checkExportDetail.Checked == true)
             {
                 SaveXltReportCls.xltRptTable xdt_detail_All = new SaveXltReportCls.xltRptTable(dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
-                xl.dicDatas.Add("##R14UNRLDETAIL", xdt_detail_All);
+                xl.dicDatas.Add("##R21UNRLDETAIL", xdt_detail_All);
                 xl.Save();
             }
             else
@@ -563,26 +598,28 @@ order by FactorySort
                 xl.Save();
                 excel.Worksheets[2].Delete();
             }
+
             #endregion
             return true;
         }
 
-        #region --控制項Validated
-        private void datePulloutDate1_Validated(object sender, EventArgs e)
+        #region -- Validated
+        private void dateShipDate1_Validated(object sender, EventArgs e)
         {
-            if (!datePulloutDate1.Value.Empty())
+            if (!MyUtility.Check.Empty(this.dateShipDate1.Value))
             {
-                datePulloutDate2.Value = Convert.ToDateTime(this.datePulloutDate1.Value).GetLastDayOfMonth();
+                dateShipDate2.Value = Convert.ToDateTime(this.dateShipDate1.Value).GetLastDayOfMonth();
             }
         }
 
         private void dateApproveDate1_Validated(object sender, EventArgs e)
         {
-            if (!dateApproveDate1.Value.Empty())
+            if (!MyUtility.Check.Empty(this.dateApproveDate1.Value))
             {
                 dateApproveDate2.Value = Convert.ToDateTime(this.dateApproveDate1.Value).GetLastDayOfMonth();
             }
         }
+
         #endregion
     }
 }

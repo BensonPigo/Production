@@ -154,7 +154,7 @@
             // WH_B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "checkJunk";
             this.DefaultFilter = "TYPE=\'IR\'";

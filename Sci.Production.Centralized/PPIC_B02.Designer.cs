@@ -155,7 +155,7 @@
             // PPIC_B02
             // 
             this.ClientSize = new System.Drawing.Size(840, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtDescription";
             this.DefaultFilter = "Type = \'AL\'";

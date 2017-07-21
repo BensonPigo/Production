@@ -10,6 +10,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using Sci.Win.UI;
 
 namespace Sci.Production.Warehouse
 {
@@ -18,14 +19,13 @@ namespace Sci.Production.Warehouse
         Sci.Win.MatrixHelper _matrix;
         String Orderid;
         Decimal Rate;
-        public bool combo;
+        public bool combo, isSave;
         bool openFromAutoPick = false;
         public DataRow master
         {
             get;
             set;
         }
-        public DataRow parentData;
 
         public P11_Detail(bool openFromAutoPick = false)
         {
@@ -35,58 +35,17 @@ namespace Sci.Production.Warehouse
             
             this.openFromAutoPick = openFromAutoPick;
 
-            //if (this.openFromAutoPick) {
-                this.btmcont.Controls.Remove(append);
-                this.btmcont.Controls.Remove(revise);
-                this.btmcont.Controls.Remove(delete);
-            //}
-            
+            this.btmcont.Controls.Remove(append);
+            this.btmcont.Controls.Remove(revise);
+            this.btmcont.Controls.Remove(delete);            
         }
+
         protected override bool OnSave()
         {
-            if (!openFromAutoPick)
-                return base.OnSave();
-            else 
-            {
-                return true;  
-            }
+            base.OnSave();
+            return true;
         }
-        protected override void OnSaveAfter()
-        {
-            
-            base.OnSaveAfter();
-            parentData["output"] = string.Join(" , ",
-                    this.CurrentSubDetailDatas
-                    .AsEnumerable()
-                    .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
-                    .Select(row=> row["SizeCode"].ToString()+"*"+row["Qty"].ToString())
-                
-                );
-            Decimal usedqty;
-            if (Convert.ToDecimal(displyQty.Text)!=0) 
-            {
-                usedqty = Convert.ToDecimal(displyQty.Text);
-            }
-            else 
-            {
-                usedqty = 1;
-            }
 
-            parentData["qty"] = Math.Round(this.CurrentSubDetailDatas
-                                            .AsEnumerable()
-                                            .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
-                                            .Sum(row => Convert.ToDecimal(row["Qty"].ToString())) * usedqty * Rate
-                                            , 2);
-            //將需新增的資料狀態更改為新增
-            foreach (DataRow temp in CurrentSubDetailDatas.Rows)
-            {
-                if (temp["isvirtual"].ToString() == "1" && Convert.ToDecimal(temp["QTY"].ToString()) > 0)
-                {
-                    temp.AcceptChanges();
-                    temp.SetAdded();
-                }
-            }
-        }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -222,20 +181,19 @@ where id='{0}' ", Orderid), out dtY);
             base.OnAttached();
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"
-select  *
-        , concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq
-        , dbo.getmtldesc(id,seq1,seq2,2,0) [description]
+select  p.*
+        , concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
+        , dbo.getmtldesc(p.id, p.seq1, p.seq2, 2, 0) [description]
         , [orderlist] = (select orderid+',' 
                          from (
                               select orderid 
                               from dbo.po_supp_detail_orderlist WITH (NOLOCK) 
-                              where   id=po_supp_detail.id 
-                                      and seq1=po_supp_detail.seq1 
-                                      and seq2=po_supp_detail.seq2
+                              where   id = p.id 
+                                      and seq1 = p.seq1 
+                                      and seq2 = p.seq2
                           )t for xml path('')) 
-        , dbo.GetUnitRate(po_supp_detail.POUnit, po_supp_detail.StockUnit) RATE 
-from dbo.po_supp_detail WITH (NOLOCK) 
-where id='{0}' and seq1='{1}' and seq2='{2}'"
+from dbo.po_supp_detail p WITH (NOLOCK) 
+where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'"
                 , CurrentDetailData["poid"], CurrentDetailData["seq1"], CurrentDetailData["seq2"]), out dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
@@ -246,7 +204,6 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 this.displySpecial.Text = dr["special"].ToString();
                 this.editOrderList.Text = dr["orderlist"].ToString();
                 this.eb_desc.Text = dr["description"].ToString();
-                Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }
 
             #region -- matrix breakdown
@@ -308,5 +265,14 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
             this.displayTotalIssueQty.Value = totalQty;
         }
 
+        private void save_Click(object sender, EventArgs e)
+        {
+            isSave = true;
+        }
+
+        private void undo_Click(object sender, EventArgs e)
+        {
+            isSave = false;
+        }
     }
 }
