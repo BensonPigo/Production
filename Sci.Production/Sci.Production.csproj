@@ -284,6 +284,9 @@
     <None Include="XLT\Centralized_R10_OutputSummaryWithFOBReport%28Summary_Detail%29.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Centralized_R02.CPULoadingReport.xltm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
