@@ -23,6 +23,7 @@
     [AddDate]        DATETIME       NULL,
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_ArtworkType_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
+    [PostSewingDays] INT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

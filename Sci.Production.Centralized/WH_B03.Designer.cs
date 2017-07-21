@@ -170,7 +170,7 @@
             // WH_B03
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultFilter = "TYPE=\'RR\'";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

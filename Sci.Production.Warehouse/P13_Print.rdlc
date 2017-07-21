@@ -462,7 +462,6 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Left>0cm</Left>
         <Height>1.2cm</Height>
         <Width>20.828cm</Width>
         <Style>
@@ -764,7 +763,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Globals!PageNumber</Value>
+                  <Value>=Globals.PageNumber &amp; "/" &amp; Globals.TotalPages</Value>
                   <Style />
                 </TextRun>
               </TextRuns>

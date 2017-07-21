@@ -47,7 +47,7 @@
             this.txtBrandBrandID = new Sci.Production.Class.txtbrand();
             this.txtCustCDCustCDID = new Sci.Production.Class.txtcustcd();
             this.txtCountryDest = new Sci.Production.Class.txtcountry();
-            this.txtShipmodeShipModeID = new Sci.Production.Class.txtshipmode();
+            this.comboShipmodeShipmodeID = new Sci.Production.Class.txtshipmode();
             this.label11 = new Sci.Win.UI.Label();
             this.txtForwarder = new Sci.Win.UI.TextBox();
             this.label12 = new Sci.Win.UI.Label();
@@ -225,16 +225,16 @@
             this.txtCountryDest.TabIndex = 8;
             this.txtCountryDest.TextBox1Binding = "";
             // 
-            // txtShipmodeShipModeID
+            // comboShipmodeShipmodeID
             // 
-            this.txtShipmodeShipModeID.BackColor = System.Drawing.Color.White;
-            this.txtShipmodeShipModeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShipmodeShipModeID.IsSupportUnselect = true;
-            this.txtShipmodeShipModeID.Location = new System.Drawing.Point(125, 177);
-            this.txtShipmodeShipModeID.Name = "txtShipmodeShipModeID";
-            this.txtShipmodeShipModeID.Size = new System.Drawing.Size(78, 24);
-            this.txtShipmodeShipModeID.TabIndex = 9;
-            this.txtShipmodeShipModeID.UseFunction = "";
+            this.comboShipmodeShipmodeID.BackColor = System.Drawing.Color.White;
+            this.comboShipmodeShipmodeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShipmodeShipmodeID.IsSupportUnselect = true;
+            this.comboShipmodeShipmodeID.Location = new System.Drawing.Point(125, 177);
+            this.comboShipmodeShipmodeID.Name = "comboShipmodeShipmodeID";
+            this.comboShipmodeShipmodeID.Size = new System.Drawing.Size(78, 24);
+            this.comboShipmodeShipmodeID.TabIndex = 9;
+            this.comboShipmodeShipmodeID.UseFunction = "";
             // 
             // label11
             // 
@@ -294,7 +294,7 @@
             this.Controls.Add(this.label12);
             this.Controls.Add(this.txtForwarder);
             this.Controls.Add(this.label11);
-            this.Controls.Add(this.txtShipmodeShipModeID);
+            this.Controls.Add(this.comboShipmodeShipmodeID);
             this.Controls.Add(this.txtCountryDest);
             this.Controls.Add(this.txtCustCDCustCDID);
             this.Controls.Add(this.txtBrandBrandID);
@@ -338,7 +338,7 @@
             this.Controls.SetChildIndex(this.txtBrandBrandID, 0);
             this.Controls.SetChildIndex(this.txtCustCDCustCDID, 0);
             this.Controls.SetChildIndex(this.txtCountryDest, 0);
-            this.Controls.SetChildIndex(this.txtShipmodeShipModeID, 0);
+            this.Controls.SetChildIndex(this.comboShipmodeShipmodeID, 0);
             this.Controls.SetChildIndex(this.label11, 0);
             this.Controls.SetChildIndex(this.txtForwarder, 0);
             this.Controls.SetChildIndex(this.label12, 0);
@@ -370,7 +370,7 @@
         private Class.txtbrand txtBrandBrandID;
         private Class.txtcustcd txtCustCDCustCDID;
         private Class.txtcountry txtCountryDest;
-        private Class.txtshipmode txtShipmodeShipModeID;
+        private Class.txtshipmode comboShipmodeShipmodeID;
         private Win.UI.Label label11;
         private Win.UI.TextBox txtForwarder;
         private Win.UI.Label label12;
