@@ -185,6 +185,18 @@
     <Compile Include="PPIC_B02.Designer.cs">
       <DependentUpon>PPIC_B02.cs</DependentUpon>
     </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R10.Designer.cs">
+      <DependentUpon>R10.cs</DependentUpon>
+    </Compile>
     <Compile Include="R11.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,11 +215,11 @@
     <Compile Include="R13.Designer.cs">
       <DependentUpon>R13.cs</DependentUpon>
     </Compile>
-    <Compile Include="R01.cs">
+    <Compile Include="R14.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="R01.Designer.cs">
-      <DependentUpon>R01.cs</DependentUpon>
+    <Compile Include="R14.Designer.cs">
+      <DependentUpon>R14.cs</DependentUpon>
     </Compile>
     <Compile Include="WH_B03.cs">
       <SubType>Form</SubType>
@@ -249,14 +261,20 @@
     <EmbeddedResource Include="PPIC_B02.resx">
       <DependentUpon>PPIC_B02.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R10.resx">
+      <DependentUpon>R10.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="R01.resx">
-      <DependentUpon>R01.cs</DependentUpon>
+    <EmbeddedResource Include="R14.resx">
+      <DependentUpon>R14.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WH_B03.resx">
       <DependentUpon>WH_B03.cs</DependentUpon>
