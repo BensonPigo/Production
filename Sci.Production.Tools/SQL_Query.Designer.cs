@@ -152,6 +152,7 @@
             this.btnSqlUpdate.TabIndex = 3;
             this.btnSqlUpdate.Text = "SQL Update";
             this.btnSqlUpdate.UseVisualStyleBackColor = true;
+            this.btnSqlUpdate.Visible = false;
             this.btnSqlUpdate.Click += new System.EventHandler(this.btnSqlUpdate_Click);
             // 
             // checkBox1
