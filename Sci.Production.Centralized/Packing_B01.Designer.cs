@@ -132,7 +132,7 @@
             // Packing_B01
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultFilter = "Type = \'OG\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

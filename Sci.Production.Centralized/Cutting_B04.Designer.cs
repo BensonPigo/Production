@@ -156,7 +156,7 @@
             // Cutting_B04
             // 
             this.ClientSize = new System.Drawing.Size(836, 462);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultFilter = "Type=\'RC\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
