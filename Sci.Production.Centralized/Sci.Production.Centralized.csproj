@@ -119,6 +119,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.SqlServer.Types.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Sci, Version=1.0.17.832, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
@@ -130,6 +132,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -182,6 +185,36 @@
     <Compile Include="PPIC_B02.Designer.cs">
       <DependentUpon>PPIC_B02.cs</DependentUpon>
     </Compile>
+    <Compile Include="R10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R10.Designer.cs">
+      <DependentUpon>R10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R11.Designer.cs">
+      <DependentUpon>R11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R12.Designer.cs">
+      <DependentUpon>R12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R13.Designer.cs">
+      <DependentUpon>R13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R14.Designer.cs">
+      <DependentUpon>R14.cs</DependentUpon>
+    </Compile>
     <Compile Include="R20.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -228,6 +261,18 @@
     <EmbeddedResource Include="PPIC_B02.resx">
       <DependentUpon>PPIC_B02.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R10.resx">
+      <DependentUpon>R10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R12.resx">
+      <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R13.resx">
+      <DependentUpon>R13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R14.resx">
+      <DependentUpon>R14.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
     </EmbeddedResource>
@@ -273,6 +318,26 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

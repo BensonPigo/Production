@@ -222,7 +222,7 @@
             // Cutting_B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
-            this.ConnectionName = "Tradedb";
+            this.ConnectionName = "ProductionTPE";
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtartworktype_ftyArtworkType";
             this.DefaultOrder = "id";
