@@ -36,7 +36,7 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.gridSQLQuery = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSqlUpdate = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -144,16 +144,15 @@
             this.gridSQLQuery.TabIndex = 1;
             this.gridSQLQuery.TabStop = false;
             // 
-            // button1
+            // btnSqlUpdate
             // 
-            this.button1.Location = new System.Drawing.Point(58, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(110, 28);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "SQL Update";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSqlUpdate.Location = new System.Drawing.Point(58, 6);
+            this.btnSqlUpdate.Name = "btnSqlUpdate";
+            this.btnSqlUpdate.Size = new System.Drawing.Size(110, 28);
+            this.btnSqlUpdate.TabIndex = 3;
+            this.btnSqlUpdate.Text = "SQL Update";
+            this.btnSqlUpdate.UseVisualStyleBackColor = true;
+            this.btnSqlUpdate.Click += new System.EventHandler(this.btnSqlUpdate_Click);
             // 
             // checkBox1
             // 
@@ -168,7 +167,7 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnSqlUpdate);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 510);
             this.panel1.Name = "panel1";
@@ -210,7 +209,7 @@
         private Win.UI.Button btnQuery;
         private Win.UI.EditBox editSQL;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSqlUpdate;
         private System.Windows.Forms.CheckBox checkBox1;
         private Win.UI.Panel panel1;
 
