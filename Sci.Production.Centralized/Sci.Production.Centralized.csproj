@@ -187,7 +187,6 @@
     <Compile Include="PPIC_B02.Designer.cs">
       <DependentUpon>PPIC_B02.cs</DependentUpon>
     </Compile>
-    <Compile Include="PrivUtils.cs" />
     <Compile Include="R03.cs">
       <SubType>Form</SubType>
     </Compile>
