@@ -363,36 +363,47 @@ Order by tempData.Id");
         //Save and Quit
         private void btnSaveAndQuit_Click(object sender, EventArgs e)
         {
+            string sql;
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
                 IList<string> updateCmds = new List<string>();
                 this.gridProductionSchedule.ValidateControl();
                 listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
+
+                #region update SQL
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     if (dr.RowState == DataRowState.Modified)
                     {
                         updateCmds.Add(string.Format(@"
-update Order_QtyShip 
-set     EstPulloutDate = {0}
-        , ReadyDate = {1}
-        , ProdRemark = '{2}'
-        , OutstandingReason = '{3}'
-        , OutstandingRemark = '{4}'
-        , EditName = '{5}'
-        , OutstandingInCharge='{5}'
-        , EditDate = GETDATE() 
-where ID = '{6}' and Seq = '{7}'"
-, MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
-, MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'"
-, dr["ProdRemark"].ToString()
-, dr["OutReason"].ToString()
-, dr["OutRemark"].ToString()
-, Sci.Env.User.UserID
-, dr["ID"].ToString()
-, dr["Seq"].ToString()));
+                        update Order_QtyShip 
+                        set     EstPulloutDate = {0}
+                                , ReadyDate = {1}
+                                , ProdRemark = '{2}'
+                                , OutstandingReason = '{3}'
+                                , OutstandingRemark = '{4}'
+                                , EditName = '{5}'
+                                , EditDate = GETDATE() 
+                        where ID = '{6}' and Seq = '{7}'"
+                        , MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
+                        , MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'"
+                        , dr["ProdRemark"].ToString()
+                        , dr["OutReason"].ToString()
+                        , dr["OutRemark"].ToString()
+                        , Sci.Env.User.UserID
+                        , dr["ID"].ToString()
+                        , dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
+
+                        //若Outstanding Reason或Outstanding Remark有值，則更新OutstandingInCharge
+                        if (!MyUtility.Check.Empty(dr["OutReason"]) || !MyUtility.Check.Empty(dr["OutRemark"]))
+                        {
+                            sql = string.Format("update Order_QtyShip set OutstandingInCharge='{0}' where ID = '{1}' and Seq = '{2}' "
+                                , Sci.Env.User.UserID, dr["ID"].ToString(), dr["Seq"].ToString());
+                            updateCmds.Add(sql);
+                        }
+
                     }
                 }
                 if (allSP.Length != 0)
@@ -428,9 +439,10 @@ where ID = '{6}' and Seq = '{7}'"
                         return;
                     }
                 }
-                /*
-                 *避免user忘記更新EstPulloutDate,自動update EstPulloutDate and Order.PulloutDate
-                 */
+                #endregion
+
+                #region 避免user忘記更新EstPulloutDate,自動update EstPulloutDate and Order.PulloutDate
+                updateCmds.Clear();
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     if (MyUtility.Check.Seek(string.Format(@"select 1 from Order_QtyShip where id='{0}' and seq='{1}' and  EstPulloutDate is null", dr["ID"].ToString(), dr["Seq"].ToString())))
@@ -480,6 +492,8 @@ where ID = '{6}' and Seq = '{7}'"
                         return;
                     }
                 }
+                #endregion
+
                 this.Close();
             }
         }
