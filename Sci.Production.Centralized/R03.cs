@@ -114,7 +114,8 @@ QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)
 FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
 Where SewingOutput_Detail.OrderID = Orders.ID 
 And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
-And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
+And Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
+and orders.LocalOrder = 0
 ";
                 if (dateRange1.Value1.HasValue)
                     strSQL += string.Format(" and SewingOutput.OutputDate >= '{0}'", ((DateTime)dateRange1.Value1).ToString("yyyy-MM-dd"));
