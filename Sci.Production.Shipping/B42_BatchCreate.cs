@@ -798,8 +798,8 @@ Values ('{0}','{1}');", newID, str.ToString()));
 
                     for (int i = 0; i < selectedData.Length; i++)
                     {
-                        insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail (ID,NLCode,HSCode,UnitID,Qty,UserCreate)
-Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(selectedData[i]["HSCode"])
+                        insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail (ID, NLCode, HSCode, UnitID, Qty, UserCreate, SystemQty)
+Values ('{0}', '{1}', '{2}', '{3}', {4}, {5}, {4});", newID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(selectedData[i]["HSCode"])
                           , MyUtility.Convert.GetString(selectedData[i]["UnitID"]), MyUtility.Convert.GetString(selectedData[i]["Qty"])
                           , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"));
 
