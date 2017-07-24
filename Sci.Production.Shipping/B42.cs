@@ -51,11 +51,14 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             string contraceNo = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["VNContractID"]);
-            this.DetailSelectCommand = string.Format(@"select vd.*,cd.Waste
+            this.DetailSelectCommand = string.Format(@"
+select  vd.*
+        , cd.Waste
 from VNConsumption_Detail vd WITH (NOLOCK) 
-left join VNContract_Detail cd WITH (NOLOCK) on cd.NLCode = vd.NLCode and cd.ID = '{0}'
+left join VNContract_Detail cd WITH (NOLOCK) on  cd.NLCode = vd.NLCode 
+                                                 and cd.ID = '{0}'
 where vd.ID = '{1}'
-order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", contraceNo, masterID);
+order by CONVERT (int, SUBSTRING (vd.NLCode, 3, 3))", contraceNo, masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -126,6 +129,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty)
                 .Numeric("Waste", header: "Waste", decimal_places: 3, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
@@ -142,10 +146,20 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Category"] = "B";
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (
-select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
-            CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(CustomSP), 'SP000000') as CustomSP from VNConsumption WITH (NOLOCK) where VNContractID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
-            CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup("select VNMultiple from System WITH (NOLOCK) ");
+            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"
+select  ID 
+from VNContract WITH (NOLOCK) 
+where StartDate = (select   MAX(StartDate) 
+                   from VNContract WITH (NOLOCK) 
+                   where    GETDATE() between StartDate and EndDate 
+                            and Status = 'Confirmed')");
+            CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(@"
+select  CustomSP = isnull (MAX (CustomSP), 'SP000000') 
+from VNConsumption WITH (NOLOCK) 
+where VNContractID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
+            CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup(@"
+select  VNMultiple 
+from System WITH (NOLOCK) ");
         }
 
         protected override bool ClickEditBefore()
@@ -318,6 +332,20 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
                     dr["ID"] = CurrentMaintain["ID"];
                 }
             }
+
+            #region 計算出 Qty(現有欄位)時, 將數值一併寫到 SystemQty 欄位
+            foreach (DataRow dr in ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (Convert.ToBoolean(dr["UserCreate"]))
+                    {
+                        dr["SystemQty"] = dr["Qty"];
+                        dr.EndEdit();
+                    }
+                }
+            }
+            #endregion
 
             return base.ClickSaveBefore();
         }
