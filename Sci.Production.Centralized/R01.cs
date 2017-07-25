@@ -24,7 +24,7 @@ namespace Sci.Production.Centralized
     {
         DataTable dtPrint = null;
 
-        DataTable tmpData1, tmpData2, tmpData3, Final_Data1,FinalData4, FinalAllData4, FinalStyleDetail, FinalOrderDetail;
+        DataTable tmpData1, tmpData2, tmpData3, Final_Data1,FinalData4, FinalAllData4, FinalStyleDetail, FinalOrderDetail,FinalALLData;
         string SqlData1, SqlData2, SqlData3, SqlData4, All_SqlData4, SqlStyleDetail, SqlOrderDetail;
 
         public R01(ToolStripMenuItem menuitem)
@@ -98,7 +98,7 @@ namespace Sci.Production.Centralized
                                         From Orders O WITH (NOLOCK)
                                         Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
                                         inner join Production.dbo.System ts on 1 = 1
-                                        Where 1=1 {0}", where);
+                                        Where 1=1 and o.LocalOrder=0  {0}", where);
 
                     BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
                     result = DBProxy.Current.SelectByConn(con, SqlData1, out tmpData1);
@@ -275,9 +275,9 @@ order by data";
                         FinalData4.Merge(tmpData4);
 
                     if (FinalAllData4 == null || FinalAllData4.Rows.Count == 0)
-                        FinalAllData4 = All_tmpData4;
+                        FinalAllData4 = tmpData3;
                     else
-                        FinalAllData4.Merge(All_tmpData4);
+                        FinalAllData4.Merge(tmpData3);
 
                     if (FinalStyleDetail == null || FinalStyleDetail.Rows.Count == 0)
                         FinalStyleDetail = tmpStyleDetail;
@@ -289,9 +289,42 @@ order by data";
                     else
                         FinalOrderDetail.Merge(tmpOrderDetail);
 
-                }
+                }               
             }
-
+            SqlConnection sqlConn = null;
+            DBProxy.Current.OpenConnection(null, out sqlConn);
+            using (sqlConn)
+            {
+                DataTable dtAll;
+                MyUtility.Tool.ProcessWithDatatable(FinalAllData4, "", " ", out dtAll, "#tmpALL", sqlConn);
+                result = DBProxy.Current.SelectByConn(sqlConn, @";with final as (
+	select sum(SMV / sSMV) as [%] ,SMVEFFX 
+	,max(v1) as v1 ,max(v2) as v2 ,max(v3) as v3
+	,max(v4) as v4 ,max(v5) as v5 ,max(v6) as v6
+	from #tmpALL td3
+	OUTER APPLY (select sum(SMV) as sSMV from #tmpALL tmp3) ss --Sum 某一單位Factory, Region
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v1 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'A') v1
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v2 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'B') v2
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v3 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'C') v3
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v4 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'D') v4
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v5 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'E') v5
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v6 from #tmpALL tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'F') v6
+	group by SMVEFFX
+) 
+select 'All',''
+,isnull(final.[%] ,0) [%]
+,SMVEFF = case c.data when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
+,isnull(final.v1 ,0) v1 ,isnull(final.v2 ,0) v2 ,isnull(final.v3 ,0) v3
+,isnull(final.v4 ,0) v4 ,isnull(final.v5 ,0) v5 ,isnull(final.v6 ,0) v6
+from final 
+full join (
+	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
+) c on c.Data = final.SMVEFFX
+order by data", out FinalALLData);
+                sqlConn.Close();
+            }
+           
+          
             e.Report.ReportDataSource = Final_Data1;
             if (Final_Data1 != null && Final_Data1.Rows.Count > 0)
             {
@@ -318,7 +351,7 @@ order by data";
             sxrc.boOpenFile = true;
             
             SaveXltReportCls.xltRptTable xrt1 = new SaveXltReportCls.xltRptTable(FinalData4);
-            SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(FinalAllData4);
+            SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(FinalALLData);
             SaveXltReportCls.xltRptTable xrt3 = new SaveXltReportCls.xltRptTable(FinalStyleDetail);
             SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(FinalOrderDetail);
 
@@ -333,7 +366,11 @@ order by data";
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
 
             sxrc.Save();
-
+            Final_Data1.Clear();
+            FinalData4.Clear();
+            FinalALLData.Clear();
+            FinalStyleDetail.Clear();
+            FinalOrderDetail.Clear();
             return Result.True;
         }
     }
