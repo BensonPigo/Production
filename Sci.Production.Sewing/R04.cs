@@ -109,13 +109,43 @@ from #tmpSewingDetail
 group by OutputDate,Category,Shift,SewingLineID,Team,OrderId,ComboType,OrderCategory,LocalOrder,OrderBrandID,CustPONo,
 OrderCdCodeID,MockupBrandID,MockupCDCodeID,FactoryID,MDivisionID,OrderProgram,MockupProgram,OrderType,
 OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,MockupStyle,OrderSeason,MockupSeason,Rate,StdTMS,InspectQty,RejectQty
+----↓計算累計天數 function table太慢直接寫在這
+select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+into #stmp
+from #tmpSewingGroup t
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate and s.FactoryID = t.FactoryID
+inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
+order by style,s.OutputDate
 
+select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+into #wtmp
+from #tmpSewingGroup t
+inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate
+
+select cumulate = IIF(Count(1)=0, 1, Count(1)),s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+into #cl
+from #stmp s
+where s.scOutputDate >
+(
+	select date = max(Date)
+	from #wtmp w 
+	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.SewingLineID = s2.SewingLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
+	and w.OrderId = s2.OrderId and w.ComboType = s2.ComboType
+	where s2.scOutputDate is null
+	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId and w.ComboType = s.ComboType
+)
+group by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+-----↑計算累計天數
 select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
-f.Type as FtyType,f.CountryID as FtyCountry,
-[CumulateDate] = tmp.cumulate
+f.Type as FtyType,f.CountryID as FtyCountry
+,CumulateDate=c.cumulate
 into #tmp1stFilter
 from #tmpSewingGroup t
-outer apply [dbo].getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),SewingLineID,OutputDate,FactoryID)  tmp
+left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.SewingLineID = t.SewingLineID and c.FactoryID = t.FactoryID 
+				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType
 left join Factory f on t.FactoryID = f.ID
 where 1=1");
             if (!MyUtility.Check.Empty(category) && category != "Mockup")
