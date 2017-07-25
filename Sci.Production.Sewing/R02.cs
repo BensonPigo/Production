@@ -469,26 +469,25 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
                 try
                 {
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
-                        @";with tmpArtwork
-as (
-Select ID from ArtworkType WITH (NOLOCK) where Classify in ('I','A','P') and IsTtlTMS = 0
-),
-tmpAllSubprocess
-as (
-select ot.ArtworkTypeID,a.OrderId,a.ComboType,Round(sum(a.QAQty)*ot.Price*(isnull(sl.Rate,100)/100),2) as Price
-from #tmp a
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
-inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
-left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = a.ComboType
-where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-and ot.Price > 0
-group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
+@";with tmpArtwork as(
+	Select ID,rs = iif(ProductionUnit = 'TMS','CPU',iif(ProductionUnit = 'QTY','AMT',''))
+	from ArtworkType WITH (NOLOCK)
+	where Classify in ('I','A','P') and IsTtlTMS = 0
+),tmpAllSubprocess as(
+	select ot.ArtworkTypeID,a.OrderId,a.ComboType,Price = Round(sum(a.QAQty)*ot.Price*(isnull(sl.Rate,100)/100),2) 
+	from #tmp a
+	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
+	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = a.ComboType
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
+	and ot.Price > 0
+	group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
 )
-select ArtworkTypeID,sum(Price) as Price
-from tmpAllSubprocess
-group by ArtworkTypeID
-order by ArtworkTypeID",
+select ArtworkTypeID = t1.ID,Price = isnull(sum(Price),0),rs
+from tmpArtwork t1
+left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+group by t1.ID,rs
+order by t1.ID",
                         out subprocessData);
                 }
                 catch (Exception ex)
@@ -677,7 +676,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 insertRec++;
                 if (insertRec % 2 == 1)
                 {
-                    worksheet.Cells[insertRow, 2] = string.Format("{0}CMP", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '));
+                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
                     worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr["Price"]);
                 }
                 else
