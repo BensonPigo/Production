@@ -31,16 +31,9 @@ namespace Sci.Production.Sewing
             comboM.Text = Sci.Env.User.Keyword;
             comboFactory.SelectedIndex = 0;
         }
-
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
-            //    MyUtility.Msg.WarningBox("Output Date can't empty!!");
-            //    return false;
-            //}
-
             date1 = dateOoutputDate.Value1;
             date2 = dateOoutputDate.Value2;
             category = comboCategory.Text;
@@ -51,31 +44,28 @@ namespace Sci.Production.Sewing
 
             return base.ValidateInput();
         }
-
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
-select s.OutputDate,s.Category,s.Shift,s.SewingLineID,IIF(sd.QAQty=0,s.Manpower,s.Manpower*sd.QAQty) as ActManPower,
-	s.Team,sd.OrderId,o.CustPONo
-	,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Category,'') as OrderCategory,
-	o.LocalOrder,isnull(o.BrandID,'') as OrderBrandID,isnull(o.CdCodeID,'') as OrderCdCodeID,
-	isnull(mo.BrandID,'') as MockupBrandID,isnull(mo.MockupID,'') as MockupCDCodeID,s.FactoryID,s.MDivisionID,
-	isnull(o.ProgramID,'') as OrderProgram,isnull(mo.ProgramID,'') as MockupProgram,isnull(o.OrderTypeID,'') as OrderType,
-	isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
-	isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,
-	isnull(o.SeasonID,'') as OrderSeason,isnull(mo.SeasonID,'') as MockupSeason,isnull(sl.Rate,100)/100 as Rate,
-	(select StdTMS from System WITH (NOLOCK) ) as StdTMS,isnull(r.InspectQty,0) as InspectQty,isnull(r.RejectQty,0) as RejectQty
+            sqlCmd.Append(string.Format(@"--根據條件撈基本資料
+select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
+	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
+	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,'')
+	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
+	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
+	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
+	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
+	,Rate = isnull(sl.Rate,100)/100,System.StdTMS
+	,InspectQty = isnull(r.InspectQty,0),RejectQty = isnull(r.RejectQty,0)
 into #tmpSewingDetail
-from SewingOutput s WITH (NOLOCK) 
+from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
-	and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-where 1=1"));
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
+left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+where 1=1 "));
 
             if (!MyUtility.Check.Empty(date1))
             {
@@ -93,38 +83,36 @@ where 1=1"));
             {
                 sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", factory));
             }
-            if (!MyUtility.Check.Empty(category) && category == "Mockup")
+            if (!MyUtility.Check.Empty(category) && category.ToUpper() == "MOCKUP")
             {
                 sqlCmd.Append(" and s.Category = 'M'");
             }
 
-            sqlCmd.Append(@"
-select OutputDate,Category,Shift,SewingLineID,Sum(ActManPower) as ActManPower,Team,OrderId,ComboType,CustPONo,
-	sum(WorkHour) as WorkHour,sum(QAQty) as QAQty,sum(InlineQty) as InlineQty,OrderCategory,
-	LocalOrder,OrderBrandID,OrderCdCodeID,MockupBrandID,MockupCDCodeID,FactoryID,MDivisionID,
-	OrderProgram,MockupProgram,OrderType,OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,
-	MockupStyle,OrderSeason,MockupSeason,Rate,StdTMS,InspectQty,RejectQty
+            sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
+select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
+	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(WorkHour)over(partition by id,OrderId,ComboType)
+	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
+	,LocalOrder,CustPONo,OrderCategory,OrderType
+	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
+	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
+	,Rate,StdTMS,InspectQty,RejectQty
 into #tmpSewingGroup
 from #tmpSewingDetail
-group by OutputDate,Category,Shift,SewingLineID,Team,OrderId,ComboType,OrderCategory,LocalOrder,OrderBrandID,CustPONo,
-OrderCdCodeID,MockupBrandID,MockupCDCodeID,FactoryID,MDivisionID,OrderProgram,MockupProgram,OrderType,
-OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,MockupStyle,OrderSeason,MockupSeason,Rate,StdTMS,InspectQty,RejectQty
-----↓計算累計天數 function table太慢直接寫在這
+--↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #stmp
 from #tmpSewingGroup t
 inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate and s.FactoryID = t.FactoryID
 inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
-order by style,s.OutputDate
-
+--
 select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #wtmp
 from #tmpSewingGroup t
-inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate
-
+inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate
+--
 select cumulate = IIF(Count(1)=0, 1, Count(1)),s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
 into #cl
 from #stmp s
@@ -138,7 +126,7 @@ where s.scOutputDate >
 	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId and w.ComboType = s.ComboType
 )
 group by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
------↑計算累計天數
+--↑計算累計天數
 select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
 f.Type as FtyType,f.CountryID as FtyCountry
 ,CumulateDate=c.cumulate
@@ -182,26 +170,19 @@ select ID,Seq,ArtworkUnit,ProductionUnit
 into #AT
 from ArtworkType WITH (NOLOCK)
 where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
-
-select ID,Seq
-	,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')')))
-	,Unit
+--
+select ID,Seq,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
 into #atall
 from(
-	Select ID,Seq,Unit = ArtworkUnit
-	from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	Select ID,Seq,Unit = ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
 	UNION
-	Select ID,Seq,ProductionUnit
-	from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
 	UNION
-	Select ID,Seq,ArtworkUnit
-	from #AT where ArtworkUnit !='' AND ProductionUnit =''
+	Select ID,Seq,ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit =''
 	UNION
-	Select ID,Seq,ProductionUnit
-	from #AT where ArtworkUnit ='' AND ProductionUnit !=''
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit ='' AND ProductionUnit !=''
 	UNION
-	Select ID,Seq,'' from #AT 
-	where ArtworkUnit ='' AND ProductionUnit =''
+	Select ID,Seq,'' from #AT where ArtworkUnit ='' AND ProductionUnit =''
 )a
 -----orderid & ArtworkTypeID & Seq
 select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS
@@ -301,69 +282,77 @@ PIVOT
 where orderid is not null
 -----
 select MDivisionID,FactoryID
-,iif(FtyType='B','Bulk',iif(FtyType='S','Sample',FtyType)) FtyType
-,FtyCountry,OutputDate,SewingLineID,
-IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In'))) as Shift,
-Team,t.OrderId,CustPONo,	
-IIF(Category='M',MockupBrandID,OrderBrandID) as Brand,
-IIF(Category='M','Mockup',IIF(LocalOrder = 1,'Local Order',IIF(OrderCategory='B','Bulk',IIF(OrderCategory='S','Sample','')))) as Category,
-IIF(Category='M',MockupProgram,OrderProgram) as Program,OrderType,IIF(Category='M',MockupCPUFactor,OrderCPUFactor) as CPURate,
-IIF(Category='M',MockupStyle,OrderStyle) as Style,IIF(Category='M',MockupSeason,OrderSeason) as Season,
-IIF(Category='M',MockupCDCodeID,OrderCdCodeID)+'-'+ComboType as CDNo,IIF(QAQty>0,ActManPower/QAQty,ActManPower) as ActManPower,
-WorkHour,ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2) as ManHour,
-ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2) as TargetCPU,
-IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS as TMS,
-IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate) as CPUPrice,
-IIF(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0) as TargetQty,
-QAQty
-,IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty as TotalCPU,
-IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0) as CPUSewer,
-ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1) as EFF,
-IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0) as RFT,CumulateDate,
-IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate)) as DateRange,InlineQty,QAQty-InlineQty as Diff,
-rate,
-[AT(TMS)],[BONDING (HAND)(TMS)],[BONDING (MACHINE)(PANEL)],[BONDING (MACHINE)(TMS)],[CARTON(Price)],[CUTTING(TMS)],[DIE CUT(TMS)],[DOWN(TMS)][EMB_THREAD],[EMBOSS/DEBOSS(PCS)]
-,[EMBOSS/DEBOSS(Price)],[EMBROIDERY(Price)],[EMBROIDERY(STITCH)],[Garment Dye(PCS)],[Garment Dye(Price)][GMT WASH(PCS)],[GMT WASH(Price)],[HEAT SET PLEAT(PCS)],[HEAT SET PLEAT(Price)]
-,[HEAT TRANSFER(TMS)],[INSPECTION(TMS)],[LABEL(Price)][LASER(PANEL)],[LASER(TMS)],[MODEL],[PAD PRINTING(PCS)],[PAD PRINTING(Price)],[PATTERN],[PIPING(Price)],[POLYBAG(Price)]
-,[PRINTING(PCS)],[PRINTING(Price)],[QUILTING(AT)(TMS)],[SP_THREAD(Price)],[SUBLIMATION PRINT(TMS)],[SUBLIMATION ROLLER(TMS)],[SUBLIMATION SPRAY(TMS)],[WELDED(TMS)]
-,[TTL_AT(TMS)]					=Round(QAQty*(isnull(Rate,100)/100)*[AT(TMS)]					,2)
-,[TTL_BONDING (HAND)(TMS)]		=Round(QAQty*(isnull(Rate,100)/100)*[BONDING (HAND)(TMS)]		,2)
-,[TTL_BONDING (MACHINE)(PANEL)]	=Round(QAQty*(isnull(Rate,100)/100)*[BONDING (MACHINE)(PANEL)]	,2)
-,[TTL_BONDING (MACHINE)(TMS)]	=Round(QAQty*(isnull(Rate,100)/100)*[BONDING (MACHINE)(TMS)]	,2)
-,[TTL_CARTON(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[CARTON(Price)]				,2)
-,[TTL_CUTTING(TMS)]				=Round(QAQty*(isnull(Rate,100)/100)*[CUTTING(TMS)]				,2)
-,[TTL_DIE CUT(TMS)]				=Round(QAQty*(isnull(Rate,100)/100)*[DIE CUT(TMS)]				,2)
-,[TTL_DOWN(TMS)]				=Round(QAQty*(isnull(Rate,100)/100)*[DOWN(TMS)]					,2)
-,[TTL_EMB_THREAD]				=Round(QAQty*(isnull(Rate,100)/100)*[EMB_THREAD]				,2)
-,[TTL_EMBOSS/DEBOSS(PCS)]		=Round(QAQty*(isnull(Rate,100)/100)*[EMBOSS/DEBOSS(PCS)]		,2)
-,[TTL_EMBOSS/DEBOSS(Price)]		=Round(QAQty*(isnull(Rate,100)/100)*[EMBOSS/DEBOSS(Price)]		,2)
-,[TTL_EMBROIDERY(Price)]		=Round(QAQty*(isnull(Rate,100)/100)*[EMBROIDERY(Price)]			,2)
-,[TTL_EMBROIDERY(STITCH)]		=Round(QAQty*(isnull(Rate,100)/100)*[EMBROIDERY(STITCH)]		,2)
-,[TTL_Garment Dye(PCS)]			=Round(QAQty*(isnull(Rate,100)/100)*[Garment Dye(PCS)]			,2)
-,[TTL_Garment Dye(Price)]		=Round(QAQty*(isnull(Rate,100)/100)*[Garment Dye(Price)]		,2)
-,[TTL_GMT WASH(PCS)]			=Round(QAQty*(isnull(Rate,100)/100)*[GMT WASH(PCS)]				,2)
-,[TTL_GMT WASH(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[GMT WASH(Price)]			,2)
-,[TTL_HEAT SET PLEAT(PCS)]		=Round(QAQty*(isnull(Rate,100)/100)*[HEAT SET PLEAT(PCS)]		,2)
-,[TTL_HEAT SET PLEAT(Price)]	=Round(QAQty*(isnull(Rate,100)/100)*[HEAT SET PLEAT(Price)]		,2)
-,[TTL_HEAT TRANSFER(TMS)]		=Round(QAQty*(isnull(Rate,100)/100)*[HEAT TRANSFER(TMS)]		,2)
-,[TTL_INSPECTION(TMS)]			=Round(QAQty*(isnull(Rate,100)/100)*[INSPECTION(TMS)]			,2)
-,[TTL_LABEL(Price)]				=Round(QAQty*(isnull(Rate,100)/100)*[LABEL(Price)]				,2)
-,[TTL_LASER(PANEL)]				=Round(QAQty*(isnull(Rate,100)/100)*[LASER(PANEL)]				,2)
-,[TTL_LASER(TMS)]				=Round(QAQty*(isnull(Rate,100)/100)*[LASER(TMS)]				,2)
-,[TTL_MODEL]					=Round(QAQty*(isnull(Rate,100)/100)*[MODEL]						,2)
-,[TTL_PAD PRINTING(PCS)]		=Round(QAQty*(isnull(Rate,100)/100)*[PAD PRINTING(PCS)]			,2)
-,[TTL_PAD PRINTING(Price)]		=Round(QAQty*(isnull(Rate,100)/100)*[PAD PRINTING(Price)]		,2)
-,[TTL_PATTERN]					=Round(QAQty*(isnull(Rate,100)/100)*[PATTERN]					,2)
-,[TTL_PIPING(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[PIPING(Price)]				,2)
-,[TTL_POLYBAG(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[POLYBAG(Price)]			,2)
-,[TTL_PRINTING(PCS)]			=Round(QAQty*(isnull(Rate,100)/100)*[PRINTING(PCS)]				,2)
-,[TTL_PRINTING(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[PRINTING(Price)]			,2)
-,[TTL_QUILTING(AT)(TMS)]		=Round(QAQty*(isnull(Rate,100)/100)*[QUILTING(AT)(TMS)]			,2)
-,[TTL_SP_THREAD(Price)]			=Round(QAQty*(isnull(Rate,100)/100)*[SP_THREAD(Price)]			,2)
-,[TTL_SUBLIMATION PRINT(TMS)]	=Round(QAQty*(isnull(Rate,100)/100)*[SUBLIMATION PRINT(TMS)]	,2)
-,[TTL_SUBLIMATION ROLLER(TMS)]	=Round(QAQty*(isnull(Rate,100)/100)*[SUBLIMATION ROLLER(TMS)]	,2)
-,[TTL_SUBLIMATION SPRAY(TMS)]	=Round(QAQty*(isnull(Rate,100)/100)*[SUBLIMATION SPRAY(TMS)]	,2)
-,[TTL_WELDED(TMS)]				=Round(QAQty*(isnull(Rate,100)/100)*[WELDED(TMS)]				,2)
+	,FtyType = iif(FtyType='B','Bulk',iif(FtyType='S','Sample',FtyType))
+	,FtyCountry,OutputDate,SewingLineID
+	,Shift = IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In')))
+	,Team,t.OrderId,CustPONo
+	,Brand = IIF(Category='M',MockupBrandID,OrderBrandID)
+	,Category = IIF(Category='M','Mockup',IIF(LocalOrder = 1,'Local Order',IIF(OrderCategory='B','Bulk',IIF(OrderCategory='S','Sample',''))))
+	,Program = IIF(Category='M',MockupProgram,OrderProgram)
+	,OrderType
+	,CPURate = IIF(Category='M',MockupCPUFactor,OrderCPUFactor)
+	,Style = IIF(Category='M',MockupStyle,OrderStyle)
+	,Season = IIF(Category='M',MockupSeason,OrderSeason)
+	,CDNo = IIF(Category='M',MockupCDCodeID,OrderCdCodeID)+'-'+ComboType
+	,ActManPower = IIF(QAQty>0,ActManPower/QAQty,ActManPower)
+	,WorkHour
+	,ManHour = ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)
+	,TargetCPU = ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)
+	,TMS = IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS
+	,CPUPrice = IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
+	,TargetQty = IIF(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
+	,QAQty
+	,TotalCPU = IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty
+	,CPUSewer = IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0)
+	,EFF = ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
+	,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
+	,CumulateDate,
+	DateRange = IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate))
+	,InlineQty
+	,Diff = QAQty-InlineQty
+	,rate
+	,[AT(TMS)],[BONDING (HAND)(TMS)],[BONDING (MACHINE)(PANEL)],[BONDING (MACHINE)(TMS)],[CARTON(Price)],[CUTTING(TMS)],[DIE CUT(TMS)],[DOWN(TMS)][EMB_THREAD],[EMBOSS/DEBOSS(PCS)]
+	,[EMBOSS/DEBOSS(Price)],[EMBROIDERY(Price)],[EMBROIDERY(STITCH)],[Garment Dye(PCS)],[Garment Dye(Price)][GMT WASH(PCS)],[GMT WASH(Price)],[HEAT SET PLEAT(PCS)],[HEAT SET PLEAT(Price)]
+	,[HEAT TRANSFER(TMS)],[INSPECTION(TMS)],[LABEL(Price)][LASER(PANEL)],[LASER(TMS)],[MODEL],[PAD PRINTING(PCS)],[PAD PRINTING(Price)],[PATTERN],[PIPING(Price)],[POLYBAG(Price)]
+	,[PRINTING(PCS)],[PRINTING(Price)],[QUILTING(AT)(TMS)],[SP_THREAD(Price)],[SUBLIMATION PRINT(TMS)],[SUBLIMATION ROLLER(TMS)],[SUBLIMATION SPRAY(TMS)],[WELDED(TMS)]
+	,[TTL_AT(TMS)]					=Round(QAQty*Rate*[AT(TMS)]					,2)
+	,[TTL_BONDING (HAND)(TMS)]		=Round(QAQty*Rate*[BONDING (HAND)(TMS)]		,2)
+	,[TTL_BONDING (MACHINE)(PANEL)]	=Round(QAQty*Rate*[BONDING (MACHINE)(PANEL)],2)
+	,[TTL_BONDING (MACHINE)(TMS)]	=Round(QAQty*Rate*[BONDING (MACHINE)(TMS)]	,2)
+	,[TTL_CARTON(Price)]			=Round(QAQty*Rate*[CARTON(Price)]			,2)
+	,[TTL_CUTTING(TMS)]				=Round(QAQty*Rate*[CUTTING(TMS)]			,2)
+	,[TTL_DIE CUT(TMS)]				=Round(QAQty*Rate*[DIE CUT(TMS)]			,2)
+	,[TTL_DOWN(TMS)]				=Round(QAQty*Rate*[DOWN(TMS)]				,2)
+	,[TTL_EMB_THREAD]				=Round(QAQty*Rate*[EMB_THREAD]				,2)
+	,[TTL_EMBOSS/DEBOSS(PCS)]		=Round(QAQty*Rate*[EMBOSS/DEBOSS(PCS)]		,2)
+	,[TTL_EMBOSS/DEBOSS(Price)]		=Round(QAQty*Rate*[EMBOSS/DEBOSS(Price)]	,2)
+	,[TTL_EMBROIDERY(Price)]		=Round(QAQty*Rate*[EMBROIDERY(Price)]		,2)
+	,[TTL_EMBROIDERY(STITCH)]		=Round(QAQty*Rate*[EMBROIDERY(STITCH)]		,2)
+	,[TTL_Garment Dye(PCS)]			=Round(QAQty*Rate*[Garment Dye(PCS)]		,2)
+	,[TTL_Garment Dye(Price)]		=Round(QAQty*Rate*[Garment Dye(Price)]		,2)
+	,[TTL_GMT WASH(PCS)]			=Round(QAQty*Rate*[GMT WASH(PCS)]			,2)
+	,[TTL_GMT WASH(Price)]			=Round(QAQty*Rate*[GMT WASH(Price)]			,2)
+	,[TTL_HEAT SET PLEAT(PCS)]		=Round(QAQty*Rate*[HEAT SET PLEAT(PCS)]		,2)
+	,[TTL_HEAT SET PLEAT(Price)]	=Round(QAQty*Rate*[HEAT SET PLEAT(Price)]	,2)
+	,[TTL_HEAT TRANSFER(TMS)]		=Round(QAQty*Rate*[HEAT TRANSFER(TMS)]		,2)
+	,[TTL_INSPECTION(TMS)]			=Round(QAQty*Rate*[INSPECTION(TMS)]			,2)
+	,[TTL_LABEL(Price)]				=Round(QAQty*Rate*[LABEL(Price)]			,2)
+	,[TTL_LASER(PANEL)]				=Round(QAQty*Rate*[LASER(PANEL)]			,2)
+	,[TTL_LASER(TMS)]				=Round(QAQty*Rate*[LASER(TMS)]				,2)
+	,[TTL_MODEL]					=Round(QAQty*Rate*[MODEL]					,2)
+	,[TTL_PAD PRINTING(PCS)]		=Round(QAQty*Rate*[PAD PRINTING(PCS)]		,2)
+	,[TTL_PAD PRINTING(Price)]		=Round(QAQty*Rate*[PAD PRINTING(Price)]		,2)
+	,[TTL_PATTERN]					=Round(QAQty*Rate*[PATTERN]					,2)
+	,[TTL_PIPING(Price)]			=Round(QAQty*Rate*[PIPING(Price)]			,2)
+	,[TTL_POLYBAG(Price)]			=Round(QAQty*Rate*[POLYBAG(Price)]			,2)
+	,[TTL_PRINTING(PCS)]			=Round(QAQty*Rate*[PRINTING(PCS)]			,2)
+	,[TTL_PRINTING(Price)]			=Round(QAQty*Rate*[PRINTING(Price)]			,2)
+	,[TTL_QUILTING(AT)(TMS)]		=Round(QAQty*Rate*[QUILTING(AT)(TMS)]		,2)
+	,[TTL_SP_THREAD(Price)]			=Round(QAQty*Rate*[SP_THREAD(Price)]		,2)
+	,[TTL_SUBLIMATION PRINT(TMS)]	=Round(QAQty*Rate*[SUBLIMATION PRINT(TMS)]	,2)
+	,[TTL_SUBLIMATION ROLLER(TMS)]	=Round(QAQty*Rate*[SUBLIMATION ROLLER(TMS)]	,2)
+	,[TTL_SUBLIMATION SPRAY(TMS)]	=Round(QAQty*Rate*[SUBLIMATION SPRAY(TMS)]	,2)
+	,[TTL_WELDED(TMS)]				=Round(QAQty*Rate*[WELDED(TMS)]				,2)
 from #tmp1stFilter t
 left join #oid_at o on o.orderid = t.OrderId
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,t.OrderId
