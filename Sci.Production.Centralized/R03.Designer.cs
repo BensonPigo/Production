@@ -49,6 +49,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,6 +68,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtstyle1);
+            this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.txtCentralizedFactory1);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.txtCountry1);
@@ -87,7 +91,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(4, -5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(419, 254);
+            this.groupBox1.Size = new System.Drawing.Size(419, 286);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
@@ -96,7 +100,7 @@
             // 
             this.txtCentralizedFactory1.BackColor = System.Drawing.Color.White;
             this.txtCentralizedFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCentralizedFactory1.Location = new System.Drawing.Point(133, 158);
+            this.txtCentralizedFactory1.Location = new System.Drawing.Point(133, 182);
             this.txtCentralizedFactory1.Name = "txtCentralizedFactory1";
             this.txtCentralizedFactory1.Size = new System.Drawing.Size(66, 23);
             this.txtCentralizedFactory1.TabIndex = 219;
@@ -104,7 +108,7 @@
             // label11
             // 
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(4, 232);
+            this.label11.Location = new System.Drawing.Point(4, 256);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(420, 23);
             this.label11.TabIndex = 218;
@@ -116,7 +120,7 @@
             // 
             this.txtCountry1.DisplayBox1Binding = "";
             this.txtCountry1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtCountry1.Location = new System.Drawing.Point(132, 181);
+            this.txtCountry1.Location = new System.Drawing.Point(132, 205);
             this.txtCountry1.Name = "txtCountry1";
             this.txtCountry1.Size = new System.Drawing.Size(232, 22);
             this.txtCountry1.TabIndex = 17;
@@ -132,7 +136,7 @@
             "Bulk",
             "Sample",
             "Bulk + Sample"});
-            this.comboBox2.Location = new System.Drawing.Point(132, 205);
+            this.comboBox2.Location = new System.Drawing.Point(132, 229);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 16;
@@ -144,7 +148,7 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(132, 133);
+            this.comboBox1.Location = new System.Drawing.Point(132, 157);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 14;
@@ -154,7 +158,7 @@
             // 
             this.txtBrand1.BackColor = System.Drawing.Color.White;
             this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(132, 112);
+            this.txtBrand1.Location = new System.Drawing.Point(132, 109);
             this.txtBrand1.Name = "txtBrand1";
             this.txtBrand1.Size = new System.Drawing.Size(121, 23);
             this.txtBrand1.TabIndex = 13;
@@ -164,7 +168,7 @@
             this.txtSeason1.BackColor = System.Drawing.Color.White;
             this.txtSeason1.BrandObjectName = null;
             this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason1.Location = new System.Drawing.Point(132, 88);
+            this.txtSeason1.Location = new System.Drawing.Point(132, 85);
             this.txtSeason1.Name = "txtSeason1";
             this.txtSeason1.Size = new System.Drawing.Size(121, 23);
             this.txtSeason1.TabIndex = 12;
@@ -192,7 +196,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(4, 181);
+            this.label9.Location = new System.Drawing.Point(4, 205);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(127, 23);
             this.label9.TabIndex = 8;
@@ -200,7 +204,7 @@
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(4, 205);
+            this.label8.Location = new System.Drawing.Point(4, 229);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(127, 23);
             this.label8.TabIndex = 7;
@@ -208,7 +212,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(4, 157);
+            this.label7.Location = new System.Drawing.Point(4, 181);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(127, 23);
             this.label7.TabIndex = 6;
@@ -216,7 +220,7 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(4, 133);
+            this.label6.Location = new System.Drawing.Point(4, 157);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(127, 23);
             this.label6.TabIndex = 5;
@@ -274,9 +278,27 @@
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label10.TextStyle.Color = System.Drawing.Color.Blue;
             // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(4, 133);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(127, 23);
+            this.label12.TabIndex = 220;
+            this.label12.Text = "Style";
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = this.txtBrand1;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(132, 133);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 221;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 275);
+            this.ClientSize = new System.Drawing.Size(520, 306);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
@@ -318,5 +340,7 @@
         private Win.UI.Label label10;
         private Win.UI.Label label11;
         private Class.txtCentralizedFactory txtCentralizedFactory1;
+        private Class.txtstyle txtstyle1;
+        private Win.UI.Label label12;
     }
 }

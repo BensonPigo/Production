@@ -133,6 +133,8 @@ and orders.LocalOrder = 0
                     strSQL += string.Format(" AND Orders.SeasonID = '{0}' ", txtSeason1.Text);
                 if (txtBrand1.Text != "")
                     strSQL += string.Format(" AND Orders.BrandID = '{0}' ", txtBrand1.Text);
+                if (txtstyle1.Text != "")
+                    strSQL += string.Format(" AND Orders.StyleID = '{0}' ", txtstyle1.Text);
                 if (gstrMRTeam != "")
                     strSQL += string.Format(" AND Brand.MRTeam = '{0}' ", gstrMRTeam);
                 if (txtCentralizedFactory1.Text != "")
