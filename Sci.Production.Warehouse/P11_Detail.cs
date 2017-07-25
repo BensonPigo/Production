@@ -18,7 +18,6 @@ namespace Sci.Production.Warehouse
     {
         Sci.Win.MatrixHelper _matrix;
         String Orderid;
-        Decimal Rate;
         public bool combo, isSave;
         bool openFromAutoPick = false;
         public DataRow master
