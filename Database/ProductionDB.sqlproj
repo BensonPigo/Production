@@ -2212,6 +2212,19 @@
     <Build Include="dbo\Tables\SkewnessOption.sql" />
     <Build Include="dbo\Stored Procedures\Update_PassFunction.sql" />
     <Build Include="dbo\Functions\GetStockUnitBySPSeq.sql" />
+    <Build Include="dbo\Tables\Order_SizeSpec_OrderCombo.sql" />
+    <Build Include="dbo\Functions\dbo.getStockType.sql" />
+    <Build Include="dbo\Functions\dbo.getStockUnit.sql" />
+    <Build Include="dbo\Functions\dbo.getTPEPass1.sql" />
+    <Build Include="dbo\Functions\GetLossAccessory_1.sql" />
+    <Build Include="dbo\Functions\GetRequestETA.sql" />
+    <Build Include="dbo\Functions\GetSCI.sql" />
+    <Build Include="dbo\Tables\dbo.InventoryRefno.sql" />
+    <Build Include="dbo\Tables\Order_BOA_Article.sql" />
+    <Build Include="dbo\Tables\PO_Artwork.sql" />
+    <Build Include="dbo\Tables\PO_Factory.sql" />
+    <Build Include="dbo\Views\dbo.View_Unitrate.sql" />
+    <Build Include="dbo\Views\Order_OrderComboList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
