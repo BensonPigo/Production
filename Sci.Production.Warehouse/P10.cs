@@ -44,7 +44,6 @@ namespace Sci.Production.Warehouse
             //SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
 
             DoSubForm = new P10_Detail();
-            this.ChangeDetailColor();
         }
 
         public P10(ToolStripMenuItem menuitem, string transID)
@@ -75,29 +74,10 @@ namespace Sci.Production.Warehouse
             DoSubForm = new P10_Detail();
         }
 
-        private void ChangeDetailColor()
-        {
-            detailgrid.RowPostPaint += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                int i = e.RowIndex;
-                decimal qty, accu_issue, netqty;
-                decimal.TryParse(dr["qty"].ToString(), out qty);
-                decimal.TryParse(dr["accu_issue"].ToString(), out accu_issue);
-                decimal.TryParse(dr["netqty"].ToString(), out netqty);
-                if (qty + accu_issue > netqty)
-                {
-                    detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
-                }
-
-            };
-        }
-
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor;
             #region qty 開窗
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
@@ -150,6 +130,31 @@ namespace Sci.Production.Warehouse
             .Numeric("netqty", name: "netqty", header: "Net Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
             ;     //
             #endregion 欄位設定
+
+            #region Grid 變色規則
+            detailgrid.RowPrePaint += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
+                #region 變色規則，若該 Row 已經變色則跳過
+                decimal qty, accu_issue, netqty;
+                decimal.TryParse(dr["qty"].ToString(), out qty);
+                decimal.TryParse(dr["accu_issue"].ToString(), out accu_issue);
+                decimal.TryParse(dr["netqty"].ToString(), out netqty);
+                if (qty + accu_issue > netqty)
+                {
+                    if (detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 128, 192))
+                        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
+                }
+                else
+                {
+                    if (detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                }
+                #endregion 
+            };
+            #endregion 
         }
         protected override void OpenSubDetailPage()
         {

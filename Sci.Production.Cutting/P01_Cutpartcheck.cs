@@ -27,6 +27,7 @@ namespace Sci.Production.Cutting
             gridSetup();
             this.gridCutpartcheck.AutoResizeColumns();
         }
+
         private void requery()
         {
             #region CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
@@ -132,17 +133,6 @@ namespace Sci.Production.Cutting
 
         private void gridSetup()
         {
-            gridCutpartcheck.RowPostPaint += (s, e) =>
-            {
-                for (int i = 0; i < e.RowIndex; i++)
-                {
-                    if (gridCutpartcheck.Rows[i].Cells[4].Value.ToString() == "=")
-                    {
-                        gridCutpartcheck.Rows[i].DefaultCellStyle.BackColor = Color.Pink;
-                    }
-                }
-            };
-
             Helper.Controls.Grid.Generator(this.gridCutpartcheck)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -152,7 +142,25 @@ namespace Sci.Production.Cutting
                 .Numeric("Qty", header: "Prd Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("CutQty", header: "Cut Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(7), iseditingreadonly: true);
+
+            #region Grid 變色規則
+            Color backDefaultColor = gridCutpartcheck.DefaultCellStyle.BackColor;
+
+            gridCutpartcheck.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataGridViewRow dr = gridCutpartcheck.Rows[index];
+                    dr.DefaultCellStyle.BackColor = (dr.Cells[4].Value.ToString().EqualString("=")) ? Color.Pink : backDefaultColor;
+                    index++;
+                }    
+            };
+            #endregion 
         }
+
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();

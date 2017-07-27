@@ -69,24 +69,6 @@ namespace Sci.Production.Warehouse
             comboStockType.SelectedIndex = 0;
         }
 
-        private void ChangeDetailColor()
-        {
-            detailgrid.RowPostPaint += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                    int i = e.RowIndex;
-                    if (MyUtility.Check.Empty(dr["stocktype"]) || MyUtility.Check.Empty(dr["stockunit"]))
-                    {
-                        detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
-                    }
-                }
-            };
-        }
-
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {

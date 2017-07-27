@@ -38,6 +38,8 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Color backDefaultColor = gridProductionSchedule.DefaultCellStyle.BackColor;
+
             readyDate.CellValidating += (s, e) =>
             {
                 if (EditMode)
@@ -231,26 +233,30 @@ where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
                 gridProductionSchedule.Columns["OutReason"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["OutRemark"].DefaultCellStyle.BackColor = Color.Pink;
             }
-
-            gridProductionSchedule.RowPostPaint += (s, e) =>
-            {
-                DataRow dr = gridProductionSchedule.GetDataRow(e.RowIndex);
-                if (gridProductionSchedule.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                int i = e.RowIndex;
-                if (dr["MTLDelay"].ToString() == "Y")
-                {
-                    gridProductionSchedule.Rows[i].Cells["ID"].Style.BackColor = Color.FromArgb(255, 255, 128);
-                }
-            };
             
             gridProductionSchedule.CellToolTipTextNeeded += (s, e) =>
+            {
+                if (e.ColumnIndex == 7)
                 {
-                    if (e.ColumnIndex == 7)
-                    {
-                        e.ToolTipText = "material shipment arranged by L/ETA";
-                    }
-                };
+                    e.ToolTipText = "material shipment arranged by L/ETA";
+                }
+            };
+
+            gridProductionSchedule.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                #region 變色規則，若 MTLDelay != 'Y' 則需變回預設的 Color
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataRow dr = gridProductionSchedule.GetDataRow(index);
+                    DataGridViewRow dgvr = gridProductionSchedule.Rows[index];
+                    dgvr.Cells["ID"].Style.BackColor = (dr["MTLDelay"].ToString().EqualString("Y")) ? Color.FromArgb(255, 255, 128) : backDefaultColor;
+                    index++;
+                }
+                #endregion 
+            };
         }
 
         //Query

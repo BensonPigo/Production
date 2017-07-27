@@ -27,7 +27,6 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("Type='A'");
-            ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
             di_fabrictype.Add("O", "Other");
@@ -57,7 +56,6 @@ namespace Sci.Production.Warehouse
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
-            ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
             di_fabrictype.Add("O", "Other");
@@ -75,25 +73,6 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "A";
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.NotSortable; }
-        }
-
-
-        private void ChangeDetailColor()
-        {
-            detailgrid.RowPostPaint += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                    int i = e.RowIndex;
-                    if (MyUtility.Check.Empty(dr["stocktype"]) || MyUtility.Check.Empty(dr["stockunit"]))
-                    {
-                        detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
-                    }
-                }
-            };
         }
 
         // delete前檢查
@@ -278,9 +257,10 @@ where   #tmp.poid = dbo.po_supp.id
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            DataRow dr;
+
             if (!(CurrentMaintain == null))
             {
+                DataRow dr;
                 dateArrivePortDate.Value = null;
                 dateDoxRcvDate.Value = null;
                 if (MyUtility.Check.Seek(string.Format(@"select portarrival, docarrival from dbo.export WITH (NOLOCK) where id='{0}'"
@@ -296,16 +276,15 @@ where   #tmp.poid = dbo.po_supp.id
 
             labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
-            #endregion Status Label
+            #endregion Status Label           
         }
 
         DataGridViewColumn Col_ActualQty, Col_Location;
         protected override void OnDetailGridSetup()
         {
+            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor; 
             #region SP# Vaild 判斷此sp#存在po中。
-
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
-            DataRow dr;
             ts4.CellValidating += (s, e) =>
             {
                 if (CurrentDetailData == null) return;
@@ -441,6 +420,7 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
                             return;
                         }
 
+                        DataRow dr;
                         if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                 @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
@@ -614,6 +594,22 @@ where   v.FROM_U ='{0}'
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
+
+
+            detailgrid.RowsAdded += (s, e) =>
+            {
+                if (EditMode || e.RowIndex < 0) return;
+
+                #region 變色規則，若 stockunit && stocktype != '' 則需變回預設的 Color
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataGridViewRow dr = detailgrid.Rows[index];
+                    dr.DefaultCellStyle.BackColor = (MyUtility.Check.Empty(dr.Cells["stockunit"].Value) || MyUtility.Check.Empty(dr.Cells["stocktype"].Value)) ? Color.FromArgb(255, 192, 203) : backDefaultColor;
+                    index++;
+                }
+                #endregion
+            };
         }
 
         //Confirm

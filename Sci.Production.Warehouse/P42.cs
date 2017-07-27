@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
     public partial class P42 : Sci.Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,18 +33,21 @@ namespace Sci.Production.Warehouse
             this.checkEmptyMtlETA.Checked = true;
             dateInline.Value = DateTime.Now;
             dateOffline.Value = DateTime.Now;
-            gridCuttingTapeQuickAdjust.RowPostPaint += (s, e) =>
-            {
-                //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
-                //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
-                DataRow dr = gridCuttingTapeQuickAdjust.GetDataRow(e.RowIndex);
-                if (gridCuttingTapeQuickAdjust.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+            Color backDefaultColor = gridCuttingTapeQuickAdjust.DefaultCellStyle.BackColor;
 
-                int i = e.RowIndex;
-                if (MyUtility.Check.Empty(dr["EachConsApv"]))
+            gridCuttingTapeQuickAdjust.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                #region 變色規則，若 EachConsApv != '' 則需變回預設的 Color
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
                 {
-                    gridCuttingTapeQuickAdjust.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
+                    DataGridViewRow dr = gridCuttingTapeQuickAdjust.Rows[index];
+                    dr.DefaultCellStyle.BackColor = (MyUtility.Check.Empty(dr.Cells["EachConsApv"].Value)) ? Color.FromArgb(255, 128, 192) : backDefaultColor;
+                    index++;
                 }
+                #endregion     
             };
 
 

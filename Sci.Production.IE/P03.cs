@@ -29,11 +29,17 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select ld.*,o.DescEN as Description,e.Name as EmployeeName,e.Skill as EmployeeSkill,iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+            this.DetailSelectCommand = string.Format(@"
+select  ld.*
+        , o.DescEN as Description
+        , e.Name as EmployeeName
+        , e.Skill as EmployeeSkill
+        , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
+where ld.ID = '{0}' 
+order by ld.No, ld.GroupKey", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -69,6 +75,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor;
             Ict.Win.DataGridViewGeneratorTextColumnSettings no = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -283,42 +290,24 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            //detailgrid.RowsAdded += (s, e) =>
-            //{
-                
-            //    DataTable dtData = (DataTable)detailgridbs.DataSource;
-            //    for (int i = 0; i < e.RowCount; i++)
-            //    {
-            //        DataRow dr = detailgrid.GetDataRow(i + e.RowIndex);
-            //        if (dr["New"].ToString().ToUpper() == "TRUE")
-            //        {
-            //            detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-            //        }
-                    
-            //    }
-            //};
-
-            //detailgrid.RowValidated += (s, e) =>
-            //{
-            //    DataTable dtData = (DataTable)detailgridbs.DataSource;
-            //    if (dtData.Rows[e.RowIndex].RowState != DataRowState.Deleted && dtData.Rows[e.RowIndex]["New"].ToString().ToUpper() == "TRUE")
-            //    {
-            //        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-            //    }
-            //};
-
-            detailgrid.RowPrePaint += detailgrid_RowPrePaint;
-        }
-
-        void detailgrid_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            DataRow dr = ((DataRowView)detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-
-            if (dr["New"].ToString().ToUpper() == "TRUE")
+            detailgrid.RowPrePaint += (s, e) =>
             {
-                detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-            }
+                if (e.RowIndex < 0) return;
+                DataRow dr = ((DataRowView)detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+
+                #region 變色規則，若該 Row 已經變色則跳過
+                if (dr["New"].ToString().ToUpper() == "TRUE")
+                {
+                    if (detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
+                        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+                }
+                else
+                {
+                    if (detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                        detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                }
+                #endregion 
+            };
         }
 
         //撈出Employee資料
@@ -481,37 +470,38 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         
         protected override void OnDetailGridInsertClick()
         {
-            DataRow newrow, tmp;
+            DataRow newrow, tmp;           
            
-           
-                //先紀錄目前Grid所指道的那筆資料
-                tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
-                 if (tmp.Empty())
-                 {
-                     return;
-                 }
-                SumNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
-                base.OnDetailGridInsertClick();
-                newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
-                newrow.ItemArray = tmp.ItemArray;//將剛剛紀錄的資料複製到新增的那筆record
-                CurrentDetailData["New"] = true;
-                AssignNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
-           
+            //先紀錄目前Grid所指道的那筆資料
+            tmp = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+            if (tmp.Empty())
+            {
+                return;
+            }
+            SumNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
+            base.OnDetailGridInsertClick();
+            newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+            newrow.ItemArray = tmp.ItemArray;//將剛剛紀錄的資料複製到新增的那筆record
+            CurrentDetailData["New"] = true;
+            AssignNoGSDCycleTime(CurrentDetailData["GroupKey"].ToString());
         }
 
         protected override void OnDetailGridDelete()
         {
-            if (CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
+            if (detailgrid.Rows.Count != 0)
             {
-                MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
-                return;
+                if (CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
+                {
+                    MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
+                    return;
+                }
+                string no = CurrentDetailData["No"].ToString(); //紀錄要被刪除的No
+                string groupkey = CurrentDetailData["GroupKey"].ToString();
+                SumNoGSDCycleTime(groupkey);
+                base.OnDetailGridDelete();
+                AssignNoGSDCycleTime(groupkey);
+                ReclculateGridGSDCycleTime(no);//傳算被刪除掉的No的TotalGSD & Total Cycle Time
             }
-            string no = CurrentDetailData["No"].ToString(); //紀錄要被刪除的No
-            string groupkey = CurrentDetailData["GroupKey"].ToString();
-            SumNoGSDCycleTime(groupkey);
-            base.OnDetailGridDelete();
-            AssignNoGSDCycleTime(groupkey);
-            ReclculateGridGSDCycleTime(no);//傳算被刪除掉的No的TotalGSD & Total Cycle Time
         }
 
         protected override bool ClickPrint()
