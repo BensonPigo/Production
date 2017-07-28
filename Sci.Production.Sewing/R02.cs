@@ -681,7 +681,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 }
                 else
                 {
-                    worksheet.Cells[insertRow, 6] = string.Format("{0}CMP", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '));
+                    worksheet.Cells[insertRow, 6] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
                     worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(dr["Price"]);
                     insertRow++;
                     //插入一筆Record
