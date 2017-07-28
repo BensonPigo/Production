@@ -309,6 +309,10 @@ tmpFilterZone as (
             }
             if (poCombo)
             {
+                if (seperate)
+                {
+                    seperCmd = " , '' seq ";
+                }
                 sqlCmd.Append(@"
 ), tmpListPoCombo as (
     select * 
@@ -388,8 +392,9 @@ tmpFilterZone as (
             , o.CPUFactor
             , o.ClogLastReceiveDate
             , o.IsMixMarker
-            , o.GFR
-    from Orders o  WITH (NOLOCK) 
+            , o.GFR "
+            + seperCmd +                    
+    @"from Orders o  WITH (NOLOCK) 
     OUTER APPLY (
         SELECT Name 
         FROM Pass1 WITH (NOLOCK) 
