@@ -31,16 +31,9 @@ namespace Sci.Production.Sewing
             comboM.Text = Sci.Env.User.Keyword;
             comboFactory.SelectedIndex = 0;
         }
-
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
-            //    MyUtility.Msg.WarningBox("Output Date can't empty!!");
-            //    return false;
-            //}
-
             date1 = dateOoutputDate.Value1;
             date2 = dateOoutputDate.Value2;
             category = comboCategory.Text;
@@ -51,31 +44,28 @@ namespace Sci.Production.Sewing
 
             return base.ValidateInput();
         }
-
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
-with tmpSewingDetail　as (
-	select s.OutputDate,s.Category,s.Shift,s.SewingLineID,IIF(sd.QAQty=0,s.Manpower,s.Manpower*sd.QAQty) as ActManPower,
-		s.Team,sd.OrderId,o.CustPONo
-		,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Category,'') as OrderCategory,
-		o.LocalOrder,isnull(o.BrandID,'') as OrderBrandID,isnull(o.CdCodeID,'') as OrderCdCodeID,
-		isnull(mo.BrandID,'') as MockupBrandID,isnull(mo.MockupID,'') as MockupCDCodeID,s.FactoryID,s.MDivisionID,
-		isnull(o.ProgramID,'') as OrderProgram,isnull(mo.ProgramID,'') as MockupProgram,isnull(o.OrderTypeID,'') as OrderType,
-		isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
-		isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,
-		isnull(o.SeasonID,'') as OrderSeason,isnull(mo.SeasonID,'') as MockupSeason,isnull(sl.Rate,100)/100 as Rate,
-		(select StdTMS from System WITH (NOLOCK) ) as StdTMS,isnull(r.InspectQty,0) as InspectQty,isnull(r.RejectQty,0) as RejectQty
-	from SewingOutput s WITH (NOLOCK) 
-	inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-	left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
-	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-	left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
-		and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-where 1=1"));
+            sqlCmd.Append(string.Format(@"--根據條件撈基本資料
+select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
+	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
+	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,'')
+	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
+	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
+	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
+	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
+	,Rate = isnull(sl.Rate,100)/100,System.StdTMS
+	,InspectQty = isnull(r.InspectQty,0),RejectQty = isnull(r.RejectQty,0)
+into #tmpSewingDetail
+from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
+left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+where 1=1 "));
 
             if (!MyUtility.Check.Empty(date1))
             {
@@ -93,30 +83,59 @@ where 1=1"));
             {
                 sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", factory));
             }
-            if (!MyUtility.Check.Empty(category) && category == "Mockup")
+            if (!MyUtility.Check.Empty(category) && category.ToUpper() == "MOCKUP")
             {
                 sqlCmd.Append(" and s.Category = 'M'");
             }
 
-            sqlCmd.Append(@"
-),tmpSewingGroup　as (
-	select OutputDate,Category,Shift,SewingLineID,Sum(ActManPower) as ActManPower,Team,OrderId,ComboType,CustPONo,
-		sum(WorkHour) as WorkHour,sum(QAQty) as QAQty,sum(InlineQty) as InlineQty,OrderCategory,
-		LocalOrder,OrderBrandID,OrderCdCodeID,MockupBrandID,MockupCDCodeID,FactoryID,MDivisionID,
-		OrderProgram,MockupProgram,OrderType,OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,
-		MockupStyle,OrderSeason,MockupSeason,Rate,StdTMS,InspectQty,RejectQty
-	from tmpSewingDetail
-	group by OutputDate,Category,Shift,SewingLineID,Team,OrderId,ComboType,OrderCategory,LocalOrder,OrderBrandID,CustPONo,
-	OrderCdCodeID,MockupBrandID,MockupCDCodeID,FactoryID,MDivisionID,OrderProgram,MockupProgram,OrderType,
-	OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,MockupStyle,OrderSeason,MockupSeason,Rate,StdTMS,InspectQty,RejectQty
-),tmp1stFilter　as (
-	select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
-    f.Type as FtyType,f.CountryID as FtyCountry,
-    [CumulateDate] = tmp.cumulate
-	from tmpSewingGroup t
-	outer apply [dbo].getSewingOutputCumulateOfDays(IIF(t.Category <> 'M',OrderStyle,MockupStyle),SewingLineID,OutputDate,FactoryID)  tmp
-	left join Factory f on t.FactoryID = f.ID
-	where 1=1");
+            sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
+select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
+	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(WorkHour)over(partition by id,OrderId,ComboType)
+	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
+	,LocalOrder,CustPONo,OrderCategory,OrderType
+	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
+	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
+	,Rate,StdTMS,InspectQty,RejectQty
+into #tmpSewingGroup
+from #tmpSewingDetail
+--↓計算累計天數 function table太慢直接寫在這
+select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+into #stmp
+from #tmpSewingGroup t
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate and s.FactoryID = t.FactoryID
+inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
+--
+select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+into #wtmp
+from #tmpSewingGroup t
+inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate
+--
+select cumulate = IIF(Count(1)=0, 1, Count(1)),s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+into #cl
+from #stmp s
+where s.scOutputDate >
+(
+	select date = max(Date)
+	from #wtmp w 
+	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.SewingLineID = s2.SewingLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
+	and w.OrderId = s2.OrderId and w.ComboType = s2.ComboType
+	where s2.scOutputDate is null
+	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId and w.ComboType = s.ComboType
+)
+group by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+--↑計算累計天數
+select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
+f.Type as FtyType,f.CountryID as FtyCountry
+,CumulateDate=c.cumulate
+into #tmp1stFilter
+from #tmpSewingGroup t
+left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.SewingLineID = t.SewingLineID and c.FactoryID = t.FactoryID 
+				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType
+left join Factory f on t.FactoryID = f.ID
+where 1=1");
             if (!MyUtility.Check.Empty(category) && category != "Mockup")
             {
                 if (category == "Bulk")
@@ -145,29 +164,81 @@ where 1=1"));
                 sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", cdcode));
             }
 
-            sqlCmd.Append(@")
+            sqlCmd.Append(@"
+-----Artwork
+select ID,Seq,ArtworkUnit,ProductionUnit
+into #AT
+from ArtworkType WITH (NOLOCK)
+where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
+--
+select ID,Seq,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
+into #atall
+from(
+	Select ID,Seq,Unit = ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit =''
+	UNION
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit ='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,'' from #AT where ArtworkUnit ='' AND ProductionUnit =''
+)a
+-----orderid & ArtworkTypeID & Seq
+select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS
+into #idat
+from #tmpSewingDetail t
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
+declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']') from #atall for xml path('')),1,1,'')
+declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall for xml path(''))
+declare @TTLZ nvarchar(max) = (select concat(',[TTL_',ArtworkType_Unit,']=Round(QAQty*Rate*[',ArtworkType_Unit,'],2)')from #atall for xml path(''))
+-----by orderid & all ArtworkTypeID
+declare @lastSql nvarchar(max) =N'
+select orderid'+@NameZ+N'
+into #oid_at
+from
+(select orderid = i.ID,a.ArtworkType_Unit,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,i.Qty))from #atall a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq)a
+PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
+where orderid is not null'
++N'
 select MDivisionID,FactoryID
-    ,iif(FtyType='B','Bulk',iif(FtyType='S','Sample',FtyType)) FtyType
-    ,FtyCountry,OutputDate,SewingLineID,
-    IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In'))) as Shift,
-    Team,OrderId,CustPONo,	
-	IIF(Category='M',MockupBrandID,OrderBrandID) as Brand,
-    IIF(Category='M','Mockup',IIF(LocalOrder = 1,'Local Order',IIF(OrderCategory='B','Bulk',IIF(OrderCategory='S','Sample','')))) as Category,
-    IIF(Category='M',MockupProgram,OrderProgram) as Program,OrderType,IIF(Category='M',MockupCPUFactor,OrderCPUFactor) as CPURate,
-    IIF(Category='M',MockupStyle,OrderStyle) as Style,IIF(Category='M',MockupSeason,OrderSeason) as Season,
-    IIF(Category='M',MockupCDCodeID,OrderCdCodeID)+'-'+ComboType as CDNo,IIF(QAQty>0,ActManPower/QAQty,ActManPower) as ActManPower,
-    WorkHour,ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2) as ManHour,
-    ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2) as TargetCPU,
-    IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS as TMS,
-    IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate) as CPUPrice,
-    IIF(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0) as TargetQty,
-    QAQty,IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty as TotalCPU,
-    IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0) as CPUSewer,
-    ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1) as EFF,
-    IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0) as RFT,CumulateDate,
-    IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate)) as DateRange,InlineQty,QAQty-InlineQty as Diff
-from tmp1stFilter
-order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,OrderId");
+	,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
+	,FtyCountry,OutputDate,SewingLineID
+	,Shift = IIF(LastShift=''D'',''Day'',IIF(LastShift=''N'',''Night'',IIF(LastShift=''O'',''Subcon-Out'',''Subcon-In'')))
+	,Team,t.OrderId,CustPONo
+	,Brand = IIF(Category=''M'',MockupBrandID,OrderBrandID)
+	,Category = IIF(Category=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(OrderCategory=''B'',''Bulk'',IIF(OrderCategory=''S'',''Sample'',''''))))
+	,Program = IIF(Category=''M'',MockupProgram,OrderProgram)
+	,OrderType
+	,CPURate = IIF(Category=''M'',MockupCPUFactor,OrderCPUFactor)
+	,Style = IIF(Category=''M'',MockupStyle,OrderStyle)
+	,Season = IIF(Category=''M'',MockupSeason,OrderSeason)
+	,CDNo = IIF(Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+ComboType
+	,ActManPower = IIF(QAQty>0,ActManPower/QAQty,ActManPower)
+	,WorkHour
+	,ManHour = ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)
+	,TargetCPU = ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)
+	,TMS = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS
+	,CPUPrice = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
+	,TargetQty = IIF(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
+	,QAQty
+	,TotalCPU = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty
+	,CPUSewer = IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0)
+	,EFF = ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
+	,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
+	,CumulateDate,
+	DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
+	,InlineQty
+	,Diff = QAQty-InlineQty
+	,rate
+	,'+@columnsName+@TTLZ+N'
+from #tmp1stFilter t
+left join #oid_at o on o.orderid = t.OrderId
+order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,t.OrderId
+drop table #AT,#atall,#idat,#tmpSewingDetail,#oid_at,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp'
+
+EXEC sp_executesql @lastSql
+");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
@@ -192,7 +263,17 @@ order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,OrderId");
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: excelFile, headerRow: 1);
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile);//開excelapp
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            for (int i = 35; i < printData.Columns.Count; i++)
+            {
+                objSheets.Cells[1, i + 1] = printData.Columns[i].ColumnName;
+            }
+            string r = MyUtility.Excel.ConvertNumericToExcelColumn(printData.Columns.Count);
+            objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
+            objSheets.get_Range("A1", r + "1").AutoFilter(1);
+            bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: excelFile, headerRow: 1, excelApp: objApp);
+
             if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             this.HideWaitMessage();
             return true;
