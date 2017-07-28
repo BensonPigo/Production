@@ -188,7 +188,7 @@ group by p.FactoryID,p.ID,p.CurrencyID,CpuRate
 ";
             #endregion
 
-            #region 主要Trade SQL
+            #region 主要Trade SQL 要額外排除Local訂單
             tsql_Trade =
 @"
 IF OBJECT_ID('tempdb.dbo.#Sewing') IS NOT NULL 
@@ -218,16 +218,67 @@ select so.FactoryID,o.ID,o.CurrencyID,
 into #Sewing
 from SewingOutput so
 inner join SewingOutput_Detail_Detail sodd on sodd.ID = so.ID
-inner join Orders o on o.ID = sodd.OrderId
+inner join Orders o on o.ID = sodd.OrderId and o.LocalOrder=0 
 left join CDCode cd on o.CdCodeID = cd.id
 outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetSuitRate(cd.ComboPcs,sodd.ComboType) as SuitRate where cd.ID = o.CdCodeID) as GetSuitRate
 outer apply(select dbo.GetPoPriceByArticleSize(sodd.OrderId,sodd.Article,sodd.SizeCode)as price) as price
-where so.FactoryID <> 'TSR'" + WhereSewingStr +
+where so.FactoryID <> 'TSR' " + WhereSewingStr +
 @"
 group by so.FactoryID,o.ID,o.CurrencyID,CpuRate
 
 --OnBoard
+IF Object_id('tempdb.dbo.#tmpFtyBooking1') IS NOT NULL 
+  BEGIN 
+      DROP TABLE #tmpftybooking1 
+  END 
+
+IF Object_id('tempdb.dbo.#tmpFtyBooking2') IS NOT NULL 
+  BEGIN 
+      DROP TABLE #tmpftybooking2 
+  END 
+
+IF Object_id('tempdb.dbo.#GarmentInvoice') IS NOT NULL 
+  BEGIN 
+      DROP TABLE #garmentinvoice 
+  END 
+
+--Create same as Trade Table: GarmentInvoice  
+SELECT b.id, 
+       b.etd 
+INTO   #tmpftybooking1 
+FROM   production.dbo.pullout_detail a, 
+       production.dbo.gmtbooking b 
+WHERE  a. invno = b.id 
+ORDER  BY b.id 
+
+SELECT a.packinglistid AS ID, 
+       po1.pulloutdate AS ETD 
+INTO   #tmpftybooking2 
+FROM   (SELECT DISTINCT packinglistid 
+        FROM   production.dbo.pullout_detail 
+        WHERE  ( packinglisttype = 'F' 
+                  OR packinglisttype = 'I' ) 
+               AND packinglistid <> '' 
+        EXCEPT 
+        SELECT id AS PackingListID 
+        FROM   #tmpftybooking1) a 
+       LEFT JOIN production.dbo.packinglist p1 
+              ON a. packinglistid = p1.id 
+       LEFT JOIN production.dbo.pullout po1 
+              ON p1.pulloutid = po1.id 
+
+SELECT id, 
+       etd 
+INTO   #GarmentInvoice 
+FROM   (SELECT DISTINCT id, 
+                        etd 
+        FROM   #tmpftybooking1 
+        UNION ALL 
+        SELECT id, 
+               etd 
+        FROM   #tmpftybooking2) a 
+
 select o.FactoryID,o.ID,o.CurrencyID,
        Qty = sum(pdd.ShipQty),
        CpuRate,
@@ -235,13 +286,14 @@ select o.FactoryID,o.ID,o.CurrencyID,
 	   TotalFOB = sum(round(pdd.ShipQty*price.price,2)),
        TotalUSD = sum(round(pdd.ShipQty*price.price,2))/IIF(o.CurrencyID = 'CNY',6.1,1)
 into #OnBoard 
-from GMTBooking gi
+from #GarmentInvoice gi
 inner join Pullout_Detail pd on gi.ID=pd.INVNo
+inner join Pullout p on pd.ID=p.ID
 inner join Pullout_Detail_Detail pdd on pd.Ukey = pdd.Pullout_DetailUKey
-inner join Orders o on pd.OrderID = o.ID
+inner join Orders o on pd.OrderID = o.ID and o.LocalOrder=0
 outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetPoPriceByArticleSize(pdd.OrderId,pdd.Article,pdd.SizeCode)as price) as price
-where o.FactoryID <> 'TSR'" + WhereOnBoardStr +
+where o.FactoryID <> 'TSR' and p.Status<>'New' " + WhereOnBoardStr +
 @"
 group by o.FactoryID,o.ID,o.CurrencyID,CpuRate
 
@@ -253,12 +305,13 @@ select o.FactoryID,o.ID,o.CurrencyID,
 	   TotalFOB = sum(round(pdd.ShipQty*price.price,2)),
        TotalUSD = sum(round(pdd.ShipQty*price.price,2))/IIF(o.CurrencyID = 'CNY',6.1,1)
 into #Pullout
-from Pullout_Detail pd
+from Pullout p
+inner join Pullout_Detail pd on p.ID=pd.ID
 inner join Pullout_Detail_Detail pdd on pd.Ukey = pdd.Pullout_DetailUKey
-inner join Orders o on pd.OrderID = o.ID
+inner join Orders o on pd.OrderID = o.ID and o.LocalOrder=0 
 outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 outer apply(select dbo.GetPoPriceByArticleSize(pdd.OrderId,pdd.Article,pdd.SizeCode)as price) as price
-where o.FactoryID <> 'TSR'" + WherePulloutStr +
+where o.FactoryID <> 'TSR' and p.Status<>'New' " + WherePulloutStr +
 @"
 group by o.FactoryID,o.ID,o.CurrencyID,CpuRate";
 
@@ -314,7 +367,7 @@ select d.Factory,d.CurrencyID,d.OrderID,d.Sewing_Qty,d.Sewing_TotalCpu,d.Sewing_
        d.Pullout_TotalFOB,d.Pullout_TotalUSD,d.Start_Qty,d.Start_TotalCPU,d.Start_TotalFOB,d.Start_TotalUSD,o.BuyerDelivery,name,o.BrandID,
        o.Qty,o.StyleUnit,PoPrice = round(o.PoPrice,2),o.CPU,CpuRate,CPUAmount = o.Qty * o.CPU * CpuRate
 from #Detail d
-inner join Orders o on d.OrderID = o.ID
+inner join Orders o on d.OrderID = o.ID and o.LocalOrder=0
 outer apply(select name from DropDownList where ID = o.Category and Type = 'Category') as typename
 outer apply(select CpuRate from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')) as CPURate
 )";
@@ -393,12 +446,6 @@ from #Query
             DataTable dtStock = new DataTable();
             DataTable dtAllStock = new DataTable();
             DataTable dtResult = new DataTable();
-            result = DBProxy.Current.Select(null, " select DISTINCT ID,ETD from GMTBooking ", out dtGMTBooking);
-            if (!result) { return result; }
-            result = DBProxy.Current.Select(null, " select FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete from Orders ", out dtOrders);
-            if (!result) { return result; }
-            result = DBProxy.Current.Select(null, " select ID,CountryID from Factory  ", out dtFactory);
-            if (!result) { return result; }
 
             #region --由Factory.PmsPath抓各個連線路徑
             this.SetLoadingText("Load connections... ");
@@ -447,6 +494,61 @@ from #Query
                 using (conn = new SqlConnection(conString))
                 {
                     conn.Open();
+                    result = DBProxy.Current.SelectByConn(conn,
+
+@"--Create same as Trade Table: GarmentInvoice 
+IF OBJECT_ID('tempdb.dbo.#tmpFtyBooking1') IS NOT NULL 
+BEGIN
+    DROP TABLE #tmpFtyBooking1
+END
+IF OBJECT_ID('tempdb.dbo.#tmpFtyBooking2') IS NOT NULL 
+BEGIN
+    DROP TABLE #tmpFtyBooking2
+END
+IF OBJECT_ID('tempdb.dbo.#GarmentInvoice') IS NOT NULL 
+BEGIN
+    DROP TABLE #GarmentInvoice
+END
+
+SELECT b.ID,b.ETD
+INTO  #tmpFtyBooking1
+FROM Production.dbo.Pullout_Detail  a, Production.dbo.GMTBooking b 
+WHERE a. INVNo = b.id
+ORDER BY b.id 
+
+SELECT a.packinglistid                          AS ID,      
+       po1.pulloutdate                          AS ETD      
+into #tmpFtyBooking2
+FROM   (SELECT DISTINCT packinglistid 
+        FROM   production.dbo.pullout_detail 
+        WHERE  ( packinglisttype = 'F' 
+                  OR packinglisttype = 'I' ) 
+               AND packinglistid <> '' 
+        EXCEPT 
+        SELECT id AS PackingListID 
+        FROM   #tmpftybooking1) a 
+       LEFT JOIN production.dbo.packinglist p1 
+              ON a. packinglistid = p1.id 
+       LEFT JOIN production.dbo.pullout po1 
+              ON p1.pulloutid = po1.id 
+
+select ID,ETD
+into #GarmentInvoice 
+from (
+select distinct ID,  ETD 
+from #tmpFtyBooking1
+union all
+select ID, ETD 
+from #tmpFtyBooking2
+) a 
+
+select DISTINCT ID,ETD from #GarmentInvoice", out dtGMTBooking);
+                    if (!result) { return result; }
+                    result = DBProxy.Current.SelectByConn(conn, @" select FactoryID,ID,CurrencyID,CPU,OrderTypeID,ProgramID,Category,BrandID,GMTComplete from Orders where LocalOrder=0", out dtOrders);
+                    if (!result) { return result; }
+                    result = DBProxy.Current.SelectByConn(conn, @" select ID,CountryID from Factory  ", out dtFactory);
+                    if (!result) { return result; }
+
 
                     DataTable dtProduction;
                     result = MyUtility.Tool.ProcessWithDatatable(dtFactory, "ID,CountryID", "select 1", out dtProduction, "#tmpFactory", conn);
@@ -459,7 +561,7 @@ from #Query
                     {
                         dtProduction.Rows.Add();
                     }
-                    result = MyUtility.Tool.ProcessWithDatatable(dtProduction, "FactoryID,ID,CurrencyID,Qty,CpuRate,OrderID,Article,SizeCode,TotalCpu", tsql_Stock, out dtStock, "#Production");
+                    result = MyUtility.Tool.ProcessWithDatatable(dtProduction, "FactoryID,ID,CurrencyID,Qty,CpuRate,OrderID,Article,SizeCode,TotalCpu", tsql_Stock, out dtStock, "#Production",conn);
                     if (!result) { return result; }
 
                     if (dtStock == null || dtStock.Rows.Count == 0 || dtStock.Rows[0]["ID"] == DBNull.Value)
@@ -474,22 +576,23 @@ from #Query
                     {
                         dtAllStock.Merge(dtStock);
                     }
+                    #region 合併各資料庫資料
+                    result = MyUtility.Tool.ProcessWithDatatable(dtAllStock, "FactoryID,ID,CurrencyID,Qty,CpuRate,TotalCpu,TotalFOB,TotalUSD", tsql_Trade + tsql_Query, out dtResult, "#Stock", conn);
+                    if (!result) { return result; }
+                    if (DT1 == null || DT1.Rows.Count == 0)
+                    {
+                        DT1 = dtResult;
+                    }
+                    else
+                    {
+                        DT1.Merge(dtResult);
+                    }
+                    #endregion
                 }
             }
             #endregion
 
-            #region 合併各資料庫資料
-            result = MyUtility.Tool.ProcessWithDatatable(dtAllStock, "FactoryID,ID,CurrencyID,Qty,CpuRate,TotalCpu,TotalFOB,TotalUSD", tsql_Trade + tsql_Query, out dtResult, "#Stock");
-            if (!result) { return result; }
-            if (DT1 == null || DT1.Rows.Count == 0)
-            {
-                DT1 = dtResult;
-            }
-            else
-            {
-                DT1.Merge(dtResult);
-            }
-            #endregion
+
 
             #region 計算Tatol金額
             if (DT1 != null && DT1.Rows.Count > 0)
@@ -578,7 +681,11 @@ from #Query
             xl.dicDatas.Add("##Title", "SINTEX INTERNATIONAL LTD.");
             xl.dicDatas.Add("##Title2", Title2ForExcel);
 
-
+            Parameter = "查詢條件-日期區間 : " + ((DateTime)this.dateQueryDateStart.Value).ToShortDateString() + " ~ " + ((DateTime)this.dateQueryDateEnd.Value).ToShortDateString();
+            Parameter += " , Categoty : " + this.txtdropdownlist.Text;
+            if (!this.txtCentralizedFactory.Text.Empty()) Parameter += " , Factory : " + this.txtCentralizedFactory.Text;
+            if (!this.txtbrand.Text.Empty()) Parameter += " , Brand : " + this.txtbrand.Text;
+            if (!this.txtcountry.TextBox1.Text.Empty()) Parameter += " , Region : " + this.txtcountry.DisplayBox1.Text;
 
             xl.dicDatas.Add("##Parameter", Parameter);
             xl.dicDatas.Add("##Data", Data1);
