@@ -10,6 +10,7 @@
     [ALocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
     [BLocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CLocation] VARCHAR(5000) NULL DEFAULT (''), 
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
