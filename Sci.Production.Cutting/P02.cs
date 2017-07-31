@@ -1905,7 +1905,12 @@ where w.ID = '{0}'", masterID);
 
         private void numUnitCons_UnitCons_Validated(object sender, EventArgs e)
         {
-            cal_Cons(false, true);
+            //與marklength變更規則不一樣
+            decimal cp = MyUtility.Convert.GetDecimal(CurrentDetailData["Conspc"]);
+            decimal la = MyUtility.Convert.GetDecimal(CurrentDetailData["Layer"]);
+            decimal ttsr = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.Qty) as TotalSizeRatio
+From WorkOrder_SizeRatio b with (NOLOCK) where b.workorderukey='{0}'", CurrentDetailData["Ukey"].ToString()), null));
+            CurrentDetailData["Cons"] = cp * la * ttsr;
         }
 
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
