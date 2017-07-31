@@ -1495,7 +1495,6 @@ where w.ID = '{0}'", masterID);
                 txtMarkerLengthE.ReadOnly = false;
                 numUnitCons.ReadOnly = false;
                 txtCutCell.ReadOnly = false;
-                numCons.ReadOnly = false;
                 txtFabricCombo.ReadOnly = false;
                 txtFabricPanelCode.ReadOnly = false;
                 sizeratioMenuStrip.Enabled = true;
@@ -1507,7 +1506,6 @@ where w.ID = '{0}'", masterID);
                 txtMarkerLengthE.ReadOnly = true;
                 numUnitCons.ReadOnly = true;
                 txtCutCell.ReadOnly = true;
-                numCons.ReadOnly = true;
                 txtFabricCombo.ReadOnly = true;
                 txtFabricPanelCode.ReadOnly = true;
                 sizeratioMenuStrip.Enabled = false;
@@ -1931,9 +1929,9 @@ where w.ID = '{0}'", masterID);
             MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));            
             if (sizeRatioQty == 0) Conspc = 0;
             else Conspc = MarkerLengthNum / sizeRatioQty;//Conspc = MarkerLength / SizeRatio Qty
-            if (updateConsPC == true)
+            if (updateConsPC)
                 CurrentDetailData["Conspc"] = Conspc;
-            if (updateCons == true)
+            if (updateCons)
             {
                 if (MyUtility.Check.Empty(CurrentDetailData["Layer"]))
                     CurrentDetailData["Cons"] = MarkerLengthNum * 0;
