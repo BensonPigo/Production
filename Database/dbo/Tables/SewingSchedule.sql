@@ -28,6 +28,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Schedule', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingSchedule';
 
@@ -126,4 +128,9 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[SewingSchedule]([MDivisionID] ASC, [Inline] ASC, [Offline] ASC)
     INCLUDE([OrderID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [OrderID_ComboType]
+    ON [dbo].[SewingSchedule]([OrderID] ASC, [ComboType] ASC);
 

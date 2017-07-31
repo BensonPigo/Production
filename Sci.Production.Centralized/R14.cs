@@ -22,7 +22,6 @@ namespace Sci.Production.Centralized
         DataTable dt_detail, dt_detail_All;
         String tsql_Detail;
         String tsql_LoadData;
-        String tsql_GetConnectionString;
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -129,10 +128,7 @@ namespace Sci.Production.Centralized
             #endregion
 
             sqlWhere = string.Join(" and ", sqlWheres);
-
-            //連線的SQL語法
-            tsql_GetConnectionString = @"select distinct PmsPath from Factory where IsSCI = 1 and PmsPath <> '' ";
-
+            
             //判斷是不是要列印Detail報表明細資料
             if (this.checkExportDetail.Checked == true)
             {

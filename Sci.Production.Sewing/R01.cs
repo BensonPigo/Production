@@ -329,9 +329,10 @@ where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O'))
 and ot.Price > 0
 group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
 )
-select ArtworkTypeID,sum(Price) as Price
-from tmpAllSubprocess
-group by ArtworkTypeID
+select ArtworkTypeID,sum(Price) as Price,rs = iif(att.ProductionUnit = 'TMS','CPU',iif(att.ProductionUnit = 'QTY','AMT',''))
+from tmpAllSubprocess t
+left join ArtworkType att WITH (NOLOCK) on att.id = t.ArtworkTypeID
+group by ArtworkTypeID,att.ProductionUnit
 order by ArtworkTypeID
 ",
                         out _subprocessData);
@@ -593,7 +594,7 @@ order by ArtworkTypeID
             insertRow = insertRow + 2;
             foreach (DataRow dr in _subprocessData.Rows)
             {
-                worksheet.Cells[insertRow, 3] = string.Format("{0}CMP US$", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '));
+                worksheet.Cells[insertRow, 3] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
                 worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(dr["Price"]);
                 insertRow++;
                 //插入一筆Record

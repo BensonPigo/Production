@@ -56,14 +56,17 @@ namespace Sci.Production.Tools
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
-                button1.Visible = true;
+                btnSqlUpdate.Visible = true;
             else
-                button1.Visible = false;
+                btnSqlUpdate.Visible = false;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSqlUpdate_Click(object sender, EventArgs e)
         {
             string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir,"*.sql");
+            string subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Success !!", DBProxy.Current.DefaultModuleName, Sci.Env.User.UserName, Sci.Env.User.Factory);
+            string desc = subject;
+
             if (dirs.Length == 0)
             {
                 MyUtility.Msg.WarningBox("No update on this time !!", "Warning");
@@ -73,21 +76,12 @@ namespace Sci.Production.Tools
             foreach (string dir in dirs)
             {
                 string script = File.ReadAllText(dir);
-             
                 //DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
                 {
                     try
-                    {
-                        //script = script.Replace("GO\r\n", "");
-                        //if (!(upResult = DBProxy.Current.Execute(null, script)))
-                        //{
-                        //    _transactionscope.Dispose();
-                        //    ShowErr(script, upResult);
-                        //    return;
-                        //}
-
+                    {                       
                         SqlConnection connection;
                         DBProxy.Current.OpenConnection("Production", out connection);
 
@@ -105,6 +99,12 @@ namespace Sci.Production.Tools
                     {
                         _transactionscope.Dispose();
                         ShowErr("Commit transaction error.", ex);
+                        subject = string.Format("DataBase={0}, Account={1}, Factory={2} SQL Update Fail !!", DBProxy.Current.DefaultModuleName, Sci.Env.User.UserName, Sci.Env.User.Factory);
+                        desc = subject + string.Format(@"
+------------------------------------------------------------
+{0}
+-----------------------------------------------------------", ex.ToString());
+                        sendmail(subject, desc);
                         return;
                     }
                 }               
@@ -112,7 +112,14 @@ namespace Sci.Production.Tools
                 _transactionscope = null;              
             }
             MyUtility.Msg.InfoBox("Update completed !!");
-            
+            sendmail(subject, desc);
+        }
+
+        private void sendmail(string subject, string desc)
+        {
+            string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, "", subject, "", desc, true, true);
+            mail.ShowDialog();
         }
     }
 }

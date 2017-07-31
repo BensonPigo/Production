@@ -19,13 +19,11 @@ namespace Sci.Production.Centralized
         #region --宣告物件
         DataTable dt_All;
         DataTable dt_Tmp;
-        DataTable dt_Connections;
         DataTable dt_detail, dt_detail_All;
         DataTable dt_detail_detail, dt_detail_detail_All;
         String tsql_Detail;
         String tsql_Detail_Detail;
         String tsql_LoadData;
-        String tsql_GetConnectionString;
         #endregion
         public R13(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -164,7 +162,6 @@ namespace Sci.Production.Centralized
             sqlWhere = string.Join(" and ",sqlWheres);
 
             //連線的SQL語法
-            tsql_GetConnectionString =@"SELECT distinct PmsPath  FROM FACTORY WHERE  IsSCI = 1 and PmsPath <> ''  ";
             #endregion
             //判斷是不是要列印Detail報表明細資料
             if (this.checkExportDetail.Checked == true)

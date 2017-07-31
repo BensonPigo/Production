@@ -28,8 +28,8 @@ namespace Sci.Production.Planning
 
         protected override void OnFormLoaded()
         {
-
             base.OnFormLoaded();
+            Color backDefaultColor = gridFactoryID.DefaultCellStyle.BackColor; 
             //grid2.AutoGenerateColumns = true;
 
             dateSewingInline.Value1 = DateTime.Today.AddMonths(1);
@@ -53,24 +53,28 @@ namespace Sci.Production.Planning
             comboInHouseOSP.DisplayMember = "Value";
             comboInHouseOSP.SelectedIndex = 1;  //inhouse
 
-            gridFactoryID.RowPostPaint += (s, e) =>
+            gridFactoryID.RowPrePaint += (s, e) =>
             {
-                //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
-                //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
+                if (e.RowIndex < 0) return;
                 DataRow dr = gridFactoryID.GetDataRow(e.RowIndex);
-                if (gridFactoryID.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
-                int i = e.RowIndex;
-                switch (int.Parse(dr["err"].ToString()))
+                #region 變色規則，若該 Row 已經變色則跳過
+                switch (dr["err"].ToString())
                 {
-                    case 1:
-                        gridFactoryID.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
+                    case "1":
+                        if (gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor !=  Color.FromArgb(255, 220, 255))
+                            gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
                         break;
-                    case 2:
-                        gridFactoryID.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
+                    case "2":
+                        if (gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(128, 255, 0))
+                            gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
+                        break;
+                    default:
+                        if (gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                            gridFactoryID.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
                         break;
                 }
-               
+                #endregion 
             };
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
@@ -332,54 +336,100 @@ namespace Sci.Production.Planning
             }
             string orderby = "";
             string sqlcmd
-                = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
-, a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
-, (select cast(t.article as varchar)+';' from (select article from order_qty WITH (NOLOCK) where id = a.ID group by article )t for xml path('')) as article
-,b.qty,b.InhouseOSP,b.LocalSuppID
-,(select Abb from LocalSupp WITH (NOLOCK) where id = b.LocalSuppID) suppnm
-,b.ArtworkInLine
-,b.ArtworkOffLine
-,convert(date,c.Inline) as sewinline
-,convert(date,c.offline) as SewOffLine
-,a.StyleUkey
-,isnull((select sum(tmp3.qaqty)  
-    from 
-    (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location WITH (NOLOCK)  
-	    left join (
-				    SELECT 
-					      [ComboType]
-					      ,[Article]
-					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
-				      GROUP BY ComboType,Article) TMP 
-	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
-	    group by article) tmp3),0) qaqty
-, 0 as stdq
-, 0 as err
-,'' as msg
-,C.alloqty
-,(select batchno from embbatch WITH (NOLOCK) where b.qty >= BeginStitch AND b.qty <=EndStitch) batchno
-,round(alloqty/({0}*{1}*(select batchno from embbatch WITH (NOLOCK) where b.qty >= BeginStitch AND b.qty <=EndStitch))*100/{2},3) as totalqty
-,round(IIF(b.tms =0,0,(a.qty-(isnull((select sum(tmp3.qaqty)  
-    from 
-    (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location WITH (NOLOCK) 
-	    left join (
-				    SELECT 
-					      [ComboType]
-					      ,[Article]
-					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
-				      GROUP BY ComboType,Article) TMP 
-	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
-	    group by article) tmp3),0)))/(3600*18/b.tms)*100/15.0),3) as balance
-,b.artworktypeid
-,a.qty * b.tms as totaltms
- FROM (Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
+                = string.Format(@"
+SELECT  0 as selected
+        , a.id
+        , a.SciDelivery
+        , a.CutInline
+        , a.CutOffline
+        , a.FactoryID
+        , a.StyleID
+        , a.SeasonID
+        , a.Qty AS OrderQty
+        , a.isforecast
+        , a.poid
+        , article = (select cast (t.article as varchar) + ';' 
+                     from (
+                        select article 
+                        from order_qty WITH (NOLOCK) 
+                        where id = a.ID 
+                        group by article 
+                     ) t 
+                     for xml path(''))
+        , b.qty
+        , b.InhouseOSP
+        , b.LocalSuppID
+        , suppnm = (select Abb 
+                    from LocalSupp WITH (NOLOCK) 
+                    where id = b.LocalSuppID) 
+        , b.ArtworkInLine
+        , b.ArtworkOffLine
+        , sewinline = convert (date, c.Inline)
+        , SewOffLine = convert (date, c.offline)
+        , a.StyleUkey
+        , qaqty = isnull ((select sum(tmp3.qaqty)  
+                           from (
+                                SELECT  article
+                                        , qaqty = min (isnull (qaqty, 0)) 
+	                            FROM style_location WITH (NOLOCK)  
+	                            left join (
+				                    SELECT  [ComboType]
+					                        , [Article]
+					                        , QAQTY = SUM ([QAQty]) 
+				                    FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) 
+                                    WHERE ORDERID = a.id
+				                    GROUP BY ComboType, Article
+                                ) TMP on style_location.Location = tmp.ComboType 
+                                where style_location.StyleUkey = a.styleukey
+	                            group by article
+                           ) tmp3), 0) 
+        , stdq = 0
+        , err = 0
+        , msg = ''
+        , C.alloqty
+        , batchno = (select batchno 
+                     from embbatch WITH (NOLOCK) 
+                     where  b.qty >= BeginStitch 
+                            and b.qty <= EndStitch) 
+        , totalqty = round (alloqty 
+                            / ( {0} 
+                                * {1} 
+                                * (select batchno 
+                                   from embbatch WITH (NOLOCK) 
+                                   where    b.qty >= BeginStitch 
+                                            and b.qty <= EndStitch)
+                               )
+                            * 100 / {2}, 3)
+        , balance = round (IIF (b.tms = 0, 0
+                                         , ( a.qty 
+                                             - (isnull ((select sum(tmp3.qaqty)  
+                                                         from (
+                                                             SELECT  article
+                                                                     , qaqty = min (isnull (qaqty, 0)) 
+	                                                         FROM style_location WITH (NOLOCK) 
+	                                                         left join (
+				                                                    SELECT  [ComboType]
+					                                                        , [Article]
+					                                                        , QAQTY = SUM ([QAQty]) 
+				                                                    FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) 
+                                                                    WHERE ORDERID = a.id
+				                                                    GROUP BY ComboType, Article
+                                                             ) TMP on style_location.Location = tmp.ComboType 
+                                                             where style_location.StyleUkey = a.styleukey
+	                                                         group by article
+                                                         ) tmp3), 0))
+                                           ) / (3600 * 18 / b.tms) * 100 / 15.0)
+                           , 3)
+        , b.artworktypeid 
+        , totaltms = a.qty * b.tms
+FROM (Orders a WITH (NOLOCK) 
+inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
 inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
 inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'" + orderby, numHeads.Text, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
+where   a.Finished = 0 
+        and a.Category != 'M' 
+        and b.ArtworkTypeID = 'EMBROIDERY'  
+        and factory.mdivisionid = '{3}'" + orderby, numHeads.Text, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}

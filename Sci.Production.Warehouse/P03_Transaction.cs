@@ -685,9 +685,11 @@ namespace Sci.Production.Warehouse
                         frm = new Sci.Production.Warehouse.P10(null, dr2["id"].ToString());
                         frm.ShowDialog(this);
                         break;
-                    case "IS":
+                    case "P11":
                     //	P11
-                    break;
+                        frm = new Sci.Production.Warehouse.P11(null, dr2["id"].ToString());
+                        frm.ShowDialog(this);
+                        break;
                     case "P12":
                         //	P12
                         frm = new Sci.Production.Warehouse.P12(null, dr2["id"].ToString());

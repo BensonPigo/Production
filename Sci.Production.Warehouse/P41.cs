@@ -28,18 +28,21 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.checkEachCons.Checked = true;
             this.checkEmptyMtlETA.Checked = true;
-            gridEmbAppliqueQuery.RowPostPaint += (s, e) =>
-            {
-                //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
-                //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
-                DataRow dr = gridEmbAppliqueQuery.GetDataRow(e.RowIndex);
-                if (gridEmbAppliqueQuery.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+            Color backDefaultColor = gridEmbAppliqueQuery.DefaultCellStyle.BackColor;
 
-                int i = e.RowIndex;
-                if (MyUtility.Check.Empty(dr["EachConsApv"]))
+            gridEmbAppliqueQuery.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                #region 變色規則，若 EachConsApv != '' 則需變回預設的 Color
+                int index = e.RowIndex;    
+                for (int i = 0; i < e.RowCount; i++)
                 {
-                    gridEmbAppliqueQuery.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
+                    DataGridViewRow dr = gridEmbAppliqueQuery.Rows[index];
+                    dr.DefaultCellStyle.BackColor = (MyUtility.Check.Empty(dr.Cells["EachConsApv"].Value)) ? Color.FromArgb(255, 128, 192) : backDefaultColor;
+                    index++;
                 }
+                #endregion                
             };
 
 

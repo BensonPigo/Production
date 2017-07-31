@@ -95,13 +95,13 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(87, 75);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(117, 23);
             this.txtmfactory.TabIndex = 2;
-            this.txtmfactory.Visible = false;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // comboCategory
             // 
@@ -208,7 +208,6 @@
             this.labelFactory.Size = new System.Drawing.Size(75, 23);
             this.labelFactory.TabIndex = 11;
             this.labelFactory.Text = "Factory";
-            this.labelFactory.Visible = false;
             // 
             // labelOrderCfmDate
             // 
