@@ -550,6 +550,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UIClassPrg.cs" />
+    <Compile Include="P01_ProductionOutput_LoadingoutputDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ProductionOutput_LoadingoutputDetail.Designer.cs">
+      <DependentUpon>P01_ProductionOutput_LoadingoutputDetail.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -757,6 +763,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ProductionOutput_LoadingoutputDetail.resx">
+      <DependentUpon>P01_ProductionOutput_LoadingoutputDetail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

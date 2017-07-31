@@ -43,7 +43,6 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridSewingOutput = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
             this.numSewingQty = new Sci.Win.UI.NumericBox();
             this.numSewingOrderQty = new Sci.Win.UI.NumericBox();
@@ -55,7 +54,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridCutting = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel8 = new Sci.Win.UI.Panel();
             this.numCuttingQty = new Sci.Win.UI.NumericBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
@@ -66,26 +64,30 @@
             this.panel10 = new Sci.Win.UI.Panel();
             this.numLoadingQty = new Sci.Win.UI.NumericBox();
             this.numOrderQty_L = new Sci.Win.UI.NumericBox();
+            this.lbttlQty = new Sci.Win.UI.Label();
             this.lbLoadingQty = new Sci.Win.UI.Label();
             this.lbQrderQty = new Sci.Win.UI.Label();
             this.gridLoading = new Sci.Win.UI.Grid();
-            this.lbttlQty = new Sci.Win.UI.Label();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel6.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel8.SuspendLayout();
             this.LoadingQutput.SuspendLayout();
             this.panel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -346,10 +348,10 @@
             // 
             this.tabPage2.Controls.Add(this.panel9);
             this.tabPage2.Controls.Add(this.panel8);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(601, 355);
+            this.tabPage2.Size = new System.Drawing.Size(601, 358);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "-(Cutting(Comb";
             // 
@@ -359,7 +361,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(595, 290);
+            this.panel9.Size = new System.Drawing.Size(595, 293);
             this.panel9.TabIndex = 1;
             // 
             // gridCutting
@@ -390,7 +392,7 @@
             this.gridCutting.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutting.RowTemplate.Height = 24;
             this.gridCutting.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutting.Size = new System.Drawing.Size(595, 290);
+            this.gridCutting.Size = new System.Drawing.Size(595, 293);
             this.gridCutting.TabIndex = 0;
             this.gridCutting.TabStop = false;
             // 
@@ -402,7 +404,7 @@
             this.panel8.Controls.Add(this.label7);
             this.panel8.Controls.Add(this.label8);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(3, 293);
+            this.panel8.Location = new System.Drawing.Point(3, 296);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(595, 59);
             this.panel8.TabIndex = 0;
@@ -534,6 +536,7 @@
             0,
             0,
             0});
+            this.numLoadingQty.DoubleClick += new System.EventHandler(this.numLoadingQty_DoubleClick);
             // 
             // numOrderQty_L
             // 
@@ -555,6 +558,20 @@
             0,
             0,
             0});
+            // 
+            // lbttlQty
+            // 
+            this.lbttlQty.BackColor = System.Drawing.Color.Transparent;
+            this.lbttlQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.lbttlQty.Location = new System.Drawing.Point(133, 29);
+            this.lbttlQty.Name = "lbttlQty";
+            this.lbttlQty.Size = new System.Drawing.Size(45, 23);
+            this.lbttlQty.TabIndex = 4;
+            this.lbttlQty.Text = "Total";
+            this.lbttlQty.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.Color = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
             // lbLoadingQty
             // 
@@ -616,20 +633,6 @@
             this.gridLoading.TabIndex = 2;
             this.gridLoading.TabStop = false;
             // 
-            // lbttlQty
-            // 
-            this.lbttlQty.BackColor = System.Drawing.Color.Transparent;
-            this.lbttlQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.lbttlQty.Location = new System.Drawing.Point(133, 29);
-            this.lbttlQty.Name = "lbttlQty";
-            this.lbttlQty.Size = new System.Drawing.Size(45, 23);
-            this.lbttlQty.TabIndex = 4;
-            this.lbttlQty.Text = "Total";
-            this.lbttlQty.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.lbttlQty.TextStyle.Color = System.Drawing.Color.Red;
-            this.lbttlQty.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
-            this.lbttlQty.TextStyle.GradientColor = System.Drawing.Color.Red;
-            // 
             // P01_ProductionOutput
             // 
             this.CancelButton = this.btnClose;
@@ -647,19 +650,20 @@
             this.tabPage1.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.LoadingQutput.ResumeLayout(false);
             this.panel10.ResumeLayout(false);
             this.panel10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -704,5 +708,6 @@
         private Win.UI.Label lbLoadingQty;
         private Win.UI.Label lbQrderQty;
         private Win.UI.Grid gridLoading;
+        private Win.UI.ListControlBindingSource listControlBindingSource3;
     }
 }
