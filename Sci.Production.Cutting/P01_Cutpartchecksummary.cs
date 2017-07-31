@@ -19,13 +19,13 @@ namespace Sci.Production.Cutting
         public P01_Cutpartchecksummary(string cID)
         {
             InitializeComponent();
-
             this.Text = string.Format("Cut Parts Check Summary<SP:{0}>)", cID);
             cutid = cID;
             requery();
             gridSetup();
             this.gridCutpartchecksummary.AutoResizeColumns();
         }
+
         private void requery()
         {
             #region 找出有哪些部位
@@ -100,22 +100,9 @@ namespace Sci.Production.Cutting
             #endregion
             gridCutpartchecksummary.DataSource = gridtb;
         }
+
         private void gridSetup()
         {
-            gridCutpartchecksummary.RowPostPaint += (s, e) =>
-            {
-                string art = "";
-                for (int i = 0; i <= e.RowIndex; i++)
-                {
-                    if (i == 0) art = gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString();
-                    if (gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString() != art)
-                    {
-                        gridCutpartchecksummary.Rows[i - 1].DefaultCellStyle.BackColor = Color.Pink;
-                        art = gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString();
-                    }
-                }
-            };
-
             Helper.Controls.Grid.Generator(this.gridCutpartchecksummary)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -123,6 +110,35 @@ namespace Sci.Production.Cutting
                 .Numeric("Qty", header: "Order Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Complete", header: "Complete", width: Widths.AnsiChars(1), iseditingreadonly: true);
 
+            #region Grid 變色規則
+            Color backDefaultColor = gridCutpartchecksummary.DefaultCellStyle.BackColor;
+
+            gridCutpartchecksummary.RowsAdded += (s, e) =>
+            {
+                int index = 0;
+                string art = "";
+                foreach (DataGridViewRow dr in gridCutpartchecksummary.Rows)
+                {
+                    if (index == 0)
+                    {
+                        art = dr.Cells[1].Value.ToString();
+                        index++;
+                        continue;
+                    }
+
+                    if (dr.Cells[1].Value.ToString() != art)
+                    {
+                        gridCutpartchecksummary.Rows[index - 1].DefaultCellStyle.BackColor = Color.Pink;
+                        art = dr.Cells[1].Value.ToString();
+                    }
+                    else
+                    {
+                        gridCutpartchecksummary.Rows[index - 1].DefaultCellStyle.BackColor = backDefaultColor;
+                    }
+                    index++;
+                }
+            };
+            #endregion 
 
             for (int i = 0; i < fabcodetb.Rows.Count; i++)
             {
@@ -145,6 +161,7 @@ namespace Sci.Production.Cutting
                 };
             }
         }
+
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();

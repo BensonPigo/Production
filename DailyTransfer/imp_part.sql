@@ -307,7 +307,9 @@ s.EditDate
 	-- if type<>'M'
 	UPDATE Machine.DBO.PartPO_Detail
 	SET TPEPOID = B.id,
-	SEQ1=b.Seq1
+	SEQ1=b.Seq1,
+	SuppDelivery=b.SuppDelivery,
+	EstETA=b.EstETA
 	FROM Machine.DBO.PartPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno and  a.SEQ2=b.Seq2
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
@@ -316,7 +318,9 @@ s.EditDate
 
 	UPDATE Machine.DBO.MiscPO_Detail
 	SET TPEPOID = B.id,
-	SEQ1=b.Seq1
+	SEQ1=b.Seq1,
+	SuppDelivery=b.SuppDelivery,
+	EstETA=b.EstETA
 	FROM Machine.DBO.MiscPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.MiscID=b.Refno and  a.SEQ2=b.Seq2
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
@@ -360,7 +364,9 @@ s.EditDate
 -----------------MachinePO_Detail Type <>'M'---------------------
 update t
 		set t.TpePOID = s.id,
-		t.seq1=s.seq1
+		t.seq1=s.seq1,
+		t.SuppDelivery=s.SuppDelivery,
+		t.EstETA=s.EstETA
 		from  Machine.dbo.PartPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
@@ -370,7 +376,9 @@ update t
 
 		update t
 		set t.TpePOID = s.id,
-		t.seq1=s.seq1
+		t.seq1=s.seq1,
+		t.SuppDelivery=s.SuppDelivery,
+		t.EstETA=s.EstETA
 		from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID

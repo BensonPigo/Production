@@ -440,7 +440,6 @@ BEGIN
 				t.PackETA				= s.PackETA ,
 				t.MTLExport				= s.MTLExport ,
 				t.DoxType				= s.DoxType ,
-				t.FtyGroup				= s.FTY_Group ,
 				t.MDivisionID			= s.MDivisionID ,
 				t.KPIChangeReason		= s.KPIChangeReason ,
 				t.MDClose				= iif((s.GMTComplete='C' OR s.GMTComplete='S') and t.PulloutComplete=0  ,@dToDay,t.MDClose),
@@ -467,9 +466,7 @@ BEGIN
 				t.Qty					= s.Qty, 
 				t.StyleUnit				= s.StyleUnit, 				
 				t.AddName				= s.AddName, 
-				t.AddDate				= s.AddDate,
-				t.PulloutDate			= s.PulloutDate,
-				t.InspDate				= s.InspDate
+				t.AddDate				= s.AddDate
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -479,7 +476,7 @@ BEGIN
 			, PoPrice				, CFMPrice				, CurrencyID			, Commission			, FactoryID
 			, BrandAreaCode			, BrandFTYCode			, CTNQty				, CustCDID				, CustPONo
 			, Customize1			, Customize2			, Customize3			, CFMDate				, BuyerDelivery
-			, SciDelivery			, SewOffLine			, CutInLine				, CutOffLine			, PulloutDate
+			, SciDelivery			, SewOffLine			, CutInLine				, CutOffLine			
 			, CMPUnit				, CMPPrice				, CMPQDate				, CMPQRemark			, EachConsApv
 			, MnorderApv			, CRDDate				, InitialPlanDate		, PlanDate				, FirstProduction
 			, FirstProductionLock	, OrigBuyerDelivery		, ExCountry				, InDCDate				, CFMShipment
@@ -492,8 +489,8 @@ BEGIN
 			, OutstandingRemark		, OutstandingInCharge	, OutstandingDate		, OutstandingReason		, StyleUkey
 			, POID					, OrderComboID			, IsNotRepeatOrMapping	, SplitOrderId			, FtyKPI				
 			, AddName				, AddDate				, EditName				, EditDate				, IsForecast			
-			, GMTComplete			, PFOrder				, InspDate				, KPILETA				, MTLETA				
-			, SewETA				, PackETA				, MTLExport				, DoxType				, FtyGroup				
+			, GMTComplete			, PFOrder				, KPILETA				, MTLETA				
+			, SewETA				, PackETA				, MTLExport				, DoxType						
 			, MDivisionID			, MCHandle				, KPIChangeReason		, MDClose				, CPUFactor				
 			, SizeUnit				, CuttingSP				, IsMixMarker			, EachConsSource		, KPIEachConsApprove	
 			, KPICmpq				, KPIMNotice			, GFR					, SDPDate				, PulloutComplete		
@@ -506,7 +503,7 @@ BEGIN
 			, s.PoPrice				, s.CFMPrice			, s.CurrencyID			, s.Commission			, s.FactoryID 
 			, s.BrandAreaCode		, s.BrandFTYCode		, s.CTNQty				, s.CustCDID			, s.CustPONo 
 			, s.Customize1			, s.Customize2			, s.Customize3			, s.CFMDate				, s.BuyerDelivery 
-			, s.SciDelivery			, s.SewOffLine			, s.CutInLine			, s.CutOffLine			, s.PulloutDate 
+			, s.SciDelivery			, s.SewOffLine			, s.CutInLine			, s.CutOffLine			
 			, s.CMPUnit				, s.CMPPrice			, s.CMPQDate			, s.CMPQRemark			, s.EachConsApv 
 			, s.MnorderApv			, s.CRDDate				, s.InitialPlanDate		, s.PlanDate			, s.FirstProduction 
 			, s.FirstProductionLock , s.OrigBuyerDelivery	, s.ExCountry			, s.InDCDate			, s.CFMShipment 
@@ -519,8 +516,8 @@ BEGIN
 			, s.OutstandingRemark	, s.OutstandingInCharge , s.OutstandingDate		, s.OutstandingReason	, s.StyleUkey 
 			, s.POID				, s.OrderComboID		, s.IsNotRepeatOrMapping, s.SplitOrderId		, s.FtyKPI
 			, s.AddName 			, s.AddDate				, s.EditName			, s.EditDate			, s.IsForecast			
-			, s.GMTComplete 		, s.PFOrder				, s.InspDate			, s.KPILETA				, s.MTLETA				
-			, s.SewETA				, s.PackETA				, s.MTLExport			, s.DoxType				, s.FTY_Group			
+			, s.GMTComplete 		, s.PFOrder				, s.KPILETA				, s.MTLETA				
+			, s.SewETA				, s.PackETA				, s.MTLExport			, s.DoxType				
 			, s.MDivisionID 		, S.MCHandle			, s.KPIChangeReason		, S.MDClose				, s.CPUFactor			
 			, s.SizeUnit			, s.CuttingSP			, s.IsMixMarker			, s.EachConsSource		, s.KPIEachConsApprove	
 			, s.KPICmpq 			, s.KPIMNotice			, s.GFR					, s.SDPDate				, s.PulloutComplete		

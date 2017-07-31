@@ -863,6 +863,7 @@ Where DetailUkey = {15};",
                 excel.Cells[14 + (i * 8), 8] = this.grid.Rows[rowcount].Cells["pointRate"].Value.ToString();
                 excel.Cells[14 + (i * 8), 9] = this.grid.Rows[rowcount].Cells["Grade"].Value.ToString();
                 excel.Cells[14 + (i * 8), 10] = this.grid.Rows[rowcount].Cells["Result"].Value.ToString();
+                excel.Cells[14 + (i * 8), 11] = this.grid.Rows[rowcount].Cells["Remark"].Value.ToString();
                 rowcount++;
 
 
@@ -932,6 +933,13 @@ select  a.ID
         ,Name_w = (select Concat(Pass1.Name, ' Ext.', Pass1.ExtNo) 
                    from Pass1
                    where Pass1.ID = c.Inspector) 
+        ,type_m = 'Moisture' 
+        ,Result_m = IIF(a.Moisture=0,'Fail','Pass')
+        ,Remark_m = ''
+        ,Inspector_m = a.Inspector 
+        ,Name_m = (select Concat(Pass1.Name, ' Ext.', Pass1.ExtNo) 
+                   from Pass1
+                   where Pass1.ID = a.Inspector) 
         ,Comment = '' 
 from FIR_Physical a WITH (NOLOCK) 
 left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
@@ -972,6 +980,10 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
                         excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[0]["Result_w"].ToString();
                         excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Remark_w"].ToString();
                         excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Name_w"].ToString();
+
+                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result_m"].ToString();
+                        excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[0]["Remark_m"].ToString();
+                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Name_m"].ToString();
 
                     }                   
                     worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.colorindex = 38;

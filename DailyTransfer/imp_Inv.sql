@@ -261,7 +261,7 @@ SET		--a.ID					= b.ID
 		, a.Qty					= b.Qty
 		, a.Type				= isnull(b.Type,'')
 		, a.TransferMDivisionID	= isnull(c.MDivisionID ,'') 
-		, a.TransferFactory		= b.TransferFactory
+		, a.TransferFactory		= b.OrderFactory
 		, a.InventoryUkey		= b.InventoryUkey
 		, a.InventoryRefnoId	= b.InventoryRefnoId
 		, a.PoID				= b.PoID
@@ -377,7 +377,7 @@ select	b.ID
 		, ISNULL(Confirmed,0)
 		, ISNULL(Qty,0)
 		, ISNULL(Type,'')
-		, TransferFactory      
+		, b.OrderFactory      
 		, isnull(c.MDivisionID,'')
 		, InventoryUkey
 		, InventoryRefnoId

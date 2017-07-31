@@ -1454,10 +1454,25 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
             int allColumns = dtseq.Columns.Count;
             int sizeColumns = dtSizecode.Rows.Count;
-            xlTable.lisTitleMerge.Add(new Dictionary<string, string> {{ "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }});
+            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
+            string cc = MyUtility.Excel.ConvertNumericToExcelColumn(dtseq.Columns.Count);
+            // 合併儲存格
+            wks.get_Range("G9", cc + "9").Merge(false);
+            wks.Cells[9, 7] = "SIZE";
+            //框線
+            wks.Range["G9", cc + "10"].Borders.LineStyle = 1;
+            //置中
+            wks.get_Range("G9", cc + "9").HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+            for (int i = 6; i < dtseq.Columns.Count; i++)
+			{
+                wks.Cells[10, i+1] = dtseq.Columns[i].ColumnName;
+			}
+            
             xlTable.Borders.OnlyHeaderBorders = true;
             xlTable.Borders.AllCellsBorders = true;
+            xlTable.ShowHeader = false;
             xl.dicDatas.Add("##SEQ", xlTable);
+
             
             xl.Save();
             return true;

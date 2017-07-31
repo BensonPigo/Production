@@ -15693,6 +15693,14 @@
             Execute popup window when pressed F2 or mouse right click.
             </summary>
         </member>
+        <member name="M:Sci.Win.UI.TextBox.ProcessTextInsert(System.Windows.Forms.TextBoxBase,System.Windows.Forms.KeyPressEventArgs,System.Boolean)">
+            <summary>
+            判斷是否要像複寫模式一樣, 蓋掉當前focus 位置上的字
+            </summary>
+            <param name="sender"> 文字欄位</param>
+            <param name="e"></param>
+            <param name="foreceOverride"></param>
+        </member>
         <member name="M:Sci.Win.UI.TextBox.#ctor">
             <summary>
             Constructor of TextBox.

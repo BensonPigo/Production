@@ -38,6 +38,8 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Color backDefaultColor = gridProductionSchedule.DefaultCellStyle.BackColor;
+
             readyDate.CellValidating += (s, e) =>
             {
                 if (EditMode)
@@ -231,26 +233,30 @@ where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
                 gridProductionSchedule.Columns["OutReason"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["OutRemark"].DefaultCellStyle.BackColor = Color.Pink;
             }
-
-            gridProductionSchedule.RowPostPaint += (s, e) =>
-            {
-                DataRow dr = gridProductionSchedule.GetDataRow(e.RowIndex);
-                if (gridProductionSchedule.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                int i = e.RowIndex;
-                if (dr["MTLDelay"].ToString() == "Y")
-                {
-                    gridProductionSchedule.Rows[i].Cells["ID"].Style.BackColor = Color.FromArgb(255, 255, 128);
-                }
-            };
             
             gridProductionSchedule.CellToolTipTextNeeded += (s, e) =>
+            {
+                if (e.ColumnIndex == 7)
                 {
-                    if (e.ColumnIndex == 7)
-                    {
-                        e.ToolTipText = "material shipment arranged by L/ETA";
-                    }
-                };
+                    e.ToolTipText = "material shipment arranged by L/ETA";
+                }
+            };
+
+            gridProductionSchedule.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                #region 變色規則，若 MTLDelay != 'Y' 則需變回預設的 Color
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataRow dr = gridProductionSchedule.GetDataRow(index);
+                    DataGridViewRow dgvr = gridProductionSchedule.Rows[index];
+                    dgvr.Cells["ID"].Style.BackColor = (dr["MTLDelay"].ToString().EqualString("Y")) ? Color.FromArgb(255, 255, 128) : backDefaultColor;
+                    index++;
+                }
+                #endregion 
+            };
         }
 
         //Query
@@ -363,35 +369,47 @@ Order by tempData.Id");
         //Save and Quit
         private void btnSaveAndQuit_Click(object sender, EventArgs e)
         {
+            string sql;
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
                 IList<string> updateCmds = new List<string>();
                 this.gridProductionSchedule.ValidateControl();
                 listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
+
+                #region update SQL
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     if (dr.RowState == DataRowState.Modified)
                     {
                         updateCmds.Add(string.Format(@"
-update Order_QtyShip 
-set     EstPulloutDate = {0}
-        , ReadyDate = {1}
-        , ProdRemark = '{2}'
-        , OutstandingReason = '{3}'
-        , OutstandingRemark = '{4}'
-        , EditName = '{5}'
-        , EditDate = GETDATE() 
-where ID = '{6}' and Seq = '{7}'"
-, MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
-, MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'"
-, dr["ProdRemark"].ToString()
-, dr["OutReason"].ToString()
-, dr["OutRemark"].ToString()
-, Sci.Env.User.UserID
-, dr["ID"].ToString()
-, dr["Seq"].ToString()));
+                        update Order_QtyShip 
+                        set     EstPulloutDate = {0}
+                                , ReadyDate = {1}
+                                , ProdRemark = '{2}'
+                                , OutstandingReason = '{3}'
+                                , OutstandingRemark = '{4}'
+                                , EditName = '{5}'
+                                , EditDate = GETDATE() 
+                        where ID = '{6}' and Seq = '{7}'"
+                        , MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
+                        , MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'"
+                        , dr["ProdRemark"].ToString()
+                        , dr["OutReason"].ToString()
+                        , dr["OutRemark"].ToString()
+                        , Sci.Env.User.UserID
+                        , dr["ID"].ToString()
+                        , dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
+
+                        //若Outstanding Reason或Outstanding Remark有值，則更新OutstandingInCharge
+                        if (!MyUtility.Check.Empty(dr["OutReason"]) || !MyUtility.Check.Empty(dr["OutRemark"]))
+                        {
+                            sql = string.Format("update Order_QtyShip set OutstandingInCharge='{0}' where ID = '{1}' and Seq = '{2}' "
+                                , Sci.Env.User.UserID, dr["ID"].ToString(), dr["Seq"].ToString());
+                            updateCmds.Add(sql);
+                        }
+
                     }
                 }
                 if (allSP.Length != 0)
@@ -427,6 +445,61 @@ where ID = '{6}' and Seq = '{7}'"
                         return;
                     }
                 }
+                #endregion
+
+                #region 避免user忘記更新EstPulloutDate,自動update EstPulloutDate and Order.PulloutDate
+                updateCmds.Clear();
+                foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"select 1 from Order_QtyShip where id='{0}' and seq='{1}' and  EstPulloutDate is null", dr["ID"].ToString(), dr["Seq"].ToString())))
+                    {
+                        updateCmds.Add(string.Format(@"
+                        update Order_QtyShip 
+                        set     EstPulloutDate = {0}
+                                , EditName = '{1}'
+                                , EditDate = GETDATE() 
+                        where ID = '{2}' and Seq = '{3}'"
+                        , MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
+                        , Sci.Env.User.UserID
+                        , dr["ID"].ToString()
+                        , dr["Seq"].ToString()));
+                        allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
+                    }
+                }
+                if (allSP.Length != 0)
+                {
+                    DataTable GroupData;
+                    try
+                    {
+                        MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Id,ReadyDate,EstPulloutDate",
+                            string.Format("select id,min(EstPulloutDate) as EstPulloutDate from #tmp where Id in ({0}) group by Id", allSP.ToString().Substring(0, allSP.ToString().Length - 1)),
+                            out GroupData);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErr("Save error.", ex);
+                        return;
+                    }
+
+                    foreach (DataRow dr in GroupData.Rows)
+                    {
+                        updateCmds.Add(string.Format("update Orders set  EditName= '{0}', PulloutDate = {1} where ID = '{2}'",
+                        Sci.Env.User.UserID, MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
+                            dr["Id"].ToString()));
+                    }
+                }
+
+                if (updateCmds.Count != 0)
+                {
+                    DualResult result = DBProxy.Current.Executes(null, updateCmds);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Save Fail!" + result.ToString());
+                        return;
+                    }
+                }
+                #endregion
+
                 this.Close();
             }
         }
