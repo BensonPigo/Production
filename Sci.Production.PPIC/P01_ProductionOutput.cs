@@ -27,14 +27,6 @@ namespace Sci.Production.PPIC
             masterData = MasterData;
             Text = "Production output - " + MyUtility.Convert.GetString(masterData["ID"]);
             cuttingWorkType = MyUtility.GetValue.Lookup(string.Format("select WorkType from Cutting WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])));
-            //if (cuttingWorkType == "1")
-            //{
-            //    tabPage2.Text = "Cutting(Comb) - " + MyUtility.Convert.GetString(masterData["CuttingSP"]);
-            //}
-            //else
-            //{
-            //    tabPage2.Text = "Cutting - " + MyUtility.Convert.GetString(masterData["ID"]);
-            //}
             tabPage2.Text = "Cutting output";
         }
 
@@ -57,8 +49,6 @@ isnull((select SUM(c.Qty)
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
             dateLastSewingOutputDate.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
             numSewingOrderQty.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
-            //numericBox2.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["SewingQty"]);
-            //numericBox3.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["CutQty"]);
             numOrderQty.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
 
             sewingqty.CellMouseDoubleClick += (s, e) =>
