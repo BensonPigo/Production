@@ -33,7 +33,7 @@ namespace Sci.Production.PPIC
             Helper.Controls.Grid.Generator(this.gridSewingDailyOutput)
                  .DateTime("InComing", header: "InComing", width: Widths.AnsiChars(20))
                  .DateTime("OutGoing", header: "OutGoing", width: Widths.AnsiChars(20))
-                 .Text("BundleNo", header: "BundleNo", width: Widths.AnsiChars(16))
+                 .Text("BundleNo", header: "BundleNo", width: Widths.AnsiChars(12))
                  .Text("FabricPanelCode", header: "FabricPanelCode", width: Widths.AnsiChars(2))
                  .Text("Patterncode", header: "PanelCode", width: Widths.AnsiChars(2))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4));
