@@ -28,6 +28,7 @@ namespace Sci.Production.Centralized
         Microsoft.Office.Interop.Excel.Application excel = null;
 
         string gstrMRTeam = "", gstrCategory = "";
+        System.Data.DataTable gdtData1o, gdtData2o, gdtData3o, gdtData4o, gdtData5o, gdtData6o, gdtData7o, gdtData8o, gdtData9o;
         System.Data.DataTable gdtData1, gdtData2, gdtData3, gdtData4, gdtData5, gdtData6, gdtData7, gdtData8, gdtData9;
         System.Data.DataTable gdtData;
         public R03()
@@ -157,139 +158,150 @@ and orders.LocalOrder = 0
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strFactory, null, out gdtData);
-                    if(gdtData1 ==null)gdtData1 = gdtData.Clone();
-                    gdtData1.Merge(gdtData);
+                    if(gdtData1o ==null)gdtData1o = gdtData.Clone();
+                    gdtData1o.Merge(gdtData);
                     if (!result)
                         return result;
                 }
+                MyUtility.Tool.ProcessWithDatatable(gdtData1o, "", @"select A,B=sum(B),C=sum(C),D=sum(D),E=sum(E),F=sum(F) from #tmp Group BY A order by A", out gdtData1);
                 #endregion 1.	By Factory
 
                 #region 2.	By Brand
                 string strBrand = string.Format(@" Select BrandID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D, 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
-                                                                                         FROM ({0} ) AAA  Group BY BrandID order by BrandID ", strSQL);
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS E, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS F 
+FROM ({0} ) AAA  Group BY BrandID order by BrandID ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strBrand, null, out gdtData);
-                    if (gdtData2 == null) gdtData2 = gdtData.Clone();
-                    gdtData2.Merge(gdtData);
+                    if (gdtData2o == null) gdtData2o = gdtData.Clone();
+                    gdtData2o.Merge(gdtData);
                     if (!result)
                         return result;
-                }          
+                }
+                MyUtility.Tool.ProcessWithDatatable(gdtData2o, "", @"select A,B=sum(B),C=sum(C),D=sum(D),E=Round(sum(E),2),F=Round(sum(F),2) from #tmp Group BY A order by A", out gdtData2);
                 #endregion 2.	By Brand
+
                 #region 3.	By Brand + Factory
-                string strFBrand = string.Format(@" Select BrandID AS A, FactoryID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E , 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G  
-                                                                                         FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", strSQL);
+                string strFBrand = string.Format(@" 
+Select BrandID AS A, FactoryID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E , 
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G  
+FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strFBrand, null, out gdtData);
-                    if (gdtData3 == null) gdtData3 = gdtData.Clone();
-                    gdtData3.Merge(gdtData);
+                    if (gdtData3o == null) gdtData3o = gdtData.Clone();
+                    gdtData3o.Merge(gdtData);
                     if (!result)
                         return result;
-                }      
+                }
+                MyUtility.Tool.ProcessWithDatatable(gdtData3o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2)  from #tmp Group BY A,B order by A,B", out gdtData3);
                 #endregion 3.	By Brand + Factory
 
                 #region 4.	By Style
                 string strStyle = string.Format(@" Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F, Sum(QARate) AS G, Sum(TotalCPUOut) AS H, SUM(TotalManHour) AS I, 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS J, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS K
-                                                                                         , ModularParent AS L, CPUAdjusted AS M
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS J, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS K
+ , ModularParent AS L, CPUAdjusted AS M
                                                                                          FROM ({0} ) AAA  Group BY StyleID, BrandID, CDCodeID,SeasonID,  CDDesc, StyleDesc , ModularParent, CPUAdjusted  order by StyleID, BrandID, CDCodeID,SeasonID ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strStyle, null, out gdtData);
-                    if (gdtData4 == null) gdtData4 = gdtData.Clone();
-                    gdtData4.Merge(gdtData);
+                    if (gdtData4o == null) gdtData4o = gdtData.Clone();
+                    gdtData4o.Merge(gdtData);
                     if (!result)
                         return result;
-                }      
+                }
+                MyUtility.Tool.ProcessWithDatatable(gdtData4o, "", @"select A,B,C,D,E,F,G=sum(G),H=sum(H),I=sum(I),J=Round(sum(J),2),K=Round(sum(K),2),L,M from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E", out gdtData4);
                 #endregion 4.	By Style
 
                 #region 5.	By CD
                 string strCdCodeID = string.Format(@" Select CdCodeID AS A, CDDesc AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G 
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G 
                                                                                          FROM ({0} ) AAA  Group BY CdCodeID, CDDesc order by  CdCodeID", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strCdCodeID, null, out gdtData);
-                    if (gdtData5 == null) gdtData5 = gdtData.Clone();
-                    gdtData5.Merge(gdtData);
+                    if (gdtData5o == null) gdtData5o = gdtData.Clone();
+                    gdtData5o.Merge(gdtData);
                     if (!result)
                         return result;
                 }
+                MyUtility.Tool.ProcessWithDatatable(gdtData5o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2) from #tmp Group BY A,B order by A", out gdtData5);
                 #endregion 5.	By CD
 
                 #region 6.	By Factory Line
                 string strFactoryLine = string.Format(@" Select FactoryID AS A, SewingLineID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS F, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS G 
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G 
                                                                                          FROM ({0} ) AAA  Group BY FactoryID, SewingLineID order by FactoryID, SewingLineID ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strFactoryLine, null, out gdtData);
-                    if (gdtData6 == null) gdtData6 = gdtData.Clone();
-                    gdtData6.Merge(gdtData);
+                    if (gdtData6o == null) gdtData6o = gdtData.Clone();
+                    gdtData6o.Merge(gdtData);
                     if (!result)
                         return result;
                 }
+                MyUtility.Tool.ProcessWithDatatable(gdtData6o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2) from #tmp Group BY A,B order by B", out gdtData6);
                 #endregion 6.	By Factory Line
 
                 #region 7.	By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(@" Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, Sum(QARate) AS E, Sum(TotalCPUOut) AS F, SUM(TotalManHour) AS G, 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS H, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS I 
+(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS H, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS I 
                                                                                          FROM ({0} ) AAA  Group BY BrandID, FactoryID, CdCodeID, CDDesc order by BrandID, FactoryID,  CdCodeID", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strFBCDCode, null, out gdtData);
-                    if (gdtData7 == null) gdtData7 = gdtData.Clone();
-                    gdtData7.Merge(gdtData);
+                    if (gdtData7o == null) gdtData7o = gdtData.Clone();
+                    gdtData7o.Merge(gdtData);
                     if (!result)
                         return result;
                 }
+                MyUtility.Tool.ProcessWithDatatable(gdtData7o, "", @"select A,B,C,D,E=sum(E),F=sum(F),G=sum(G),H=Round(sum(H),2),I=Round(sum(I),2) from #tmp Group BY A,B,C,D order by A,B,C", out gdtData7);
                 #endregion 7.	By Factory, Brand , CDCode
 
                 #region 8.	By PO Combo
                 string strPOCombo = string.Format(@" Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
-                                                                                         , ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS L, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS M 
+,(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS L, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS M 
                                                                                          FROM ({0} ) AAA  Group BY POID, StyleID, BrandID,  CdCodeID, CDDesc, StyleDesc, SeasonID , ProgramID order by POID, StyleID, BrandID,  CdCodeID , SeasonID", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strPOCombo, null, out gdtData);
-                    if (gdtData8 == null) gdtData8 = gdtData.Clone();
-                    gdtData8.Merge(gdtData);
+                    if (gdtData8o == null) gdtData8o = gdtData.Clone();
+                    gdtData8o.Merge(gdtData);
                     if (!result)
                         return result;
                 }
+                MyUtility.Tool.ProcessWithDatatable(gdtData8o, "", @"select A,B,C,D,E,F,G,H,I=sum(I),J=sum(J),K=sum(K),L=Round(sum(L),2),M=Round(sum(M),2) from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G", out gdtData8);
                 #endregion 8.	By PO Combo
                 
                 #region 9.	By Program
                 string strProgram = string.Format(@" Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
-                                                                                         , ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS L, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS M 
+, (Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS L, 
+(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS M 
                                                                                          FROM ({0} ) AAA  Group BY ProgramID, StyleID, FactoryID, BrandID,  CdCodeID, SeasonID,  CDDesc, StyleDesc order by  ProgramID, StyleID, FactoryID, BrandID, CdCodeID, SeasonID  ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
                     result = DBProxy.Current.SelectByConn(conn, strProgram, null, out gdtData);
-                    if (gdtData9 == null) gdtData9 = gdtData.Clone();
-                    gdtData9.Merge(gdtData);
+                    if (gdtData9o == null) gdtData9o = gdtData.Clone();
+                    gdtData9o.Merge(gdtData);
                     if (!result)
                         return result;
-                }        
+                }
+                MyUtility.Tool.ProcessWithDatatable(gdtData9o, "", @"select A,B,C,D,E,F,G,H,I=sum(I),J=sum(J),K=sum(K),L=Round(sum(L),2),M=Round(sum(M),2) from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
                 #endregion 9.	By Program
 
                 if (((gdtData1 != null) && (gdtData1.Rows.Count > 0)) || ((gdtData2 != null) && (gdtData2.Rows.Count > 0)) || ((gdtData3 != null) && (gdtData3.Rows.Count > 0))
