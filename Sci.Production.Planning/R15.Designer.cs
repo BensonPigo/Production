@@ -392,8 +392,7 @@
             this.DefaultControlForEdit = "dateBuyerDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R15";
-            this.Text = "R15. WIP";
-            this.Load += new System.EventHandler(this.R15_Load);
+            this.Text = "R15. WIP";            
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
