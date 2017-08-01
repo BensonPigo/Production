@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnImportFromRealTime = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.labelID = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
@@ -74,12 +74,12 @@
             this.masterpanel.Controls.Add(this.labelArtworkType);
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Controls.Add(this.btnImportFromRealTime);
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(1000, 139);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImportFromRealTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArtworkType, 0);
@@ -112,7 +112,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 210);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 490);
             // 
             // detail2
             // 
@@ -162,22 +162,21 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(428, 13);
             // 
-            // btnImportFromRealTime
+            // btnImport
             // 
-            this.btnImportFromRealTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImportFromRealTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromRealTime.Location = new System.Drawing.Point(892, 46);
-            this.btnImportFromRealTime.Name = "btnImportFromRealTime";
-            this.btnImportFromRealTime.Size = new System.Drawing.Size(100, 50);
-            this.btnImportFromRealTime.TabIndex = 5;
-            this.btnImportFromRealTime.Text = "Import From Real Time";
-            this.btnImportFromRealTime.UseVisualStyleBackColor = true;
-            this.btnImportFromRealTime.Visible = false;
-            this.btnImportFromRealTime.Click += new System.EventHandler(this.btnImportFromRealTime_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(853, 46);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(139, 25);
+            this.btnImport.TabIndex = 5;
+            this.btnImport.Text = "Batch Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Visible = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 12);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -186,7 +185,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(252, 14);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(75, 23);
@@ -195,7 +193,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(645, 14);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(99, 23);
@@ -204,7 +201,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(16, 46);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(75, 23);
@@ -213,7 +209,6 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(252, 48);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(75, 23);
@@ -222,7 +217,6 @@
             // 
             // labelTotalQty
             // 
-            this.labelTotalQty.Lines = 0;
             this.labelTotalQty.Location = new System.Drawing.Point(645, 48);
             this.labelTotalQty.Name = "labelTotalQty";
             this.labelTotalQty.Size = new System.Drawing.Size(99, 23);
@@ -231,7 +225,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(16, 81);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -293,7 +286,6 @@
             // 
             this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelConfirmed.Lines = 0;
             this.labelConfirmed.Location = new System.Drawing.Point(892, 14);
             this.labelConfirmed.Name = "labelConfirmed";
             this.labelConfirmed.Size = new System.Drawing.Size(103, 23);
@@ -305,13 +297,14 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(330, 14);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 2;
             this.txtmfactory.TabStop = false;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserHandle
             // 
@@ -375,7 +368,7 @@
         #endregion
 
         private Win.UI.Label labelID;
-        private Win.UI.Button btnImportFromRealTime;
+        private Win.UI.Button btnImport;
         private Win.UI.TextBox txtRemark;
         private Class.txtuser txtuserHandle;
         private Win.UI.DisplayBox displayID;
