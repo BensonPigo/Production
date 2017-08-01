@@ -89,6 +89,8 @@
             this.labelApplyNo = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.btnSwitchtoWorkOrder = new Sci.Win.UI.Button();
+            this.lbFabricKind = new Sci.Win.UI.Label();
+            this.displayFabricKind = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -190,7 +192,6 @@
             // labelEditBy
             // 
             this.labelEditBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelEditBy.Lines = 0;
             this.labelEditBy.Location = new System.Drawing.Point(304, 40);
             this.labelEditBy.Name = "labelEditBy";
             this.labelEditBy.Size = new System.Drawing.Size(75, 21);
@@ -200,7 +201,6 @@
             // labelCreateby
             // 
             this.labelCreateby.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelCreateby.Lines = 0;
             this.labelCreateby.Location = new System.Drawing.Point(304, 8);
             this.labelCreateby.Name = "labelCreateby";
             this.labelCreateby.Size = new System.Drawing.Size(75, 21);
@@ -235,7 +235,6 @@
             // 
             // labelDataSource
             // 
-            this.labelDataSource.Lines = 0;
             this.labelDataSource.Location = new System.Drawing.Point(240, 7);
             this.labelDataSource.Name = "labelDataSource";
             this.labelDataSource.Size = new System.Drawing.Size(76, 21);
@@ -259,7 +258,6 @@
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(7, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(110, 23);
@@ -272,6 +270,8 @@
             this.panelBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBasic.Controls.Add(this.displayFabricKind);
+            this.panelBasic.Controls.Add(this.lbFabricKind);
             this.panelBasic.Controls.Add(this.displayType);
             this.panelBasic.Controls.Add(this.displayConsPC);
             this.panelBasic.Controls.Add(this.panelSizeQty);
@@ -340,7 +340,7 @@
             this.panelSizeQty.Controls.Add(this.gridSizeQty);
             this.panelSizeQty.Location = new System.Drawing.Point(301, 6);
             this.panelSizeQty.Name = "panelSizeQty";
-            this.panelSizeQty.Size = new System.Drawing.Size(186, 161);
+            this.panelSizeQty.Size = new System.Drawing.Size(186, 141);
             this.panelSizeQty.TabIndex = 150;
             // 
             // gridSizeQty
@@ -365,7 +365,7 @@
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeQty.RowTemplate.Height = 24;
             this.gridSizeQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSizeQty.Size = new System.Drawing.Size(186, 161);
+            this.gridSizeQty.Size = new System.Drawing.Size(186, 141);
             this.gridSizeQty.TabIndex = 0;
             this.gridSizeQty.TabStop = false;
             // 
@@ -405,7 +405,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(190, 304);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(62, 21);
@@ -440,7 +439,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(6, 251);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(83, 21);
@@ -463,7 +461,6 @@
             // 
             // labelForArticle
             // 
-            this.labelForArticle.Lines = 0;
             this.labelForArticle.Location = new System.Drawing.Point(6, 224);
             this.labelForArticle.Name = "labelForArticle";
             this.labelForArticle.Size = new System.Drawing.Size(83, 21);
@@ -473,7 +470,6 @@
             // 
             // labelSeqNo
             // 
-            this.labelSeqNo.Lines = 0;
             this.labelSeqNo.Location = new System.Drawing.Point(6, 6);
             this.labelSeqNo.Name = "labelSeqNo";
             this.labelSeqNo.Size = new System.Drawing.Size(83, 21);
@@ -515,7 +511,6 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Lines = 0;
             this.labelTotal.Location = new System.Drawing.Point(490, 6);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(50, 21);
@@ -525,7 +520,6 @@
             // 
             // labelSizeRatio
             // 
-            this.labelSizeRatio.Lines = 0;
             this.labelSizeRatio.Location = new System.Drawing.Point(233, 6);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(65, 21);
@@ -545,7 +539,6 @@
             // 
             // labelMarkerListWidth
             // 
-            this.labelMarkerListWidth.Lines = 0;
             this.labelMarkerListWidth.Location = new System.Drawing.Point(370, 197);
             this.labelMarkerListWidth.Name = "labelMarkerListWidth";
             this.labelMarkerListWidth.Size = new System.Drawing.Size(100, 21);
@@ -555,7 +548,6 @@
             // 
             // labelFabricWidth
             // 
-            this.labelFabricWidth.Lines = 0;
             this.labelFabricWidth.Location = new System.Drawing.Point(152, 197);
             this.labelFabricWidth.Name = "labelFabricWidth";
             this.labelFabricWidth.Size = new System.Drawing.Size(83, 21);
@@ -575,7 +567,6 @@
             // 
             // labelConsPC
             // 
-            this.labelConsPC.Lines = 0;
             this.labelConsPC.Location = new System.Drawing.Point(6, 197);
             this.labelConsPC.Name = "labelConsPC";
             this.labelConsPC.Size = new System.Drawing.Size(83, 21);
@@ -585,7 +576,6 @@
             // 
             // labelEfficiency
             // 
-            this.labelEfficiency.Lines = 0;
             this.labelEfficiency.Location = new System.Drawing.Point(152, 149);
             this.labelEfficiency.Name = "labelEfficiency";
             this.labelEfficiency.Size = new System.Drawing.Size(83, 21);
@@ -605,7 +595,6 @@
             // 
             // labelFabric
             // 
-            this.labelFabric.Lines = 0;
             this.labelFabric.Location = new System.Drawing.Point(6, 173);
             this.labelFabric.Name = "labelFabric";
             this.labelFabric.Size = new System.Drawing.Size(83, 21);
@@ -625,7 +614,6 @@
             // 
             // labelFabricCombo
             // 
-            this.labelFabricCombo.Lines = 0;
             this.labelFabricCombo.Location = new System.Drawing.Point(6, 149);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(83, 21);
@@ -655,7 +643,6 @@
             // 
             // labelFabricPanelCode
             // 
-            this.labelFabricPanelCode.Lines = 0;
             this.labelFabricPanelCode.Location = new System.Drawing.Point(6, 126);
             this.labelFabricPanelCode.Name = "labelFabricPanelCode";
             this.labelFabricPanelCode.Size = new System.Drawing.Size(100, 21);
@@ -675,7 +662,6 @@
             // 
             // labelPatternPanel
             // 
-            this.labelPatternPanel.Lines = 0;
             this.labelPatternPanel.Location = new System.Drawing.Point(6, 102);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(83, 21);
@@ -695,7 +681,6 @@
             // 
             // labelMarkerLength
             // 
-            this.labelMarkerLength.Lines = 0;
             this.labelMarkerLength.Location = new System.Drawing.Point(6, 78);
             this.labelMarkerLength.Name = "labelMarkerLength";
             this.labelMarkerLength.Size = new System.Drawing.Size(83, 21);
@@ -715,7 +700,6 @@
             // 
             // labelMarkerName
             // 
-            this.labelMarkerName.Lines = 0;
             this.labelMarkerName.Location = new System.Drawing.Point(6, 54);
             this.labelMarkerName.Name = "labelMarkerName";
             this.labelMarkerName.Size = new System.Drawing.Size(83, 21);
@@ -735,7 +719,6 @@
             // 
             // labelMarkerNo
             // 
-            this.labelMarkerNo.Lines = 0;
             this.labelMarkerNo.Location = new System.Drawing.Point(6, 30);
             this.labelMarkerNo.Name = "labelMarkerNo";
             this.labelMarkerNo.Size = new System.Drawing.Size(83, 21);
@@ -796,7 +779,6 @@
             // 
             // labelMarkerVersion
             // 
-            this.labelMarkerVersion.Lines = 0;
             this.labelMarkerVersion.Location = new System.Drawing.Point(370, 6);
             this.labelMarkerVersion.Name = "labelMarkerVersion";
             this.labelMarkerVersion.Size = new System.Drawing.Size(100, 21);
@@ -806,7 +788,6 @@
             // 
             // labelPhaseID
             // 
-            this.labelPhaseID.Lines = 0;
             this.labelPhaseID.Location = new System.Drawing.Point(190, 6);
             this.labelPhaseID.Name = "labelPhaseID";
             this.labelPhaseID.Size = new System.Drawing.Size(62, 21);
@@ -836,7 +817,6 @@
             // 
             // labelMarkerDownloadID
             // 
-            this.labelMarkerDownloadID.Lines = 0;
             this.labelMarkerDownloadID.Location = new System.Drawing.Point(6, 33);
             this.labelMarkerDownloadID.Name = "labelMarkerDownloadID";
             this.labelMarkerDownloadID.Size = new System.Drawing.Size(120, 21);
@@ -846,7 +826,6 @@
             // 
             // labelApplyNo
             // 
-            this.labelApplyNo.Lines = 0;
             this.labelApplyNo.Location = new System.Drawing.Point(6, 6);
             this.labelApplyNo.Name = "labelApplyNo";
             this.labelApplyNo.Size = new System.Drawing.Size(62, 21);
@@ -874,6 +853,25 @@
             this.btnSwitchtoWorkOrder.Text = "Switch to WorkOrder";
             this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
             this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.btnSwitchtoWorkOrder_Click);
+            // 
+            // lbFabricKind
+            // 
+            this.lbFabricKind.Location = new System.Drawing.Point(301, 149);
+            this.lbFabricKind.Name = "lbFabricKind";
+            this.lbFabricKind.Size = new System.Drawing.Size(74, 21);
+            this.lbFabricKind.TabIndex = 153;
+            this.lbFabricKind.Text = "Fabric Kind";
+            this.lbFabricKind.TextStyle.Color = System.Drawing.Color.White;
+            // 
+            // displayFabricKind
+            // 
+            this.displayFabricKind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricKind.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricKind", true));
+            this.displayFabricKind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricKind.Location = new System.Drawing.Point(378, 149);
+            this.displayFabricKind.Name = "displayFabricKind";
+            this.displayFabricKind.Size = new System.Drawing.Size(109, 21);
+            this.displayFabricKind.TabIndex = 154;
             // 
             // EachConsumption
             // 
@@ -982,5 +980,7 @@
         private Win.UI.Button btnSwitchtoWorkOrder;
         private Win.UI.DisplayBox displayConsPC;
         private Win.UI.DisplayBox displayType;
+        private Win.UI.DisplayBox displayFabricKind;
+        private Win.UI.Label lbFabricKind;
     }
 }
