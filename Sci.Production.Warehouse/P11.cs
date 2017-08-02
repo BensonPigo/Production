@@ -403,11 +403,7 @@ select  a.Id
                              ) v for xml path(''))
                             ,'') 
         , a.Ukey
-        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty 
-                                from dbo.ftyinventory FI WITH (NOLOCK) 
-                                where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-                                        and a.roll = fi.roll and a.stocktype = fi.stocktype)
-                             ,0.00)
+        , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)
 from dbo.Issue_Detail a WITH (NOLOCK) 
 left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
                                                 and p.seq1= a.seq1 
@@ -915,16 +911,21 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
         {
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
-            this.getpoid();
             this.SubDetailSelectCommand = string.Format(@"
 select  a.SizeCode
         , b.Id
         , '{2}' AS Issue_DetailUkey
         , isnull(b.Qty,0) QTY
         , IIF(b.Qty IS NULL , 1 ,0) isvirtual
-from dbo.Order_SizeCode a WITH (NOLOCK) 
-left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
-where a.id='{0}' order by Seq", this.poid, masterID, ukey);
+
+from  dbo.Issue_Size b WITH (NOLOCK) 
+inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
+outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
+outer apply(select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{4}' and Factory.mdivisionid = '{3}')poid2
+where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
+and b.id = '{1}' and b.Issue_DetailUkey = {2}
+order by Seq"
+            , CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Sci.Env.User.Keyword, CurrentMaintain["orderid"].ToString());
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
