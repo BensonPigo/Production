@@ -70,7 +70,9 @@ namespace Sci.Production.Cutting
             this.numCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "Cons", true));
             this.txtFabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricCombo", true));
             this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricPanelCode", true));
-            this.displayFabricRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "SCIRefno", true));
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Description", true));
+            this.displayFabricType_Refno.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MtlTypeID_SCIRefno", true));
+
             this.displayWorkOrderDownloadid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerDownLoadId", true));
             this.displayCutplanNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
             this.displayTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
@@ -78,7 +80,7 @@ namespace Sci.Production.Cutting
             this.txtMarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthE", true));
             this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
-
+            this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "shc", true));
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
 
@@ -160,12 +162,16 @@ Select
 	,multisize.multisize
 	,Order_SizeCode_Seq.Order_SizeCode_Seq
 	,SORT_NUM =0
-	,c.MtlTypeID
+    ,c.MtlTypeID
+    ,MtlTypeID_SCIRefno = concat(c.MtlTypeID, ' / ' , a.SCIRefno)
 	,c.DescDetail
+    ,c.Description
 	,newkey = 0
 	,MarkerLengthY = substring(a.MarkerLength,1,2)
 	,MarkerLengthE = substring(a.MarkerLength,4,13) 
+    ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
 from Workorder a WITH (NOLOCK) left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
+outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc
 outer apply
 (
 	select article = stuff(
@@ -1394,16 +1400,16 @@ where w.ID = '{0}'", masterID);
             bindingSource2.SetRow(this.CurrentDetailData);
             DataRow fabdr;
 
-            if (MyUtility.Check.Seek(string.Format("Select * from Fabric WITH (NOLOCK) Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
-            {
-                displayFabricType.Text = fabdr["MtlTypeid"].ToString();
-                editDescription.Text = fabdr["Description"].ToString();
-            }
-            else
-            {
-                displayFabricType.Text = "";
-                editDescription.Text = "";
-            }
+            //if (MyUtility.Check.Seek(string.Format("Select * from Fabric WITH (NOLOCK) Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
+            //{
+            //    displayFabricType_Refno.Text = fabdr["MtlTypeid"].ToString();
+            //    editDescription.Text = fabdr["Description"].ToString();
+            //}
+            //else
+            //{
+            //    displayFabricType_Refno.Text = "";
+            //    editDescription.Text = "";
+            //}
 
             #region 根據左邊Grid Filter 右邊資訊
             if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
