@@ -544,7 +544,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             DateTime? maxIssueDate = null;
             DataTable issueData;
-            string sqlCmd = string.Format("select max(i.IssueDate) as IssueDate from Issue iWITH (NOLOCK) , Issue_Detail id WITH (NOLOCK) where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), Seq1, Seq2);
+            string sqlCmd = string.Format(@"select max(i.IssueDate) as IssueDate from Issue i WITH (NOLOCK) , Issue_Detail id WITH (NOLOCK) where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), Seq1, Seq2);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out issueData);
             if (result)
             {
@@ -775,6 +775,13 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
             queryfors.SelectedIndex = 0;
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.PPIC.P10_P11_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, "Accessory");
+            frm.ShowDialog(this);
+            this.RenewData();
         }
 
     }
