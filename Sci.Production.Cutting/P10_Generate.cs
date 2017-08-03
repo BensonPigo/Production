@@ -114,6 +114,15 @@ group by sizeCode"
                     j++;
                 }
             }
+            else
+            {
+                int j = 1;
+                foreach (DataRow dr in qtyTb.Rows)
+                {
+                    dr["No"] = j;
+                    j++;
+                }
+            }
             #endregion
             
             if (detailTb.Rows.Count != 0) exist_Table_Query();
@@ -288,6 +297,7 @@ group by sizeCode"
                     }
                 }
             }
+            garmentarRC = garmentTb.Copy();
         }
 
         public void grid_setup()
