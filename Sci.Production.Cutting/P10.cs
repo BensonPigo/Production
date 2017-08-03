@@ -505,14 +505,14 @@ order by bundlegroup"
         private void txtCutRef_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
+            string newvalue = txtCutRef.Text;
+            if (txtCutRef.OldValue.ToString() == newvalue) return;
             if (txtCutRef.Text == "")
             {
                 clear();
                 return;
             }
 
-            string newvalue = txtCutRef.Text;
-            if (txtCutRef.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(@"
 Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
 (
