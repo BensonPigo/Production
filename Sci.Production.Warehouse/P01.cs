@@ -521,6 +521,20 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callNextForm.ShowDialog(this);
         }
 
+
+        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Warehouse.P03 callForm = new Sci.Production.Warehouse.P03(CurrentMaintain);
+            callForm.MdiParent = MdiParent;
+            callForm.Show();
+        }
+
+        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Warehouse.P04 callForm = new Sci.Production.Warehouse.P04(CurrentMaintain);
+            callForm.MdiParent = MdiParent;
+            callForm.Show();
+        }
        
     }
 }
