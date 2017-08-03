@@ -17,8 +17,22 @@ using System.Linq;
 namespace Sci.Production.Warehouse
 {
     public partial class P01 : Sci.Win.Tems.Input1
-    {
+    {        
         private string dataType="";
+        delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
+        ToolStripMenuItem progmenu = null;
+        class TemplateInfo
+        {
+            public string text;
+            public CREATETEMPLATE create;
+            public ToolStripMenuItem menuitem;
+        }
+        private void OpenForm(Sci.Win.Forms.Base form)
+        {
+            form.MdiParent = this;
+            form.Show();
+            form.Focus();
+        }
 
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -506,5 +520,21 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
+
+
+        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Warehouse.P03 callForm = new Sci.Production.Warehouse.P03(CurrentMaintain);
+            callForm.MdiParent = MdiParent;
+            callForm.Show();
+        }
+
+        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Warehouse.P04 callForm = new Sci.Production.Warehouse.P04(CurrentMaintain);
+            callForm.MdiParent = MdiParent;
+            callForm.Show();
+        }
+       
     }
 }
