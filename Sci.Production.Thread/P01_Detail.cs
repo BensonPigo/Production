@@ -163,7 +163,7 @@ namespace Sci.Production.Thread
                 .Text("SEQ", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("ThreadLocation", header: "Thread Location", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.Auto(true), iseditingreadonly: true)
-                .Text("Allowance", header: "Start End lost", width: Widths.Auto(true), iseditingreadonly: true)
+                .Text("Allowance", header: "Start End Loss", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(16), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 

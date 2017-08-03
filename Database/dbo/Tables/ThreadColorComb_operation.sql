@@ -1,7 +1,9 @@
 ﻿CREATE TABLE [dbo].[ThreadColorComb_operation] (
     [Id] BIGINT CONSTRAINT [DF_ThreadColorComb_operation_ThreadColorCombUkey] DEFAULT ('') NOT NULL,
     [Operationid]         VARCHAR (20) CONSTRAINT [DF_ThreadColorComb_operation_Operationid] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_ThreadColorComb_operation] PRIMARY KEY CLUSTERED ([Id] ASC, [Operationid] ASC)
+    [ComboType] VARCHAR(1) NOT NULL DEFAULT (''), 
+    [Seq] VARCHAR(4) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_ThreadColorComb_operation] PRIMARY KEY CLUSTERED ([Id] ASC, [Operationid] ASC,[ComboType] ASC ,[Seq] ASC)
 );
 
 
