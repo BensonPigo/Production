@@ -22,7 +22,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
-        string userCountry = "";        
+        string userCountry = "";
+        DataRow P01Data;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -45,6 +46,16 @@ namespace Sci.Production.Warehouse
                 userCountry = dt.Rows[0]["CountryID"].ToString();
             }  
         }
+
+        public P03(DataRow maindata) //Form to Form From W/H.P01 
+        {
+            InitializeComponent();
+            this.EditMode = true;
+            P01Data = maindata;
+            this.txtSPNo.Text = P01Data["id"].ToString().Trim();
+            Query();
+        }
+
         protected override void OnFormLoaded()
         {
 
