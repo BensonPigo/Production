@@ -36,6 +36,7 @@ namespace Sci.Production.Shipping
             browsetop.Controls.Add(btn);
             btn.Size = new Size(120, 30);//預設是(80,30)
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
+            this.grid.Columns[0].Visible = false;
         }
 
         //Batch Create按鈕的Click事件
@@ -390,16 +391,19 @@ from System WITH (NOLOCK) ");
 
         protected override void OnDetailGridDelete()
         {
-            string nlCode = MyUtility.Convert.GetString(CurrentDetailData["NLCode"]); //紀錄要被刪除的NLCode
-            string userCreate = MyUtility.Convert.GetString(CurrentDetailData["UserCreate"]).ToUpper();
-            base.OnDetailGridDelete();
-            if (userCreate == "FALSE")
+            if (CurrentDetailData != null)
             {
-                foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
+                string nlCode = MyUtility.Convert.GetString(CurrentDetailData["NLCode"]); //紀錄要被刪除的NLCode
+                string userCreate = MyUtility.Convert.GetString(CurrentDetailData["UserCreate"]).ToUpper();
+                base.OnDetailGridDelete();
+                if (userCreate == "FALSE")
                 {
-                    if (MyUtility.Convert.GetString(dr["NLCode"]) == nlCode)
+                    foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
                     {
-                        dr.Delete();
+                        if (dr.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(dr["NLCode"]) == nlCode)
+                        {
+                            dr.Delete();
+                        }
                     }
                 }
             }
