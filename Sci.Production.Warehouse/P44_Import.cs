@@ -56,8 +56,13 @@ select  0 as selected
         , '' reasonid
         , '' reason_nm        
 from LocalInventory Linv WITH (NOLOCK) 
-outer apply(select Description from LocalItem where refno=Linv.Refno) Li
-where Linv.LobQty>0 ");
+outer apply(select Description from LocalItem where refno=Linv.Refno) Li 
+outer apply (
+	select * from dbo.SplitString(
+	(select CLocation from LocalInventory 
+	where OrderID=Linv.OrderID  
+	and refno=Linv.Refno and ThreadColorID=Linv.ThreadColorID),',') ) lo
+where 1=1 ");
 
                 if (!MyUtility.Check.Empty(sp))
                 {
@@ -79,7 +84,7 @@ where Linv.LobQty>0 ");
                 if (!MyUtility.Check.Empty(location))
                 {
                     strSQLCmd.Append(string.Format(@" 
-        and Linv.CLocation like '%{0}%'  ", location));
+        and lo.Data='{0}'  ", location));
                 }
             
 
