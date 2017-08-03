@@ -215,7 +215,7 @@ outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) s
                     {
                         if (copyRow > 0)
                         {
-                            Excel.Range r = worksheet.get_Range("A" + ((12 + RowRange * (copyRow-1))).ToString(), "A" + ((12 + RowRange * (copyRow-1)) + RowRange-1).ToString()).EntireRow;
+                            Excel.Range r = worksheet.get_Range("A" + ((12 + RowRange * (copyRow - 1))).ToString(), "A" + ((12 + RowRange * (copyRow - 1)) + RowRange - 1).ToString()).EntireRow;
                             r.Copy();
                             r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
                         }
@@ -381,6 +381,7 @@ Cutplanid, str_PIVOT);
                     {
                         Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
                         rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                        worksheet.get_Range("I" + tmpn, "U" + tmpn).Merge();
                         worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
                         tmpn++;
                         nRow++;
@@ -450,20 +451,20 @@ Cutplanid, str_PIVOT);
                 #endregion
 
 
-                if (FabricComboArry.Length > 0)
-                {
-                    foreach (DataRow FabricComboDr in FabricComboArry)
-                    {
-                        if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
-                        {
-                            Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
-                            rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
-                            worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
-                            tmpn++;
-                        }
-                        tmpn += 6;
-                    }
-                }
+                //if (FabricComboArry.Length > 0)
+                //{
+                //    foreach (DataRow FabricComboDr in FabricComboArry)
+                //    {
+                //        if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
+                //        {
+                //            Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
+                //            rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                //            worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
+                //            tmpn++;
+                //        }
+                //        tmpn += 6;
+                //    }
+                //}
 
                 nSheet++;
             }
@@ -496,8 +497,8 @@ Cutplanid, str_PIVOT);
 
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
-                worksheet.Cells[41, nColumn] = OrderDr["Styleid"];
-                worksheet.Cells[42, nColumn] = detDr["ID"];
+                worksheet.Cells[40, nColumn] = OrderDr["Styleid"];
+                worksheet.Cells[41, nColumn] = detDr["ID"];
             }
 
             #endregion
@@ -515,7 +516,7 @@ Cutplanid, str_PIVOT);
             int nDisCount = 0;
             Double disRow = 0;
             string size = "", Ratio = "";
-            int TotConsRowS = 19, TotConsRowE = 20;
+            int TotConsRowS = 18, TotConsRowE = 19;
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
             {
                 spList = "";
@@ -530,7 +531,6 @@ Cutplanid, str_PIVOT);
                 worksheet.Name = Cutrefdr["Cutref"].ToString();
                 worksheet.Cells[3, 19] = Cutrefdr["Cutref"].ToString();
                 worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
-                worksheet.Cells[14, 9] = Cutrefdr["shc"];
                 nSheet++;
             }
             nSheet = 1;
@@ -585,8 +585,8 @@ Cutplanid, str_PIVOT);
 
                     for (int nColumn = 3; nColumn <= 22; nColumn += 3)
                     {
-                        worksheet.Cells[38, nColumn] = WorkorderArry[0]["Refno"];
-                        worksheet.Cells[39, nColumn] = WorkorderArry[0]["Colorid"];
+                        worksheet.Cells[37, nColumn] = WorkorderArry[0]["Refno"];
+                        worksheet.Cells[38, nColumn] = WorkorderArry[0]["Colorid"];
                     }
                     #endregion
                 }
@@ -661,7 +661,7 @@ Cutplanid, str_PIVOT);
                 #region Distribute to SP#
                 if (WorkorderDisArry.Length > 0)
                 {
-                    nrow = 17; //到Distribute ROW
+                    nrow = 16; //到Distribute ROW
                     nDisCount = WorkorderDisArry.Length;
                     disRow = Math.Ceiling(Convert.ToDouble(nDisCount) / 2); //每一個Row 有兩個可以用
                     int arrayrow = 0;
@@ -681,16 +681,16 @@ Cutplanid, str_PIVOT);
                         if (arrayrow + 1 < nDisCount)
                         {
                             worksheet.Cells[nrow, 11] = WorkorderDisArry[arrayrow + 1]["OrderID"].ToString();
-                            worksheet.Cells[nrow, 15] = WorkorderDisArry[arrayrow + 1]["Article"].ToString();
-                            worksheet.Cells[nrow, 18] = WorkorderDisArry[arrayrow + 1]["SizeCode"].ToString();
-                            worksheet.Cells[nrow, 20] = WorkorderDisArry[arrayrow + 1]["Qty"].ToString();
+                            worksheet.Cells[nrow, 14] = WorkorderDisArry[arrayrow + 1]["Article"].ToString();
+                            worksheet.Cells[nrow, 17] = WorkorderDisArry[arrayrow + 1]["SizeCode"].ToString();
+                            worksheet.Cells[nrow, 19] = WorkorderDisArry[arrayrow + 1]["Qty"].ToString();
                         }
                         else
                         {
                             worksheet.Cells[nrow, 11] = "";
-                            worksheet.Cells[nrow, 15] = "";
-                            worksheet.Cells[nrow, 18] = "";
-                            worksheet.Cells[nrow, 20] = "";
+                            worksheet.Cells[nrow, 14] = "";
+                            worksheet.Cells[nrow, 17] = "";
+                            worksheet.Cells[nrow, 19] = "";
                         }
                         nrow++;
                     }
@@ -739,7 +739,7 @@ cutref, str_PIVOT);
                     worksheet.Cells[nrow, 1] = cutqtydr["Cutno"].ToString();
                     worksheet.Cells[nrow, 2] = cutqtydr["Colorid"].ToString();
                     worksheet.Cells[nrow, 3] = cutqtydr["Layer"].ToString();
-                    worksheet.Cells[nrow, 21] = cutqtydr["Cons"].ToString();
+                    worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
                     for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
                     {
                         worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[4 + nSizeDetail].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
@@ -751,6 +751,21 @@ cutref, str_PIVOT);
                 #region Total Cons
                 worksheet.Cells[nrow+1, 20] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
                 #endregion
+                nSheet++;
+            }
+
+            nSheet = 1;
+            foreach (DataRow Cutrefdr in CutrefTb.Rows)
+            {
+                worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
+                worksheet.Select();
+                if (!MyUtility.Check.Empty(Cutrefdr["shc"]))
+                {
+                    Excel.Range r = worksheet.get_Range("A14", "A14").EntireRow;
+                    r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
+                    worksheet.get_Range("I14:U14").Merge();
+                    worksheet.Cells[14, 9] = Cutrefdr["shc"];
+                }
                 nSheet++;
             }
             #endregion //End By CutRef
