@@ -174,8 +174,6 @@
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.btnTrimCard = new Sci.Win.UI.Button();
             this.btnCloseMTL = new Sci.Win.UI.Button();
-            this.btnMeterialStatus = new Sci.Win.UI.Button();
-            this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -187,12 +185,10 @@
             // detail
             // 
             this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 697);
+            this.detail.Size = new System.Drawing.Size(1000, 665);
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.btnMeterialStatus_Local);
-            this.detailcont.Controls.Add(this.btnMeterialStatus);
             this.detailcont.Controls.Add(this.btnCloseMTL);
             this.detailcont.Controls.Add(this.btnTrimCard);
             this.detailcont.Controls.Add(this.comboCategory);
@@ -336,11 +332,11 @@
             this.detailcont.Controls.Add(this.labelBuyer);
             this.detailcont.Controls.Add(this.labelSPNo);
             this.detailcont.Controls.Add(this.shapeContainer1);
-            this.detailcont.Size = new System.Drawing.Size(1000, 697);
+            this.detailcont.Size = new System.Drawing.Size(1000, 665);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 697);
+            this.detailbtm.Location = new System.Drawing.Point(0, 665);
             this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
@@ -350,7 +346,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 725);
+            this.tabs.Size = new System.Drawing.Size(1008, 693);
             // 
             // createby
             // 
@@ -719,7 +715,7 @@
             this.lineShape4,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 697);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 665);
             this.shapeContainer1.TabIndex = 45;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1793,31 +1789,9 @@
             this.btnCloseMTL.UseVisualStyleBackColor = true;
             this.btnCloseMTL.Click += new System.EventHandler(this.btnCloseMTL_Click);
             // 
-            // btnMeterialStatus
-            // 
-            this.btnMeterialStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMeterialStatus.Location = new System.Drawing.Point(7, 661);
-            this.btnMeterialStatus.Name = "btnMeterialStatus";
-            this.btnMeterialStatus.Size = new System.Drawing.Size(183, 27);
-            this.btnMeterialStatus.TabIndex = 186;
-            this.btnMeterialStatus.Text = "Material Status";
-            this.btnMeterialStatus.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus.Click += new System.EventHandler(this.btnMeterialStatus_Click);
-            // 
-            // btnMeterialStatus_Local
-            // 
-            this.btnMeterialStatus_Local.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMeterialStatus_Local.Location = new System.Drawing.Point(206, 661);
-            this.btnMeterialStatus_Local.Name = "btnMeterialStatus_Local";
-            this.btnMeterialStatus_Local.Size = new System.Drawing.Size(183, 27);
-            this.btnMeterialStatus_Local.TabIndex = 187;
-            this.btnMeterialStatus_Local.Text = "Material Status (Local)";
-            this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
-            // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 758);
+            this.ClientSize = new System.Drawing.Size(1008, 726);
             this.DefaultOrder = "ID";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.IsSupportCopy = false;
@@ -1990,7 +1964,5 @@
         private Win.UI.Label labelCountryCode;
         private Win.UI.Button btnCloseMTL;
         private Win.UI.Button btnTrimCard;
-        private Win.UI.Button btnMeterialStatus_Local;
-        private Win.UI.Button btnMeterialStatus;
     }
 }

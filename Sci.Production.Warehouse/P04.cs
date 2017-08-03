@@ -19,23 +19,14 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
-        DataTable dataTable;
-        DataRow P01Data;
+        DataTable dataTable;        
         public P04(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             this.EditMode = true;
             InitializeComponent();
         }
-
-        public P04(DataRow maindata)
-        {
-            InitializeComponent();
-            this.EditMode = true;
-            P01Data=maindata;
-            this.txtSPNo.Text = P01Data["ID"].ToString().Trim();
-            event_Query();
-        }
+   
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
