@@ -99,7 +99,7 @@ namespace Sci.Production.Centralized
                                         From Orders O WITH (NOLOCK)
                                         Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
                                         inner join Production.dbo.System ts on 1 = 1
-                                        Where 1=1 and o.LocalOrder=0  {0}", where);
+                                        Where 1=1 and o.LocalOrder=0 and f.IsProduceFty=1 {0}", where);
 
                     BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
                     result = DBProxy.Current.SelectByConn(con, SqlData1, out tmpData1);
