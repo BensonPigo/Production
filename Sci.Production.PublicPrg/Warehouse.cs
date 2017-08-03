@@ -512,12 +512,13 @@ where p.id ='{0}'";
         public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
         {
             DataTable dt;
-            if (!(MyUtility.Check.Empty(selePoItemSqlCmd)))
+            string PoItemSql = selePoItemSqlCmd;
+            if (!(MyUtility.Check.Empty(PoItemSql)))
             {
-                selePoItemSqlCmd += string.Format(" And {0}", filters);
+                PoItemSql += string.Format(" And {0}", filters);
             }
-            string sqlcmd = string.Format(selePoItemSqlCmd, poid, Sci.Env.User.Keyword);
-
+            string sqlcmd = string.Format(PoItemSql, poid, Sci.Env.User.Keyword);
+            PoItemSql = "";
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
