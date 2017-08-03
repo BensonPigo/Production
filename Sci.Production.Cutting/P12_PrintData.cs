@@ -25,6 +25,42 @@ namespace Sci.Production.Cutting
         public string Qty { get; set; }
         public string Barcode { get; set; }
         public string Patterncode { get; set; }
+
+        public string Group_right2 { get; set; }
+        public string Group_left2 { get; set; }
+        public string Line2 { get; set; }
+        public string Cell2 { get; set; }
+        public string SP2 { get; set; }
+        public string Style2 { get; set; }
+        public string Item2 { get; set; }
+        public string Body_Cut2 { get; set; }
+        public string Parts2 { get; set; }
+        public string Color2 { get; set; }
+        public string Size2 { get; set; }
+        public string SizeSpec2 { get; set; }
+        public string Desc2 { get; set; }
+        public string SubProcess2 { get; set; }
+        public string Qty2 { get; set; }
+        public string Barcode2 { get; set; }
+        public string Patterncode2 { get; set; }
+
+        public string Group_right3 { get; set; }
+        public string Group_left3 { get; set; }
+        public string Line3 { get; set; }
+        public string Cell3 { get; set; }
+        public string SP3 { get; set; }
+        public string Style3 { get; set; }
+        public string Item3 { get; set; }
+        public string Body_Cut3 { get; set; }
+        public string Parts3 { get; set; }
+        public string Color3 { get; set; }
+        public string Size3 { get; set; }
+        public string SizeSpec3 { get; set; }
+        public string Desc3 { get; set; }
+        public string SubProcess3 { get; set; }
+        public string Qty3 { get; set; }
+        public string Barcode3 { get; set; }
+        public string Patterncode3 { get; set; }
     }
 }
 

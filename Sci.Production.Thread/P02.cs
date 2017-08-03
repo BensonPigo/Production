@@ -486,7 +486,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["factoryid"] = drOrder["FtyGroup"].ToString();
             CurrentMaintain["OrderID"] = id;
             //事先整理資料
-            sqlpre = string.Format(@"Select distinct   	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
+            sqlpre = string.Format(@"Select a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
 	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,isnull(g.MeterToCone,0.00) as MeterToCone,
 	                                g.Description as Threadcombdesc,h.Description as colordesc

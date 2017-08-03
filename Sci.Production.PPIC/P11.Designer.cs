@@ -57,6 +57,7 @@
             this.lbStatus = new Sci.Win.UI.Label();
             this.displayIssueLackDate = new Sci.Win.UI.DisplayBox();
             this.labelIssueLackDate = new Sci.Win.UI.Label();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.displayIssueLackDate);
             this.masterpanel.Controls.Add(this.labelIssueLackDate);
             this.masterpanel.Controls.Add(this.lbStatus);
@@ -102,7 +104,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 142);
+            this.masterpanel.Size = new System.Drawing.Size(919, 142);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -133,15 +135,16 @@
             this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueLackDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayIssueLackDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(892, 207);
+            this.detailpanel.Size = new System.Drawing.Size(919, 307);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(759, 107);
+            this.gridicon.Location = new System.Drawing.Point(811, 107);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -150,7 +153,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 207);
+            this.detailgridcont.Size = new System.Drawing.Size(919, 307);
             // 
             // detail2
             // 
@@ -166,16 +169,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(919, 487);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(919, 449);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 449);
+            this.detailbtm.Size = new System.Drawing.Size(919, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -184,7 +187,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(916, 516);
+            this.tabs.Size = new System.Drawing.Size(927, 516);
             // 
             // createby
             // 
@@ -475,10 +478,22 @@
             this.labelIssueLackDate.TabIndex = 39;
             this.labelIssueLackDate.Text = "Issue Lack Date";
             // 
+            // btnImport
+            // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(686, 107);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(118, 31);
+            this.btnImport.TabIndex = 41;
+            this.btnImport.Text = "Batch Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(916, 549);
+            this.ClientSize = new System.Drawing.Size(927, 549);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq";
@@ -549,5 +564,6 @@
         private Win.UI.Label lbStatus;
         private Win.UI.DisplayBox displayIssueLackDate;
         private Win.UI.Label labelIssueLackDate;
+        private Win.UI.Button btnImport;
     }
 }

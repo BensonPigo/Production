@@ -656,6 +656,7 @@ Cutplanid, str_PIVOT);
                 nSizeColumn = 4;
                 foreach (DataRow dr in SizeArry)
                 {
+                    if (str_PIVOT.Contains(string.Format("[{0}],", dr["SizeCode"].ToString()))) continue;
                     str_PIVOT = str_PIVOT + string.Format("[{0}],", dr["SizeCode"].ToString());
                     //寫入Size
                     worksheet.Cells[nrow + 1, nSizeColumn] = dr["SizeCode"].ToString();
@@ -695,7 +696,7 @@ cutref, str_PIVOT);
                     worksheet.Cells[nrow, 2] = cutqtydr["Colorid"].ToString();
                     worksheet.Cells[nrow, 3] = cutqtydr["Layer"].ToString();
                     worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
-                    for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
+                    for (int nSizeDetail = 0; nSizeDetail < CutQtyTb.Columns.Count-4; nSizeDetail++)
                     {
                         worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[4 + nSizeDetail].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
                     }

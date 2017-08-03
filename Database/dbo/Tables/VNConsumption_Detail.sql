@@ -5,6 +5,9 @@
     [UnitID]     VARCHAR (8)     CONSTRAINT [DF_VNConsumption_Detail_UnitID] DEFAULT ('') NULL,
     [Qty]        NUMERIC (14, 3) CONSTRAINT [DF_VNConsumption_Detail_Qty] DEFAULT ((0)) NULL,
     [UserCreate] BIT             CONSTRAINT [DF_VNConsumption_Detail_UserCreate] DEFAULT ((0)) NULL,
+    [SystemQty]  NUMERIC (14, 3) DEFAULT ((0)) NULL,
     CONSTRAINT [PK_VNConsumption_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [NLCode] ASC)
 );
+
+
 

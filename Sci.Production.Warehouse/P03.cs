@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
-        string userCountry = "";
+        string userCountry = "";        
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -43,11 +43,8 @@ namespace Sci.Production.Warehouse
             else
             {
                 userCountry = dt.Rows[0]["CountryID"].ToString();
-            }
-            
-            
+            }  
         }
-
         protected override void OnFormLoaded()
         {
 
@@ -299,6 +296,7 @@ namespace Sci.Production.Warehouse
             //    txtSPNo.Focus();
             //    return;
             //}
+
             string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --
             string sqlcmd
@@ -328,7 +326,50 @@ namespace Sci.Production.Warehouse
 select *
 from(
     select  ROW_NUMBER() over (partition by mdivisionid,id,seq1,seq2 order by mdivisionid,id,seq1,seq2,len_D) as ROW_NUMBER_D
-            ,*
+            , ukey
+            , mdivisionid
+            , id
+            , seq1
+            , seq2
+			, StyleID
+            , SuppID
+            , SuppCountry
+            , eta
+            , RevisedETA
+            , Refno
+            , SCIRefno
+            , FabricType 
+            , fabrictype2
+            , fabrictypeOrderby
+            , ColorID
+            , SizeSpec
+            , unitqty = iif (unitqty = 0, '', Convert (varchar, unitqty))
+            , Qty = iif (Qty = 0, '', Convert (varchar, Qty))
+            , NetQty = iif (NetQty = 0, '', Convert (varchar, NetQty))
+            , useqty = iif (useqty = 0, '', Convert (varchar, useqty))
+            , shipQty = iif (shipQty = 0, '', Convert (varchar, shipQty))
+            , ShipFOC = iif (ShipFOC = 0, '', Convert (varchar, ShipFOC))
+            , InputQty = iif (InputQty = 0, '', Convert (varchar, InputQty))
+            , POUnit
+            , Complete
+            , FinalETA
+            , InQty = iif (InQty = 0, '', Convert (varchar, InQty))
+            , StockUnit
+            , OutQty = iif (OutQty = 0, '', Convert (varchar, OutQty))
+            , AdjustQty = iif (AdjustQty = 0, '', Convert (varchar, AdjustQty))
+            , balanceqty = iif (balanceqty = 0, '', Convert (varchar, balanceqty))
+            , LInvQty = iif (LInvQty = 0, '', Convert (varchar, LInvQty))
+            , LObQty = iif (LObQty = 0, '', Convert (varchar, LObQty))
+            , ALocation
+            , BLocation 
+            , ThirdCountry
+            , junk
+            , BomTypeCalculate
+            , description
+            , currencyid
+            , FIR
+            , Remark
+            , OrderIdList
     from (
         select  *
                 , -len(description) as len_D 

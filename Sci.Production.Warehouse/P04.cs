@@ -19,15 +19,14 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
-        DataTable dataTable;
-
+        DataTable dataTable;        
         public P04(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             this.EditMode = true;
             InitializeComponent();
         }
-
+   
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -95,9 +94,9 @@ select  [sp] = l.OrderID
         , [desc] = b.Description
         , [supp] = c.ID + '-' + c.Abb
         , [threadColor] = l.ThreadColorID
-        , [inQty] = l.InQty
-        , [outQty] = l.OutQty
-        , [Balance] = InQty - OutQty + AdjustQty
+        , [inQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
+        , [outQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
+        , [Balance] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
 from LocalInventory l
 left join LocalItem b on l.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
