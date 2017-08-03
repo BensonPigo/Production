@@ -376,7 +376,7 @@ where f.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(SP)) sqlcmd.Append(string.Format(@" and pd.id = '{0}'", SP));
 
-            if (!MyUtility.Check.Empty(factory)) sqlcmd.Append(string.Format(@" and o.FactoryID = '{0}'", factory));
+            if (!MyUtility.Check.Empty(factory)) sqlcmd.Append(string.Format(@" and o.FtyGroup = '{0}'", factory));
 
             if (!(string.IsNullOrWhiteSpace(ATA_b)))
             {
