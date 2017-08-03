@@ -40,11 +40,9 @@ namespace Sci.Production.Warehouse
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2,
-iseditingreadonly: true)
+                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("TransID", header: "Trans. ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
@@ -208,12 +206,12 @@ WHERE   StockType='{0}'
 
             Helper.Controls.Grid.Generator(this.gridRel)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
-                 .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                 .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                 .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
-                  .Text("fromlocation", header: "From Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
+                .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
+                .Text("fromlocation", header: "From Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
@@ -299,7 +297,7 @@ WHERE   StockType='{0}'
             sqlcmd.Append(string.Format(@"
 ;with cte as(
     select  convert(bit,0) as selected
-            , iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete
+            , iif (y.cnt > 0, 'Y', '') complete
             , rtrim(o.id) poid
             , o.Category
             , o.FtyGroup
@@ -315,101 +313,158 @@ WHERE   StockType='{0}'
             , isnull(x.accu_qty,0.00) accu_qty
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-    inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup"));
+    inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
+    inner join dbo.Factory checkProduceFty With (NoLock) on o.FactoryID = checkProduceFty.ID "));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
-                sqlcmd.Append(string.Format(@" cross apply
-(
-	select distinct 1 abc from dbo.Invtrans WITH (NOLOCK) where type=1 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
-) z ", InputDate_b, InputDate_e));
+                sqlcmd.Append(string.Format(@" 
+    cross apply (
+	    select distinct 1 abc 
+        from dbo.Invtrans WITH (NOLOCK) 
+        where   type = 1 
+                and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) 
+                and poid = pd.id 
+                and seq1 = pd.seq1 
+                and seq2 = pd.seq2
+    ) z ", InputDate_b, InputDate_e));
             }
- sqlcmd.Append(string.Format(@" outer apply
-(select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
-) y--Detail有MD為null數量,沒有則為0,沒資料也為0
-outer apply
-(
-	select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fid.MtlLocationID is not null 
-) yz--Detail資料數量
-outer apply
-(
-    select sum(sd.Qty) accu_qty 
-    from dbo.SubTransfer s WITH (NOLOCK) 
-    inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id 
-    where s.type='A' and s.Status= 'Confirmed' and sd.FromPOID = pd.ID and sd.FromSeq1 = pd.SEQ1 and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
-) x
-cross apply
-(   select sum(i.Qty) taipei_qty
-    from dbo.Invtrans i WITH (NOLOCK) 
-    where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
-) xz
-where f.MDivisionID = '{0}'", Env.User.Keyword));
+            sqlcmd.Append(string.Format(@" 
+    outer apply (
+        select count(1) cnt 
+        from FtyInventory fi WITH (NOLOCK) 
+        left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
+	    where   fi.POID = pd.ID 
+                and fi.Seq1 = pd.Seq1 
+                and fi.Seq2 = pd.Seq2 
+                and fi.StockType = 'B' 
+                and fid.MtlLocationID is not null
+                and fi.Lock = 0 
+                and fi.InQty - fi.OutQty + fi.AdjustQty > 0
+    ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
+    outer apply (
+        select sum(sd.Qty) accu_qty 
+        from dbo.SubTransfer s WITH (NOLOCK) 
+        inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id 
+        where   s.type = 'A' 
+                and s.Status = 'Confirmed' 
+                and sd.FromPOID = pd.ID 
+                and sd.FromSeq1 = pd.SEQ1 
+                and sd.FromSeq2 = pd.SEQ2 
+                and FromStockType = 'B' 
+                and toStockType='I'
+    ) x
+    cross apply (   
+        select sum(i.Qty) taipei_qty
+        from dbo.Invtrans i WITH (NOLOCK) 
+        where   (i.type = 1 OR I.TYPE = 4) 
+                and i.InventoryPOID = pd.ID 
+                and i.InventorySeq1 = pd.seq1 
+                and i.InventorySeq2 = pd.SEQ2
+    ) xz
+    where   f.MDivisionID = '{0}'
+            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword));
 
             #region -- 條件 --
             switch (selectindex)
             {
                 case 0:
-                    sqlcmd.Append(@" and (o.Category = 'B')");
+                    sqlcmd.Append(@" 
+            and (o.Category = 'B')");
                     break;
                 case 1:
-                    sqlcmd.Append(@" and o.Category = 'S' ");
+                    sqlcmd.Append(@" 
+            and o.Category = 'S' ");
                     break;
                 case 2:
-                    sqlcmd.Append(@" and (o.Category = 'M')");
+                    sqlcmd.Append(@" 
+            and (o.Category = 'M')");
                     break;
                 case 3:
-                    sqlcmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')");
+                    sqlcmd.Append(@" 
+            and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')");
                     break;
             }
             switch (selectindex2)
             {
                 case 0:
-                    sqlcmd.Append(@" AND pd.FabricType ='F'");
+                    sqlcmd.Append(@" 
+            AND pd.FabricType ='F'");
                     break;
                 case 1:
-                    sqlcmd.Append(@" AND pd.FabricType ='A'");
+                    sqlcmd.Append(@" 
+            AND pd.FabricType ='A'");
                     break;
                 case 2:
                     break;
             }
 
-            if (!MyUtility.Check.Empty(SP)) sqlcmd.Append(string.Format(@" and pd.id = '{0}'", SP));
+            if (!MyUtility.Check.Empty(SP)) 
+                sqlcmd.Append(string.Format(@" 
+            and pd.id = '{0}'", SP));
 
-            if (!MyUtility.Check.Empty(factory)) sqlcmd.Append(string.Format(@" and o.FtyGroup = '{0}'", factory));
+            if (!MyUtility.Check.Empty(factory)) 
+                sqlcmd.Append(string.Format(@" 
+            and o.FtyGroup = '{0}'", factory));
 
             if (!(string.IsNullOrWhiteSpace(ATA_b)))
             {
-                sqlcmd.Append(string.Format(@" and pd.FinalETA between '{0}' and '{1}'", ATA_b, ATA_e));
+                sqlcmd.Append(string.Format(@" 
+            and pd.FinalETA between '{0}' and '{1}'", ATA_b, ATA_e));
             }
 
             #endregion
-            sqlcmd.Append(@")
-select *,0.00 qty into #tmp from cte where inputqty > accu_qty
+            sqlcmd.Append(@"
+)
+select  *
+        , 0.00 qty 
+into #tmp 
+from cte 
+where inputqty > accu_qty
 
-select * from #tmp order by poid,seq1,seq2 ;
+select * 
+from #tmp 
+order by poid, seq1, seq2 ;
 
-select 
-convert(bit,0) as selected,
-fi.Ukey FromFtyInventoryUkey,
-o.FactoryID fromFactoryID,
-fi.POID FromPoid,
-fi.Seq1 FromSeq1,
-fi.Seq2 Fromseq2,
-fi.Roll FromRoll,
-fi.Dyelot FromDyelot,
-fi.StockType FromStockType,
-fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
-0.00 as Qty,
-rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype ,t.FactoryID ToFactoryID
-,dbo.Getlocation(fi.ukey) fromlocation
-,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t for xml path('')), 1, 1, '') tolocation
-,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
+select  convert(bit,0) as selected
+        , fi.Ukey FromFtyInventoryUkey
+        , o.FactoryID fromFactoryID
+        , fi.POID FromPoid
+        , fi.Seq1 FromSeq1
+        , fi.Seq2 Fromseq2
+        , fi.Roll FromRoll
+        , fi.Dyelot FromDyelot
+        , fi.StockType FromStockType
+        , fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty
+        , 0.00 as Qty
+        , rtrim(t.poID) topoid
+        , rtrim(t.seq1) toseq1
+        , t.seq2 toseq2
+        , fi.Roll toRoll
+        , fi.Dyelot toDyelot
+        , 'I' tostocktype 
+        , t.FactoryID ToFactoryID
+        , dbo.Getlocation(fi.ukey) fromlocation
+        , tolocation = stuff ((select ',' + mtllocationid 
+                               from (
+                                    select MtlLocationid 
+                                    from dbo.FtyInventory_Detail f WITH (NOLOCK)  
+                                    inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID 
+                                    where   f.Ukey = fi.Ukey 
+                                            and m.StockType = 'I' 
+                                            and m.Junk != '1'
+                               )t 
+                               for xml path('')
+                             ), 1, 1, '') 
+        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
 from #tmp t 
-inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
+inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.POID 
+                                             and fi.seq1 = t.Seq1 
+                                             and fi.Seq2 = t.Seq2
 left join orders o on fi.poid=o.id
-where fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
-order by topoid,toseq1,toseq2,GroupQty DESC,fi.Dyelot,BalanceQty DESC
+where   fi.StockType = 'B' 
+        and fi.Lock = 0 
+        and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
 drop table #tmp");
 
             this.ShowWaitMessage("Data Loading....");
