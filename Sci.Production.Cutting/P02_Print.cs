@@ -381,7 +381,10 @@ Cutplanid, str_PIVOT);
                     {
                         Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
                         rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
-                        worksheet.get_Range("I" + tmpn, "U" + tmpn).Merge();
+                        Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I" + tmpn, "U" + tmpn);
+                        rng2.Merge();
+                        rng2.Cells.Font.Color = Color.Red;
+                        rng2.Cells.Font.Bold = true;
                         worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
                         tmpn++;
                         nRow++;
@@ -449,23 +452,7 @@ Cutplanid, str_PIVOT);
                     }
                 }
                 #endregion
-
-
-                //if (FabricComboArry.Length > 0)
-                //{
-                //    foreach (DataRow FabricComboDr in FabricComboArry)
-                //    {
-                //        if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
-                //        {
-                //            Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
-                //            rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
-                //            worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
-                //            tmpn++;
-                //        }
-                //        tmpn += 6;
-                //    }
-                //}
-
+                
                 nSheet++;
             }
             //重製Mode以取消Copy區塊
@@ -763,7 +750,10 @@ cutref, str_PIVOT);
                 {
                     Excel.Range r = worksheet.get_Range("A14", "A14").EntireRow;
                     r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
-                    worksheet.get_Range("I14:U14").Merge();
+                    Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I14:U14");
+                    rng2.Merge();
+                    rng2.Cells.Font.Color = Color.Red;
+                    rng2.Cells.Font.Bold = true;
                     worksheet.Cells[14, 9] = Cutrefdr["shc"];
                 }
                 nSheet++;
