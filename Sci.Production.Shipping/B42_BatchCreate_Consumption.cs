@@ -139,19 +139,61 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        DataTable detail2s;
+                        DualResult result1;
+                        DataTable detail2s = null, selectDataDt;
                         DataRow[] selectData = detaildata.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}' and RefNo <> '' ", styleUKey, sizeCode, article, MyUtility.Convert.GetString(dr["NLCode"])));
-                        DualResult result1 = DBProxy.Current.Select(null, "select RefNo,'' as Description, '' as SuppID, '' as Type, '' as UnitID, Qty from VNConsumption_Detail_Detail WITH (NOLOCK) where 1 = 0", out detail2s);
-                        for (int i = 0; i < selectData.Length; i++)
+                        if (selectData != null && selectData.Length > 0)
                         {
-                            DataRow newrow = detail2s.NewRow();
-                            newrow["RefNo"] = selectData[i]["RefNo"];
-                            newrow["Description"] = selectData[i]["Description"];
-                            newrow["SuppID"] = selectData[i]["RefNo"];
-                            newrow["Type"] = selectData[i]["Type"];
-                            newrow["UnitID"] = selectData[i]["CustomsUnit"];
-                            newrow["Qty"] = selectData[i]["Qty"];
-                            detail2s.Rows.Add(newrow);
+                            string getInfoSQL = string.Format(@"
+select 	a.RefNo
+		, Description = IIF(a.LocalItem = 1,a.Description,a.DescDetail)
+		, SuppID = IIF(a.LocalItem = 1,a.LocalSuppid,'') 
+		, Type = IIF(a.LocalItem = 1,a.Category,IIF(a.Type = 'F','Fabric','Accessory'))
+		, UnitID = IIF(a.LocalItem = 1,a.LUnit,a.FUnit) 
+		, a.Qty
+from (
+	select 	t.RefNo
+			, t.Qty
+			, t.LocalItem
+			, f.DescDetail
+			, f.Type
+			, f.CustomsUnit as FUnit
+			, l.Description
+			, l.Category
+		 	, l.LocalSuppid
+		 	, l.CustomsUnit as LUnit
+	from #tmp t
+	left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno
+	left join LocalItem l WITH (NOLOCK) on t.RefNo = l.RefNo
+	where t.NLCode = '{0}'
+) a
+order by RefNo", MyUtility.Convert.GetString(dr["NLCode"]));
+                            result1 = MyUtility.Tool.ProcessWithDatatable(selectData.CopyToDataTable(), "", getInfoSQL, out selectDataDt, "#tmp");
+                            if (!result1)
+                            {
+                                MyUtility.Msg.WarningBox(result1.Description);
+                                return;
+                            }
+                            result1 = DBProxy.Current.Select(null, "select RefNo,'' as Description, '' as SuppID, '' as Type, '' as UnitID, Qty from VNConsumption_Detail_Detail WITH (NOLOCK) where 1 = 0", out detail2s);
+                            if (!result1)
+                            {
+                                MyUtility.Msg.WarningBox(result1.Description);
+                                return;
+                            }
+                            if (selectData != null)
+                            {
+                                foreach (DataRow selectDr in selectDataDt.Rows)
+                                {
+                                    DataRow newrow = detail2s.NewRow();
+                                    newrow["RefNo"] = selectDr["RefNo"];
+                                    newrow["Description"] = selectDr["Description"];
+                                    newrow["SuppID"] = selectDr["SuppID"];
+                                    newrow["Type"] = selectDr["Type"];
+                                    newrow["UnitID"] = selectDr["UnitID"];
+                                    newrow["Qty"] = selectDr["Qty"];
+                                    detail2s.Rows.Add(newrow);
+                                }
+                            }
                         }
                         Sci.Production.Shipping.B42_Detail callNextForm = new Sci.Production.Shipping.B42_Detail(detail2s);
                         DialogResult result2 = callNextForm.ShowDialog(this);
