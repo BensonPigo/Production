@@ -142,12 +142,12 @@ namespace Sci.Production.Packing
                                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
-                                        {
-                                            CurrentMaintain["OrderShipmodeSeq"] = "";
+                                        {                                            
+                                            dr["OrderShipmodeSeq"] = "";
                                         }
                                         else
-                                        {
-                                            CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
+                                        {                                           
+                                            dr["OrderShipmodeSeq"] = item.GetSelectedString();
                                         }
                                     }
                                 }
