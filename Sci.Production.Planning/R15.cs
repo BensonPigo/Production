@@ -702,10 +702,11 @@ where Orderid=t.OrderID and BIO.SubProcessId='PRT'
 outer apply 
 (
 	select [AccuLoad] = AccuLoad from 
-	(select distinct FactoryID,SP,StyleID,Line,AccuLoad from #print ) a
+	(select distinct FactoryID,SP,StyleID,Line,AccuLoad,SewingDate from #print ) a
 	where SP=t.OrderID and  StyleID=t.StyleID
 	and FactoryID=t.FactoryID
 	and line=t.SewLine
+    and SewingDate=t.SewInLine
 )loading
 ");
 
