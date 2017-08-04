@@ -190,7 +190,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5601, 561);
+            this.refresh.Location = new System.Drawing.Point(5657, 561);
             // 
             // detailgridcont
             // 
@@ -199,7 +199,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(629, 585);
             // 
             // detail2
             // 
@@ -1100,9 +1100,8 @@
             this.lbshc.ForeColor = System.Drawing.Color.Red;
             this.lbshc.Location = new System.Drawing.Point(3, 189);
             this.lbshc.Name = "lbshc";
-            this.lbshc.Size = new System.Drawing.Size(369, 13);
+            this.lbshc.Size = new System.Drawing.Size(0, 13);
             this.lbshc.TabIndex = 60;
-            this.lbshc.Text = "Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension";
             // 
             // P02
             // 
