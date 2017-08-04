@@ -404,7 +404,7 @@ group by sizeCode"
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem2 sele;
-                    sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString(), null, null, null);
+                    sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsSelection=1", "Subprocess", "23", dr["PatternCode"].ToString(), null, null, null);
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     string subpro = sele.GetSelectedString().Replace(",", "+");
