@@ -110,7 +110,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings DefectsCell3 = new DataGridViewGeneratorTextColumnSettings();
             DefectsCell1.CellMouseDoubleClick += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (e.RowIndex == -1 || !this.EditMode) return;
                 
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds1"])) return;
@@ -119,7 +119,7 @@ namespace Sci.Production.Quality
             };
             DefectsCell2.CellMouseDoubleClick += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (e.RowIndex == -1 || !this.EditMode) return;
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds2"])) return;
                 var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"2");
@@ -127,7 +127,7 @@ namespace Sci.Production.Quality
             };
             DefectsCell3.CellMouseDoubleClick += (s, e) =>
             {
-                if (!this.EditMode) return;
+                if (e.RowIndex == -1 || !this.EditMode) return;
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds3"])) return;
                 var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"3");
@@ -182,16 +182,15 @@ namespace Sci.Production.Quality
             Double SumPoint = MyUtility.Convert.GetDouble(DefectTb.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
             CurrentData["TotalPoint"] = SumPoint;
-            CurrentData["PointRate"] = Math.Round((SumPoint / MyUtility.Convert.GetDouble(CurrentData["ActualYds"])) * 100, 2);
+            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
+            CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
             #region Grade,Result
-           // string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
-            //string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WITH (NOLOCK) WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
-            string grade_cmd = string.Format(@"
-select grade = Min(ID) 
-from SuppLevel SLv
-where   SLv.Range1 <= {0} and {0} <= SLv.Range2
-        and Junk != 1", CurrentData["PointRate"]);
+            string grade_cmd = String.Format(@"
+SELECT MIN(GRADE) grade 
+FROM FIR_Grade WITH (NOLOCK) 
+WHERE   WEAVETYPEID = '{0}' 
+        AND PERCENTAGE >= IIF({1} > 100, 100, {1})", WeaveTypeid, CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
             {
