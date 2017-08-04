@@ -112,7 +112,8 @@
             this.comboCategory.Items.AddRange(new object[] {
             "Bulk",
             "Sample",
-            "Material"});
+            "Material",
+            "All"});
             this.comboCategory.Location = new System.Drawing.Point(729, 42);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
