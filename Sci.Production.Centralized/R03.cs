@@ -254,7 +254,7 @@ from #tmp Group BY A,B order by A", out gdtData5);
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData6o, "", @"select A,B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E,
+                MyUtility.Tool.ProcessWithDatatable(gdtData6o, "", @"select A,B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E
 ,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
 ,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
 from #tmp Group BY A,B order by A,B", out gdtData6);
