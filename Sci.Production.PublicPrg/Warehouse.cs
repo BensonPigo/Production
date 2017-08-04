@@ -481,6 +481,7 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , p.Refno   
         , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
         , p.ColorID
+        , p.SizeSpec 
         , p.FinalETA
         , isnull(m.InQty, 0) as InQty
         , p.pounit
@@ -511,18 +512,19 @@ where p.id ='{0}'";
         public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
         {
             DataTable dt;
-            if (!(MyUtility.Check.Empty(selePoItemSqlCmd)))
+            string PoItemSql = selePoItemSqlCmd;
+            if (!(MyUtility.Check.Empty(PoItemSql)))
             {
-                selePoItemSqlCmd += string.Format(" And {0}", filters);
+                PoItemSql += string.Format(" And {0}", filters);
             }
-            string sqlcmd = string.Format(selePoItemSqlCmd, poid, Sci.Env.User.Keyword);
-
+            string sqlcmd = string.Format(PoItemSql, poid, Sci.Env.User.Keyword);
+            PoItemSql = "";
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
             Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
-                            , "Seq,refno,description,colorid,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty"
-                            , "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
+                            , "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty"
+                            , "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
             selepoitem.Width = 1024;
 
             return selepoitem;
@@ -613,80 +615,159 @@ for xml path('') ", ukey), out dt);
             {
                 request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
                 sqlcmd = string.Format(@"
-with cte as 
-(
-select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
-Group by Dyelot
+with cte as (
+    select  Dyelot
+            , sum(inqty-OutQty+AdjustQty) as GroupQty
+    from dbo.FtyInventory a WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                      and p.seq1 = a.Seq1 
+                                                      and p.seq2 = a.Seq2
+    where   poid = '{1}' 
+            and Stocktype = '{4}' 
+            and inqty - OutQty + AdjustQty > 0
+            and p.SCIRefno = '{2}' 
+            and p.ColorID = '{3}' 
+            and a.Seq1 BETWEEN '00' AND '99'
+    Group by Dyelot
 ) 
-
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
-rows between unbounded preceding and current row) as running_total
---,c.GroupQty
+select  location = Stuff ((select ',' + t.mtllocationid 
+                           from (
+                                select MtlLocationID 
+                                from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                where ukey = a.Ukey
+                           )t 
+                           for xml path('')
+                          ), 1, 1, '')
+        , a.Ukey as FtyInventoryUkey
+        , POID
+        , a.seq1
+        , a.Seq2
+        , roll
+        , stocktype
+        , a.Dyelot
+        , inqty - OutQty + AdjustQty qty
+        , inqty
+        , outqty
+        , adjustqty
+        , inqty - OutQty + AdjustQty balanceqty
+        , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
+                                                            rows between unbounded preceding and current row)
+        --,c.GroupQty
 from cte c 
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
-order by c.GroupQty DESC,a.Dyelot,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                  and p.seq1 = a.Seq1 
+                                                  and p.seq2 = a.Seq2
+where   poid = '{1}' 
+        and Stocktype = '{4}' 
+        and inqty - OutQty + AdjustQty > 0
+        and p.SCIRefno = '{2}' 
+        and p.ColorID = '{3}' 
+        and a.Seq1 BETWEEN '00' AND '99'", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
             else if (isIssue == false && stocktype == "B")//P28 Auto Pick
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
-with cte as 
-(
-select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.seq1 = '{2}' and p.seq2 = '{3}'
-Group by Dyelot
+with cte as (
+    select  Dyelot
+            , sum (inqty - OutQty + AdjustQty) as GroupQty
+    from dbo.FtyInventory a WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                      and p.seq1 = a.Seq1 
+                                                      and p.seq2 = a.Seq2
+    where   poid = '{1}' 
+            and Stocktype = '{4}' 
+            and inqty - OutQty + AdjustQty > 0
+            and p.seq1 = '{2}' 
+            and p.seq2 = '{3}'
+    Group by Dyelot
 ) 
-
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
-rows between unbounded preceding and current row) as running_total
---,c.GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-inner join cte c on c.Dyelot=a.Dyelot
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
+select  location = Stuff ((select ',' + t.mtllocationid 
+                           from (
+                                select MtlLocationID 
+                                from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                where ukey = a.Ukey
+                           )t 
+                           for xml path('')
+                          ), 1, 1, '')
+        , a.Ukey as FtyInventoryUkey
+        , POID
+        , a.seq1
+        , a.Seq2
+        , roll
+        , stocktype
+        , a.Dyelot
+        , inqty - OutQty + AdjustQty qty
+        , inqty
+        , outqty
+        , adjustqty
+        , inqty - OutQty + AdjustQty balanceqty
+        , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
+                                                            rows between unbounded preceding and current row) 
+        --,c.GroupQty
+from dbo.FtyInventory a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                  and p.seq1 = a.Seq1 
+                                                  and p.seq2 = a.Seq2
+inner join cte c on c.Dyelot = a.Dyelot
+where   poid = '{1}' 
+        and Stocktype = '{4}' 
+        and inqty-OutQty+AdjustQty > 0
+        and p.seq1 = '{2}' 
+        and p.seq2 = '{3}'", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
             else//P29 Auto Pick
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
-with cte as 
-(
-select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.seq1 = '{2}' and p.seq2 = '{3}'
-Group by Dyelot
+with cte as (
+    select  Dyelot
+            , sum (inqty - OutQty + AdjustQty) as GroupQty
+    from dbo.FtyInventory a WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                      and p.seq1 = a.Seq1 
+                                                      and p.seq2 = a.Seq2
+    where   poid = '{1}' 
+            and Stocktype = '{4}' 
+            and inqty - OutQty + AdjustQty > 0
+            and p.seq1 = '{2}' 
+            and p.seq2 = '{3}'
+    Group by Dyelot
 ) 
-
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
-rows between unbounded preceding and current row) as running_total
---,c.GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-inner join cte c on c.Dyelot=a.Dyelot
-where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
+select  location = Stuff ((select ',' + t.mtllocationid 
+                           from (
+                                select MtlLocationID 
+                                from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                where ukey = a.Ukey
+                           )t 
+                           for xml path('')
+                          ), 1, 1, '')
+        , a.Ukey as FtyInventoryUkey
+        , POID
+        , a.seq1
+        , a.Seq2
+        , roll
+        , stocktype
+        , a.Dyelot
+        , inqty - OutQty + AdjustQty qty
+        , inqty
+        , outqty
+        , adjustqty
+        , inqty - OutQty + AdjustQty balanceqty
+        , running_total = sum (inqty - OutQty + AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
+                                                                 rows between unbounded preceding and current row) 
+        --,c.GroupQty
+from dbo.FtyInventory a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
+                                                  and p.seq1 = a.Seq1 
+                                                  and p.seq2 = a.Seq2
+inner join cte c on c.Dyelot = a.Dyelot
+where   poid = '{1}' 
+        and Stocktype = '{4}' 
+        and inqty - OutQty + AdjustQty > 0
+        and p.seq1 = '{2}' 
+        and p.seq2 = '{3}'", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
             }
             DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
             if (!result)
