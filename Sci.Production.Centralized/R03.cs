@@ -150,10 +150,11 @@ and orders.LocalOrder = 0
                 if (txtCountry1.TextBox1.Text != "")
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
                 #region 1.	By Factory
-                string strFactory = string.Format(@" Select FactoryID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D , 
-                                                                                         ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
-                                                                                         ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
-                                                                                         FROM ({0} ) AAA  Group BY FactoryID order by FactoryID ", strSQL);
+                string strFactory = string.Format(@" 
+Select FactoryID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D , 
+ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
+ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
+FROM ({0} ) AAA  Group BY FactoryID order by FactoryID ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -167,10 +168,8 @@ and orders.LocalOrder = 0
                 #endregion 1.	By Factory
 
                 #region 2.	By Brand
-                string strBrand = string.Format(@" Select BrandID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D, 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS E, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS F 
-FROM ({0} ) AAA  Group BY BrandID order by BrandID ", strSQL);
+                string strBrand = string.Format(@" Select BrandID AS A, QARate,TotalCPUOut,TotalManHour
+FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -180,15 +179,15 @@ FROM ({0} ) AAA  Group BY BrandID order by BrandID ", strSQL);
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData2o, "", @"select A,B=sum(B),C=sum(C),D=sum(D),E=Round(sum(E),2),F=Round(sum(F),2) from #tmp Group BY A order by A", out gdtData2);
+                MyUtility.Tool.ProcessWithDatatable(gdtData2o, "", @"select A,B=sum(QARate),C=sum(TotalCPUOut),D=sum(TotalManHour)
+,E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) from #tmp Group BY A order by A", out gdtData2);
                 #endregion 2.	By Brand
 
                 #region 3.	By Brand + Factory
                 string strFBrand = string.Format(@" 
-Select BrandID AS A, FactoryID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E , 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G  
-FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", strSQL);
+Select BrandID AS A, FactoryID AS B, QARate, TotalCPUOut,TotalManHour
+FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -198,15 +197,16 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData3o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2)  from #tmp Group BY A,B order by A,B", out gdtData3);
+                MyUtility.Tool.ProcessWithDatatable(gdtData3o, "", @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
+,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)  
+from #tmp Group BY A,B order by A,B", out gdtData3);
                 #endregion 3.	By Brand + Factory
 
                 #region 4.	By Style
-                string strStyle = string.Format(@" Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F, Sum(QARate) AS G, Sum(TotalCPUOut) AS H, SUM(TotalManHour) AS I, 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS J, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS K
- , ModularParent AS L, CPUAdjusted AS M
-                                                                                         FROM ({0} ) AAA  Group BY StyleID, BrandID, CDCodeID,SeasonID,  CDDesc, StyleDesc , ModularParent, CPUAdjusted  order by StyleID, BrandID, CDCodeID,SeasonID ", strSQL);
+                string strStyle = string.Format(@" Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F
+, QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M
+FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -216,14 +216,18 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData4o, "", @"select A,B,C,D,E,F,G=sum(G),H=sum(H),I=sum(I),J=Round(sum(J),2),K=Round(sum(K),2),L,M from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E", out gdtData4);
+                MyUtility.Tool.ProcessWithDatatable(gdtData4o, "", @"select A,B,C,D,E,F
+,G=sum(QARate)
+,H=sum(TotalCPUOut),I=sum(TotalManHour)
+,J=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
+,K=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
+,L,M 
+
+from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E", out gdtData4);
                 #endregion 4.	By Style
 
                 #region 5.	By CD
-                string strCdCodeID = string.Format(@" Select CdCodeID AS A, CDDesc AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G 
-                                                                                         FROM ({0} ) AAA  Group BY CdCodeID, CDDesc order by  CdCodeID", strSQL);
+                string strCdCodeID = string.Format(@" Select CdCodeID AS A, CDDesc AS B, QARate, TotalCPUOut,TotalManHour FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -233,14 +237,14 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData5o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2) from #tmp Group BY A,B order by A", out gdtData5);
+                MyUtility.Tool.ProcessWithDatatable(gdtData5o, "", @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
+,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
+from #tmp Group BY A,B order by A", out gdtData5);
                 #endregion 5.	By CD
 
                 #region 6.	By Factory Line
-                string strFactoryLine = string.Format(@" Select FactoryID AS A, SewingLineID AS B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E, 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS F, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS G 
-                                                                                         FROM ({0} ) AAA  Group BY FactoryID, SewingLineID order by FactoryID, SewingLineID ", strSQL);
+                string strFactoryLine = string.Format(@" Select FactoryID AS A, SewingLineID AS B, QARate, TotalCPUOut,TotalManHour FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -250,14 +254,15 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData6o, "", @"select A,B,C=sum(C),D=sum(D),E=sum(E),F=Round(sum(F),2),G=Round(sum(G),2) from #tmp Group BY A,B order by B", out gdtData6);
+                MyUtility.Tool.ProcessWithDatatable(gdtData6o, "", @"select A,B, Sum(QARate) AS C, Sum(TotalCPUOut) AS D, SUM(TotalManHour) AS E,
+,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B order by A,B", out gdtData6);
                 #endregion 6.	By Factory Line
 
                 #region 7.	By Factory, Brand , CDCode
-                string strFBCDCode = string.Format(@" Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, Sum(QARate) AS E, Sum(TotalCPUOut) AS F, SUM(TotalManHour) AS G, 
-(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS H, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS I 
-                                                                                         FROM ({0} ) AAA  Group BY BrandID, FactoryID, CdCodeID, CDDesc order by BrandID, FactoryID,  CdCodeID", strSQL);
+                string strFBCDCode = string.Format(@" Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, QARate, TotalCPUOut,TotalManHour
+FROM ({0} ) AAA  ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -267,14 +272,15 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData7o, "", @"select A,B,C,D,E=sum(E),F=sum(F),G=sum(G),H=Round(sum(H),2),I=Round(sum(I),2) from #tmp Group BY A,B,C,D order by A,B,C", out gdtData7);
+                MyUtility.Tool.ProcessWithDatatable(gdtData7o, "", @"select A,B,C,D,E=sum(QARate),F=sum(TotalCPUOut),G=sum(TotalManHour)
+,H=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,I=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D order by A,B,C", out gdtData7);
                 #endregion 7.	By Factory, Brand , CDCode
 
                 #region 8.	By PO Combo
-                string strPOCombo = string.Format(@" Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
-,(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS L, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS M 
-                                                                                         FROM ({0} ) AAA  Group BY POID, StyleID, BrandID,  CdCodeID, CDDesc, StyleDesc, SeasonID , ProgramID order by POID, StyleID, BrandID,  CdCodeID , SeasonID", strSQL);
+                string strPOCombo = string.Format(@" Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, QARate, TotalCPUOut, TotalManHour
+FROM ({0} ) AAA  ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -284,14 +290,15 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData8o, "", @"select A,B,C,D,E,F,G,H,I=sum(I),J=sum(J),K=sum(K),L=Round(sum(L),2),M=Round(sum(M),2) from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G", out gdtData8);
+                MyUtility.Tool.ProcessWithDatatable(gdtData8o, "", @"select A,B,C,D,E,F,G,H
+,I=sum(QARate),J=sum(TotalCPUOut),K=sum(TotalManHour)
+,L=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,M=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G", out gdtData8);
                 #endregion 8.	By PO Combo
                 
                 #region 9.	By Program
-                string strProgram = string.Format(@" Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, Sum(QARate) AS I, Sum(TotalCPUOut) AS J, SUM(TotalManHour) AS K 
-, (Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) AS L, 
-(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100) AS M 
-                                                                                         FROM ({0} ) AAA  Group BY ProgramID, StyleID, FactoryID, BrandID,  CdCodeID, SeasonID,  CDDesc, StyleDesc order by  ProgramID, StyleID, FactoryID, BrandID, CdCodeID, SeasonID  ", strSQL);
+                string strProgram = string.Format(@" Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, QARate,TotalCPUOut, TotalManHour FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -301,7 +308,11 @@ FROM ({0} ) AAA  Group BY  BrandID, FactoryID order by BrandID, FactoryID ", str
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData9o, "", @"select A,B,C,D,E,F,G,H,I=sum(I),J=sum(J),K=sum(K),L=Round(sum(L),2),M=Round(sum(M),2) from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
+                MyUtility.Tool.ProcessWithDatatable(gdtData9o, "", @"select A,B,C,D,E,F,G,H
+,I=sum(QARate),J=sum(TotalCPUOut),K=sum(TotalManHour)
+,L=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
+,M=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
                 #endregion 9.	By Program
 
                 if (((gdtData1 != null) && (gdtData1.Rows.Count > 0)) || ((gdtData2 != null) && (gdtData2.Rows.Count > 0)) || ((gdtData3 != null) && (gdtData3.Rows.Count > 0))
