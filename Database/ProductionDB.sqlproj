@@ -2221,6 +2221,7 @@
     <Build Include="dbo\Tables\AdjustLocal.sql" />
     <Build Include="dbo\Tables\AdjustLocal_Detail.sql" />
     <Build Include="dbo\Tables\ShrinkageConcern.sql" />
+    <Build Include="dbo\Functions\getstdq.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
