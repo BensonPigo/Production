@@ -1057,7 +1057,7 @@ group by sizeCode"
         private void btnGarment_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null, maindatarow["cutref"].ToString());
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString());
             callNextForm.ShowDialog(this);
         }
 
