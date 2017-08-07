@@ -115,8 +115,9 @@ QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)
 FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
 Where SewingOutput_Detail.OrderID = Orders.ID 
 And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
-And Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
+And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
 and orders.LocalOrder = 0
+and Factory.IsProduceFty = '1'
 ";
                 if (dateRange1.Value1.HasValue)
                     strSQL += string.Format(" and SewingOutput.OutputDate >= '{0}'", ((DateTime)dateRange1.Value1).ToString("yyyy-MM-dd"));
@@ -150,11 +151,7 @@ and orders.LocalOrder = 0
                 if (txtCountry1.TextBox1.Text != "")
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
                 #region 1.	By Factory
-                string strFactory = string.Format(@" 
-Select FactoryID AS A, Sum(QARate) AS B, Sum(TotalCPUOut) AS C, SUM(TotalManHour) AS D , 
-ROUND(Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end, 2) AS E, 
-ROUND(Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100, 2) AS F 
-FROM ({0} ) AAA  Group BY FactoryID order by FactoryID ", strSQL);
+                string strFactory = string.Format(@"Select FactoryID AS A, QARate, TotalCPUOut, TotalManHour FROM ({0} ) AAA ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -164,7 +161,10 @@ FROM ({0} ) AAA  Group BY FactoryID order by FactoryID ", strSQL);
                     if (!result)
                         return result;
                 }
-                MyUtility.Tool.ProcessWithDatatable(gdtData1o, "", @"select A,B=sum(B),C=sum(C),D=sum(D),E=sum(E),F=sum(F) from #tmp Group BY A order by A", out gdtData1);
+                MyUtility.Tool.ProcessWithDatatable(gdtData1o, "", @"select A,B=sum(QARate),C=sum(TotalCPUOut),D=sum(TotalManHour)
+,E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+,F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A order by A", out gdtData1);
                 #endregion 1.	By Factory
 
                 #region 2.	By Brand
@@ -181,7 +181,8 @@ FROM ({0} ) AAA ", strSQL);
                 }
                 MyUtility.Tool.ProcessWithDatatable(gdtData2o, "", @"select A,B=sum(QARate),C=sum(TotalCPUOut),D=sum(TotalManHour)
 ,E=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) from #tmp Group BY A order by A", out gdtData2);
+,F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp Group BY A order by A", out gdtData2);
                 #endregion 2.	By Brand
 
                 #region 3.	By Brand + Factory
@@ -534,8 +535,10 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
             catch (Exception ex)
             {
                if (null != excel) { excel.DisplayAlerts = false; excel.Quit(); }
-                return new DualResult(false, "Export excel error.", ex);
+               clear();
+               return new DualResult(false, "Export excel error.", ex);
             }
+            clear();
             return result;
         }
 
@@ -559,6 +562,12 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
                     gstrCategory = "BS";
                     break;
             }
+        }
+
+        private void clear()
+        {
+            gdtData1o = null; gdtData2o = null; gdtData3o = null; gdtData4o = null; gdtData5o = null; gdtData6o = null; gdtData7o = null; gdtData8o = null; gdtData9o = null; 
+            return;
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
