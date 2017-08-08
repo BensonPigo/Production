@@ -314,7 +314,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量  Local Inventory
+            #region 更新庫存數量  Local Inventory & Location
 
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
@@ -330,22 +330,43 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            refno = m.First().Field<string>("refno"),
                            threadcolorid = m.First().Field<string>("threadcolorid"),
                            unitid = m.First().Field<string>("unitid"),
+                           location = string.Join(",", m.Select(row => row["location"].ToString())),
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
 
-            foreach (var item in bs1)
-            {
-                sqlupd2.Append(string.Format(@"
-merge into dbo.localinventory t
-using (select '{1}','{2}','{3}',{0},'{4}') as s (orderid,refno,threadcolorid,qty,unitid)
-on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
-when matched then
-      update set inqty = inqty + s.qty
+            sqlupd2.Append(@"
+merge into dbo.LocalInventory t
+using (
+	select	#tmp.OrderId
+			, #tmp.Refno
+			, #tmp.ThreadColorID
+			, #tmp.UnitID
+			, #tmp.Qty
+			, NewLocation = stuff((select distinct ',' + ADDLocation.value
+								   from (
+				 					  select value = Data
+			 						  from dbo.SplitString(#tmp.Location, ',')
+						
+									  union all
+									  select value = Data
+			 						  from dbo.SplitString(LInv.ALocation, ',')						
+			 					   ) ADDLocation
+								   for xml path('')
+								 ), 1, 1, '')
+	from #tmp
+	left join LocalInventory LInv on  #tmp.OrderId = LInv.OrderID
+									   and #tmp.Refno = LInv.Refno
+									   and #tmp.ThreadColorID = LInv.ThreadColorID
+) s on  t.OrderID = s.OrderID
+		and t.Refno = s.Refno
+		and t.ThreadColorID = s.ThreadColorID
+when matched then 
+	update set	inqty = inqty + s.qty
+				, ALocation = s.NewLocation
 when not matched then
-      insert (orderid, refno, threadcolorid, inqty, unitid) 
-      values (s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
-                    , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
-            }
+	insert (orderid		, refno		, threadcolorid		, inqty	, unitid    , ALocation) 
+    values (s.orderid	, s.refno	, s.threadcolorid	, s.qty	, s.unitid  , s.NewLocation);
+");
 
             #endregion 更新庫存數量  Local Inventory
 
@@ -358,7 +379,8 @@ when not matched then
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2.ToString())))
+                    DataTable resultDt;
+                    if (!(result2 = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2.ToString(), out resultDt, "#tmp")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(sqlupd2.ToString(), result2);

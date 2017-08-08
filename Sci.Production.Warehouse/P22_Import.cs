@@ -245,7 +245,13 @@ WHERE   StockType='{0}'
                     DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
-                        dr["qty"] = dr["balanceqty"];
+                        if (dr.GetParentRow("rel1") != null && !dr["balanceqty"].EqualDecimal(0))
+                        {
+                            decimal masterBalance, detailBalance;                            
+                            Decimal.TryParse(dr.GetParentRow("rel1")["balanceqty"].ToString(), out masterBalance);
+                            Decimal.TryParse(dr["balanceqty"].ToString(), out detailBalance);
+                            dr["qty"] = (masterBalance > detailBalance) ? detailBalance : masterBalance;
+                        }
                     }
                     else if (Convert.ToBoolean(dr["selected"]) == false)
                     {

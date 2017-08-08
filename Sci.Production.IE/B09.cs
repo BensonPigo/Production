@@ -37,8 +37,21 @@ namespace Sci.Production.IE
             this.displaySection1.Text = MyUtility.GetValue.Lookup(selectCommand, null);
             this.numMachineAllowance.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
             this.numManualAllowance.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
-            this.picture1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + CurrentMaintain["Picture1"].ToString();
-            this.picture2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
+
+            /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
+            if (MyUtility.Check.Empty(CurrentMaintain["Picture1"])) picture1.ImageLocation = "";
+            else
+                if (File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"])))
+                    picture1.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+                else
+                    picture1.ImageLocation = "";
+            if (MyUtility.Check.Empty(CurrentMaintain["Picture2"])) picture2.ImageLocation = "";
+            else
+                if (File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"])))
+                    picture2.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+                else
+                    picture2.ImageLocation = "";
+
         }
 
         private void btnPicture1Attach_Click(object sender, EventArgs e)

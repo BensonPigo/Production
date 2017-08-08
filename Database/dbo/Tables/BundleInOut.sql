@@ -8,6 +8,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleInOut', @level2type = N'COLUMN', @level2name = N'EditDate';
 
@@ -34,4 +36,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle No',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Bundle-Subprocess In Out Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'BundleInOut';
+
+
+GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20170801-090820]
+    ON [dbo].[BundleInOut]([SubProcessId] ASC);
+
+
+GO
+CREATE CLUSTERED INDEX [ClusteredIndex-20170801-090525]
+    ON [dbo].[BundleInOut]([BundleNo] ASC);
 

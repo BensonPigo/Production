@@ -50,11 +50,11 @@ namespace Sci.Production.PublicForm
             {
                 patidsql = String.Format(
                             @"select top 1 Ukey 
-from Pattern 
-where PatternNo = (select substring(MarkerNo,1,9)+'N' from WorkOrder where CutRef = '{0}')
-and Status = 'Completed'
-order by ActFinDate Desc
-             ", _cutref);
+                            from Pattern 
+                            where PatternNo = (select substring(MarkerNo,1,9)+'N' from WorkOrder where CutRef = '{0}' and ID='{1}')
+                            and Status = 'Completed'
+                            order by ActFinDate Desc
+                            ", _cutref, id);
             }
             
 

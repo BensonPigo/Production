@@ -272,13 +272,13 @@ WHERE   StockType='{0}'
         {
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
-            string ATA_b, ATA_e, InputDate_b, InputDate_e, SP;
+            string ATA_b, ATA_e, InputDate_b, InputDate_e, SP,factory;
             ATA_b = null;
             ATA_e = null;
             InputDate_b = null;
             InputDate_e = null;
             SP = txtIssueSP.Text;
-
+            factory = txtfactory.Text;
             if (dateMaterialATA.Value1 != null) ATA_b = this.dateMaterialATA.Text1;
             if (dateMaterialATA.Value2 != null) { ATA_e = this.dateMaterialATA.Text2; }
 
@@ -376,6 +376,7 @@ where f.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(SP)) sqlcmd.Append(string.Format(@" and pd.id = '{0}'", SP));
 
+            if (!MyUtility.Check.Empty(factory)) sqlcmd.Append(string.Format(@" and o.FtyGroup = '{0}'", factory));
 
             if (!(string.IsNullOrWhiteSpace(ATA_b)))
             {

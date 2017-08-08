@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Sci.Production.PPIC.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -417,6 +418,12 @@
     <Compile Include="P10.Designer.cs">
       <DependentUpon>P10.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_P11_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_P11_Import.Designer.cs">
+      <DependentUpon>P10_P11_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P12.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -550,6 +557,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UIClassPrg.cs" />
+    <Compile Include="P01_ProductionOutput_LoadingoutputDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_ProductionOutput_LoadingoutputDetail.Designer.cs">
+      <DependentUpon>P01_ProductionOutput_LoadingoutputDetail.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -694,6 +707,9 @@
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P10_P11_Import.resx">
+      <DependentUpon>P10_P11_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
@@ -757,6 +773,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_ProductionOutput_LoadingoutputDetail.resx">
+      <DependentUpon>P01_ProductionOutput_LoadingoutputDetail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

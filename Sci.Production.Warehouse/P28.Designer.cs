@@ -52,6 +52,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -66,6 +68,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtfactory);
+            this.panel1.Controls.Add(this.lbFactory);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
             this.panel1.Controls.Add(this.comboFabricType);
@@ -98,7 +102,7 @@
             this.comboCategory.Location = new System.Drawing.Point(729, 42);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 4;
+            this.comboCategory.TabIndex = 5;
             // 
             // labelCategory
             // 
@@ -121,7 +125,7 @@
             this.comboFabricType.Location = new System.Drawing.Point(729, 9);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 3;
+            this.comboFabricType.TabIndex = 4;
             // 
             // labelFabricType
             // 
@@ -136,7 +140,7 @@
             this.dateInputDate.Location = new System.Drawing.Point(334, 42);
             this.dateInputDate.Name = "dateInputDate";
             this.dateInputDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInputDate.TabIndex = 2;
+            this.dateInputDate.TabIndex = 3;
             // 
             // dateMaterialATA
             // 
@@ -159,7 +163,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(916, 45);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 6;
+            this.btnAutoPick.TabIndex = 7;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -169,7 +173,7 @@
             this.btnQuery.Location = new System.Drawing.Point(916, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 5;
+            this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -320,6 +324,25 @@
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(9, 42);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(75, 23);
+            this.lbFactory.TabIndex = 117;
+            this.lbFactory.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(87, 42);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(117, 23);
+            this.txtfactory.TabIndex = 118;
+            // 
             // P28
             // 
             this.ClientSize = new System.Drawing.Size(1008, 601);
@@ -375,5 +398,7 @@
         private Win.UI.Grid gridComplete;
         private Win.UI.Grid gridRel;
         private Win.UI.CheckBox checkOnly;
+        private Win.UI.Label lbFactory;
+        private Class.txtfactory txtfactory;
     }
 }

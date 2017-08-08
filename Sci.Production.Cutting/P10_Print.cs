@@ -224,9 +224,35 @@ order by x.[Barcode]");
                 {
                     return result;
                 }
+                DataTable dt1,dt2, dt3;
+                //int count =dt.Rows.Count;
+                int count=1;
+                dt1 = dt.Clone();
+                dt2 = dt.Clone();
+                dt3 = dt.Clone();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    //第一列資料
+                    if (count % 3 == 1)
+                    {
+                        dt1.ImportRow(dr);
+                    }
+                    //第二列資料
+                    if (count % 3 == 2)
+                    {
+                        dt2.ImportRow(dr);
+                    }
+                    //第三列資料
+                    if (count % 3 == 0)
+                    {
+                        dt3.ImportRow(dr);
+                    }
+                     count++;
+                }
+		           
 
-                // 傳 list 資料            
-                List<P10_PrintData> data = dt.AsEnumerable()
+                // 傳 list 資料     
+                List<P10_PrintData> data = dt1.AsEnumerable()
                     .Select(row1 => new P10_PrintData()
                     {
                         Group_right = row1["Group_right"].ToString(),
@@ -246,6 +272,48 @@ order by x.[Barcode]");
                         Quantity = row1["Quantity"].ToString(),
                         Barcode = row1["Barcode"].ToString()
                     }).ToList();
+                   data.AddRange(
+                    dt2.AsEnumerable().Select(row1 => new P10_PrintData()
+                    {
+                        Group_right2 = row1["Group_right"].ToString(),
+                        Group_left2 = row1["Group_left"].ToString(),
+                        Line2 = row1["Line"].ToString(),
+                        Cell2 = row1["Cell"].ToString(),    
+                        SP2 = row1["SP"].ToString(),
+                        Style2 = row1["Style"].ToString(),
+                        Item2 = row1["Item"].ToString(),
+                        Body_Cut2 = row1["Body_Cut"].ToString(),
+                        Parts2 = row1["Parts"].ToString(),
+                        Color2 = row1["Color"].ToString(),
+                        Size2 = row1["Size"].ToString(),
+                        SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+                        Desc2 = row1["Desc"].ToString(),
+                        Artwork2 = row1["Artwork"].ToString(),
+                        Quantity2 = row1["Quantity"].ToString(),
+                        Barcode2 = row1["Barcode"].ToString()
+                    }).ToList());
+
+
+                    data.AddRange(
+                    dt3.AsEnumerable().Select(row1 => new P10_PrintData()
+                    {
+                        Group_right3 = row1["Group_right"].ToString(),
+                        Group_left3 = row1["Group_left"].ToString(),
+                        Line3 = row1["Line"].ToString(),
+                        Cell3 = row1["Cell"].ToString(),
+                        SP3 = row1["SP"].ToString(),
+                        Style3 = row1["Style"].ToString(),
+                        Item3 = row1["Item"].ToString(),
+                        Body_Cut3 = row1["Body_Cut"].ToString(),
+                        Parts3 = row1["Parts"].ToString(),
+                        Color3 = row1["Color"].ToString(),
+                        Size3 = row1["Size"].ToString(),
+                        SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+                        Desc3 = row1["Desc"].ToString(),
+                        Artwork3 = row1["Artwork"].ToString(),
+                        Quantity3 = row1["Quantity"].ToString(),
+                        Barcode3 = row1["Barcode"].ToString()
+                    }).ToList());
 
                 e.Report.ReportDataSource = data;
 

@@ -114,6 +114,15 @@ group by sizeCode"
                     j++;
                 }
             }
+            else
+            {
+                int j = 1;
+                foreach (DataRow dr in qtyTb.Rows)
+                {
+                    dr["No"] = j;
+                    j++;
+                }
+            }
             #endregion
             
             if (detailTb.Rows.Count != 0) exist_Table_Query();
@@ -288,6 +297,7 @@ group by sizeCode"
                     }
                 }
             }
+            garmentarRC = garmentTb.Copy();
         }
 
         public void grid_setup()
@@ -394,7 +404,7 @@ group by sizeCode"
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem2 sele;
-                    sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString(), null, null, null);
+                    sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsSelection=1", "Subprocess", "23", dr["PatternCode"].ToString(), null, null, null);
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     string subpro = sele.GetSelectedString().Replace(",", "+");
@@ -1047,7 +1057,7 @@ group by sizeCode"
         private void btnGarment_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null, maindatarow["cutref"].ToString());
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, maindatarow["poid"].ToString(), maindatarow["cutref"].ToString());
             callNextForm.ShowDialog(this);
         }
 

@@ -759,5 +759,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             queryfors.SelectedIndex = 0;
         }
 
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.PPIC.P10_P11_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource,"Fabric");
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
     }
 }

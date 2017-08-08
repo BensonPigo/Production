@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
@@ -409,12 +410,15 @@ and ai.Status='Confirmed'
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricDetail.xltx");
-                    xl.dicDatas.Add("##BODY", dtFabricDetail);
-                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                    xl.Save();
-                    wks.Columns.AutoFit();
-                    wks.Rows.AutoFit();
+                    string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricDetail.xltx");
+                    sxrc sxr = new sxrc(xltPath);
+                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtFabricDetail);
+                    dt.ShowHeader = false;
+                    dt.boAddFilter = true;
+                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+
+                    sxr.boOpenFile = true;
+                    sxr.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
@@ -425,11 +429,15 @@ and ai.Status='Confirmed'
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricSummary.xltx");
-                    xl.dicDatas.Add("##BODY", dtFabricSummary);
-                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                    xl.Save();
+                    string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricSummary.xltx");
+                    sxrc sxr = new sxrc(xltPath);
+                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtFabricSummary);
+                    dt.ShowHeader = false;
+                    Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
+                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+
+                    sxr.Save();
                 }
 
             }
@@ -444,12 +452,15 @@ and ai.Status='Confirmed'
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessoryDetail.xltx");
-                    xl.dicDatas.Add("##BODY", dtAccessoryDetail);
-                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                    xl.Save();
-                    wks.Columns.AutoFit();
-                    wks.Rows.AutoFit();
+                    string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessoryDetail.xltx");
+                    sxrc sxr = new sxrc(xltPath);
+                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtAccessoryDetail);
+                    dt.ShowHeader = false;
+                    dt.boAddFilter = true;
+                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+
+                    sxr.boOpenFile = true;
+                    sxr.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
@@ -460,11 +471,15 @@ and ai.Status='Confirmed'
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }
-                    Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessorySummary.xltx");
-                    xl.dicDatas.Add("##BODY", dtAccessorySummary);
-                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                    xl.Save();
+                    string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessorySummary.xltx");
+                    sxrc sxr = new sxrc(xltPath);
+                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtAccessorySummary);
+                    dt.ShowHeader = false;
+                    Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
+                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+
+                    sxr.Save();
                 }
 
             }

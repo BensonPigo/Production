@@ -454,11 +454,37 @@ outer apply
                 return;
             }
 
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars = new List<SqlParameter>();
+            DataTable dt1, dt2, dt3,dtSelect;
+            //int count =dt.Rows.Count;
+            int count = 1;
+            dt1 = dtt.Clone();
+            dt2 = dtt.Clone();
+            dt3 = dtt.Clone();
+            dtSelect = dtt.AsEnumerable()
+                .Where(row => (bool)row["selected"]).CopyToDataTable();
+            foreach (DataRow dr in dtSelect.Rows)
+            {
+                //第一列資料
+                if (count % 3 == 1)
+                {
+                    dt1.ImportRow(dr);
+                }
+                //第二列資料
+                if (count % 3 == 2)
+                {
+                    dt2.ImportRow(dr);
+                }
+                //第三列資料
+                if (count % 3 == 0)
+                {
+                    dt3.ImportRow(dr);
+                }
+                count++;
+            }
+
 
             //傳 list 資料            
-            var res = dtt.AsEnumerable()
+            var res = dt1.AsEnumerable()
                 .Where(row => (bool)row["selected"])
             .Select(row1 => new P12_PrintData()
             {
@@ -480,6 +506,52 @@ outer apply
                 Qty = row1["Qty"].ToString(),
                 Barcode = row1["Bundle"].ToString()
             }).ToList();
+
+             res.AddRange( dt2.AsEnumerable()
+               .Where(row => (bool)row["selected"])
+           .Select(row1 => new P12_PrintData()
+           {
+               Group_right2 = row1["Group"].ToString(),
+               Group_left2 = row1["left"].ToString(),
+               Line2 = row1["Line"].ToString(),
+               Cell2 = row1["Cell"].ToString(),
+               SP2 = row1["SP"].ToString(),
+               Style2 = row1["Style"].ToString(),
+               Item2 = row1["Item"].ToString(),
+               Body_Cut2 = row1["Body_Cut"].ToString(),
+               Parts2 = row1["Parts"].ToString(),
+               Color2 = row1["Color2"].ToString(),
+               Size2 = row1["Size"].ToString(),
+               SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+               Patterncode2 = row1["Patterncode"].ToString(),
+               Desc2 = row1["Description"].ToString(),
+               SubProcess2 = row1["SubProcess"].ToString(),
+               Qty2 = row1["Qty"].ToString(),
+               Barcode2 = row1["Bundle"].ToString()
+           }).ToList());
+
+             res.AddRange( dt3.AsEnumerable()
+               .Where(row => (bool)row["selected"])
+           .Select(row1 => new P12_PrintData()
+           {
+               Group_right3 = row1["Group"].ToString(),
+               Group_left3 = row1["left"].ToString(),
+               Line3 = row1["Line"].ToString(),
+               Cell3 = row1["Cell"].ToString(),
+               SP3 = row1["SP"].ToString(),
+               Style3 = row1["Style"].ToString(),
+               Item3 = row1["Item"].ToString(),
+               Body_Cut3 = row1["Body_Cut"].ToString(),
+               Parts3 = row1["Parts"].ToString(),
+               Color3 = row1["Color2"].ToString(),
+               Size3 = row1["Size"].ToString(),
+               SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
+               Patterncode3 = row1["Patterncode"].ToString(),
+               Desc3 = row1["Description"].ToString(),
+               SubProcess3 = row1["SubProcess"].ToString(),
+               Qty3 = row1["Qty"].ToString(),
+               Barcode3 = row1["Bundle"].ToString()
+           }).ToList());
 
 
 

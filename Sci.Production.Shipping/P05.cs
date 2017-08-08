@@ -47,14 +47,65 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             masterID = (e.Master == null) ? "1=0" : string.Format("p.INVNo = '{0}'",MyUtility.Convert.GetString(e.Master["ID"]));
-            this.DetailSelectCommand = string.Format(@"select p.GMTBookingLock,p.FactoryID,p.ID,
-STUFF((select CONCAT(',',cast(a.OrderID as nvarchar)) from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),1,1,'') as OrderID,
-p.CargoReadyDate,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate,
-p.PulloutDate,p.ShipQty,p.CTNQty,p.GW,p.CBM,p.InvNo,
-(select o.CustCDID from Orders o WITH (NOLOCK) , (select top 1 OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a where o.ID = a.OrderID) as CustCDID,
-(select o.Dest from Orders o WITH (NOLOCK) , (select top 1 OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a where o.ID = a.OrderID) as Dest,
-p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,p.InspDate,p.ShipModeID
+            this.DetailSelectCommand = string.Format(@"
+select  p.GMTBookingLock
+        , p.FactoryID,p.ID
+        , OrderID = STUFF ((select CONCAT (',', cast (a.OrderID as nvarchar)) 
+                            from (
+                                select distinct OrderID 
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                where pd.ID = p.id
+                            ) a 
+                            for xml path('')
+                          ), 1, 1, '') 
+        , p.CargoReadyDate
+        , BuyerDelivery = ( select   oq.BuyerDelivery 
+                            from (
+                                select  top 1 OrderID
+                                        , OrderShipmodeSeq 
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                where pd.ID = p.ID
+                            ) a, Order_QtyShip oq 
+                            where   a.OrderID = oq.Id 
+                                    and a.OrderShipmodeSeq = oq.Seq)
+        , SDPDate = (select oq.SDPDate 
+                     from (
+                         select  top 1 OrderID
+                                 , OrderShipmodeSeq 
+                         from PackingList_Detail pd WITH (NOLOCK) 
+                         where pd.ID = p.ID
+                     ) a, Order_QtyShip oq WITH (NOLOCK) 
+                     where   a.OrderID = oq.Id 
+                             and a.OrderShipmodeSeq = oq.Seq)
+        , p.PulloutDate
+        , p.ShipQty
+        , p.CTNQty
+        , p.GW
+        , p.CBM
+        , p.InvNo
+        , CustCDID = (select o.CustCDID 
+                      from (
+                        select top 1 OrderID 
+                        from PackingList_Detail pd WITH (NOLOCK) 
+                        where pd.ID = p.ID
+                      ) a, Orders o WITH (NOLOCK)  
+                      where o.ID = a.OrderID)
+        , Dest = (select o.Dest 
+                  from (
+                        select top 1 OrderID 
+                        from PackingList_Detail pd WITH (NOLOCK) 
+                        where pd.ID = p.ID
+                  ) a, Orders o WITH (NOLOCK)
+                  where o.ID = a.OrderID)
+        , p.NW
+        , p.NNW
+        , p.Status
+        , ClogCTNQty = (select sum(CTNQty) 
+                        from PackingList_Detail pd WITH (NOLOCK) 
+                        where   pd.ID = p.ID 
+                                and pd.ReceiveDate is not null)
+        , p.InspDate
+        , p.ShipModeID
 from PackingList p WITH (NOLOCK) 
 where {0}", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -313,11 +364,13 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             }
 
             //只要Pullout Report已經Confirmed就不可以被刪除
-            string sqlCmd = string.Format(@"select distinct pl.PulloutID
-from PackingList pl WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
-where pl.INVNo = '{0}'
-and pl.PulloutID = p.ID
-and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string sqlCmd = string.Format(@"
+select  distinct pl.PulloutID
+from PackingList pl WITH (NOLOCK) 
+     , Pullout p WITH (NOLOCK) 
+where   pl.INVNo = '{0}'
+        and pl.PulloutID = p.ID
+        and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (result)
             {
@@ -349,6 +402,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
 
         protected override bool ClickSaveBefore()
         {
+            DualResult result;
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["InvSerial"]))
             {
@@ -422,9 +476,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
                 MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 return false;
             }
-            #endregion
-
-            
+            #endregion            
             //新增單狀態下，取ID且檢查此ID是否存在
             if (IsDetailInserting)
             {
@@ -472,7 +524,7 @@ Select od.ID,od.OrderID,od.CurrencyID,od.PayTermARID,cc.CNT
 from OrderData od
 left join CurrencyCount cc on od.CurrencyID = cc.CurrencyID
 order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+                result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -504,6 +556,36 @@ order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
             }
             #endregion
 
+            #region 簡查 BrandID 是否與表頭一致
+            string checkBrandSQL = string.Format(@"
+select  Msg = Concat('The brand of <SP#> ', tmpSP.value, ' is not ', '{0}')
+from #tmp
+outer apply (
+    select value = data
+    from dbo.SplitString(#tmp.OrderID, ',') 
+) tmpSP
+left join Orders o on tmpSP.value = o.ID
+where   o.BrandID is null
+        or o.BrandID != '{0}'", this.txtbrand.Text);
+            DataTable checkBrandDt;
+            result =  MyUtility.Tool.ProcessWithDatatable(((DataTable)((BindingSource)detailgrid.DataSource).DataSource), "", checkBrandSQL, out checkBrandDt, "#tmp");
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+                return false;
+            }
+            if (checkBrandDt != null && checkBrandDt.Rows.Count > 0)
+            {
+                StringBuilder ErrorMsg = new StringBuilder("Garment Booking cannot be created !!");
+                foreach (DataRow checkBrandDr in checkBrandDt.Rows)
+                {
+                    ErrorMsg.Append(Environment.NewLine + checkBrandDr["Msg"]);
+                }
+                MyUtility.Msg.WarningBox(ErrorMsg.ToString());
+                return false;
+            }
+            #endregion 
+
             #region 組Description
             string season = "", category = "";
             if (allPackID.Length > 0)
@@ -517,7 +599,7 @@ as
 )
 select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category from OrderData) a for xml path('')) as Category,
 (select CAST(a.SeasonID as nvarchar)+'/' from (select distinct SeasonID from OrderData) a for xml path('')) as Season", allPackID.ToString().Substring(0, allPackID.Length - 1));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+                result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());

@@ -58,8 +58,7 @@
             this.labelCutCell = new Sci.Win.UI.Label();
             this.labelFabricCombo = new Sci.Win.UI.Label();
             this.labelFabricPanelCode = new Sci.Win.UI.Label();
-            this.labelFabricRefno = new Sci.Win.UI.Label();
-            this.labelFabricType = new Sci.Win.UI.Label();
+            this.labelFabricType_Refno = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
             this.txtMarkerLengthE = new Sci.Win.UI.TextBox();
             this.numUnitCons = new Sci.Win.UI.NumericBox();
@@ -67,8 +66,7 @@
             this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
             this.txtFabricCombo = new Sci.Win.UI.TextBox();
             this.labelDescription = new Sci.Win.UI.Label();
-            this.displayFabricRefno = new Sci.Win.UI.DisplayBox();
-            this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.displayFabricType_Refno = new Sci.Win.UI.DisplayBox();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.labelSizeRatio = new Sci.Win.UI.Label();
             this.gridSizeRatio = new Sci.Win.UI.Grid();
@@ -107,6 +105,7 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lbshc = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -191,7 +190,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5545, 561);
+            this.refresh.Location = new System.Drawing.Point(5657, 561);
             // 
             // detailgridcont
             // 
@@ -200,7 +199,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(629, 585);
             // 
             // detail2
             // 
@@ -525,27 +524,19 @@
             // 
             // labelFabricPanelCode
             // 
-            this.labelFabricPanelCode.Location = new System.Drawing.Point(204, 83);
+            this.labelFabricPanelCode.Location = new System.Drawing.Point(204, 56);
             this.labelFabricPanelCode.Name = "labelFabricPanelCode";
             this.labelFabricPanelCode.Size = new System.Drawing.Size(110, 23);
             this.labelFabricPanelCode.TabIndex = 30;
             this.labelFabricPanelCode.Text = "Fab_Panel Code";
             // 
-            // labelFabricRefno
+            // labelFabricType_Refno
             // 
-            this.labelFabricRefno.Location = new System.Drawing.Point(3, 137);
-            this.labelFabricRefno.Name = "labelFabricRefno";
-            this.labelFabricRefno.Size = new System.Drawing.Size(97, 23);
-            this.labelFabricRefno.TabIndex = 31;
-            this.labelFabricRefno.Text = "Fabric Refno";
-            // 
-            // labelFabricType
-            // 
-            this.labelFabricType.Location = new System.Drawing.Point(3, 110);
-            this.labelFabricType.Name = "labelFabricType";
-            this.labelFabricType.Size = new System.Drawing.Size(97, 23);
-            this.labelFabricType.TabIndex = 32;
-            this.labelFabricType.Text = "Fabric Type";
+            this.labelFabricType_Refno.Location = new System.Drawing.Point(3, 110);
+            this.labelFabricType_Refno.Name = "labelFabricType_Refno";
+            this.labelFabricType_Refno.Size = new System.Drawing.Size(117, 23);
+            this.labelFabricType_Refno.TabIndex = 32;
+            this.labelFabricType_Refno.Text = "Fabric Type/Refno";
             // 
             // label17
             // 
@@ -620,7 +611,7 @@
             // 
             this.txtFabricPanelCode.BackColor = System.Drawing.Color.White;
             this.txtFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFabricPanelCode.Location = new System.Drawing.Point(316, 83);
+            this.txtFabricPanelCode.Location = new System.Drawing.Point(316, 56);
             this.txtFabricPanelCode.Name = "txtFabricPanelCode";
             this.txtFabricPanelCode.Size = new System.Drawing.Size(51, 23);
             this.txtFabricPanelCode.TabIndex = 15;
@@ -636,36 +627,27 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(3, 164);
+            this.labelDescription.Location = new System.Drawing.Point(3, 136);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(97, 23);
             this.labelDescription.TabIndex = 40;
             this.labelDescription.Text = "Description";
             // 
-            // displayFabricRefno
+            // displayFabricType_Refno
             // 
-            this.displayFabricRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFabricRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricRefno.Location = new System.Drawing.Point(103, 137);
-            this.displayFabricRefno.Name = "displayFabricRefno";
-            this.displayFabricRefno.Size = new System.Drawing.Size(144, 23);
-            this.displayFabricRefno.TabIndex = 17;
-            // 
-            // displayFabricType
-            // 
-            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricType.Location = new System.Drawing.Point(103, 110);
-            this.displayFabricType.Name = "displayFabricType";
-            this.displayFabricType.Size = new System.Drawing.Size(144, 23);
-            this.displayFabricType.TabIndex = 16;
+            this.displayFabricType_Refno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType_Refno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType_Refno.Location = new System.Drawing.Point(122, 110);
+            this.displayFabricType_Refno.Name = "displayFabricType_Refno";
+            this.displayFabricType_Refno.Size = new System.Drawing.Size(245, 23);
+            this.displayFabricType_Refno.TabIndex = 16;
             // 
             // editDescription
             // 
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editDescription.IsSupportEditMode = false;
-            this.editDescription.Location = new System.Drawing.Point(103, 164);
+            this.editDescription.Location = new System.Drawing.Point(103, 136);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
@@ -984,7 +966,7 @@
             // 
             // btnPatternPanel
             // 
-            this.btnPatternPanel.Location = new System.Drawing.Point(256, 133);
+            this.btnPatternPanel.Location = new System.Drawing.Point(204, 79);
             this.btnPatternPanel.Name = "btnPatternPanel";
             this.btnPatternPanel.Size = new System.Drawing.Size(110, 30);
             this.btnPatternPanel.TabIndex = 18;
@@ -1062,14 +1044,14 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
             this.splitContainer1.Panel1.Controls.Add(this.labelQtyBreakdown);
             this.splitContainer1.Panel1.Controls.Add(this.numMarkerLengthY);
             this.splitContainer1.Panel1.Controls.Add(this.labelMarkerLengthY);
             this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLength);
             this.splitContainer1.Panel1.Controls.Add(this.txtPatternPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.displayFabricType);
-            this.splitContainer1.Panel1.Controls.Add(this.displayFabricRefno);
+            this.splitContainer1.Panel1.Controls.Add(this.displayFabricType_Refno);
             this.splitContainer1.Panel1.Controls.Add(this.labelPatternPanel);
             this.splitContainer1.Panel1.Controls.Add(this.editDescription);
             this.splitContainer1.Panel1.Controls.Add(this.labelDistributetoSPNo);
@@ -1095,9 +1077,8 @@
             this.splitContainer1.Panel1.Controls.Add(this.numUnitCons);
             this.splitContainer1.Panel1.Controls.Add(this.labelWorkOrderDownloadID);
             this.splitContainer1.Panel1.Controls.Add(this.gridDistributetoSPNo);
-            this.splitContainer1.Panel1.Controls.Add(this.labelFabricRefno);
             this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLengthE);
-            this.splitContainer1.Panel1.Controls.Add(this.labelFabricType);
+            this.splitContainer1.Panel1.Controls.Add(this.labelFabricType_Refno);
             this.splitContainer1.Panel1.Controls.Add(this.label17);
             this.splitContainer1.Panel1.Controls.Add(this.numTotalDistributionQty);
             this.splitContainer1.Panel1.Controls.Add(this.labelTotalDistributionQty);
@@ -1111,6 +1092,16 @@
             this.splitContainer1.SplitterDistance = 554;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 61;
+            // 
+            // lbshc
+            // 
+            this.lbshc.AutoSize = true;
+            this.lbshc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.lbshc.ForeColor = System.Drawing.Color.Red;
+            this.lbshc.Location = new System.Drawing.Point(3, 189);
+            this.lbshc.Name = "lbshc";
+            this.lbshc.Size = new System.Drawing.Size(0, 13);
+            this.lbshc.TabIndex = 60;
             // 
             // P02
             // 
@@ -1193,8 +1184,7 @@
         private Win.UI.Grid gridSizeRatio;
         private Win.UI.Label labelSizeRatio;
         private Win.UI.EditBox editDescription;
-        private Win.UI.DisplayBox displayFabricType;
-        private Win.UI.DisplayBox displayFabricRefno;
+        private Win.UI.DisplayBox displayFabricType_Refno;
         private Win.UI.Label labelDescription;
         private Win.UI.TextBox txtFabricCombo;
         private Win.UI.TextBox txtFabricPanelCode;
@@ -1203,8 +1193,7 @@
         private Win.UI.NumericBox numUnitCons;
         private Win.UI.TextBox txtMarkerLengthE;
         private Win.UI.Label label17;
-        private Win.UI.Label labelFabricType;
-        private Win.UI.Label labelFabricRefno;
+        private Win.UI.Label labelFabricType_Refno;
         private Win.UI.Label labelFabricPanelCode;
         private Win.UI.Label labelFabricCombo;
         private Win.UI.Label labelCutCell;
@@ -1238,5 +1227,6 @@
         private Win.UI.TextBox numMarkerLengthY;
         private Win.UI.Button btn_Refresh;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Label lbshc;
     }
 }

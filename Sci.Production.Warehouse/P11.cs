@@ -273,11 +273,15 @@ order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
 
                         if (!MyUtility.Check.Seek(string.Format(@"
 select  a.*
-        , b.FabricType
+        , FabricType = CASE b.FabricType 
+                            WHEN 'A' THEN 'Accessory' 
+                            WHEN 'F' THEN 'Fabric'  
+                            WHEN 'O' THEN 'Other' 
+                       END
         , b.SCIRefno
         , f.MtlTypeID
         , m.IssueType
-        , left (a.seq1 + '   ' , 3) + a.seq2 seq
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
         , b.Colorid
         , b.SizeSpec
         , b.UsedQty
@@ -300,14 +304,17 @@ from dbo.ftyinventory a WITH (NOLOCK)
 inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id = a.POID 
                                                  and b.seq1 = a.seq1 
                                                  and b.seq2 = a.Seq2
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where   poid = '{0}' 
         and a.seq1 = '{1}' 
         and a.seq2 = '{2}' 
         and lock = 0 
         and inqty - outqty + adjustqty > 0  
-        and stocktype = 'B' "
-                            , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
+        and stocktype = 'B' 
+        and b.FabricType='A'
+        and m.IssueType='Sewing' "
+                            , CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                            e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
