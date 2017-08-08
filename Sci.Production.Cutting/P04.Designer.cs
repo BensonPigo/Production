@@ -332,7 +332,6 @@
             this.IsGridIconVisible = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportSend = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P04";
