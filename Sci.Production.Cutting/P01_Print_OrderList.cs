@@ -14,6 +14,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Data.SqlClient;
 using System.Linq;
 using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
@@ -44,7 +45,9 @@ namespace Sci.Production.Cutting
                 DataRow dr2 = dts[1].Rows[0];
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrder.xltx");
                 sxrc sxr = new sxrc(xltPath);
+                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
 
+                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
                 sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
                 sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
                 sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
@@ -120,6 +123,10 @@ namespace Sci.Production.Cutting
                 sxrc sxr = new sxrc(xltPath);
 
                 sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+
+                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
+
+                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
 
                 Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
@@ -280,8 +287,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
                 sxr.boOpenFile = true;
-                sxr.Save();
-                //SaveExcel(sxr, xltPath);
+                sxr.Save();                
                 #endregion
             }
             if (radioColorQtyBDown.Checked)
@@ -338,6 +344,8 @@ namespace Sci.Production.Cutting
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_QtyBreakdown_PoCombbySPList.xltx");
                 sxrc sxr = new sxrc(xltPath);
 
+                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
+                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
                 sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
 
                 dt.Borders.AllCellsBorders = true;
@@ -372,37 +380,192 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx");
-                sxrc sxr = new sxrc(xltPath);
-                sxr.dicDatas.Add(sxr._v + "SPNO", dr["ORDERNO"]);
-                sxr.dicDatas.Add(sxr._v + "Style", dr["StyleID"]);
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                string xltPath = Sci.Env.Cfg.XltPathDir + "\\Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx";
+                    
+                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(xltPath);
+                excel.Visible = false;
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
+                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
+                worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID");
+                worksheet.Cells[2, 2] = dr["ORDERNO"];
+                worksheet.Cells[3, 2] = dr["StyleID"];
 
-                //欄位水平對齊
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(6, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                Microsoft.Office.Interop.Excel.Range rg1, rg2;
+                if (dts[1].Rows.Count > 0)
+                {                    
+                    int count_header = 0;
+                    int count_left = 0;
+                    int count_right = 0;
+                    int countRow_left = 1;
+                    int countRow_Right = 1;
 
-                //第二欄(Color)改為文字
-                sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(dt.Columns[1].ColumnName);
-                xlc1.NumberFormate = "@";
-                dt.lisColumnInfo.Add(xlc1);
+                    for (int i = 0; i < dts[1].Rows.Count; i++)
+                    {
+                        #region 塞第一頁的值與Header
+                        /*
+                         * 第一頁左右只能各塞44行資料(一頁共49行 = 4行Header+44資料+一行空白)
+                         */
+                        if (i <= 43)
+                        {
+                            //左側資料Header
+                            worksheet.Cells[4, 1] = "#";
+                            worksheet.Cells[4, 2] = "Article";
+                            worksheet.Cells[4, 3] = "Size";
+                            worksheet.Cells[4, 4] = "CutQty";
+                            worksheet.Cells[4, 5] = "OrderQty";
+                            worksheet.Cells[4, 6] = "Balance";
+                            rg1 = worksheet.Range["A4", "F4"];
+                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
 
-                dt.Borders.InsideVertical = false;
-                dt.Borders.OutsideVertical = false;
-                dt.Borders.DependOnColumn.Add(1, 4);
-                dt.TotalBorders.DependOnColumn.Add(3, "Sub.TTL:");
+                            /*塞第一頁左側資料*/
+                            //當FabricPanelCode有東西,就對上一行加上下底框線
+                            if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
+                            {
+                                worksheet.Range["A" + (4 + i), "F" + (4 + i)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                worksheet.Range["A" + (4 + i), "F" + (4 + i)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                            }
+                            //5+i 是因為從第五行開始才塞值
+                            worksheet.Cells[5 + i, 1] = dts[1].Rows[i]["#"].ToString();
+                            worksheet.Cells[5 + i, 2] = dts[1].Rows[i]["Article"].ToString();
+                            worksheet.Cells[5 + i, 3] = dts[1].Rows[i]["Size"].ToString();
+                            worksheet.Cells[5 + i, 4] = dts[1].Rows[i]["CutQty"].ToString();
+                            worksheet.Cells[5 + i, 5] = dts[1].Rows[i]["orderQty"].ToString();
+                            worksheet.Cells[5 + i, 6] = dts[1].Rows[i]["Balance"].ToString();
 
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                        }
+                        //塞第一頁右側資料
+                        else if (i >= 44 && i < 88)
+                        {
+                            worksheet.Cells[4, 8] = "#";
+                            worksheet.Cells[4, 9] = "Article";
+                            worksheet.Cells[4, 10] = "Size";
+                            worksheet.Cells[4, 11] = "CutQty";
+                            worksheet.Cells[4, 12] = "OrderQty";
+                            worksheet.Cells[4, 13] = "Balance";
+                            rg2 = worksheet.Range["H" + (4), "M" + (4)];
+                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
 
-                sxr.boOpenFile = true;
-                sxr.Save();
-                //SaveExcel(sxr, xltPath);
+                            if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
+                            {
+                                worksheet.Range["H" + (4 + i - 44), "M" + (4 + i - 44)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                worksheet.Range["H" + (4 + i - 44), "M" + (4 + i - 44)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                            }
+                            /*
+                             * 5 + i - 44 
+                             * 從第五行開始塞資料
+                             * 需要跟左側資料平行,需要減掉左側i=44的資料筆數
+                             */
+                            worksheet.Cells[5 + i - (44), 8] = dts[1].Rows[i]["#"].ToString();
+                            worksheet.Cells[5 + i - (44), 9] = dts[1].Rows[i]["Article"].ToString();
+                            worksheet.Cells[5 + i - (44), 10] = dts[1].Rows[i]["Size"].ToString();
+                            worksheet.Cells[5 + i - (44), 11] = dts[1].Rows[i]["CutQty"].ToString();
+                            worksheet.Cells[5 + i - (44), 12] = dts[1].Rows[i]["orderQty"].ToString();
+                            worksheet.Cells[5 + i - (44), 13] = dts[1].Rows[i]["Balance"].ToString();
+                        }
+                        #endregion
+                        #region 塞第二頁以後的值與Header
+                        else
+                        {
+                            /*
+                             * 塞第二頁以後的資料
+                             * 塞進Excel的資料 以及DataTable的資料必須分開計算
+                             * Excel行數計算:
+                             *      必須從第50行算起,每一頁只能存在46行,必須以46的倍數放進Excel
+                             * DataTable筆數計算:
+                             *      每一頁只能放46行資料,每頁第一行放Header + 44行的資料 + 1行的空白分隔
+                             *      所以44的倍數計算                             
+                             * */
+                            //左側資料Header
+                            if ((i % 44 == 0) && ((i / 44) % 2 == 0))
+                            {
+                                worksheet.Cells[50 + (count_header * 46), 1] = "#";
+                                worksheet.Cells[50 + (count_header * 46), 2] = "Article";
+                                worksheet.Cells[50 + (count_header * 46), 3] = "Size";
+                                worksheet.Cells[50 + (count_header * 46), 4] = "CutQty";
+                                worksheet.Cells[50 + (count_header * 46), 5] = "OrderQty";
+                                worksheet.Cells[50 + (count_header * 46), 6] = "Balance";
+                                rg1 = worksheet.Range["A" + (50 + (count_header * 46)), "F" + (50 + (count_header * 46))];
+                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+                                count_left++;
+                                countRow_left = 1;
+                            }
+                            //右側資料Header
+                            else if (i % 44 == 0 && (i / 44) % 2 != 0)
+                            {
+                                worksheet.Cells[50 + (count_header * 46), 8] = "#";
+                                worksheet.Cells[50 + (count_header * 46), 9] = "Article";
+                                worksheet.Cells[50 + (count_header * 46), 10] = "Size";
+                                worksheet.Cells[50 + (count_header * 46), 11] = "CutQty";
+                                worksheet.Cells[50 + (count_header * 46), 12] = "OrderQty";
+                                worksheet.Cells[50 + (count_header * 46), 13] = "Balance";
+                                rg2 = worksheet.Range["H" + (50 + (count_header * 46)), "M" + (50 + (count_header * 46))];
+                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+                                count_right++;
+                                count_header++;
+                                countRow_Right = 1;
+
+                            }
+
+                            //左側的資料
+                            if (i >= count_left * 2 * 44 && i < (count_left * 2 + 1) * 44)
+                            {
+                                int BordeCnt = 50 + (46 * (count_left - 1)) + (countRow_left - 1);
+                                if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
+                                {
+                                    worksheet.Range["A" + BordeCnt, "F" + BordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                    worksheet.Range["A" + BordeCnt, "F" + BordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                }
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 1] = dts[1].Rows[i]["#"].ToString();
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 2] = dts[1].Rows[i]["Article"].ToString();
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 3] = dts[1].Rows[i]["Size"].ToString();
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 4] = dts[1].Rows[i]["CutQty"].ToString();
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 5] = dts[1].Rows[i]["orderQty"].ToString();
+                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 6] = dts[1].Rows[i]["Balance"].ToString();
+                                countRow_left++;
+
+                            }
+                            //右側的資料                          
+                            else
+                            {
+                                int BorderCnt = 50 + (46 * (count_right - 1)) + (countRow_Right - 1);
+                                if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
+                                {
+                                    worksheet.Range["H" + BorderCnt, "M" + BorderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+                                    worksheet.Range["H" + BorderCnt, "M" + BorderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
+                                }
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 8] = dts[1].Rows[i]["#"].ToString();
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 9] = dts[1].Rows[i]["Article"].ToString();
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 10] = dts[1].Rows[i]["Size"].ToString();
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 11] = dts[1].Rows[i]["CutQty"].ToString();
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 12] = dts[1].Rows[i]["orderQty"].ToString();
+                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 13] = dts[1].Rows[i]["Balance"].ToString();
+                                countRow_Right++;
+                            }
+                        #endregion
+                        }
+                    }
+                }
+                             
+                
+                excel.Visible = true;
+                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
+                if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
+                this.HideWaitMessage();
+                return true;
+
                 #endregion
             }
             if (radioMarkerList.Checked)
@@ -497,6 +660,8 @@ namespace Sci.Production.Cutting
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
                 sxrc sxr = new sxrc(xltPath);
+                string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
+                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
                 sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
                 sxr.dicDatas.Add(sxr._v + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
@@ -666,8 +831,9 @@ namespace Sci.Production.Cutting
 
         void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
+
             addTotal(dt, 1, "Sub.TTL:", true);
-            addTotal(dt, 0, "Total:", false);
+            addTotal(dt, 0, "Total:", false);           
             removeRepeat(dt, 0, true);
             removeRepeat(dt, 1, false);
         }
@@ -698,7 +864,15 @@ namespace Sci.Production.Cutting
                         if (exRow)
                             dt.Rows.InsertAt(dt.NewRow(), i + 1);
                         else
-                            dt.Rows.RemoveAt(i - 1);
+                        {       
+                            //預防不同FabricPanelCode,相同Article計算Total會把上一筆資料給刪除
+                            if (MyUtility.Check.Empty(dt.Rows[i-1]["Size"].ToString()))
+                            {
+                                dt.Rows.RemoveAt(i - 1);    
+                            }
+                                                     
+                        }
+                            
 
                         sCutQty = 0;
                         sOrderQty = 0;
