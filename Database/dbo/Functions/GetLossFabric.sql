@@ -6,7 +6,7 @@ CREATE Function [dbo].[GetLossFabric]
 )
 Returns @FabricColorQty Table
 	(  RowID		BigInt Identity(1,1) Not Null
-	 , SciRefNo		VarChar(26)
+	 , SciRefNo		VarChar(30)
 	 , LossType		Numeric(1,0)
 	 , WeaveTypeID	VarChar(20)
 	 , FabricCode	VarChar(3)
