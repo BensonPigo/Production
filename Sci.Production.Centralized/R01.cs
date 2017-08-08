@@ -298,22 +298,32 @@ order by data";
             {
                 DataTable dtAll;
                 MyUtility.Tool.ProcessWithDatatable(FinalAllData4, "", " ", out dtAll, "#tmpALL", sqlConn);
-                result = DBProxy.Current.SelectByConn(sqlConn, @"
+                if (rbRegionNo.Checked)
+                {
+                    select = "AGCCode";
+                    GroupBy = "AGCCode";
+                }
+                else
+                {
+                    select = "Factory";
+                    GroupBy = "Factory";
+                }
+                result = DBProxy.Current.SelectByConn(sqlConn, string.Format(@"
 ;with final as (
-	select AGCCode,Country ,sum(SMV / sSMV) as [%] ,SMVEFFX 
+	select {0},Country ,sum(SMV / sSMV) as [%] ,SMVEFFX 
 	,max(v1) as v1 ,max(v2) as v2 ,max(v3) as v3
 	,max(v4) as v4 ,max(v5) as v5 ,max(v6) as v6
 	from #tmpALL td3
-	OUTER APPLY (select sum(SMV) as sSMV from #tmpALL tmp3 where td3.Country = tmp3.Country and td3.AGCCode = tmp3.AGCCode) ss
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v1 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'A') v1                                          
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v2 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'B') v2                                          
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v3 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'C') v3                                        
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v4 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'D') v4                                         
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v5 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'E') v5                                          
-	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v6 from #tmpALL tmp where tmp.Country = td3.Country and tmp.AGCCode = td3.AGCCode and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'F') v6
-	group by AGCCode , Country , SMVEFFX
+	OUTER APPLY (select sum(SMV) as sSMV from #tmpALL tmp3 where td3.Country = tmp3.Country and td3.{0} = tmp3.{0}) ss
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v1 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'A') v1                                          
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v2 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'B') v2                                          
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v3 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'C') v3                                        
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v4 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'D') v4                                         
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v5 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'E') v5                                          
+	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v6 from #tmpALL tmp where tmp.Country = td3.Country and tmp.{0} = td3.{0} and tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'F') v6
+	group by {0} , Country , SMVEFFX
 ) 
-select AGCCode = iif(final.AGCCode is not null, final.AGCCode, c.AGCCode)
+select {0} = iif(final.{0} is not null, final.{0}, c.{0})
 ,Country = iif(final.Country is not null, final.Country, c.Country)
 ,isnull(final.[%] ,0) [%]
 ,SMVEFF = case c.data when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
@@ -321,10 +331,10 @@ select AGCCode = iif(final.AGCCode is not null, final.AGCCode, c.AGCCode)
 ,isnull(final.v4 ,0) v4 ,isnull(final.v5 ,0) v5 ,isnull(final.v6 ,0) v6
 from final 
 full join (
-	select * from (select AGCCode,Country from final group by AGCCode,Country) a
+	select * from (select {0},Country from final group by {0},Country) a
 	inner join ( select data from dbo.SplitString('A,B,C,D,E,F,G,H',',') ) b on 1=1
-) c on c.Country = final.Country and c.data = final.SMVEFFX and c.AGCCode = final.AGCCode
-order by AGCCode , Country , data", out FinalDetailData);
+) c on c.Country = final.Country and c.data = final.SMVEFFX and c.{0} = final.{0}
+order by {0} , Country , data", select, GroupBy), out FinalDetailData);
 
                 result = DBProxy.Current.SelectByConn(sqlConn, @";with final as (
 	select sum(SMV / sSMV) as [%] ,SMVEFFX 
