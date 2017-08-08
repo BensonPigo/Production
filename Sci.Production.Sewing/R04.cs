@@ -170,8 +170,9 @@ select ID,Seq,ArtworkUnit,ProductionUnit
 into #AT
 from ArtworkType WITH (NOLOCK)
 where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
---
-select ID,Seq,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
+select ID,Seq
+	,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
+	,ArtworkType_CPU = iif(Unit = 'TMS',concat(ID,'(CPU)'),'')
 into #atall
 from(
 	Select ID,Seq,Unit = ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
@@ -189,15 +190,23 @@ select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS
 into #idat
 from #tmpSewingDetail t
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
-declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']') from #atall for xml path('')),1,1,'')
-declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall for xml path(''))
-declare @TTLZ nvarchar(max) = (select concat(',[TTL_',ArtworkType_Unit,']=Round(QAQty*Rate*[',ArtworkType_Unit,'],2)')from #atall for xml path(''))
+
+declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']',iif(ArtworkType_CPU = '', '',',['+ArtworkType_CPU+']')) from #atall for xml path('')),1,1,'')
+declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)'
+								,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=isnull([Price],0)')))from #atall for xml path(''))
+declare @TTLZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)'
+								,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=Round(isnull([Price],0)*Rate*[',ArtworkType_CPU,'],2)'))
+								,',[TTL_',ArtworkType_Unit,']=Round(QAQty*Rate*[',ArtworkType_Unit,'],2)'
+								,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(isnull([Price],0)*Rate*[',ArtworkType_CPU,'],2)')))from #atall for xml path(''))
+print @columnsName
+print @NameZ
+print @TTLZ
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-select orderid'+@NameZ+N'
+select orderid,Price'+@NameZ+N'
 into #oid_at
 from
-(select orderid = i.ID,a.ArtworkType_Unit,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,i.Qty))from #atall a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq)a
+(select orderid = i.ID,a.ArtworkType_Unit,i.Price,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,i.Qty))from #atall a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq)a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
 where orderid is not null'
 +N'
@@ -226,17 +235,17 @@ select MDivisionID,FactoryID
 	,CPUSewer = IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0)
 	,EFF = ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
 	,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
-	,CumulateDate,
-	DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
+	,CumulateDate
+	,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 	,InlineQty
 	,Diff = QAQty-InlineQty
 	,rate
-	,'+@columnsName+@TTLZ+N'
+	'+@TTLZ+N'
 from #tmp1stFilter t
 left join #oid_at o on o.orderid = t.OrderId
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,t.OrderId
-drop table #AT,#atall,#idat,#tmpSewingDetail,#oid_at,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp'
-
+drop table #AT,#atall,#idat,#tmpSewingDetail,#oid_at,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp
+'
 EXEC sp_executesql @lastSql
 ");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
