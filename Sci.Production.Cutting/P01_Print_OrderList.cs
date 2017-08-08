@@ -864,13 +864,12 @@ namespace Sci.Production.Cutting
                         if (exRow)
                             dt.Rows.InsertAt(dt.NewRow(), i + 1);
                         else
-                        {       
+                        {                            
                             //預防不同FabricPanelCode,相同Article計算Total會把上一筆資料給刪除
-                            if (MyUtility.Check.Empty(dt.Rows[i-1]["Size"].ToString()))
+                            if (MyUtility.Check.Empty(dt.Rows[i - 1]["Size"].ToString()))
                             {
-                                dt.Rows.RemoveAt(i - 1);    
+                                dt.Rows.RemoveAt(i - 1);
                             }
-                                                     
                         }
                             
 
@@ -883,6 +882,13 @@ namespace Sci.Production.Cutting
                 else
                 {
 
+                }
+                //防止加總上一個Total,避免Total重複相加
+                if (i > 1 && dt.Rows[i - 1]["Size"].ToString() == "Total:")
+                {
+                    sCutQty = 0;
+                    sOrderQty = 0;
+                    sBalance = 0;
                 }
 
                 sCutQty += decimal.Parse(dt.Rows[i]["CutQty"].ToString());
