@@ -28,7 +28,6 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             //MDivisionID 是 P12 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='C' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            ChangeDetailColor();
             //
             detailgrid.StatusNotification += (s, e) =>
             {
@@ -52,8 +51,6 @@ namespace Sci.Production.Warehouse
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
-            ChangeDetailColor();
-
         }
 
         protected override void OnFormLoaded()
@@ -74,24 +71,6 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "C";
             CurrentMaintain["IssueDate"] = DateTime.Now;
-        }
-
-        private void ChangeDetailColor()
-        {
-            detailgrid.RowPostPaint += (s, e) =>
-            {
-                if (!this.EditMode)
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (detailgrid.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
-
-                    int i = e.RowIndex;
-                    if ( MyUtility.Check.Empty(dr["stockunit"]))
-                    {
-                        detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
-                    }
-                }
-            };
         }
 
         // delete前檢查
@@ -186,9 +165,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailEntered();
             #region Status Label
-
             labelNotApprove.Text = CurrentMaintain["status"].ToString();
-
             #endregion Status Label
         }
 
@@ -201,10 +178,10 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor;
             #region SP# Vaild 判斷
-
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
-            DataRow dr;
+
             ts4.CellValidating += (s, e) =>
             {
                 if (this.EditMode && string.Compare(CurrentDetailData["poid"].ToString(),e.FormattedValue.ToString()) != 0)
@@ -278,8 +255,8 @@ namespace Sci.Production.Warehouse
                                 e.Cancel = true;MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
-                            
 
+                            DataRow dr;
                             if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                     @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
@@ -337,6 +314,21 @@ namespace Sci.Production.Warehouse
                 .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //5
             ;     //
             #endregion 欄位設定
+
+            detailgrid.RowsAdded += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+
+                #region 變色規則，若 stockunit != '' 則需變回預設的 Color
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataGridViewRow dr = detailgrid.Rows[index];
+                    dr.DefaultCellStyle.BackColor = (MyUtility.Check.Empty(dr.Cells["stockunit"].Value)) ? Color.FromArgb(255, 192, 203) : backDefaultColor;
+                    index++;
+                }
+                #endregion
+            };
         }
 
         //Confirm

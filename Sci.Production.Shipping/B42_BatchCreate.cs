@@ -794,12 +794,12 @@ Values ('{0}','{1}');", newID, str.ToString()));
                         }
                     }
 
-                    DataRow[] selectedData = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))));
+                    DataRow[] selectedData = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))));                    
 
                     for (int i = 0; i < selectedData.Length; i++)
                     {
-                        insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail (ID,NLCode,HSCode,UnitID,Qty,UserCreate)
-Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(selectedData[i]["HSCode"])
+                        insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail (ID, NLCode, HSCode, UnitID, Qty, UserCreate, SystemQty)
+Values ('{0}', '{1}', '{2}', '{3}', {4}, {5}, {4});", newID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(selectedData[i]["HSCode"])
                           , MyUtility.Convert.GetString(selectedData[i]["UnitID"]), MyUtility.Convert.GetString(selectedData[i]["Qty"])
                           , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"));
 

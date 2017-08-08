@@ -159,20 +159,20 @@ namespace Sci.Production.Thread
             #region setup Grid
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(20), settings: refno)
-            .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), settings: thcolor)
-            .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
-            .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 3)
+            .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(10), settings: refno)
+            .Text("Description", header: "Description", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(4), settings: thcolor)
+            .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(2), integer_places: 3, iseditingreadonly: true)
+            .Text("category", header: "Category", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("supp", header: "Supplier", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Numeric("NewCone", header: "New\r\nCone", width: Widths.AnsiChars(2), integer_places: 3)
             .Numeric("pcsused", header: "No Of Psc. \nFor Used Cone", width: Widths.AnsiChars(5), integer_places: 3,settings : pcsused)
             .Numeric("TotalWeight", header: "Total used \nWeight (G.W.)", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: totalweight)
-            .Numeric("Weight", header: "Weight Of \nOne Cone(G.W.)", width: Widths.AnsiChars(15), integer_places: 5, decimal_places: 6, iseditingreadonly: true)
+            .Numeric("Weight", header: "Weight Of \nOne Cone(G.W.)", width: Widths.AnsiChars(12), integer_places: 5, decimal_places: 6, iseditingreadonly: true)
             .Numeric("AxleWeight", header: "Center Of \nAxle weight", width: Widths.AnsiChars(10), integer_places: 5, decimal_places: 4, iseditingreadonly: true)
-            .Numeric("UsedCone", header: "Used cone", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-            .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10));
+            .Numeric("UsedCone", header: "Used\r\ncone", width: Widths.AnsiChars(2), integer_places: 5, iseditingreadonly: true)
+            .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(8));
             #endregion
 
             this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;

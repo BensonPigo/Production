@@ -122,7 +122,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
 
             DBProxy.Current.Select(null,sqlcmd,out dt);
             //return int.Parse(dt.Rows[0][0].ToString());
-            if (dt.Rows[0][0].Empty())
+            if (dt == null || dt.Rows.Count == 0 || dt.Rows[0].Table == null || dt.Rows[0].Table.Rows.Count == 0 || dt.Rows[0][0].Empty())
             {
                 return 0;
             }

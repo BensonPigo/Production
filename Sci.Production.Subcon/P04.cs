@@ -147,6 +147,10 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
+            #region 確認 DB 是否存在相同【ArtworkTypeID, BundleNo, ArtworkID, PatternCode】
+            if (!this.checkDetailData(isSave: true))
+                return false;
+            #endregion
 
             //取單號： 
             if (this.IsDetailInserting)
@@ -166,19 +170,28 @@ namespace Sci.Production.Subcon
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string id = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select 
-                BundleNo, OrderID, styleID, ArtworkPoID, ArtworkID, PatternCode, PatternDesc, ArtworkPoQty, OnHand, 
-                (artworkpoqty - onhand) Variance, 
-                Qty, 
-                (artworkpoqty - onhand - qty) BalQty ,
-                Ukey , 
-                ArtworkPo_DetailUkey
-                from FarmIn_Detail WITH (NOLOCK) 
-                outer apply(
-	                select styleID
-	                from orders WITH (NOLOCK) 
-	                where orders.id = FarmIn_Detail.Orderid	
-                ) styleID where id='{0}'", id);
+            this.DetailSelectCommand = string.Format(@"
+select  BundleNo
+        , OrderID
+        , styleID
+        , ArtworkPoID
+        , ArtworkID
+        , PatternCode
+        , PatternDesc
+        , ArtworkPoQty
+        , OnHand
+        , (artworkpoqty - onhand) Variance
+        , Qty
+        , (artworkpoqty - onhand - qty) BalQty 
+        , Ukey 
+        , ArtworkPo_DetailUkey
+from FarmIn_Detail WITH (NOLOCK) 
+outer apply(
+	select styleID
+	from orders WITH (NOLOCK) 
+	where orders.id = FarmIn_Detail.Orderid	
+) styleID 
+where id='{0}'", id);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -194,7 +207,7 @@ namespace Sci.Production.Subcon
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region Batch Import
-            btnImportFromRealTime.Enabled = this.EditMode;
+            btnImport.Enabled = this.EditMode;
             #endregion
         }
 
@@ -314,6 +327,10 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
 
         protected override void ClickConfirm()
         {
+            #region 確認 DB 是否存在相同【ArtworkTypeID, BundleNo, ArtworkID, PatternCode】
+            if (!this.checkDetailData(isSave: false))
+                return;
+            #endregion
             base.ClickConfirm();
             if ((!(Prgs.GetAuthority(Env.User.UserID)) && CurrentMaintain["handle"].ToString() != Env.User.UserID))
             {
@@ -588,10 +605,64 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
            
         }
 
-        private void btnImportFromRealTime_Click(object sender, EventArgs e)
+        /// <summary>確認 DB 是否存在相同【ArtworkTypeID, BundleNo, ArtworkID, PatternCode】
+        /// </summary>
+        private bool checkDetailData(bool isSave)
         {
-            //P03_Import TrimCardPrint = new P03_Import();
-            //P03_Import.ShowDialog(this);
+            string checkCmd = string.Format(@"
+select  #Tmp.BundleNo
+        , #Tmp.ArtworkID
+        , #Tmp.PatternCode
+        , checkFarm.ID
+from #Tmp
+inner join (
+    select  FI.ID
+            , FI.ArtworkTypeID
+            , FID.BundleNo
+            , FID.ArtworkID
+            , FID.PatternCode
+    from FarmIn FI
+    inner join FarmIn_Detail FID on FID.ID = FI.ID
+    where   FI.MDivisionID = '{0}'
+            and FI.status = 'Confirmed'
+) checkFarm on  checkFarm.ArtworkTypeID = '{1}'
+                and checkFarm.BundleNo = #Tmp.BundleNo and #Tmp.BundleNo<>''
+                and checkFarm.ArtworkID = #Tmp.ArtworkID
+                and checkFarm.PatternCode = #Tmp.PatternCode
+", Sci.Env.User.Keyword, this.txtartworktype_ftyArtworkType.Text);
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)((BindingSource)detailgrid.DataSource).DataSource, "", checkCmd, out dt, "#Tmp");
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+                return false;
+            }
+            else if (dt != null && dt.Rows.Count > 0)
+            {
+                StringBuilder errorMsg = new StringBuilder("");
+                foreach (DataRow dr in dt.Rows)
+                {
+                    errorMsg.Append(string.Format("Bundle No = {0}, Artwork = {1}, Cutpart = {2}, already exist in PO# = {3}" + Environment.NewLine, dr["BundleNo"], dr["ArtworkID"], dr["PatternCode"], dr["ID"]));
+                }
+                if (isSave)
+                    errorMsg.Append(", can't save !!");
+                else
+                    errorMsg.Append(", can't confirm !!");
+                MyUtility.Msg.WarningBox(errorMsg.ToString());
+                return false;
+            }
+            return true;
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            if (txtartworktype_ftyArtworkType.Text.Empty())
+            {
+                MyUtility.Msg.InfoBox("ArtworkType can't be empty.");
+                return;
+            }
+            P03_Import imoprt = new P03_Import(P03_Import.Subcon_P04, this.txtartworktype_ftyArtworkType.Text, ((DataTable)((BindingSource)detailgrid.DataSource).DataSource));
+            imoprt.ShowDialog(this);
           
         }
 

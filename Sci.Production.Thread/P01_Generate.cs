@@ -31,18 +31,20 @@ namespace Sci.Production.Thread
 
             string sql = string.Format(
             @"with a as (
-            Select threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
+            Select b.combotype,b.seq,threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
             from threadcolorcomb a WITH (NOLOCK) , threadcolorcomb_Operation b WITH (NOLOCK) ,style f WITH (NOLOCK) 
             where a.id = b.id and a.styleukey = f.ukey and 
             f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'),
             b as(
-            Select seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
+            Select c.ComboType,seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
             join operation e on e.id = d.operationid
             where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0)
+
             select 0 as sel,a.id,b.*,a.threadcombid from b WITH (NOLOCK) left join a WITH (NOLOCK) 
 			on a.operationid = b.operationid and b.styleid = a.styleid 
-            and a.seasonid  = b.seasonid and a.brandid = b.brandid order by seq
+            and a.seasonid  = b.seasonid and a.brandid = b.brandid and a.combotype= b.ComboType and a.seq=b.Seq
+            order by seq
             ", str_styleid, str_season, str_brandid);
             styleUkey = str_styleukey;
             strstyleid = str_styleid;
@@ -81,6 +83,7 @@ namespace Sci.Production.Thread
             this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            .Text("ComboType", header: "ComboType", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Seq", header: "SEQ", width: Widths.Auto(true),iseditingreadonly:true)
             .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
@@ -166,14 +169,14 @@ namespace Sci.Production.Thread
 
             //sum(seamlength)
             MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength",
-                                    @"Select id ,threadcombid,Machinetypeid ,isnull(sum(seamlength),0) as Length
+                                    @"Select threadcombid,Machinetypeid ,isnull(sum(seamlength),0) as Length
                                     from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' 
-                                    group by id,threadcombid,machinetypeid", out groupTable, "#tmp");
+                                    group by threadcombid,machinetypeid", out groupTable, "#tmp");
             //operationid,threadcombid ,Machinetypeid
-            MyUtility.Tool.ProcessWithDatatable(gridTable3, "threadcombid,operationid,Machinetypeid",
-                                    @"Select threadcombid,operationid,Machinetypeid
+            MyUtility.Tool.ProcessWithDatatable(gridTable3, "ComboType,SEQ,threadcombid,operationid,Machinetypeid",
+                                    @"Select ComboType,SEQ,threadcombid,operationid,Machinetypeid
                                     from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' 
-                                    group by threadcombid,operationid,Machinetypeid", out operTable, "#tmp");
+                                    group by ComboType,SEQ,threadcombid,operationid,Machinetypeid", out operTable, "#tmp");
 
             #region 準備新增字串
             foreach (DataRow dr in groupTable.Rows)
@@ -235,7 +238,7 @@ namespace Sci.Production.Thread
                                     {
                                         if (!MyUtility.Check.Seek(string.Format("Select * from ThreadColorComb_operation WITH (NOLOCK) where id='{0}' and operationid = '{1}'", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString())))
                                         {
-                                            sql2.Append(string.Format("Insert into ThreadColorComb_operation (id,operationid) values({0},'{1}');", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString()));
+                                            sql2.Append(string.Format("Insert into ThreadColorComb_operation (id,operationid,ComboType,SEQ) values({0},'{1}','{2}','{3}');", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString(), rowSelect[j]["ComboType"].ToString(), rowSelect[j]["Seq"].ToString()));
                                         }
                                     }
                                 }

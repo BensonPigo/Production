@@ -15,8 +15,9 @@ BEGIN
 	-- Declare the return variable here
 	DECLARE @rtn as varchar(45);
 
+	set @rtn = @id;
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @rtn = CONCAT(a.id, ':', a.Name) from dbo.Pass1 a WITH (NOLOCK) where a.ID = @id;
+	SELECT @rtn = CONCAT(@rtn, ':', a.Name) from dbo.Pass1 a WITH (NOLOCK) where a.ID = @id;
 
 	-- Return the result of the function
 	RETURN @rtn;

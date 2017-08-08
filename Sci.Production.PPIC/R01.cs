@@ -331,7 +331,7 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 try
                 {
                     objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
-                    result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 1, showExcel: false, excelApp: objApp);
+                    result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
@@ -340,6 +340,15 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                     this.ShowWaitMessage("Excel Processing...");
                     worksheet = objApp.Sheets[1];
 
+                    #region Set Excel Title
+                    string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
+select NameEn 
+from Factory 
+where id = '{0}'", Sci.Env.User.Factory), null);
+                    worksheet.Cells[1, 1] = factoryName; 
+                    worksheet.Cells[2, 1] = "Sewing Line Schedule Report";
+                    worksheet.Cells[3, 1] = "Date:" + DateTime.Now.ToString("yyyy/MM/dd");
+                    #endregion 
                     for (int i = 1; i < printData.Rows.Count; i++)
                     {
                         DataRow frontRow = printData.Rows[i - 1];
@@ -349,7 +358,7 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                         if ( !frontRow["StyleID"].EqualString(Row["StyleID"]))
                         {
                             // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1 
-                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 2) + ":Z" + (i + 2));
+                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":Z" + (i + 5));
                             excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
                         }
                     }

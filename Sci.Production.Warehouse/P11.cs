@@ -273,11 +273,15 @@ order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
 
                         if (!MyUtility.Check.Seek(string.Format(@"
 select  a.*
-        , b.FabricType
+        , FabricType = CASE b.FabricType 
+                            WHEN 'A' THEN 'Accessory' 
+                            WHEN 'F' THEN 'Fabric'  
+                            WHEN 'O' THEN 'Other' 
+                       END
         , b.SCIRefno
         , f.MtlTypeID
         , m.IssueType
-        , left (a.seq1 + '   ' , 3) + a.seq2 seq
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
         , b.Colorid
         , b.SizeSpec
         , b.UsedQty
@@ -300,14 +304,17 @@ from dbo.ftyinventory a WITH (NOLOCK)
 inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id = a.POID 
                                                  and b.seq1 = a.seq1 
                                                  and b.seq2 = a.Seq2
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where   poid = '{0}' 
         and a.seq1 = '{1}' 
         and a.seq2 = '{2}' 
         and lock = 0 
         and inqty - outqty + adjustqty > 0  
-        and stocktype = 'B' "
-                            , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
+        and stocktype = 'B' 
+        and b.FabricType='A'
+        and m.IssueType='Sewing' "
+                            , CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                            e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -1454,10 +1461,25 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
             int allColumns = dtseq.Columns.Count;
             int sizeColumns = dtSizecode.Rows.Count;
-            xlTable.lisTitleMerge.Add(new Dictionary<string, string> {{ "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }});
+            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
+            string cc = MyUtility.Excel.ConvertNumericToExcelColumn(dtseq.Columns.Count);
+            // 合併儲存格
+            wks.get_Range("G9", cc + "9").Merge(false);
+            wks.Cells[9, 7] = "SIZE";
+            //框線
+            wks.Range["G9", cc + "10"].Borders.LineStyle = 1;
+            //置中
+            wks.get_Range("G9", cc + "9").HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+            for (int i = 6; i < dtseq.Columns.Count; i++)
+			{
+                wks.Cells[10, i+1] = dtseq.Columns[i].ColumnName;
+			}
+            
             xlTable.Borders.OnlyHeaderBorders = true;
             xlTable.Borders.AllCellsBorders = true;
+            xlTable.ShowHeader = false;
             xl.dicDatas.Add("##SEQ", xlTable);
+
             
             xl.Save();
             return true;

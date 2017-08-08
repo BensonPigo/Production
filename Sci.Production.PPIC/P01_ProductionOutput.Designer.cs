@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -42,7 +43,6 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridSewingOutput = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
             this.numSewingQty = new Sci.Win.UI.NumericBox();
             this.numSewingOrderQty = new Sci.Win.UI.NumericBox();
@@ -54,26 +54,40 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridCutting = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel8 = new Sci.Win.UI.Panel();
             this.numCuttingQty = new Sci.Win.UI.NumericBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
+            this.LoadingQutput = new System.Windows.Forms.TabPage();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.numLoadingQty = new Sci.Win.UI.NumericBox();
+            this.numOrderQty_L = new Sci.Win.UI.NumericBox();
+            this.lbttlQty = new Sci.Win.UI.Label();
+            this.lbLoadingQty = new Sci.Win.UI.Label();
+            this.lbQrderQty = new Sci.Win.UI.Label();
+            this.gridLoading = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel6.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel8.SuspendLayout();
+            this.LoadingQutput.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -113,7 +127,6 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(8, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(197, 23);
@@ -148,6 +161,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.LoadingQutput);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -269,7 +283,6 @@
             // 
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(133, 29);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(45, 23);
@@ -293,7 +306,6 @@
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(271, 4);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(83, 23);
@@ -308,7 +320,6 @@
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(184, 4);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
@@ -323,7 +334,6 @@
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(3, 4);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(165, 23);
@@ -338,10 +348,10 @@
             // 
             this.tabPage2.Controls.Add(this.panel9);
             this.tabPage2.Controls.Add(this.panel8);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(601, 355);
+            this.tabPage2.Size = new System.Drawing.Size(601, 358);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "-(Cutting(Comb";
             // 
@@ -351,7 +361,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(595, 290);
+            this.panel9.Size = new System.Drawing.Size(595, 293);
             this.panel9.TabIndex = 1;
             // 
             // gridCutting
@@ -382,7 +392,7 @@
             this.gridCutting.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutting.RowTemplate.Height = 24;
             this.gridCutting.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutting.Size = new System.Drawing.Size(595, 290);
+            this.gridCutting.Size = new System.Drawing.Size(595, 293);
             this.gridCutting.TabIndex = 0;
             this.gridCutting.TabStop = false;
             // 
@@ -394,7 +404,7 @@
             this.panel8.Controls.Add(this.label7);
             this.panel8.Controls.Add(this.label8);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(3, 293);
+            this.panel8.Location = new System.Drawing.Point(3, 296);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(595, 59);
             this.panel8.TabIndex = 0;
@@ -445,7 +455,6 @@
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(133, 29);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(45, 23);
@@ -460,7 +469,6 @@
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(271, 4);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(83, 23);
@@ -475,7 +483,6 @@
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(184, 4);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
@@ -485,6 +492,146 @@
             this.label8.TextStyle.Color = System.Drawing.Color.Black;
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // LoadingQutput
+            // 
+            this.LoadingQutput.Controls.Add(this.panel10);
+            this.LoadingQutput.Controls.Add(this.gridLoading);
+            this.LoadingQutput.Location = new System.Drawing.Point(4, 25);
+            this.LoadingQutput.Name = "LoadingQutput";
+            this.LoadingQutput.Size = new System.Drawing.Size(601, 355);
+            this.LoadingQutput.TabIndex = 2;
+            this.LoadingQutput.Text = "Loading Qutput";
+            // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.numLoadingQty);
+            this.panel10.Controls.Add(this.numOrderQty_L);
+            this.panel10.Controls.Add(this.lbttlQty);
+            this.panel10.Controls.Add(this.lbLoadingQty);
+            this.panel10.Controls.Add(this.lbQrderQty);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel10.Location = new System.Drawing.Point(0, 296);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(601, 59);
+            this.panel10.TabIndex = 1;
+            // 
+            // numLoadingQty
+            // 
+            this.numLoadingQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numLoadingQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numLoadingQty.IsSupportEditMode = false;
+            this.numLoadingQty.Location = new System.Drawing.Point(274, 29);
+            this.numLoadingQty.Name = "numLoadingQty";
+            this.numLoadingQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numLoadingQty.ReadOnly = true;
+            this.numLoadingQty.Size = new System.Drawing.Size(75, 23);
+            this.numLoadingQty.TabIndex = 6;
+            this.numLoadingQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numLoadingQty.DoubleClick += new System.EventHandler(this.numLoadingQty_DoubleClick);
+            // 
+            // numOrderQty_L
+            // 
+            this.numOrderQty_L.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty_L.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty_L.IsSupportEditMode = false;
+            this.numOrderQty_L.Location = new System.Drawing.Point(184, 29);
+            this.numOrderQty_L.Name = "numOrderQty_L";
+            this.numOrderQty_L.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOrderQty_L.ReadOnly = true;
+            this.numOrderQty_L.Size = new System.Drawing.Size(75, 23);
+            this.numOrderQty_L.TabIndex = 5;
+            this.numOrderQty_L.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // lbttlQty
+            // 
+            this.lbttlQty.BackColor = System.Drawing.Color.Transparent;
+            this.lbttlQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.lbttlQty.Location = new System.Drawing.Point(133, 29);
+            this.lbttlQty.Name = "lbttlQty";
+            this.lbttlQty.Size = new System.Drawing.Size(45, 23);
+            this.lbttlQty.TabIndex = 4;
+            this.lbttlQty.Text = "Total";
+            this.lbttlQty.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.Color = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
+            this.lbttlQty.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // lbLoadingQty
+            // 
+            this.lbLoadingQty.BackColor = System.Drawing.Color.Transparent;
+            this.lbLoadingQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lbLoadingQty.Location = new System.Drawing.Point(271, 4);
+            this.lbLoadingQty.Name = "lbLoadingQty";
+            this.lbLoadingQty.Size = new System.Drawing.Size(83, 23);
+            this.lbLoadingQty.TabIndex = 2;
+            this.lbLoadingQty.Text = "Loading Q\'ty";
+            this.lbLoadingQty.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbLoadingQty.TextStyle.Color = System.Drawing.Color.Black;
+            this.lbLoadingQty.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.lbLoadingQty.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // lbQrderQty
+            // 
+            this.lbQrderQty.BackColor = System.Drawing.Color.Transparent;
+            this.lbQrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lbQrderQty.Location = new System.Drawing.Point(184, 4);
+            this.lbQrderQty.Name = "lbQrderQty";
+            this.lbQrderQty.Size = new System.Drawing.Size(75, 23);
+            this.lbQrderQty.TabIndex = 1;
+            this.lbQrderQty.Text = "Order Q\'ty";
+            this.lbQrderQty.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbQrderQty.TextStyle.Color = System.Drawing.Color.Black;
+            this.lbQrderQty.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.lbQrderQty.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // gridLoading
+            // 
+            this.gridLoading.AllowUserToAddRows = false;
+            this.gridLoading.AllowUserToDeleteRows = false;
+            this.gridLoading.AllowUserToResizeRows = false;
+            this.gridLoading.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridLoading.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridLoading.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLoading.DataSource = this.listControlBindingSource1;
+            this.gridLoading.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridLoading.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridLoading.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridLoading.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridLoading.Location = new System.Drawing.Point(0, 0);
+            this.gridLoading.Name = "gridLoading";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridLoading.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridLoading.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridLoading.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridLoading.RowTemplate.Height = 24;
+            this.gridLoading.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLoading.Size = new System.Drawing.Size(601, 355);
+            this.gridLoading.TabIndex = 2;
+            this.gridLoading.TabStop = false;
             // 
             // P01_ProductionOutput
             // 
@@ -503,15 +650,20 @@
             this.tabPage1.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
+            this.LoadingQutput.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -548,5 +700,14 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.Label label8;
+        private System.Windows.Forms.TabPage LoadingQutput;
+        private Win.UI.Panel panel10;
+        private Win.UI.NumericBox numLoadingQty;
+        private Win.UI.NumericBox numOrderQty_L;
+        private Win.UI.Label lbttlQty;
+        private Win.UI.Label lbLoadingQty;
+        private Win.UI.Label lbQrderQty;
+        private Win.UI.Grid gridLoading;
+        private Win.UI.ListControlBindingSource listControlBindingSource3;
     }
 }

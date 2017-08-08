@@ -60,36 +60,52 @@ namespace Sci.Production.Cutting
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("@Cutref1", S1));
             paras.Add(new SqlParameter("@Cutref2", S2));
-            string byType;
+            string byType, byType2;
 
             if (radioByCutRefNo.Checked)  byType = "Cutref";
             else byType = "Cutplanid";
-
-            string workorder_cmd = string.Format("Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds from Workorder a WITH (NOLOCK) Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"], byType);
+            if (radioByCutRefNo.Checked) byType2 = ",shc";
+            else byType2 = "";
+            string workorder_cmd = string.Format(@"Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds 
+    ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
+from Workorder a WITH (NOLOCK) Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno 
+outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
+            Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"], byType);
             DualResult dResult = DBProxy.Current.Select(null, workorder_cmd, paras,out WorkorderTb);
             if (!dResult) return dResult;
+
             workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderDisTb);
             if (!dResult) return dResult;
+
             workorder_cmd = string.Format("Select {1},a.MarkerName,a.MarkerNo,MarkerLength,Cons,a.Layer,a.Cutno,a.colorid,c.seq,a.FabricPanelCode,b.* from Workorder a WITH (NOLOCK) ,Workorder_SizeRatio b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderSizeTb);
             if (!dResult) return dResult;
+
             workorder_cmd = string.Format("Select {1},b.*,Markername,a.FabricPanelCode from Workorder a,Workorder_PatternPanel b Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderPatternTb);
             if (!dResult) return dResult;
+
             MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", detDr["ID"]), out OrderDr);
-            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},estCutDate",byType), string.Format("Select distinct {0},estCutDate From #tmp ",byType), out CutrefTb);
+
+            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},estCutDate{1}", byType,byType2), string.Format("Select distinct {0},estCutDate{1} From #tmp ", byType, byType2), out CutrefTb);
+
             MyUtility.Tool.ProcessWithDatatable(WorkorderDisTb, string.Format("{0},OrderID",byType), string.Format("Select distinct {0},OrderID From #tmp",byType), out CutDisOrderIDTb); //整理sp
+
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", byType), out CutSizeTb); //整理SizeGroup,Qty
+
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},SizeCode,seq", byType), string.Format("Select distinct {0},SizeCode,seq From #tmp order by seq ", byType), out SizeTb); //整理Size
+
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName", byType), string.Format("Select distinct {0},MarkerName From #tmp ", byType), out MarkerTB); //整理MarkerName
-            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},FabricPanelCode,SCIRefno", byType), string.Format("Select distinct {0},a.FabricPanelCode,a.SCIRefno,b.Description,b.width  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", byType), out FabricComboTb); //整理FabricPanelCode     
+
+            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},FabricPanelCode,SCIRefno,shc", byType), string.Format("Select distinct {0},a.FabricPanelCode,a.SCIRefno,b.Description,b.width,shc  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", byType), out FabricComboTb); //整理FabricPanelCode     
 
             if (radioByCutplanId.Checked)
             {
                 string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a WITH (NOLOCK) ,Issue_Detail b WITH (NOLOCK) , #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
                 MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricPanelCode     
             }
+
             return Result.True; 
         }
 
@@ -192,17 +208,18 @@ namespace Sci.Production.Cutting
                 }
                 int copyRow = 0;
                 int RowRange = 6;
-
+                int tmpn=13;
                 if (FabricComboArry.Length > 0)
                 {
                     foreach (DataRow FabricComboDr in FabricComboArry)
                     {
                         if (copyRow > 0)
                         {
-                            Excel.Range r = worksheet.get_Range("A" + ((12 + RowRange * (copyRow-1))).ToString(), "A" + ((12 + RowRange * (copyRow-1)) + RowRange-1).ToString()).EntireRow;
+                            Excel.Range r = worksheet.get_Range("A" + ((12 + RowRange * (copyRow - 1))).ToString(), "A" + ((12 + RowRange * (copyRow - 1)) + RowRange - 1).ToString()).EntireRow;
                             r.Copy();
                             r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
                         }
+
                         WorkorderPatternArry = WorkorderPatternTb.Select(string.Format("Cutplanid='{0}' and FabricPanelCode = '{1}'", Cutplanid, FabricComboDr["FabricPanelCode"]), "PatternPanel");
                         pattern = "";
                         if (WorkorderPatternArry.Length > 0)
@@ -233,10 +250,10 @@ namespace Sci.Production.Cutting
                         }
 
                         worksheet.Cells[FabricRow, 19] = FabricComboDr["width"].ToString();
-
                         copyRow++;
                     }
                 }
+
                 #region OrderSP List, Line List
                 if (WorkorderOrderIDArry.Length > 0)
                 {
@@ -322,6 +339,7 @@ namespace Sci.Production.Cutting
                     #endregion   
                 }
                 #endregion
+                tmpn=nRow + 2;
                 nRow = nRow + 3; //Size
                 string str_PIVOT = "";
                 nSizeColumn = 4;
@@ -359,6 +377,19 @@ Cutplanid, str_PIVOT);
                 DataRow[] FabricComboTbsi = FabricComboTb.Select(string.Format("Cutplanid = '{0}'", Cutplanid));
                 foreach (DataRow FabricComboDr in FabricComboTbsi)
                 {
+                    if (!MyUtility.Check.Empty(FabricComboDr["shc"]))
+                    {
+                        Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[tmpn, Type.Missing];
+                        rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                        Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I" + tmpn, "U" + tmpn);
+                        rng2.Merge();
+                        rng2.Cells.Font.Color = Color.Red;
+                        rng2.Cells.Font.Bold = true;
+                        worksheet.Cells[tmpn, 9] = FabricComboDr["shc"].ToString();
+                        tmpn++;
+                        nRow++;
+                    }
+                    tmpn += 6;
                     DataRow[] CutQtyArray = CutQtyTb.Select(string.Format("FabricPanelCode = '{0}'", FabricComboDr["FabricPanelCode"]));
                     if (CutQtyArray.Length > 0)
                     {
@@ -373,6 +404,7 @@ Cutplanid, str_PIVOT);
                                 Excel.Range r = worksheet.get_Range("A" + (nRow).ToString(), "A" + (nRow).ToString()).EntireRow;
                                 r.Copy();
                                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); //新增Row
+                                tmpn++;
                             }
                             worksheet.Cells[nRow, 1] = cutqtydr["Cutno"].ToString();
                             worksheet.Cells[nRow, 2] = cutqtydr["Colorid"].ToString();
@@ -420,6 +452,7 @@ Cutplanid, str_PIVOT);
                     }
                 }
                 #endregion
+                
                 nSheet++;
             }
             //重製Mode以取消Copy區塊
@@ -448,6 +481,7 @@ Cutplanid, str_PIVOT);
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 13] = OrderDr["Sewline"];
+
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
                 worksheet.Cells[40, nColumn] = OrderDr["Styleid"];
@@ -469,7 +503,7 @@ Cutplanid, str_PIVOT);
             int nDisCount = 0;
             Double disRow = 0;
             string size = "", Ratio = "";
-            int TotConsRowS = 19, TotConsRowE = 20;
+            int TotConsRowS = 18, TotConsRowE = 19;
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
             {
                 spList = "";
@@ -689,8 +723,6 @@ cutref, str_PIVOT);
                         r.Copy();
                         r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); //新增Row
                     }
-
-
                     worksheet.Cells[nrow, 1] = cutqtydr["Cutno"].ToString();
                     worksheet.Cells[nrow, 2] = cutqtydr["Colorid"].ToString();
                     worksheet.Cells[nrow, 3] = cutqtydr["Layer"].ToString();
@@ -706,6 +738,24 @@ cutref, str_PIVOT);
                 #region Total Cons
                 worksheet.Cells[nrow+1, 20] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
                 #endregion
+                nSheet++;
+            }
+
+            nSheet = 1;
+            foreach (DataRow Cutrefdr in CutrefTb.Rows)
+            {
+                worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
+                worksheet.Select();
+                if (!MyUtility.Check.Empty(Cutrefdr["shc"]))
+                {
+                    Excel.Range r = worksheet.get_Range("A14", "A14").EntireRow;
+                    r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
+                    Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I14:U14");
+                    rng2.Merge();
+                    rng2.Cells.Font.Color = Color.Red;
+                    rng2.Cells.Font.Bold = true;
+                    worksheet.Cells[14, 9] = Cutrefdr["shc"];
+                }
                 nSheet++;
             }
             #endregion //End By CutRef

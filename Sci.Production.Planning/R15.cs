@@ -237,6 +237,333 @@ namespace Sci.Production.Planning
             }
             #endregion
 
+            #region -- 產生RFID Loading Qty --
+            sqlCmd.Append(@"/*Cur_bdltrack2*/
+
+declare @EndDate date = (select Max(SewInLine) from #cte);
+
+/*
+Step1
+取得基礎訂單
+1.排除掉SewinLine and SewinOffLine 空值的訂單
+*/
+select masterID = o.POID
+		, o.orderID 
+		, StyleID
+		, o.Finished
+		, o.FactoryID
+		, o.SewLine
+		, o.SewInLine
+		, o.SewOffLine
+into  #tsp
+from #cte o
+inner join Factory f on o.FactoryID = f.ID
+where	1=1--o.Junk != 1
+and (o.SewInLine is not null or o.SewInLine != '')
+		and (o.SewOffLine is not null or o.SewOffLine != '')	
+
+----------------------------------------------------------------------------------------------------------
+/*
+	依照 Poid，取得製作一件衣服所有需要的 【FabricCode & PatternCode】
+*/
+select	Poid = o.POID
+		, pt.UKey
+into #TablePatternUkey
+from #tsp p
+inner join Orders o on p.orderID = o.ID
+inner join Pattern pt on	pt.StyleUkey = o.StyleUkey
+							and pt.Status = 'Completed' 
+							and pt.EDITdATE = (	SELECT MAX(EditDate) 
+												from pattern WITH (NOLOCK) 
+												where styleukey = o.StyleUkey
+														and Status = 'Completed') 
+------------------------------------------------------------------------------------------------------------------
+/*														
+*	取得所有 PatternPanel
+*	※ C# 中 SubStrin (10) 代表第 11 個字元，SQL 中 SubString (11) 代表第 11 個字元
+*
+*	FabricPanelCode 只需要取 FabricCode 不為空白
+*	Distinct 原因是會有多筆 Article Group
+*	PatternCode 只要 Annotation = 空值，則 PatterCode = 'ALLPARTS'	
+*/
+Select	distinct tpu.Poid
+		, PatternCode = case
+							when pg.Annotation = '' or pg.Annotation is null then 'ALLPARTS'
+							else PatternCode.value
+						end
+		, F_CODE = a.FabricPanelCode
+into #TablePatternCode
+from #TablePatternUkey tpu
+inner join Pattern_GL pg WITH (NOLOCK) on tpu.UKey = pg.PatternUKEY
+inner join Pattern_GL_LectraCode a WITH (NOLOCK) on	 a.PatternUkey = tpu.Ukey
+														and a.FabricCode != ''
+														and pg.SEQ = a.SEQ
+outer apply (
+	select value = iif(a.SEQ = '0001', SubString(a.PatternCode, 11, Len(a.PatternCode)), a.PatternCode)
+) PatternCode
+
+------------------------------------------------------------------------------------------------------------------
+/*
+*	取出的訂單，執行以下判斷流程 (#CutComb 儲存 整件衣服 應該裁剪的部位【須展開至 PatterCode】)
+*	Step1 找出同 Article、Comb 的 bundel card 有幾個不同的 artwork bundle
+*	Step2 組出 SP# 的剪裁 Comb
+*		排除
+*			1. Order_BOF.Kind = 0 (表Other) 
+*			2. Order_BOF.Kind = 3 (表Polyfill)的資料
+*			3. 外裁項 (Order_EachCons.CuttingPiece == 0) 【0 代表非外裁項】
+*/
+select	#tsp.masterID
+		, #tsp.orderID
+		, #tsp.StyleID
+		, #cur_artwork.FabricCombo
+		, #cur_artwork.PatternCode
+		, #cur_artwork.Article
+		, #cur_artwork.artwork 
+		, #tsp.SewLine
+		, #tsp.FactoryID
+into #cutcomb
+from #tsp
+inner join (
+	select	distinct #tsp.orderID
+			, b.Article
+			, FabricCombo = tpc.F_CODE
+			, artwork = isnull (stuff ((select '+' + subprocessid
+										from (
+											select distinct bda.subprocessid
+											from Bundle_Detail_Art bda
+											where bd.BundleNo = bda.Bundleno
+										) k
+										for xml path('')
+									  ), 1, 1, '')
+							  , '')
+			, PatternCode = tpc.PatternCode
+	from #TablePatternCode tpc
+	left join Bundle b on b.POID = tpc.Poid
+	left join Bundle_Detail bd on b.id = bd.id
+								  and tpc.PatternCode = bd.Patterncode
+	left join #tsp on b.Orderid = #tsp.orderID
+	left join WorkOrder wo on b.POID = wo.id
+							   and b.CutRef = wo.CutRef
+	left join Order_BOF ob on ob.Id = wo.Id 
+							  and ob.FabricCode = wo.FabricCode
+	left join Order_EachCons oec on oec.ID = ob.ID 
+								    and oec.MarkerName = wo.Markername 
+									and oec.FabricCombo = wo.FabricCombo 
+									and oec.FabricPanelCode = wo.FabricPanelCode 
+									and oec.FabricCode = wo.FabricCode
+
+	where ob.Kind not in ('0','3')
+	      and oec.CuttingPiece = 0
+)#cur_artwork on #tsp.orderID = #cur_artwork.orderID
+
+/*
+Step2
+ 取出被 Loader 收下的 Bundle Data
+*		條件 SubProcessId = 'Loading'
+*		排除
+*			1. Order_BOF.Kind = 0 (表Other) 
+*			2. Order_BOF.Kind = 3 (表Polyfill)的資料
+*			3. 外裁項 【Bundle_Detail 不會出現外裁項的資料】
+*		BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差
+*/
+select	b.orderid
+		, bd.SizeCode
+		, cdate2 = cDate.value
+		, b.Article
+		, bd.BundleGroup
+		, FabricCombo = wo.FabricPanelCode
+		, PatternCode = bd.Patterncode
+		, artwork = isnull(ArtWork.value, '')
+		, qty = sum(isnull(bd.qty, 0))
+into #cur_bdltrack2
+from BundleInOut bio
+inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
+inner join Bundle b on b.id = bd.id
+inner join WorkOrder wo on b.POID = wo.id
+						   and b.CutRef = wo.CutRef
+left join Order_BOF ob on ob.Id = wo.Id 
+						  and ob.FabricCode = wo.FabricCode
+inner join #tsp on b.Orderid = #tsp.orderID
+outer apply (
+	select value = stuff ((	select '+' + subprocessid
+							from (
+								select distinct bda.subprocessid
+								from Bundle_Detail_Art bda
+								where bd.BundleNo = bda.Bundleno
+							) k
+							for xml path('')
+							), 1, 1, '')
+) ArtWork
+outer apply(
+	select value = CONVERT(char(10), bio.InComing, 120)
+) cDate
+where	bio.SubProcessId = 'loading'
+		and ob.Kind not in ('0','3')		
+		-- 篩選 OrderID		
+group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup;
+
+------------------------------------------------------------------------------------------------------------------
+
+/*
+*	根據每一個 OrderID 取得 SewInDate  日期展開至 EndDate
+*	這邊會影響到最後計算成衣件數
+*/
+create table #CBDate (
+	OrderID varchar(13)
+	, SewDate date
+);
+
+Declare rs Cursor For Select orderID, SewInLine from #tsp
+Declare @OrderID varchar(20);
+Declare @StartInLine date;
+Declare @SewInLine date;
+Declare @count int = 0;
+
+/*
+*	指向 #tsp 第一筆資料
+*	@@FETCH_STATUS = 0，代表資料指向成功
+*/
+Open rs
+Fetch Next From rs Into @OrderID, @SewInLine
+While @@FETCH_STATUS = 0
+Begin	
+	select top 1 @StartInLine = iif(cdate2 is null or cdate2 = '', @SewInLine, cdate2)
+	from #cur_bdltrack2 
+	where #cur_bdltrack2.Orderid = @OrderID
+	order by cdate2
+	
+	;with qa as (
+		select	OrderID = @OrderID
+				, qdate = @StartInLine
+
+		union all
+		select	OrderID = @OrderID
+				, DATEADD(day, 1, qdate)
+		from qa 
+		where	qdate < @EndDate
+	) 
+	insert into #CBDate
+	select OrderID, qdate
+	from qa
+	Option (maxrecursion 365);
+
+/*
+*	Fetch 指向 #tsp 下一筆資料
+*/
+	Fetch Next From rs Into @OrderID, @SewInLine
+End;
+Close rs;
+Deallocate rs; 
+-----------------------------------------------------
+
+/*	
+*	Step4 已收的bundle資料中找出各 
+*			article 
+*			size
+*			部位
+*			artwork
+*			加總數量
+*	Step5 計算 sp# 上線日至下線日的產出
+*	Step6 依條件日期區間，至 sewing 取得 stdqty 加總以及抓取備妥的成衣件數
+*/
+select	NewCutComb.FactoryID
+		, NewCutComb.orderid
+		, NewCutComb.StyleID
+		, NewCutComb.cdate2
+		, NewCutComb.SewLine
+		, NewCutComb.Article
+		, NewCutComb.SizeCode
+		, NewCutComb.BundleGroup
+		, NewCutComb.FabricCombo
+		, NewCutComb.PatternCode
+		, NewCutComb.artwork
+		, qty = isnull(#cur_bdltrack2.qty, 0)
+		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by NewCutComb.FactoryID, NewCutComb.orderid,  NewCutComb.Article, NewCutComb.SizeCode, NewCutComb.BundleGroup, NewCutComb.FabricCombo, NewCutComb.PatternCode, NewCutComb.artwork
+																    order by NewCutComb.cdate2)
+into #Min_cut
+from (
+/*
+*	組出每一天，同 OrderID, Artwork, Article, SizeCode 需要的 FabricCombe & PatternCode
+*	這邊會在 CutComb 成衣組合中，加入需計算的日期	
+*/
+	select	distinct #cutcomb.*
+			, cdate2 = #CBDate.SewDate
+			, SizeCode = SizeCode.value
+			, BundleGroup = BundleGroup.value
+	from #cutcomb
+	outer apply (
+		select distinct value = SizeCode
+		from #cur_bdltrack2 
+		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
+	) SizeCode
+	outer apply (
+		select distinct value = BundleGroup
+		from #cur_bdltrack2 
+		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
+	) BundleGroup
+	inner join #CBDate on #cutcomb.orderID = #CBDate.OrderID
+) NewCutComb 
+left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork 
+							and NewCutComb.FabricCombo = #cur_bdltrack2.FabricCombo
+							and NewCutComb.PatternCode = #cur_bdltrack2.PatternCode
+							and NewCutComb.orderID = #cur_bdltrack2.orderid
+							and NewCutComb.Article = #cur_bdltrack2.Article 
+							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
+                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2	
+							and NewCutComb.BundleGroup = #cur_bdltrack2.BundleGroup;						
+--order by cdate2, orderid, Article, SizeCode, FabricCombo, PatternCode, artwork
+
+-----------------------------------------------------------
+
+/*
+*	準備好要印的資料
+*/
+select	FactoryID
+		, SP
+		, StyleID
+		, SewingDate = DateAdd(day, 1 ,SewingDate)
+		, Line
+		, AccuLoad = AccuLoading
+into #print
+from (
+	select	FactoryID
+			, SP = orderID
+			, StyleID
+			, SewingDate = cdate2
+			, Line = SewLine
+			, AccuLoading = sum (isnull(MinLoadingQty, 0))
+	from (
+/*
+*		依照【日期, SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
+*		判斷 BundleGroup
+*			第一次群組判斷最小數量需要加上 BundleGroup
+*			第二次群組加總所有成衣數量		
+*/
+		select FactoryID
+				, orderID
+				, StyleID
+				, cdate2
+				, SewLine
+				, Article, SizeCode
+				, MinLoadingQty = sum (MinLoadingQty)
+		from (
+			select	FactoryID
+					, orderID
+					, StyleID
+					, cdate2
+					, SewLine
+					, Article, SizeCode
+					, MinLoadingQty = min(AccuLoadingQty)
+			from #Min_cut 
+			group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode, BundleGroup
+		)w
+		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
+	)x 
+	group by FactoryID, orderID, StyleID, cdate2, SewLine
+) a
+");
+            #endregion
+
             sqlCmd.Append(string.Format(@"
                 -- 依撈出來的order資料(cte)去找各製程的WIP
                 select 
@@ -303,28 +630,31 @@ namespace Sci.Production.Planning
                 ,t.Dest,t.StyleID,t.OrderTypeID
                 ,t.ShipmodeID,'' [OrderNo],t.CustPONo,t.CustCDID,t.ProgramID,t.CdCodeID,t.KPILETA
                 ,t.LETA,t.MTLETA,t.SewETA,t.PackETA,t.CPU
-                ,t.Qty_byShip,#cte2.first_cut_date,#cte2.cut_qty,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
+                ,t.Qty_byShip,#cte2.first_cut_date,#cte2.cut_qty
+                ,[RFID Cut Qty]= iif(CutQty.[RFID Cut Qty]>t.qty,t.qty,CutQty.[RFID Cut Qty])
+			    ,[RFID Loading Qty]= isnull(loading.AccuLoad,0)
+				,[RFID Emb Qty] = iif(EmbQty.[RFID Emb Qty]>t.qty,t.qty,EmbQty.[RFID Emb Qty])
+				,[RFID Bond Qty] = iif(BondQty.[RFID Bond Qty]>t.qty,t.qty,BondQty.[RFID Bond Qty])
+				,[RFID Print Qty] = iif(PrintQty.[RFID Print Qty]>t.qty,t.qty,PrintQty.[RFID Print Qty]) 
+                ,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
                 ,#cte2.PRINTING_qty,#cte2.sewing_output,t.qty+t.FOCQty - #cte2.sewing_output [Balance]
                 ,#cte2.firstSewingDate,#cte2.AVG_QAQTY
                 ,DATEADD(DAY,iif(isnull(#cte2.AVG_QAQTY,0) = 0,0,ceiling((t.qty+t.FOCQty - #cte2.sewing_output)/(#cte2.AVG_QAQTY*1.0))),#cte2.firstSewingDate) [Est_offline]
                 ,IIF(isnull(t.TotalCTN,0)=0, 0, round(t.ClogCTN / (t.TotalCTN*1.0),4) * 100 ) [pack_rate]
-                ,t.TotalCTN
-                --,t.FtyCTN
+                ,t.TotalCTN                
                 ,t.TotalCTN-t.FtyCTN as FtyCtn
-                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI
-                --,t.KPIChangeReason
+                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI                
                 ,KPIChangeReason.KPIChangeReason  KPIChangeReason
                 ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
                 ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
-                ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]
-                --,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [MC Handle]
+                ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]             
                 ,dbo.getTPEPass1(t.McHandle) [MC Handle]
                 ,t.DoxType
-                ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q WITH (NOLOCK) where q.ID = t.OrderID) t for xml path('')) article_list
-                --, t.Customize1 [SpecMark]
+                ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q WITH (NOLOCK) where q.ID = t.OrderID) t for xml path('')) article_list                
                 , (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = t.SpecialMark) [SpecMark]
                 , t.GFR, t.SampleReason
-                ,(select s.StdTms * t.CPU from System s WITH (NOLOCK) ) [TMS]"));
+                ,(select s.StdTms * t.CPU from System s WITH (NOLOCK) ) [TMS]
+"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
             sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID"));
@@ -332,11 +662,69 @@ namespace Sci.Production.Planning
                 sqlCmd.Append(string.Format(@" left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
 
             //KPIChangeReason
-            sqlCmd.Append(@"  outer apply ( select ID + '-' + Name KPIChangeReason  from Reason 
-				where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason 
-				and t.KPIChangeReason !='' and t.KPIChangeReason is not null ) KPIChangeReason  ");
+            sqlCmd.Append(@"  
+outer apply ( select ID + '-' + Name KPIChangeReason  from Reason 
+where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason 
+and t.KPIChangeReason !='' and t.KPIChangeReason is not null 
+) KPIChangeReason 
+outer apply (
+  select 
+  [RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
+from Bundle B
+left join Bundle_Detail BD on BD.Id=B.ID
+left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where Orderid=t.OrderID and BIO.SubProcessId='SORTING'
+) CutQty
+outer apply (
+select 
+[RFID Emb Qty]=isnull(sum(BD.Qty), 0) 
+from Bundle B
+left join Bundle_Detail BD on BD.Id=B.ID
+left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where Orderid=t.OrderID and BIO.SubProcessId='EMB'
+) EmbQty
+outer apply(
+select 
+[RFID Bond Qty]=isnull(sum(BD.Qty), 0)  
+from Bundle B
+left join Bundle_Detail BD on BD.Id=B.ID
+left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where Orderid=t.OrderID and BIO.SubProcessId='BO'
+) BondQty
+outer apply(
+select 
+[RFID Print Qty]=isnull(sum(BD.Qty), 0)
+from Bundle B
+left join Bundle_Detail BD on BD.Id=B.ID
+left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+where Orderid=t.OrderID and BIO.SubProcessId='PRT'
+) PrintQty
+outer apply 
+(
+	select [AccuLoad] = AccuLoad from 
+	(select distinct FactoryID,SP,StyleID,Line,AccuLoad from #print ) a
+	where SP=t.OrderID and  StyleID=t.StyleID
+	and FactoryID=t.FactoryID
+	and line=t.SewLine
+)loading
+");
 
             sqlCmd.Append(string.Format(@" order by {0}", orderby));
+            sqlCmd.Append(@" 
+DROP TABLE #cte2,#cte
+drop table #tsp
+drop table #cutcomb
+drop table #cur_bdltrack2
+drop table #Min_cut
+drop table #print
+drop table #TablePatternUkey;
+drop table #TablePatternCode
+drop table #CBDate
+");
+            if (isArtwork)
+            {
+                sqlCmd.Append(@" drop table #rawdata_tmscost,#tmscost_pvt");
+            }
 
 
             DBProxy.Current.DefaultTimeout = 1800;
@@ -409,11 +797,6 @@ namespace Sci.Production.Planning
             }
             
             return true;
-        }
-
-        private void R15_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

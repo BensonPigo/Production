@@ -17,14 +17,14 @@ BEGIN
 
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
-		, @suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(13)+CHAR(10)) 
+		, @suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(10)) 
 							  , iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, ''))
 		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
-		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail + CHAR(13)+CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail + CHAR(10))
 		, @po_desc=@po_desc + iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
-		, @po_desc=@po_desc + iif(ISNULL(p.SizeUnit,'') = '', '', p.SizeUnit) + iif(p.sizespec = '', '', CHAR(13)+CHAR(10))
-		, @po_desc=@po_desc + iif(ISNULL(p.Special,'') = '', '', p.Special + CHAR(13)+CHAR(10))
-		, @po_desc=@po_desc + iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(13)+CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.SizeUnit,'') = '', '', p.SizeUnit) + iif(p.sizespec = '', '', CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.Special,'') = '', '', p.Special + CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(10))
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
 		from dbo.po_supp_detail p WITH (NOLOCK)
 		left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
@@ -50,15 +50,15 @@ BEGIN
 		if @repeat = 0
 		BEGIN	
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
-			set @string = concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13) + CHAR(10)))
-								, rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13) + CHAR(10)))
-								, rtrim(iif(isnull(@po_desc, '') = '','',@po_desc + CHAR(13) + CHAR(10))));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(10));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(10));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(10));
+			set @string = concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',iif(@suppcolor='',@fabric_detaildesc,@fabric_detaildesc + CHAR(10))))
+								, rtrim(iif(isnull(@suppcolor, '') = '','',iif(@po_desc='',@suppcolor,@suppcolor + CHAR(10))))
+								, rtrim(iif(isnull(@po_desc, '') = '','',replace(@po_desc,char(10),'') )));
 		END
 		ELSE
-			set @string = rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc + CHAR(13)+ CHAR(10)));
+		set @string = rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor ))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc ));
 	END
 
 	IF @type =4

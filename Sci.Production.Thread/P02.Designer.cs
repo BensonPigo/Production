@@ -113,6 +113,7 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(789, 119);
             this.gridicon.TabIndex = 3;
+            this.gridicon.Visible = false;
             // 
             // refresh
             // 

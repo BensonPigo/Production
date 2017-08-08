@@ -17,7 +17,7 @@
     [OrganicCotton] BIT            NULL,
     [LTDay]         NUMERIC (1)    NULL,
     [AbbCH]         NVARCHAR (70)  NULL,
-    [AbbEN]         NVARCHAR (70)  NULL,
+    [AbbEN]         NVARCHAR (80)  NULL,
     [AllowanceType] NUMERIC (1)    NULL,
     [AllowanceRate] NUMERIC (2)    NULL,
     [AddName]       VARCHAR (10)   NULL,
