@@ -31,32 +31,25 @@
             this.components = new System.ComponentModel.Container();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
-            this.btnQuery = new Sci.Win.UI.Button();
-            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelSP = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
-            this.txtLocation2 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.txtToLocation = new Sci.Win.UI.TextBox();
+            this.btnUpdateAll = new Sci.Win.UI.Button();
+            this.labelReason = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
-            this.txtDyelot = new Sci.Win.UI.TextBox();
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioSPNo = new Sci.Win.UI.RadioButton();
-            this.radioTransactionID = new Sci.Win.UI.RadioButton();
-            this.labelDyelot = new Sci.Win.UI.Label();
-            this.labelRef = new Sci.Win.UI.Label();
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtLocation = new Sci.Win.UI.TextBox();
-            this.txtTransactionID = new Sci.Win.UI.TextBox();
-            this.txtRef = new Sci.Win.UI.TextBox();
             this.labelLocation = new Sci.Win.UI.Label();
+            this.txtRef = new Sci.Win.UI.TextBox();
+            this.labelRef = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labelMaterialType = new Sci.Win.UI.Label();
-            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.radioPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -69,7 +62,7 @@
             this.btnCancel.Location = new System.Drawing.Point(912, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 5;
+            this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -81,38 +74,45 @@
             this.btnImport.Location = new System.Drawing.Point(816, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
-            this.btnImport.TabIndex = 4;
+            this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // btnQuery
+            // btnFindNow
             // 
-            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(918, 25);
-            this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(84, 30);
-            this.btnQuery.TabIndex = 7;
-            this.btnQuery.Text = "Query";
-            this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(890, 15);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 5;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
-            // txtSPNo
+            // txtSP
             // 
-            this.txtSPNo.BackColor = System.Drawing.Color.White;
-            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.IsSupportEditMode = false;
-            this.txtSPNo.Location = new System.Drawing.Point(138, 29);
-            this.txtSPNo.Name = "txtSPNo";
-            this.txtSPNo.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNo.TabIndex = 1;
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(81, 19);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(122, 23);
+            this.txtSP.TabIndex = 0;
+            // 
+            // labelSP
+            // 
+            this.labelSP.Location = new System.Drawing.Point(9, 19);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(69, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnUpdateAllLocation);
-            this.groupBox2.Controls.Add(this.txtLocation2);
-            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.txtToLocation);
+            this.groupBox2.Controls.Add(this.btnUpdateAll);
+            this.groupBox2.Controls.Add(this.labelReason);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -122,179 +122,116 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
-            // btnUpdateAllLocation
+            // txtToLocation
             // 
-            this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAllLocation.Location = new System.Drawing.Point(596, 16);
-            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
-            this.btnUpdateAllLocation.Size = new System.Drawing.Size(156, 30);
-            this.btnUpdateAllLocation.TabIndex = 3;
-            this.btnUpdateAllLocation.Text = "Update All Location";
-            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
+            this.txtToLocation.BackColor = System.Drawing.Color.White;
+            this.txtToLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToLocation.Location = new System.Drawing.Point(93, 21);
+            this.txtToLocation.Name = "txtToLocation";
+            this.txtToLocation.Size = new System.Drawing.Size(261, 23);
+            this.txtToLocation.TabIndex = 10;
+            this.txtToLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtToLocation_PopUp);
             // 
-            // txtLocation2
+            // btnUpdateAll
             // 
-            this.txtLocation2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtLocation2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtLocation2.IsSupportEditMode = false;
-            this.txtLocation2.Location = new System.Drawing.Point(119, 20);
-            this.txtLocation2.Name = "txtLocation2";
-            this.txtLocation2.ReadOnly = true;
-            this.txtLocation2.Size = new System.Drawing.Size(471, 23);
-            this.txtLocation2.TabIndex = 2;
-            this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation2_MouseDown);
+            this.btnUpdateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAll.Location = new System.Drawing.Point(360, 17);
+            this.btnUpdateAll.Name = "btnUpdateAll";
+            this.btnUpdateAll.Size = new System.Drawing.Size(90, 30);
+            this.btnUpdateAll.TabIndex = 1;
+            this.btnUpdateAll.Text = "Update All";
+            this.btnUpdateAll.UseVisualStyleBackColor = true;
+            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
             // 
-            // label2
+            // labelReason
             // 
-            this.label2.Location = new System.Drawing.Point(47, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Location";
+            this.labelReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelReason.Location = new System.Drawing.Point(9, 21);
+            this.labelReason.Name = "labelReason";
+            this.labelReason.Size = new System.Drawing.Size(81, 23);
+            this.labelReason.TabIndex = 8;
+            this.labelReason.Text = "To Location";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.cmbMaterialType);
-            this.groupBox1.Controls.Add(this.labelMaterialType);
-            this.groupBox1.Controls.Add(this.txtSeq);
-            this.groupBox1.Controls.Add(this.txtDyelot);
-            this.groupBox1.Controls.Add(this.radioPanel1);
-            this.groupBox1.Controls.Add(this.btnQuery);
-            this.groupBox1.Controls.Add(this.labelDyelot);
-            this.groupBox1.Controls.Add(this.txtSPNo);
-            this.groupBox1.Controls.Add(this.labelRef);
+            this.groupBox1.Controls.Add(this.txtColor);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtLocation);
-            this.groupBox1.Controls.Add(this.txtTransactionID);
-            this.groupBox1.Controls.Add(this.txtRef);
             this.groupBox1.Controls.Add(this.labelLocation);
+            this.groupBox1.Controls.Add(this.txtRef);
+            this.groupBox1.Controls.Add(this.labelRef);
+            this.groupBox1.Controls.Add(this.btnFindNow);
+            this.groupBox1.Controls.Add(this.txtSP);
+            this.groupBox1.Controls.Add(this.labelSP);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 107);
+            this.groupBox1.Size = new System.Drawing.Size(1008, 58);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
-            // txtSeq
+            // txtColor
             // 
-            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(267, 29);
-            this.txtSeq.Name = "txtSeq";
-            this.txtSeq.seq1 = "";
-            this.txtSeq.seq2 = "";
-            this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 2;
+            this.txtColor.BackColor = System.Drawing.Color.White;
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.Location = new System.Drawing.Point(465, 19);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.Size = new System.Drawing.Size(106, 23);
+            this.txtColor.TabIndex = 2;
             // 
-            // txtDyelot
+            // label1
             // 
-            this.txtDyelot.BackColor = System.Drawing.Color.White;
-            this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDyelot.IsSupportEditMode = false;
-            this.txtDyelot.Location = new System.Drawing.Point(667, 29);
-            this.txtDyelot.Name = "txtDyelot";
-            this.txtDyelot.Size = new System.Drawing.Size(60, 23);
-            this.txtDyelot.TabIndex = 6;
-            // 
-            // radioPanel1
-            // 
-            this.radioPanel1.Controls.Add(this.radioSPNo);
-            this.radioPanel1.Controls.Add(this.radioTransactionID);
-            this.radioPanel1.Location = new System.Drawing.Point(6, 12);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(126, 88);
-            this.radioPanel1.TabIndex = 0;
-            this.radioPanel1.Value = "1";
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
-            // 
-            // radioSPNo
-            // 
-            this.radioSPNo.AutoSize = true;
-            this.radioSPNo.Checked = true;
-            this.radioSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSPNo.Location = new System.Drawing.Point(6, 19);
-            this.radioSPNo.Name = "radioSPNo";
-            this.radioSPNo.Size = new System.Drawing.Size(52, 21);
-            this.radioSPNo.TabIndex = 0;
-            this.radioSPNo.TabStop = true;
-            this.radioSPNo.Text = "SP#";
-            this.radioSPNo.UseVisualStyleBackColor = true;
-            this.radioSPNo.Value = "1";
-            // 
-            // radioTransactionID
-            // 
-            this.radioTransactionID.AutoSize = true;
-            this.radioTransactionID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioTransactionID.Location = new System.Drawing.Point(6, 58);
-            this.radioTransactionID.Name = "radioTransactionID";
-            this.radioTransactionID.Size = new System.Drawing.Size(118, 21);
-            this.radioTransactionID.TabIndex = 1;
-            this.radioTransactionID.Text = "Transaction ID";
-            this.radioTransactionID.UseVisualStyleBackColor = true;
-            this.radioTransactionID.Value = "2";
-            // 
-            // labelDyelot
-            // 
-            this.labelDyelot.Location = new System.Drawing.Point(613, 29);
-            this.labelDyelot.Name = "labelDyelot";
-            this.labelDyelot.Size = new System.Drawing.Size(51, 23);
-            this.labelDyelot.TabIndex = 9;
-            this.labelDyelot.Text = "Dyelot";
-            // 
-            // labelRef
-            // 
-            this.labelRef.Location = new System.Drawing.Point(331, 29);
-            this.labelRef.Name = "labelRef";
-            this.labelRef.Size = new System.Drawing.Size(40, 23);
-            this.labelRef.TabIndex = 3;
-            this.labelRef.Text = "Ref#";
+            this.label1.Location = new System.Drawing.Point(393, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 23);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Color";
             // 
             // txtLocation
             // 
             this.txtLocation.BackColor = System.Drawing.Color.White;
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.IsSupportEditMode = false;
-            this.txtLocation.Location = new System.Drawing.Point(542, 29);
+            this.txtLocation.Location = new System.Drawing.Point(649, 19);
             this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(68, 23);
-            this.txtLocation.TabIndex = 5;
+            this.txtLocation.Size = new System.Drawing.Size(106, 23);
+            this.txtLocation.TabIndex = 3;
+            this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocation_PopUp);
+            this.txtLocation.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocation_Validating);
             // 
-            // txtTransactionID
+            // labelLocation
             // 
-            this.txtTransactionID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtTransactionID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtTransactionID.IsSupportEditMode = false;
-            this.txtTransactionID.Location = new System.Drawing.Point(138, 68);
-            this.txtTransactionID.Name = "txtTransactionID";
-            this.txtTransactionID.ReadOnly = true;
-            this.txtTransactionID.Size = new System.Drawing.Size(122, 23);
-            this.txtTransactionID.TabIndex = 8;
+            this.labelLocation.Location = new System.Drawing.Point(577, 19);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(69, 23);
+            this.labelLocation.TabIndex = 7;
+            this.labelLocation.Text = "Location";
             // 
             // txtRef
             // 
             this.txtRef.BackColor = System.Drawing.Color.White;
             this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRef.IsSupportEditMode = false;
-            this.txtRef.Location = new System.Drawing.Point(374, 29);
+            this.txtRef.Location = new System.Drawing.Point(281, 19);
             this.txtRef.Name = "txtRef";
-            this.txtRef.Size = new System.Drawing.Size(87, 23);
-            this.txtRef.TabIndex = 4;
+            this.txtRef.Size = new System.Drawing.Size(106, 23);
+            this.txtRef.TabIndex = 1;
             // 
-            // labelLocation
+            // labelRef
             // 
-            this.labelLocation.Location = new System.Drawing.Point(464, 29);
-            this.labelLocation.Name = "labelLocation";
-            this.labelLocation.Size = new System.Drawing.Size(75, 23);
-            this.labelLocation.TabIndex = 7;
-            this.labelLocation.Text = "Location";
+            this.labelRef.Location = new System.Drawing.Point(209, 19);
+            this.labelRef.Name = "labelRef";
+            this.labelRef.Size = new System.Drawing.Size(69, 23);
+            this.labelRef.TabIndex = 4;
+            this.labelRef.Text = "Ref#";
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.gridImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 107);
+            this.panel1.Location = new System.Drawing.Point(0, 58);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 370);
+            this.panel1.Size = new System.Drawing.Size(1008, 419);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -317,28 +254,9 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.Size = new System.Drawing.Size(1008, 370);
+            this.gridImport.Size = new System.Drawing.Size(1008, 419);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // labelMaterialType
-            // 
-            this.labelMaterialType.Location = new System.Drawing.Point(730, 29);
-            this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
-            this.labelMaterialType.TabIndex = 10;
-            this.labelMaterialType.Text = "Material Type";
-            // 
-            // cmbMaterialType
-            // 
-            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
-            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbMaterialType.FormattingEnabled = true;
-            this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(821, 28);
-            this.cmbMaterialType.Name = "cmbMaterialType";
-            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
-            this.cmbMaterialType.TabIndex = 11;
             // 
             // P27_Import
             // 
@@ -346,15 +264,12 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "txtSPNo";
             this.Name = "P27_Import";
             this.Text = "P27. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.radioPanel1.ResumeLayout(false);
-            this.radioPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
@@ -366,28 +281,22 @@
 
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnImport;
-        private Win.UI.Button btnQuery;
-        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Button btnFindNow;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelSP;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label2;
-        private Win.UI.Button btnUpdateAllLocation;
-        private Win.UI.TextBox txtLocation2;
-        private Win.UI.TextBox txtDyelot;
-        private Win.UI.Label labelDyelot;
-        private Win.UI.TextBox txtLocation;
-        private Win.UI.Label labelLocation;
         private Win.UI.TextBox txtRef;
         private Win.UI.Label labelRef;
-        private Win.UI.TextBox txtTransactionID;
-        private Win.UI.RadioButton radioTransactionID;
-        private Win.UI.RadioButton radioSPNo;
-        private Win.UI.RadioPanel radioPanel1;
-        private Class.txtSeq txtSeq;
-        private Win.UI.Label labelMaterialType;
-        private Win.UI.ComboBox cmbMaterialType;
+        private Win.UI.Label labelLocation;
+        private Win.UI.Button btnUpdateAll;
+        private Win.UI.Label labelReason;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.TextBox txtColor;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtToLocation;
     }
 }

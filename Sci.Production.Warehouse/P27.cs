@@ -232,11 +232,11 @@ Where LD.id = '{0}' ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
 
         }
-
+        //Import
         private void btnImport_Click(object sender, EventArgs e)
         {
-            //var frm = new Sci.Production.Warehouse.P27_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            //frm.ShowDialog(this);
+            var frm = new Sci.Production.Warehouse.P27_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            frm.ShowDialog(this);
         }
         //當表身已經有值時，編輯時若換了stock type則表身要一併清空。
         private void comboStockType_Validating(object sender, CancelEventArgs e)
