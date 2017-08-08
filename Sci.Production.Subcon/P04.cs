@@ -626,7 +626,7 @@ inner join (
     where   FI.MDivisionID = '{0}'
             and FI.status = 'Confirmed'
 ) checkFarm on  checkFarm.ArtworkTypeID = '{1}'
-                and checkFarm.BundleNo = #Tmp.BundleNo
+                and checkFarm.BundleNo = #Tmp.BundleNo and #Tmp.BundleNo<>''
                 and checkFarm.ArtworkID = #Tmp.ArtworkID
                 and checkFarm.PatternCode = #Tmp.PatternCode
 ", Sci.Env.User.Keyword, this.txtartworktype_ftyArtworkType.Text);
