@@ -17,45 +17,23 @@ namespace Sci.Production.Warehouse
 {
     public partial class P27 : Sci.Win.Tems.Input6
     {
-        //private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        //private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            //this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            //Dictionary<string, string> di_Stocktype = new Dictionary<string, string>();
-            //di_Stocktype.Add("B", "Bulk");
-            //di_Stocktype.Add("I", "Inventory");
-            //di_Stocktype.Add("O", "Scrap");
+            #region Stock Type 下拉選單 ‘B’,’Bulk’,’O’,’Scrap’
+            Dictionary<string, string> di_Stocktype = new Dictionary<string, string>();
+            di_Stocktype.Add("B", "Bulk");
+            di_Stocktype.Add("O", "Scrap");
+            comboStockType.DataSource = new BindingSource(di_Stocktype, null);
+            comboStockType.ValueMember = "Key";
+            comboStockType.DisplayMember = "Value";
+            #endregion
 
-            //comboStockType.DataSource = new BindingSource(di_Stocktype, null);
-            //comboStockType.ValueMember = "Key";
-            //comboStockType.DisplayMember = "Value";
-
-            //gridicon.Append.Enabled = false;
-            //gridicon.Append.Visible = false;
-            //gridicon.Insert.Enabled = false;
-            //gridicon.Insert.Visible = false;
-            
-        }
-
-        public P27(ToolStripMenuItem menuitem, string transID)
-            : base(menuitem)
-        {
-            InitializeComponent();
-            //this.IsSupportNew = false;
-            //this.IsSupportEdit = false;
-            //this.IsSupportDelete = false;
-            //this.IsSupportConfirm = false;
-            //this.IsSupportUnconfirm = false;
-
-            //gridicon.Append.Enabled = false;
-            //gridicon.Append.Visible = false;
-            //gridicon.Insert.Enabled = false;
-            //gridicon.Insert.Visible = false;
-
+            #region 隱藏 3個小按鈕-新增/插入
+            gridicon.Append.Visible = false;
+            gridicon.Insert.Visible = false;
+            #endregion
         }
 
         // 新增時預設資料
@@ -68,18 +46,16 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["Status"] = "New";
             comboStockType.SelectedIndex = 0;
         }
-
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-        //    if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
-        //    {
-        //        MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
-        //        return false;
-        //    }
+            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
+                return false;
+            }
             return base.ClickDeleteBefore();
         }
-
         // edit前檢查
         protected override bool ClickEditBefore()
         {
@@ -91,32 +67,34 @@ namespace Sci.Production.Warehouse
             }
             return base.ClickEditBefore();
         }
-
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-         //   DataTable result = null;
-            StringBuilder warningmsg = new StringBuilder();
-
-            // Check ToLocation is not empty
-            for (int i = ((DataTable)detailgridbs.DataSource).Rows.Count - 1; i >= 0 ; i--)
+            #region 判斷表頭Stock Type/Issue Date不可為空
+            if (MyUtility.Check.Empty(CurrentMaintain["stocktype"]))
+            {
+                MyUtility.Msg.WarningBox("Stock Type can't empty!");
+                return false;
+            }
+            if (MyUtility.Check.Empty(CurrentMaintain["issuedate"]))
+            {
+                MyUtility.Msg.WarningBox("Issue Date can't empty!");
+                return false;
+            }
+            #endregion
+            #region 刪除明細ToLocation為空的資料
+            for (int i = ((DataTable)detailgridbs.DataSource).Rows.Count - 1; i >= 0; i--)
             {
                 if (((DataTable)detailgridbs.DataSource).Rows[i]["ToLocation"].Empty())
                 {
                     ((DataTable)detailgridbs.DataSource).Rows[i].Delete();
                 }
             }
-
-            if (DetailDatas.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
-                return false;
-            }
-
-            //取單號
+            #endregion
+            #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LH", "LocationTrans", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LL", "LocationTransLocal ", (DateTime)CurrentMaintain["Issuedate"], 2, "ID", null);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -124,33 +102,49 @@ namespace Sci.Production.Warehouse
                 }
                 CurrentMaintain["id"] = tmpId;
             }
-
+            #endregion
             return base.ClickSaveBefore();
         }
+        //Confirm
+        protected override void ClickConfirm()
+        {
+            base.ClickConfirm();
+            StringBuilder sqlup = new StringBuilder();
+            string Location = "";
+            if (CurrentMaintain["StockType"].EqualString("B")) Location = "ALocation";
+            if (CurrentMaintain["StockType"].EqualString("O")) Location = "CLocation";
 
+            sqlup.Append(string.Format(@"
+update LI set LI.{1} = LD.ToLocation 
+from LocationTransLocal_Detail LD 
+left join LocalInventory LI on LI.OrderID = LD.PoId and LI.Refno = LD.Refno and LI.ThreadColorID = LD.Color
+where LD.Id = '{0}';", CurrentMaintain["id"], Location));
+
+            sqlup.Append(string.Format("update LocationTransLocal set status='Confirmed' where id = '{0}'", CurrentMaintain["id"]));
+
+            DualResult dr = DBProxy.Current.Execute(null, sqlup.ToString());
+            if (!dr)
+            {
+                MyUtility.Msg.ErrorBox("Update sql command error!");
+                return;
+            }
+        }
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
-
         //refresh
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            #region Status Label
-
             label25.Text = CurrentMaintain["status"].ToString();
-
-            #endregion Status Label
         }
-
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
         }
-
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -213,180 +207,27 @@ WHERE   StockType='{0}'
             #endregion Location 右鍵開窗
 
             #region 欄位設定
-
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //2
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)    //3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //4
-            .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //5
-            .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //8
-            .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(14))    //9
-            ;     //
-
+            .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)  //1
+            .Text("Color", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)    //2
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)    //3
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //4
+            .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //5
+            .Text("ToLocation", header: "ToLocation", iseditingreadonly: false, width: Widths.AnsiChars(14), settings: ts2)    //6
+            ;    
             #endregion 欄位設定
             this.detailgrid.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
-
         }
-
-        //Confirm
-        protected override void ClickConfirm()
-        {
-            base.ClickConfirm();
-            var dr = this.CurrentMaintain;
-            if (null == dr) return;
-
-            StringBuilder sqlupd2 = new StringBuilder();
-            String sqlupd3 = "";
-            DualResult result;//, result2;
-            string upd_MD_2T = "";
-            string upd_Fty_26F = "";
-
-            #region 更新表頭狀態資料
-
-            sqlupd3 = string.Format(@"update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-            #endregion 更新表頭狀態資料
-
-            #region 更新庫存數量 ftyinventory
-
-            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
-            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
-                dtrLocation = dtrLocation.Distinct().ToArray();
-
-                if (dtrLocation.Length == 1)
-                {
-                    DataRow newDr = newDt.NewRow();
-                    newDr.ItemArray = dtr.ItemArray;
-                    newDt.Rows.Add(newDr);
-                }
-                else
-                {
-                    foreach (string location in dtrLocation)
-                    {
-                        DataRow newDr = newDt.NewRow();
-                        newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
-                        newDt.Rows.Add(newDr);
-                    }
-                }
-            }
-
-            var data_Fty_26F = (from b in newDt.AsEnumerable()
-                         select new
-                         {
-                             poid = b.Field<string>("poid"),
-                             seq1 = b.Field<string>("seq1"),
-                             seq2 = b.Field<string>("seq2"),
-                             stocktype = CurrentMaintain["stocktype"].ToString(),
-                             qty = b.Field<decimal>("qty"),
-                             toLocation = b.Field<string>("ToLocation"),
-                             roll = b.Field<string>("roll"),
-                             dyelot = b.Field<string>("dyelot"),
-                         }).ToList();
-
-            upd_Fty_26F = Prgs.UpdateFtyInventory_IO(26, null, false);
-            #endregion 更新庫存數量 po_supp_detail & ftyinventory
-
-            #region 更新庫存數量 mdivisionPoDetail
-            var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2")
-                       } into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
-                           qty = 0,
-                           stocktype = CurrentMaintain["stocktype"].ToString()
-                       }).ToList();
-            #endregion            
-
-            TransactionScope _transactionscope = new TransactionScope();
-            SqlConnection sqlConn = null;
-            DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
-            using (sqlConn)
-            {
-                try
-                {
-                    /*
-                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
-                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
-                     * 因為要在同一 SqlConnection 之下執行
-                     */
-                    DataTable resulttb;
-                    #region FtyInventory
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, "", upd_Fty_26F, out resulttb, "#TmpSource", conn: sqlConn)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
-                    #endregion
-
-                    #region MDivisionPoDetail
-                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
-
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(result);
-                        return;
-                    }
-                    #endregion
-
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd3, result);
-                        return;
-                    }
-
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Confirmed successful");
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-
-            }
-           
-        }
-
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.colorid from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as colorid
-,(select p1.sizespec from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as sizespec
-,a.Roll
-,a.Dyelot
-,a.Qty
-,a.FromLocation
-,a.ToLocation
-,a.ftyinventoryukey
-,ukey
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-from dbo.LocationTrans_detail a WITH (NOLOCK) 
-Where a.id = '{0}' ", masterID);
+            this.DetailSelectCommand = string.Format(@"select LD.id,LD.PoId,LD.Refno,LD.Color,LD.Qty,LD.FromLocation,LD.ToLocation,L.Description
+from LocationTransLocal_detail LD WITH (NOLOCK) 
+left join LocalItem L WITH (NOLOCK) on L.RefNo = LD.Refno
+Where LD.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
 
@@ -394,17 +235,16 @@ Where a.id = '{0}' ", masterID);
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P27_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
+            //var frm = new Sci.Production.Warehouse.P27_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            //frm.ShowDialog(this);
         }
-
-        //217: WAREHOUSE_P27_Mtl Location update，2.當表身已經有值時，編輯時若換了stock type則表身要一併清空。
+        //當表身已經有值時，編輯時若換了stock type則表身要一併清空。
         private void comboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
             {
-                if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
+                if (detailgridbs.DataSource == null) return;
+                if (((DataTable)detailgridbs.DataSource).Rows.Count > 0)
                 {
                     for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count; i++)
                     {
@@ -413,7 +253,5 @@ Where a.id = '{0}' ", masterID);
                 }
             }
         }
-
-
     }
 }
