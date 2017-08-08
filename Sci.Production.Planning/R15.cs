@@ -240,7 +240,7 @@ namespace Sci.Production.Planning
             #region -- 產生RFID Loading Qty --
             sqlCmd.Append(@"/*Cur_bdltrack2*/
 
-declare @EndDate date = (select Max(SewInLine) from #cte);
+declare @EndDate date = CONVERT(date, GETDATE());
 
 /*
 Step1
@@ -706,7 +706,7 @@ outer apply
 	where SP=t.OrderID and  StyleID=t.StyleID
 	and FactoryID=t.FactoryID
 	and line=t.SewLine
-    and SewingDate=t.SewInLine
+    and SewingDate= CONVERT(date, GETDATE())
 )loading
 ");
 
