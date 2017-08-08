@@ -281,6 +281,9 @@
     <None Include="SCHEMAS.xss">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
+    <None Include="XLT\Centralized-R03.Prod. Efficiency Analysis Report.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Centralized_R10_OutputSummaryWithFOBReport%28Summary_Detail%29.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
