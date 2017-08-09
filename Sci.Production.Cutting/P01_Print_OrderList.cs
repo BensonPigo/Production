@@ -870,6 +870,7 @@ namespace Sci.Production.Cutting
                             {
                                 dt.Rows.RemoveAt(i - 1);
                             }
+                                                     
                         }
                             
 
