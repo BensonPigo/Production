@@ -341,6 +341,7 @@
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 660);
+
             this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
@@ -351,6 +352,7 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 688);
+
             // 
             // createby
             // 

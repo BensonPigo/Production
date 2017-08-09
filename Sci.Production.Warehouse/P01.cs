@@ -563,6 +563,5 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                 callP04.P04Data(CurrentMaintain["ID"].ToString());
             }
         }
-
     }
 }

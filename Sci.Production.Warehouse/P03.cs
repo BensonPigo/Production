@@ -23,10 +23,10 @@ namespace Sci.Production.Warehouse
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
         string userCountry = "";
+
         string SpNo = "";
         bool ButtonOpen = false;               
-        
-        
+       
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -67,7 +67,6 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
             SpNo = P01SPNo;
             this.txtSPNo.Text = SpNo.Trim();
-            ButtonOpen = true;
             Query();
         }
 
