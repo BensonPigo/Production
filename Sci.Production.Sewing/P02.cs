@@ -65,7 +65,17 @@ where sd.ID = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select ID,MockupID,StyleID,SeasonID,BrandID from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = '{0}'", Sci.Env.User.Factory);
+                            string sqlCmd = string.Format(@"
+select  mo.ID
+        , mo.MockupID
+        , mo.StyleID
+        , mo.SeasonID
+        , mo.BrandID 
+from MockupOrder mo WITH (NOLOCK) 
+inner join Factory f on mo.FtyGroup = f.ID
+where   mo.Junk = 0 
+        and mo.FTYGroup = '{0}'
+        and f.IsProduceFty = 1", Sci.Env.User.Factory);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
                             item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
@@ -149,7 +159,14 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable moData;
-                        string sqlCmd = "select * from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                        string sqlCmd = @"
+select mo.* 
+from MockupOrder mo WITH (NOLOCK) 
+inner join Factory f on mo.FtyGroup = f.ID
+where   mo.Junk = 0 
+        and mo.FTYGroup = @factoryid 
+        and mo.ID = @id
+        and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moData);
                         if (!result || moData.Rows.Count <= 0)
                         {

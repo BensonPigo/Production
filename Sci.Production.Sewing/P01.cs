@@ -131,7 +131,12 @@ order by a.OrderId,os.Seq"
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select distinct OrderID from SewingSchedule WITH (NOLOCK) where FactoryID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
+                            string sqlCmd = string.Format(@"
+select distinct ss.OrderID 
+from SewingSchedule ss WITH (NOLOCK) 
+where   ss.FactoryID = '{0}' 
+        and ss.SewingLineID = '{1}' 
+        and ss.OrderFinished = 0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -172,7 +177,19 @@ order by a.OrderId,os.Seq"
                         cmds.Add(sp2);
 
                         DataTable OrdersData;
-                        string sqlCmd = "select IsForecast,SewLine,CPU,CPUFactor,StyleUkey,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders WITH (NOLOCK) where FtyGroup = @factoryid and ID = @id";
+                        string sqlCmd = @"
+select  o.IsForecast
+        , o.SewLine
+        , o.CPU
+        , o.CPUFactor
+        , o.StyleUkey
+        , StdTMS = (select StdTMS 
+                      from System WITH (NOLOCK))
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where   o.FtyGroup = @factoryid 
+        and o.ID = @id
+        and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
                         if (!result || OrdersData.Rows.Count <= 0)
                         {
