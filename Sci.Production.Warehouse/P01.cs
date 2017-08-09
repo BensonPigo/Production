@@ -19,14 +19,6 @@ namespace Sci.Production.Warehouse
     public partial class P01 : Sci.Win.Tems.Input1
     {        
         private string dataType="";
-        delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
-        ToolStripMenuItem progmenu = null;
-        class TemplateInfo
-        {
-            public string text;
-            public CREATETEMPLATE create;
-            public ToolStripMenuItem menuitem;
-        }
         private void OpenForm(Sci.Win.Forms.Base form)
         {
             form.MdiParent = this;
@@ -524,17 +516,53 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
 
         private void btnMeterialStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.Warehouse.P03 callForm = new Sci.Production.Warehouse.P03(CurrentMaintain);
-            callForm.MdiParent = MdiParent;
-            callForm.Show();
+            P03FormOpen();
         }
 
         private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
         {
-            Sci.Production.Warehouse.P04 callForm = new Sci.Production.Warehouse.P04(CurrentMaintain);
-            callForm.MdiParent = MdiParent;
-            callForm.Show();
+            P04FormOpen();          
+        }        
+        Sci.Production.Warehouse.P03 callP03 = null;
+        private void P03FormOpen()
+        {
+            callP03 = new P03(CurrentMaintain["ID"].ToString());
+            callP03.MdiParent = MdiParent;
+            this.btnMeterialStatus.Enabled = false;
+            callP03.FormClosed += (s, e) =>
+            {
+                this.btnMeterialStatus.Enabled = true;
+            };
+            callP03.Show();
+            
         }
-       
+        Sci.Production.Warehouse.P04 callP04 = null;
+        private void P04FormOpen()
+        {
+            callP04 = new P04(CurrentMaintain["ID"].ToString());
+            callP04.MdiParent = MdiParent;
+            this.btnMeterialStatus_Local.Enabled = false;
+            callP04.FormClosed += (s, e) =>
+            {
+                this.btnMeterialStatus_Local.Enabled = true;
+            };
+            callP04.Show();
+
+        }
+        protected override void ClickMove(int direction)
+        {
+            base.ClickMove(direction);
+            if (MyUtility.Check.Empty(CurrentMaintain)) return;
+            //設定在detail頁,如果P03 or P04 開啟,按上下筆資料會連帶變動
+            if (callP03 != null && callP03.Visible == true)
+            {
+                callP03.P03Data(CurrentMaintain["ID"].ToString());             
+            }
+            if (callP04 != null && callP04.Visible == true)
+            {
+                callP04.P04Data(CurrentMaintain["ID"].ToString());
+            }
+        }
+
     }
 }

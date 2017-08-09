@@ -23,7 +23,10 @@ namespace Sci.Production.Warehouse
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
         string userCountry = "";
-        DataRow P01Data;
+        string SpNo = "";
+        bool ButtonOpen = false;               
+        
+        
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -44,15 +47,27 @@ namespace Sci.Production.Warehouse
             else
             {
                 userCountry = dt.Rows[0]["CountryID"].ToString();
-            }  
+            }
+            ButtonOpen = false;
         }
-
-        public P03(DataRow maindata) //Form to Form From W/H.P01 
+        //Form to Form W/H.P01
+        public P03(string P01SPNo)  
         {
             InitializeComponent();
             this.EditMode = true;
-            P01Data = maindata;
-            this.txtSPNo.Text = P01Data["id"].ToString().Trim();
+            SpNo = P01SPNo;
+            this.txtSPNo.Text = SpNo.Trim();
+            ButtonOpen = true;
+            Query();
+        }
+        //隨著 P01上下筆SP#切換資料
+        public void P03Data(string P01SPNo)  
+        {
+            this.EditMode = true;
+            this.EditMode = true;
+            SpNo = P01SPNo;
+            this.txtSPNo.Text = SpNo.Trim();
+            ButtonOpen = true;
             Query();
         }
 
@@ -301,12 +316,6 @@ namespace Sci.Production.Warehouse
         private void Query()
         {
             DataTable dtData;
-            //if (MyUtility.Check.Empty(txtSPNo.Text))
-            //{
-            //    MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-            //    txtSPNo.Focus();
-            //    return;
-            //}
 
             string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --
@@ -569,11 +578,12 @@ where ROW_NUMBER_D =1
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
-                if (dtData.Rows.Count == 0)
+                if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
                 grid1_sorting();
                 ChangeDetailColor();
+                ButtonOpen = false;
             }
             else
             {
@@ -581,6 +591,8 @@ where ROW_NUMBER_D =1
             }
             this.HideWaitMessage();
         }
+
+        
 
         private void grid1_sorting()
         {
@@ -608,9 +620,6 @@ where ROW_NUMBER_D =1
         //Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
-            //MyUtility.Excel.CopyToXls(dt, "");
             
             if (null == this.gridMaterialStatus.CurrentRow) return;
             var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
@@ -660,6 +669,8 @@ where ROW_NUMBER_D =1
             txtSPNo.Select();
         }
     }
+
+    
 }
 
 
