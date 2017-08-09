@@ -24,9 +24,7 @@ namespace Sci.Production.Warehouse
     {
         string userCountry = "";
         string SpNo = "";
-        bool ButtonOpen = false;               
-        
-        
+        bool ButtonOpen = false;    
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -63,7 +61,6 @@ namespace Sci.Production.Warehouse
         //隨著 P01上下筆SP#切換資料
         public void P03Data(string P01SPNo)  
         {
-            this.EditMode = true;
             this.EditMode = true;
             SpNo = P01SPNo;
             this.txtSPNo.Text = SpNo.Trim();

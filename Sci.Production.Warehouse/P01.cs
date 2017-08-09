@@ -559,6 +559,5 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callP04.MdiParent = MdiParent;
             callP04.Show();
         }
-
     }
 }
