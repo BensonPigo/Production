@@ -152,10 +152,11 @@ namespace Sci.Production.Warehouse
 
                 if (row["fabrictype"].ToString().ToUpper() != "F")
                 {
-                    row["roll"] = "";
                     row["dyelot"] = "";
                 }
+
             }
+
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
@@ -816,5 +817,6 @@ Where a.id = '{0}' ", masterID);
             else
             { detailgridbs.Position = index; }
         }
+
     }
 }
