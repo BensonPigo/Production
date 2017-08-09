@@ -1723,5 +1723,8 @@ order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), ou
 
         }
 
+        protected override void OnDetailGridRowChanged()
+        {
+        }
     }
 }
