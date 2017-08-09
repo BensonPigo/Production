@@ -49,6 +49,7 @@ namespace Sci.Production.Cutting
 
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
+                pars.Add(new SqlParameter("@CutRef", CurrentDataRow["cutref"].ToString()));
                 if (checkExtendAllParts.Checked)
                     pars.Add(new SqlParameter("@extend", "1"));
                 else
@@ -67,7 +68,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,b.Item [Item]
+        ,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
         ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -101,7 +102,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,b.Item [Item]
+        ,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
         ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -154,7 +155,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,b.Item [Item]
+			,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
 			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -182,7 +183,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,b.Item [Item]
+			,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
 			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -261,7 +262,7 @@ order by x.[Barcode]");
                         Cell = row1["Cell"].ToString(),
                         SP = row1["SP"].ToString(),
                         Style = row1["Style"].ToString(),
-                        Item = row1["Item"].ToString(),
+                        MarkerNo = row1["MarkerNo"].ToString(),
                         Body_Cut = row1["Body_Cut"].ToString(),
                         Parts = row1["Parts"].ToString(),
                         Color = row1["Color"].ToString(),
@@ -281,7 +282,7 @@ order by x.[Barcode]");
                         Cell2 = row1["Cell"].ToString(),    
                         SP2 = row1["SP"].ToString(),
                         Style2 = row1["Style"].ToString(),
-                        Item2 = row1["Item"].ToString(),
+                        MarkerNo2 = row1["MarkerNo"].ToString(),
                         Body_Cut2 = row1["Body_Cut"].ToString(),
                         Parts2 = row1["Parts"].ToString(),
                         Color2 = row1["Color"].ToString(),
@@ -303,7 +304,7 @@ order by x.[Barcode]");
                         Cell3 = row1["Cell"].ToString(),
                         SP3 = row1["SP"].ToString(),
                         Style3 = row1["Style"].ToString(),
-                        Item3 = row1["Item"].ToString(),
+                        MarkerNo3 = row1["MarkerNo"].ToString(),
                         Body_Cut3 = row1["Body_Cut"].ToString(),
                         Parts3 = row1["Parts"].ToString(),
                         Color3 = row1["Color"].ToString(),
