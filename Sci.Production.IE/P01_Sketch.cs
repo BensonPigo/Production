@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.IO;
 
 namespace Sci.Production.IE
 {
@@ -56,9 +57,32 @@ where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
             {
                 displayPicture1.Value = styleData.Rows[0]["Picture1"].ToString().Trim();
                 displayPicture2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
-                picture1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
-                picture2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
-               
+
+                /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
+                if (MyUtility.Check.Empty(styleData.Rows[0]["Picture1"].ToString().Trim())) picture1.ImageLocation = "";
+                else
+                {
+                    if (File.Exists(styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim()))
+                    {
+                        picture1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
+                    }
+                    else
+                    {
+                        picture1.ImageLocation = "";
+                    }
+                }
+                if (MyUtility.Check.Empty(styleData.Rows[0]["Picture2"].ToString().Trim())) picture2.ImageLocation = "";
+                else
+                {
+                    if (File.Exists(styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim()))
+                    {
+                        picture2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+                    }
+                    else
+                    {
+                        picture2.ImageLocation = "";
+                    }
+                }             
             }
             //Image images = Image.FromFile(@"D:\images.jpg");
             //pictureBox1.BackgroundImage = images;
