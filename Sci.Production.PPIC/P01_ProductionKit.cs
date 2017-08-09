@@ -170,13 +170,7 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
         private void btnViewDetail_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
-            DoForm.Set(CanEdit, new List<DataRow>(((DataTable)gridbs.DataSource).Select(dataFilter)), grid.GetDataRow(grid.GetSelectedRowIndex())); DoForm.ShowDialog(this);
-            if (CanEdit)
-            {
-                EditMode = true;
-                this.DoSave();
-                EditMode = false;
-            }
+            DoForm.Set(false, new List<DataRow>(((DataTable)gridbs.DataSource).Select(dataFilter)), grid.GetDataRow(grid.GetSelectedRowIndex())); DoForm.ShowDialog(this);
         }
 
         
