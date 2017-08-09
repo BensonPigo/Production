@@ -119,7 +119,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void comboYearMonth_Validated(object sender, EventArgs e)
+        private void comboYearMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.btnRefersh.PerformClick();
         }

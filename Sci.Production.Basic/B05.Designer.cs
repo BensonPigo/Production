@@ -79,7 +79,6 @@
             // 
             // labelYearMonth
             // 
-            this.labelYearMonth.Lines = 0;
             this.labelYearMonth.Location = new System.Drawing.Point(8, 6);
             this.labelYearMonth.Name = "labelYearMonth";
             this.labelYearMonth.Size = new System.Drawing.Size(90, 23);
@@ -176,7 +175,7 @@
             this.comboYearMonth.Name = "comboYearMonth";
             this.comboYearMonth.Size = new System.Drawing.Size(90, 24);
             this.comboYearMonth.TabIndex = 0;
-            this.comboYearMonth.Validated += new System.EventHandler(this.comboYearMonth_Validated);
+            this.comboYearMonth.SelectedIndexChanged += new System.EventHandler(this.comboYearMonth_SelectedIndexChanged);
             // 
             // btnRefersh
             // 
