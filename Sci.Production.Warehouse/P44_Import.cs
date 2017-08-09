@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
 
                 strSQLCmd.Append(@"
-select  0 as selected    
+select distinct 0 as selected    
         , '' id     
         , Linv.OrderID as poid
 		, Linv.Refno
