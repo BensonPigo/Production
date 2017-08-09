@@ -53,6 +53,7 @@ namespace Sci.Production.Warehouse
                 .Text("threadColor", header: "Thread Color", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("inQty", header: "InQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("outQty", header: "OutQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
+                .Numeric("adjustQty", header: "Adjust Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6), settings: setBalance)
                 .EditText("Alocation", header: "Bulk Location", iseditingreadonly: true, width: Widths.AnsiChars(10));
             #endregion
@@ -97,6 +98,7 @@ select  [sp] = l.OrderID
         , [threadColor] = l.ThreadColorID
         , [inQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
         , [outQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
+        , [adjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
         , [Balance] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
         , [ALocation] = l.ALocation
 from LocalInventory l

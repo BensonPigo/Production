@@ -109,7 +109,6 @@
             this.panel1.Controls.Add(this.displaySupplierID);
             this.panel1.Controls.Add(this.labelSupplierID);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Enabled = false;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 561);
@@ -144,7 +143,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(277, 304);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(110, 23);
@@ -167,7 +165,6 @@
             // 
             // labelAddressCH
             // 
-            this.labelAddressCH.Lines = 0;
             this.labelAddressCH.Location = new System.Drawing.Point(13, 174);
             this.labelAddressCH.Name = "labelAddressCH";
             this.labelAddressCH.Size = new System.Drawing.Size(110, 23);
@@ -279,7 +276,6 @@
             // 
             // labelDelay
             // 
-            this.labelDelay.Lines = 0;
             this.labelDelay.Location = new System.Drawing.Point(473, 369);
             this.labelDelay.Name = "labelDelay";
             this.labelDelay.Size = new System.Drawing.Size(110, 23);
@@ -288,7 +284,6 @@
             // 
             // labelLockDate
             // 
-            this.labelLockDate.Lines = 0;
             this.labelLockDate.Location = new System.Drawing.Point(13, 369);
             this.labelLockDate.Name = "labelLockDate";
             this.labelLockDate.Size = new System.Drawing.Size(110, 23);
@@ -297,7 +292,6 @@
             // 
             // labelFax
             // 
-            this.labelFax.Lines = 0;
             this.labelFax.Location = new System.Drawing.Point(13, 336);
             this.labelFax.Name = "labelFax";
             this.labelFax.Size = new System.Drawing.Size(110, 23);
@@ -306,7 +300,6 @@
             // 
             // labelTEL
             // 
-            this.labelTEL.Lines = 0;
             this.labelTEL.Location = new System.Drawing.Point(13, 304);
             this.labelTEL.Name = "labelTEL";
             this.labelTEL.Size = new System.Drawing.Size(110, 23);
@@ -315,7 +308,6 @@
             // 
             // labelAddressEN
             // 
-            this.labelAddressEN.Lines = 0;
             this.labelAddressEN.Location = new System.Drawing.Point(13, 206);
             this.labelAddressEN.Name = "labelAddressEN";
             this.labelAddressEN.Size = new System.Drawing.Size(110, 23);
@@ -324,7 +316,6 @@
             // 
             // labelCompanyEN
             // 
-            this.labelCompanyEN.Lines = 0;
             this.labelCompanyEN.Location = new System.Drawing.Point(13, 140);
             this.labelCompanyEN.Name = "labelCompanyEN";
             this.labelCompanyEN.Size = new System.Drawing.Size(110, 23);
@@ -333,7 +324,6 @@
             // 
             // labelCompanyCH
             // 
-            this.labelCompanyCH.Lines = 0;
             this.labelCompanyCH.Location = new System.Drawing.Point(13, 107);
             this.labelCompanyCH.Name = "labelCompanyCH";
             this.labelCompanyCH.Size = new System.Drawing.Size(110, 23);
@@ -342,7 +332,6 @@
             // 
             // labelAbbrEnglish
             // 
-            this.labelAbbrEnglish.Lines = 0;
             this.labelAbbrEnglish.Location = new System.Drawing.Point(277, 74);
             this.labelAbbrEnglish.Name = "labelAbbrEnglish";
             this.labelAbbrEnglish.Size = new System.Drawing.Size(110, 23);
@@ -351,7 +340,6 @@
             // 
             // labelAbbrChinese
             // 
-            this.labelAbbrChinese.Lines = 0;
             this.labelAbbrChinese.Location = new System.Drawing.Point(13, 74);
             this.labelAbbrChinese.Name = "labelAbbrChinese";
             this.labelAbbrChinese.Size = new System.Drawing.Size(110, 23);
@@ -360,7 +348,6 @@
             // 
             // labelZipCode
             // 
-            this.labelZipCode.Lines = 0;
             this.labelZipCode.Location = new System.Drawing.Point(277, 42);
             this.labelZipCode.Name = "labelZipCode";
             this.labelZipCode.Size = new System.Drawing.Size(110, 23);
@@ -369,7 +356,6 @@
             // 
             // labelNationality
             // 
-            this.labelNationality.Lines = 0;
             this.labelNationality.Location = new System.Drawing.Point(277, 13);
             this.labelNationality.Name = "labelNationality";
             this.labelNationality.Size = new System.Drawing.Size(110, 23);
@@ -409,7 +395,6 @@
             // 
             // labelSupplierID
             // 
-            this.labelSupplierID.Lines = 0;
             this.labelSupplierID.Location = new System.Drawing.Point(13, 13);
             this.labelSupplierID.Name = "labelSupplierID";
             this.labelSupplierID.Size = new System.Drawing.Size(110, 23);
@@ -442,6 +427,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 561);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.EditMode = false;
             this.Name = "P03_Supplier";
             this.Text = "Supplier";
             this.panel1.ResumeLayout(false);
