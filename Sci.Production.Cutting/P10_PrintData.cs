@@ -14,7 +14,7 @@ namespace Sci.Production.Cutting
         public string Cell { get; set; }
         public string SP { get; set; }
         public string Style { get; set; }
-        public string Item { get; set; }
+        public string MarkerNo { get; set; }
         public string Body_Cut { get; set; }
         public string Parts { get; set; }
         public string Color { get; set; }
@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
         public string Cell2 { get; set; }
         public string SP2 { get; set; }
         public string Style2 { get; set; }
-        public string Item2 { get; set; }
+        public string MarkerNo2 { get; set; }
         public string Body_Cut2 { get; set; }
         public string Parts2 { get; set; }
         public string Color2 { get; set; }
@@ -48,7 +48,7 @@ namespace Sci.Production.Cutting
         public string Cell3 { get; set; }
         public string SP3 { get; set; }
         public string Style3 { get; set; }
-        public string Item3 { get; set; }
+        public string MarkerNo3 { get; set; }
         public string Body_Cut3 { get; set; }
         public string Parts3 { get; set; }
         public string Color3 { get; set; }

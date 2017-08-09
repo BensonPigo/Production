@@ -113,18 +113,6 @@
           <DataField>Group_right3</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Item">
-          <DataField>Item</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Item2">
-          <DataField>Item2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Item3">
-          <DataField>Item3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Line">
           <DataField>Line</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -135,6 +123,18 @@
         </Field>
         <Field Name="Line3">
           <DataField>Line3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MarkerNo">
+          <DataField>MarkerNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MarkerNo2">
+          <DataField>MarkerNo2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MarkerNo3">
+          <DataField>MarkerNo3</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Parts">
@@ -362,7 +362,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Item.......:</Value>
+                                      <Value>Marker No...:</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -373,7 +373,7 @@
                               <Top>2.97863cm</Top>
                               <Left>0.16301cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>1.97964cm</Width>
+                              <Width>2.2cm</Width>
                               <ZIndex>4</ZIndex>
                               <Style>
                                 <Border>
@@ -697,7 +697,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Item.Value</Value>
+                                      <Value>=Fields!MarkerNo.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -706,7 +706,7 @@
                               </Paragraphs>
                               <rd:DefaultName>Textbox9</rd:DefaultName>
                               <Top>2.97863cm</Top>
-                              <Left>2.14265cm</Left>
+                              <Left>2.46015cm</Left>
                               <Height>0.6cm</Height>
                               <Width>2.61938cm</Width>
                               <ZIndex>15</ZIndex>
@@ -1946,7 +1946,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Item.......:</Value>
+                                      <Value>Marker No...:</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -1957,7 +1957,7 @@
                               <Top>3.05901cm</Top>
                               <Left>0.20739cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>1.97964cm</Width>
+                              <Width>2.2cm</Width>
                               <ZIndex>22</ZIndex>
                               <Style>
                                 <Border>
@@ -1976,7 +1976,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Item2.Value</Value>
+                                      <Value>=Fields!MarkerNo2.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -1985,7 +1985,7 @@
                               </Paragraphs>
                               <rd:DefaultName>Textbox9</rd:DefaultName>
                               <Top>3.05901cm</Top>
-                              <Left>2.18703cm</Left>
+                              <Left>2.50453cm</Left>
                               <Height>0.6cm</Height>
                               <Width>2.61938cm</Width>
                               <ZIndex>23</ZIndex>
@@ -2982,7 +2982,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Item.......:</Value>
+                                      <Value>Marker No...:</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -2993,7 +2993,7 @@
                               <Top>2.98846cm</Top>
                               <Left>0.28603cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>1.97964cm</Width>
+                              <Width>2.2cm</Width>
                               <ZIndex>22</ZIndex>
                               <Style>
                                 <Border>
@@ -3012,7 +3012,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Item3.Value</Value>
+                                      <Value>=Fields!MarkerNo3.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -3021,7 +3021,7 @@
                               </Paragraphs>
                               <rd:DefaultName>Textbox9</rd:DefaultName>
                               <Top>2.98846cm</Top>
-                              <Left>2.26567cm</Left>
+                              <Left>2.58317cm</Left>
                               <Height>0.6cm</Height>
                               <Width>2.61938cm</Width>
                               <ZIndex>23</ZIndex>
@@ -3295,7 +3295,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
