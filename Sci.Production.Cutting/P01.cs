@@ -250,7 +250,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         private void btnProductionkit_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
-            var frm = new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
+            var frm = new Sci.Production.PPIC.P01_ProductionKit(false, StyleUkey, null, null, null);
             frm.ShowDialog(this);
             OnDetailEntered();
         }
