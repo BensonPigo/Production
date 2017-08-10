@@ -5,19 +5,21 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
     public partial class P05_Print : Sci.Win.Tems.PrintForm
     {
         private DataTable gridData;
-        private string readyDate1, readyDate2;
+        private string readyDate1, readyDate2, strUp2SCIDelivery;
         private DataRow[] printData;
         
-        public P05_Print(DataTable GridData)
+        public P05_Print(DataTable GridData, string strUp2SCIDelivery)
         {
             InitializeComponent();
             gridData = GridData;
+            this.strUp2SCIDelivery = strUp2SCIDelivery;
         }
 
         // 驗證輸入條件
@@ -50,7 +52,15 @@ namespace Sci.Production.PPIC
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
-            int rownum = 2, counter = 0;
+            #region Header
+            string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
+select  NameEN
+from Factory
+where ID = '{0}'", Sci.Env.User.Factory));
+            worksheet.PageSetup.LeftHeader = string.Format("\n\nUp to SCI Delivery : {0}      Ready Date : {1} ~ {2}", strUp2SCIDelivery, readyDate1, readyDate2);
+            worksheet.PageSetup.CenterHeader = string.Format("{0}\nProduction Schedule", factoryName);
+            #endregion             
+            int rownum = 2, counter = 0;            
             object[,] objArray = new object[1, 23];
             foreach (DataRow dr in printData)
             {                
@@ -79,6 +89,7 @@ namespace Sci.Production.PPIC
                 worksheet.Cells[rownum, 22] = dr["OutReasonDesc"];
                 worksheet.Cells[rownum, 23] = dr["OutRemark"];
                 worksheet.Cells[rownum, 24] = dr["ProdRemark"];
+                ((Excel.Range)worksheet.Range[worksheet.Cells[rownum, 1], worksheet.Cells[rownum, 24]]).Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDash;
                 counter++;
             }
             excel.Visible = true;
