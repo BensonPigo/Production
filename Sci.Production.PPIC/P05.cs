@@ -512,7 +512,7 @@ Order by tempData.Id");
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
-            Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)listControlBindingSource1.DataSource);
+            Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)listControlBindingSource1.DataSource, MyUtility.Check.Empty(dateUptoSCIDelivery.Value) ? "" : Convert.ToDateTime(dateUptoSCIDelivery.Value).ToString("d"));
             callNextForm.ShowDialog(this);
         }
 
