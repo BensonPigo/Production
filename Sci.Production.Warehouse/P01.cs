@@ -19,14 +19,6 @@ namespace Sci.Production.Warehouse
     public partial class P01 : Sci.Win.Tems.Input1
     {        
         private string dataType="";
-        delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
-        ToolStripMenuItem progmenu = null;
-        class TemplateInfo
-        {
-            public string text;
-            public CREATETEMPLATE create;
-            public ToolStripMenuItem menuitem;
-        }
         private void OpenForm(Sci.Win.Forms.Base form)
         {
             form.MdiParent = this;
@@ -521,6 +513,51 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callNextForm.ShowDialog(this);
         }
 
-       
+
+        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        {
+            if (callP03 != null && callP03.Visible == true)
+            {
+                callP03.P03Data(CurrentMaintain["ID"].ToString());
+            }
+            else
+            {
+                P03FormOpen();
+            }  
+        }
+
+        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        {
+            if (callP04 != null && callP04.Visible == true)
+            {
+                callP04.P04Data(CurrentMaintain["ID"].ToString());
+            }
+            else
+            {
+                P04FormOpen();
+            }       
+        }        
+
+        Sci.Production.Warehouse.P03 callP03 = null;
+        private void P03FormOpen()
+        {
+            callP03 = new P03(CurrentMaintain["ID"].ToString());
+            callP03.MdiParent = MdiParent;                      
+            callP03.Show();
+            #region BackUP
+            //callP03.FormClosed += (s, e) =>
+            //{
+            //btnMeterialStatus.Enabled = true;
+            //};
+            #endregion
+        }
+
+        Sci.Production.Warehouse.P04 callP04 = null;
+        private void P04FormOpen()
+        {
+            callP04 = new P04(CurrentMaintain["ID"].ToString());
+            callP04.MdiParent = MdiParent;
+            callP04.Show();
+        }
     }
 }

@@ -224,10 +224,10 @@
         private Win.UI.Panel panel2;
         private Win.UI.Grid gridMaterialStatus;
         private Win.UI.Button btnToExcel;
-        private Win.UI.TextBox txtSPNo;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelSortBy;
         private Win.UI.ComboBox comboSortBy;
         private Win.UI.Button btnNewSearch;
+        private Win.UI.TextBox txtSPNo;
     }
 }
