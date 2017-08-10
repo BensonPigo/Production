@@ -273,6 +273,7 @@ namespace Sci.Production.Quality
         {
             string strSqlcmd = "";
             this.btnAmend.Enabled = false;
+            
 
             DualResult result;
             DataTable dt;
@@ -295,13 +296,13 @@ namespace Sci.Production.Quality
                             MyUtility.Msg.InfoBox("<Result> can not be null");
                             return;
                         }
-                        if (MyUtility.Check.Empty(dateInspectDate))
+                        if (MyUtility.Check.Empty(dateInspectDate.Value))
                         {
                             this.dateInspectDate.Focus();
                             MyUtility.Msg.InfoBox("<Inspdate> can not be null");
                             return;
                         }
-                        if (MyUtility.Check.Empty(txtInspector))
+                        if (MyUtility.Check.Empty(txtInspector.TextBox1.Text))
                         {
                             this.txtInspector.Focus();
                             MyUtility.Msg.InfoBox("<Inspector> can not be null");
@@ -327,9 +328,11 @@ namespace Sci.Production.Quality
                         }
                         string updatesql = "";
                         #region  寫入實體Table Encode
+                        string InspDate = MyUtility.Check.Empty(dateInspectDate.Value) ? "Null" : "'" + string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value) + "'";
                         updatesql = string.Format(
-                        "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.txtInspectedQty.Text, this.txtRejectedQty.Text, string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value), txtInspector.TextBox1.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
+                        "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = {2},Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
+                        this.txtInspectedQty.Text, this.txtRejectedQty.Text,
+                        InspDate, txtInspector.TextBox1.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
                         DualResult upResult;
                         TransactionScope _transactionscope = new TransactionScope();
                         using (_transactionscope)
@@ -366,12 +369,25 @@ namespace Sci.Production.Quality
                         this.txtRemark.ReadOnly = true;
                         this.editDefect.ReadOnly = true;                        
                         this.btnClose.Text = "Close";
+                        this.left.Enabled = true;
+                        this.right.Enabled = true;
                         this.EditMode = false;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
                         return;
                     }
                     else
                     {
-                        this.EditMode = true;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
+                       this.EditMode = true;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
+                       if (MyUtility.Check.Empty(this.dateInspectDate.Value))
+                       {
+                           this.dateInspectDate.Value = DateTime.Today;
+                           CurrentData["InspDate"] = string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value);
+
+                       }
+                       if (MyUtility.Check.Empty(this.txtInspector.TextBox1.Text))
+                       {
+                           this.txtInspector.TextBox1.Text = Sci.Env.User.UserID;
+                           CurrentData["Inspector"] = Sci.Env.User.UserID;
+                       }
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
                             this.btnAmend.Enabled = true;
@@ -389,6 +405,8 @@ namespace Sci.Production.Quality
                             this.editDefect.ReadOnly = true;
                             this.btnEdit.Text = "Save";
                             this.btnClose.Text = "Undo";
+                            this.left.Enabled = false;
+                            this.right.Enabled = false;
 
                             return;
                         }
