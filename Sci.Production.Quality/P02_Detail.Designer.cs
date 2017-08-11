@@ -59,11 +59,11 @@
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.editDefect = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtInspector = new Sci.Production.Class.txtuser();
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.btnEdit = new Sci.Win.UI.Button();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.txtInspector = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -130,6 +130,7 @@
             this.txtUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "unit", true));
             this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtUnit.IsSupportEditMode = false;
             this.txtUnit.Location = new System.Drawing.Point(95, 125);
             this.txtUnit.Name = "txtUnit";
             this.txtUnit.ReadOnly = true;
@@ -141,6 +142,7 @@
             this.txtColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtColor.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "colorid", true));
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtColor.IsSupportEditMode = false;
             this.txtColor.Location = new System.Drawing.Point(328, 125);
             this.txtColor.Name = "txtColor";
             this.txtColor.ReadOnly = true;
@@ -152,6 +154,7 @@
             this.txtSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "size", true));
             this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSize.IsSupportEditMode = false;
             this.txtSize.Location = new System.Drawing.Point(534, 125);
             this.txtSize.Name = "txtSize";
             this.txtSize.ReadOnly = true;
@@ -163,6 +166,7 @@
             this.txtArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtArriveQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArriveQty", true));
             this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtArriveQty.IsSupportEditMode = false;
             this.txtArriveQty.Location = new System.Drawing.Point(95, 94);
             this.txtArriveQty.Name = "txtArriveQty";
             this.txtArriveQty.ReadOnly = true;
@@ -174,6 +178,7 @@
             this.txtWKNO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtWKNO.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportID", true));
             this.txtWKNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtWKNO.IsSupportEditMode = false;
             this.txtWKNO.Location = new System.Drawing.Point(95, 60);
             this.txtWKNO.Name = "txtWKNO";
             this.txtWKNO.ReadOnly = true;
@@ -185,6 +190,7 @@
             this.txtRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Refno", true));
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtRefno.IsSupportEditMode = false;
             this.txtRefno.Location = new System.Drawing.Point(328, 60);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.ReadOnly = true;
@@ -196,6 +202,7 @@
             this.txtSCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSCIRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SCIRefno", true));
             this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSCIRefno.IsSupportEditMode = false;
             this.txtSCIRefno.Location = new System.Drawing.Point(328, 30);
             this.txtSCIRefno.Name = "txtSCIRefno";
             this.txtSCIRefno.ReadOnly = true;
@@ -206,6 +213,7 @@
             // 
             this.txtSEQ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSEQ.IsSupportEditMode = false;
             this.txtSEQ.Location = new System.Drawing.Point(95, 30);
             this.txtSEQ.Name = "txtSEQ";
             this.txtSEQ.ReadOnly = true;
@@ -214,7 +222,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(15, 30);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
@@ -223,7 +230,6 @@
             // 
             // labelWKNO
             // 
-            this.labelWKNO.Lines = 0;
             this.labelWKNO.Location = new System.Drawing.Point(15, 60);
             this.labelWKNO.Name = "labelWKNO";
             this.labelWKNO.Size = new System.Drawing.Size(75, 23);
@@ -232,7 +238,6 @@
             // 
             // labelSCIRefno
             // 
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(248, 30);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
@@ -241,7 +246,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(248, 60);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -250,7 +254,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(248, 94);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
@@ -259,7 +262,6 @@
             // 
             // labelArriveQty
             // 
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(15, 94);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
@@ -268,7 +270,6 @@
             // 
             // labelSize
             // 
-            this.labelSize.Lines = 0;
             this.labelSize.Location = new System.Drawing.Point(456, 125);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(75, 23);
@@ -277,7 +278,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(248, 125);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -286,7 +286,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(15, 125);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(75, 23);
@@ -295,7 +294,6 @@
             // 
             // labelDefect
             // 
-            this.labelDefect.Lines = 0;
             this.labelDefect.Location = new System.Drawing.Point(237, 32);
             this.labelDefect.Name = "labelDefect";
             this.labelDefect.Size = new System.Drawing.Size(91, 23);
@@ -304,7 +302,6 @@
             // 
             // labelInspectedQty
             // 
-            this.labelInspectedQty.Lines = 0;
             this.labelInspectedQty.Location = new System.Drawing.Point(18, 188);
             this.labelInspectedQty.Name = "labelInspectedQty";
             this.labelInspectedQty.Size = new System.Drawing.Size(91, 23);
@@ -323,7 +320,6 @@
             // 
             // labelRejectedQty
             // 
-            this.labelRejectedQty.Lines = 0;
             this.labelRejectedQty.Location = new System.Drawing.Point(18, 223);
             this.labelRejectedQty.Name = "labelRejectedQty";
             this.labelRejectedQty.Size = new System.Drawing.Size(91, 23);
@@ -332,7 +328,6 @@
             // 
             // labelInspectDate
             // 
-            this.labelInspectDate.Lines = 0;
             this.labelInspectDate.Location = new System.Drawing.Point(18, 257);
             this.labelInspectDate.Name = "labelInspectDate";
             this.labelInspectDate.Size = new System.Drawing.Size(91, 23);
@@ -351,7 +346,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(238, 166);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(91, 23);
@@ -360,7 +354,6 @@
             // 
             // labelInspector
             // 
-            this.labelInspector.Lines = 0;
             this.labelInspector.Location = new System.Drawing.Point(18, 288);
             this.labelInspector.Name = "labelInspector";
             this.labelInspector.Size = new System.Drawing.Size(91, 23);
@@ -369,7 +362,6 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(18, 321);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(91, 23);
@@ -393,6 +385,7 @@
             this.editDefect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDefect.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Defect", true));
             this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDefect.IsSupportEditMode = false;
             this.editDefect.Location = new System.Drawing.Point(331, 32);
             this.editDefect.Multiline = true;
             this.editDefect.Name = "editDefect";
@@ -415,16 +408,6 @@
             this.panel1.Size = new System.Drawing.Size(639, 209);
             this.panel1.TabIndex = 133;
             // 
-            // txtInspector
-            // 
-            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
-            this.txtInspector.DisplayBox1Binding = "";
-            this.txtInspector.Location = new System.Drawing.Point(102, 132);
-            this.txtInspector.Name = "txtInspector";
-            this.txtInspector.Size = new System.Drawing.Size(301, 23);
-            this.txtInspector.TabIndex = 135;
-            this.txtInspector.TextBox1Binding = "";
-            // 
             // dateInspectDate
             // 
             this.dateInspectDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
@@ -436,23 +419,13 @@
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(579, 5);
+            this.btnClose.Location = new System.Drawing.Point(580, 5);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 135;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Suppid", true));
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(328, 94);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(214, 23);
-            this.txtsupplier.TabIndex = 134;
-            this.txtsupplier.TextBox1Binding = "";
             // 
             // btnEdit
             // 
@@ -464,6 +437,26 @@
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Suppid", true));
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(328, 94);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(214, 23);
+            this.txtsupplier.TabIndex = 134;
+            this.txtsupplier.TextBox1Binding = "";
+            // 
+            // txtInspector
+            // 
+            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
+            this.txtInspector.DisplayBox1Binding = "";
+            this.txtInspector.Location = new System.Drawing.Point(102, 132);
+            this.txtInspector.Name = "txtInspector";
+            this.txtInspector.Size = new System.Drawing.Size(301, 23);
+            this.txtInspector.TabIndex = 135;
+            this.txtInspector.TextBox1Binding = "";
             // 
             // P02_Detail
             // 
