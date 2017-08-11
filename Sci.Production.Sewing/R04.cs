@@ -192,8 +192,8 @@ from #tmpSewingDetail t
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
 
 declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']',iif(ArtworkType_CPU = '', '',',['+ArtworkType_CPU+']')) from #atall for xml path('')),1,1,'')
-declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)'
-								,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=isnull([Price],0)')))from #atall for xml path(''))
+declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=sum(isnull([',ArtworkType_Unit,'],0))'
+								,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull([Price],0))')))from #atall for xml path(''))
 declare @TTLZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)'
 								,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=Round(isnull([Price],0)*Rate*[',ArtworkType_CPU,'],2)'))
 								,',[TTL_',ArtworkType_Unit,']=Round(QAQty*Rate*[',ArtworkType_Unit,'],2)'
@@ -203,12 +203,13 @@ print @NameZ
 print @TTLZ
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-select orderid,Price'+@NameZ+N'
+select orderid,Price = sum(Price)'+@NameZ+N'
 into #oid_at
 from
 (select orderid = i.ID,a.ArtworkType_Unit,i.Price,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,i.Qty))from #atall a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq)a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
-where orderid is not null'
+where orderid is not null
+group by orderid'
 +N'
 select MDivisionID,FactoryID
 	,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
