@@ -31,9 +31,12 @@
     [RFIDLoginId]             VARCHAR (20)   NULL,
     [RFIDLoginPwd]            VARCHAR (20)   NULL,
     [RFIDTable]               VARCHAR (20)   NULL,
-    [ProphetSingleSizeDeduct] NUMERIC (3)    NULL, 
-    [PrintingSuppID]		  VARCHAR(8)	 NULL
+    [ProphetSingleSizeDeduct] NUMERIC (3)    NULL,
+    [PrintingSuppID]          VARCHAR (8)    NULL,
+    [QCMachineDelayTime]      NUMERIC (2, 1) NULL
 );
+
+
 
 
 
@@ -231,3 +234,6 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'ExchangeID'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'驗布機延遲時間(秒)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'QCMachineDelayTime';
+

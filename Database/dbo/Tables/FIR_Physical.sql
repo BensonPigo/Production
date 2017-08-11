@@ -19,8 +19,14 @@
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_FIR_Physical_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     [Moisture]    BIT            CONSTRAINT [DF_FIR_Physical_Moisture] DEFAULT ((0)) NULL,
+    [QCTime]      INT            CONSTRAINT [DF_FIR_Physical_QCTime] DEFAULT ((0)) NOT NULL,
+    [QCStopQty]   TINYINT        CONSTRAINT [DF_FIR_Physical_QCStopQty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
+
+
 
 
 
@@ -114,4 +120,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[FIR_Physical]([ID] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QC驗布時間(秒)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Physical', @level2type = N'COLUMN', @level2name = N'QCTime';
+
+
+GO
+
 

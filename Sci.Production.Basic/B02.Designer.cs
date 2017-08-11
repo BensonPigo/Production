@@ -85,16 +85,20 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
+            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
             this.txtUserPOApproved = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numQCMachineDelayTime)).BeginInit();
             this.SuspendLayout();
             // 
             // labelCPUTMS
             // 
-            this.labelCPUTMS.Lines = 0;
             this.labelCPUTMS.Location = new System.Drawing.Point(17, 15);
             this.labelCPUTMS.Name = "labelCPUTMS";
             this.labelCPUTMS.Size = new System.Drawing.Size(85, 23);
@@ -125,7 +129,6 @@
             // 
             // labelSampleRate
             // 
-            this.labelSampleRate.Lines = 0;
             this.labelSampleRate.Location = new System.Drawing.Point(203, 15);
             this.labelSampleRate.Name = "labelSampleRate";
             this.labelSampleRate.Size = new System.Drawing.Size(85, 23);
@@ -156,7 +159,6 @@
             // 
             // labelAccountKeyword
             // 
-            this.labelAccountKeyword.Lines = 0;
             this.labelAccountKeyword.Location = new System.Drawing.Point(378, 15);
             this.labelAccountKeyword.Name = "labelAccountKeyword";
             this.labelAccountKeyword.Size = new System.Drawing.Size(114, 23);
@@ -175,7 +177,6 @@
             // 
             // labelLocalCurrency
             // 
-            this.labelLocalCurrency.Lines = 0;
             this.labelLocalCurrency.Location = new System.Drawing.Point(17, 54);
             this.labelLocalCurrency.Name = "labelLocalCurrency";
             this.labelLocalCurrency.Size = new System.Drawing.Size(97, 23);
@@ -194,7 +195,6 @@
             // 
             // labelUSDRate
             // 
-            this.labelUSDRate.Lines = 0;
             this.labelUSDRate.Location = new System.Drawing.Point(17, 83);
             this.labelUSDRate.Name = "labelUSDRate";
             this.labelUSDRate.Size = new System.Drawing.Size(97, 23);
@@ -226,7 +226,6 @@
             // 
             // labelPOApproved
             // 
-            this.labelPOApproved.Lines = 0;
             this.labelPOApproved.Location = new System.Drawing.Point(279, 54);
             this.labelPOApproved.Name = "labelPOApproved";
             this.labelPOApproved.Size = new System.Drawing.Size(91, 23);
@@ -235,7 +234,6 @@
             // 
             // labelAutoApprovedWhileDateBefore
             // 
-            this.labelAutoApprovedWhileDateBefore.Lines = 0;
             this.labelAutoApprovedWhileDateBefore.Location = new System.Drawing.Point(279, 83);
             this.labelAutoApprovedWhileDateBefore.Name = "labelAutoApprovedWhileDateBefore";
             this.labelAutoApprovedWhileDateBefore.Size = new System.Drawing.Size(204, 23);
@@ -265,7 +263,6 @@
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(541, 83);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
@@ -278,7 +275,6 @@
             // 
             // labelRegionCode
             // 
-            this.labelRegionCode.Lines = 0;
             this.labelRegionCode.Location = new System.Drawing.Point(579, 15);
             this.labelRegionCode.Name = "labelRegionCode";
             this.labelRegionCode.Size = new System.Drawing.Size(86, 23);
@@ -297,7 +293,6 @@
             // 
             // labelCuttingLeadTime
             // 
-            this.labelCuttingLeadTime.Lines = 0;
             this.labelCuttingLeadTime.Location = new System.Drawing.Point(17, 122);
             this.labelCuttingLeadTime.Name = "labelCuttingLeadTime";
             this.labelCuttingLeadTime.Size = new System.Drawing.Size(119, 23);
@@ -326,7 +321,6 @@
             // 
             // labelMtlInspectionLeadTime
             // 
-            this.labelMtlInspectionLeadTime.Lines = 0;
             this.labelMtlInspectionLeadTime.Location = new System.Drawing.Point(247, 122);
             this.labelMtlInspectionLeadTime.Name = "labelMtlInspectionLeadTime";
             this.labelMtlInspectionLeadTime.Size = new System.Drawing.Size(162, 23);
@@ -355,7 +349,6 @@
             // 
             // labelReadyDayByProd
             // 
-            this.labelReadyDayByProd.Lines = 0;
             this.labelReadyDayByProd.Location = new System.Drawing.Point(514, 122);
             this.labelReadyDayByProd.Name = "labelReadyDayByProd";
             this.labelReadyDayByProd.Size = new System.Drawing.Size(125, 23);
@@ -384,7 +377,6 @@
             // 
             // labelDailyOutputLockDate
             // 
-            this.labelDailyOutputLockDate.Lines = 0;
             this.labelDailyOutputLockDate.Location = new System.Drawing.Point(17, 161);
             this.labelDailyOutputLockDate.Name = "labelDailyOutputLockDate";
             this.labelDailyOutputLockDate.Size = new System.Drawing.Size(145, 23);
@@ -403,7 +395,6 @@
             // 
             // labelPulloutLockDate
             // 
-            this.labelPulloutLockDate.Lines = 0;
             this.labelPulloutLockDate.Location = new System.Drawing.Point(342, 160);
             this.labelPulloutLockDate.Name = "labelPulloutLockDate";
             this.labelPulloutLockDate.Size = new System.Drawing.Size(112, 23);
@@ -422,8 +413,7 @@
             // 
             // labelSMTPIP
             // 
-            this.labelSMTPIP.Lines = 0;
-            this.labelSMTPIP.Location = new System.Drawing.Point(17, 201);
+            this.labelSMTPIP.Location = new System.Drawing.Point(17, 234);
             this.labelSMTPIP.Name = "labelSMTPIP";
             this.labelSMTPIP.Size = new System.Drawing.Size(75, 23);
             this.labelSMTPIP.TabIndex = 28;
@@ -435,15 +425,14 @@
             this.txtSMTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSMTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mailserver", true));
             this.txtSMTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSMTPIP.Location = new System.Drawing.Point(97, 201);
+            this.txtSMTPIP.Location = new System.Drawing.Point(97, 234);
             this.txtSMTPIP.Name = "txtSMTPIP";
             this.txtSMTPIP.Size = new System.Drawing.Size(471, 23);
             this.txtSMTPIP.TabIndex = 14;
             // 
             // labelSendFrom
             // 
-            this.labelSendFrom.Lines = 0;
-            this.labelSendFrom.Location = new System.Drawing.Point(17, 230);
+            this.labelSendFrom.Location = new System.Drawing.Point(17, 263);
             this.labelSendFrom.Name = "labelSendFrom";
             this.labelSendFrom.Size = new System.Drawing.Size(75, 23);
             this.labelSendFrom.TabIndex = 30;
@@ -455,15 +444,14 @@
             this.txtSendFrom.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSendFrom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sendfrom", true));
             this.txtSendFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSendFrom.Location = new System.Drawing.Point(97, 230);
+            this.txtSendFrom.Location = new System.Drawing.Point(97, 263);
             this.txtSendFrom.Name = "txtSendFrom";
             this.txtSendFrom.Size = new System.Drawing.Size(246, 23);
             this.txtSendFrom.TabIndex = 15;
             // 
             // labelEmailID
             // 
-            this.labelEmailID.Lines = 0;
-            this.labelEmailID.Location = new System.Drawing.Point(17, 259);
+            this.labelEmailID.Location = new System.Drawing.Point(17, 292);
             this.labelEmailID.Name = "labelEmailID";
             this.labelEmailID.Size = new System.Drawing.Size(75, 23);
             this.labelEmailID.TabIndex = 32;
@@ -475,15 +463,14 @@
             this.txtEmailID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailID", true));
             this.txtEmailID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEmailID.Location = new System.Drawing.Point(97, 259);
+            this.txtEmailID.Location = new System.Drawing.Point(97, 292);
             this.txtEmailID.Name = "txtEmailID";
             this.txtEmailID.Size = new System.Drawing.Size(246, 23);
             this.txtEmailID.TabIndex = 16;
             // 
             // labelEmailPassword
             // 
-            this.labelEmailPassword.Lines = 0;
-            this.labelEmailPassword.Location = new System.Drawing.Point(369, 259);
+            this.labelEmailPassword.Location = new System.Drawing.Point(369, 292);
             this.labelEmailPassword.Name = "labelEmailPassword";
             this.labelEmailPassword.Size = new System.Drawing.Size(67, 23);
             this.labelEmailPassword.TabIndex = 34;
@@ -495,15 +482,14 @@
             this.txtEmailPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailPwd", true));
             this.txtEmailPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEmailPassword.Location = new System.Drawing.Point(440, 259);
+            this.txtEmailPassword.Location = new System.Drawing.Point(440, 292);
             this.txtEmailPassword.Name = "txtEmailPassword";
             this.txtEmailPassword.Size = new System.Drawing.Size(100, 23);
             this.txtEmailPassword.TabIndex = 17;
             // 
             // labelFTPIP
             // 
-            this.labelFTPIP.Lines = 0;
-            this.labelFTPIP.Location = new System.Drawing.Point(17, 288);
+            this.labelFTPIP.Location = new System.Drawing.Point(17, 321);
             this.labelFTPIP.Name = "labelFTPIP";
             this.labelFTPIP.Size = new System.Drawing.Size(75, 23);
             this.labelFTPIP.TabIndex = 36;
@@ -515,15 +501,14 @@
             this.txtFTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
             this.txtFTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPIP.Location = new System.Drawing.Point(97, 288);
+            this.txtFTPIP.Location = new System.Drawing.Point(97, 321);
             this.txtFTPIP.Name = "txtFTPIP";
             this.txtFTPIP.Size = new System.Drawing.Size(274, 23);
             this.txtFTPIP.TabIndex = 18;
             // 
             // labelFTPID
             // 
-            this.labelFTPID.Lines = 0;
-            this.labelFTPID.Location = new System.Drawing.Point(17, 317);
+            this.labelFTPID.Location = new System.Drawing.Point(17, 350);
             this.labelFTPID.Name = "labelFTPID";
             this.labelFTPID.Size = new System.Drawing.Size(75, 23);
             this.labelFTPID.TabIndex = 38;
@@ -535,15 +520,14 @@
             this.txtFTPID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
             this.txtFTPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPID.Location = new System.Drawing.Point(97, 317);
+            this.txtFTPID.Location = new System.Drawing.Point(97, 350);
             this.txtFTPID.Name = "txtFTPID";
             this.txtFTPID.Size = new System.Drawing.Size(100, 23);
             this.txtFTPID.TabIndex = 19;
             // 
             // labelFTPPassword
             // 
-            this.labelFTPPassword.Lines = 0;
-            this.labelFTPPassword.Location = new System.Drawing.Point(369, 317);
+            this.labelFTPPassword.Location = new System.Drawing.Point(369, 350);
             this.labelFTPPassword.Name = "labelFTPPassword";
             this.labelFTPPassword.Size = new System.Drawing.Size(67, 23);
             this.labelFTPPassword.TabIndex = 40;
@@ -555,15 +539,14 @@
             this.txtFTPPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
             this.txtFTPPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFTPPassword.Location = new System.Drawing.Point(440, 317);
+            this.txtFTPPassword.Location = new System.Drawing.Point(440, 350);
             this.txtFTPPassword.Name = "txtFTPPassword";
             this.txtFTPPassword.Size = new System.Drawing.Size(100, 23);
             this.txtFTPPassword.TabIndex = 20;
             // 
             // labelSketchFilesPath
             // 
-            this.labelSketchFilesPath.Lines = 0;
-            this.labelSketchFilesPath.Location = new System.Drawing.Point(17, 356);
+            this.labelSketchFilesPath.Location = new System.Drawing.Point(17, 388);
             this.labelSketchFilesPath.Name = "labelSketchFilesPath";
             this.labelSketchFilesPath.Size = new System.Drawing.Size(112, 23);
             this.labelSketchFilesPath.TabIndex = 42;
@@ -571,8 +554,7 @@
             // 
             // labelClipFilesPath
             // 
-            this.labelClipFilesPath.Lines = 0;
-            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 385);
+            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 417);
             this.labelClipFilesPath.Name = "labelClipFilesPath";
             this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
             this.labelClipFilesPath.TabIndex = 43;
@@ -584,7 +566,7 @@
             this.txtSketchFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSketchFilesPath.Location = new System.Drawing.Point(133, 356);
+            this.txtSketchFilesPath.Location = new System.Drawing.Point(133, 388);
             this.txtSketchFilesPath.Name = "txtSketchFilesPath";
             this.txtSketchFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtSketchFilesPath.TabIndex = 22;
@@ -595,7 +577,7 @@
             this.txtCilpFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 385);
+            this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 417);
             this.txtCilpFilesPath.Name = "txtCilpFilesPath";
             this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
             this.txtCilpFilesPath.TabIndex = 24;
@@ -603,7 +585,7 @@
             // btnMailTo
             // 
             this.btnMailTo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMailTo.Location = new System.Drawing.Point(558, 314);
+            this.btnMailTo.Location = new System.Drawing.Point(558, 347);
             this.btnMailTo.Name = "btnMailTo";
             this.btnMailTo.Size = new System.Drawing.Size(80, 30);
             this.btnMailTo.TabIndex = 21;
@@ -614,7 +596,7 @@
             // btnSketchFilesPath
             // 
             this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSketchFilesPath.Location = new System.Drawing.Point(642, 356);
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(642, 388);
             this.btnSketchFilesPath.Name = "btnSketchFilesPath";
             this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnSketchFilesPath.TabIndex = 23;
@@ -625,7 +607,7 @@
             // btnCilpFilesPath
             // 
             this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 385);
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 417);
             this.btnCilpFilesPath.Name = "btnCilpFilesPath";
             this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
             this.btnCilpFilesPath.TabIndex = 25;
@@ -657,8 +639,8 @@
             this.lineShape7.Name = "lineShape7";
             this.lineShape7.X1 = 8;
             this.lineShape7.X2 = 726;
-            this.lineShape7.Y1 = 416;
-            this.lineShape7.Y2 = 416;
+            this.lineShape7.Y1 = 446;
+            this.lineShape7.Y2 = 446;
             // 
             // lineShape6
             // 
@@ -666,8 +648,8 @@
             this.lineShape6.Name = "lineShape6";
             this.lineShape6.X1 = 8;
             this.lineShape6.X2 = 726;
-            this.lineShape6.Y1 = 348;
-            this.lineShape6.Y2 = 348;
+            this.lineShape6.Y1 = 381;
+            this.lineShape6.Y2 = 381;
             // 
             // lineShape5
             // 
@@ -675,8 +657,8 @@
             this.lineShape5.Name = "lineShape5";
             this.lineShape5.X1 = 8;
             this.lineShape5.X2 = 726;
-            this.lineShape5.Y1 = 193;
-            this.lineShape5.Y2 = 193;
+            this.lineShape5.Y1 = 189;
+            this.lineShape5.Y2 = 189;
             // 
             // lineShape4
             // 
@@ -716,6 +698,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.numQCMachineDelayTime);
+            this.panel1.Controls.Add(this.lbQCMachineDelayTime);
             this.panel1.Controls.Add(this.labelCPUTMS);
             this.panel1.Controls.Add(this.btnCilpFilesPath);
             this.panel1.Controls.Add(this.num1CPUTMS);
@@ -767,8 +752,55 @@
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(737, 427);
+            this.panel1.Size = new System.Drawing.Size(737, 454);
             this.panel1.TabIndex = 50;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(230, 197);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(23, 23);
+            this.label2.TabIndex = 46;
+            this.label2.Text = "(s)";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // numQCMachineDelayTime
+            // 
+            this.numQCMachineDelayTime.BackColor = System.Drawing.Color.White;
+            this.numQCMachineDelayTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QCMachineDelayTime", true));
+            this.numQCMachineDelayTime.DecimalPlaces = 1;
+            this.numQCMachineDelayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQCMachineDelayTime.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numQCMachineDelayTime.Location = new System.Drawing.Point(178, 197);
+            this.numQCMachineDelayTime.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numQCMachineDelayTime.Name = "numQCMachineDelayTime";
+            this.numQCMachineDelayTime.Size = new System.Drawing.Size(49, 23);
+            this.numQCMachineDelayTime.TabIndex = 45;
+            this.numQCMachineDelayTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            65536});
+            // 
+            // lbQCMachineDelayTime
+            // 
+            this.lbQCMachineDelayTime.Location = new System.Drawing.Point(17, 197);
+            this.lbQCMachineDelayTime.Name = "lbQCMachineDelayTime";
+            this.lbQCMachineDelayTime.Size = new System.Drawing.Size(158, 23);
+            this.lbQCMachineDelayTime.TabIndex = 44;
+            this.lbQCMachineDelayTime.Text = "QC Machine Delay Time";
             // 
             // txtUserPOApproved
             // 
@@ -786,6 +818,7 @@
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape10,
             this.lineShape8,
             this.lineShape9,
             this.lineShape7,
@@ -795,13 +828,22 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(737, 427);
+            this.shapeContainer2.Size = new System.Drawing.Size(737, 454);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
+            // lineShape10
+            // 
+            this.lineShape10.BorderColor = System.Drawing.Color.DarkGray;
+            this.lineShape10.Name = "lineShape10";
+            this.lineShape10.X1 = 9;
+            this.lineShape10.X2 = 727;
+            this.lineShape10.Y1 = 227;
+            this.lineShape10.Y2 = 227;
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(759, 474);
+            this.ClientSize = new System.Drawing.Size(759, 504);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "numSample";
             this.DefaultControlForEdit = "numSample";
@@ -814,6 +856,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numQCMachineDelayTime)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -880,5 +923,9 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Panel panel1;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private Win.UI.Label label2;
+        private Win.UI.NumericUpDown numQCMachineDelayTime;
+        private Win.UI.Label lbQCMachineDelayTime;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape10;
     }
 }
