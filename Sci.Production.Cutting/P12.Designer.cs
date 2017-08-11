@@ -70,6 +70,8 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.txtComb = new Sci.Win.UI.TextBox();
+            this.lbComb = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -79,6 +81,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtComb);
+            this.panel1.Controls.Add(this.lbComb);
             this.panel1.Controls.Add(this.txtCutno);
             this.panel1.Controls.Add(this.dateBundlecreatedDate);
             this.panel1.Controls.Add(this.txtuser1);
@@ -482,6 +486,23 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtComb
+            // 
+            this.txtComb.BackColor = System.Drawing.Color.White;
+            this.txtComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtComb.Location = new System.Drawing.Point(869, 79);
+            this.txtComb.Name = "txtComb";
+            this.txtComb.Size = new System.Drawing.Size(100, 23);
+            this.txtComb.TabIndex = 106;
+            // 
+            // lbComb
+            // 
+            this.lbComb.Location = new System.Drawing.Point(819, 79);
+            this.lbComb.Name = "lbComb";
+            this.lbComb.Size = new System.Drawing.Size(47, 21);
+            this.lbComb.TabIndex = 105;
+            this.lbComb.Text = "Comb";
+            // 
             // P12
             // 
             this.ClientSize = new System.Drawing.Size(1008, 562);
@@ -546,5 +567,7 @@
         private Win.UI.Label lbCutno;
         private Win.UI.Label lbBundlecreatedDate;
         private Win.UI.Label lbBundlecreator;
+        private Win.UI.TextBox txtComb;
+        private Win.UI.Label lbComb;
     }
 }

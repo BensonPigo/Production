@@ -47,6 +47,7 @@ namespace Sci.Production.Cutting
         string Addname;
         DateTime? AddDate;
         string Cutno;
+        string Comb;
         
         void GridSetup()
         {
@@ -106,6 +107,7 @@ namespace Sci.Production.Cutting
             Addname = txtuser1.TextBox1.Text;
             AddDate = dateBundlecreatedDate.Value;
             Cutno = txtCutno.Text;
+            Comb = txtComb.Text;
 
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = ""; string sb = "";
@@ -180,10 +182,15 @@ namespace Sci.Production.Cutting
 
             if (!this.txtfactoryByM.Text.Empty())
             {
-                sqlWheres.Add("c.FtyGroup  = @FtyGroup ");
+                sqlWheres.Add(" c.FtyGroup  = @FtyGroup ");
                 lis.Add(new SqlParameter("@FtyGroup ", txtfactoryByM.Text));
             }
 
+            if (!this.txtComb.Text.Empty())
+            {
+                sqlWheres.Add(" b.PatternPanel  = @Comb ");
+                lis.Add(new SqlParameter("@Comb ", txtComb.Text));
+            }
 
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
