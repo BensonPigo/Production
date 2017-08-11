@@ -85,12 +85,12 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
+            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
             this.txtUserPOApproved = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
-            this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
-            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -755,6 +755,53 @@
             this.panel1.Size = new System.Drawing.Size(737, 454);
             this.panel1.TabIndex = 50;
             // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(230, 197);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(23, 23);
+            this.label2.TabIndex = 46;
+            this.label2.Text = "(s)";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label2.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // numQCMachineDelayTime
+            // 
+            this.numQCMachineDelayTime.BackColor = System.Drawing.Color.White;
+            this.numQCMachineDelayTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QCMachineDelayTime", true));
+            this.numQCMachineDelayTime.DecimalPlaces = 1;
+            this.numQCMachineDelayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQCMachineDelayTime.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numQCMachineDelayTime.Location = new System.Drawing.Point(178, 197);
+            this.numQCMachineDelayTime.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numQCMachineDelayTime.Name = "numQCMachineDelayTime";
+            this.numQCMachineDelayTime.Size = new System.Drawing.Size(49, 23);
+            this.numQCMachineDelayTime.TabIndex = 45;
+            this.numQCMachineDelayTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            65536});
+            // 
+            // lbQCMachineDelayTime
+            // 
+            this.lbQCMachineDelayTime.Location = new System.Drawing.Point(17, 197);
+            this.lbQCMachineDelayTime.Name = "lbQCMachineDelayTime";
+            this.lbQCMachineDelayTime.Size = new System.Drawing.Size(158, 23);
+            this.lbQCMachineDelayTime.TabIndex = 44;
+            this.lbQCMachineDelayTime.Text = "QC Machine Delay Time";
+            // 
             // txtUserPOApproved
             // 
             this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
@@ -793,53 +840,6 @@
             this.lineShape10.X2 = 727;
             this.lineShape10.Y1 = 227;
             this.lineShape10.Y2 = 227;
-            // 
-            // lbQCMachineDelayTime
-            // 
-            this.lbQCMachineDelayTime.Location = new System.Drawing.Point(17, 197);
-            this.lbQCMachineDelayTime.Name = "lbQCMachineDelayTime";
-            this.lbQCMachineDelayTime.Size = new System.Drawing.Size(158, 23);
-            this.lbQCMachineDelayTime.TabIndex = 44;
-            this.lbQCMachineDelayTime.Text = "QC Machine Delay Time";
-            // 
-            // numQCMachineDelayTime
-            // 
-            this.numQCMachineDelayTime.BackColor = System.Drawing.Color.White;
-            this.numQCMachineDelayTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QCMachineDelayTime", true));
-            this.numQCMachineDelayTime.DecimalPlaces = 1;
-            this.numQCMachineDelayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQCMachineDelayTime.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numQCMachineDelayTime.Location = new System.Drawing.Point(178, 197);
-            this.numQCMachineDelayTime.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numQCMachineDelayTime.Name = "numQCMachineDelayTime";
-            this.numQCMachineDelayTime.Size = new System.Drawing.Size(49, 23);
-            this.numQCMachineDelayTime.TabIndex = 45;
-            this.numQCMachineDelayTime.Value = new decimal(new int[] {
-            35,
-            0,
-            0,
-            65536});
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(230, 197);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(23, 23);
-            this.label2.TabIndex = 46;
-            this.label2.Text = "(s)";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
             // B02
             // 

@@ -65,8 +65,8 @@ SELECT [Inspected Date] = FP.InspDate,
        [Dyelot#] = fp.Dyelot,
        [Arrived YDS] = RD.StockQty,
        [Actual YDS] = FP.ActualYds,
-       [Speed] = IIF(FP.QCTime- (System.QCMachineDelayTime * FP.QCStopQty) = 0, 0,
-	                Round(FP.ActualYds/(FP.QCTime- (System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
+       [Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
+	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
        [Grade] = FP.Grade
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
