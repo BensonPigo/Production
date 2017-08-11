@@ -100,12 +100,12 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-         
+
             labelCofirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
 
             DataRow dr;
             string sqlStatus = string.Format(@"select * from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"].ToString());
-            if (MyUtility.Check.Seek(sqlStatus,out dr))
+            if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
                 if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelCofirmed.Text = "New";
                 else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelCofirmed.Text = "Confirmed";
@@ -145,10 +145,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 displayStartCtn.Value = orderData["CTNStartNo"].ToString();
             }
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
-            {              
+            {
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
-                gridicon.Remove.Enabled = false;                
+                gridicon.Remove.Enabled = false;
             }
             else
             {
@@ -191,7 +191,7 @@ Select  ID
         , FtyGroup
 from Orders WITH (NOLOCK) 
 where   ID = '{0}' 
-        and Category = 'B' 
+        and ((Category = 'B' and LocalOrder = 0) or Category = 'S')
         and BrandID = '{1}' 
         and Dest = '{2}' 
         and CustCDID = '{3}'
@@ -218,7 +218,7 @@ where   ID = '{0}'
                             dr["Factory"] = orderData["FtyGroup"].ToString();
                             dr["StyleID"] = orderData["StyleID"].ToString();
                             dr["CustPONo"] = orderData["CustPONo"].ToString();
-                            dr["SeasonID"] = orderData["SeasonID"].ToString(); 
+                            dr["SeasonID"] = orderData["SeasonID"].ToString();
                             dr["Article"] = "";
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
@@ -276,7 +276,16 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select oq.Seq, oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id  where oq.ID = '{0}' and oq.ShipmodeID = '{1}' and o.MDivisionID = '{2}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
+                            string sqlCmd = string.Format(@"
+select  oq.Seq
+        , oq.BuyerDelivery
+        , oq.ShipmodeID
+        , oq.Qty 
+from Order_QtyShip oq WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on oq.id = o.id  
+where   oq.ID = '{0}' 
+        and oq.ShipmodeID = '{1}' 
+        and o.MDivisionID = '{2}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -596,7 +605,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             base.ClickEditAfter();
             comboSortby.Text = "";
 
-            if (CurrentMaintain["ID"].ToString().Substring(3,2).ToUpper()=="PG")
+            if (CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
                 txtbrand.ReadOnly = true;
                 txtcustcd.ReadOnly = true;
@@ -657,7 +666,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
                 return false;
             }
-           
+
 
             //刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
@@ -722,7 +731,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     return false;
                 }
                 #endregion
-                   
+
                 #region 填入Seq欄位值
                 i = i + 1;
                 dr["Seq"] = Convert.ToString(i).PadLeft(6, '0');
@@ -819,8 +828,8 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
                 if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}' and Refno='{1}'", dt["OrderID"].ToString(), dt["RefNo"].ToString())))
                 {
-                    warningmsg.Append(Environment.NewLine + string.Format("SP#：<{0}>, RefNo：<{1}>.", dt["OrderID"].ToString(), dt["RefNo"].ToString()));       
-                }                                   
+                    warningmsg.Append(Environment.NewLine + string.Format("SP#：<{0}>, RefNo：<{1}>.", dt["OrderID"].ToString(), dt["RefNo"].ToString()));
+                }
             }
             if (warningmsg.ToString() != "Please inform Purchase Team that the Carton Ref No. has been changed.")
                 MyUtility.Msg.InfoBox(warningmsg.ToString());
@@ -1100,7 +1109,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             if (EditMode && txtcustcd.OldValue != txtcustcd.Text)
             {
                 DeleteDetailData(txtcustcd, txtcustcd.OldValue);
-            }            
+            }
         }
 
         //Destination
@@ -1113,7 +1122,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 txtcountry.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
-        
+
         //ShipMode        
         private void txtshipmode_Validated(object sender, EventArgs e)
         {
@@ -1141,7 +1150,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //刪除表身Grid的資料
-        private void DeleteDetailData(TextBoxBase textbox,string oldvalue)
+        private void DeleteDetailData(TextBoxBase textbox, string oldvalue)
         {
             DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
             if (diresult == DialogResult.No)
@@ -1321,7 +1330,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 return;
             }
 
-          
+
         }
 
         //UnConfirm
@@ -1345,7 +1354,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
             SelectReason();
 
-           
+
         }
 
         private void SelectReason()
@@ -1498,7 +1507,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 MyUtility.Msg.InfoBox(errMsg.JoinToString("\n") + " Can not be Empty!!");
                 return;
             }
-            #endregion 
+            #endregion
 
             Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             nextForm.ShowDialog(this);
