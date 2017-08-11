@@ -190,6 +190,7 @@ namespace Sci.Production.Quality
         {
             string strSqlcmd = "";
             this.btnAmend.Enabled = false;
+            
 
 
             DualResult result;
@@ -294,6 +295,18 @@ namespace Sci.Production.Quality
                             this.txtInspector.TextBox1.Text = Sci.Env.User.UserID;
                             CurrentData["Inspector"] = Sci.Env.User.UserID;
                         }
+                       this.EditMode = true;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
+                       if (MyUtility.Check.Empty(this.dateInspectDate.Value))
+                       {
+                           this.dateInspectDate.Value = DateTime.Today;
+                           CurrentData["InspDate"] = string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value);
+
+                       }
+                       if (MyUtility.Check.Empty(this.txtInspector.TextBox1.Text))
+                       {
+                           this.txtInspector.TextBox1.Text = Sci.Env.User.UserID;
+                           CurrentData["Inspector"] = Sci.Env.User.UserID;
+                       }
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
                             this.btnAmend.Enabled = true;
