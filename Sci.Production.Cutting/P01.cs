@@ -81,7 +81,7 @@ namespace Sci.Production.Cutting
                 dateSewingScheduleLastMtlETA.Value = null;
                 dateSewingScheduleRMtlETA.Value = null;
             }
-            //Switch to WordOrder
+            // Switch to WorkOrder
             switch (CurrentMaintain["Worktype"].ToString())
             {
                 case "1":
@@ -208,8 +208,10 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.PublicForm.EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,true);
             frm.ShowDialog(this);
+            this.RenewData();
             this.OnDetailEntered();
         }
+
         //Button Bundle Card
         private void btnBundleCard_Click(object sender, EventArgs e)
         {
