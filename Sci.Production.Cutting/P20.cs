@@ -515,6 +515,33 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
            
             #endregion
 
+            DataTable dtDistinct = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, new string[] { "Cuttingid" });
+            StringBuilder dissp = new StringBuilder();
+            dissp.Append(" and (1=0");
+            foreach (DataRow dr in dtDistinct.Rows)
+            {
+                dissp.Append(string.Format(" or COD.CuttingID ='{0}'", dr["Cuttingid"].ToString()));
+            }
+            dissp.Append(")");
+            string sqlupfl = string.Format(@"
+update c
+set c.FirstCutDate = a.FirstCutDate
+	,c.LastCutDate = a.LastCutDate
+from
+(
+select
+FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
+FROM CuttingOutput_Detail COD
+LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
+WHERE CO.Status='Confirmed' {0}
+group by COD.CuttingID
+)a,Cutting c
+where c.ID =a.CuttingID", dissp.ToString());
+            upResult = DBProxy.Current.Execute(null, sqlupfl);
+            if (!upResult)
+            {
+                ShowErr("Commit transaction error.", upResult);
+            }
         }
         protected override void ClickUnconfirm()
         {
@@ -609,6 +636,35 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
             
             #endregion
+
+            DataTable dtDistinct = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, new string[] { "Cuttingid" });
+            StringBuilder dissp = new StringBuilder();
+            dissp.Append("where (1=0");
+            foreach (DataRow dr in dtDistinct.Rows)
+            {
+                dissp.Append(string.Format(" or c.ID  ='{0}'", dr["Cuttingid"].ToString()));
+            }
+            dissp.Append(")");
+            string sqlupfl = string.Format(@"
+update c
+set c.FirstCutDate = a.FirstCutDate
+	,c.LastCutDate = a.LastCutDate
+
+from Cutting c left join
+(
+	select
+	FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
+	FROM CuttingOutput_Detail COD
+	LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
+	WHERE CO.Status='NEW' 
+	group by COD.CuttingID
+)a on a.CuttingID = c.ID
+{0}", dissp.ToString());
+            upResult = DBProxy.Current.Execute(null, sqlupfl);
+            if (!upResult)
+            {
+                ShowErr("Commit transaction error.", upResult);
+            }
         }
 
         private void btnImportfromWorkOrder_Click(object sender, EventArgs e)
@@ -623,72 +679,5 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             base.OnFormLoaded();
             
         }
-//        private void Gmtrequery()
-//        {
-//            #region 找出有哪些部位
-//            DataTable fabcodetb;
-//            string fabcodesql = string.Format(@"Select distinct a.PatternPanel
-//            from Order_ColorCombo a ,Order_EachCons b,CuttingOutput_Detail c
-//            where a.id = c.cuttingid and a.FabricCode is not null and a.FabricCode !='' 
-//            and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel and b.id = c.cuttingid and c.id ='{0}'
-//            order by patternpanel", CurrentMaintain["ID"]);
-//            DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
-//            #endregion
-//            #region 建立Grid
-//            string settbsql = "Select distinct a.id,article,sizecode,a.qty,'' as complete"; //寫SQL建立Table
-//            foreach (DataRow dr in fabcodetb.Rows) //組動態欄位
-//            {
-//                settbsql = settbsql + ", 0 as " + dr["PatternPanel"];
-//            }
-//            settbsql = settbsql + string.Format(" From Order_Qty a,orders b,CuttingOutput_Detail c Where b.cuttingsp =c.cuttingid and c.id = '{0}' and a.id = b.id order by id,article,sizecode", CurrentMaintain["ID"]);
-
-//            DataTable gridtb;
-//            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out gridtb);
-
-//            #endregion
-//            #region 寫入部位數量
-//            string getqtysql = string.Format("Select b.article,b.sizecode,b.qty,c.PatternPanel,b.orderid from CuttingOutput_Detail a, workorder_Distribute b, workorder_PatternPanel c Where a.cdate <= '{0}' and a.mdivisionid = '{1}' and a.workorderukey = b.workorderukey and a.workorderukey = c.workorderukey and b.workorderukey = c.workorderukey and b.article !=''", CurrentMaintain["cdate"], keyWord);
-//            DataTable getqtytb;
-
-//            gridResult = DBProxy.Current.Select(null, getqtysql, out getqtytb);
-//            foreach (DataRow dr in getqtytb.Rows)
-//            {
-//                DataRow[] gridselect = gridtb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["PatternPanel"], dr["Qty"]));
-//                if (gridselect.Length != 0)
-//                {
-//                    gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["PatternPanel"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
-//                }
-
-
-//            }
-//            #endregion
-//            #region 判斷是否Complete
-//            bool complete = true;
-//            DataTable panneltb;
-//            fabcodesql = string.Format(@"Select distinct a.Article,a.PatternPanel
-//            from Order_ColorCombo a ,Order_EachCons b,(Select distinct orders.id,POID ,article
-//			from Orders,CuttingOutput_Detail ,WorkOrder_Distribute where Orders.id = WorkOrder_Distribute.OrderID and               
-//            CuttingOutput_Detail.id='{0}' 
-//			and WorkOrder_Distribute.WorkOrderUkey = CuttingOutput_Detail.WorkOrderUkey) as f
-//            where a.id = f.poid and a.FabricCode is not null 
-//            and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
-//            and a.FabricCode !='' order by Article,PatternPanel", CurrentMaintain["ID"]);
-//            gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
-//            foreach (DataRow dr in gridtb.Rows)
-//            {
-//                complete = true;
-//                DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
-//                foreach (DataRow pdr in sel)
-//                {
-
-//                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) complete = false;
-
-//                }
-//                if (complete) dr["Complete"] = "Y";
-
-//            }
-//            #endregion
-//            grid1.DataSource = gridtb;
-//        }
     }
 }
