@@ -111,6 +111,9 @@ namespace Sci.Production.Cutting
             Qtycell.CellValidating += (s, e) =>
             {
                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
+                int old = MyUtility.Convert.GetInt(dr["Qty"]);
+                int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
+                if (old == newvalue) return;
                 int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
                 int newcount = Convert.ToInt16(e.FormattedValue);
                 numNoOfBundle.Value = newcount;
