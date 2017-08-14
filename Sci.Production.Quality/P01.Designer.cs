@@ -61,21 +61,17 @@
             this.labelavailablemodified = new Sci.Win.UI.Label();
             this.txtSEQ1 = new Sci.Win.UI.TextBox();
             this.labelSEQ1 = new Sci.Win.UI.Label();
-            this.modifyWeightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyWeightToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyShadeBondTestRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyContinuityRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gridmenu = new Sci.Win.UI.ContextMenuStrip();
-            this.modifyPhysicalInspectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyShadeBondToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modifyContinuityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtLocateforWK = new Sci.Win.UI.TextBox();
             this.labelLocateforWK = new Sci.Win.UI.Label();
             this.dateEarliestEstCutDate = new Sci.Win.UI.DateBox();
             this.dateEarliestSCIDel = new Sci.Win.UI.DateBox();
             this.dateTargetLeadTime = new Sci.Win.UI.DateBox();
             this.dateCompletionDate = new Sci.Win.UI.DateBox();
+            this.modifyPhysicalInspectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyShadeBondTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyContinuityTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -88,7 +84,6 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
-            this.gridmenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -97,10 +92,10 @@
             this.masterpanel.Controls.Add(this.labelLocateforWK);
             this.masterpanel.Controls.Add(this.txtSEQ1);
             this.masterpanel.Controls.Add(this.labelSEQ1);
-            this.masterpanel.Controls.Add(this.dateCompletionDate);
-            this.masterpanel.Controls.Add(this.dateTargetLeadTime);
-            this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
             this.masterpanel.Controls.Add(this.dateEarliestEstCutDate);
+            this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
+            this.masterpanel.Controls.Add(this.dateTargetLeadTime);
+            this.masterpanel.Controls.Add(this.dateCompletionDate);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.displayMTLCmlpt);
             this.masterpanel.Controls.Add(this.displayofInspection);
@@ -145,10 +140,10 @@
             this.masterpanel.Controls.SetChildIndex(this.displayMTLCmlpt, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCutDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateTargetLeadTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCompletionDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateTargetLeadTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateforWK, 0);
@@ -252,7 +247,6 @@
             // labelSP
             // 
             this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(15, 15);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(54, 23);
@@ -262,7 +256,6 @@
             // labelStyle
             // 
             this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(15, 44);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(54, 23);
@@ -272,7 +265,6 @@
             // labelSeason
             // 
             this.labelSeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(15, 72);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(54, 23);
@@ -282,7 +274,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(15, 102);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(54, 23);
@@ -292,7 +283,6 @@
             // labelEarliestEstCutDate
             // 
             this.labelEarliestEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestEstCutDate.Lines = 0;
             this.labelEarliestEstCutDate.Location = new System.Drawing.Point(246, 15);
             this.labelEarliestEstCutDate.Name = "labelEarliestEstCutDate";
             this.labelEarliestEstCutDate.Size = new System.Drawing.Size(137, 23);
@@ -302,7 +292,6 @@
             // labelTargetLeadTime
             // 
             this.labelTargetLeadTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTargetLeadTime.Lines = 0;
             this.labelTargetLeadTime.Location = new System.Drawing.Point(246, 72);
             this.labelTargetLeadTime.Name = "labelTargetLeadTime";
             this.labelTargetLeadTime.Size = new System.Drawing.Size(136, 23);
@@ -312,7 +301,6 @@
             // labelEarliestSCIDel
             // 
             this.labelEarliestSCIDel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(246, 44);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(137, 23);
@@ -322,7 +310,6 @@
             // labelofInspection
             // 
             this.labelofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelofInspection.Lines = 0;
             this.labelofInspection.Location = new System.Drawing.Point(542, 15);
             this.labelofInspection.Name = "labelofInspection";
             this.labelofInspection.Size = new System.Drawing.Size(95, 23);
@@ -332,7 +319,6 @@
             // labelCompletionDate
             // 
             this.labelCompletionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(246, 102);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(136, 23);
@@ -342,7 +328,6 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(542, 72);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(95, 23);
@@ -352,7 +337,6 @@
             // labelMTLCmlpt
             // 
             this.labelMTLCmlpt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelMTLCmlpt.Lines = 0;
             this.labelMTLCmlpt.Location = new System.Drawing.Point(542, 44);
             this.labelMTLCmlpt.Name = "labelMTLCmlpt";
             this.labelMTLCmlpt.Size = new System.Drawing.Size(95, 23);
@@ -362,7 +346,6 @@
             // labelSEQ2
             // 
             this.labelSEQ2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ2.Lines = 0;
             this.labelSEQ2.Location = new System.Drawing.Point(391, 146);
             this.labelSEQ2.Name = "labelSEQ2";
             this.labelSEQ2.Size = new System.Drawing.Size(75, 23);
@@ -478,7 +461,6 @@
             // 
             this.labelContinuity.BackColor = System.Drawing.Color.Transparent;
             this.labelContinuity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelContinuity.Lines = 0;
             this.labelContinuity.Location = new System.Drawing.Point(671, 10);
             this.labelContinuity.Name = "labelContinuity";
             this.labelContinuity.Size = new System.Drawing.Size(51, 23);
@@ -500,7 +482,6 @@
             // 
             this.labelShadeBond.BackColor = System.Drawing.Color.Transparent;
             this.labelShadeBond.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelShadeBond.Lines = 0;
             this.labelShadeBond.Location = new System.Drawing.Point(581, 10);
             this.labelShadeBond.Name = "labelShadeBond";
             this.labelShadeBond.Size = new System.Drawing.Size(66, 23);
@@ -522,7 +503,6 @@
             // 
             this.labelWeightTest.BackColor = System.Drawing.Color.Transparent;
             this.labelWeightTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelWeightTest.Lines = 0;
             this.labelWeightTest.Location = new System.Drawing.Point(492, 10);
             this.labelWeightTest.Name = "labelWeightTest";
             this.labelWeightTest.Size = new System.Drawing.Size(76, 23);
@@ -544,7 +524,6 @@
             // 
             this.labelPhysicalInsp.BackColor = System.Drawing.Color.Transparent;
             this.labelPhysicalInsp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelPhysicalInsp.Lines = 0;
             this.labelPhysicalInsp.Location = new System.Drawing.Point(393, 10);
             this.labelPhysicalInsp.Name = "labelPhysicalInsp";
             this.labelPhysicalInsp.Size = new System.Drawing.Size(81, 23);
@@ -566,7 +545,6 @@
             // 
             this.labelavailablemodified.BackColor = System.Drawing.Color.Transparent;
             this.labelavailablemodified.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelavailablemodified.Lines = 0;
             this.labelavailablemodified.Location = new System.Drawing.Point(274, 10);
             this.labelavailablemodified.Name = "labelavailablemodified";
             this.labelavailablemodified.Size = new System.Drawing.Size(93, 23);
@@ -588,74 +566,11 @@
             // labelSEQ1
             // 
             this.labelSEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ1.Lines = 0;
             this.labelSEQ1.Location = new System.Drawing.Point(255, 146);
             this.labelSEQ1.Name = "labelSEQ1";
             this.labelSEQ1.Size = new System.Drawing.Size(75, 23);
             this.labelSEQ1.TabIndex = 28;
             this.labelSEQ1.Text = "SEQ1";
-            // 
-            // modifyWeightToolStripMenuItem
-            // 
-            this.modifyWeightToolStripMenuItem.Name = "modifyWeightToolStripMenuItem";
-            this.modifyWeightToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
-            this.modifyWeightToolStripMenuItem.Text = "Modify Physical Inspection Record";
-            // 
-            // modifyWeightToolStripMenuItem1
-            // 
-            this.modifyWeightToolStripMenuItem1.Name = "modifyWeightToolStripMenuItem1";
-            this.modifyWeightToolStripMenuItem1.Size = new System.Drawing.Size(269, 22);
-            this.modifyWeightToolStripMenuItem1.Text = "Modify Weight Test Record";
-            // 
-            // modifyShadeBondTestRecordToolStripMenuItem
-            // 
-            this.modifyShadeBondTestRecordToolStripMenuItem.Name = "modifyShadeBondTestRecordToolStripMenuItem";
-            this.modifyShadeBondTestRecordToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
-            this.modifyShadeBondTestRecordToolStripMenuItem.Text = "Modify Shade Bond Record";
-            // 
-            // modifyContinuityRecordToolStripMenuItem
-            // 
-            this.modifyContinuityRecordToolStripMenuItem.Name = "modifyContinuityRecordToolStripMenuItem";
-            this.modifyContinuityRecordToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
-            this.modifyContinuityRecordToolStripMenuItem.Text = "Modify Continuity Record";
-            // 
-            // gridmenu
-            // 
-            this.gridmenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.modifyPhysicalInspectionToolStripMenuItem,
-            this.modifyWeightTestToolStripMenuItem,
-            this.modifyShadeBondToolStripMenuItem,
-            this.modifyContinuityToolStripMenuItem});
-            this.gridmenu.Name = "gridmenu";
-            this.gridmenu.Size = new System.Drawing.Size(226, 92);
-            // 
-            // modifyPhysicalInspectionToolStripMenuItem
-            // 
-            this.modifyPhysicalInspectionToolStripMenuItem.Name = "modifyPhysicalInspectionToolStripMenuItem";
-            this.modifyPhysicalInspectionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.modifyPhysicalInspectionToolStripMenuItem.Text = "Modify Physical Inspection";
-            this.modifyPhysicalInspectionToolStripMenuItem.Click += new System.EventHandler(this.modifyPhysicalInspectionToolStripMenuItem_Click);
-            // 
-            // modifyWeightTestToolStripMenuItem
-            // 
-            this.modifyWeightTestToolStripMenuItem.Name = "modifyWeightTestToolStripMenuItem";
-            this.modifyWeightTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.modifyWeightTestToolStripMenuItem.Text = "Modify Weight Test";
-            this.modifyWeightTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWeightTestToolStripMenuItem_Click);
-            // 
-            // modifyShadeBondToolStripMenuItem
-            // 
-            this.modifyShadeBondToolStripMenuItem.Name = "modifyShadeBondToolStripMenuItem";
-            this.modifyShadeBondToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.modifyShadeBondToolStripMenuItem.Text = "Modify Shade Bond";
-            this.modifyShadeBondToolStripMenuItem.Click += new System.EventHandler(this.modifyShadeBondToolStripMenuItem_Click);
-            // 
-            // modifyContinuityToolStripMenuItem
-            // 
-            this.modifyContinuityToolStripMenuItem.Name = "modifyContinuityToolStripMenuItem";
-            this.modifyContinuityToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.modifyContinuityToolStripMenuItem.Text = "Modify Continuity";
-            this.modifyContinuityToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityToolStripMenuItem_Click);
             // 
             // txtLocateforWK
             // 
@@ -671,7 +586,6 @@
             // labelLocateforWK
             // 
             this.labelLocateforWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLocateforWK.Lines = 0;
             this.labelLocateforWK.Location = new System.Drawing.Point(14, 146);
             this.labelLocateforWK.Name = "labelLocateforWK";
             this.labelLocateforWK.Size = new System.Drawing.Size(105, 23);
@@ -714,14 +628,55 @@
             this.dateCompletionDate.Size = new System.Drawing.Size(132, 23);
             this.dateCompletionDate.TabIndex = 159;
             // 
+            // modifyPhysicalInspectionToolStripMenuItem
+            // 
+            this.modifyPhysicalInspectionToolStripMenuItem.Name = "modifyPhysicalInspectionToolStripMenuItem";
+            this.modifyPhysicalInspectionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyPhysicalInspectionToolStripMenuItem.Text = "Modify Physical Inspection";
+            this.modifyPhysicalInspectionToolStripMenuItem.Click += new System.EventHandler(this.modifyPhysicalInspectionToolStripMenuItem_Click);
+            // 
+            // modifyWeightTestToolStripMenuItem
+            // 
+            this.modifyWeightTestToolStripMenuItem.Name = "modifyWeightTestToolStripMenuItem";
+            this.modifyWeightTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyWeightTestToolStripMenuItem.Text = "Modify Weight Test";
+            this.modifyWeightTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWeightTestToolStripMenuItem_Click);
+            // 
+            // modifyShadeBondTestToolStripMenuItem
+            // 
+            this.modifyShadeBondTestToolStripMenuItem.Name = "modifyShadeBondTestToolStripMenuItem";
+            this.modifyShadeBondTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyShadeBondTestToolStripMenuItem.Text = "Modify ShadeBond Test";
+            this.modifyShadeBondTestToolStripMenuItem.Click += new System.EventHandler(this.modifyShadeBondTestToolStripMenuItem_Click);
+            // 
+            // modifyContinuityTestToolStripMenuItem
+            // 
+            this.modifyContinuityTestToolStripMenuItem.Name = "modifyContinuityTestToolStripMenuItem";
+            this.modifyContinuityTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyContinuityTestToolStripMenuItem.Text = "Modify Continuity Test";
+            this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityTestToolStripMenuItem_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.modifyPhysicalInspectionToolStripMenuItem,
+                this.modifyWeightTestToolStripMenuItem,
+                this.modifyShadeBondTestToolStripMenuItem,
+                this.modifyWeightTestToolStripMenuItem
+                        });
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(845, 730);
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
+            this.EditMode = true;
             this.GridAlias = "FIR";
             this.GridNew = 0;
+            this.GridPopUp = true;
             this.GridUniqueKey = "seq1,seq2,receivingid";
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
@@ -748,7 +703,6 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
-            this.gridmenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -789,20 +743,16 @@
         private Win.UI.Label labelavailablemodified;
         private Win.UI.TextBox txtSEQ1;
         private Win.UI.Label labelSEQ1;
-        private System.Windows.Forms.ToolStripMenuItem modifyWeightToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modifyWeightToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem modifyShadeBondTestRecordToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modifyContinuityRecordToolStripMenuItem;
-        private Win.UI.ContextMenuStrip gridmenu;
-        private System.Windows.Forms.ToolStripMenuItem modifyPhysicalInspectionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modifyShadeBondToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modifyContinuityToolStripMenuItem;
         private Win.UI.TextBox txtLocateforWK;
         private Win.UI.Label labelLocateforWK;
         private Win.UI.DateBox dateEarliestSCIDel;
         private Win.UI.DateBox dateEarliestEstCutDate;
         private Win.UI.DateBox dateCompletionDate;
         private Win.UI.DateBox dateTargetLeadTime;
+        private System.Windows.Forms.ToolStripMenuItem modifyPhysicalInspectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyShadeBondTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyContinuityTestToolStripMenuItem;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
     }
 }
