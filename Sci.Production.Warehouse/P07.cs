@@ -121,6 +121,35 @@ namespace Sci.Production.Warehouse
 
             #endregion 必輸檢查
 
+            #region 確認此單中，是否存在同【SP#, Seq1, Seq2, Roll】
+            DataTable dtCheckDuplicateData;
+            string strCheckDuplicateData = @"
+select count (*)
+from (
+    select  value = count(*)
+    from #tmp
+    group by Poid, Seq1, Seq2, Roll
+) x
+where x.value > 1
+";
+            DualResult resultCheck = MyUtility.Tool.ProcessWithDatatable((DataTable)(((BindingSource)this.detailgrid.DataSource).DataSource), null, strCheckDuplicateData, out dtCheckDuplicateData, "#tmp");
+            if (resultCheck)
+            {
+                if (dtCheckDuplicateData != null && dtCheckDuplicateData.Rows.Count != 0)
+                {
+                    if (!dtCheckDuplicateData.Rows[0][0].EqualDecimal(0))
+                    {
+                        MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate.");
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(resultCheck.Description);
+                return false;
+            }
+            #endregion 
 
             DateTime ArrivePortDate;
             DateTime WhseArrival;
