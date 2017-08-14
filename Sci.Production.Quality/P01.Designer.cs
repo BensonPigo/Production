@@ -662,7 +662,7 @@
                 this.modifyPhysicalInspectionToolStripMenuItem,
                 this.modifyWeightTestToolStripMenuItem,
                 this.modifyShadeBondTestToolStripMenuItem,
-                this.modifyWeightTestToolStripMenuItem
+                this.modifyContinuityTestToolStripMenuItem
                         });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
