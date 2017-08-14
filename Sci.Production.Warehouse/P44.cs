@@ -47,7 +47,7 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "C";
-            CurrentMaintain["IssueDate"] = DateTime.Now;            
+            CurrentMaintain["IssueDate"] = DateTime.Now;
         }
         // 刪除前檢查
         protected override bool ClickDeleteBefore()
@@ -89,8 +89,9 @@ namespace Sci.Production.Warehouse
             {
                 if (MyUtility.Convert.GetDecimal(row["QtyAfter"]) == MyUtility.Convert.GetDecimal(row["QtyBefore"]))
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} Refno#: {1} Color:{2} Original Qty and Current Qty can't be equal!!"
-                        , row["poid"], row["Refno"], row["Color"]) + Environment.NewLine);
+                    warningmsg.Append(string.Format(@"SP#: {0} Refno#: {1} Color:{2} 
+Original Qty and Current Qty can't be equal!!"
+                        , row["poid"].ToString().Trim(), row["Refno"].ToString().Trim(), row["Color"].ToString().Trim()) + Environment.NewLine);
                 }
 
                 if (MyUtility.Check.Empty(row["reasonid"]))
@@ -110,6 +111,10 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
+
+            //P44存檔,塞值 AdjustLocal_Detail.StockType='O' , MdivisionID
+            CurrentDetailData["StockType"] = "O";
+            CurrentDetailData["MDivisionID"] = Sci.Env.User.Keyword;
 
             //取單號
             if (this.IsDetailInserting)
@@ -154,6 +159,8 @@ AL2.id,
 AL2.POID,
 AL2.Refno,
 AL2.Color,
+AL2.StockType,
+AL2.MDivisionID,
 Litem.Description,
 AL2.QtyBefore,
 AL2.QtyAfter,
