@@ -20,7 +20,7 @@ namespace Sci.Production.Packing
         {
             InitializeComponent();
         }
-        DataTable gridData;
+        DataTable gridData;        
         string selectDataTable_DefaultView_Sort = "";
         protected override void OnFormLoaded()
         {
@@ -37,6 +37,7 @@ namespace Sci.Production.Packing
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Date("TransferDate", header: "Transfer Date",iseditable:false)
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditable: false)
@@ -44,7 +45,6 @@ namespace Sci.Production.Packing
                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false);
 
@@ -93,20 +93,31 @@ namespace Sci.Production.Packing
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select *,
-rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+select  *
+        , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+        , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-select 1 as selected,t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,pd.Id,
-isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
-isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID, convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery,t.AddDate
-
-from TransferToClog t WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
-left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    select  1 as selected
+            , t.TransferDate
+            , t.PackingListID
+            , t.OrderID
+            , t.CTNStartNo
+            , pd.Id
+            , isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1
+            , isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest
+            , isnull(o.FactoryID,'') as FactoryID
+            , convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery
+            , t.AddDate
+    from TransferToClog t WITH (NOLOCK) 
+    left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
+    left join Country c WITH (NOLOCK) on o.Dest = c.ID
+    left join PackingList_Detail pd WITH (NOLOCK) on  pd.ID = t.PackingListID 
+                                                        and pd.OrderID = t.OrderID 
+                                                        and pd.CTNStartNo = t.CTNStartNo 
+                                                        and pd.CTNQty > 0
+    left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
+                                                    and oq.Seq = pd.OrderShipmodeSeq
+    where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateTimePicker1.Text))
             {
@@ -124,7 +135,12 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(txtSP.Text)));
             }
-            sqlCmd.Append(@")X order by rn");
+            if (!MyUtility.Check.Empty(txtfactory.Text))
+            {
+                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", MyUtility.Convert.GetString(txtfactory.Text)));
+            }
+            sqlCmd.Append(@"
+) X order by rn");
            
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
             if (!result)
