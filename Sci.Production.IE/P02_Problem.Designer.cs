@@ -63,10 +63,12 @@
             // 
             this.save.Location = new System.Drawing.Point(540, 5);
             this.save.Size = new System.Drawing.Size(80, 34);
+            this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // P02_Problem
             // 
             this.ClientSize = new System.Drawing.Size(710, 364);
+            this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P02_Problem";
             this.Text = "Problem";

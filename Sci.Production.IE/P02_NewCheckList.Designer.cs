@@ -78,6 +78,7 @@
             // P02_NewCheckList
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);
+            this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P02_NewCheckList";
             this.Text = "Check List - New";
