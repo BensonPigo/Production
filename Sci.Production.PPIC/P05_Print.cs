@@ -92,6 +92,7 @@ where ID = '{0}'", Sci.Env.User.Factory));
                 ((Excel.Range)worksheet.Range[worksheet.Cells[rownum, 1], worksheet.Cells[rownum, 24]]).Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDash;
                 counter++;
             }
+            worksheet.Columns.AutoFit();
             excel.Visible = true;
             return true;
         }
