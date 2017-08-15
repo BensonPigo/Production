@@ -577,7 +577,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 {
                     sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
                                     "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
-                                    , ddr["poid"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
+                                    , ddr["id"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
                 }
             }
             
