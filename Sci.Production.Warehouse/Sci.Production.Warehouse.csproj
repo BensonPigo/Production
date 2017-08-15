@@ -290,18 +290,6 @@
     <Compile Include="P44_Import.Designer.cs">
       <DependentUpon>P44_Import.cs</DependentUpon>
     </Compile>
-	<Compile Include="P44.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P44.Designer.cs">
-      <DependentUpon>P44.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P44_Import.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P44_Import.Designer.cs">
-      <DependentUpon>P44_Import.cs</DependentUpon>
-    </Compile>
     <Compile Include="P50_PrintData.cs" />
     <Compile Include="P50_Print.cs">
       <SubType>Form</SubType>
@@ -1173,12 +1161,6 @@
     <EmbeddedResource Include="P32_Print.rdlc" />
     <EmbeddedResource Include="P36_Print.rdlc" />
     <EmbeddedResource Include="P37_Print.rdlc" />
-    <EmbeddedResource Include="P44.resx">
-      <DependentUpon>P44.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P44_Import.resx">
-      <DependentUpon>P44_Import.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P50BookQty_Print.rdlc" />
     <EmbeddedResource Include="P50List_Print.rdlc" />
     <EmbeddedResource Include="P50_Print.resx">
