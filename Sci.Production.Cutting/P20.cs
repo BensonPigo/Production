@@ -647,8 +647,8 @@ where c.ID =a.CuttingID", dissp.ToString());
             dissp.Append(")");
             string sqlupfl = string.Format(@"
 update c
-set c.FirstCutDate = null
-	,c.LastCutDate = null
+set c.FirstCutDate = a.FirstCutDate
+	,c.LastCutDate = c.LastCutDate
 
 from Cutting c left join
 (
@@ -656,7 +656,7 @@ from Cutting c left join
 	FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
 	FROM CuttingOutput_Detail COD
 	LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
-	WHERE CO.Status='NEW' 
+	WHERE CO.Status='Confirmed' 
 	group by COD.CuttingID
 )a on a.CuttingID = c.ID
 {0}", dissp.ToString());
