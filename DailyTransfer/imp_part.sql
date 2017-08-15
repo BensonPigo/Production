@@ -322,7 +322,9 @@ s.EditDate
 	SuppDelivery=b.SuppDelivery,
 	EstETA=b.EstETA
 	FROM Machine.DBO.MiscPO_Detail A
-	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.MiscID=b.Refno and  a.SEQ2=b.Seq2
+	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on  a.MiscID=b.Refno 
+													and  a.SEQ2=b.Seq2 
+													and a.id = b.MmsReqID
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
 	WHERE C.Type ='O'
 	and C.FactoryID in (select id from @Sayfty)
