@@ -111,6 +111,9 @@ namespace Sci.Production.Cutting
             Qtycell.CellValidating += (s, e) =>
             {
                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
+                int old = MyUtility.Convert.GetInt(dr["Qty"]);
+                int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
+                if (old == newvalue) return;
                 int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
                 int newcount = Convert.ToInt16(e.FormattedValue);
                 numNoOfBundle.Value = newcount;
@@ -568,8 +571,6 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             }
 
             #region 若有EXCESS 需顯示通知
-
-
             query_dResult = DBProxy.Current.Select(null, Excess_cmd, out ExcessTb);
             if (!query_dResult)
             {
@@ -622,6 +623,18 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                 qty_newRow["iden"] = iden;
                 qtyTb.Rows.Add(qty_newRow);
                 #endregion
+                string patidsql = String.Format(
+                            @"SELECT ukey
+                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
+                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
+                              AND EDITdATE = 
+                              (
+                                SELECT MAX(EditDate) 
+                                from pattern WITH (NOLOCK) 
+                                where styleukey = '{0}' and Status = 'Completed'
+                              )
+             ", dr["Styleukey"].ToString());
+                string patternukey = MyUtility.GetValue.Lookup(patidsql);
                 createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["PatternPanel"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
@@ -641,7 +654,6 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             this.gridAllPart.AutoResizeColumns();
 
             this.HideWaitMessage();
-
         }
         public void createPattern(string poid, string article, string patternpanel, string cutref, int iden, string ArticleGroup)
         {
@@ -649,7 +661,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             else f_code = ArticleGroup;
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-            DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}'", f_code, patternpanel));
+
+            DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}' and orderid = '{2}'", f_code, patternpanel, poid));
             foreach (DataRow dr in garmentar)
             {
                 if (MyUtility.Check.Empty(dr["annotation"])) //若無ANNOTATion直接寫入All Parts
@@ -755,7 +768,6 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
         private void gridCutRef_SelectionChanged(object sender, EventArgs e)
         {
             changeRow();
-
         }
 
         public void changeRow()
@@ -771,7 +783,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             {
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
-            ArticleSizeTb.DefaultView.RowFilter = string.Format("Ukey ='{0}' and patternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["patternPanel"]);
+            ArticleSizeTb.DefaultView.RowFilter 
+                = string.Format("Ukey ='{0}' and patternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["patternPanel"]);
             if (ArticleSizeTb.Rows.Count == 0) return;
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {

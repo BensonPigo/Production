@@ -66,6 +66,15 @@ where cp.ID = {0}", this.KeyValue1);
             SetGrid(ChgOverProblem);
             return Result.True;
         }
+        //Save -- Append/Revise/Delete按鈕要隱藏
+        private void save_Click(object sender, EventArgs e)
+        {
+            append.Visible = false;
+            revise.Visible = false;
+            delete.Visible = false;
+        }
+
+        
 
     }
 }

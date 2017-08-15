@@ -77,6 +77,7 @@
             // P02_RepeatCheckList
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);
+            this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P02_RepeatCheckList";
             this.Text = "Check List - Repeat";

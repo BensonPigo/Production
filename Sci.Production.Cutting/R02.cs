@@ -487,7 +487,7 @@ select distinct
 	[Cut Qty] = cq.SizeCode,
 	[Colorway] = woda.ac,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
-	[Remark] = min(cd.Remark) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo)
+	[Remark] = Remark.Remark
 from Cutplan c WITH (NOLOCK) 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
 inner join WorkOrder w WITH (NOLOCK) on cd.WorkOrderUkey = w.Ukey
@@ -561,6 +561,14 @@ select AC =
 		for xml path('')
 	),1,1,'')
 ) as woda
+outer apply(
+	select remark =stuff((
+		select concat(char(10),Remark)
+		from Cutplan_Detail cd2 WITH (NOLOCK) 
+		where cd2.ID = c.ID and cd2.SewingLineID = cd.Sewinglineid and cd2.OrderID = cd.OrderID
+		for xml path('')
+	),1,1,'')
+)remark
 where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(dateR_CuttingDate1))

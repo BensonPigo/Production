@@ -568,12 +568,28 @@ Region      Succeeded       Message
             #region 解壓縮檔案到資料夾裡
             if (isAuto)
             {
+                string UnRARpath = Path.Combine(importRegion.DirName);
+                string targetRar = Path.Combine(UnRARpath, importRegion.RarName);
                 //自動的話, 去FTP下載
-                if (!transferPMS.UnRAR_To_ImportDir(importRegion))
+                #region 1. 清空已存在的 targetDir 下的檔案
+                var cleanFiles = Directory.GetFiles(UnRARpath);
+                cleanFiles.Select(fileName => transferPMS.Try_DeleteFile(fileName, importRegion)).ToList().All(deleted => deleted);
+                #endregion
+                #region 2. 從FTP下載檔案
+                for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
                 {
-                    return new DualResult(false, "FTP Download failed!");
-                };
-
+                    if (this.autoDownloadFtpFile(string.Format("ftp://{0}/{1}", Sci.Env.Cfg.FtpServerIP, importRegion.RarName), targetRar))
+                    {
+                        break;
+                    }
+                }
+                #endregion
+                #region 3. 解壓縮
+                DualResult unRARResult = MyUtility.File.UnRARFile(targetRar, true, UnRARpath);//waitRarFinished: true);
+                if (unRARResult) { 
+                    importRegion.Logs.Add(new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result)); 
+                }
+                #endregion
             }
             else
             {
@@ -699,17 +715,13 @@ Region      Succeeded       Message
                     SendMail(subject, desc);
                     return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New");
                 }             
-            }
-           
-                
+            }                      
             
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
             if (!result) { return result; }
-            #endregion
-            
+            #endregion            
           
-
             #region 將資料Copy To DB資料夾以掛載
             String fromPath = this.CurrentData["ImportDataPath"].ToString();
             String toPath = transImport.Rows[0]["DirName"].ToString();
@@ -1057,6 +1069,59 @@ where AddDate <= @Lockdate
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, ".\\TMP\\" + fileName, desc, true, true);
                 mail.ShowDialog();
             }
+        }
+
+        /// <summary> 
+        /// Download FTP File 檔案續傳
+        /// </summary>
+        /// <param name="ftpPath">Ftp + FileName</param>
+        /// <param name="downloadPath">DownloadPath + FileName</param>
+        /// <returns></returns>
+        private bool autoDownloadFtpFile(string ftpPath, string downloadPath)
+        {
+            bool result = false;
+            FileStream localfileStream = null;
+            Stream responseStream = null;
+            try
+            {
+                FileInfo file = new FileInfo(downloadPath);
+                FtpWebRequest request = WebRequest.Create(ftpPath) as FtpWebRequest;
+                request.Method = WebRequestMethods.Ftp.DownloadFile;
+                request.Credentials = new NetworkCredential(Sci.Env.Cfg.FtpServerAccount, Sci.Env.Cfg.FtpServerPassword);
+                if (file.Exists)
+                {
+                    request.ContentOffset = file.Length;
+                }
+                using (localfileStream = new FileStream(downloadPath, FileMode.Append, FileAccess.Write))
+                {
+                    WebResponse response = request.GetResponse();
+                    using (responseStream = response.GetResponseStream())
+                    {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = responseStream.Read(buffer, 0, 1024);
+                        while (bytesRead != 0)
+                        {
+                            localfileStream.Write(buffer, 0, bytesRead);
+                            bytesRead = responseStream.Read(buffer, 0, 1024);
+                        }
+                        localfileStream.Close();
+                        responseStream.Close();
+                        result = true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            finally
+            {
+                if (localfileStream != null)
+                    localfileStream.Close();
+                if (responseStream != null)
+                    responseStream.Close();
+            }
+            return result;
         }
     }
 }
