@@ -71,7 +71,6 @@
             this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyShadeBondTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyContinuityTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -656,17 +655,12 @@
             this.modifyContinuityTestToolStripMenuItem.Text = "Modify Continuity Test";
             this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityTestToolStripMenuItem_Click);
             // 
-            // contextMenuStrip1
-            // 
             this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.modifyPhysicalInspectionToolStripMenuItem,
                 this.modifyWeightTestToolStripMenuItem,
                 this.modifyShadeBondTestToolStripMenuItem,
                 this.modifyContinuityTestToolStripMenuItem
                         });
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(845, 730);
@@ -753,6 +747,5 @@
         private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyShadeBondTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyContinuityTestToolStripMenuItem;
-        private Win.UI.ContextMenuStrip contextMenuStrip1;
     }
 }

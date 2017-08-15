@@ -33,7 +33,9 @@ namespace Sci.Production.Quality
             InitializeComponent();            
             detailgridmenus.Items.Remove(appendmenu);
             detailgridmenus.Items.Remove(modifymenu);
-            detailgridmenus.Items.Remove(deletemenu);            
+            detailgridmenus.Items.Remove(deletemenu);
+            //關閉表身Grid DoubleClick 會新增row的問題
+            InsertDetailGridOnDoubleClick = false;
         }
 
         public P01(string Poid) //for Form直接call form
@@ -43,7 +45,6 @@ namespace Sci.Production.Quality
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
         }
-
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
