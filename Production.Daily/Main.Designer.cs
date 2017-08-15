@@ -86,8 +86,6 @@
             // 
             // panelFTP
             // 
-            this.panelFTP.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelFTP.Controls.Add(this.textImportDataFileName);
             this.panelFTP.Controls.Add(this.textFtpPwd);
             this.panelFTP.Controls.Add(this.textFtpID);
@@ -403,8 +401,6 @@
             // 
             // panelPath
             // 
-            this.panelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelPath.Controls.Add(this.chk_import);
             this.panelPath.Controls.Add(this.chk_export);
             this.panelPath.Controls.Add(this.btnGetExportDataPath);
