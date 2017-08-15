@@ -46,6 +46,7 @@ namespace Sci.Production.Quality
             IsSupportEdit = false;
         }
 
+
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             
