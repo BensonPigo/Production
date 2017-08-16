@@ -648,7 +648,7 @@ where c.ID =a.CuttingID", dissp.ToString());
             string sqlupfl = string.Format(@"
 update c
 set c.FirstCutDate = a.FirstCutDate
-	,c.LastCutDate = c.LastCutDate
+	,c.LastCutDate = a.LastCutDate
 
 from Cutting c left join
 (
