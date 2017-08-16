@@ -48,7 +48,7 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox11</rd:DefaultName>
                                             <Top>0.10425cm</Top>
-                                            <Left>0.254cm</Left>
+                                            <Left>0.5715cm</Left>
                                             <Height>0.55879cm</Height>
                                             <Width>2.77635cm</Width>
                                             <Style>
@@ -79,7 +79,7 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox12</rd:DefaultName>
                                             <Top>0.10425cm</Top>
-                                            <Left>3.1009cm</Left>
+                                            <Left>3.4184cm</Left>
                                             <Height>0.55879cm</Height>
                                             <Width>1.12889cm</Width>
                                             <ZIndex>1</ZIndex>
@@ -109,9 +109,9 @@
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox13</rd:DefaultName>
                                             <Top>0.10425cm</Top>
-                                            <Left>4.22979cm</Left>
+                                            <Left>4.54729cm</Left>
                                             <Height>0.55879cm</Height>
-                                            <Width>5.40527cm</Width>
+                                            <Width>5.08776cm</Width>
                                             <ZIndex>2</ZIndex>
                                             <Style>
                                               <Border>
@@ -503,7 +503,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!RptTitle.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontSize>16pt</FontSize>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -512,9 +514,9 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.32473cm</Top>
+          <Top>0.64223cm</Top>
           <Left>0.254cm</Left>
-          <Height>0.61172cm</Height>
+          <Height>0.79693cm</Height>
           <Width>20.31259cm</Width>
           <Style>
             <Border>
@@ -533,7 +535,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Transfer Out to Other Region</Value>
+                  <Value>TRANSFER SLIP</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -543,10 +545,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
-          <Top>1.24513cm</Top>
-          <Left>7.60942cm</Left>
+          <Top>1.56263cm</Top>
+          <Left>0.254cm</Left>
           <Height>0.635cm</Height>
-          <Width>5.05353cm</Width>
+          <Width>20.31259cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
@@ -574,7 +576,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
           <Top>2.80301cm</Top>
-          <Left>0.254cm</Left>
+          <Left>0.5715cm</Left>
           <Height>0.6cm</Height>
           <Width>0.68791cm</Width>
           <ZIndex>2</ZIndex>
@@ -604,7 +606,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox4</rd:DefaultName>
           <Top>3.50884cm</Top>
-          <Left>0.254cm</Left>
+          <Left>0.5715cm</Left>
           <Height>0.62646cm</Height>
           <Width>1.8521cm</Width>
           <ZIndex>3</ZIndex>
@@ -666,7 +668,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox6</rd:DefaultName>
           <Top>3.50884cm</Top>
-          <Left>16.19071cm</Left>
+          <Left>15.02654cm</Left>
           <Height>0.62646cm</Height>
           <Width>1.40229cm</Width>
           <ZIndex>5</ZIndex>
@@ -696,7 +698,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
           <Top>2.80301cm</Top>
-          <Left>1.01247cm</Left>
+          <Left>2.49415cm</Left>
           <Height>0.6cm</Height>
           <Width>3.75708cm</Width>
           <ZIndex>6</ZIndex>
@@ -726,7 +728,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
           <Top>3.50884cm</Top>
-          <Left>2.17665cm</Left>
+          <Left>2.49415cm</Left>
           <Height>0.62646cm</Height>
           <Width>9.93069cm</Width>
           <ZIndex>7</ZIndex>
@@ -818,7 +820,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox11</rd:DefaultName>
           <Top>4.53162cm</Top>
-          <Left>0.254cm</Left>
+          <Left>0.5715cm</Left>
           <Height>0.92038cm</Height>
           <Width>0.8964cm</Width>
           <ZIndex>10</ZIndex>
@@ -850,7 +852,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox12</rd:DefaultName>
           <Top>4.53162cm</Top>
-          <Left>2.95978cm</Left>
+          <Left>3.27728cm</Left>
           <Height>0.92038cm</Height>
           <Width>1.09362cm</Width>
           <ZIndex>11</ZIndex>
@@ -880,7 +882,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox13</rd:DefaultName>
           <Top>4.53162cm</Top>
-          <Left>4.22979cm</Left>
+          <Left>4.54729cm</Left>
           <Height>0.92038cm</Height>
           <Width>3.0004cm</Width>
           <ZIndex>12</ZIndex>
@@ -946,7 +948,7 @@
           <Top>4.53162cm</Top>
           <Left>13.87122cm</Left>
           <Height>0.92038cm</Height>
-          <Width>1.78151cm</Width>
+          <Width>1.67568cm</Width>
           <ZIndex>14</ZIndex>
           <Style>
             <Border>
@@ -990,7 +992,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>(Bulk To Stock)</Value>
+                  <Value>(From Bulk To Stock)</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1000,10 +1002,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
-          <Top>1.9154cm</Top>
-          <Left>8.48995cm</Left>
+          <Top>2.2329cm</Top>
+          <Left>0.25401cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.88396cm</Width>
+          <Width>20.31259cm</Width>
           <ZIndex>17</ZIndex>
           <Style>
             <Border>
@@ -1167,7 +1169,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox35</rd:DefaultName>
           <Top>0.10583cm</Top>
-          <Left>0.254cm</Left>
+          <Left>1.2065cm</Left>
           <Height>0.6cm</Height>
           <Width>2.32832cm</Width>
           <Style>

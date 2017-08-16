@@ -704,7 +704,7 @@ where id = @MDivision", pars, out dt);
             DataTable dtApv;
             DualResult ApvResult = DBProxy.Current.Select("",
           @"select    
-            b.ApvDate 
+            b.ApvDate
             from dbo.Issuelack  a WITH (NOLOCK) 
             left join dbo.lack  b WITH (NOLOCK) 
             on b.id = a.requestid
@@ -718,7 +718,7 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string ApvDate = dtApv.Rows[0]["ApvDate"].ToString();
+            string ApvDate = ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToShortDateString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
 
             #endregion
