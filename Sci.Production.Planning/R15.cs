@@ -636,6 +636,7 @@ from (
 				,[RFID Emb Qty] = iif(EmbQty.[RFID Emb Qty]>t.qty,t.qty,EmbQty.[RFID Emb Qty])
 				,[RFID Bond Qty] = iif(BondQty.[RFID Bond Qty]>t.qty,t.qty,BondQty.[RFID Bond Qty])
 				,[RFID Print Qty] = iif(PrintQty.[RFID Print Qty]>t.qty,t.qty,PrintQty.[RFID Print Qty]) 
+                ,[RFID HT Qty] = iif(PrintQty2.[RFID HT Qty]>t.qty,t.qty,PrintQty2.[RFID HT Qty]) 
                 ,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
                 ,#cte2.PRINTING_qty,#cte2.sewing_output,t.qty+t.FOCQty - #cte2.sewing_output [Balance]
                 ,#cte2.firstSewingDate,#cte2.AVG_QAQTY
@@ -708,6 +709,15 @@ outer apply
 	and line=t.SewLine
     and SewingDate= CONVERT(date, GETDATE())
 )loading
+outer apply(
+select 
+    [RFID HT Qty]=isnull(sum(BD.Qty), 0)
+    from Bundle B
+    left join Bundle_Detail BD on BD.Id=B.ID
+    left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+    where Orderid=t.OrderID and BIO.SubProcessId='HT'
+) PrintQty2
+
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", orderby));
