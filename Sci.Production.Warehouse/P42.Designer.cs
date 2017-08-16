@@ -117,7 +117,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(9, 74);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
@@ -157,7 +156,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 40);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(109, 23);
@@ -173,7 +171,6 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
             this.labelSewingInline.Location = new System.Drawing.Point(423, 9);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(114, 23);
@@ -189,7 +186,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(9, 9);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(109, 23);
@@ -279,6 +275,7 @@
             this.pictureBox2.Size = new System.Drawing.Size(25, 31);
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.WaitOnLoad = true;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // pictureBox1
@@ -290,6 +287,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(25, 31);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // dateOffline
@@ -308,7 +306,6 @@
             // 
             // labelOffline
             // 
-            this.labelOffline.Lines = 0;
             this.labelOffline.Location = new System.Drawing.Point(603, 19);
             this.labelOffline.Name = "labelOffline";
             this.labelOffline.Size = new System.Drawing.Size(49, 23);
@@ -317,7 +314,6 @@
             // 
             // labelInline
             // 
-            this.labelInline.Lines = 0;
             this.labelInline.Location = new System.Drawing.Point(309, 19);
             this.labelInline.Name = "labelInline";
             this.labelInline.Size = new System.Drawing.Size(50, 23);
@@ -326,7 +322,6 @@
             // 
             // labelCheckedQty
             // 
-            this.labelCheckedQty.Lines = 0;
             this.labelCheckedQty.Location = new System.Drawing.Point(30, 19);
             this.labelCheckedQty.Name = "labelCheckedQty";
             this.labelCheckedQty.Size = new System.Drawing.Size(88, 23);

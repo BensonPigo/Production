@@ -168,8 +168,8 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd
                 = string.Format(@"
-select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID,c.MdivisionId
-,(select max(FinalETA) from 
+select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.FactoryID,c.MdivisionId
+,format((select max(FinalETA) from 
 	(select po_supp_detail.FinalETA from PO_Supp_Detail WITH (NOLOCK) 
 		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
@@ -177,8 +177,8 @@ select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID,c.MdivisionId
 	select b1.FinalETA from PO_Supp_Detail a1 WITH (NOLOCK) , PO_Supp_Detail b1 WITH (NOLOCK) 
 		where a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-	) tmp) as ETA
-	,MIN(a.SewInLine) as FstSewinline
+	) tmp),'yyyy/MM/dd') as ETA
+	,format(MIN(a.SewInLine),'yyyy/MM/dd') as FstSewinline
     ,b.Special AS cutType
 	,qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), (select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit))
 	,b.stockunit
