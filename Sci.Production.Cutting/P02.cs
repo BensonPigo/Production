@@ -1567,13 +1567,6 @@ where w.ID = '{0}'", masterID);
             }
         }
 
-        private void comboBox1_Validated(object sender, EventArgs e)
-        {
-            gridValid();
-            grid.ValidateControl();
-            sorting(comboBox1.Text);
-        }
-
         private void AutoRef_Click(object sender, EventArgs e)
         {
             gridValid();
@@ -2352,6 +2345,13 @@ where   id = '{0}'
                     MyUtility.Msg.WarningBox(string.Format("fab width greater than cutting cell {0}, please check it.", strCutCellID));
                 }
             }
+        }
+
+        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            gridValid();
+            grid.ValidateControl();
+            sorting(comboBox1.Text);
         }
     }
 }
