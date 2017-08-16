@@ -18,6 +18,7 @@ namespace Sci.Production.Planning
 {
     public partial class P01 : Sci.Win.Tems.Input6
     {
+        bool firstTime = true;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,6 +26,7 @@ namespace Sci.Production.Planning
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
             this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
 in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
+            firstTime = false;
         }
         public P01(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -364,6 +366,18 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             var frm = new Sci.Production.Planning.P01_BatchApprove();
             frm.ShowDialog(this);
             this.RenewData();
+        }
+       
+
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (!firstTime)
+            {
+                txtcountryDestination.TextBox1.ReadOnly = true;
+                txtuserPPICMR.TextBox1.ReadOnly = true;
+            }
+            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
