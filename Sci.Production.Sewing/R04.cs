@@ -207,18 +207,17 @@ declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull(['
 
 declare @TTLZ nvarchar(max) = 
 (select concat(',[',ArtworkType_Unit,']=sum(isnull([',ArtworkType_Unit,'],0)) over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category)'
-,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=Round(sum(isnull([Price],0)*Rate*[',ArtworkType_CPU,'])over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category),2)'))
-,',[TTL_',ArtworkType_Unit,']=Round(sum(QAQty*Rate*[',ArtworkType_Unit,'])over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category),2)'
-,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(isnull([Price],0)*Rate*[',ArtworkType_CPU,'])over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category),2)'))
+,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull([',ArtworkType_CPU,'],0)) over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category)'))
+,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category),2)'
+,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by FactoryID,t.OrderId,Team,OutputDate,SewingLineID,LastShift,Category),2)'))
 )from #atall for xml path(''))
-
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-select orderid,Price '+@NameZ+N'
+select orderid,qaqty '+@NameZ+N'
 into #oid_at
 from
 (
-	select orderid = i.ID,a.ArtworkType_Unit,i.Price,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',QAQTY,i.Qty)))
+	select orderid = i.ID,a.ArtworkType_Unit,i.qaqty,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',i.Price,i.Qty)))
 	from #atall2 a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq
 )a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
@@ -241,22 +240,22 @@ select * from(
 		,Style = IIF(Category=''M'',MockupStyle,OrderStyle)
 		,Season = IIF(Category=''M'',MockupSeason,OrderSeason)
 		,CDNo = IIF(Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+ComboType
-		,ActManPower = IIF(QAQty>0,ActManPower/QAQty,ActManPower)
+		,ActManPower = IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)
 		,WorkHour
-		,ManHour = ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)
-		,TargetCPU = ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)
+		,ManHour = ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)
+		,TargetCPU = ROUND(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)
 		,TMS = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*StdTMS
 		,CPUPrice = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
-		,TargetQty = IIF(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
-		,QAQty
-		,TotalCPU = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty
-		,CPUSewer = IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2),0)
-		,EFF = ROUND(IIF(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*QAQty)/(ROUND(IIF(QAQty>0,ActManPower/QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
+		,TargetQty = IIF(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
+		,t.QAQty
+		,TotalCPU = IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty
+		,CPUSewer = IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,(IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2),0)
+		,EFF = ROUND(IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,((IIF(Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty
-		,Diff = QAQty-InlineQty
+		,Diff = t.QAQty-InlineQty
 		,rate
 		'+@TTLZ+N'
 	from #tmp1stFilter t
