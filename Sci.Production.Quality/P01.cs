@@ -386,40 +386,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     Where ID = '{5}';"
                     , dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"]);
                 }
-                
-                #region 判斷AllResult
-                /*
-                 * 不使用FinResuly() 是因為此方法是撈取DB後再判斷
-                 * 可是存檔需先判斷DetailGridView修改的值,才存檔
-                 * 先後順序需要的關係
-                */
-                //判斷Result是Pass的唯一狀況
-                if (
-                    (dr["Physical"].ToString() == "Pass" || MyUtility.Convert.GetBool(dr["Nonphysical"])) &&
-                    (dr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(dr["NonWeight"])) &&
-                    (dr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(dr["NonShadeBond"])) &&
-                    (dr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(dr["NonContinuity"]))
-                    )
-                {
-                    dr["Result"] = "Pass";
-                    dr["Status"] = "Confirmed";
-                }
-                //判斷Result 是空值
-                else if (
-                    (MyUtility.Check.Empty(dr["Physical"]) && !MyUtility.Convert.GetBool(dr["Nonphysical"])) ||
-                    (MyUtility.Check.Empty(dr["Weight"]) && !MyUtility.Convert.GetBool(dr["NonWeight"])) ||
-                    (MyUtility.Check.Empty(dr["ShadeBond"]) && !MyUtility.Convert.GetBool(dr["NonShadeBond"])) ||
-                    (MyUtility.Check.Empty(dr["Continuity"]) && !MyUtility.Convert.GetBool(dr["NonContinuity"])))
-                {
-                    dr["Result"] = "";
-                }
-                else
-                {
-                    dr["Result"] = "Fail";
-                }                
-               
+                #region 重新判斷AllResult
+                //重新判斷AllResult             
+                //string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
+                //dr["Result"] = returnstr[0];
+                //dr["Status"] = returnstr[1];
                 #endregion
- 
             }
            
             DualResult upResult;
@@ -458,7 +430,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
         {
             if (this.EditMode) //Status = Confirm 才會判斷
             {               
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr["ID"]);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
 
                 dr["Result"] = returnstr[0];
                 dr["Status"] = returnstr[1];
@@ -542,6 +514,11 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -567,6 +544,11 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -591,6 +573,11 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -615,6 +602,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            //重新計算表頭資料
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)

@@ -62,11 +62,9 @@ namespace Sci.Production.PublicPrg
         /// 判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         /// </summary>
         /// <param name ="ID"></param>
-        /// <returns></returns>
-        public static string[] GetOverallResult_Status(object fir_id)
-        {
-            DataRow maindr;
-            MyUtility.Check.Seek(string.Format("Select * from Fir WITH (NOLOCK) Where id={0}", fir_id), out maindr);
+        /// <returns></returns>        
+        public static string[] GetOverallResult_Status(DataRow maindr)
+        {                       
             string allResult = "";
             string status = "New";
 
@@ -79,8 +77,8 @@ namespace Sci.Production.PublicPrg
                 (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"]))
                 )
             {
-                maindr["Result"] = "Pass";
-                maindr["Status"] = "Confirmed";
+                allResult = "Pass";
+                status = "Confirmed";
             }
             //判斷Result 是空值
             else if (
@@ -89,11 +87,11 @@ namespace Sci.Production.PublicPrg
                 (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
                 (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])))
             {
-                maindr["Result"] = "";
+                allResult = "";
             }
             else
             {
-                maindr["Result"] = "Fail";
+                allResult = "Fail";
             }                
             #endregion
 

@@ -328,7 +328,7 @@ namespace Sci.Production.Quality
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 #endregion 
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -356,17 +356,20 @@ namespace Sci.Production.Quality
             }
             else //Amend
             {
-                #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
-                #endregion 
+
+               
+
                 #region  寫入虛擬欄位
                 maindr["shadebond"] = "";
                 maindr["shadebondDate"] = DBNull.Value;
-                maindr["shadebondEncode"] = false;
-                maindr["Status"] = returnstr[1];
+                maindr["shadebondEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+
+                //判斷Result and Status 必須先確認shadebond="",判斷才會正確
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 maindr["Result"] = returnstr[0];
+                maindr["Status"] = returnstr[1];
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
