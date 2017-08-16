@@ -120,7 +120,14 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 DataTable TaipeiInput = dsTmp.Tables[0];
                 dsTmp.Tables[0].TableName = "TaipeiInput";
                 DataTable FtyDetail = dsTmp.Tables[1];
-
+                foreach (DataRow dr in FtyDetail.Rows)
+                {
+                    string ToLocation = dr["ToLocation"].ToString();
+                    string sqlcheckToLocation = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='I' and junk != '1' and id = '{0}'", ToLocation);
+                    string checkToLocation = "";
+                    checkToLocation = MyUtility.GetValue.Lookup(sqlcheckToLocation);
+                    if (checkToLocation == "") dr["ToLocation"] = "";
+                }
                 relation = new DataRelation("rel1"
                     , new DataColumn[] { TaipeiInput.Columns["poid"], TaipeiInput.Columns["seq1"], TaipeiInput.Columns["seq2"] }
                     , new DataColumn[] { FtyDetail.Columns["toPoid"], FtyDetail.Columns["toseq1"], FtyDetail.Columns["toseq2"] }
