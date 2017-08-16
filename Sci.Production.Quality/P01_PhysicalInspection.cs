@@ -545,7 +545,7 @@ Where DetailUkey = {15};",
                 maindr["TotalInspYds"] = sumTotalYds;
                 #endregion 
                 #region 判斷Result 是否要寫入
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
@@ -571,19 +571,21 @@ Where DetailUkey = {15};",
                 maindr["Status"] = returnstr[1];
             }
             else //Amend
-            {
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr["ID"]);
+            {                
                 #region  寫入虛擬欄位
                 maindr["Physical"] = "";
                 maindr["PhysicalDate"] = DBNull.Value;
-                maindr["PhysicalEncode"] = false;
-                maindr["Status"] = returnstr[1];
+                maindr["PhysicalEncode"] = false;                                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 maindr["TotalDefectPoint"] = 0;
                 maindr["TotalInspYds"] = 0;
+
+                //判斷Result and Status 必須先確認Physical="",判斷才會正確
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 maindr["Result"] = returnstr[0];
-                #endregion 
+                maindr["Status"] = returnstr[1];
+                #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);

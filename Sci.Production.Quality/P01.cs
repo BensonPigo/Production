@@ -30,9 +30,12 @@ namespace Sci.Production.Quality
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-
-            detailgrid.ContextMenuStrip = gridmenu;
+            InitializeComponent();            
+            detailgridmenus.Items.Remove(appendmenu);
+            detailgridmenus.Items.Remove(modifymenu);
+            detailgridmenus.Items.Remove(deletemenu);
+            //關閉表身Grid DoubleClick 會新增row的問題
+            InsertDetailGridOnDoubleClick = false;
         }
 
         public P01(string Poid) //for Form直接call form
@@ -41,8 +44,8 @@ namespace Sci.Production.Quality
             DefaultFilter = string.Format("ID = '{0}'", Poid);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
-            detailgrid.ContextMenuStrip = gridmenu;
         }
+
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -90,7 +93,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorDateColumnSettings ConD = new DataGridViewGeneratorDateColumnSettings();
             #region ClickEvent
             phy.CellMouseDoubleClick += (s, e) =>
-            {
+            {              
                     var dr = this.CurrentDetailData; if (null == dr) return;
                     var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                     frm.ShowDialog(this);
@@ -248,19 +251,24 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
             detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             detailgrid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns["NonPhysical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            //紅粉佳人組
+            detailgrid.Columns["NonPhysical"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonWeight"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonShadeBond"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonContinuity"].DefaultCellStyle.BackColor = Color.MistyRose;
+            //檸檬薄紗組
             detailgrid.Columns["Physical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["TotalInspYds"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["PhysicalDate"].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns["NonWeight"].DefaultCellStyle.BackColor = Color.LightCyan;
+            detailgrid.Columns["PhysicalDate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            //青藍組
             detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.LightCyan;
-            detailgrid.Columns["WeightDate"].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns["NonShadeBond"].DefaultCellStyle.BackColor = Color.LightGreen;
+            detailgrid.Columns["WeightDate"].DefaultCellStyle.BackColor = Color.LightCyan;            
+            //青綠組            
             detailgrid.Columns["Shadebond"].DefaultCellStyle.BackColor = Color.LightGreen;
-            detailgrid.Columns["ShadeBondDate"].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns["NonContinuity"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
+            detailgrid.Columns["ShadeBondDate"].DefaultCellStyle.BackColor = Color.LightGreen;
+            //復古色組
             detailgrid.Columns["Continuity"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
+            detailgrid.Columns["ContinuityDate"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
             #endregion
             
         }
@@ -378,7 +386,14 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     Where ID = '{5}';"
                     , dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"]);
                 }
+                #region 重新判斷AllResult
+                //重新判斷AllResult             
+                //string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
+                //dr["Result"] = returnstr[0];
+                //dr["Status"] = returnstr[1];
+                #endregion
             }
+           
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -415,7 +430,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
         {
             if (this.EditMode) //Status = Confirm 才會判斷
             {               
-                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr["ID"]);
+                string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr);
 
                 dr["Result"] = returnstr[0];
                 dr["Status"] = returnstr[1];
@@ -480,14 +495,30 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
 
+        override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()  
+        {
+            //非編輯狀態不顯示
+            if (!EditMode)
+            {
+                return DetailGridContextMenuMode.Editable;
+            }
+            return DetailGridContextMenuMode.None;
+        }
+        
+
         private void modifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {           
-            var dr =this.CurrentDetailData; if (null == dr) return;
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
             var currentID = this.CurrentDetailData["ID"].ToString();
             var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -504,7 +535,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             detailgrid.SelectRowTo(rowindex);
         }
 
-        
         private void modifyWeightTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
@@ -514,6 +544,11 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -530,7 +565,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyShadeBondToolStripMenuItem_Click(object sender, EventArgs e)
+        private void modifyShadeBondTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
             var currentID = this.CurrentDetailData["ID"].ToString();
@@ -538,6 +573,11 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -554,7 +594,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             detailgrid.SelectRowTo(rowindex);
         }
 
-        private void modifyContinuityToolStripMenuItem_Click(object sender, EventArgs e)
+        private void modifyContinuityTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
             var currentID = this.CurrentDetailData["ID"].ToString();
@@ -562,6 +602,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
+            //重新計算表頭資料
+            this.OnDetailEntered();
+            //重新判斷AllResult            
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
+            CurrentDetailData["Result"] = returnstr[0];
+            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -576,8 +622,8 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 }
             }
             detailgrid.SelectRowTo(rowindex);
-
         }
+
       
     }
 }
