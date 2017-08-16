@@ -115,7 +115,7 @@ namespace Sci.Production.Thread
             #endregion
 
             #region Grid header,Column  Gerenator建立 可用Setting
-            DataGridViewGeneratorTextColumnSettings refno_col = celllocalitem.GetGridCell("Thread", null);
+            DataGridViewGeneratorTextColumnSettings refno_col = celllocalitem.GetGridCell("SP_THREAD", null);
             DataGridViewGeneratorTextColumnSettings threadcolor_col = new DataGridViewGeneratorTextColumnSettings();
             threadcolor_col.EditingMouseDown += (s, e) =>
             {

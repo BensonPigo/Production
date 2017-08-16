@@ -152,7 +152,8 @@ namespace Sci.Production.Thread
                                 i--;
                             }
                         }
-
+                        gridTable.DefaultView.Sort = "refno , threadcolorid , threadlocationid";
+                        gridTable = gridTable.DefaultView.ToTable();
 
                     }
                     else
