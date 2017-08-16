@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 667);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -205,7 +205,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(14, 12);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(110, 23);
@@ -214,7 +213,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(14, 44);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(110, 23);
@@ -223,7 +221,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(14, 76);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(110, 23);
@@ -232,7 +229,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(14, 110);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(110, 23);
@@ -241,7 +237,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(14, 144);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(110, 23);
@@ -250,7 +245,6 @@
             // 
             // labelSewingInlineDate
             // 
-            this.labelSewingInlineDate.Lines = 0;
             this.labelSewingInlineDate.Location = new System.Drawing.Point(318, 12);
             this.labelSewingInlineDate.Name = "labelSewingInlineDate";
             this.labelSewingInlineDate.Size = new System.Drawing.Size(130, 23);
@@ -259,7 +253,6 @@
             // 
             // labelSewingOfflineDate
             // 
-            this.labelSewingOfflineDate.Lines = 0;
             this.labelSewingOfflineDate.Location = new System.Drawing.Point(318, 44);
             this.labelSewingOfflineDate.Name = "labelSewingOfflineDate";
             this.labelSewingOfflineDate.Size = new System.Drawing.Size(130, 23);
@@ -268,7 +261,6 @@
             // 
             // labelSCIDeliveryDate
             // 
-            this.labelSCIDeliveryDate.Lines = 0;
             this.labelSCIDeliveryDate.Location = new System.Drawing.Point(318, 76);
             this.labelSCIDeliveryDate.Name = "labelSCIDeliveryDate";
             this.labelSCIDeliveryDate.Size = new System.Drawing.Size(130, 23);
@@ -277,7 +269,6 @@
             // 
             // labelBuyerDeliveryDate
             // 
-            this.labelBuyerDeliveryDate.Lines = 0;
             this.labelBuyerDeliveryDate.Location = new System.Drawing.Point(318, 110);
             this.labelBuyerDeliveryDate.Name = "labelBuyerDeliveryDate";
             this.labelBuyerDeliveryDate.Size = new System.Drawing.Size(130, 23);
@@ -286,7 +277,6 @@
             // 
             // labelPPICMR
             // 
-            this.labelPPICMR.Lines = 0;
             this.labelPPICMR.Location = new System.Drawing.Point(318, 144);
             this.labelPPICMR.Name = "labelPPICMR";
             this.labelPPICMR.Size = new System.Drawing.Size(68, 23);
@@ -295,7 +285,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(640, 12);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(130, 23);
@@ -304,7 +293,6 @@
             // 
             // labelNeededPerDay
             // 
-            this.labelNeededPerDay.Lines = 0;
             this.labelNeededPerDay.Location = new System.Drawing.Point(640, 44);
             this.labelNeededPerDay.Name = "labelNeededPerDay";
             this.labelNeededPerDay.Size = new System.Drawing.Size(130, 23);
@@ -313,7 +301,6 @@
             // 
             // labelFirstCutDate
             // 
-            this.labelFirstCutDate.Lines = 0;
             this.labelFirstCutDate.Location = new System.Drawing.Point(640, 76);
             this.labelFirstCutDate.Name = "labelFirstCutDate";
             this.labelFirstCutDate.Size = new System.Drawing.Size(130, 23);
@@ -322,7 +309,6 @@
             // 
             // labelCutQty
             // 
-            this.labelCutQty.Lines = 0;
             this.labelCutQty.Location = new System.Drawing.Point(640, 110);
             this.labelCutQty.Name = "labelCutQty";
             this.labelCutQty.Size = new System.Drawing.Size(130, 23);
@@ -331,7 +317,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(640, 144);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(130, 23);
@@ -382,7 +367,6 @@
             // 
             this.txtcountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "dest", true));
             this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Enabled = false;
             this.txtcountryDestination.Location = new System.Drawing.Point(127, 144);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(178, 22);
@@ -433,7 +417,6 @@
             // 
             this.txtuserPPICMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "mchandle", true));
             this.txtuserPPICMR.DisplayBox1Binding = "";
-            this.txtuserPPICMR.Enabled = false;
             this.txtuserPPICMR.Location = new System.Drawing.Point(389, 143);
             this.txtuserPPICMR.Name = "txtuserPPICMR";
             this.txtuserPPICMR.Size = new System.Drawing.Size(248, 23);
