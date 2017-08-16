@@ -141,7 +141,7 @@ select  0 AS selected
         , fi.roll ToRoll
         , fi.dyelot ToDyelot
         , 'B' as [ToStockType]
-        , '' as [ToLocation]
+        , dbo.Getlocation(fi.ukey) as [ToLocation]
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -165,7 +165,14 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 DataTable TaipeiInput = dsTmp.Tables[0];
                 dsTmp.Tables[0].TableName = "TaipeiInput";
                 DataTable FtyDetail = dsTmp.Tables[1];
-
+                foreach (DataRow dr in FtyDetail.Rows)
+                {
+                    string ToLocation = dr["ToLocation"].ToString();
+                    string sqlcheckToLocation = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='B' and junk != '1' and id = '{0}'", ToLocation);
+                    string checkToLocation = "";
+                    checkToLocation = MyUtility.GetValue.Lookup(sqlcheckToLocation);
+                    if (checkToLocation == "") dr["ToLocation"] = "";
+                }
                 relation = new DataRelation("rel1"
                     , new DataColumn[] { TaipeiInput.Columns["Poid"], TaipeiInput.Columns["seq1"], TaipeiInput.Columns["seq2"] }
                     , new DataColumn[] { FtyDetail.Columns["toPoid"], FtyDetail.Columns["toseq1"], FtyDetail.Columns["toseq2"] }
