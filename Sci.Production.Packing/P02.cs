@@ -590,7 +590,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 }
                 else
                 {
-                    dataRow = i + 1 + ctmpc;
+                    dataRow = i + 2 + ctmpc;
                     break;
                 }
             }
@@ -601,6 +601,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    rngToInsert.RowHeight = 19.5;
                 }
             }
             // 判斷第一碼為"=" 就塞space ,避免excel 誤認=是計算函數
