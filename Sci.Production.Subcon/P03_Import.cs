@@ -45,6 +45,9 @@ namespace Sci.Production.Subcon
             #region set Title
             this.Text = (Subcon == Subcon_P03 ? "Import Farm Out. " : "Import Farm In.") + (strArtworkType.Empty() ? "" : "(" + strArtworkType + ")");
             #endregion
+            #region Set Label Text
+            this.labelFramDate.Text = Subcon == Subcon_P03 ? "Farm Out Date" : "Farm In Date";
+            #endregion 
             #region Set Grid
             Ict.Win.UI.DataGridViewCheckBoxColumn masterChk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
             this.gridMaster.IsEditingReadOnly = false;
@@ -66,8 +69,8 @@ namespace Sci.Production.Subcon
                 .Text("Artwork", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("CutpartID", header: "Cutpart ID", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Cutpart Name", header: "Cutpart Name", width: Widths.AnsiChars(40), iseditingreadonly: true)
-                .Numeric("PoQty", header: "PoQty", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Numeric("Farm", header: (Subcon == Subcon_P03) ? "Farmout" : "Farmin", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Numeric("PoQty", header: (Subcon == Subcon_P03) ? "PoQty" : "FarmOut", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Numeric("Farm", header: (Subcon == Subcon_P03) ? "FarmOut" : "FarmIn", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridMaster.Columns.Count; i++)
@@ -345,7 +348,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on  APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									and APD.PoQty > APD.Farmin 
+									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on	AP.ID = APD.ID
 left join Orders O				on	O.ID = B.Orderid
 where	BIO.SubProcessId = @SubProcessID
@@ -386,7 +389,7 @@ select	sel = 0
 		, [Artwork] = APD.ArtworkId
 		, [CutpartID] = APD.PatternCode
 		, [Cutpart Name] = APD.PatternDesc
-		, APD.PoQty
+		, PoQty = APD.Farmout
 		--若為[Subcon][P03]呼叫，則改為Farmout 
 		, Farm = APD.Farmin
 		, BD.Qty
@@ -398,7 +401,7 @@ left join Bundle B				on	BD.Id = B.ID
 left join ArtworkPO_Detail APD	on	APD.OrderID = B.Orderid 
 									and APD.PatternCode = BD.Patterncode
 									--若為[Subcon][P03]呼叫，則改為Farmout 
-									and APD.PoQty > APD.Farmin
+									and APD.Farmout > APD.Farmin
 left join ArtworkPO AP			on AP.ID = APD.ID
 where	BIO.SubProcessId = @SubProcessID
 		--若為[Subcon][P03] => OutGoing

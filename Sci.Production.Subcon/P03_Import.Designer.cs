@@ -34,7 +34,7 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.dateRangeFarmOutDate = new Sci.Win.UI.DateRange();
             this.labelSPnum = new Sci.Win.UI.Label();
-            this.labelFramOutDate = new Sci.Win.UI.Label();
+            this.labelFramDate = new Sci.Win.UI.Label();
             this.textSPnum = new Sci.Win.UI.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridMaster = new Sci.Win.UI.Grid();
@@ -57,7 +57,7 @@
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.dateRangeFarmOutDate);
             this.panel1.Controls.Add(this.labelSPnum);
-            this.panel1.Controls.Add(this.labelFramOutDate);
+            this.panel1.Controls.Add(this.labelFramDate);
             this.panel1.Controls.Add(this.textSPnum);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -93,13 +93,13 @@
             this.labelSPnum.TabIndex = 1;
             this.labelSPnum.Text = "SP#";
             // 
-            // labelFramOutDate
+            // labelFramDate
             // 
-            this.labelFramOutDate.Location = new System.Drawing.Point(9, 9);
-            this.labelFramOutDate.Name = "labelFramOutDate";
-            this.labelFramOutDate.Size = new System.Drawing.Size(102, 23);
-            this.labelFramOutDate.TabIndex = 1;
-            this.labelFramOutDate.Text = "Farm Out Date";
+            this.labelFramDate.Location = new System.Drawing.Point(9, 9);
+            this.labelFramDate.Name = "labelFramDate";
+            this.labelFramDate.Size = new System.Drawing.Size(102, 23);
+            this.labelFramDate.TabIndex = 1;
+            this.labelFramDate.Text = "Farm Out Date";
             // 
             // textSPnum
             // 
@@ -256,7 +256,7 @@
         private Win.UI.Button btnQuery;
         private Win.UI.DateRange dateRangeFarmOutDate;
         private Win.UI.Label labelSPnum;
-        private Win.UI.Label labelFramOutDate;
+        private Win.UI.Label labelFramDate;
         private Win.UI.TextBox textSPnum;
         private Win.UI.Button btnImport;
         private Win.UI.Button btnClose;
