@@ -24,17 +24,27 @@ namespace Sci.Production.Warehouse
     {
         string userCountry = "";
         string SpNo = "";
-        bool ButtonOpen = false;    
+        bool ButtonOpen = false;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P03)
+                {
+                    form.Activate();
+                    this.Shown += (s, e) => { this.Close(); };
+                    break;
+                }
+            }
+
             InitializeComponent();
             this.EditMode = true;
 
+            #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
-            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
-
+            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));            
             DataTable dt;
             DualResult result;
 
@@ -46,18 +56,37 @@ namespace Sci.Production.Warehouse
             {
                 userCountry = dt.Rows[0]["CountryID"].ToString();
             }
+            #endregion 
             ButtonOpen = false;
         }
+
         //Form to Form W/H.P01
-        public P03(string P01SPNo)  
-        {
+        public P03(string P01SPNo)
+        {            
             InitializeComponent();
             this.EditMode = true;
+
+            #region set userCountry
+            string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
+            List<SqlParameter> sqlPar = new List<SqlParameter>();
+            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            DataTable dt;
+            DualResult result;
+
+            if (!(result = DBProxy.Current.Select(null, sql, sqlPar, out dt)))
+            {
+                MyUtility.Msg.ErrorBox(result.Description);
+            }
+            else
+            {
+                userCountry = dt.Rows[0]["CountryID"].ToString();
+            }
+            #endregion 
             SpNo = P01SPNo;
             this.txtSPNo.Text = SpNo.Trim();
             ButtonOpen = true;
-            Query();
         }
+
         //隨著 P01上下筆SP#切換資料
         public void P03Data(string P01SPNo)  
         {
@@ -66,6 +95,7 @@ namespace Sci.Production.Warehouse
             this.txtSPNo.Text = SpNo.Trim();
             ButtonOpen = true;
             Query();
+            ChangeDetailColor();
         }
 
         protected override void OnFormLoaded()
@@ -208,10 +238,10 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.gridMaterialStatus)
-            .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //0
-            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //1
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
-            .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
+            .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //1
+            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //3
+            //.Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
@@ -247,9 +277,9 @@ namespace Sci.Production.Warehouse
             ;
             #endregion
 
-            gridMaterialStatus.Columns[8].Frozen = true;  //Fabric Type
-            gridMaterialStatus.Columns[1].Width = 40;
-            gridMaterialStatus.Columns[2].Width = 40;
+            gridMaterialStatus.Columns["fabrictype2"].Frozen = true;  //Fabric Type
+            gridMaterialStatus.Columns["id"].Width = 40;
+            gridMaterialStatus.Columns["seq1"].Width = 40;
         }
 
         private void ChangeDetailColor()
@@ -266,26 +296,26 @@ namespace Sci.Production.Warehouse
                 }
                 else
                 {
-                    if (dr["ThirdCountry"].ToString() == "True")
-                    {
-                        gridMaterialStatus.Rows[i].Cells[4].Style.BackColor = Color.DeepPink;
-                    }
+                    //if (dr["ThirdCountry"].ToString() == "True")
+                    //{
+                    //    gridMaterialStatus.Rows[i].Cells[4].Style.BackColor = Color.DeepPink;
+                    //}
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells[7].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells["RevisedETA"].Style.BackColor = Color.Orange;
                     }
 
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
                     if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
                     {
-                        gridMaterialStatus.Rows[i].Cells[17].Style.ForeColor = Color.Red;
+                        gridMaterialStatus.Rows[i].Cells["NETQty"].Style.ForeColor = Color.Red;
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
                     {
-                        gridMaterialStatus.Rows[i].Cells[1].Style.BackColor = Color.Yellow;
-                        gridMaterialStatus.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells["id"].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells["seq1"].Style.BackColor = Color.Yellow;
                     }
 
                     if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty())
@@ -310,7 +340,7 @@ namespace Sci.Production.Warehouse
             Query();
         }
 
-        private void Query()
+        public void Query()
         {
             DataTable dtData;
 
@@ -589,8 +619,6 @@ where ROW_NUMBER_D =1
             this.HideWaitMessage();
         }
 
-        
-
         private void grid1_sorting()
         {
             if (gridMaterialStatus.RowCount > 0)
@@ -665,12 +693,10 @@ where ROW_NUMBER_D =1
             txtSPNo.ResetText();
             txtSPNo.Select();
         }
+
+        public void setTxtSPNo(string spNo)
+        {
+            this.txtSPNo.Text = spNo;
+        }
     }
-
-    
 }
-
-
-
-
-
