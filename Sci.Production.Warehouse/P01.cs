@@ -519,6 +519,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             if (callP03 != null && callP03.Visible == true)
             {
                 callP03.P03Data(CurrentMaintain["ID"].ToString());
+                callP03.Activate();
             }
             else
             {
@@ -541,9 +542,22 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         Sci.Production.Warehouse.P03 callP03 = null;
         private void P03FormOpen()
         {
-            callP03 = new P03(CurrentMaintain["ID"].ToString());
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P03)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    activateForm.setTxtSPNo (CurrentMaintain["ID"].ToString());
+                    activateForm.Query();
+                    return;
+                }
+            }
+
+            callP03 = new P03(CurrentMaintain["ID"].ToString());            
             callP03.MdiParent = MdiParent;                      
             callP03.Show();
+            callP03.Query();
             #region BackUP
             //callP03.FormClosed += (s, e) =>
             //{
