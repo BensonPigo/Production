@@ -124,7 +124,8 @@ group by sizeCode"
                 }
             }
             #endregion
-            
+            //計算左上TotalQty
+            calsumQty();
             if (detailTb.Rows.Count != 0) exist_Table_Query();
             else noexist_Table_Query();
 
@@ -239,7 +240,7 @@ group by sizeCode"
         {
             //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid", "Select distinct PatternCode,PatternDesc,Parts,subProcessid from #tmp", out tmp);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid", "Select  PatternCode,PatternDesc,Parts,subProcessid from #tmp", out tmp);
             MyUtility.Tool.ProcessWithDatatable(bundle_detail_artTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp", out artTb);
             foreach (DataRow dr in tmp.Rows)
             {
