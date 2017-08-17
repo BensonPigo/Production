@@ -953,7 +953,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             worksheet.Cells[titleSciDeliveryRow, titleSciDeliveryColumn] = strSciDelivery;
             worksheet.Cells[titleInvoiceRow, titleInvoiceColumn] = MyUtility.Convert.GetString(PLdr["INVNo"]);
             worksheet.Cells[titleCustCDRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
-            worksheet.Cells[titleShipModeRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
+            worksheet.Cells[titleShipModeRow, titleShipModeColumn] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
             worksheet.Cells[titleInClogRow, titleInClogColumn] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
             worksheet.Cells[titleDestinationRow, titleDestinationColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
             worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
