@@ -16,13 +16,14 @@ namespace Sci.Production.Subcon
         DataTable printData;
         DataTable printData2;
 
-        string SubProcess, SP, Factory,CutRef1, CutRef2;
+        string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         DateTime?  dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             comboload();
+            this.comboFactory.setDataSource();
         }
         //string date = "";
         private void comboload()
@@ -56,15 +57,16 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Bundel CDate or Bundle Trans date can't empty!!");
                 return false;
             }
-            SubProcess = comboSubProcess.Text;
-            SP = txtSPNo.Text;
-            Factory = comboM.Text;
-            CutRef1 = txtCutRefStart.Text;
-            CutRef2 = txtCutRefEnd.Text;
-            dateBundle1 = dateBundleCDate.Value1;
-            dateBundle2 = dateBundleCDate.Value2;
-            dateBundleTransDate1 = dateBundleTransDate.Value1;
-            dateBundleTransDate2 = dateBundleTransDate.Value2;
+            SubProcess = this.comboSubProcess.Text;
+            SP = this.txtSPNo.Text;
+            M = this.comboM.Text;
+            Factory = this.comboFactory.Text;
+            CutRef1 = this.txtCutRefStart.Text;
+            CutRef2 = this.txtCutRefEnd.Text;
+            dateBundle1 = this.dateBundleCDate.Value1;
+            dateBundle2 = this.dateBundleCDate.Value2;
+            dateBundleTransDate1 = this.dateBundleTransDate.Value1;
+            dateBundleTransDate2 = this.dateBundleTransDate.Value2;
             return base.ValidateInput();
         }
         //非同步讀取資料
@@ -77,7 +79,8 @@ namespace Sci.Production.Subcon
             [Cut Ref#] = b.CutRef,
             [SP#] = b.Orderid,
             [Master SP#] = b.POID,
-            [Factory] = b.MDivisionid,
+            [M] = b.MDivisionid,
+            [Factory] = o.FtyGroup,
             [Style] = o.StyleID,
             [Season] = o.SeasonID,
             [Brand] = o.BrandID,
@@ -145,9 +148,13 @@ namespace Sci.Production.Subcon
             {
                 sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'",Convert.ToDateTime(dateBundleTransDate2).ToString("d")));
             }
+            if (!MyUtility.Check.Empty(M))
+            {
+                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+            }
             if (!MyUtility.Check.Empty(Factory))
             {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", Factory));
+                sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
             #endregion
 

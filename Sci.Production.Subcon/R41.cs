@@ -14,13 +14,14 @@ namespace Sci.Production.Subcon
     public partial class R41 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string SubProcess, SP, M, CutRef1, CutRef2;
+        string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         DateTime?  dateBundle1, dateBundle2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             comboload();
+            this.comboFactory.setDataSource();
         }
        
         private void comboload()
@@ -53,13 +54,14 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Bundel CDate can't empty!!");
                 return false;
             }
-            SubProcess = comboSubProcess.Text;
-            SP = txtSPNo.Text;
-            M = comboM.Text;
-            CutRef1 = txtCutRefStart.Text;
-            CutRef2 = txtCutRefEnd.Text;
-            dateBundle1 = dateBundleCDate.Value1;
-            dateBundle2 = dateBundleCDate.Value2;
+            SubProcess = this.comboSubProcess.Text;
+            SP = this.txtSPNo.Text;
+            M = this.comboM.Text;
+            Factory = this.comboFactory.Text;
+            CutRef1 = this.txtCutRefStart.Text;
+            CutRef2 = this.txtCutRefEnd.Text;
+            dateBundle1 = this.dateBundleCDate.Value1;
+            dateBundle2 = this.dateBundleCDate.Value2;
             return base.ValidateInput();
         }
         //非同步讀取資料
@@ -73,7 +75,8 @@ Select DISTINCT
     [Cut Ref#] = b.CutRef,
     [SP#] = b.Orderid,
     [Master SP#] = b.POID,
-    [Factory] = b.MDivisionid,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
     [Style] = o.StyleID,
     [Season] = o.SeasonID,
     [Brand] = o.BrandID,
@@ -135,6 +138,10 @@ where 1=1
             if (!MyUtility.Check.Empty(M))
             {
                 sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+            }
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
             #endregion
 
