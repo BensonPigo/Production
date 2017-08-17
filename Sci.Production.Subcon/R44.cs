@@ -427,6 +427,8 @@ from #print p
 outer apply (
 	select value = ROUND(AccuLoad / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
 ) BCS
+---0006111以上全部都不動，直接組新的Table計算欄位(acc.QtyAll)Accu. Loading Qty of Garment
+---再依[SP#]= p.SP and FactoryID = p.FactoryID做outer apply
 outer apply(
 	select FactoryID,[SP#],[Article],QtyAll=sum(QtySM)
 	from
