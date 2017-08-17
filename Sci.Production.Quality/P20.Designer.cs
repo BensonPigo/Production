@@ -470,7 +470,7 @@
             // comboTeam
             // 
             this.comboTeam.BackColor = System.Drawing.Color.White;
-            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
+            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Team", true));
             this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTeam.FormattingEnabled = true;
             this.comboTeam.IsSupportUnselect = true;
