@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.dateBundleCDate = new Sci.Win.UI.DateRange();
@@ -42,6 +43,8 @@
             this.txtCutRefStart = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
             this.txtCutRefEnd = new Sci.Win.UI.TextBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -101,7 +104,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(22, 159);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(120, 23);
@@ -110,7 +112,6 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Lines = 0;
             this.labelSubProcess.Location = new System.Drawing.Point(22, 129);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(120, 23);
@@ -119,7 +120,6 @@
             // 
             // labelBundleCDate
             // 
-            this.labelBundleCDate.Lines = 0;
             this.labelBundleCDate.Location = new System.Drawing.Point(22, 70);
             this.labelBundleCDate.Name = "labelBundleCDate";
             this.labelBundleCDate.Size = new System.Drawing.Size(120, 23);
@@ -128,7 +128,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(22, 41);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(120, 23);
@@ -137,7 +136,6 @@
             // 
             // labelCutRefNo
             // 
-            this.labelCutRefNo.Lines = 0;
             this.labelCutRefNo.Location = new System.Drawing.Point(22, 12);
             this.labelCutRefNo.Name = "labelCutRefNo";
             this.labelCutRefNo.Size = new System.Drawing.Size(120, 23);
@@ -154,7 +152,6 @@
             // 
             // labelBundleTransDate
             // 
-            this.labelBundleTransDate.Lines = 0;
             this.labelBundleTransDate.Location = new System.Drawing.Point(22, 99);
             this.labelBundleTransDate.Name = "labelBundleTransDate";
             this.labelBundleTransDate.Size = new System.Drawing.Size(120, 23);
@@ -173,7 +170,6 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(264, 12);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(24, 23);
@@ -190,9 +186,31 @@
             this.txtCutRefEnd.Size = new System.Drawing.Size(116, 23);
             this.txtCutRefEnd.TabIndex = 1;
             // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(22, 188);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(120, 23);
+            this.labelFactory.TabIndex = 108;
+            this.labelFactory.Text = "Factory";
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(145, 188);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 118;
+            // 
             // R42
             // 
-            this.ClientSize = new System.Drawing.Size(599, 240);
+            this.ClientSize = new System.Drawing.Size(599, 241);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtCutRefEnd);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtCutRefStart);
@@ -202,6 +220,7 @@
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.dateBundleCDate);
             this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSubProcess);
             this.Controls.Add(this.labelBundleCDate);
@@ -219,6 +238,7 @@
             this.Controls.SetChildIndex(this.labelBundleCDate, 0);
             this.Controls.SetChildIndex(this.labelSubProcess, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtSPNo, 0);
             this.Controls.SetChildIndex(this.dateBundleCDate, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
@@ -228,6 +248,7 @@
             this.Controls.SetChildIndex(this.txtCutRefStart, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.txtCutRefEnd, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -249,5 +270,7 @@
         private Win.UI.TextBox txtCutRefStart;
         private Win.UI.Label label7;
         private Win.UI.TextBox txtCutRefEnd;
+        private Win.UI.Label labelFactory;
+        private Class.comboFactory comboFactory;
     }
 }

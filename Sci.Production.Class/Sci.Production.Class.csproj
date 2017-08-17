@@ -52,6 +52,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="comboFactory.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboFactory.Designer.cs">
+      <DependentUpon>comboFactory.cs</DependentUpon>
+    </Compile>
     <Compile Include="comboMDivision.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -433,6 +439,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="comboFactory.resx">
+      <DependentUpon>comboFactory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
     </EmbeddedResource>

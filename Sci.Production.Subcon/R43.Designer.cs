@@ -28,12 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.labelSubProcess = new Sci.Win.UI.Label();
             this.labelBundleReceiveDate = new Sci.Win.UI.Label();
             this.dateBundleReceiveDate = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -76,7 +79,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(32, 79);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(134, 23);
@@ -85,7 +87,6 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Lines = 0;
             this.labelSubProcess.Location = new System.Drawing.Point(32, 49);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(134, 23);
@@ -94,7 +95,6 @@
             // 
             // labelBundleReceiveDate
             // 
-            this.labelBundleReceiveDate.Lines = 0;
             this.labelBundleReceiveDate.Location = new System.Drawing.Point(32, 19);
             this.labelBundleReceiveDate.Name = "labelBundleReceiveDate";
             this.labelBundleReceiveDate.Size = new System.Drawing.Size(134, 23);
@@ -109,13 +109,36 @@
             this.dateBundleReceiveDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleReceiveDate.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(32, 109);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(134, 23);
+            this.label1.TabIndex = 115;
+            this.label1.Text = "M";
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(169, 109);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 119;
+            // 
             // R43
             // 
-            this.ClientSize = new System.Drawing.Size(565, 145);
+            this.ClientSize = new System.Drawing.Size(565, 160);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.dateBundleReceiveDate);
             this.Controls.Add(this.labelBundleReceiveDate);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboSubProcess);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSubProcess);
             this.DefaultControl = "dateBundleReceiveDate";
@@ -127,10 +150,12 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelSubProcess, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.labelBundleReceiveDate, 0);
             this.Controls.SetChildIndex(this.dateBundleReceiveDate, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,5 +169,7 @@
         private Win.UI.Label labelSubProcess;
         private Win.UI.Label labelBundleReceiveDate;
         private Win.UI.DateRange dateBundleReceiveDate;
+        private Win.UI.Label label1;
+        private Class.comboFactory comboFactory;
     }
 }

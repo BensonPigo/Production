@@ -15,7 +15,7 @@ namespace Sci.Production.Subcon
     public partial class R43 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string SubProcess, M;
+        string SubProcess, M, Factory;
         DateTime? dateBundleReceive1, dateBundleReceive2;
 
         public R43(ToolStripMenuItem menuitem)
@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             comboload();
+            this.comboFactory.setDataSource();
         }
 
         private void comboload()
@@ -58,6 +59,7 @@ namespace Sci.Production.Subcon
 
             SubProcess = comboSubProcess.Text;
             M = comboM.Text;
+            Factory = comboFactory.Text;
             dateBundleReceive1 = dateBundleReceiveDate.Value1;
             dateBundleReceive2 = dateBundleReceiveDate.Value2;
             return base.ValidateInput();
@@ -68,7 +70,8 @@ namespace Sci.Production.Subcon
             #region sqlcmd
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select
-            [Factory] = b.MDivisionid,
+            [M] = b.MDivisionid,
+            [Factory] = o.FtyGroup,
             [SPNo] = b.Orderid,
             [Style] = o.StyleID,
             [Season] = o.SeasonID,
@@ -107,16 +110,21 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(M))
             {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = @Factory"));
-                cmds.Add(new SqlParameter("@Factory", M));
+                sqlCmd.Append(string.Format(@" and b.MDivisionid = @M"));
+                cmds.Add(new SqlParameter("@M", M));
+            }
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                sqlCmd.Append(string.Format(@" and o.FtyGroup = @Factory"));
+                cmds.Add(new SqlParameter("@Factory", Factory));
             }
             #endregion
             #region group order
             sqlCmd.Append(@"
             group by 
-            b.MDivisionid,b.Orderid,o.StyleID,o.SeasonID,o.BrandID,bio.SubProcessId,bio.InComing,bio.OutGoing,s.BCSDate
+            b.MDivisionid, o.FtyGroup, b.Orderid, o.StyleID, o.SeasonID, o.BrandID, bio.SubProcessId, bio.InComing, bio.OutGoing, s.BCSDate
             order by 
-            [Factory],[SPNo],[Style],[Season],[Brand],[Sub-process],[Receive Qty],[Release Qty],[BCS]");
+            [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process], [Receive Qty], [Release Qty], [BCS]");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
