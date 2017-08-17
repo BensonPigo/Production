@@ -597,13 +597,15 @@
             // 
             this.txtuserApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserApproveName.DisplayBox1Binding = "";
-            this.txtuserApproveName.Enabled = false;
+            this.txtuserApproveName.Enabled = true;
             this.txtuserApproveName.Location = new System.Drawing.Point(578, 82);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(286, 23);
             this.txtuserApproveName.TabIndex = 24;
             this.txtuserApproveName.TabStop = false;
             this.txtuserApproveName.TextBox1Binding = "";
+            this.txtuserApproveName.TextBox1.IsSupportEditMode = false;
+            this.txtuserApproveName.TextBox1.ReadOnly = true;
             // 
             // txtuserHandle
             // 

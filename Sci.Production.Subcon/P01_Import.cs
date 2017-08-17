@@ -78,34 +78,44 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor
 
                 string strSQLCmd = string.Format(@"
-select  0 as Selected
+select  Selected = 0
         , ot.LocalSuppID
-        , '' as id
-        , q.id as orderid
-        , sum(q.qty) OrderQty 
+        , id = ''
+        , orderid = q.id
+        , OrderQty = sum(q.qty)  
         , IssueQty.IssueQty 
-        , sum(q.qty)-IssueQty.IssueQty poqty 
+        , poqty = iif (sum(q.qty)-IssueQty.IssueQty < 0, 0, sum(q.qty)-IssueQty.IssueQty)
         , oa.ArtworkTypeID
         , oa.ArtworkID
         , oa.PatternCode
         , o.SewInLIne
         , o.SciDelivery
-        , oa.qty as coststitch
-        , oa.qty Stitch
+        , coststitch = oa.qty
+        , Stitch = oa.qty 
         , oa.PatternDesc
-        , 1 as qtygarment
+        , qtygarment = 1
         , oa.Cost
-        , oa.Cost unitprice
-        , oa.Cost as  price
-        , (sum(q.qty)-IssueQty.IssueQty)*cost as amount
+        , unitprice = oa.Cost
+        , price = oa.Cost
+        , amount = (sum(q.qty)-IssueQty.IssueQty)*cost 
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID and ad.PatternCode= oa.PatternCode) IssueQty
-where 1=1 
-and o.category != 'M'
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID 
+                                         AND OA.Article = Q.Article 
+                                         AND OA.SizeCode=Q.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID 
+                                                 and ot.ArtworkTypeID = oa.ArtworkTypeID
+outer apply ( 
+        select IssueQty = ISNULL(sum(PoQty),0) 
+        from ArtworkPO_Detail AD, ArtworkPO A 
+        where   AD.ID = A.ID 
+                and A.Status = 'Approved' 
+                and OrderID = o.ID 
+                and ad.PatternCode= oa.PatternCode
+) IssueQty
+where   1=1 
+        and o.category != 'M'
 ");
 
                 strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
