@@ -421,14 +421,62 @@ IF @ByFactory = 1
 	group by FactoryID, SewingDate
 	order by FactoryID, SewingDate
 Else  
-	select	#print.* 
-			, BCS = iif(BCS.value >= 100, 100, BCS.value)
-	from #print
-	outer apply (
-		select value = ROUND(AccuLoad / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
-	) BCS
-	where SewingDate between @StartDate and @EndDate
-	order by FactoryID, SP, SewingDate, Line
+select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
+		, BCS = iif(BCS.value >= 100, 100, BCS.value)
+from #print p
+outer apply (
+	select value = ROUND(AccuLoad / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
+) BCS
+outer apply(
+	select FactoryID,[SP#],[Article],QtyAll=sum(QtySM)
+	from
+	(
+		select FactoryID,[SP#],[Article],SizeCode,[Comb],QtySM = min(QtySum)
+		from(
+			Select DISTINCT
+				 o.FactoryID,
+				[SP#] = b.Orderid,
+				[Article] = b.Article,
+				bd.SizeCode,
+				[Comb] = b.PatternPanel,
+				[Artwork] = sub.sub,
+				[Pattern] = bd.PatternCode,
+				--[Qty] = bd.Qty,
+				[QtySum] = sum(bd.Qty) over(partition by o.FactoryID,b.Orderid,b.Article,bd.SizeCode,b.PatternPanel,sub.sub,bd.PatternCode)
+			from Bundle b WITH (NOLOCK) 
+			inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+			left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+			inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+			inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
+			left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
+			outer apply(
+					select sub= stuff((
+						Select distinct concat('+', bda.SubprocessId)
+						from Bundle_Detail_Art bda WITH (NOLOCK) 
+						where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+						for xml path('')
+					),1,1,'')
+			) as sub
+			where 1=1
+			and s.Id = 'LOADING'
+			and b.Orderid = p.SP
+			and bio.InComing is not null and bio.InComing !='' and bio.InComing< p.SewingDate
+			and b.PatternPanel in(
+				Select distinct oe.PatternPanel
+				From dbo.Order_EachCons a WITH (NOLOCK) 
+				Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
+				left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
+				left join Order_EachCons_PatternPanel oe WITH (NOLOCK) on oe.Order_EachConsUkey = a.Ukey
+				Where a.ID = o.POID and bof.kind !=0
+			)
+		)aa
+		group by FactoryID,[SP#],[Article],SizeCode,[Comb]
+	)bb
+	where [SP#]= p.SP and FactoryID = p.FactoryID
+	group by FactoryID,[SP#],[Article]
+)acc 
+where SewingDate between @StartDate and @EndDate
+order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
 drop table #tsp
 drop table #cutcomb
