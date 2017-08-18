@@ -98,6 +98,7 @@ namespace Sci.Production.Thread
             dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
             OnDetailGridRowChanged();
+            grid1.DataSource = gridTb; //重新Binding Grid1
         }
         protected override void OnDetailGridRowChanged()
         {
