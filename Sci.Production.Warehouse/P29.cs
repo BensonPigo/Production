@@ -249,8 +249,13 @@ WHERE   StockType='{0}'
             #endregion
         }
 
+        DataSet dataSet;
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            dataSet = null;
+            listControlBindingSource1.DataSource = null;
+            listControlBindingSource2.DataSource = null;
+
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
             string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP, ProjectID, factory;
@@ -446,7 +451,6 @@ drop table #tmp");
 
             this.ShowWaitMessage("Data Loading....");
             #endregion
-            DataSet dataSet;
             if (!SQL.Selects("", sqlcmd.ToString(), out dataSet))
             {
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
