@@ -33,6 +33,8 @@
             this.gridRefNo = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.cmbFactory = new Sci.Win.UI.ComboBox();
+            this.lbfactory = new Sci.Win.UI.Label();
             this.comboSize = new Sci.Win.UI.ComboBox();
             this.labelSize = new Sci.Win.UI.Label();
             this.comboColor = new Sci.Win.UI.ComboBox();
@@ -96,14 +98,36 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.cmbFactory);
+            this.panel3.Controls.Add(this.lbfactory);
             this.panel3.Controls.Add(this.comboSize);
             this.panel3.Controls.Add(this.labelSize);
             this.panel3.Controls.Add(this.comboColor);
             this.panel3.Controls.Add(this.labelColor);
             this.panel3.Location = new System.Drawing.Point(114, 7);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(364, 34);
+            this.panel3.Size = new System.Drawing.Size(545, 34);
             this.panel3.TabIndex = 4;
+            // 
+            // cmbFactory
+            // 
+            this.cmbFactory.BackColor = System.Drawing.Color.White;
+            this.cmbFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbFactory.FormattingEnabled = true;
+            this.cmbFactory.IsSupportUnselect = true;
+            this.cmbFactory.Location = new System.Drawing.Point(67, 6);
+            this.cmbFactory.Name = "cmbFactory";
+            this.cmbFactory.Size = new System.Drawing.Size(121, 24);
+            this.cmbFactory.TabIndex = 10;
+            this.cmbFactory.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
+            // 
+            // lbfactory
+            // 
+            this.lbfactory.Location = new System.Drawing.Point(9, 6);
+            this.lbfactory.Name = "lbfactory";
+            this.lbfactory.Size = new System.Drawing.Size(55, 23);
+            this.lbfactory.TabIndex = 9;
+            this.lbfactory.Text = "Factory";
             // 
             // comboSize
             // 
@@ -111,16 +135,15 @@
             this.comboSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSize.FormattingEnabled = true;
             this.comboSize.IsSupportUnselect = true;
-            this.comboSize.Location = new System.Drawing.Point(232, 6);
+            this.comboSize.Location = new System.Drawing.Point(416, 7);
             this.comboSize.Name = "comboSize";
             this.comboSize.Size = new System.Drawing.Size(121, 24);
             this.comboSize.TabIndex = 8;
-            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.comboSize_SelectedIndexChanged);
+            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
             // 
             // labelSize
             // 
-            this.labelSize.Lines = 0;
-            this.labelSize.Location = new System.Drawing.Point(191, 6);
+            this.labelSize.Location = new System.Drawing.Point(375, 7);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(38, 23);
             this.labelSize.TabIndex = 7;
@@ -132,16 +155,15 @@
             this.comboColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboColor.FormattingEnabled = true;
             this.comboColor.IsSupportUnselect = true;
-            this.comboColor.Location = new System.Drawing.Point(56, 5);
+            this.comboColor.Location = new System.Drawing.Point(246, 6);
             this.comboColor.Name = "comboColor";
             this.comboColor.Size = new System.Drawing.Size(121, 24);
             this.comboColor.TabIndex = 6;
-            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.comboColor_SelectedIndexChanged);
+            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
-            this.labelColor.Location = new System.Drawing.Point(9, 5);
+            this.labelColor.Location = new System.Drawing.Point(199, 6);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(44, 23);
             this.labelColor.TabIndex = 5;
@@ -149,7 +171,6 @@
             // 
             // labelFilterCondition
             // 
-            this.labelFilterCondition.Lines = 0;
             this.labelFilterCondition.Location = new System.Drawing.Point(9, 11);
             this.labelFilterCondition.Name = "labelFilterCondition";
             this.labelFilterCondition.Size = new System.Drawing.Size(102, 23);
@@ -212,5 +233,7 @@
         private Win.UI.ComboBox comboColor;
         private Win.UI.Label labelColor;
         private Win.UI.Label labelFilterCondition;
+        private Win.UI.ComboBox cmbFactory;
+        private Win.UI.Label lbfactory;
     }
 }
