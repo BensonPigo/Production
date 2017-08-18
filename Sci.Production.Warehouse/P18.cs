@@ -338,7 +338,7 @@ where a.id = @ID", pars, out dtDetail);
 
                     DataTable dt;
                     string sqlcmd = string.Format(@"
-select  poid = p.POID 
+select  poid = p.ID 
         , seq = concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2)
         , p.seq1
         , p.seq2
@@ -346,9 +346,9 @@ select  poid = p.POID
         , Description = (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) 
         , p.scirefno
         , p.FabricType
-        , stockunit = dbo.GetStockUnitBySPSeq (p.poid, p.seq1, p.seq2)
-from dbo.Inventory p WITH (NOLOCK) 
-where POID ='{0}'", CurrentDetailData["poid"].ToString());
+        , stockunit = dbo.GetStockUnitBySPSeq (p.ID, p.seq1, p.seq2)
+from dbo.Po_Supp_Detail p WITH (NOLOCK) 
+where p.ID ='{0}'", CurrentDetailData["poid"].ToString());
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
