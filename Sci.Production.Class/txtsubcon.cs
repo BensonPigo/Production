@@ -59,7 +59,8 @@ namespace Sci.Production.Class
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
            // base.OnValidating(e);
-            string textValue = this.textBox1.Text;
+            string textValue = this.textBox1.Text.Trim();
+            if (textValue == "") { this.textBox1.Text = ""; this.displayBox1.Text = ""; return; }
             if (!string.IsNullOrWhiteSpace(textValue) || textValue != this.textBox1.OldValue)
             {
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
@@ -67,7 +68,7 @@ namespace Sci.Production.Class
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Supplier: {0} > not found!!!", textValue));
                     return;
                 }
                 else
@@ -79,7 +80,7 @@ namespace Sci.Production.Class
                         {
                             this.textBox1.Text = "";
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
+                            MyUtility.Msg.WarningBox(string.Format("< Supplier: {0} > not found!!!", textValue));
                             return;
                         }
                     }
@@ -91,7 +92,8 @@ namespace Sci.Production.Class
         
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-           
+            string textValue = this.textBox1.Text.Trim();
+            if (textValue == "") { this.textBox1.Text = ""; this.displayBox1.Text = ""; return; }
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
             if (myForm.EditMode == false)
             {
@@ -99,7 +101,7 @@ namespace Sci.Production.Class
             }
             if (!this.IsIncludeJunk)
             {
-                string textValue = this.textBox1.Text;
+                textValue = this.textBox1.Text;
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
                 if (lookupresult == "True")
