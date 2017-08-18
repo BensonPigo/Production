@@ -202,7 +202,7 @@
             this.btnEmptyNLCodetoExcel.Name = "btnEmptyNLCodetoExcel";
             this.btnEmptyNLCodetoExcel.Size = new System.Drawing.Size(195, 30);
             this.btnEmptyNLCodetoExcel.TabIndex = 7;
-            this.btnEmptyNLCodetoExcel.Text = "Empty NL Code (to Excel)";
+            this.btnEmptyNLCodetoExcel.Text = "Empty Customs Code (to Excel)";
             this.btnEmptyNLCodetoExcel.UseVisualStyleBackColor = true;
             this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.btnEmptyNLCodetoExcel_Click);
             // 

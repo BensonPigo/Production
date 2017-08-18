@@ -31,7 +31,7 @@ namespace Sci.Production.Shipping
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Waste", header: "Waste", decimal_places: 3)
@@ -147,7 +147,7 @@ namespace Sci.Production.Shipping
             {
                 if (dr.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(dr["WrongUnit"]) == "1")
                 {
-                    wrongUnit.Append(string.Format("NL Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
+                    wrongUnit.Append(string.Format("Customs Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
                 }
             }
             if (!MyUtility.Check.Empty(wrongUnit.ToString()))

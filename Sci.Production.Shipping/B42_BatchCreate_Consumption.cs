@@ -73,7 +73,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "NL Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
+                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "Customs Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
 
@@ -103,7 +103,7 @@ namespace Sci.Production.Shipping
                             dr["Unit"] = "";
                             dr["Waste"] = 0;
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
                             return;
                         }
                         else
@@ -135,7 +135,7 @@ namespace Sci.Production.Shipping
                     DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(dr["UserCreate"]) == "1")
                     {
-                        MyUtility.Msg.InfoBox("This NL Code is not create by the system, so no more detail can be show.");
+                        MyUtility.Msg.InfoBox("This Customs Code is not create by the system, so no more detail can be show.");
                     }
                     else
                     {
@@ -205,7 +205,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"]));
 
             this.gridConsumption.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridConsumption)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(8), settings: nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), settings: nlcode)
                 .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(7), settings: qty)
                 .Numeric("Waste", header: "Waste", decimal_places: 3, width: Widths.AnsiChars(5), iseditingreadonly: true);
@@ -265,7 +265,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"]));
             if (DuplicateData != null && DuplicateData.Rows.Count > 0)
             {
                 StringBuilder duplicateNLCode = new StringBuilder();
-                duplicateNLCode.Append("Below NL Code was duplicate, Pls check!!\r\n");
+                duplicateNLCode.Append("Below Customs Code was duplicate, Pls check!!\r\n");
                 foreach (DataRow dr in DuplicateData.Rows)
                 {
                     duplicateNLCode.Append(string.Format("{0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));

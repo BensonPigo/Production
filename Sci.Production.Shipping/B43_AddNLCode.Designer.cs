@@ -188,7 +188,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "B43_AddNLCode";
-            this.Text = "Add New NL Code";
+            this.Text = "Add New Customs Code";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAddNewNLCode)).EndInit();

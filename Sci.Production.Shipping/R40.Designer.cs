@@ -78,7 +78,7 @@
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(93, 23);
             this.labelNLCode.TabIndex = 96;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelSPNoStartFrom
             // 

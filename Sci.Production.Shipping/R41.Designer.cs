@@ -66,7 +66,7 @@
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(80, 23);
             this.labelNLCode.TabIndex = 95;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelType
             // 
@@ -137,7 +137,7 @@
             this.Controls.Add(this.labelDate);
             this.IsSupportToPrint = false;
             this.Name = "R41";
-            this.Text = "R41. NL Code Import/Export/Adjust detail list";
+            this.Text = "R41. Customs Code Import/Export/Adjust detail list";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

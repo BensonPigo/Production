@@ -95,37 +95,33 @@
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Lines = 0;
             this.labelNLCode.Location = new System.Drawing.Point(43, 18);
             this.labelNLCode.Name = "labelNLCode";
-            this.labelNLCode.Size = new System.Drawing.Size(61, 23);
+            this.labelNLCode.Size = new System.Drawing.Size(99, 23);
             this.labelNLCode.TabIndex = 2;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelHSCode
             // 
-            this.labelHSCode.Lines = 0;
             this.labelHSCode.Location = new System.Drawing.Point(43, 56);
             this.labelHSCode.Name = "labelHSCode";
-            this.labelHSCode.Size = new System.Drawing.Size(61, 23);
+            this.labelHSCode.Size = new System.Drawing.Size(99, 23);
             this.labelHSCode.TabIndex = 3;
             this.labelHSCode.Text = "HS Code";
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(43, 95);
             this.labelUnit.Name = "labelUnit";
-            this.labelUnit.Size = new System.Drawing.Size(61, 23);
+            this.labelUnit.Size = new System.Drawing.Size(99, 23);
             this.labelUnit.TabIndex = 4;
             this.labelUnit.Text = "Unit";
             // 
             // labelQty
             // 
-            this.labelQty.Lines = 0;
             this.labelQty.Location = new System.Drawing.Point(43, 132);
             this.labelQty.Name = "labelQty";
-            this.labelQty.Size = new System.Drawing.Size(61, 23);
+            this.labelQty.Size = new System.Drawing.Size(99, 23);
             this.labelQty.TabIndex = 5;
             this.labelQty.Text = "Q\'ty";
             // 
@@ -134,7 +130,7 @@
             this.txtNLCode.BackColor = System.Drawing.Color.White;
             this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(108, 18);
+            this.txtNLCode.Location = new System.Drawing.Point(145, 18);
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(60, 23);
             this.txtNLCode.TabIndex = 0;
@@ -146,7 +142,7 @@
             this.displayHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
             this.displayHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayHSCode.Location = new System.Drawing.Point(108, 56);
+            this.displayHSCode.Location = new System.Drawing.Point(145, 56);
             this.displayHSCode.Name = "displayHSCode";
             this.displayHSCode.Size = new System.Drawing.Size(110, 23);
             this.displayHSCode.TabIndex = 5;
@@ -156,7 +152,7 @@
             this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UnitID", true));
             this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayUnit.Location = new System.Drawing.Point(108, 95);
+            this.displayUnit.Location = new System.Drawing.Point(145, 95);
             this.displayUnit.Name = "displayUnit";
             this.displayUnit.Size = new System.Drawing.Size(80, 23);
             this.displayUnit.TabIndex = 6;
@@ -167,7 +163,7 @@
             this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.numQty.DecimalPlaces = 3;
             this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQty.Location = new System.Drawing.Point(108, 132);
+            this.numQty.Location = new System.Drawing.Point(145, 132);
             this.numQty.Name = "numQty";
             this.numQty.NullValue = new decimal(new int[] {
             0,
@@ -187,7 +183,7 @@
             this.radioPanel1.Controls.Add(this.radioCalculate);
             this.radioPanel1.Controls.Add(this.radioFixedQty);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Type", true));
-            this.radioPanel1.Location = new System.Drawing.Point(193, 129);
+            this.radioPanel1.Location = new System.Drawing.Point(230, 129);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(217, 57);
             this.radioPanel1.TabIndex = 8;
