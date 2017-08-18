@@ -31,9 +31,12 @@ namespace Sci.Production.Quality
 
         private void GenComboBox()
         {
-            //this.comboShift.Type = "shift";
-            //this.comboTeam.Type = "Team";
-            MyUtility.Tool.SetupCombox(comboTeam, 1, 1, "A,B");
+            Dictionary<string, string> dicComboBox = new Dictionary<string, string>();
+            dicComboBox.Add("A", "A");
+            dicComboBox.Add("B", "B");
+            this.comboTeam.DataSource = new BindingSource(dicComboBox, null);
+            this.comboTeam.ValueMember = "key";
+            this.comboTeam.DisplayMember = "value";
         }
 
         // 新增時預設資料
@@ -44,12 +47,26 @@ namespace Sci.Production.Quality
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
+            displayCell.Text = "";
         }
 
         private void txtSP_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtSP.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtSP.OldValue)
+
+            if (string.IsNullOrWhiteSpace(textValue))
+            {
+                CurrentMaintain["sewinglineid"] = "";
+                CurrentMaintain["OrderID"] = "";
+                displayStyle.Text = "";
+                displayDestination.Text = "";
+                this.displayCell.Text = "";
+                this.txtCPU.Text = "0";
+                this.txtSP.Focus();
+                return;
+            }
+
+            if (textValue != this.txtSP.OldValue)
             {
                 DataTable dt; 
                 DualResult result;
@@ -80,12 +97,15 @@ namespace Sci.Production.Quality
                         }
                         CurrentMaintain["sewinglineid"]="";
                         CurrentMaintain["OrderID"] = textValue;
+                        displayStyle.Text = "";
+                        displayDestination.Text = "";   
                         this.displayCell.Text = "";
+                        this.txtCPU.Text = "0";
                         this.txtLine.Focus();
                     }
                     else
                     {
-                            displayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                        displayStyle.Text = dt.Rows[0]["styleid"].ToString();
                         displayDestination.Text = MyUtility.Check.Empty(dt.Rows[0]["dest"].ToString()) ? "" : dt.Rows[0]["dest"].ToString() + " - " + MyUtility.GetValue.Lookup("NameEN", dt.Rows[0]["dest"].ToString(), "dbo.Country", "ID");
                         txtCPU.Text = dt.Rows[0]["cpu"].ToString();
                     }
@@ -95,7 +115,7 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("Error:"+ result);
                 }
             }
-            }
+        }
 
         //refresh
         protected override void OnDetailEntered()
@@ -480,7 +500,6 @@ where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID='{2}'", this.t
             return base.ClickEditBefore();
         }
     
-
         protected override bool ClickNew()
         {
             
@@ -490,6 +509,6 @@ where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID='{2}'", this.t
             this.txtCPU.Text = "0";
             this.isNew = true;
             return base.ClickNew();
-        }
+        }        
     }
 }
