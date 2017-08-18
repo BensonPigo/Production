@@ -206,9 +206,9 @@ where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["P
                     return;
                 }
             }
-                //系統會自動有回傳值
-                DialogResult = System.Windows.Forms.DialogResult.OK;
-            }
+            //系統會自動有回傳值
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
 
         //Import From Barcode
         private void btnImportFromBarcode_Click(object sender, EventArgs e)
