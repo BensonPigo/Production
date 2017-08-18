@@ -361,7 +361,7 @@ where a.Selected = 1", out selectData);
                     return;
                 }
             }
-            Find();
+            listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
         }
 
         //Close/Cancel
