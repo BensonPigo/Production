@@ -149,8 +149,8 @@ namespace Sci.Production.Subcon
                  .Numeric("Stitch", header: "Stitch", iseditable: true)    //4
                  .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //7
-                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2) //8
+                .Numeric("UnitPrice", header: "Unit Price", iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //7
+                .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true, integer_places: 2) //8
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //9
                 .Numeric("poqty", header: "PO Qty", iseditingreadonly: true)
                 .Numeric("farmin", header: "Farm In", iseditingreadonly: true)
