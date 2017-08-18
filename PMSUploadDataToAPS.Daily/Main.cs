@@ -140,7 +140,7 @@ namespace PMSUploadDataToAPS.Daily
 
             #region 完成後發送Mail
             #region 組合 Desc
-            desc = "UPDATE usp_PMSUploadDataToAPS";
+            desc = "UPDATE usp_PMSUploadDataToAPS"+ Environment.NewLine ;
             desc += "Dear All:" + Environment.NewLine + Environment.NewLine +
                    "             (**Please don't reply this mail. **)" + Environment.NewLine + Environment.NewLine +
                    "PMS system already uploaded data to APS." + Environment.NewLine +
