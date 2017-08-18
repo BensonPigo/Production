@@ -100,11 +100,20 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             //Arrive Port Date 不可晚於 Arrive W/H Date
-            if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]) && Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
+            if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
             {
-                MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
-                return false;
+                if (!(MyUtility.Convert.GetString(CurrentMaintain["ExportCountry"]) 
+                    == MyUtility.Convert.GetString(CurrentMaintain["ImportCountry"]) 
+                    && MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]) == "TRUCK"))
+                {
+                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
+                    {
+                        MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
+                        return false;
+                    }
+                }
             }
+            
 
             //ETA <= Arrive Port Date <= ETA+10
             if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["Eta"]))
