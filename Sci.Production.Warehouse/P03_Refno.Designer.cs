@@ -33,6 +33,8 @@
             this.gridRefNo = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.cmbFactory = new Sci.Win.UI.ComboBox();
+            this.lbfactory = new Sci.Win.UI.Label();
             this.comboSize = new Sci.Win.UI.ComboBox();
             this.labelSize = new Sci.Win.UI.Label();
             this.comboColor = new Sci.Win.UI.ComboBox();
@@ -42,8 +44,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.cmbFactory = new Sci.Win.UI.ComboBox();
-            this.lbfactory = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridRefNo)).BeginInit();
             this.panel2.SuspendLayout();
@@ -109,6 +109,26 @@
             this.panel3.Size = new System.Drawing.Size(545, 34);
             this.panel3.TabIndex = 4;
             // 
+            // cmbFactory
+            // 
+            this.cmbFactory.BackColor = System.Drawing.Color.White;
+            this.cmbFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbFactory.FormattingEnabled = true;
+            this.cmbFactory.IsSupportUnselect = true;
+            this.cmbFactory.Location = new System.Drawing.Point(67, 6);
+            this.cmbFactory.Name = "cmbFactory";
+            this.cmbFactory.Size = new System.Drawing.Size(121, 24);
+            this.cmbFactory.TabIndex = 10;
+            this.cmbFactory.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
+            // 
+            // lbfactory
+            // 
+            this.lbfactory.Location = new System.Drawing.Point(9, 6);
+            this.lbfactory.Name = "lbfactory";
+            this.lbfactory.Size = new System.Drawing.Size(55, 23);
+            this.lbfactory.TabIndex = 9;
+            this.lbfactory.Text = "Factory";
+            // 
             // comboSize
             // 
             this.comboSize.BackColor = System.Drawing.Color.White;
@@ -119,7 +139,7 @@
             this.comboSize.Name = "comboSize";
             this.comboSize.Size = new System.Drawing.Size(121, 24);
             this.comboSize.TabIndex = 8;
-            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.comboSize_SelectedIndexChanged);
+            this.comboSize.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
             // 
             // labelSize
             // 
@@ -139,7 +159,7 @@
             this.comboColor.Name = "comboColor";
             this.comboColor.Size = new System.Drawing.Size(121, 24);
             this.comboColor.TabIndex = 6;
-            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.comboColor_SelectedIndexChanged);
+            this.comboColor.SelectedIndexChanged += new System.EventHandler(this.combo_SelectedIndexChanged);
             // 
             // labelColor
             // 
@@ -180,26 +200,6 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // cmbFactory
-            // 
-            this.cmbFactory.BackColor = System.Drawing.Color.White;
-            this.cmbFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbFactory.FormattingEnabled = true;
-            this.cmbFactory.IsSupportUnselect = true;
-            this.cmbFactory.Location = new System.Drawing.Point(67, 6);
-            this.cmbFactory.Name = "cmbFactory";
-            this.cmbFactory.Size = new System.Drawing.Size(121, 24);
-            this.cmbFactory.TabIndex = 10;
-            this.cmbFactory.SelectedIndexChanged += new System.EventHandler(this.cmbFactory_SelectedIndexChanged);
-            // 
-            // lbfactory
-            // 
-            this.lbfactory.Location = new System.Drawing.Point(9, 6);
-            this.lbfactory.Name = "lbfactory";
-            this.lbfactory.Size = new System.Drawing.Size(55, 23);
-            this.lbfactory.TabIndex = 9;
-            this.lbfactory.Text = "Factory";
             // 
             // P03_Refno
             // 
