@@ -32,7 +32,7 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(CurrentMaintain["NLCode"]))
             {
-                MyUtility.Msg.WarningBox("NL Code can't empty!!");
+                MyUtility.Msg.WarningBox("Customs Code can't empty!!");
                 return false;
             }
 
@@ -51,7 +51,7 @@ namespace Sci.Production.Shipping
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSCode, Unit");
+order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "Customs Code, HSCode, Unit");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -90,7 +90,7 @@ and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                         CurrentMaintain["HSCode"] = "";
                         CurrentMaintain["UnitID"] = "";
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
+                        MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
                         return;
                     }
                 }

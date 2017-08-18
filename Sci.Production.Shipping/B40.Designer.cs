@@ -201,7 +201,7 @@
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(90, 23);
             this.labelNLCode.TabIndex = 11;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelHSCode
             // 
@@ -532,7 +532,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B40";
-            this.Text = "B40. NL Code - Fabric/Accessory";
+            this.Text = "B40. Customs Code - Fabric/Accessory";
             this.UniqueExpress = "SCIRefno";
             this.WorkAlias = "Fabric";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

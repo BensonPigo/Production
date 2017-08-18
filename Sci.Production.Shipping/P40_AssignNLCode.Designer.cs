@@ -126,7 +126,7 @@
             this.btnSaveNLCode.Name = "btnSaveNLCode";
             this.btnSaveNLCode.Size = new System.Drawing.Size(216, 30);
             this.btnSaveNLCode.TabIndex = 0;
-            this.btnSaveNLCode.Text = "Save NL Code && Re-Calculate";
+            this.btnSaveNLCode.Text = "Save Customs Code && Re-Calculate";
             this.btnSaveNLCode.UseVisualStyleBackColor = true;
             this.btnSaveNLCode.Click += new System.EventHandler(this.btnSaveNLCode_Click);
             // 
@@ -357,7 +357,7 @@
             this.labelBelowDataIsnoNLCode.Name = "labelBelowDataIsnoNLCode";
             this.labelBelowDataIsnoNLCode.Size = new System.Drawing.Size(248, 23);
             this.labelBelowDataIsnoNLCode.TabIndex = 0;
-            this.labelBelowDataIsnoNLCode.Text = "Below data is no NL Code in B40, B41:";
+            this.labelBelowDataIsnoNLCode.Text = "Below data is no Customs Code in B40, B41:";
             this.labelBelowDataIsnoNLCode.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelBelowDataIsnoNLCode.TextStyle.Color = System.Drawing.Color.Black;
             this.labelBelowDataIsnoNLCode.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
@@ -373,7 +373,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "P40_AssignNLCode";
-            this.Text = "Assign NL Code";
+            this.Text = "Assign Customs Code";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel7.ResumeLayout(false);

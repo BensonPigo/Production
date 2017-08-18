@@ -571,7 +571,7 @@ and t.SizeCode = x.SizeCode and t.Category = x.Category
                 newrow["Qty"] = dr["GMTQty"];
                 newrow["StyleUKey"] = dr["StyleUKey"];
                 newrow["CPU"] = dr["StyleCPU"];
-                newrow["Consumption"] = (MyUtility.Check.Empty(lackNLCode) ? "" : ("Lacking NL Code:" + lackNLCode.Substring(0, lackNLCode.Length - 1) + ". ")) + (findData.Length > 0 ? "Appear empty NL Code." : "");
+                newrow["Consumption"] = (MyUtility.Check.Empty(lackNLCode) ? "" : ("Lacking Customs Code:" + lackNLCode.Substring(0, lackNLCode.Length - 1) + ". ")) + (findData.Length > 0 ? "Appear empty Customs Code." : "");
 
                 gridData.Rows.Add(newrow);
             }
@@ -843,7 +843,7 @@ Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(s
             }
             catch (Exception ex)
             {
-                MyUtility.Msg.ErrorBox("Query empty NL Code data fail!!\r\n" + ex.ToString());
+                MyUtility.Msg.ErrorBox("Query empty Customs Code data fail!!\r\n" + ex.ToString());
                 return;
             }
 

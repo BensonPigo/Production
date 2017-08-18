@@ -70,7 +70,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                                     dr["Qty"] = 0;
                                     dr["UnitID"] = "";
                                     e.Cancel = true;
-                                    MyUtility.Msg.WarningBox("NL Code not found!!");
+                                    MyUtility.Msg.WarningBox("Customs Code not found!!");
                                     return;
                                 }
                                 else
@@ -95,7 +95,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7),settings:nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }
@@ -249,7 +249,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                     MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))), out seekData))
                 {
-                    errNLCode.Append(string.Format("NL Code: {0}\r\n",MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));
+                    errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));
                     continue;
                 }
                 else
@@ -269,7 +269,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             this.HideWaitMessage();
             if (!MyUtility.Check.Empty(errNLCode.ToString()))
             {
-                MyUtility.Msg.WarningBox(string.Format("Below NL Code is not in B43. Customs Contract - Contract No.: {0}\r\n{1}", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), errNLCode.ToString()));
+                MyUtility.Msg.WarningBox(string.Format("Below Customs Code is not in B43. Customs Contract - Contract No.: {0}\r\n{1}", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), errNLCode.ToString()));
             }
             MyUtility.Msg.InfoBox("Import Complete!!");
         }

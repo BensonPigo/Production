@@ -50,7 +50,7 @@ namespace Sci.Production.Shipping
                             dr["HSCode"] = "";
                             dr["CustomsUnit"] = "";
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
                             return;
                         }
                     }
@@ -77,7 +77,7 @@ namespace Sci.Production.Shipping
                             dr["HSCode"] = "";
                             dr["CustomsUnit"] = "";
                             e.Cancel = true;
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
                             return;
                         }
                     }
@@ -91,7 +91,7 @@ namespace Sci.Production.Shipping
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(8), settings: nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), settings: nlcode)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CustomsUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PcsWidth", header: "Width/Pcs(M)", decimal_places: 3)
@@ -112,7 +112,7 @@ namespace Sci.Production.Shipping
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(8), settings: nlcode2)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), settings: nlcode2)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CustomsUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("PcsWidth", header: "Width/Pcs(M)", decimal_places: 3)
@@ -146,13 +146,13 @@ namespace Sci.Production.Shipping
             DataRow[] dataCheck = noNLCode.Select("NLCode = ''");
             if (dataCheck.Length < 0)
             {
-                MyUtility.Msg.WarningBox("NL Code can't empty!!");
+                MyUtility.Msg.WarningBox("Customs Code can't empty!!");
                 return;
             }
             dataCheck = notInPo.Select("NLCode = ''");
             if (dataCheck.Length < 0)
             {
-                MyUtility.Msg.WarningBox("NL Code can't empty!!");
+                MyUtility.Msg.WarningBox("Customs Code can't empty!!");
                 return;
             }
 
