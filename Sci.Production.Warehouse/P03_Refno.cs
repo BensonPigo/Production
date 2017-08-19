@@ -34,9 +34,10 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             string selectCommand1
                 = string.Format(@"
-Select  b.id
+Select  a.FtyGroup
+        ,b.id
         , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
-        , b.colorid
+        , colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
         , b.sizespec
         , c.suppid
         , a.sewinline
@@ -64,29 +65,90 @@ order by ColorID, SizeSpec ,SewinLine
                 listControlBindingSource1.DataSource = selectDataTable1;
             }
 
-            //分別加入comboboxitem
-            comboColor.Items.Clear();
-            comboSize.Items.Clear();
+            ////分別加入comboboxitem
+            //cmbFactory.Items.Clear();
+            //comboSize.Items.Clear();
 
-            List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
-            List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            //List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["FtyGroup"].ToString()).Distinct().OrderBy(o => o[0]).ToList();
+            //List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
 
-            dts2.Insert(0, "All");
-            dts3.Insert(0, "All");
-           
-            if (!dts2.Empty())
-            {
-                comboColor.DataSource = dts2;
-            }
-            if (!dts2.Empty())
-            {
-                comboSize.DataSource = dts3;
-            }
+            //dts2.Insert(0, "");
+            //dts2.Insert(0, "All");
+            //dts3.Insert(0, "All");
+
+            //if (!dts2.Empty()) cmbFactory.DataSource = dts2;
+
+            //if (!dts2.Empty()) comboSize.DataSource = dts3;
+
+            string sizespeccmd = string.Format(@"
+select sizespec = 'All' 
+union all 
+select sizespec
+from
+(
+    select sizespec = ''
+    union 
+    Select distinct b.sizespec
+    from orders a WITH (NOLOCK) 
+    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+    where   b.scirefno = '{0}'and a.WhseClose is null
+)xx
+", dr["scirefno"].ToString());
+            DataTable dtsizespec;
+            DualResult selectResult4 = DBProxy.Current.Select(null, sizespeccmd, out dtsizespec);
+            if (!selectResult4) { ShowErr(sizespeccmd, selectResult4); return; }
+            MyUtility.Tool.SetupCombox(comboSize, 1, dtsizespec);
+
+            string factorycmd = string.Format(@"
+select FtyGroup = 'All' 
+union all
+select FtyGroup
+from
+(
+    select FtyGroup = ''
+    union 
+    Select distinct a.FtyGroup
+    from orders a WITH (NOLOCK) 
+    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+    where   b.scirefno = '{0}'and a.WhseClose is null
+)xx
+", dr["scirefno"].ToString());
+            DataTable dtfactory;
+            DualResult selectResult3 = DBProxy.Current.Select(null, factorycmd, out dtfactory);
+            if (!selectResult3) { ShowErr(factorycmd, selectResult3); return; }
+            MyUtility.Tool.SetupCombox(cmbFactory, 1, dtfactory);
+
+            string coloridcmd = string.Format(@"
+select colorid = 'All' 
+union all
+select colorid
+from
+(
+    select colorid = ''
+    union 
+    Select distinct colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
+    from orders a WITH (NOLOCK) 
+    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+    where   b.scirefno = '{0}'and a.WhseClose is null
+)xx
+", dr["scirefno"].ToString());
+            DataTable dtcolorid;
+            DualResult selectResult2 = DBProxy.Current.Select(null, coloridcmd, out dtcolorid);
+            if (!selectResult2) { ShowErr(coloridcmd, selectResult2); return; }
+            MyUtility.Tool.SetupCombox(comboColor, 1, dtcolorid);
+            
             //設定Grid1的顯示欄位
             MyUtility.Tool.AddMenuToPopupGridFilter(this, this.gridRefNo, null, "factoryid,colorid,sizespec");
             this.gridRefNo.IsEditingReadOnly = true;
             this.gridRefNo.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridRefNo)
+                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(13))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
@@ -111,7 +173,7 @@ order by ColorID, SizeSpec ,SewinLine
             this.ShowWaitMessage("Excel Processing...");
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dt.DefaultView.ToTable(), "", "Warehouse_P03_Refno.xltx", 4, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
 select NameEN
@@ -122,79 +184,18 @@ where id = '{0}'", Sci.Env.User.Keyword));
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);
         }
-
-        private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
+        
+        private void combo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboColor.SelectedValue == null) return;
-            if (comboColor.SelectedValue.ToString() == comboColorvalue || comboColor.SelectedValue.ToString() == null) return;
-            comboColorvalue = comboColor.SelectedValue.ToString();
-            Filter();
-        }
-
-        private void comboSize_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboSize.SelectedValue == null) return;
-            if (comboSize.SelectedValue.ToString() == comboSizevalue || comboSize.SelectedValue.ToString() == null) return;
-            comboSizevalue = comboSize.SelectedValue.ToString();
-            Filter();
-        }
-
-        protected void Filter()
-        {
-            DataTable ntb=null;
-            //string s1 = comboM.Text, s2 = comboColor.Text, s3 = comboSize.Text;
-            //第一趟進來combobox都還未加入item都是""字串
-            if (comboColorvalue != "" || comboSizevalue != "")
-            {
-                IEnumerable<DataRow> query =
-                    from o in selectDataTable1.AsEnumerable()
-                    where
-                    (comboColorvalue != "All" ? o.Field<String>("colorid") == comboColorvalue : 1 == 1) &&
-                    (comboSizevalue != "All" ? o.Field<String>("sizespec") == comboSizevalue : 1 == 1)
-                    select o;
-
-                int FilterCount = query.ToList<DataRow>().Count;
-                if (FilterCount > 0)  ntb = query.CopyToDataTable<DataRow>();
-                listControlBindingSource1.DataSource = ntb;
-
-            }
-            else
-            {
-                listControlBindingSource1.DataSource = selectDataTable1;
-            }
-
-            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
-            //comboM.DataSource = null;
-            //comboM.Items.Clear();
-            comboColor.DataSource = null;
-            comboColor.Items.Clear();
-            comboSize.DataSource = null;
-            comboSize.Items.Clear();
- 
-            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
-            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-
-
-            if (!dts2.Empty())
-            {
-                dts2.Insert(0, "All");
-                if (comboColorvalue != "All")
-                {
-                    dts2.Remove(comboColorvalue);
-                    dts2.Insert(0, comboColorvalue);
-                }
-                comboColor.DataSource = dts2;
-            }
-            if (!dts3.Empty())
-            {
-                dts3.Insert(0, "All");
-                if (comboSizevalue != "All")
-                {
-                    dts3.Remove(comboSizevalue);
-                    dts3.Insert(0, comboSizevalue);
-                }
-                comboSize.DataSource = dts3;
-            }
+            if (cmbFactory.SelectedValue == null || comboSize.SelectedValue == null || comboColor.SelectedValue == null) return;
+            string cmbFactoryvalue = cmbFactory.SelectedValue.ToString();
+            string comboSizevalue = comboSize.SelectedValue.ToString();
+            string comboColorvalue = comboColor.SelectedValue.ToString();
+            string filter = string.Format(@"
+(FtyGroup = '{0}' or 'All'='{0}')
+and (sizespec = '{1}' or 'All'='{1}')
+and (colorid = '{2}' or 'All'='{2}')", cmbFactoryvalue, comboSizevalue, comboColorvalue);
+            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
         }
     }
 }

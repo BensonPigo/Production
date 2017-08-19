@@ -953,7 +953,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             worksheet.Cells[titleSciDeliveryRow, titleSciDeliveryColumn] = strSciDelivery;
             worksheet.Cells[titleInvoiceRow, titleInvoiceColumn] = MyUtility.Convert.GetString(PLdr["INVNo"]);
             worksheet.Cells[titleCustCDRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
-            worksheet.Cells[titleShipModeRow, titleCustCDColumn] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
+            worksheet.Cells[titleShipModeRow, titleShipModeColumn] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
             worksheet.Cells[titleInClogRow, titleInClogColumn] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
             worksheet.Cells[titleDestinationRow, titleDestinationColumn] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
             worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
@@ -1061,7 +1061,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             for (int i = 1; i <= cdsi; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[bodyRowIndex, System.Type.Missing];
-                rangeRowCD.RowHeight = 16.5 * (i + 1);
+                rangeRowCD.RowHeight = 19.5 * (i + 1);
 
             }
             worksheet.Cells[bodyRowIndex, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
@@ -1469,8 +1469,6 @@ where   p.ID = '{0}'
             worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PacklistData["Remark"]);
             //填Special Instruction
             //先取得Special Instruction總共有幾行
-            int startIndex = 0;
-            int endIndex = 0;
             int dataRow = 0;
 
             string tmp = MyUtility.Convert.GetString(SpecialInstruction);
@@ -1490,23 +1488,31 @@ where   p.ID = '{0}'
                 }
                 ctmpc += 1;
             }
+            #region 舊寫法SpecialInstruction 有幾行資料,就多加幾行空白
+            /*
+             *原本寫法是SpecialInstruction 有幾行資料,就多加幾行空白
+             */
+            //for (int i = 1; ; i++)
+            //{
+            //    if (i > 1)
+            //    {
+            //        startIndex = endIndex + 2;
+            //    }
+            //    if (SpecialInstruction.IndexOf("\r\n", startIndex) > 0)
+            //    {
+            //        endIndex = SpecialInstruction.IndexOf("\r\n", startIndex);
+            //    }
+            //    else
+            //    {
 
-            for (int i = 1; ; i++)
-            {
-                if (i > 1)
-                {
-                    startIndex = endIndex + 2;
-                }
-                if (SpecialInstruction.IndexOf("\r\n", startIndex) > 0)
-                {
-                    endIndex = SpecialInstruction.IndexOf("\r\n", startIndex);
-                }
-                else
-                {
-                    dataRow = i + 1 + ctmpc;
-                    break;
-                }
-            }
+            //        break;
+            //    }
+            //}
+            //
+            #endregion
+
+            //調整寫法, 只需要多加兩行空白即可
+            dataRow = 2 + ctmpc;
             excelRow++;
 
             if (dataRow > 2)
@@ -1515,10 +1521,11 @@ where   p.ID = '{0}'
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    rngToInsert.RowHeight = 19.5 ;
                 }
             }
             worksheet.Cells[excelRow, 3] = SpecialInstruction;
-
+            
             //Carton Dimension:
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
             
@@ -1554,7 +1561,7 @@ where   p.ID = '{0}'
             for (int i = 1; i <= cdsi; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
-                rangeRowCD.RowHeight = 16.5 * (i + 1);
+                rangeRowCD.RowHeight = 19.5 * (i + 1);
             }    
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 

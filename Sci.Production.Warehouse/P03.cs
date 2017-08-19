@@ -406,7 +406,7 @@ from(
                     , a.FabricType 
                     , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-                    , a.ColorID
+                    , ColorID = dbo.GetColorMultipleID(Orders.BrandID,a.ColorID) 
                     , a.SizeSpec
                     , ROUND(a.UsedQty, 4) unitqty
                     , Qty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.Qty, 0)), 2)
@@ -490,7 +490,7 @@ from(
                     , a.SCIRefno
                     , a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-                    , a.ColorID
+                    , ColorID = dbo.GetColorMultipleID(o.BrandID,a.ColorID) 
                     , a.SizeSpec
                     , ROUND(a.UsedQty, 4) unitqty
                     , Qty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(A.Qty, 0)), 2)
