@@ -231,7 +231,7 @@ set
 	,[MATERIALRECEIVEDDATE] = s.[sMATERIALRECEIVEDDATE]
 	,[PPRO] = s.[sPPRO]
 	,[PRGM] = s.[sPRGM]
-
+	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
 from #tmp2 s
 where 
 RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
@@ -262,12 +262,12 @@ insert into '+@SerDbDboTb+N'
 ([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CUSY],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
-,[PPRO],[PRGM])
+,[PPRO],[PRGM],UPDT)
 
 select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCUSY],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
-,[sPPRO],[sPRGM]
+,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
 from #tmp2
 where C is null
 
