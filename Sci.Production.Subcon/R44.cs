@@ -424,9 +424,6 @@ Else
 select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
 		, BCS = iif(BCS.value >= 100, 100, BCS.value)
 from #print p
-outer apply (
-	select value = ROUND(AccuLoad / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
-) BCS
 ---0006111以上全部都不動，直接組新的Table計算欄位(acc.QtyAll)Accu. Loading Qty of Garment
 ---再依[SP#]= p.SP and FactoryID = p.FactoryID做outer apply
 outer apply(
@@ -477,6 +474,9 @@ outer apply(
 	where [SP#]= p.SP and FactoryID = p.FactoryID
 	group by FactoryID,[SP#],[Article]
 )acc 
+outer apply (
+	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
+) BCS
 where SewingDate between @StartDate and @EndDate
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
