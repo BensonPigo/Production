@@ -412,7 +412,6 @@ FROM Orders a WITH (NOLOCK)
 inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID
 inner join factory WITH (NOLOCK) on factory.id = a.factoryid
 where	a.Finished = 0 
-        and a.IsForecast=0
 		and a.Category !='M' 
 		and b.ArtworkTypeID = 'PRINTING' 
         and a.IsForecast=0
