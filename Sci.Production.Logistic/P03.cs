@@ -38,6 +38,7 @@ namespace Sci.Production.Logistic
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -96,6 +97,7 @@ select  ID
         , selected
         , ReceiveDate
         , PackingListID
+        , FtyGroup
         , OrderID
         , CTNStartNo
 	    , CustPONo
@@ -114,6 +116,7 @@ from (
             , 1 as selected
             , b.ReceiveDate
             , a.Id as PackingListID
+            , c.FtyGroup
             , a.OrderID
             , b.CTNStartNo
 	        , c.CustPONo
@@ -164,6 +167,10 @@ from (
             {
                 sqlCmd.Append(string.Format(@" 
             and b.ReceiveDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
+            }
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
+            {
+                sqlCmd.Append(string.Format(@" and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()));
             }
             sqlCmd.Append(@"
 ) a
