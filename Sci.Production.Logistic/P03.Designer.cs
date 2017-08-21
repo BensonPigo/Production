@@ -57,6 +57,8 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -222,6 +224,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtfactory);
+            this.panel3.Controls.Add(this.lbFactory);
             this.panel3.Controls.Add(this.dateTimePicker2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.dateTimePicker1);
@@ -333,6 +337,25 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(433, 46);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(52, 23);
+            this.lbFactory.TabIndex = 34;
+            this.lbFactory.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(488, 47);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 37;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(712, 512);
@@ -388,5 +411,7 @@
         private Win.UI.Label label1;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label2;
+        private Win.UI.Label lbFactory;
+        private Class.txtfactory txtfactory;
     }
 }
