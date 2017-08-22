@@ -807,6 +807,7 @@ where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToStrin
                 CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
+                detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
                 CalculateValue(0);
             }
         }
@@ -867,6 +868,7 @@ where td.ID = {0} and td.SMV > 0 order by td.Seq", timeStudy["ID"].ToString());
             CurrentMaintain["TotalCycle"] = sumSMV;
             CurrentMaintain["HighestGSD"] = maxSMV;
             CurrentMaintain["HighestCycle"] = maxSMV;
+            detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             CalculateValue(0);
         }
     }

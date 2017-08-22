@@ -881,6 +881,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             {
                 CurrentMaintain["IETMSID"] = ietmsData.Rows[0]["IETMSID"].ToString();
                 CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
+                detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
         }
 
