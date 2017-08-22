@@ -590,13 +590,13 @@ order by FactorySort
                 SaveXltReportCls.xltRptTable xdt_detail_All = new SaveXltReportCls.xltRptTable(dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
                 xl.dicDatas.Add("##R21UNRLDETAIL", xdt_detail_All);
-                xl.Save();
+                xl.Save(new Sci.Production.Class.GetExcelName().GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
             }
             else
             {
-                Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
-                xl.Save();
+                Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;                
                 excel.Worksheets[2].Delete();
+                xl.Save(new Sci.Production.Class.GetExcelName().GetName("Centralized_R12_Transportation_Cost_Sister_Factory_Transfer"));
             }
 
             #endregion

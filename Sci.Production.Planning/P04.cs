@@ -157,13 +157,37 @@ namespace Sci.Production.Planning
                     MyUtility.Msg.WarningBox("Please select inhouse or osp first");
                     return;
                 }
+                sqlcmd = string.Format(@"
+SELECT QU.localsuppid as id, 
+       localsupp.abb as abb, 
+       QU.mockup 
+FROM   order_tmscost OT WITH (nolock) 
+       INNER JOIN orders WITH (nolock) 
+               ON OT.id = orders.id 
+       INNER JOIN style_artwork SA WITH (nolock) 
+               ON OT.artworktypeid = SA.artworktypeid 
+                  AND orders.styleukey = SA.styleukey 
+       LEFT JOIN style_artwork_quot QU WITH (nolock) 
+              ON QU.ukey = SA.ukey 
+       INNER JOIN localsupp WITH (nolock) 
+               ON localsupp.id = QU.localsuppid 
+WHERE  priceapv = 'Y' 
+       AND mockup IS NOT NULL 
+       AND OT.ID = '{0}'
+       AND OT.artworktypeid = '{1}' 
+GROUP  BY QU.localsuppid, 
+          localsupp.abb, 
+          QU.mockup 
+order by QU.localsuppid ", ddr["ID"].ToString().Trim(),comboArtworkType.Text);
+                /*Query 需排除預估的資料,所以不需要進行額外判斷
                 if (ddr["inhouseosp"].ToString() == "O")
                     sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
                     sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
+                 * */
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,15", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     IList<DataRow> x = item.GetSelecteds();
@@ -176,10 +200,34 @@ namespace Sci.Production.Planning
                 string Code = e.FormattedValue.ToString();//抓到當下的cell值
                 string sqlcmd = ""; DataTable dt;
                 DataRow ddr = gridFactoryID.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                sqlcmd = string.Format(@"
+SELECT QU.localsuppid as id, 
+       localsupp.abb as abb, 
+       QU.mockup 
+FROM   order_tmscost OT WITH (nolock) 
+       INNER JOIN orders WITH (nolock) 
+               ON OT.id = orders.id 
+       INNER JOIN style_artwork SA WITH (nolock) 
+               ON OT.artworktypeid = SA.artworktypeid 
+                  AND orders.styleukey = SA.styleukey 
+       LEFT JOIN style_artwork_quot QU WITH (nolock) 
+              ON QU.ukey = SA.ukey 
+       INNER JOIN localsupp WITH (nolock) 
+               ON localsupp.id = QU.localsuppid 
+WHERE  priceapv = 'Y' 
+       AND mockup IS NOT NULL 
+       AND OT.ID = '{0}'
+       AND OT.artworktypeid = '{1}' 
+GROUP  BY QU.localsuppid, 
+          localsupp.abb, 
+          QU.mockup 
+order by QU.localsuppid ", ddr["ID"].ToString().Trim(), comboArtworkType.Text);
+                /*Query 需排除預估的資料,所以不需要進行額外判斷
                 if (ddr["inhouseosp"].ToString() == "O")
                     sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
                     sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
+                 * */
                 Ict.DualResult result;
                 string dtid = ""; string dtabb = "";
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -419,6 +467,7 @@ inner join dbo.factory on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category != 'M' 
         and b.tms > 0  
+        and a.IsForecast=0
         and factory.mdivisionid = '{2}'" + orderby, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))

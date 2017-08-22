@@ -1762,10 +1762,254 @@
             <param name="data">destination datarow</param>
             <param name="new">source datarow</param>
         </member>
-        <member name="M:Sci.Utility.Excel.ExcelCOM.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="T:Sci.Utility.Report.XLSumLocation">
             <summary>
-            Edward : DataTable快速寫入WorkSheet
-                 create : 2016-04-21 12:20:00
+            Excel 範圍加總的位置 ( ExcelCom.AddSum 's position )
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Report.XLSumLocation.Down">
+            <summary>
+             下
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Report.XLSumLocation.Right">
+            <summary>
+            右
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Report.XLSumLocation.Left">
+            <summary>
+            左
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Report.XLSumLocation.Up">
+            <summary>
+            上
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.Excel_DefaultPath">
+            <summary>
+            設定預設路徑
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.ExcelApp">
+            <summary>
+            Excel 的 Application
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.SplitedSheets">
+            <summary>
+            for method of WriteTableSplit2Sheet , 將Split Column's value ToString()後存於Dictionary 的Key , 而Dictionary Value 是存Sheet Name
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.FillMappings">
+            <summary>
+            used in WriteFilling_PutValue(..)
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.AddHeader">
+            <summary>
+            是否WriteTable() 要加上標題列
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.TransferArray_Limit">
+            <summary>
+            WriteTable() 中每次轉 2維陣列的上限 ( 假設DataTable 有23,000筆 , 會分作 5次印在Excel上)
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.Debug">
+            <summary>
+            true 會讓WriteTable 的 TransferArray_Limit 變成 1 , 並附帶輔助Debug的作法
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.ConnectionName">
+            <summary>
+            WriteQuery中要使用的ConnectionName
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.Xlt">
+            <summary>
+            範本檔 FilePath , 指定範本檔會牽動 AddHeader 為 false
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.AutoClearDispose">
+            <summary>
+            呼叫 WriteQuery , WriteTable 的時候 , 會自動將DataTable Clear + Dispose , 藉以主動會收記憶體
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.FindMapping_KeyWord">
+            <summary>
+            used in WriteFilling_FindMappings()
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.ColumnsAutoFit">
+            <summary>
+            當呼叫到 WriteTable/ WriteHeader 時, 是否要讓各欄位自動調適欄寬
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.LeaveAliveAfterDispose">
+            <summary>
+            Dispose() 呼叫時 , 是否要將Excel Process Kill 掉
+            </summary>
+        </member>
+        <member name="F:Sci.Utility.Report.ExcelCOM.RealHeaderNames">
+            <summary>
+            使用Grid to Excel的時後, Grid 的Header Text是可以重複的 , 但是DataTable column 名稱無法重複
+            所以將 DataTable Column 重編後 , 放在此物件的 Key , 而Value是 Grid HeaderText
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.FileNamePrefix">
+            <summary>
+            存檔時, 若要自動編檔名, 可使用的檔名prefix
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.#ctor(System.String,Microsoft.Office.Interop.Excel.Application)">
+            <summary>
+            設定xlt 或沿用既有的 Application
+            </summary>
+            <param name="xlt"></param>
+            <param name="excelApp"></param>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.CreateApplication">
+            <summary>
+            開啟新的 Excel.Application ( new process )
+            </summary>
+            <returns>Excel.Application</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.InitApplication">
+            <summary>
+            Some initializations for Excel application
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.OpenXlt(System.String)">
+            <summary>
+            套用 Excel 範本檔
+            </summary>
+            <param name="xlt">要該啟的xlt檔</param>
+            <returns>判斷open xlt成功失敗的dualResult</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.OpenXls(System.String)">
+            <summary>
+            開啟 xls / xlsx 檔案
+            </summary>
+            <param name="xls">xls / xlsx 檔案</param>
+            <returns>判斷open xls成功失敗的dualResult</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.Save_n_Open(System.String)">
+            <summary>
+            存檔後, 關閉C#開的excel process, 再開啟Excel 檔 , 開啟方式是用 Windows open file 的方式 (不彈出訊息視窗顯示成功or失敗)
+            </summary>
+            <param name="fileName">Excel檔名路徑; 給null 的話會自動編檔名</param>
+            <returns>存檔成功或失敗</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.SaveOnly(System.String)">
+            <summary>
+            僅儲存Excel 檔 , 不再開啟之 (不彈出訊息視窗顯示成功or失敗)
+            </summary>
+            <param name="fileName">Excel檔名路徑; 給null 的話會自動編檔名</param>
+            <returns>存檔成功或失敗</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.RandomFileName">
+            <summary>
+            自動編檔名, 格式: ReportTemp Dir/{UserID}_yyMMdd_HHmmssff
+            </summary>
+            <returns>file name</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.Transfer_2_Array(System.Data.DataTable,System.Int32)">
+            <summary>
+            DataTable 轉 2維陣列
+            </summary>
+            <param name="data">資料源 </param>
+            <param name="offsetRows">指定要跳過幾列</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.Formating(System.Data.DataTable,System.Int32,System.Int32)">
+            <summary>
+            依 DataTable 的 DataColumn 型別指定儲存格格式 , string 則指定為文字 , DataTime則指定為 yyyy/MM/dd ; 
+            </summary>
+            <param name="data"></param>
+            <param name="firstRow">啟始列</param>
+            <param name="firstCol">啟始欄</param>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteHeader(System.Data.DataTable,System.Int32,System.Int32)">
+            <summary>
+            將 DataTable 的 DataColumns 作為標題列 印在 Sheet 上
+            </summary>
+            <param name="data"></param>
+            <param name="firstRow">啟始列</param>
+            <param name="firstCol">啟始欄</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteTable(System.Data.DataTable,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            將DataTable 印在 Sheet 上
+            </summary>
+            <param name="data"></param>
+            <param name="firstRow"></param>
+            <param name="firstCol"></param>
+            <param name="needHeader">是否要用DataTable的Colmns name來加印標題列</param>
+            <returns>代表貼上data 內容的動作是否成功</returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteQuery(System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.Int32,System.Int32,System.Int32,System.Data.SqlClient.SqlConnection)">
+            <summary>
+            <para>依 DataTable 的 DataColumn 型別指定儲存格格式 , string 則指定為文字 , DataTime則指定為 yyyy/MM/dd ; </para>
+            <para>內部判斷當有使用範本檔的狀況下, 就不套用上述指定法(this.Xlt != null ) </para>
+            </summary>
+            <param name="tsql"></param>
+            <param name="parameters"></param>
+            <param name="firstRow"></param>
+            <param name="firstCol"></param>
+            <param name="FetchCount">Sql分批select資料要每次多少筆為限, 預設int.MaxValue</param>
+            <param name="sqlConn"></param>
+            <returns>代表從Sql抓資料或是貼上data 內容的動作是否成功</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Sci.Utility.Report.ExcelCOM.WriteTableSplit2Sheet(System.Data.DataTable,System.String,System.Int32,System.Int32,System.Boolean)" -->
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteFilling">
+            <summary>
+            <para>1. 每個Sheet都呼叫一次 WriteFilling_FindMappings() 找尋需要被填的 Cell </para>
+            <para>   ( 預設當該Sheet 有 Cells string value start with "##" , the cell will be target to fill )</para>
+            <para>2. 從變數 FillMappings 中找尋到對應值後, 呼叫 WriteFilling_PutValue() 填入</para>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteFilling_FindMappings">
+            <summary>
+            <para>對ActiveSheet 找尋需要被填的 Cell , 將找到的</para>
+            <para>( 預設當該Sheet 有 Cells string value start with "##" , the cell will be target to fill )</para>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.AddSum(System.String,Sci.Utility.Report.XLSumLocation)">
+            <summary>
+            要做加總列的資料來源範圍
+            </summary>
+            <param name="Range">要做加總列的資料來源範圍</param>
+            <param name="Location">加總列的位置 ( 上/下/左/右 )</param>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.ReadAsTable(System.Object,System.String,System.Int32,System.Collections.Generic.Dictionary{System.String,System.Type})">
+            <summary>
+            將Sheet資料轉換為DataTable
+            </summary>
+            <param name="sheetNameOrIndex">預設 null , 代表 ActiveSheet </param>
+            <param name="filePath">預設 null , 代表 ActiveSheet ;  有給予FilePath 代表要重新讀取該Excel檔</param>
+            <param name="headerRow">標題列位置 , 預設 1</param>
+            <param name="columnTypes">依照標題列名稱, 指定該欄要轉換的 DataColumn 型別</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.Pivot(System.String,System.String,System.String,System.String,System.String,Microsoft.Office.Interop.Excel.XlConsolidationFunction)">
+            <summary>
+            指定Sheet資料作樞紐統計表
+            </summary>
+            <param name="sourceRange">樞紐資料來源的range, 針對active sheet, 給予 "A1:K50" (包含標題列) 或是給予 "sheet!A1:K50"</param>
+            <param name="rowHeaders">指定成為報表分析的縱向欄位Header內文, 例如 A1 內文是"ID",B1 內文"Name" , 則傳入"ID,Name" 即為指定A和B欄位樞紐的縱向欄</param>
+            <param name="columnHeaders">指定成為報表分析的橫向欄位Header內文, 例如 C1 內文是"Factory",D1 內文"Country" , 則傳入"Factory,Country" 即為指定C和D欄位樞紐的橫向欄</param>
+            <param name="valueField">指定成為報表分析的值欄位Header內文, 例如 E1 內文是"Qty" , 則傳入"Qty" 即為指定E欄位樞紐的計算值欄</param>
+            <param name="pageField">指定成為報表分析的分頁欄位Header內文, 例如 F1 內文是"SuppID" , 則傳入"SuppID" 即為指定F欄位作為分頁List</param>
+            <param name="function">預設為將ValueField 作加總分析</param>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            DataTable快速寫入WorkSheet
             </summary>
             <param name="dt">DataTable</param>
             <param name="sheet">WorkSheet</param>
@@ -1773,7 +2017,7 @@
             <param name="firstCol">開始欄、開始欄為1</param>
             <param name="AddHead">是否加入Table Header</param>
         </member>
-        <member name="M:Sci.Utility.Excel.ExcelCOM.WriteTable(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteTable(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
             <summary>
             將dataTable資料轉 , 填在 Excel 上
             </summary>
@@ -1786,7 +2030,7 @@
             <param name="AllowRangeTransferToString"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.Utility.Excel.ExcelCOM.WriteGrid(System.Windows.Forms.DataGridView,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.WriteGrid(System.Windows.Forms.DataGridView,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
             <summary>
             將Grid顯示資料轉為 dataTable, 填在 Excel 上
             </summary>
@@ -1799,7 +2043,7 @@
             <param name="AllowRangeTransferToString"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.Utility.Excel.ExcelCOM.ConvertGrid2Table(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@,System.Int32,System.Int32)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.ConvertGrid2Table(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@,System.Int32,System.Int32)">
             <summary>
             將Grid顯示資料轉為 DataTable , 並只取出顯示的Grid 欄位 , Table未顯示在Grid上的欄位不轉
             </summary>
@@ -1807,7 +2051,7 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.Utility.Excel.ExcelCOM.ConvertGrid2Table_byInnerTable(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@)">
+        <member name="M:Sci.Utility.Report.ExcelCOM.ConvertGrid2Table_byInnerTable(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@)">
             <summary>
             將Grid顯示資料轉為 DataTable , 並只取出顯示的Grid 欄位 , Table未顯示在Grid上的欄位不轉
             </summary>
@@ -1815,11 +2059,40 @@
             <param name="data"></param>
             <returns></returns>
         </member>
-        <member name="F:Sci.Utility.Excel.ExcelCOM.RealHeaderNames">
+        <member name="M:Sci.Utility.Report.ExcelCOM.Dispose">
             <summary>
-            使用Grid to Excel的時後, Grid 的Header Text是可以重複的 , 但是DataTable column 名稱無法重複
-            所以將 DataTable Column 重編後 , 放在此物件的 Key , 而Value是 Grid HeaderText
+            除物件本身dispose外 , 當 LeaveAliveAfterDispose == false 時, 自動將Excel Application Process 強制關閉
             </summary>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.KillExcelProcess(Microsoft.Office.Interop.Excel.Application,System.Boolean)">
+            <summary>
+            透過Excel.Application 關閉工作管理員畫面裡的Excel.exe
+            </summary>
+            <param name="excelApp"></param>
+            <param name="showError"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Report.ExcelCOM.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.Boolean)">
+            <summary>
+            將資料源 DataTable 產出成Excel , 並附帶自動調整欄寬
+            </summary>
+            <param name="data">資料源</param>
+            <param name="xltFile">
+            <para>指定的範本檔 , 可以不指定 </para>
+            <para>    有指定 : 完全依範本檔格式 , 程式內不再設定儲存格格式</para>
+            <para>    不指定 : 會將 string type 的column 在Excel 上設定為文字格式 , DateTime 則是 yyyy/MM/dd , 其餘為通用格式, 會使用DataTable 的Columns Name 作為標題列 </para>
+            </param>
+            <param name="fileName">
+            <para>產出的檔案路徑</para>
+            <para>      空白或Null  :  Excel 會自動編檔名 , 存檔在 temp 目錄底下</para>
+            </param>
+            <param name="headerRow">標題列位置 , 預設 1</param>
+            <param name="showExcel">
+            <para>產生Excel 檔案後是否顯示之 ( 使用Windows open file 方式顯示 , 而非 Excel.Application.Visible = true 控制 )</para>
+            <para>而不管是否顯示 , 都會先 Kill Excel Process 之後才視參數顯示檔案</para>
+            </param>
+            <param name="autoFit">是否自動調適欄寬</param>
+            <returns></returns>
         </member>
         <member name="T:Sci.Utils">
             <summary>
@@ -2009,14 +2282,21 @@
             On User changed event method.
             </summary>
         </member>
-        <member name="M:Sci.Env.cfg_LanguageChanged(System.Object,Sci.LanguageEventArgs)">
+        <member name="M:Sci.Env.Cfg_LanguageChanged(System.Object,Sci.LanguageEventArgs)">
             <summary>
             On Cfg language change event method.
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">LanguageEventArgs</param>
         </member>
-        <member name="F:Sci.Env.CurrentControl">
+        <member name="M:Sci.Env.App_Crashed(System.Object,Ict.Win.AppCrashedEventArgs)">
+            <summary>
+            整個App crash的時候, 彈出錯誤訊息在BufProc 畫面上
+            </summary>
+            <param name="sender"> sender </param>
+            <param name="e"> an instance contains exception, which make app crash.</param>
+        </member>
+        <member name="P:Sci.Env.CurrentControl">
             <summary>
             為觸發 Grid Cell Validating 而存的物件
             </summary>
@@ -2024,6 +2304,34 @@
         <member name="M:Sci.Env.GetControlForm(System.Object)">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:Sci.Env.ExcelApps">
+            <summary>
+            被納管的 Excel, 控制特定狀況是否要關閉
+            </summary>
+        </member>
+        <member name="M:Sci.Env.RegisterExcel(Microsoft.Office.Interop.Excel.Application)">
+            <summary>
+            to centralize control excel's application, kill their's processes once winform app is crashed.
+            </summary>
+            <param name="app"> Excel's application </param>
+        </member>
+        <member name="M:Sci.Env.ExcelProcess_Exited(System.Object,System.EventArgs)">
+            <summary>
+            由user close excel 觸發的excel 正常關閉, 就將該 excel app 移除納管
+            </summary>
+            <param name="sender"> excel's process</param>
+            <param name="e"> args </param>
+        </member>
+        <member name="M:Sci.Env.CloseHiddenExcels">
+            <summary>
+            當App Close (正常關閉), 如果有納管的Excel 是處於隱藏狀態, 應該要將其process 關閉
+            </summary>
+        </member>
+        <member name="M:Sci.Env.CloseAllExcel4Crash">
+            <summary>
+            當App crash, 所有的Excel 都會變成 user即使關閉excel , 其process 也無法跟著結束的狀態, 所以要將所有的excel process砍掉
             </summary>
         </member>
         <member name="T:Sci.ILanguageHelper">
@@ -9070,7 +9378,7 @@
             <summary>
             Batch insert with DoBatchForm.
             </summary>
-            <param name="index"></param>
+            <param name="index">specify an index for new dataRow</param>
         </member>
         <member name="M:Sci.Win.Tems.Input6.OnDetailGridUpdate">
             <summary>
@@ -9721,6 +10029,14 @@
             <summary>
             RenewDataPostEventArgs class.
             </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.InputMasterDetail.RenewDataPostEventArgs.#ctor(System.Data.DataRow,System.Data.DataTable,System.Data.DataTable)">
+            <summary>
+            
+            </summary>
+            <param name="master"></param>
+            <param name="details"></param>
+            <param name="detail2s"></param>
         </member>
         <member name="T:Sci.Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs">
             <summary>
@@ -14842,6 +15158,13 @@
             <summary>
             Property of advance Editmode.
             </summary>
+        </member>
+        <member name="M:Sci.Win.UI.Grid.OnCellKeyDown_ToExcel(System.Object,System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            按 Alt + E 的時候轉Grid到Excel的功能
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="P:Sci.Win.UI.Grid.CurrentDataRow">
             <summary>

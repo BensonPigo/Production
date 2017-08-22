@@ -12,6 +12,8 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Xml.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Centralized
 {
@@ -275,12 +277,21 @@ order by FactoryID
                 MyUtility.Msg.ErrorBox("data not found");
                 return false;
             }
-
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
-            xl.boOpenFile = true;
-            xl.dicDatas.Add("##OSWFRS", dtSummary);
-            xl.dicDatas.Add("##OSWFRD", dtDetail);
-            xl.Save("",false);
+            #region Save & Show Excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            MyUtility.Excel.CopyToXls(dtSummary, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(dtDetail, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
+            for (int i = 1; i <= 2; i++){
+                objApp.Sheets[i].Columns.AutoFit();
+            }
+            Excel.Workbook workbook = objApp.Workbooks[1];
+            string strFileName = new Sci.Production.Class.GetExcelName().GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            workbook.SaveAs(strFileName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            strFileName.OpenFile();
+            #endregion 
             return true;
         }
     }
