@@ -115,8 +115,15 @@ namespace Sci.Production.Planning
                 ,O.SampleReason,O.InspDate,O.MnorderApv,O.FtyKPI,O.KPIChangeReason
                 ,O.StyleUkey
                 ,O.POID
+				,InspResult = IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))
+				,InspHandle = (o.InspHandle +'-'+ I.Name)
                 into #cte 
                 from dbo.Orders o WITH (NOLOCK) inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
+				OUTER APPLY(
+					SELECT  Name 
+					FROM Pass1 WITH (NOLOCK) 
+					WHERE Pass1.ID = O.InspHandle
+				)I
                 WHERE 1=1 
                 "));
 
@@ -627,24 +634,38 @@ from (
 
                 select t.MDivisionID,t.FactoryID,t.SewLine,t.BuyerDelivery,t.SewInLine,t.SewOffLine
                 ,t.BrandID,t.OrderID
-                ,t.Dest,t.StyleID,t.OrderTypeID
-                ,t.ShipmodeID,'' [OrderNo],t.CustPONo,t.CustCDID,t.ProgramID,t.CdCodeID,t.KPILETA
+                ,Dest = Country.Alias
+				,t.StyleID,t.OrderTypeID
+                ,t.ShipmodeID
+				,[OrderNo]=t.Customize1
+				,t.CustPONo,t.CustCDID,t.ProgramID,t.CdCodeID,t.KPILETA
                 ,t.LETA,t.MTLETA,t.SewETA,t.PackETA,t.CPU
-                ,t.Qty_byShip,#cte2.first_cut_date,#cte2.cut_qty
+                ,t.Qty_byShip,#cte2.first_cut_date
+				,#cte2.cut_qty
                 ,[RFID Cut Qty]= iif(CutQty.[RFID Cut Qty]>t.qty,t.qty,CutQty.[RFID Cut Qty])
 			    ,[RFID Loading Qty]= isnull(loading.AccuLoad,0)
 				,[RFID Emb Qty] = iif(EmbQty.[RFID Emb Qty]>t.qty,t.qty,EmbQty.[RFID Emb Qty])
 				,[RFID Bond Qty] = iif(BondQty.[RFID Bond Qty]>t.qty,t.qty,BondQty.[RFID Bond Qty])
 				,[RFID Print Qty] = iif(PrintQty.[RFID Print Qty]>t.qty,t.qty,PrintQty.[RFID Print Qty]) 
-                ,[RFID HT Qty] = iif(PrintQty2.[RFID HT Qty]>t.qty,t.qty,PrintQty2.[RFID HT Qty]) 
+                --,[RFID HT Qty] = iif(PrintQty2.[RFID HT Qty]>t.qty,t.qty,PrintQty2.[RFID HT Qty]) 
+				,[RFID HT Farm In Qty] =iif(htin.[RFID HT Farm In Qty]>t.qty,t.qty,htin.[RFID HT Farm In Qty]) 
+				, [RFID HT Farm Out Qty] = iif(htout.[RFID HT Farm Out Qty]>t.qty,t.qty,htout.[RFID HT Farm Out Qty]) 
                 ,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
                 ,#cte2.PRINTING_qty,#cte2.sewing_output,t.qty+t.FOCQty - #cte2.sewing_output [Balance]
-                ,#cte2.firstSewingDate,#cte2.AVG_QAQTY
+                ,#cte2.firstSewingDate				
+				,[Last Sewn Date] = (select Max(so.OutputDate) 
+                         from SewingOutput so WITH (NOLOCK) 
+                         inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
+                         where sod.OrderID = t.OrderID)
+				,#cte2.AVG_QAQTY
                 ,DATEADD(DAY,iif(isnull(#cte2.AVG_QAQTY,0) = 0,0,ceiling((t.qty+t.FOCQty - #cte2.sewing_output)/(#cte2.AVG_QAQTY*1.0))),#cte2.firstSewingDate) [Est_offline]
                 ,IIF(isnull(t.TotalCTN,0)=0, 0, round(t.ClogCTN / (t.TotalCTN*1.0),4) * 100 ) [pack_rate]
                 ,t.TotalCTN                
                 ,t.TotalCTN-t.FtyCTN as FtyCtn
-                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI                
+                , t.ClogCTN, t.InspDate
+				, InspResult
+				, [CFA Name] = InspHandle
+				, t.ActPulloutDate,t.FtyKPI                
                 ,KPIChangeReason.KPIChangeReason  KPIChangeReason
                 ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
                 ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
@@ -658,7 +679,8 @@ from (
 "));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
-            sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID"));
+            sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID  
+left join Country with (Nolock) on Country.id= t.Dest"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@" left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
 
@@ -717,6 +739,20 @@ select
     left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
     where Orderid=t.OrderID and BIO.SubProcessId='HT'
 ) PrintQty2
+outer apply(
+	select [RFID HT Farm In Qty] =isnull(sum(BD.Qty), 0) --RFID HT Farm In Qty
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='HT' and BIO.InComing is not null
+)htin
+outer apply(
+	select [RFID HT Farm Out Qty] = isnull(sum(BD.Qty), 0) --RFID HT Farm Out Qty
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='HT' and BIO.OutGoing is not null
+)htout
 
 ");
 
