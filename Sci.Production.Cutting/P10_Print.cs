@@ -77,7 +77,8 @@ from (
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,a.SizeCode [Size]
-	    ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
+        --,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
+        ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
         --,Artwork.Artwork [Artwork]
     ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
@@ -111,7 +112,7 @@ from (
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,a.SizeCode [Size]
-	    ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
+         ,'(' + qq.Cutpart + ')' + d.PatternDesc [Desc]
         --,Artwork.Artwork [Artwork]
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
@@ -229,100 +230,6 @@ order by x.[Barcode]");
                 {
                     return result;
                 }
-                DataTable dt1,dt2, dt3;
-                //int count =dt.Rows.Count;
-                int count=1;
-                dt1 = dt.Clone();
-                dt2 = dt.Clone();
-                dt3 = dt.Clone();
-                foreach (DataRow dr in dt.Rows)
-                {
-                    //第一列資料
-                    if (count % 3 == 1)
-                    {
-                        dt1.ImportRow(dr);
-                    }
-                    //第二列資料
-                    if (count % 3 == 2)
-                    {
-                        dt2.ImportRow(dr);
-                    }
-                    //第三列資料
-                    if (count % 3 == 0)
-                    {
-                        dt3.ImportRow(dr);
-                    }
-                     count++;
-                }
-		           
-
-                // 傳 list 資料     
-                List<P10_PrintData> data = dt1.AsEnumerable()
-                    .Select(row1 => new P10_PrintData()
-                    {
-                        Group_right = row1["Group_right"].ToString(),
-                        Group_left = row1["Group_left"].ToString(),
-                        Line = row1["Line"].ToString(),
-                        Cell = row1["Cell"].ToString(),
-                        SP = row1["SP"].ToString(),
-                        Style = row1["Style"].ToString(),
-                        MarkerNo = row1["MarkerNo"].ToString(),
-                        Body_Cut = row1["Body_Cut"].ToString(),
-                        Parts = row1["Parts"].ToString(),
-                        Color = row1["Color"].ToString(),
-                        Size = row1["Size"].ToString(),
-                        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-                        Desc = row1["Desc"].ToString(),
-                        Artwork = row1["Artwork"].ToString(),
-                        Quantity = row1["Quantity"].ToString(),
-                        Barcode = row1["Barcode"].ToString()
-                    }).ToList();
-                   data.AddRange(
-                    dt2.AsEnumerable().Select(row1 => new P10_PrintData()
-                    {
-                        Group_right2 = row1["Group_right"].ToString(),
-                        Group_left2 = row1["Group_left"].ToString(),
-                        Line2 = row1["Line"].ToString(),
-                        Cell2 = row1["Cell"].ToString(),    
-                        SP2 = row1["SP"].ToString(),
-                        Style2 = row1["Style"].ToString(),
-                        MarkerNo2 = row1["MarkerNo"].ToString(),
-                        Body_Cut2 = row1["Body_Cut"].ToString(),
-                        Parts2 = row1["Parts"].ToString(),
-                        Color2 = row1["Color"].ToString(),
-                        Size2 = row1["Size"].ToString(),
-                        SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-                        Desc2 = row1["Desc"].ToString(),
-                        Artwork2 = row1["Artwork"].ToString(),
-                        Quantity2 = row1["Quantity"].ToString(),
-                        Barcode2 = row1["Barcode"].ToString()
-                    }).ToList());
-
-
-                    data.AddRange(
-                    dt3.AsEnumerable().Select(row1 => new P10_PrintData()
-                    {
-                        Group_right3 = row1["Group_right"].ToString(),
-                        Group_left3 = row1["Group_left"].ToString(),
-                        Line3 = row1["Line"].ToString(),
-                        Cell3 = row1["Cell"].ToString(),
-                        SP3 = row1["SP"].ToString(),
-                        Style3 = row1["Style"].ToString(),
-                        MarkerNo3 = row1["MarkerNo"].ToString(),
-                        Body_Cut3 = row1["Body_Cut"].ToString(),
-                        Parts3 = row1["Parts"].ToString(),
-                        Color3 = row1["Color"].ToString(),
-                        Size3 = row1["Size"].ToString(),
-                        SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-                        Desc3 = row1["Desc"].ToString(),
-                        Artwork3 = row1["Artwork"].ToString(),
-                        Quantity3 = row1["Quantity"].ToString(),
-                        Barcode3 = row1["Barcode"].ToString()
-                    }).ToList());
-
-                e.Report.ReportDataSource = data;
-
-
                 #endregion
             }
             else
@@ -499,8 +406,7 @@ order by x.[Bundle]");
                     return result;
                 }
                 #endregion
-            }
-
+            }            
             return result;
         }
 
@@ -512,7 +418,8 @@ order by x.[Bundle]");
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dtt.Rows.Count);
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1,1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'",CurrentDataRow["ID"].ToString().Substring(0,3)));
@@ -544,7 +451,7 @@ order by x.[Bundle]");
 
         protected override bool OnToPrint(ReportDefinition report)
         {
-           
+            
             if (radioBundleCard.Checked)
             {
                 #region Bundle Card
@@ -553,7 +460,9 @@ order by x.[Bundle]");
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
-                
+                // 顯示筆數於PrintForm上Count欄位
+                SetCount(dt.Rows.Count);
+
                 DataTable dt1, dt2, dt3;
                 //int count =dt.Rows.Count;
                 int count = 1;
@@ -591,7 +500,7 @@ order by x.[Bundle]");
                         Cell = row1["Cell"].ToString(),
                         SP = row1["SP"].ToString(),
                         Style = row1["Style"].ToString(),
-                        MarkerNo = row1["Item"].ToString(),
+                        MarkerNo = row1["MarkerNo"].ToString(),
                         Body_Cut = row1["Body_Cut"].ToString(),
                         Parts = row1["Parts"].ToString(),
                         Color = row1["Color"].ToString(),
@@ -611,7 +520,7 @@ order by x.[Bundle]");
                      Cell2 = row1["Cell"].ToString(),
                      SP2 = row1["SP"].ToString(),
                      Style2 = row1["Style"].ToString(),
-                     MarkerNo2 = row1["Item"].ToString(),
+                     MarkerNo2 = row1["MarkerNo"].ToString(),
                      Body_Cut2 = row1["Body_Cut"].ToString(),
                      Parts2 = row1["Parts"].ToString(),
                      Color2 = row1["Color"].ToString(),
@@ -633,7 +542,7 @@ order by x.[Bundle]");
                     Cell3 = row1["Cell"].ToString(),
                     SP3 = row1["SP"].ToString(),
                     Style3 = row1["Style"].ToString(),
-                    MarkerNo3 = row1["Item"].ToString(),
+                    MarkerNo3 = row1["MarkerNo"].ToString(),
                     Body_Cut3 = row1["Body_Cut"].ToString(),
                     Parts3 = row1["Parts"].ToString(),
                     Color3 = row1["Color"].ToString(),
@@ -674,6 +583,8 @@ order by x.[Bundle]");
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
+                // 顯示筆數於PrintForm上Count欄位
+                SetCount(dtt.Rows.Count);
 
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
                 pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
