@@ -5,10 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using System.Reflection;
 using Microsoft.Office.Interop.Excel;
-
 using Sci.Data;
 using Ict;
 using Ict.Win;
@@ -21,6 +19,7 @@ using System.Xml.Linq;
 using System.Configuration;
 using System.Linq;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Centralized
 {
@@ -60,7 +59,15 @@ namespace Sci.Production.Centralized
             if (excel == null)
                 return true;
             ShowInfo("Completed.");
-            excel.Visible = true;
+            #region Save & Show Excel
+            Excel.Workbook workbook = excel.Workbooks[1];
+            string strExcelName = new Sci.Production.Class.GetExcelName().GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelNameExtension.Xlsm);
+            workbook.SaveAs(strExcelName, Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
 

@@ -19,6 +19,7 @@ using System.Configuration;
 using System.Linq;
 using System.Data.SqlClient;
 using Sci.Production.Prg;
+using System.Runtime.InteropServices;
 //from trade  planning R14
 namespace Sci.Production.Centralized
 {
@@ -530,7 +531,17 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
                     wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 9.	By Program
+
+                #region Save & Show Excel
                 excel.Visible = true;
+                Workbook workbook = excel.Workbooks[1];
+                string strExcelName = new Sci.Production.Class.GetExcelName().GetName("Centralized-R03.Prod. Efficiency Analysis Report");
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                strExcelName.OpenFile();
+                #endregion 
             }
             catch (Exception ex)
             {
