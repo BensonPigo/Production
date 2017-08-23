@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-
+using Ict;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Utility;
@@ -518,13 +518,18 @@ Exists (
 
                 mainSheet.Cells[1, 1].Select();
                 app.DisplayAlerts = true;
-
-#if !DEBUG
-            app.Visible = true;
-#endif
-
                 mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
 
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Pattern-P01_PrintSMnotice");
+                Microsoft.Office.Interop.Excel.Workbook workbook = app.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                app.Quit();
+                Marshal.ReleaseComObject(mainSheet);
+
+                strExcelName.OpenFile();
+                #endregion 
             }
             finally
             {

@@ -24,7 +24,7 @@ namespace Sci.Production.Cutting
     {
         DualResult result;
         DataRow CurrentDataRow;
-        string pathName;
+
         public P10_Print(DataRow row)
         {
             InitializeComponent();
@@ -709,10 +709,10 @@ order by x.[Bundle]");
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
             objSheets.get_Range("I1:L1").ColumnWidth = 15;
             objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
-            
+
             MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(objSheets);    //釋放sheet
+            Marshal.ReleaseComObject(objApp);       //釋放objApp
             return true;
         }
 
@@ -850,7 +850,6 @@ order by x.[Bundle]");
                 }
 
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
-                pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
                 //string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
                 if (MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp, false))
                 {
@@ -870,7 +869,7 @@ order by x.[Bundle]");
                     objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
                     objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
                     objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-                    //MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+
                     objSheets.get_Range("D1:D1").ColumnWidth = 11;
                     objSheets.get_Range("E1:E1").Columns.AutoFit();
                     objSheets.get_Range("G1:H1").ColumnWidth = 9;
@@ -878,27 +877,20 @@ order by x.[Bundle]");
 
                     objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
 
-                    //Random Excle名稱
-                    //Random random = new Random();
-                    pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Guid.NewGuid() + ".xlsx";
-                    pathName = Path.GetFullPath(pathName);
-                    objBook.SaveAs(pathName);
                     PrintDialog pd = new PrintDialog();
                     if (pd.ShowDialog() == DialogResult.OK)
                     {
                         string printer = pd.PrinterSettings.PrinterName;
                         objBook.PrintOutEx(ActivePrinter: printer);
                     }
-                    objBook.Close();
-                    objApp.Workbooks.Close();
+                    objBook.Close(false);
                     objApp.Quit();
 
-                    if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                    if (objBook != null) Marshal.FinalReleaseComObject(objBook);
+                    Marshal.ReleaseComObject(objSheets);    //釋放sheet
+                    Marshal.ReleaseComObject(objApp);       //釋放objApp
+                    Marshal.ReleaseComObject(objBook);
                     objApp = null;
                 }
-                System.IO.File.Delete(pathName);
                 //刪除存檔
                 #endregion
             }

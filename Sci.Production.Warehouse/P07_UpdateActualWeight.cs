@@ -40,6 +40,7 @@ namespace Sci.Production.Warehouse
                 //this.numericBox3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
             }
         }
+
         public P07_UpdateActualWeight(object data,string data2)
         {
             InitializeComponent();

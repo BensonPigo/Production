@@ -336,10 +336,15 @@ where 1=1
                     worksheet.Cells[i + 1, 12] = str.Trim();
             }
 
-            objApp.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R03");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

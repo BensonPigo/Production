@@ -13,6 +13,7 @@ using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Transactions;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -713,9 +714,19 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
                 }
                 index++;
             }
-
             worksheet.Columns.AutoFit();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P28");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(range);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
         }
 
         private void btnClose_Click(object sender, EventArgs e)

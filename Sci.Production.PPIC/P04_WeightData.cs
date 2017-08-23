@@ -20,6 +20,7 @@ namespace Sci.Production.PPIC
             uk = keyvalue1;
             InitializeComponent();
         }
+
         protected override DualResult OnRequery(out DataTable datas)
         {
             datas = null;

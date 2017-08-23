@@ -64,6 +64,7 @@ namespace Sci.Production.Subcon
             dateBundle2 = this.dateBundleCDate.Value2;
             return base.ValidateInput();
         }
+
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -156,9 +157,8 @@ where 1=1
             }
             return Result.True;
         }
+
         // 產生Excel
-
-
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             SetCount(printData.Rows.Count);
@@ -168,13 +168,9 @@ where 1=1
                 return false;
             }
             //預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp
-                = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
             // 將datatable copy to excel
             MyUtility.Excel.CopyToXls(printData, "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1, true, null, objApp);
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
         #endregion

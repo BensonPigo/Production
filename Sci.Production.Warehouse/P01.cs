@@ -513,7 +513,6 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callNextForm.ShowDialog(this);
         }
 
-
         private void btnMeterialStatus_Click(object sender, EventArgs e)
         {
             if (callP03 != null && callP03.Visible == true)

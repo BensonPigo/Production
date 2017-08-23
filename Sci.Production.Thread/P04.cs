@@ -24,6 +24,7 @@ namespace Sci.Production.Thread
             this.DefaultFilter = defaultfilter;
             InitializeComponent();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -38,6 +39,7 @@ namespace Sci.Production.Thread
             where a.id = '{0}'", masterID,keyWord);
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override bool OnGridSetup()
         {
 
@@ -181,11 +183,13 @@ namespace Sci.Production.Thread
 
             return base.OnGridSetup();
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -195,6 +199,7 @@ namespace Sci.Production.Thread
             CurrentMaintain["AddDate"] = DateTime.Now;
             CurrentMaintain["mDivisionid"] = keyWord;
         }
+
         protected override bool ClickDeleteBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -204,6 +209,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickDeleteBefore();
         }
+
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -213,6 +219,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickEditBefore();
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
@@ -267,11 +274,13 @@ namespace Sci.Production.Thread
 
             return base.ClickSaveBefore();
         }
+
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
             dateDate.ReadOnly = true;
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -325,6 +334,7 @@ namespace Sci.Production.Thread
 
          
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();

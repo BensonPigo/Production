@@ -208,7 +208,6 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq
             this.Close();
         }
 
-
         //Import
         private void btnImport_Click(object sender, EventArgs e)
         {

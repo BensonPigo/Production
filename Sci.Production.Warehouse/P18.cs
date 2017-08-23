@@ -1220,7 +1220,6 @@ Where a.id = '{0}'", masterID);
             }
         }
 
-
         private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;

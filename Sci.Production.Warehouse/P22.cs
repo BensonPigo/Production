@@ -840,7 +840,6 @@ Where a.id = '{0}'", masterID);
             { detailgridbs.Position = index; }
         }
 
-
         protected override bool ClickPrint()
         {
             //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());

@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -157,9 +158,12 @@ namespace Sci.Production.Packing
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
-
-                        winword.Visible = true;                      
-                        winword = null;
+                        #region Save & Show Word
+                        winword.Visible = true;
+                        Marshal.ReleaseComObject(winword);
+                        Marshal.ReleaseComObject(document);
+                        Marshal.ReleaseComObject(table);
+                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -217,9 +221,12 @@ namespace Sci.Production.Packing
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
-
+                        #region Save & Show Word
                         winword.Visible = true;
-                        winword = null;
+                        Marshal.ReleaseComObject(winword);
+                        Marshal.ReleaseComObject(document);
+                        Marshal.ReleaseComObject(table);
+                        #endregion 
                     }
                     catch (Exception ex)
                     {

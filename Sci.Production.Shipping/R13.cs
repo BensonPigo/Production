@@ -179,7 +179,7 @@ Where o.LocalOrder = 0 ");
 
             this.ShowWaitMessage("Starting EXCEL...");
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R13_FactoryCMTForecast.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Shipping_R13_FactoryCMTForecast.xltx", 3, true, null, objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Shipping_R13_FactoryCMTForecast.xltx", 3, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             string Buyer_Delivery=" ~ ";
             if (!MyUtility.Check.Empty(buyerDlv1)) Buyer_Delivery = buyerDlv1.Value.ToShortDateString() + Buyer_Delivery;
@@ -189,8 +189,16 @@ Where o.LocalOrder = 0 ");
             objSheets.Cells[2, 7] = MyUtility.Convert.GetString(Shipper);
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(factory);
             objSheets.Cells[2, 11] = MyUtility.Convert.GetString(txtdropdownlistCategory.Text.ToString().Replace(category+"-",""));
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

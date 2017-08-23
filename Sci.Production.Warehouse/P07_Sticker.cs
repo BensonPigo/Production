@@ -104,33 +104,30 @@ namespace Sci.Production.Warehouse
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
-        {
-            
-               List<P07_Sticker_Data> tmpData = Data.Where(data => data.selected).ToList();
+        {            
+            List<P07_Sticker_Data> tmpData = Data.Where(data => data.selected).ToList();
 
 
 
-               // 指定是哪個 RDLC
-               DualResult result;
-               Type ReportResourceNamespace = typeof(P07_Sticker_Data);
-               Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-               string ReportResourceName = "P07_Sticker.rdlc";
-               IReportResource reportresource;
-               if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
-               {
-                   //this.ShowException(result);
-                   return;
-               }
-               ReportDefinition report = new ReportDefinition();
-               report.ReportDataSource = tmpData;
-               report.ReportResource = reportresource;
+            // 指定是哪個 RDLC
+            DualResult result;
+            Type ReportResourceNamespace = typeof(P07_Sticker_Data);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P07_Sticker.rdlc";
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return;
+            }
+            ReportDefinition report = new ReportDefinition();
+            report.ReportDataSource = tmpData;
+            report.ReportResource = reportresource;
 
-               // 開啟 report view
-               var frm = new Sci.Win.Subs.ReportView(report);
-               frm.MdiParent = MdiParent;
-               frm.Show();
-         
-
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
             return ;
         }
        

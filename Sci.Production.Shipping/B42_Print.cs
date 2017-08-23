@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -248,6 +249,7 @@ and 1=1"));
                             PicTop = Convert.ToSingle(rngToInsert1.Top);
                             string targetFile = picPath+pic1;
                             worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                            Marshal.ReleaseComObject(rngToInsert1);
                         }
                         if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
                         {
@@ -259,6 +261,7 @@ and 1=1"));
                             PicTop = Convert.ToSingle(rngToInsert2.Top);
                             string targetFile = picPath+pic2;
                             worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                            Marshal.ReleaseComObject(rngToInsert2);
                         }
 
                         customSPCount++;
@@ -284,6 +287,7 @@ and 1=1"));
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt+13)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        Marshal.ReleaseComObject(rngToInsert);
                     }
                     objArray[0, 0] = stt;
                     objArray[0, 1] = dr["DescVI"];
@@ -304,6 +308,7 @@ and 1=1"));
                 //刪除多的一行
                 Microsoft.Office.Interop.Excel.Range rngToDelete1 = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 14)), Type.Missing).EntireRow;
                 rngToDelete1.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToDelete1);
                 //貼圖
                 if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
                 {
@@ -332,7 +337,15 @@ and 1=1"));
                 worksheet = excel.ActiveWorkbook.Worksheets[1];
                 worksheet.Select();
 
-                excel.Visible = true;
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B42_EachConsumption");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             else
             {

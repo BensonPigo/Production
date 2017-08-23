@@ -686,7 +686,6 @@ Where a.id = '{0}'", masterID);
             { detailgridbs.Position = index; }
         }
 
-
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentMaintain;

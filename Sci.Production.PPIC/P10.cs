@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -518,8 +519,18 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
             }
 
-            excel.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P10");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
 
+            strExcelName.OpenFile();
+            #endregion
             return base.ClickPrint();
         }
 

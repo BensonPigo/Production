@@ -129,6 +129,7 @@ namespace Sci.Production.Thread
 
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -139,6 +140,7 @@ namespace Sci.Production.Thread
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (dt == null || dt.Rows.Count == 0)
@@ -158,11 +160,16 @@ namespace Sci.Production.Thread
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
-            objApp.Visible = true;
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R20");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
 
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

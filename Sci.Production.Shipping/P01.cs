@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System.Transactions;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -302,7 +303,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             return base.ClickPrint();
         }
 
-        private bool ToExcel(bool autoSave)
+        private bool ToExcel(bool isSendMail)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
@@ -365,19 +366,16 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             worksheet.Cells[22, 2] = MyUtility.Convert.GetString(CurrentMaintain["FtyDesc"]);
             worksheet.Cells[23, 2] = MyUtility.Convert.GetString(CurrentMaintain["MRComment"]);
 
-
-            if (autoSave)
+            #region Save Excel
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P01");
+            excel.ActiveWorkbook.SaveAs(excelFile);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            #endregion
+            if (!isSendMail)
             {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "AirPP - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000))+".xlsx";
-                worksheet.SaveAs(excelFile);
-                excel.Workbooks.Close();
-                excel.Quit();
-                excel = null;
-            }
-            else
-            {
-                excel.Visible = true;
+                excelFile.OpenFile();
             }
             return true;
         }

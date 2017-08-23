@@ -94,6 +94,7 @@ namespace Sci.Production.Thread
             gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
+
         private void btnFilter_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
@@ -332,7 +333,5 @@ where S.Ukey = '{0}'", styleUkey);
                 //}
             }
         }
-
-
     }
 }

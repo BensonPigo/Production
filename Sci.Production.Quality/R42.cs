@@ -461,9 +461,9 @@ from
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx");
-            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+            Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx", keepApp: true);
+            SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add(" ", "1,1");
@@ -480,18 +480,18 @@ from
             dic.Add("November", "42,45");
             dic.Add("December", "46,49");
             dic.Add("YTD", "50,51");
-            xdt_All.lisTitleMerge.Add(dic);
+            xdt_All.LisTitleMerge.Add(dic);
             xdt_All.ShowHeader = true;
 
 
             foreach (var item in dicSUP)
             {
                 string supplier = item.Key;
-                SaveXltReportCls.xltRptTable x_All = new SaveXltReportCls.xltRptTable(item.Value);
+                SaveXltReportCls.XltRptTable x_All = new SaveXltReportCls.XltRptTable(item.Value);
 
                 for (int i = 0; i < x_All.Columns.Count; i++)
                 {
-                    SaveXltReportCls.xlsColumnInfo xlc = new SaveXltReportCls.xlsColumnInfo(i + 1);
+                    SaveXltReportCls.XlsColumnInfo xlc = new SaveXltReportCls.XlsColumnInfo(i + 1);
                     if (x_All.Columns[i].ColumnName == "Month")
                     {
                         xlc.NumberFormate = "MMM-yy";
@@ -505,34 +505,31 @@ from
 
                     }
                     xlc.IsAutoFit = true;                   
-                    x_All.lisColumnInfo.Add(xlc);
+                    x_All.LisColumnInfo.Add(xlc);
                 }
-                x_All.boAutoFitColumn = true;
-                xl.dicDatas.Add("##SUPSheetName" + supplier, item.Key);
-                xl.dicDatas.Add("##SUPDetail" + supplier, x_All);
+                x_All.BoAutoFitColumn = true;
+                xl.DicDatas.Add("##SUPSheetName" + supplier, item.Key);
+                xl.DicDatas.Add("##SUPDetail" + supplier, x_All);
             }
-
-
-            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
 
             xl.VarToSheetName = "##SUPSheetName";
             //xdt_All.boAutoFitColumn = true;
-            xl.dicDatas.Add("##psd", xdt_All);
+            xl.DicDatas.Add("##psd", xdt_All);
 
             SaveXltReportCls.ReplaceAction b = Addcolor;
-            xl.dicDatas.Add("##addcolor", b);
+            xl.DicDatas.Add("##addcolor", b);
 
             SaveXltReportCls.ReplaceAction c = CopySheet;
             
-            xl.dicDatas.Add("##copysupsheet", c);
+            xl.DicDatas.Add("##copysupsheet", c);
 
            
             SaveXltReportCls.ReplaceAction d = addfilter;
-            xl.dicDatas.Add("##addfilter", d);
+            xl.DicDatas.Add("##addfilter", d);
 
-            xl.Save();
-            wks.Columns.AutoFit();
-            
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R42"));    
+            ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+            xl.FinishSave();
             return true;
         }
 

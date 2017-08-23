@@ -577,6 +577,7 @@ where a.id = '{0}'", masterID);
             }
             ChangeDetailHeader();
         }
+
         private void ChangeDetailHeader()
         {
             #region --動態unit header --

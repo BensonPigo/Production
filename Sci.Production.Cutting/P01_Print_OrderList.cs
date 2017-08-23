@@ -47,35 +47,35 @@ namespace Sci.Production.Cutting
                 sxrc sxr = new sxrc(xltPath);
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
 
-                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
-                sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
-                sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
-                sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
-                sxr.dicDatas.Add(sxr._v + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "PoList", dr["PoList"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "StyleID", dr["StyleID"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "CutLine", dr["CutLine"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
 
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[2]);
 
                 dt.Borders.AllCellsBorders = true;
                 
                 //合併儲存格
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
+                dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
 
                 //自動欄位寬度
-                dt.boAutoFitColumn = true;
+                dt.BoAutoFitColumn = true;
 
                 for (int i = 5; i <= dt.Columns.Count - 11; i++)
                 {
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
                 }
 
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });  //Marker Name調窄
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3) { ColumnWidth = (decimal)7.38 });  //Fabric Combo調窄
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });  //Marker Name調窄
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(3) { ColumnWidth = (decimal)7.38 });  //Fabric Combo調窄
                                 
                 //凍結窗格
-                dt.boFreezePanes = true;
+                dt.BoFreezePanes = true;
 
-                dt.boAddFilter = true;
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                dt.BoAddFilter = true;
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
                 Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
@@ -103,7 +103,7 @@ namespace Sci.Production.Cutting
 
                 wks.get_Range("A5").RowHeight = 16.5;
                 wks.get_Range("A6").RowHeight = 16.5;
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
                 #endregion
             }
@@ -122,11 +122,11 @@ namespace Sci.Production.Cutting
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingSchedule.xltx");
                 sxrc sxr = new sxrc(xltPath);
 
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[0]);
 
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
 
-                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
 
                 Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
@@ -136,21 +136,21 @@ namespace Sci.Production.Cutting
                 dt.Borders.AllCellsBorders = true;
                 
                 //自動欄位寬度
-                dt.boAutoFitColumn = true;
+                dt.BoAutoFitColumn = true;
                 dt.HeaderColor = Color.LawnGreen;
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(10) { ColumnWidth = (decimal)10 });
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(10) { ColumnWidth = (decimal)10 });
                 
                 //凍結窗格
-                dt.boFreezePanes = true;
+                dt.BoFreezePanes = true;
 
                 //篩選
-                dt.boAddFilter = true;
+                dt.BoAddFilter = true;
 
                 
 
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingSchedule"));
                 #endregion
             }
@@ -182,49 +182,49 @@ namespace Sci.Production.Cutting
 
                     extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
 
-                    sxr.dicDatas.Add(sxr._v + "APPLYNO" + idxStr, dr["APPLYNO"]);
-                    sxr.dicDatas.Add(sxr._v + "MARKERNO" + idxStr, dr["MARKERNO"]);
-                    sxr.dicDatas.Add(sxr._v + "CUTTINGSP" + idxStr, dr["CUTTINGSP"]);
-                    sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
-                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
-                    sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "APPLYNO" + idxStr, dr["APPLYNO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MARKERNO" + idxStr, dr["MARKERNO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "CUTTINGSP" + idxStr, dr["CUTTINGSP"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO" + idxStr, dr["ORDERNO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dr["STYLENO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
+                    sxr.DicDatas.Add(sxr.VPrefix + "FACTORY" + idxStr, dr["FACTORY"]);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[sgIdx]);
 
                     //欄位水平對齊
                     for (int i = 5; i <= dt.Columns.Count - 8; i++)
                     {
-                        sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, false, 6, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
-                        dt.lisColumnInfo.Add(citbl);
+                        sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, false, 6, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                        dt.LisColumnInfo.Add(citbl);
                     }
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 7, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 6, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 7, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 6, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
                     //合併儲存格
-                    dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 8) } });
+                    dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 8) } });
 
                     dt.Borders.AllCellsBorders = true;
 
                     //凍結窗格
-                    dt.boFreezePanes = true;
-                    dt.intFreezeColumn = 3;
+                    dt.BoFreezePanes = true;
+                    dt.IntFreezeColumn = 3;
 
-                    sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
-                    sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
-                    sxr.dicDatas.Add(sxr._v + "MarkerDownloadID" + idxStr, MarkerDownloadID);
+                    sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, MarkerDownloadID);
 
                     sxrc.ReplaceAction a = exMethod;
-                    sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
+                    sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
 
-                sxr.VarToSheetName = sxr._v + "SizeGroup";
+                sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
                 #endregion
             }
@@ -242,24 +242,24 @@ namespace Sci.Production.Cutting
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath);
-                sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
-                sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
 
-                sxr.dicDatas.Add(sxr._v + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
-                sxr.dicDatas.Add(sxr._v + "FTY", dr["FACTORY"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
 
-                sxr.dicDatas.Add(sxr._v + "FABTYPE", dr["FABTYPE"]);
-                sxr.dicDatas.Add(sxr._v + "FLP", dr["FLP"].ToString());
-                sxr.dicDatas.Add(sxr._v + "MarkerDownloadID", dr["MarkerDownloadID"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "FABTYPE", dr["FABTYPE"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "FLP", dr["FLP"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID", dr["MarkerDownloadID"]);
 
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
 
                 //欄位水平對齊
                 for (int i = 3; i <= dt.Columns.Count; i++)
                 {
-                    sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
 
                     if (i == 4 | i == 6 | i == 8 | i == 7)
                     {
@@ -273,10 +273,10 @@ namespace Sci.Production.Cutting
                     {
                         citbl.PointCnt = 3;
                     }
-                    dt.lisColumnInfo.Add(citbl);
+                    dt.LisColumnInfo.Add(citbl);
                 }
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
                 //合併儲存格
                 //dt.lisTitleMerge.Add(new Dictionary<string, string> { { "Usage", string.Format("{0},{1}", 3, 4) }, { "Purchase", string.Format("{0},{1}", 5, 6) } });
                 dt.Borders.DependOnColumn.Add(1, 2);
@@ -284,9 +284,9 @@ namespace Sci.Production.Cutting
                 //不顯示標題列
                 dt.ShowHeader = false;
 
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));                
                 #endregion
             }
@@ -306,9 +306,9 @@ namespace Sci.Production.Cutting
                 string POComboList = rpt3.Rows[0]["POComboList"].ToString();
                 string sty = rpt3.Rows[0]["Style"].ToString();
 
-                sxr.dicDatas.Add(sxr._v + "SP", POComboList);
-                sxr.dicDatas.Add(sxr._v + "Style", sty);
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                sxr.DicDatas.Add(sxr.VPrefix + "SP", POComboList);
+                sxr.DicDatas.Add(sxr.VPrefix + "Style", sty);
+                sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
                 System.Data.DataTable[] dts;
                 res = DBProxy.Current.SelectSP("", "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id), new SqlParameter("@ByType", "2") }, out dts);
@@ -316,18 +316,18 @@ namespace Sci.Production.Cutting
                 if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
                 if (dts.Length < 3 || (dts[0].Rows.Count <= 0 && dts[1].Rows.Count <= 0 && dts[2].Rows.Count <= 0)) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
-                sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
-                sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
-                sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
+                sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
+                sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
                 SetColumn(tbl1, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
                 SetColumn(tbl2, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
                 SetColumn(tbl3, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
 
-                sxr.dicDatas.Add(sxr._v + "tbl1", tbl1);
-                sxr.dicDatas.Add(sxr._v + "tbl2", tbl2);
-                sxr.dicDatas.Add(sxr._v + "tbl3", tbl3);
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", tbl1);
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl2", tbl2);
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl3", tbl3);
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ColorCombo_SizeBreakdown"));
                 #endregion
             }
@@ -344,26 +344,26 @@ namespace Sci.Production.Cutting
                 sxrc sxr = new sxrc(xltPath);
 
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
-                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[0]);
 
                 dt.Borders.AllCellsBorders = true;
 
                 //合併儲存格
                 dt.Columns["TTL"].SetOrdinal(7);
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
+                dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
 
                 //凍結窗格
-                dt.boFreezePanes = true;
-                dt.boAutoFitColumn = true;
-                dt.boAddFilter = true;
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                dt.BoFreezePanes = true;
+                dt.BoAutoFitColumn = true;
+                dt.BoAddFilter = true;
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
                 Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                 string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
                 wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
                 wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_QtyBreakdown_PoCombbySPList"));
                 #endregion
             }
@@ -599,12 +599,12 @@ namespace Sci.Production.Cutting
 
                     extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
 
-                    sxr.dicDatas.Add(sxr._v + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
-                    sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
-                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);                    
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO" + idxStr, dr["ORDERNO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dr["STYLENO"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dr["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "FACTORY" + idxStr, dr["FACTORY"]);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[sgIdx]);
 
                     #region 補上空白的SizeCode
                     int SizeCodeCnt = dt.Columns.Count - 2 - 3;
@@ -619,37 +619,37 @@ namespace Sci.Production.Cutting
                     //欄位水平對齊
                     for (int i = 4; i <= dt.Columns.Count - 2; i++)
                     {
-                        sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, false, 6, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
-                        dt.lisColumnInfo.Add(citbl);
+                        sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, false, 6, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                        dt.LisColumnInfo.Add(citbl);
                     }
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(3, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
                     dt.Borders.AllCellsBorders = true;
 
                     //合併儲存格
-                    dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
-                    sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
+                    dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
+                    sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
                     //凍結窗格
-                    dt.boFreezePanes = true;
-                    dt.intFreezeColumn = 3;
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
-                    sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
-                    sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
+                    dt.BoFreezePanes = true;
+                    dt.IntFreezeColumn = 3;
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
+                    sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
 
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Range["B3", "B3"].WrapText = 1;
                     wks.get_Range("A3").RowHeight = 16.5;
                     wks.get_Range("A4").RowHeight = 16.5;
                     sxrc.ReplaceAction a = exMethod;
-                    sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
+                    sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                     
                 }
-                sxr.VarToSheetName = sxr._v + "SizeGroup";
+                sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("cutting_P01_MarkerList"));
                 #endregion
             }
@@ -668,12 +668,12 @@ namespace Sci.Production.Cutting
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
-                sxr.dicDatas.Add(sxr._v + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
-                sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
-                sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
-                sxr.dicDatas.Add(sxr._v + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
-                sxr.dicDatas.Add(sxr._v + "FTY", dr["FACTORY"]);
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
                 dt.ShowHeader = false;
 
                 //欄位水平對齊
@@ -684,7 +684,7 @@ namespace Sci.Production.Cutting
                         xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
 
-                    sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, true, 0, xha);
+                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, xha);
                     if (i == 5 | i == 8 | i == 10 | i == 12)
                     {
                         citbl.PointCnt = 2; //小數點兩位
@@ -693,17 +693,17 @@ namespace Sci.Production.Cutting
                     {
                         citbl.PointCnt = 4;
                     }
-                    dt.lisColumnInfo.Add(citbl);
+                    dt.LisColumnInfo.Add(citbl);
                 }
 
                 dt.Borders.DependOnColumn.Add(1, 2);
 
                 //合併儲存格
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "Usage", "7,8" }, { "Purchase", "9,10" } });
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                dt.LisTitleMerge.Add(new Dictionary<string, string> { { "Usage", "7,8" }, { "Purchase", "9,10" } });
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
+                sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc"));
                 #endregion
             }
@@ -711,17 +711,17 @@ namespace Sci.Production.Cutting
             return true;
         }
 
-        void SetColumn(sxrc.xltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
+        void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
         {
-            sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(tbl.Columns[0].ColumnName);
+            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
             xlc1.NumberFormate = "@";
-            tbl.lisColumnInfo.Add(xlc1);
+            tbl.LisColumnInfo.Add(xlc1);
 
             for (int i = 1; i < tbl.Columns.Count; i++)
             {
-                sxrc.xlsColumnInfo xlc = new sxrc.xlsColumnInfo(tbl.Columns[i].ColumnName);
+                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName);
                 xlc.Alignment = Alignment;
-                tbl.lisColumnInfo.Add(xlc);
+                tbl.LisColumnInfo.Add(xlc);
             }
         }
         

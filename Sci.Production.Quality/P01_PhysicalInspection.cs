@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
         private string keyWord = Sci.Env.User.Keyword;
         string excelFile = "";
         DataTable Fir_physical_Defect;
+
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
@@ -40,11 +41,13 @@ namespace Sci.Production.Quality
             maindr = mainDr;
             this.textID.Text = keyvalue1;
         }
+
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             button_enable();
         }
+
         protected override DualResult OnRequery()
         {
             #region Encode/Approve Enable
@@ -115,7 +118,9 @@ namespace Sci.Production.Quality
             return base.OnRequery();
             
         }
+
         DataTable datas2;
+
         protected override void OnRequeryPost(DataTable datas)
         {
             datas2 = datas;
@@ -366,6 +371,7 @@ namespace Sci.Production.Quality
             return true;
 
         }
+
         protected override void OnInsert()
         {
             DataTable Dt = (DataTable)gridbs.DataSource;
@@ -383,6 +389,7 @@ namespace Sci.Production.Quality
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
         }
+
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
@@ -447,6 +454,7 @@ namespace Sci.Production.Quality
 
             return base.OnSaveBefore();
         }
+
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true) ;
@@ -744,6 +752,7 @@ Where DetailUkey = {15};",
             #endregion
             OnRequery();
         }
+
         private void button_enable()
         {
             if (maindr == null) return;
@@ -775,7 +784,7 @@ Where DetailUkey = {15};",
             ToExcel(false);
         }
 
-        private bool ToExcel(bool AutoSave)
+        private bool ToExcel(bool isSendMail)
         {
             #region DataTables && 共用變數
             //FabricDefect 基本資料 DB
@@ -837,7 +846,6 @@ Where DetailUkey = {15};",
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
 
             #region FabricDefect 基本資料
             int counts = dtBasic.Rows.Count;
@@ -1061,25 +1069,18 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            if (AutoSave)
-            {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "QA_P01_PhysicalInspection" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+            #region Save Excel
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_PhysicalInspection");
+            excel.ActiveWorkbook.SaveAs(excelFile);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            #endregion
 
-                worksheet.SaveAs(excelFile);
-                excel.Workbooks.Close();
-                excel.Quit();
-                excel = null;
-            }
-            else
+            if (!isSendMail)
             {
-                excel.Visible = true;
+                excelFile.OpenFile();
             }
-
-           
-            
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
-            if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
             this.HideWaitMessage();
             return true;
         }

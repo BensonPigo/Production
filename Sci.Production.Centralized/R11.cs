@@ -662,17 +662,17 @@ order by FactorySort
 
             #region --匯出Excel
             Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Centralized_R11_Transportation_Cost_Material_Import_clearance.xltx");
-            xl.boOpenFile = true;
-            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
+            xl.BoOpenFile = true;
+            SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
             xdt_All.ShowHeader = true;
             xdt_All.HeaderColor = Color.FromArgb(216, 228, 188);
-            xl.dicDatas.Add("##R20UPRLLIST", xdt_All);
+            xl.DicDatas.Add("##R20UPRLLIST", xdt_All);
 
             if (this.checkExportDetail.Checked == true)
             {
-                SaveXltReportCls.xltRptTable xdt_detail_All = new SaveXltReportCls.xltRptTable(dt_detail_All);
+                SaveXltReportCls.XltRptTable xdt_detail_All = new SaveXltReportCls.XltRptTable(dt_detail_All);
                 xdt_detail_All.ShowHeader = false;
-                xl.dicDatas.Add("##R20UNRLDETAIL", xdt_detail_All);
+                xl.DicDatas.Add("##R20UNRLDETAIL", xdt_detail_All);
                 xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R11_Transportation_Cost_Material_Import_clearance"));
             }
             else

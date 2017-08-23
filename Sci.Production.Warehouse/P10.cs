@@ -20,7 +20,6 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10 : Sci.Win.Tems.Input8
     {
-
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -1083,13 +1082,7 @@ where t.id= @ID";
             frm.MdiParent = MdiParent;
             frm.Show();
   
-            
-            
             return true;
-
-
-
         }
-
     }
 }

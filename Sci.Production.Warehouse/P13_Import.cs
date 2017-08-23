@@ -158,8 +158,6 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
             this.Close();
         }
 
-
-
         private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();

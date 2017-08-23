@@ -18,8 +18,7 @@ using Sci;
 namespace Sci.Production.Quality
 {
     public partial class P01 : Sci.Win.Tems.Input6
-    {
-      
+    {     
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
        
@@ -45,7 +44,6 @@ namespace Sci.Production.Quality
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
         }
-
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -425,6 +423,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             return Result.True;
 
         }
+
         //判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         public void FinalResult(DataRow dr)
         {
@@ -503,8 +502,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 return DetailGridContextMenuMode.Editable;
             }
             return DetailGridContextMenuMode.None;
-        }
-        
+        }        
 
         private void modifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -623,8 +621,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             }
             detailgrid.SelectRowTo(rowindex);
         }
-
-      
     }
 }
 

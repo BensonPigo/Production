@@ -985,8 +985,6 @@ namespace Sci.Production.Quality
             OnRequery();
         }
 
-
-
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
@@ -1054,11 +1052,16 @@ namespace Sci.Production.Quality
 
             worksheet.Select();
             MyUtility.Msg.WaitClear();
-            excel.Visible = true;
 
-            if (excel != null) Marshal.FinalReleaseComObject(excel); //釋放sheet
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet); //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P06_Detail_Report");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
 
+            strExcelName.OpenFile();
+            #endregion
         }
 
         private new void TextChanged(object sender, EventArgs e)
@@ -1070,13 +1073,5 @@ namespace Sci.Production.Quality
         {
             isModify = true;
         }
-
-       
-
-      
-
-       
-
-
     }
 }

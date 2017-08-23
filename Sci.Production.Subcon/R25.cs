@@ -131,8 +131,8 @@ left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  "
             result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
         
             return result; //base.OnAsyncDataLoad(e);
-            }
-            DataTable dtt;
+        }
+        DataTable dtt;
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -149,13 +149,18 @@ left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  "
             worksheet.Cells[2, 1] = string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
                                                     (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("yyyy/MM/dd"),
                                                     (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("yyyy/MM/dd"),
-                                                    SP, Refno, Category, Supplier, Factory);            
+                                                    SP, Refno, Category, Supplier, Factory);
 
-            objApp.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R25");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
-
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
             return false;
         }
     }

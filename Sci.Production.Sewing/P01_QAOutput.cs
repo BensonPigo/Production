@@ -19,10 +19,12 @@ namespace Sci.Production.Sewing
             InitializeComponent();
             
         }
+
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
         }
+
         protected override bool OnSaveBefore()
         {
             grid.ValidateControl();

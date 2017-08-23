@@ -16,7 +16,6 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11_AutoPick_Detail : Sci.Win.Subs.Base
     {
-
         DataTable dt_detail;
         
         //
@@ -266,6 +265,7 @@ where id='{0}' ", orderid), out dtY);
             DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
             SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());           
         }
+
         //下一筆
         private void button1_Click(object sender, EventArgs e)
         {
@@ -288,6 +288,7 @@ where id='{0}' ", orderid), out dtY);
             computeTotalIssueQty();
             #endregion 
         }
+
         //上一筆
         private void button2_Click(object sender, EventArgs e)
         {

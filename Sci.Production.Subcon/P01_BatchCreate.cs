@@ -18,7 +18,6 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_BatchCreate : Sci.Win.Subs.Base
     {
-
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         string poType, isArtwork;
@@ -618,15 +617,12 @@ Order_TmsCost.ApvDate
             }
         }
 
-       
-
         //excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save();
-            //MyUtility.Excel.CopyToXls(dt, "");
+            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P01_BatchCreate"));
         }
 
         private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)

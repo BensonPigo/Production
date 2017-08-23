@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -324,10 +325,10 @@ ORDER BY POID,SEQ";
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             } 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R01.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new Utility.Excel.SaveXltReportCls.xltRptTable(dt);
+            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R01.xltx", keepApp: true);
+            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new Utility.Excel.SaveXltReportCls.XltRptTable(dt);
             string d1 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
             string d3 = (MyUtility.Check.Empty(DateSCIStart)) ? "" : Convert.ToDateTime(DateSCIStart).ToString("yyyy/MM/dd");
@@ -336,26 +337,25 @@ ORDER BY POID,SEQ";
             string d6 = (MyUtility.Check.Empty(DateSewEnd)) ? "" : Convert.ToDateTime(DateSewEnd).ToString("yyyy/MM/dd");
             string d7 = (MyUtility.Check.Empty(DateEstStart)) ? "" : Convert.ToDateTime(DateEstStart).ToString("yyyy/MM/dd");
             string d8 = (MyUtility.Check.Empty(DateEstEnd)) ? "" : Convert.ToDateTime(DateEstEnd).ToString("yyyy/MM/dd");
-            xl.dicDatas.Add("##Arr", d1 + "~" + d2);
-            xl.dicDatas.Add("##SCI", d3 + "~" + d4);
-            xl.dicDatas.Add("##Sew", d5 + "~" + d6);
-            xl.dicDatas.Add("##Est", d7 + "~" + d8);
-            xl.dicDatas.Add("##SP", spStrat + "~" + spEnd);
-            xl.dicDatas.Add("##Sea", Sea);
-            xl.dicDatas.Add("##Brand", Brand);
-            xl.dicDatas.Add("##Ref", Ref);
-            xl.dicDatas.Add("##Cate", Category);
-            xl.dicDatas.Add("##supp", Supp);
-            xl.dicDatas.Add("##Over", Over);
-            xl.dicDatas.Add("##body", dt1);
-            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-            dt1.ShowHeader = false;
-            xl.Save();
-            wks.Columns.AutoFit();
+            xl.DicDatas.Add("##Arr", d1 + "~" + d2);
+            xl.DicDatas.Add("##SCI", d3 + "~" + d4);
+            xl.DicDatas.Add("##Sew", d5 + "~" + d6);
+            xl.DicDatas.Add("##Est", d7 + "~" + d8);
+            xl.DicDatas.Add("##SP", spStrat + "~" + spEnd);
+            xl.DicDatas.Add("##Sea", Sea);
+            xl.DicDatas.Add("##Brand", Brand);
+            xl.DicDatas.Add("##Ref", Ref);
+            xl.DicDatas.Add("##Cate", Category);
+            xl.DicDatas.Add("##supp", Supp);
+            xl.DicDatas.Add("##Over", Over);
+            xl.DicDatas.Add("##body", dt1);            
+            dt1.ShowHeader = false;       
+
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R01"));
+            ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+            xl.FinishSave();
             return true;
             
         }
-
-       
     }
 }

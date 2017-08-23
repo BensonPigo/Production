@@ -20,7 +20,6 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
-
           
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -388,6 +387,7 @@ namespace Sci.Production.Quality
             
             
         }
+
         protected override void ClickNewAfter()
         {
             CurrentMaintain["No"] = (int)CurrentMaintain["No"]+1;

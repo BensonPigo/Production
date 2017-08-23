@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -148,7 +149,16 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
 
                     rownum++;
                 }
-                excel.Visible = true;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P03_Detail");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             else
             {
@@ -194,7 +204,15 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                 excel.Cells.EntireColumn.AutoFit();
                 excel.Cells.EntireRow.AutoFit();
 
-                excel.Visible = true;
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P03_List");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             
             return true;

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -64,7 +65,7 @@ from VNExportDeclaration e WITH (NOLOCK)
 left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
 left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
 left join PackingList pl WITH (NOLOCK) on e.InvNo = pl.INVNo
-where 1=1 '{0}'
+where 1=1 {0}
 and e.Status = 'Confirmed'
 ),
 SecondStepFilterData
@@ -204,9 +205,16 @@ from tmpSumDetail
             worksheet.Select();
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            excel.Visible = true;
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P41_Print");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
 
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

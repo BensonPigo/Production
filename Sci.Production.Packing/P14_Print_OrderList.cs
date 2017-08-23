@@ -94,6 +94,7 @@ outer apply(
 
         private void toExcel(string xltFile, int headerRow, DataTable ExcelTable)
         {
+            string strExcelProcessName = "";
             if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
@@ -123,6 +124,7 @@ outer apply(
 
             if (xltFile.EqualString("Packing_P14_TransferSlip.xltx"))
             {
+                strExcelProcessName = "Packing_P14_TransferSlip";
                 decimal sumTTL = 0;
                 for (int i = 1; i <= ExcelTable.Rows.Count; i++)
                 {
@@ -142,13 +144,25 @@ outer apply(
                 objSheets.Rows.AutoFit();
             }
             if (xltFile.EqualString("Packing_P14.xltx"))
-            {                
+            {
+                strExcelProcessName = "Packing_P14";
                 int r = ExcelTable.Rows.Count;
                 objSheets.get_Range(string.Format("A5:L{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
             }
-            objApp.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             this.HideWaitMessage();
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet

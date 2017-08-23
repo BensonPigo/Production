@@ -705,7 +705,6 @@ Where a.id = '{0}'", masterID);
             frm.ShowDialog(this);
         }
 
-
         private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;

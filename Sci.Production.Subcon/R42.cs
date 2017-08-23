@@ -25,6 +25,7 @@ namespace Sci.Production.Subcon
             comboload();
             this.comboFactory.setDataSource();
         }
+
         //string date = "";
         private void comboload()
         {
@@ -69,6 +70,7 @@ namespace Sci.Production.Subcon
             dateBundleTransDate2 = this.dateBundleTransDate.Value2;
             return base.ValidateInput();
         }
+
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -179,8 +181,7 @@ namespace Sci.Production.Subcon
             }
             return Result.True;
         }
-
-
+        
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -199,9 +200,6 @@ namespace Sci.Production.Subcon
             
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             MyUtility.Excel.CopyToXls(printData2, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
-
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
         #endregion

@@ -719,6 +719,5 @@ select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.C
             txtContractNo.Text = item.GetSelectedString();            
             
         }
-
     }
 }

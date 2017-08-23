@@ -762,6 +762,7 @@ where a.id= @ID", pars, out dd);
             return true;
 
         }
+
         private void txtFromFactory_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtFromFactory.Text)) return;
@@ -773,8 +774,7 @@ where a.id= @ID", pars, out dd);
                 this.txtFromFactory.Select();
             }
         }
-
-
+        
         private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;

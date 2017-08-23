@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using Ict;
 
 namespace Sci.Production.Warehouse
 {
@@ -196,10 +197,16 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
-                objApp.Visible = true;
 
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P04_LocalTransaction");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 this.HideWaitMessage();
             }
         }

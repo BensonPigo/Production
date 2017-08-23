@@ -302,7 +302,6 @@ namespace Sci.Production.Quality
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), decimal_places: 0, integer_places: 5);
 
         }      
-
    
         protected override void ClickConfirm()
         {

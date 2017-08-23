@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         string Category; string Sea; string Brand; string Factory; 
         List<SqlParameter> lis; DualResult res;
         DataTable dt; string cmd;
+
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -46,6 +47,7 @@ namespace Sci.Production.Quality
             comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             bool date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
@@ -190,6 +192,7 @@ namespace Sci.Production.Quality
 
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
          
@@ -200,6 +203,7 @@ namespace Sci.Production.Quality
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -211,10 +215,6 @@ namespace Sci.Production.Quality
             }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R03.xltx"); //預先開啟excel app                         
             MyUtility.Excel.CopyToXls(dt, "", "Quality_R03.xltx", 2, true, null, objApp);      // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-
             return res;
         }
     }

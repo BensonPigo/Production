@@ -27,6 +27,7 @@ namespace Sci.Production.Thread
             this.detTable = detTable;
             
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

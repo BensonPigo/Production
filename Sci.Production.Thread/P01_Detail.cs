@@ -413,7 +413,5 @@ namespace Sci.Production.Thread
                 gridDetail.IsEditingReadOnly = !EditMode;
             }
         }
-
-        
     }
 }

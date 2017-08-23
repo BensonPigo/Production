@@ -364,7 +364,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"]
             Excel.Application objApp = null;
             Excel.Worksheet worksheet = null;
             objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
-            MyUtility.Excel.CopyToXls(resultDt, "", "PPIC_R10.xltx", 3, showExcel: true, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(resultDt, "", "PPIC_R10.xltx", 3, showExcel: false, excelApp: objApp);
             worksheet = objApp.Sheets[1];
             
             /*
@@ -377,8 +377,18 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"]
 
             worksheet.Rows.AutoFit();
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R10");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             #endregion
             this.HideWaitMessage();
             return true;

@@ -177,6 +177,7 @@ drop table #tmp,#tmp2"
             }
             #endregion
         }
+
         //CREATE
         private void btnCreate_Click(object sender, EventArgs e)
         {
@@ -231,6 +232,7 @@ values('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
             MyUtility.Msg.InfoBox("Create success " + getID);
             Close();
         }
+
         //Close
         private void btnClose_Click(object sender, EventArgs e)
         {

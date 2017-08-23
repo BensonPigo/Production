@@ -12,10 +12,8 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
-
     public partial class P36_ModifyAfterSent : Sci.Win.Subs.Base
     {
-
         DataRow dr;
         DataTable dtData;
         public P36_ModifyAfterSent(DataRow Data)

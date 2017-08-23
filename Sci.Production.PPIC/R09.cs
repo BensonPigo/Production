@@ -175,7 +175,6 @@ order by FactoryID, OrderId"
             Excel.Application objApp = null;
             objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R09.xltx");
             MyUtility.Excel.CopyToXls(dtPrint, "", "PPIC_R09.xltx", 1, showExcel: true, excelApp: objApp);
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             #endregion 
             this.HideWaitMessage();
             return true;

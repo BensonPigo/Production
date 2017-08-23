@@ -132,6 +132,7 @@ Where   c.lock = 0
                 this.HideWaitMessage();
             }
         }
+
         //Form Load
         protected override void OnFormLoaded()
         {

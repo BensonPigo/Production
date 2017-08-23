@@ -1359,6 +1359,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             if (excel == null) return;
             excel.Visible = true;
         }
+
         protected override bool ClickPrint()
         {
             DataTable details = (DataTable)this.detailgridbs.DataSource;

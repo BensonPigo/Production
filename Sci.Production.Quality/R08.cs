@@ -13,6 +13,9 @@ namespace Sci.Production.Quality
 {
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
+        DataTable printData;
+        string sp1, sp2, uid;
+        DateTime? InspectionDate1, InspectionDate2;
 
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -20,9 +23,6 @@ namespace Sci.Production.Quality
             InitializeComponent();
         }
 
-        DataTable printData;
-        string sp1, sp2, uid;
-        DateTime? InspectionDate1, InspectionDate2;
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
@@ -101,10 +101,6 @@ ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
             string xltx = "Quality_R08.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData, "", xltx, 1, true, null, objApp);// 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
     }

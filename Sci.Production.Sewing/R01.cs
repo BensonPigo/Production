@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
@@ -390,6 +391,7 @@ order by ArtworkTypeID
                         Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
                         rng.Select();
                         rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                        Marshal.ReleaseComObject(rng);
                     }
                     //填入Sub Total資料
                     if (_ttlData != null)
@@ -458,6 +460,7 @@ order by ArtworkTypeID
                 //插入一筆Record
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToInsert);
             }
 
             //最後一個Shift資料
@@ -467,6 +470,7 @@ order by ArtworkTypeID
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow, Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                Marshal.ReleaseComObject(rng);
             }
             //填入Sub Total資料
             if (_ttlData != null)
@@ -504,6 +508,7 @@ order by ArtworkTypeID
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow + 1, Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                Marshal.ReleaseComObject(rng);
             }
 
             insertRow = insertRow + 2;
@@ -600,10 +605,20 @@ order by ArtworkTypeID
                 //插入一筆Record
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToInsert);
             }
 
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R01_DailyCMPReport");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

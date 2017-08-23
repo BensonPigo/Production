@@ -812,7 +812,7 @@ drop table #CBDate
             if (isArtwork)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
@@ -825,13 +825,24 @@ drop table #CBDate
                 firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                 objApp.Cells.EntireColumn.AutoFit();  //自動欄寬
 
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+                Marshal.ReleaseComObject(firstRow);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, false, null, objApp);      // 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 //首列資料篩選
@@ -839,8 +850,19 @@ drop table #CBDate
                 firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
                 objApp.Cells.EntireColumn.AutoFit();  //自動欄寬
 
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R15_WIP");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+                Marshal.ReleaseComObject(firstRow);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             
             return true;

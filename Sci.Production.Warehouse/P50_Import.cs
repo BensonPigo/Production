@@ -189,8 +189,6 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             this.Close();
         }
 
-
-
         private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();

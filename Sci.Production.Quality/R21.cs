@@ -31,6 +31,7 @@ namespace Sci.Production.Quality
             this.radioSummary.Checked = true;
 
         }
+
         // 驗證輸入條件 必須要有
         protected override bool ValidateInput()
         {
@@ -49,6 +50,7 @@ namespace Sci.Production.Quality
             brand = txtBrand.Text;
             return base.ValidateInput();
         }
+
         // 非同步資料 必須要有
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -236,6 +238,7 @@ where a.Status = 'Confirmed'");
          
             return Result.True;
         }
+
         // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
         {   
@@ -251,15 +254,19 @@ where a.Status = 'Confirmed'");
                 }
 
                 Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(SummaryData, "", "Quality_R21_CFA_InlineReport_Summary.xltx", 2, true, null, excel);
-                Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表                 
+                MyUtility.Excel.CopyToXls(SummaryData, "", "Quality_R21_CFA_InlineReport_Summary.xltx", 2, false, null, excel);            
 
                 excel.Cells.EntireColumn.AutoFit();
                 excel.Cells.EntireRow.AutoFit();
 
-                if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-                if (excel != null) Marshal.FinalReleaseComObject(excel);
-                
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_Summary");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             if (radiobyDetail.Checked)
             {
@@ -271,19 +278,23 @@ where a.Status = 'Confirmed'");
                     return false;
                 }
                 Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, true, null, excel);
-                Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表
+                MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, false, null, excel);
 
                 excel.Cells.EntireColumn.AutoFit();
                 excel.Cells.EntireRow.AutoFit();
 
-                 if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-                 if (excel != null) Marshal.FinalReleaseComObject(excel);     
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R21_CFA_InlineReport_detail");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+
+                strExcelName.OpenFile();
+                #endregion 
             }
             
             this.HideWaitMessage();
             return true;
         }
-    }
-    
+    }    
 }

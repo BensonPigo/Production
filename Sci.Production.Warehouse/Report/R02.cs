@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
             {
                 //return MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1,true);
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
                 this.ShowWaitMessage("Excel Processing...");
                 Excel.Worksheet worksheet = objApp.Sheets[1];
@@ -66,10 +66,16 @@ namespace Sci.Production.Warehouse
                     if(!MyUtility.Check.Empty(str))
                         worksheet.Cells[i + 1, 9] = str.Trim();
                 }
-                objApp.Visible = true;
 
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R02");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 this.HideWaitMessage();
                 return true;
             }

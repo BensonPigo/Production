@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         protected DataRow motherData;
         Size thisSize;
         bool FirstTime = true;
+
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem,String history) : base(menuitem) 
         {
@@ -54,14 +55,17 @@ namespace Sci.Production.Quality
             button_enable();
 
         }
+
         public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
+
         public void colorSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
+
         public void colorSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton ,int eRowIndex){
             if (eButton == System.Windows.Forms.MouseButtons.Right)
             {
@@ -85,10 +89,12 @@ namespace Sci.Production.Quality
         {
             this.itemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
+
         public void itemSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
             this.itemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
+
         public void itemSelect_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
         {
             DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);
@@ -116,6 +122,7 @@ namespace Sci.Production.Quality
                 dr1["Item"] = item1.GetSelectedString();
             }
         }
+
         // 設定Grid內容值
         protected override void OnDetailGridSetup()
         {
@@ -227,7 +234,6 @@ where a.id=b.POID and a.fabrictype='A'
             detailgrid.ValidateControl();
       
         }
-
         
         // When click Edit button and Grid is empty then New 5 column in GridView
         //choice ClickEditAfter becauser Transaction problemm
@@ -340,6 +346,7 @@ where a.id=b.POID and a.fabrictype='A'
             }
             return Result.True;
         }
+
         //表頭combobox
         protected override void OnFormLoaded()
         {
@@ -409,6 +416,7 @@ where a.id=b.POID and a.fabrictype='A'
             btnFinished.Enabled = !this.EditMode;
             
         }       
+
         protected override DualResult ClickSave()
         {
                      
@@ -481,9 +489,5 @@ where a.id=b.POID and a.fabrictype='A'
             Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
-
-
-       
-
     }
 }

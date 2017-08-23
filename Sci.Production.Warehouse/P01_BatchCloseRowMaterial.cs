@@ -29,6 +29,7 @@ namespace Sci.Production.Warehouse
             comboCategory.SelectedIndex = 0;
 
         }
+
         public P01_BatchCloseRowMaterial(DataRow master, DataTable detail)
             : this()
         {
@@ -277,8 +278,7 @@ from #tmp";
             {
                 MyUtility.Tool.ProcessWithDatatable(dtBatch[1], "",cmd , out printDatatable, "#Tmp");
                 Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
-                sdExcel.Save();
-
+                sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P01_BatchCloseRowMaterial"));
             }
         }
     }

@@ -27,11 +27,13 @@ namespace Sci.Production.Quality
              this.txtDefectcode.ReadOnly = true;         
              base.ClickEditAfter();                                    
          }        
+
          protected override bool ClickNewBefore()
          {
              this.txtDefectcode.ReadOnly = false;         
              return base.ClickNewBefore();
          }
+
          protected override bool ClickSaveBefore()
          {
              #region 必輸檢查
@@ -94,6 +96,7 @@ namespace Sci.Production.Quality
                  this.txtDefectType.Text = this.txtDefectcode.Text.ToString().Substring(0, 1);
              }
          }
+
          #region 解決EditBox BindSouce後,會清空txtDefectType
          private void editDescription_Leave(object sender, EventArgs e)
          {
@@ -111,8 +114,5 @@ namespace Sci.Production.Quality
              }
          }
         #endregion
-
-
-
     }
 }

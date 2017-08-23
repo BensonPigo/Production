@@ -262,7 +262,7 @@ pivot
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R18.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R18.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Planning_R18.xltx", 1, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheet.Name = comboArtworkType.SelectedValue.ToString();
@@ -282,11 +282,20 @@ pivot
                 range.ShrinkToFit = false;
                 range.EntireColumn.AutoFit();
             }
-            objApp.Visible = true;
-            
 
-            if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R18");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheet);
+            Marshal.ReleaseComObject(range);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

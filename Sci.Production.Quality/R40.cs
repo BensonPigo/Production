@@ -24,6 +24,7 @@ namespace Sci.Production.Quality
             print.Enabled = false;
             this.comboBrand.SelectedIndex = 0;
         }
+
         string Brand;
         string Year;
         string Factory;
@@ -45,8 +46,8 @@ namespace Sci.Production.Quality
             return true;
         }
 
-
         System.Data.DataTable allFactory = null;
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             dtt_All = null;
@@ -460,20 +461,22 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             }
             return result;
         }
+
         Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
         string stringyear2;
         string stringyear3;
         string stringyear4;
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (radiobyYear.Checked == true)
             {
-                #region By Year               
+                #region By Year
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
                
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByYear.xltx");
-                SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dtt_All);
+                SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dtt_All);
                 DateTime newtodaty = DateTime.Today;
                 int year1 = newtodaty.Year;
                 int year2;
@@ -500,14 +503,14 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 dic.Add(stringyear4, "3,5");
                 dic.Add(stringyear3, "6,8");
                 dic.Add(stringyear2, "9,11");
-                xdt_All.lisTitleMerge.Add(dic);
+                xdt_All.LisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
-                xdt_All.boAutoFitColumn = true;
-                xl.dicDatas.Add("##by_year", xdt_All);
+                xdt_All.BoAutoFitColumn = true;
+                xl.DicDatas.Add("##by_year", xdt_All);
                 SaveXltReportCls.ReplaceAction a = AddRpt;
-                xl.dicDatas.Add("##addrpt", a);
-                
-                xl.Save();
+                xl.DicDatas.Add("##addrpt", a);
+
+                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
                 #endregion
 
             }
@@ -516,10 +519,10 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 #region By Factory
 
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
                
-                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx");
-                SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(alltemp_All);
+                Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx", keepApp: true);
+                SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(alltemp_All);
 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add(" ", "1,2");
@@ -529,14 +532,14 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                     dic.Add(allFactory.Rows[i]["FactoryID"].ToString()
                         , string.Format("{0},{1}", ((i * 3) + 3), ((i * 3) + 5)));
                 }
-                xdt_All.lisTitleMerge.Add(dic);
+                xdt_All.LisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
 
 
                 foreach (var item in dicFTY)
                 {
                     string fty = item.Key;
-                    SaveXltReportCls.xltRptTable x_All = new SaveXltReportCls.xltRptTable(item.Value);
+                    SaveXltReportCls.XltRptTable x_All = new SaveXltReportCls.XltRptTable(item.Value);
                     DateTime newtodaty = DateTime.Today;
                     int year1 = newtodaty.Year;
                     int year2;
@@ -564,31 +567,30 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                     dic1.Add(stringyear4, "3,5");
                     dic1.Add(stringyear3, "6,8");
                     dic1.Add(stringyear2, "9,11");
-                    x_All.lisTitleMerge.Add(dic1);
+                    x_All.LisTitleMerge.Add(dic1);
 
-                    xl.dicDatas.Add("##ftySheetName" + fty, item.Key);
-                    xl.dicDatas.Add("##ftyDetail" + fty, x_All);
+                    xl.DicDatas.Add("##ftySheetName" + fty, item.Key);
+                    xl.DicDatas.Add("##ftyDetail" + fty, x_All);
 
 
 
                 }
 
                 xl.VarToSheetName = "##ftySheetName";
-                xdt_All.boAutoFitColumn = true;
-                xl.dicDatas.Add("##by_factory", xdt_All);
+                xdt_All.BoAutoFitColumn = true;
+                xl.DicDatas.Add("##by_factory", xdt_All);
 
 
                 SaveXltReportCls.ReplaceAction b = Addfactory;
                 
-                xl.dicDatas.Add("##addfactory", b);
+                xl.DicDatas.Add("##addfactory", b);
 
                 SaveXltReportCls.ReplaceAction c = CopySheet;
-                xl.dicDatas.Add("##copyftysheet", c);
+                xl.DicDatas.Add("##copyftysheet", c);
 
-                Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                xl.Save();
-                wks.Columns.AutoFit();
-
+                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R40_ByFactory"));
+                ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+                xl.FinishSave();
                 #endregion
             }
 
@@ -917,6 +919,5 @@ drop table #dRangesM,#dRangesY,#daterange,#F
             }
 
         }
-
     }
 }

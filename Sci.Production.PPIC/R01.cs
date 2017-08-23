@@ -328,50 +328,55 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
                 Excel.Application objApp = null;
                 Excel.Worksheet worksheet = null;
-                try
-                {
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
-                    result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                        return false;
-                    }
-                    this.ShowWaitMessage("Excel Processing...");
-                    worksheet = objApp.Sheets[1];
 
-                    #region Set Excel Title
-                    string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
+                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    return false;
+                }
+                this.ShowWaitMessage("Excel Processing...");
+                worksheet = objApp.Sheets[1];
+
+                #region Set Excel Title
+                string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
 select NameEn 
 from Factory 
 where id = '{0}'", Sci.Env.User.Factory), null);
-                    worksheet.Cells[1, 1] = factoryName; 
-                    worksheet.Cells[2, 1] = "Sewing Line Schedule Report";
-                    worksheet.Cells[3, 1] = "Date:" + DateTime.Now.ToString("yyyy/MM/dd");
-                    #endregion 
-                    for (int i = 1; i < printData.Rows.Count; i++)
-                    {
-                        DataRow frontRow = printData.Rows[i - 1];
-                        DataRow Row = printData.Rows[i];
-
-                        //當前後 SyleID 不同時，中間加上虛線
-                        if ( !frontRow["StyleID"].EqualString(Row["StyleID"]))
-                        {
-                            // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1 
-                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":Z" + (i + 5));
-                            excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
-                        }
-                    }
-                    
-                    worksheet.Columns[26].ColumnWidth = 30;
-                    objApp.Visible = true;
-                    this.HideWaitMessage();
-                }
-                finally
+                worksheet.Cells[1, 1] = factoryName; 
+                worksheet.Cells[2, 1] = "Sewing Line Schedule Report";
+                worksheet.Cells[3, 1] = "Date:" + DateTime.Now.ToString("yyyy/MM/dd");
+                #endregion 
+                for (int i = 1; i < printData.Rows.Count; i++)
                 {
-                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                    if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                    DataRow frontRow = printData.Rows[i - 1];
+                    DataRow Row = printData.Rows[i];
+
+                    //當前後 SyleID 不同時，中間加上虛線
+                    if ( !frontRow["StyleID"].EqualString(Row["StyleID"]))
+                    {
+                        // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1 
+                        Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":Z" + (i + 5));
+                        excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
+                    }
                 }
+                    
+                worksheet.Columns[26].ColumnWidth = 30;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_PrintOut");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
+                this.HideWaitMessage();
                 #endregion
             }
             else
@@ -423,7 +428,5 @@ where id = '{0}'", Sci.Env.User.Factory), null);
                 }
             }
         }
-
-
     }
 }
