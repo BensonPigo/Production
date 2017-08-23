@@ -201,7 +201,9 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-
+                        dr["Result"] = "pass";
+                        dr["Grade"] = "A";
+                        dr["totalpoint"] = 0.00;
                         dr.EndEdit();
                     }
                     else
@@ -209,7 +211,20 @@ namespace Sci.Production.Quality
                         dr["Roll"] = "";
                         dr["Dyelot"] = "";
                         dr["Ticketyds"] = 0.00;
+                        dr["Actualyds"] = 0.00;
                         dr["CutWidth"] = 0.00;
+                        dr["fullwidth"] = 0.00;
+                        dr["actualwidth"] = 0.00;
+                        dr["totalpoint"] = 0.00;
+                        dr["pointRate"] = 0.00;
+                        dr["Result"] = "";
+                        dr["Grade"] = "";
+                        dr["moisture"] = 0;
+                        dr["Remark"] = "";
+                        dr["InspDate"] = DBNull.Value;
+                        dr["Inspector"] = "";
+                        dr["Name"] = "";
+                        dr.EndEdit();
                         dr.EndEdit();
                         return;
                     }  
@@ -226,6 +241,21 @@ namespace Sci.Production.Quality
                 {
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
+                    dr["Ticketyds"] = 0.00;
+                    dr["Actualyds"] = 0.00;
+                    dr["CutWidth"] = 0.00;
+                    dr["fullwidth"] = 0.00;
+                    dr["actualwidth"] = 0.00;
+                    dr["totalpoint"] = 0.00;
+                    dr["pointRate"] = 0.00;
+                    dr["Result"] = "";
+                    dr["Grade"] = "";
+                    dr["moisture"] = 0;
+                    dr["Remark"] = "";
+                    dr["InspDate"] = DBNull.Value;
+                    dr["Inspector"] = "";
+                    dr["Name"] = "";
+                    dr.EndEdit();
                     return;
                 }
                 if (oldvalue == newvalue) return;
@@ -241,7 +271,9 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-
+                    dr["Result"] = "pass";
+                    dr["Grade"] = "A";
+                    dr["totalpoint"] = 0.00;
                     dr.EndEdit();
                 }
                 else
@@ -249,7 +281,19 @@ namespace Sci.Production.Quality
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr["Ticketyds"] = 0.00;
+                    dr["Actualyds"] = 0.00;
                     dr["CutWidth"] = 0.00;
+                    dr["fullwidth"] = 0.00;
+                    dr["actualwidth"] = 0.00;
+                    dr["totalpoint"] = 0.00;
+                    dr["pointRate"] = 0.00;
+                    dr["Result"] = "";
+                    dr["Grade"] = "";
+                    dr["moisture"] = 0;
+                    dr["Remark"] = "";
+                    dr["InspDate"] = DBNull.Value;
+                    dr["Inspector"] = "";
+                    dr["Name"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
@@ -261,13 +305,14 @@ namespace Sci.Production.Quality
             Ydscell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["actualyds"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
-                if (oldvalue == newvalue) return;
-                double pointrate = Math.Round((MyUtility.Convert.GetDouble(dr["totalpoint"]) / MyUtility.Convert.GetDouble(e.FormattedValue)) * 100, 2);
-                dr["pointrate"] = pointrate;
-                dr["actualyds"] = newvalue;
+                dr["totalpoint"] = 0.00;
+                //string oldvalue = dr["actualyds"].ToString();
+                //string newvalue = e.FormattedValue.ToString();
+                //if (this.EditMode == false) return;
+                //if (oldvalue == newvalue) return;
+                //double pointrate = Math.Round((MyUtility.Convert.GetDouble(dr["totalpoint"]) / MyUtility.Convert.GetDouble(e.FormattedValue)) * 100, 2);
+                //dr["pointrate"] = pointrate;
+                //dr["actualyds"] = newvalue;
                 dr.EndEdit();
             };
             #endregion
@@ -276,7 +321,7 @@ namespace Sci.Production.Quality
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
+            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, settings: Ydscell)
             .Numeric("CutWidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2,iseditingreadonly:true)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
