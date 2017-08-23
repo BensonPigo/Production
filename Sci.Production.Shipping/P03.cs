@@ -102,14 +102,13 @@ where ed.ID = '{0}'", masterID);
             //Arrive Port Date 不可晚於 Arrive W/H Date
             if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
             {
-                if (!(MyUtility.Convert.GetString(CurrentMaintain["ExportCountry"]) 
-                    == MyUtility.Convert.GetString(CurrentMaintain["ImportCountry"]) 
-                    && MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]) == "TRUCK"))
+                if (!(MyUtility.Convert.GetString(CurrentMaintain["ExportCountry"]).ToUpper() 
+                    == MyUtility.Convert.GetString(CurrentMaintain["ImportCountry"]).ToUpper()
+                    && MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]).ToUpper() == "TRUCK"))
                 {
                     if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
                     {
                         MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
-                        return false;
                     }
                 }
             }
@@ -121,19 +120,19 @@ where ed.ID = '{0}'", masterID);
                 if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) < Convert.ToDateTime(CurrentMaintain["Eta"]))
                 {
                     DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    if (buttonResult == System.Windows.Forms.DialogResult.No)
-                    {
-                        return false;
-                    }
+                    //if (buttonResult == System.Windows.Forms.DialogResult.No)
+                    //{
+                    return false;
+                    //}
                 }
 
                 if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10))
                 {
                     DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > later than < ETA > + 10 days. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    if (buttonResult == System.Windows.Forms.DialogResult.No)
-                    {
-                        return false;
-                    }
+                    //if (buttonResult == System.Windows.Forms.DialogResult.No)
+                    //{
+                    return false;
+                    //}
                 }
             }
 
