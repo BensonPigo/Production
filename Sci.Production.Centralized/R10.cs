@@ -285,7 +285,7 @@ order by FactoryID
                 objApp.Sheets[i].Columns.AutoFit();
             }
             Excel.Workbook workbook = objApp.Workbooks[1];
-            string strFileName = new Sci.Production.Class.GetExcelName().GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
+            string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             workbook.SaveAs(strFileName);
             workbook.Close();
             objApp.Quit();

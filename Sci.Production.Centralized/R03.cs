@@ -535,11 +535,13 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H", out gdtData9);
                 #region Save & Show Excel
                 excel.Visible = true;
                 Workbook workbook = excel.Workbooks[1];
-                string strExcelName = new Sci.Production.Class.GetExcelName().GetName("Centralized-R03.Prod. Efficiency Analysis Report");
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized-R03.Prod. Efficiency Analysis Report");
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(workbook);
+
                 strExcelName.OpenFile();
                 #endregion 
             }

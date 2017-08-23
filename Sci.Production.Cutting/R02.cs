@@ -20,9 +20,8 @@ namespace Sci.Production.Cutting
         string[] cuttings;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
-        string tmpFile;
         DataTable Cutcelltb;
-        string NameEN;
+        string NameEN, strExcelName;
 
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -670,8 +669,7 @@ where 1 = 1
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(printData[0].Rows.Count);
-            if (!boolsend) tmpFile = null;               
+            SetCount(printData[0].Rows.Count);            
             
             int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
             bool countrow = false;
@@ -712,12 +710,13 @@ where 1 = 1
                         continue;
                     
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
+                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+
                     foreach (DataRow dr in printData[i].Rows)
                     {
                         dr["Fab Desc1"] = dr["Fab Desc1"].ToString().Trim();
                     }
-                    MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
-
+                    
                     for (int j = 0; j < printData[i].Rows.Count; j++)
                     {
                         if (!printData[i].Rows[j]["Request#1"].Empty())
@@ -758,15 +757,23 @@ where 1 = 1
                     objSheets.get_Range("P1").ColumnWidth = 50;
                     objSheets.get_Range("Q1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
-                    if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                    
+
+                    Marshal.ReleaseComObject(objSheets); //釋放sheet                    
                 }
-                if (!boolsend) objApp.Visible = true;
-                if (boolsend)
+
+                #region Save Excel
+                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBydetail");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(workbook);
+                #endregion 
+                if (!boolsend)
                 {
-                    objApp.SaveWorkspace();
-                    MyUtility.Excel.KillExcelProcess(objApp); 
+                    strExcelName.OpenFile();
                 }
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp); //釋放objApp
             }
             #endregion
 
@@ -792,8 +799,8 @@ where 1 = 1
                     if (printData[i].Rows.Count == 0)
                         continue;
 
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
-                    MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表                    
+                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
 
                     for (int j = 0; j < printData[i].Rows.Count; j++)
                     {
@@ -834,18 +841,23 @@ where 1 = 1
                     objSheets.get_Range("P1").ColumnWidth = 12.88;
                     objSheets.get_Range("Q1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
-                    if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                     
+                    
+                    Marshal.ReleaseComObject(objSheets); //釋放sheet                     
                 }
+
+                #region Save Excel
+                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(workbook);
+                #endregion 
                 if (!boolsend)
                 {
-                    objApp.Visible = true;
+                    strExcelName.OpenFile();
                 }
-                if (boolsend)
-                {
-                    objApp.SaveWorkspace();
-                    MyUtility.Excel.KillExcelProcess(objApp);
-                }
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp); //釋放objApp
             }
             #endregion
 
@@ -875,12 +887,14 @@ where 1 = 1
                         dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
                     }
 
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
-                    MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表      
+                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
+                    objSheets.Columns.AutoFit();
                     objSheets.Columns[7].ColumnWidth = 47;
                     objSheets.Columns[11].ColumnWidth = 8;
                     objSheets.Columns[12].ColumnWidth = 13;
@@ -888,15 +902,21 @@ where 1 = 1
                     objSheets.Columns[14].ColumnWidth = 10;
                     objSheets.Columns[15].ColumnWidth = 20;
                     objSheets.Columns[16].ColumnWidth = 41;
-                    if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
+                    Marshal.ReleaseComObject(objSheets);    //釋放sheet                    
                 }
-                if (!boolsend) objApp.Visible = true;
-                if (boolsend)
+                #region Save Excel
+                strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R02_CuttingDailyPlanSummaryReportBySummary");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(workbook);
+                #endregion 
+                if (!boolsend)
                 {
-                    objApp.SaveWorkspace();
-                    MyUtility.Excel.KillExcelProcess(objApp);
+                    strExcelName.OpenFile();
                 }
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 
@@ -911,7 +931,6 @@ where 1 = 1
 
         private void btnSendMail_Click(object sender, EventArgs e)
         {
-            tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串
             boolshowexcel = false;
             boolsend = true;
             this.toexcel.PerformClick();            
@@ -947,11 +966,11 @@ where 1 = 1
 
             var email = new MailTo(Sci.Env.Cfg.MailFrom, ToAddress, CcAddress,
                 Subject,
-                tmpFile,
+                this.strExcelName,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + MD, false, true);
             email.ShowDialog(this);
             //tmpFile
-            System.IO.FileInfo fi = new System.IO.FileInfo(tmpFile);
+            System.IO.FileInfo fi = new System.IO.FileInfo(this.strExcelName);
             try
             {
                 fi.Delete();

@@ -690,7 +690,7 @@ select DISTINCT ID,ETD from #GarmentInvoice", out dtGMTBooking);
             xl.dicDatas.Add("##Parameter", Parameter);
             xl.dicDatas.Add("##Data", Data1);
 
-            xl.Save(new Sci.Production.Class.GetExcelName().GetName(Title2ForExcel), false);
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName(Title2ForExcel), false);
             //因再次匯出資料時，會殘留上次的連線數，故先清空
             this.SetLoadingText("");
             return true;

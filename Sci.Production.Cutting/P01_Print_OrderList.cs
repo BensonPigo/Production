@@ -104,7 +104,7 @@ namespace Sci.Production.Cutting
                 wks.get_Range("A5").RowHeight = 16.5;
                 wks.get_Range("A6").RowHeight = 16.5;
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
                 #endregion
             }
             if (radioCuttingschedule.Checked)
@@ -151,7 +151,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_CuttingSchedule"));
                 #endregion
             }
             if (radioEachConsumption.Checked)
@@ -225,7 +225,7 @@ namespace Sci.Production.Cutting
                 sxr.VarToSheetName = sxr._v + "SizeGroup";
 
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
                 #endregion
             }
             if (radioTTLConsumption.Checked)
@@ -287,7 +287,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
                 sxr.boOpenFile = true;
-                sxr.Save();                
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));                
                 #endregion
             }
             if (radioColorQtyBDown.Checked)
@@ -328,8 +328,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "tbl3", tbl3);
 
                 sxr.boOpenFile = true;
-                sxr.Save();
-                //SaveExcel(sxr, xltPath);
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ColorCombo_SizeBreakdown"));
                 #endregion
             }
             if (radioQtyBreakdown_PoCombbySPList.Checked)
@@ -365,7 +364,7 @@ namespace Sci.Production.Cutting
                 wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
                 wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_QtyBreakdown_PoCombbySPList"));
                 #endregion
             }
             if (radioEachConsVSOrderQtyBDown.Checked)
@@ -558,11 +557,19 @@ namespace Sci.Production.Cutting
                         }
                     }
                 }
-                             
-                
-                excel.Visible = true;
-                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
-                if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = MyUtility.Excel.GetRandomFileName("Cutting_P01_EachconsVSOrderQTYBDownPOCombo");
+                Microsoft.Office.Interop.Excel.Workbook workbook = excel.Workbooks[1];
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion 
                 this.HideWaitMessage();
                 return true;
 
@@ -643,7 +650,7 @@ namespace Sci.Production.Cutting
                 sxr.VarToSheetName = sxr._v + "SizeGroup";
 
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("cutting_P01_MarkerList"));
                 #endregion
             }
             if (radioConsumptionCalculateByMarkerListConsPerPC.Checked)
@@ -697,8 +704,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
 
                 sxr.boOpenFile = true;
-                sxr.Save();
-                //SaveExcel(sxr, xltPath);
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc"));
                 #endregion
             }
             

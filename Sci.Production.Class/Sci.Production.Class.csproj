@@ -65,7 +65,9 @@
       <DependentUpon>comboMDivision.cs</DependentUpon>
     </Compile>
     <Compile Include="Command\UserPrg.cs" />
-    <Compile Include="GetExcelName.cs" />
+    <Compile Include="MicrosoftFileName.cs">
+      <Generator>r</Generator>
+    </Compile>
     <Compile Include="Holiday.cs">
       <SubType>UserControl</SubType>
     </Compile>

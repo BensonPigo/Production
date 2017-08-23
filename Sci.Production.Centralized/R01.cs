@@ -405,7 +405,7 @@ order by data", out FinalALLData);
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
 
 
-            sxrc.Save(new Sci.Production.Class.GetExcelName().GetName("Centralized_R01.Matrix"));
+            sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R01.Matrix"));
             Final_Data1.Clear();
             FinalData4.Clear();
             FinalDetailData.Clear();

@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
@@ -107,13 +108,21 @@ namespace Sci.Production.Logistic
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
-                winword.Visible = true;
-                winword = null;
+
+                #region Save & Show Word
+                string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_B01_Barcode", Sci.Production.Class.WordFileeNameExtension.Docx);
+                document.SaveAs(strWordName);
+                document.Close();
+                winword.Quit();
+                Marshal.ReleaseComObject(winword);
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(table);
+
+                strWordName.OpenFile();
+                #endregion
             }
             catch (Exception ex)
             {
-                if (null != winword)
-                    winword.Quit();
                 return new DualResult(false, "Export word error.", ex);
             }
             finally

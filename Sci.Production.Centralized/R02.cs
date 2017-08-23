@@ -61,11 +61,13 @@ namespace Sci.Production.Centralized
             ShowInfo("Completed.");
             #region Save & Show Excel
             Excel.Workbook workbook = excel.Workbooks[1];
-            string strExcelName = new Sci.Production.Class.GetExcelName().GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelNameExtension.Xlsm);
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelFileNameExtension.Xlsm);
             workbook.SaveAs(strExcelName, Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
             workbook.Close();
             excel.Quit();
             Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(workbook);
+
             strExcelName.OpenFile();
             #endregion 
             return true;

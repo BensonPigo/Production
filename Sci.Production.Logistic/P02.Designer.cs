@@ -47,6 +47,8 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.lbFactory = new Sci.Win.UI.Label();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label2 = new System.Windows.Forms.Label();
@@ -60,8 +62,6 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -161,7 +161,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button1_Click);
+            this.btnFind.Click += new System.EventHandler(this.buttonFind_Click);
             // 
             // panel2
             // 
@@ -180,7 +180,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // btnClose
             // 
@@ -192,7 +192,7 @@
             this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // panel1
             // 
@@ -211,7 +211,7 @@
             this.btnImportFromBarcode.TabIndex = 7;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
-            this.btnImportFromBarcode.Click += new System.EventHandler(this.button2_Click);
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.buttonImport_Click);
             // 
             // panel4
             // 
@@ -252,6 +252,25 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(712, 152);
             this.panel3.TabIndex = 19;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(488, 44);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 36;
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(433, 44);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(52, 23);
+            this.lbFactory.TabIndex = 35;
+            this.lbFactory.Text = "Factory";
             // 
             // dateTimePicker2
             // 
@@ -309,7 +328,7 @@
             this.btnUpdateAllLocation.TabIndex = 15;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.button5_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.buttonUpdate_Click);
             // 
             // labelLocationNo
             // 
@@ -373,25 +392,6 @@
             this.lineShape1.X2 = 706;
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
-            // 
-            // lbFactory
-            // 
-            this.lbFactory.Location = new System.Drawing.Point(433, 44);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(52, 23);
-            this.lbFactory.TabIndex = 35;
-            this.lbFactory.Text = "Factory";
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(488, 44);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 36;
             // 
             // P02
             // 

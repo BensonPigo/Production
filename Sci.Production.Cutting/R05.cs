@@ -180,7 +180,7 @@ where 1=1
             {
                 dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
             }
-            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R05_CuttingMonthlyForecast.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R05_CuttingMonthlyForecast.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
             objSheets.Cells[1, 6] = WorkOrder.ToString();   // 條件字串寫入excel
@@ -191,8 +191,16 @@ where 1=1
             objSheets.Columns[17].ColumnWidth = 11;
             objSheets.Columns[19].ColumnWidth = 67;
             objSheets.Rows.AutoFit();
+
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R05_CuttingMonthlyForecast");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+            strExcelName.OpenFile();
             return true;
         }
     }

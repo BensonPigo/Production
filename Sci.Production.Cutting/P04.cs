@@ -420,10 +420,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
 
                     if (autoSave)
                     {
-                        Random random = new Random();
-
-                        pathName = Env.Cfg.ReportTempDir + "Cutting_Daily_Plan - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                        objBook.SaveAs(pathName);
+                        objBook.SaveAs(Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan"));
                         objBook.Close();
                         objApp.Workbooks.Close();
                         objApp.Quit();

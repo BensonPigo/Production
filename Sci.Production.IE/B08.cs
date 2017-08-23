@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.IE
 {
@@ -263,7 +264,17 @@ namespace Sci.Production.IE
 
                 worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
             }
-            excel.Visible = true;
+
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P08");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
             return base.ClickPrint();
         }
         

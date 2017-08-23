@@ -255,7 +255,7 @@ namespace Sci.Production.Packing
             else if (reportType == "3")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, masterData, orderQty, specialInstruction);
-
+                
             }
             this.HideWaitMessage();
             return true;

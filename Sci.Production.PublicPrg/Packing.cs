@@ -9,6 +9,7 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1062,6 +1063,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[bodyRowIndex, System.Type.Missing];
                 rangeRowCD.RowHeight = 19.5 * (i + 1);
+                Marshal.ReleaseComObject(rangeRowCD);
 
             }
             worksheet.Cells[bodyRowIndex, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
@@ -1079,7 +1081,9 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                    Marshal.ReleaseComObject(rngToCopy);
                 }
+                Marshal.ReleaseComObject(rngToCopy);
             }
             foreach (DataRow dr in QtyBDown.Rows)
             {
@@ -1107,6 +1111,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
+                    Marshal.ReleaseComObject(mark);
                 }
             }
             bodyRowIndex = bodyRowIndex + add + 13;
@@ -1127,12 +1132,25 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
+                    Marshal.ReleaseComObject(mark);
                 }
             }
             //MyUtility.Msg.WaitClear();
             excel.Columns.AutoFit();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(boolMultiple ? "Packing_P03_PackingListReport_Multiple" : "Packing_P03_PackingGuideReport");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
         }
 
         private static int formarks(string[] marks)

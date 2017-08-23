@@ -163,13 +163,13 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             listControlBindingSource1.DataSource = selectDataTable;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonFind_Click(object sender, EventArgs e)
         {
             find();
         }
 
         //Import From Barcode
-        private void button2_Click(object sender, EventArgs e)
+        private void buttonImport_Click(object sender, EventArgs e)
         {
             //設定只能選txt檔
             openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -290,7 +290,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void buttonSave_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
             this.gridImport.ValidateControl();
@@ -409,13 +409,13 @@ where a.Selected = 1", out selectData);
         }
 
         //Cancel
-        private void button4_Click(object sender, EventArgs e)
+        private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Update All Location
-        private void button5_Click(object sender, EventArgs e)
+        private void buttonUpdate_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;     //記錄目前指標位置

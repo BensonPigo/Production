@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
@@ -458,11 +459,18 @@ Cutplanid, str_PIVOT);
             //重製Mode以取消Copy區塊
             worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
 
-            ////選回第一格
-            //worksheet.Activate();
-            //worksheet.UsedRange.Cells[1, 1].Select();
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyRequest");
+            Excel.Workbook workbook = excel.Workbooks[1];
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(worksheet);
 
-            excel.Visible = true;
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
         public bool ByCutrefExcel()
@@ -761,7 +769,15 @@ cutref, str_PIVOT);
             #endregion //End By CutRef
             //重製Mode以取消Copy區塊
             worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
-            excel.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P02_SpreadingReportbyCutref");
+            Excel.Workbook workbook = excel.Workbooks[1];
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

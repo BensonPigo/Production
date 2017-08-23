@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
@@ -153,10 +154,19 @@ and (p.PulloutID = '' or po.Status = 'New')");
                 intRowsStart++;
             }
 
-            //excel.Cells.EntireColumn.AutoFit();
-            //excel.Cells.EntireRow.AutoFit();
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_R02_ClogAuditList");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             this.HideWaitMessage();
-            excel.Visible = true;
             return true;
         }
     }

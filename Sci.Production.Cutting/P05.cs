@@ -393,9 +393,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
                     if (autoSave)
                     {
-                        Random random = new Random();
-                        pathName = Env.Cfg.ReportTempDir + "Bulk_Marker_Request - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                        objBook.SaveAs(pathName);
+                        objBook.SaveAs(Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request"));
                         objBook.Close();
                         objApp.Workbooks.Close();
                         objApp.Quit();

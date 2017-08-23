@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
@@ -256,8 +257,19 @@ order by PackingListID, OrderID, rn");
             string drange = d1 + "~" + d2;
             objSheets.Cells[3, 13] = drange;
             objSheets.get_Range("A1").RowHeight = 45;
-            objApp.Visible = true;
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_P05");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             this.HideWaitMessage();
         }
     }
