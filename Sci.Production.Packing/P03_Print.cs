@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -157,8 +158,16 @@ namespace Sci.Production.Packing
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                        #region Save & Show Word
+                        string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_BarcodeVN", Sci.Production.Class.WordFileeNameExtension.Docx);
+                        document.SaveAs(strWordName);
+                        document.Close();
+                        winword.Quit();
+                        Marshal.ReleaseComObject(winword);
+                        Marshal.ReleaseComObject(document);
 
-                        winword.Visible = true;                      
+                        strWordName.OpenFile();
+                        #endregion                   
                         winword = null;
                     }
                     catch (Exception ex)
@@ -217,8 +226,16 @@ namespace Sci.Production.Packing
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                        #region Save & Show Word
+                        string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_Barcode", Sci.Production.Class.WordFileeNameExtension.Docx);
+                        document.SaveAs(strWordName);
+                        document.Close();
+                        winword.Quit();
+                        Marshal.ReleaseComObject(winword);
+                        Marshal.ReleaseComObject(document);
 
-                        winword.Visible = true;
+                        strWordName.OpenFile();
+                        #endregion 
                         winword = null;
                     }
                     catch (Exception ex)

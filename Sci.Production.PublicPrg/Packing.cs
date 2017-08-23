@@ -1402,6 +1402,7 @@ where   p.ID = '{0}'
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
@@ -1471,6 +1472,7 @@ where   p.ID = '{0}'
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                Marshal.ReleaseComObject(rng);
             }
             else
             {
@@ -1479,6 +1481,7 @@ where   p.ID = '{0}'
                     Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                     rng.Select();
                     rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                    Marshal.ReleaseComObject(rng);
                 }
             }
 
@@ -1540,6 +1543,7 @@ where   p.ID = '{0}'
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     rngToInsert.RowHeight = 19.5 ;
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
             }
             worksheet.Cells[excelRow, 3] = SpecialInstruction;
@@ -1580,6 +1584,7 @@ where   p.ID = '{0}'
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
                 rangeRowCD.RowHeight = 19.5 * (i + 1);
+                Marshal.ReleaseComObject(rangeRowCD);
             }    
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 
@@ -1601,11 +1606,21 @@ where   p.ID = '{0}'
                 PicTop = Convert.ToSingle(rngToInsert.Top);
                 string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
                 worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                Marshal.ReleaseComObject(rngToInsert);
             }
 
-            //MyUtility.Msg.WaitClear();
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
 
-            excel.Visible = true;
+            strExcelName.OpenFile();
+            #endregion 
         }
         #endregion
 

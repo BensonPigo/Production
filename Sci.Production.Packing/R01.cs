@@ -272,11 +272,21 @@ select Customize1 = stuff((
             worksheet.Cells[2, 18] = _factory;
             worksheet.Cells[2, 20] = rdbtnDetail.Checked ? "Complete" : (rdbtnSummary.Checked ? "Not Complete" : "ALL");
             worksheet.Cells[3, 8] = _columnname;
-            MyUtility.Excel.CopyToXls(_printData, "", reportname, 3, showExcel: true, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(_printData, "", reportname, 3, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_R01");
+            Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             #endregion
             this.HideWaitMessage();
             return true;

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -187,6 +188,7 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A6:A6", Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        Marshal.ReleaseComObject(rngToInsert);
                     }
                 }
 
@@ -246,8 +248,19 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 excelRow++;
                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(masterData["Remark"]);
 
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
+                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion 
                 this.HideWaitMessage();
-                excel.Visible = true;
             }
             return true;
         }
