@@ -13,6 +13,7 @@ using Ict;
 using Sci.Win.Tools;
 using Sci.Win;
 using Ict.Win;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
@@ -60,14 +61,11 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text.Trim();
-            if (textValue == "") 
+            if (textValue == this.textBox1.OldValue)
             {
-                this.textBox1.Text = "";
-                this.displayBox1.Text = "";
-                e.Cancel = true;
-                return; 
+                return;
             }
-            if (!string.IsNullOrWhiteSpace(textValue) || textValue != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(textValue))
             {
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
