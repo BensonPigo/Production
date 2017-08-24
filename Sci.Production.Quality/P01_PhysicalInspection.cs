@@ -115,8 +115,10 @@ namespace Sci.Production.Quality
             return base.OnRequery();
             
         }
+        DataTable datas2;
         protected override void OnRequeryPost(DataTable datas)
         {
+            datas2 = datas;
             if (!datas.Columns.Contains("CutWidth"))
             {
                 datas.ColumnsDecimalAdd("CutWidth");
@@ -152,7 +154,12 @@ namespace Sci.Production.Quality
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
             #endregion
         }
-        
+        private void redefect()
+        {
+            string str_defect = string.Format("Select a.* ,b.NewKey from Fir_physical_Defect a WITH (NOLOCK) ,#tmp b Where a.id = b.id and a.FIR_PhysicalDetailUKey = b.DetailUkey");
+
+            MyUtility.Tool.ProcessWithDatatable(datas2, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
+        }
         protected override bool OnGridSetup()
         {
 
@@ -201,7 +208,10 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-
+                        dr["Result"] = "pass";
+                        dr["Grade"] = "A";
+                        dr["totalpoint"] = 0.00;
+                        redefect();
                         dr.EndEdit();
                     }
                     else
@@ -209,7 +219,20 @@ namespace Sci.Production.Quality
                         dr["Roll"] = "";
                         dr["Dyelot"] = "";
                         dr["Ticketyds"] = 0.00;
+                        dr["Actualyds"] = 0.00;
                         dr["CutWidth"] = 0.00;
+                        dr["fullwidth"] = 0.00;
+                        dr["actualwidth"] = 0.00;
+                        dr["totalpoint"] = 0.00;
+                        dr["pointRate"] = 0.00;
+                        dr["Result"] = "";
+                        dr["Grade"] = "";
+                        dr["moisture"] = 0;
+                        dr["Remark"] = "";
+                        dr["InspDate"] = DBNull.Value;
+                        dr["Inspector"] = "";
+                        dr["Name"] = "";
+                        redefect();
                         dr.EndEdit();
                         return;
                     }  
@@ -220,12 +243,26 @@ namespace Sci.Production.Quality
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
                 {
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
+                    dr["Ticketyds"] = 0.00;
+                    dr["Actualyds"] = 0.00;
+                    dr["CutWidth"] = 0.00;
+                    dr["fullwidth"] = 0.00;
+                    dr["actualwidth"] = 0.00;
+                    dr["totalpoint"] = 0.00;
+                    dr["pointRate"] = 0.00;
+                    dr["Result"] = "";
+                    dr["Grade"] = "";
+                    dr["moisture"] = 0;
+                    dr["Remark"] = "";
+                    redefect();
+                    dr.EndEdit();
                     return;
                 }
                 if (oldvalue == newvalue) return;
@@ -241,7 +278,10 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-
+                    dr["Result"] = "pass";
+                    dr["Grade"] = "A";
+                    dr["totalpoint"] = 0.00;
+                    redefect();
                     dr.EndEdit();
                 }
                 else
@@ -249,8 +289,21 @@ namespace Sci.Production.Quality
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr["Ticketyds"] = 0.00;
+                    dr["Actualyds"] = 0.00;
                     dr["CutWidth"] = 0.00;
+                    dr["fullwidth"] = 0.00;
+                    dr["actualwidth"] = 0.00;
+                    dr["totalpoint"] = 0.00;
+                    dr["pointRate"] = 0.00;
+                    dr["Result"] = "";
+                    dr["Grade"] = "";
+                    dr["moisture"] = 0;
+                    dr["Remark"] = "";
+                    dr["InspDate"] = DBNull.Value;
+                    dr["Inspector"] = "";
+                    dr["Name"] = "";
                     dr.EndEdit();
+                    redefect();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
@@ -260,14 +313,21 @@ namespace Sci.Production.Quality
             #region Act Yds
             Ydscell.CellValidating += (s, e) =>
             {
+
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["actualyds"].ToString();
+                string oldvalue = dr["Actualyds"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
                 if (oldvalue == newvalue) return;
-                double pointrate = Math.Round((MyUtility.Convert.GetDouble(dr["totalpoint"]) / MyUtility.Convert.GetDouble(e.FormattedValue)) * 100, 2);
-                dr["pointrate"] = pointrate;
-                dr["actualyds"] = newvalue;
+                dr["Actualyds"] = e.FormattedValue;
+                dr["totalpoint"] = 0.00;
+                redefect();
+                //string oldvalue = dr["actualyds"].ToString();
+                //string newvalue = e.FormattedValue.ToString();
+                //if (this.EditMode == false) return;
+                //if (oldvalue == newvalue) return;
+                //double pointrate = Math.Round((MyUtility.Convert.GetDouble(dr["totalpoint"]) / MyUtility.Convert.GetDouble(e.FormattedValue)) * 100, 2);
+                //dr["pointrate"] = pointrate;
+                //dr["actualyds"] = newvalue;
                 dr.EndEdit();
             };
             #endregion
@@ -276,7 +336,7 @@ namespace Sci.Production.Quality
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
+            .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, settings: Ydscell)
             .Numeric("CutWidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2,iseditingreadonly:true)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
