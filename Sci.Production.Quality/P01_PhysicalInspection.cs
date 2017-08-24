@@ -261,9 +261,6 @@ namespace Sci.Production.Quality
                     dr["Grade"] = "";
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
-                    dr["InspDate"] = DBNull.Value;
-                    dr["Inspector"] = "";
-                    dr["Name"] = "";
                     redefect();
                     dr.EndEdit();
                     return;
