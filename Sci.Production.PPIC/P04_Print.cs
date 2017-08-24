@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -201,7 +202,18 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
 
-            excel.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P04_Print");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

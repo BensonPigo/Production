@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -263,7 +264,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             return base.ClickPrint();
         }
 
-        private bool ToExcel(bool autoSave)
+        private bool ToExcel(bool isSendMail)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
@@ -356,18 +357,20 @@ order by rd.Seq1,rd.Seq2", masterID);
             }
 
             worksheet.Protect(Password: "Sport2006");
-            if (autoSave)
+
+            #region Save Excel
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P09");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(excelFile);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+            #endregion 
+            if (!isSendMail)
             {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "Accessory replacement report - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000))+".xlsx";
-                worksheet.SaveAs(excelFile);
-                excel.Workbooks.Close();
-                excel.Quit();
-                excel = null;
-            }
-            else
-            {
-                excel.Visible = true;
+                excelFile.OpenFile();
             }
             return true;
         }

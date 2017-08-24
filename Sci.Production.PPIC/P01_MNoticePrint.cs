@@ -137,8 +137,8 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 }
-                sxr.boOpenFile = true;
-                sxr.Save();
+
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice"));
             }
 
              //M/Notict (Combo by ComboID)
@@ -255,7 +255,7 @@ namespace Sci.Production.PPIC
                 //#endif
 
                 sxr.boOpenFile = true;
-                sxr.Save();
+                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04"));
             }
             this.HideWaitMessage();
             return true;

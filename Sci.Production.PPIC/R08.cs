@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -178,7 +179,19 @@ where 1=1");
             }
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R08_ReplacementReportList");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

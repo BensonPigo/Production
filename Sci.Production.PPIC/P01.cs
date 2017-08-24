@@ -882,7 +882,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
 
 
             sxr.isProtect = true; //Excel 加密
-            sxr.Save();
+            sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_CMPQ"));
             this.HideWaitMessage();
         }
         void SetColumn1toText(sxrc.xltRptTable tbl)
