@@ -382,8 +382,8 @@
             // 
             // numTotalParts
             // 
-            this.numTotalParts.BackColor = System.Drawing.Color.White;
-            this.numTotalParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTotalParts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalParts.IsSupportEditMode = false;
             this.numTotalParts.Location = new System.Drawing.Point(404, 205);
             this.numTotalParts.Minimum = new decimal(new int[] {
@@ -397,6 +397,7 @@
             0,
             0,
             0});
+            this.numTotalParts.ReadOnly = true;
             this.numTotalParts.Size = new System.Drawing.Size(37, 23);
             this.numTotalParts.TabIndex = 5;
             this.numTotalParts.Value = new decimal(new int[] {
