@@ -24,7 +24,6 @@ namespace Sci.Production.Quality
         private string ID;
         private Hashtable ht = new Hashtable();
 
-
         public P03_Wash(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -38,12 +37,14 @@ namespace Sci.Production.Quality
  
 
         }
+
         //編輯事件觸發     
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
             button_enable();
         }
+
         //設定表頭資料
         protected override DualResult OnRequery()
         {
@@ -166,6 +167,7 @@ where a.ID='{0}'"
             }
 
         }
+
         //GridView 設定
         protected override bool OnGridSetup()
         {
@@ -578,6 +580,7 @@ where a.ID='{0}'"
             GridView_Visable();
             return true;
         }
+
         private void GridView_Visable()
         {
             if (this.radioOption1.Checked)
@@ -702,6 +705,7 @@ where a.ID='{0}'"
 
             return base.OnSaveBefore();
         }
+
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -818,6 +822,7 @@ where a.ID='{0}'"
             }
             return upResult;
         }
+
         //編輯權限設定
         private void button_enable()
         {
@@ -828,6 +833,7 @@ where a.ID='{0}'"
             this.radioPanel1.ReadOnly = !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
+
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
@@ -988,7 +994,7 @@ where a.ID='{0}'"
             else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
 
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
-            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Wash_Test.xltx", fileName: "Quality_P03_Wash_Test", headerline: 5, excelAppObj: excel);
+            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Wash_Test.xltx", headerline: 5, openfile: false, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
             excelSheets.Cells[2, 2] = txtSP.Text.ToString();
             excelSheets.Cells[2, 4] = txtSEQ.Text.ToString();
@@ -1009,10 +1015,17 @@ where a.ID='{0}'"
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-            if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Wash_Test");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(excelSheets);
 
+            strExcelName.OpenFile();
+            #endregion 
         }
+
         /// <summary>
         /// Calculation Skewness value
         /// </summary>
@@ -1047,6 +1060,7 @@ where a.ID='{0}'"
                 }
             }
         }
+
         /// <summary>
         /// Calculation HorizontalRate Value
         /// </summary>
@@ -1067,6 +1081,7 @@ where a.ID='{0}'"
             decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
             dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
         }
+
         /// <summary>
         /// Calculation VerticalRate Value
         /// </summary>

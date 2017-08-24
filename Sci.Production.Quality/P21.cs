@@ -17,8 +17,7 @@ using System.Data.SqlClient;
 namespace Sci.Production.Quality
 {
     public partial class P21 : Sci.Win.Tems.Input6
-    {
-        
+    {        
         private string loginID = Sci.Env.User.UserID;
         string tmpId;
 
@@ -30,6 +29,7 @@ namespace Sci.Production.Quality
             InitializeComponent();
            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
+
         protected override void OnFormLoaded()
         {
  	            base.OnFormLoaded();
@@ -370,6 +370,7 @@ where a.ID='{0}'",
             .Text("Action", header: "Action", width: Widths.AnsiChars(20));
             
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -430,7 +431,6 @@ where a.ID='{0}'",
         }
        
         // save 前檢查
-
         protected override bool ClickSaveBefore()
         {
           
@@ -547,7 +547,6 @@ where a.ID='{0}'",
             return base.ClickSaveBefore();
         }
   
-
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -556,6 +555,7 @@ where a.ID='{0}'",
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
         }
+
         // edit前檢查
         protected override bool ClickEditBefore()
         {
@@ -666,6 +666,5 @@ where a.ID='{0}'", txtSP.Text);
                 }
             }          
         }
-
     }
 }

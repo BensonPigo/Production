@@ -23,7 +23,6 @@ namespace Sci.Production.Quality
         private DataRow maindr;
         private string ID;
 
-
         public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -38,6 +37,7 @@ namespace Sci.Production.Quality
             base.OnEditModeChanged();
             button_enable();
         }
+
         protected override DualResult OnRequery()
         {
             mainDBQuery();
@@ -91,6 +91,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             return base.OnRequery();
         }
+
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -117,6 +118,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             }
 
         }
+
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
@@ -342,7 +344,6 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return true;
         }
 
-
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)gridbs.DataSource;
@@ -359,6 +360,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
         }
+
         protected override bool OnSaveBefore()
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
@@ -418,6 +420,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             #endregion
             return base.OnSaveBefore();
         }
+
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -635,9 +638,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
             else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
 
-
-            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
-            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: "Quality_P03_Crocking_Test", headerline: 5, excelAppObj: excel);
+            Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+            excel.Workbooks.Add();
+            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: "", openfile: false, headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表      
             excel.Cells[2, 2] = txtSP.Text.ToString();
             excel.Cells[2, 4] = txtSEQ.Text.ToString();
@@ -658,11 +661,17 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(excelSheets);
 
-            if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-            if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
-
+            strExcelName.OpenFile();
+            #endregion 
         }
+
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
@@ -691,9 +700,5 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             }
 
         }
-
-
-
-
     }
 }

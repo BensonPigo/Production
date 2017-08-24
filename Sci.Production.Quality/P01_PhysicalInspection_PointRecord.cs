@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
         private DataTable defRecord;
         private string def_num;
         private DataRow def_dr;
+
         public P01_PhysicalInspection_PointRecord(DataRow data_dr,string n_column)
         {
             InitializeComponent();

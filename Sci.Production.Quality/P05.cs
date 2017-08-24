@@ -21,7 +21,6 @@ namespace Sci.Production.Quality
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add, edit, delete;
-
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
         private new bool IsSupportEdit = true;
@@ -32,8 +31,7 @@ namespace Sci.Production.Quality
             InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
 
-        }
-       
+        }       
       
         //refresh
         protected override void OnDetailEntered()
@@ -234,6 +232,7 @@ namespace Sci.Production.Quality
             this.RenewData();
             OnDetailEntered();
         }
+
         // Context Menu選擇Edit This Record's Detail
         private void EditThisDetail()
         {
@@ -262,6 +261,7 @@ namespace Sci.Production.Quality
             }
             detailgrid.SelectRowTo(rowindex);
         }
+
         // Context Menu選擇Delete This Record's Detail
         private void DeleteThisDetail()
         {

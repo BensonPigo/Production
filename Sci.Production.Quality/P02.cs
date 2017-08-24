@@ -19,7 +19,6 @@ namespace Sci.Production.Quality
     {
         // 宣告Context Menu Item
         ToolStripMenuItem edit;
-
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         string find = "";
@@ -77,6 +76,7 @@ namespace Sci.Production.Quality
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -254,6 +254,7 @@ namespace Sci.Production.Quality
             //this.grid.AutoResizeColumns();
 
         }
+
         protected override DualResult ClickSave()
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
@@ -394,6 +395,7 @@ namespace Sci.Production.Quality
             contextMenuStrip();
             base.OnDetailGridRowChanged();
         }
+
         private void btnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
@@ -457,6 +459,5 @@ namespace Sci.Production.Quality
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
-
     }
 }

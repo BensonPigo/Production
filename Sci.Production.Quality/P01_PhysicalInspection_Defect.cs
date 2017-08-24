@@ -18,7 +18,6 @@ namespace Sci.Production.Quality
     public partial class P01_PhysicalInspection_Defect : Sci.Win.Subs.Input6A
     {
         DataTable DefectTb, DefectFilterTb;
-
         private DataTable gridTb;
         public DataRow mainrow;
         
@@ -29,6 +28,7 @@ namespace Sci.Production.Quality
             mainrow = maindr;
 
         }
+
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
@@ -96,12 +96,14 @@ namespace Sci.Production.Quality
             gridFabricInspection.DataSource = gridTb;
 
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             GridSetUp();
  
         }
+
         public void GridSetUp()
         {
 

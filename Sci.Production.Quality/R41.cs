@@ -645,10 +645,10 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
-            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
+            SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(dt_All);
 
             #region Defect
 
@@ -659,9 +659,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 string dmonth = dym.Rows[i]["name"].ToString();
 
 
-                SaveXltReportCls.xltRptTable dxt = new SaveXltReportCls.xltRptTable(dt[i]);
+                SaveXltReportCls.XltRptTable dxt = new SaveXltReportCls.XltRptTable(dt[i]);
                 dxt.Columns.RemoveAt(dxt.Columns.Count - 1);
-                dxt.boAddNewRow = false;
+                dxt.BoAddNewRow = false;
 
                 if (dxt.Rows.Count <= 0)
                 {
@@ -677,11 +677,11 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(dyear, "1,3");
 
-                dxt.lisTitleMerge.Add(dic);
-                dxt.lisTitleMerge.Add(dic2);
+                dxt.LisTitleMerge.Add(dic);
+                dxt.LisTitleMerge.Add(dic2);
                 dxt.Borders.OutsideVertical = true;
                 dxt.ShowHeader = true;
-                sxc.dicDatas.Add("##defect" + i, dxt);
+                sxc.DicDatas.Add("##defect" + i, dxt);
 
 
             }
@@ -691,9 +691,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             {
                 string dyear1 = dy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.xltRptTable alldxtb = new SaveXltReportCls.xltRptTable(dts[a]);
+                SaveXltReportCls.XltRptTable alldxtb = new SaveXltReportCls.XltRptTable(dts[a]);
                 alldxtb.Columns.RemoveAt(alldxtb.Columns.Count - 1);
-                alldxtb.boAddNewRow = false;
+                alldxtb.BoAddNewRow = false;
 
                 if (alldxtb.Rows.Count <= 0)
                 {
@@ -710,16 +710,16 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 dic2.Add(dyear1, "1,3");
 
 
-                alldxtb.lisTitleMerge.Add(dic);
-                alldxtb.lisTitleMerge.Add(dic2);
+                alldxtb.LisTitleMerge.Add(dic);
+                alldxtb.LisTitleMerge.Add(dic2);
                 alldxtb.Borders.AllCellsBorders = false;
                 alldxtb.Borders.OutsideVertical = true;
                 alldxtb.ShowHeader = true;
-                sxc.dicDatas.Add("##adefect" + a, alldxtb);
+                sxc.DicDatas.Add("##adefect" + a, alldxtb);
 
             }
             SaveXltReportCls.ReplaceAction adr = addrow;
-            sxc.dicDatas.Add("##addRow", adr);
+            sxc.DicDatas.Add("##addRow", adr);
             #endregion
 
             #region Style
@@ -730,9 +730,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 string smonth = sym.Rows[i]["name"].ToString();
 
 
-                SaveXltReportCls.xltRptTable sxt = new SaveXltReportCls.xltRptTable(da[i]);
+                SaveXltReportCls.XltRptTable sxt = new SaveXltReportCls.XltRptTable(da[i]);
                 sxt.Columns.RemoveAt(sxt.Columns.Count - 1);
-                sxt.boAddNewRow = false;
+                sxt.BoAddNewRow = false;
 
                 if (sxt.Rows.Count <= 0)
                 {
@@ -749,11 +749,11 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(syear, "1,3");
 
-                sxt.lisTitleMerge.Add(dic);
-                sxt.lisTitleMerge.Add(dic2);
+                sxt.LisTitleMerge.Add(dic);
+                sxt.LisTitleMerge.Add(dic2);
                 sxt.Borders.OutsideVertical = true;
                 sxt.ShowHeader = true;
-                sxc.dicDatas.Add("##style" + i, sxt);
+                sxc.DicDatas.Add("##style" + i, sxt);
             }
 
             //for (int a = 0; a < das.Length; a++)
@@ -761,9 +761,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             {
                 string syear1 = sy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.xltRptTable allsxtb = new SaveXltReportCls.xltRptTable(das[a]);
+                SaveXltReportCls.XltRptTable allsxtb = new SaveXltReportCls.XltRptTable(das[a]);
                 allsxtb.Columns.RemoveAt(allsxtb.Columns.Count - 1);
-                allsxtb.boAddNewRow = false;
+                allsxtb.BoAddNewRow = false;
 
                 if (allsxtb.Rows.Count <= 0)
                 {
@@ -778,11 +778,11 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(syear1, "1,3");
 
-                allsxtb.lisTitleMerge.Add(dic);
-                allsxtb.lisTitleMerge.Add(dic2);
+                allsxtb.LisTitleMerge.Add(dic);
+                allsxtb.LisTitleMerge.Add(dic2);
                 allsxtb.ShowHeader = true;
                 allsxtb.Borders.OutsideVertical = true;
-                sxc.dicDatas.Add("##astyle" + a, allsxtb);
+                sxc.DicDatas.Add("##astyle" + a, allsxtb);
             }
             #endregion
 
@@ -795,9 +795,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 string cmonth = cym.Rows[i]["name"].ToString();
 
 
-                SaveXltReportCls.xltRptTable cxt = new SaveXltReportCls.xltRptTable(datb[i]);
+                SaveXltReportCls.XltRptTable cxt = new SaveXltReportCls.XltRptTable(datb[i]);
                 cxt.Columns.RemoveAt(cxt.Columns.Count - 1);
-                cxt.boAddNewRow = false;
+                cxt.BoAddNewRow = false;
                 if (cxt.Rows.Count <= 0)
                 {
                     for (int j = 0; j < 10; j++)
@@ -812,12 +812,12 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(cyear, "1,3");
 
-                cxt.lisTitleMerge.Add(dic);
-                cxt.lisTitleMerge.Add(dic2);
+                cxt.LisTitleMerge.Add(dic);
+                cxt.LisTitleMerge.Add(dic2);
 
                 cxt.Borders.OutsideVertical = true;
                 cxt.ShowHeader = true;
-                sxc.dicDatas.Add("##country" + i, cxt);
+                sxc.DicDatas.Add("##country" + i, cxt);
             }
 
             //for (int a = 0; a < datbs.Length; a++)
@@ -825,9 +825,9 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             {
                 string cyear1 = cy.Rows[a]["yy"].ToString();
 
-                SaveXltReportCls.xltRptTable allcxtb = new SaveXltReportCls.xltRptTable(datbs[a]);
+                SaveXltReportCls.XltRptTable allcxtb = new SaveXltReportCls.XltRptTable(datbs[a]);
                 allcxtb.Columns.RemoveAt(allcxtb.Columns.Count - 1);
-                allcxtb.boAddNewRow = false;
+                allcxtb.BoAddNewRow = false;
 
                 if (allcxtb.Rows.Count <= 0)
                 {
@@ -843,11 +843,11 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 Dictionary<string, string> dic2 = new Dictionary<string, string>();
                 dic2.Add(cyear1, "1,3");
 
-                allcxtb.lisTitleMerge.Add(dic);
-                allcxtb.lisTitleMerge.Add(dic2);
+                allcxtb.LisTitleMerge.Add(dic);
+                allcxtb.LisTitleMerge.Add(dic2);
                 allcxtb.Borders.OutsideVertical = true;
                 allcxtb.ShowHeader = true;
-                sxc.dicDatas.Add("##acountry" + a, allcxtb);
+                sxc.DicDatas.Add("##acountry" + a, allcxtb);
             }
             #endregion
 
@@ -855,27 +855,27 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             foreach (var item in dicFTY)
             {
                 string fty = item.Key;
-                SaveXltReportCls.xltRptTable x_All = new SaveXltReportCls.xltRptTable(item.Value);
-                sxc.dicDatas.Add("##SUPSheetName" + fty, item.Key);
-                sxc.dicDatas.Add("##psd" + fty, x_All);
+                SaveXltReportCls.XltRptTable x_All = new SaveXltReportCls.XltRptTable(item.Value);
+                sxc.DicDatas.Add("##SUPSheetName" + fty, item.Key);
+                sxc.DicDatas.Add("##psd" + fty, x_All);
                 //凍結窗格
-                x_All.boFreezePanes = true;
-                x_All.intFreezeColumn = 2;
+                x_All.BoFreezePanes = true;
+                x_All.IntFreezeColumn = 2;
 
                 x_All.ShowHeader = false;
                 x_All.Borders.AllCellsBorders = true;
-                x_All.boAutoFitColumn = true;
+                x_All.BoAutoFitColumn = true;
             }
 
             sxc.VarToSheetName = "##SUPSheetName";
 
             SaveXltReportCls.ReplaceAction c = CopySheet;
-            sxc.dicDatas.Add("##copysupsheet", c);
+            sxc.DicDatas.Add("##copysupsheet", c);
 
             SaveXltReportCls.ReplaceAction d = addfilter;
-            sxc.dicDatas.Add("##addfilter", d);
+            sxc.DicDatas.Add("##addfilter", d);
 
-            sxc.Save();
+            sxc.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R41"));
             #endregion
             clearall();
             return true;
@@ -915,6 +915,7 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
             datatab = null;
             dt_All = null;
         }
+
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
             Microsoft.Office.Interop.Excel._Application myExcel = null;

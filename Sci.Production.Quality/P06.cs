@@ -200,10 +200,12 @@ namespace Sci.Production.Quality
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
         }
+
         public void grid_CellMouseClick(object sender,DataGridViewCellMouseEventArgs e)
         {
             this.grid_CellMouseClick(e.Button, e.RowIndex);
         }
+
         public void grid_CellMouseClick(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
         {
             if (eButton== System.Windows.Forms.MouseButtons.Right)
@@ -211,24 +213,22 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.InfoBox("Right Click Event!!");
             }
         }
+
         protected override void OnMouseClick(MouseEventArgs e)
         {          
             base.OnMouseClick(e);
             
         }
+
         protected override void OnFormLoaded()
         {
-            
-           
             detailgridmenus.Items.Clear();//清空原有的Menu Item
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
-           
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);          
             
             base.OnFormLoaded();
-        }
-     
+        }     
 
         // Context Menu選擇Create New test
         private void CreateNewTest()
@@ -378,6 +378,5 @@ namespace Sci.Production.Quality
             contextMenuStrip();
             base.OnDetailGridRowChanged();
         }
-
     }
 }

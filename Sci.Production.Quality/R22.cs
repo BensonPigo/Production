@@ -34,6 +34,7 @@ namespace Sci.Production.Quality
                 dateAuditDate.Control2.Enabled = false;
             }
         }
+
         private void radioPerDateFactory_CheckedChanged(object sender, EventArgs e)
         {
             if (radioPerDateFactory.Checked)
@@ -42,6 +43,7 @@ namespace Sci.Production.Quality
                 dateAuditDate.Control2.Enabled = true;
             }
         }
+
         private void radioPerDateBrand_CheckedChanged(object sender, EventArgs e)
         {
             if (radioPerDateBrand.Checked)
@@ -50,6 +52,7 @@ namespace Sci.Production.Quality
                 dateAuditDate.Control2.Enabled = true;
             }
         }
+
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
@@ -800,9 +803,15 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A3", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
                 objSheets.get_Range("A3", lastright).EntireRow.AutoFit();//自動調整列高
 
-                objApp.Visible = true;//Excell顯示
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerBrand");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion 
             }
             #endregion
 
@@ -842,9 +851,16 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
                 objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
                 objSheets.Columns.AutoFit();
-                objApp.Visible = true;//Excell顯示
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerDate(Factory)");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion 
             }
             #endregion
 
@@ -884,17 +900,15 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
                 objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
 
-                //TEST cell1,cell2一定要先宣告Range再放入get_Range(,)內
-                //Range cell1 = objSheets.Cells[1, 1];
-                //Range cell2 = objSheets.Cells[6, 6];
-                //objSheets.get_Range(cell1, cell2).Interior.Color = Color.FromArgb(222, 186, 252);
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R22_PerDate(Brand)");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
 
-                //Range all = objSheets.get_Range(top, bottom);
-                //all.Interior.Color = Color.FromArgb(222, 186, 252);
-                objSheets.Columns.AutoFit();
-                objApp.Visible = true;//Excell顯示
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                strExcelName.OpenFile();
+                #endregion 
             }
             #endregion
 

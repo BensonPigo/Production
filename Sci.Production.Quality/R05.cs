@@ -391,7 +391,7 @@ and ai.Status='Confirmed'
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
       
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
             //saveDialog.ShowDialog();
             //string outpath = saveDialog.FileName;
             //if (outpath.Empty())
@@ -412,12 +412,12 @@ and ai.Status='Confirmed'
                     }
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtFabricDetail);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtFabricDetail);
                     dt.ShowHeader = false;
-                    dt.boAddFilter = true;
-                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+                    dt.BoAddFilter = true;
+                    sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
-                    sxr.boOpenFile = true;
+                    sxr.BoOpenFile = true;
                     sxr.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
@@ -431,11 +431,11 @@ and ai.Status='Confirmed'
                     }
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricSummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtFabricSummary);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtFabricSummary);
                     dt.ShowHeader = false;
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
-                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+                    sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.Save();
                 }
@@ -454,12 +454,12 @@ and ai.Status='Confirmed'
                     }
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessoryDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtAccessoryDetail);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtAccessoryDetail);
                     dt.ShowHeader = false;
-                    dt.boAddFilter = true;
-                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+                    dt.BoAddFilter = true;
+                    sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
-                    sxr.boOpenFile = true;
+                    sxr.BoOpenFile = true;
                     sxr.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
@@ -473,11 +473,11 @@ and ai.Status='Confirmed'
                     }
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessorySummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dtAccessorySummary);
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(dtAccessorySummary);
                     dt.ShowHeader = false;
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
-                    sxr.dicDatas.Add(sxr._v + "BODY", dt);
+                    sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.Save();
                 }

@@ -674,12 +674,12 @@ select DISTINCT ID,ETD from #GarmentInvoice", out dtGMTBooking);
             }
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls(CallsExcel);
-            SaveXltReportCls.xltRptTable Data1 = new SaveXltReportCls.xltRptTable(DT1);
-            xl.boOpenFile = true;
+            SaveXltReportCls.XltRptTable Data1 = new SaveXltReportCls.XltRptTable(DT1);
+            xl.BoOpenFile = true;
             Data1.ShowHeader = false;
 
-            xl.dicDatas.Add("##Title", "SINTEX INTERNATIONAL LTD.");
-            xl.dicDatas.Add("##Title2", Title2ForExcel);
+            xl.DicDatas.Add("##Title", "SINTEX INTERNATIONAL LTD.");
+            xl.DicDatas.Add("##Title2", Title2ForExcel);
 
             Parameter = "查詢條件-日期區間 : " + ((DateTime)this.dateQueryDateStart.Value).ToShortDateString() + " ~ " + ((DateTime)this.dateQueryDateEnd.Value).ToShortDateString();
             Parameter += " , Categoty : " + this.txtdropdownlist.Text;
@@ -687,8 +687,8 @@ select DISTINCT ID,ETD from #GarmentInvoice", out dtGMTBooking);
             if (!this.txtbrand.Text.Empty()) Parameter += " , Brand : " + this.txtbrand.Text;
             if (!this.txtcountry.TextBox1.Text.Empty()) Parameter += " , Region : " + this.txtcountry.DisplayBox1.Text;
 
-            xl.dicDatas.Add("##Parameter", Parameter);
-            xl.dicDatas.Add("##Data", Data1);
+            xl.DicDatas.Add("##Parameter", Parameter);
+            xl.DicDatas.Add("##Data", Data1);
 
             xl.Save(Sci.Production.Class.MicrosoftFile.GetName(Title2ForExcel), false);
             //因再次匯出資料時，會殘留上次的連線數，故先清空

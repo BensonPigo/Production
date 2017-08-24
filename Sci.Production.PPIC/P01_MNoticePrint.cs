@@ -70,27 +70,27 @@ namespace Sci.Production.PPIC
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
 
-                sxr.dicDatas.Add(sxr._v + "NOW", DateTime.Now);
-                sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"].ToString());
-                sxr.dicDatas.Add(sxr._v + "POID", poid);
+                sxr.DicDatas.Add(sxr.VPrefix + "NOW", DateTime.Now);
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
 
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
 
-                sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
+                sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
-                    sxrc.xlsColumnInfo xcinfo = new sxrc.xlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
+                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                     xcinfo.NumberFormate = "@";
-                    xltTbl.lisColumnInfo.Add(xcinfo);
+                    xltTbl.LisColumnInfo.Add(xcinfo);
                 }
 
-                sxr.dicDatas.Add(sxr._v + "S1_Tbl1", xltTbl);
+                sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1", xltTbl);
                 intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
                 sxrc.ReplaceAction ra = ForSizeSpec;
-                sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
+                sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
                 DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from MNOrder WITH (NOLOCK) where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
@@ -102,7 +102,7 @@ namespace Sci.Production.PPIC
                 }
 
                 sxr.CopySheet.Add(2, dt.Rows.Count - 1);
-                sxr.VarToSheetName = sxr._v + "SP";
+                sxr.VarToSheetName = sxr.VPrefix + "SP";
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     string ID = dt.Rows[i]["ID"].ToString();
@@ -110,31 +110,31 @@ namespace Sci.Production.PPIC
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", checkAdditionally.Checked) }, out dts);
 
-                    sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
-                    sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
-                    sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "Now" + idxStr, DateTime.Now);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, ID);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
 
-                    sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
-                    sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
-                    sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                    sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
+                    sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
+                    sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
                     SetColumn1toText(tbl1);
                     SetColumn1toText(tbl2);
                     SetColumn1toText(tbl3);
 
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl1" + idxStr, tbl1);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl2" + idxStr, tbl2);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl3" + idxStr, tbl3);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
                     if (dts[6].Rows.Count>0)
-                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2SHIPINGMARK" + idxStr, new sxrc.XltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
                     if (dts[7].Rows.Count > 0)
-                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     if (dts[8].Rows.Count > 0)
-                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 }
 
@@ -152,7 +152,7 @@ namespace Sci.Production.PPIC
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);
-                sxr.VarToSheetName = sxr._v + "sname";
+                sxr.VarToSheetName = sxr.VPrefix + "sname";
 
                 int ii = 0;
                 foreach (DataRow row in dtOrderCombo.Rows)
@@ -174,48 +174,48 @@ namespace Sci.Production.PPIC
                         return true;
                     }
 
-                    sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
-                    sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, drvar["MAKER"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, drvar["sty"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, drvar["QTY"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "SP" + idxStr, drvar["SPNO"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "sname1" + idxStr, OrderComboID + "-1");
-                    sxr.dicDatas.Add(sxr._v + "sname2" + idxStr, OrderComboID + "-2");
-                    sxr.dicDatas.Add(sxr._v + "sname3" + idxStr, OrderComboID + "-3");
+                    sxr.DicDatas.Add(sxr.VPrefix + "Now" + idxStr, DateTime.Now);
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, OrderComboID + "-1");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, OrderComboID + "-2");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname3" + idxStr, OrderComboID + "-3");
 
                     //For SizeSpec
-                    sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
+                    sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
-                        sxrc.xlsColumnInfo xcinfo = new sxrc.xlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
+                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
                         xcinfo.NumberFormate = "@";
-                        xltTbl.lisColumnInfo.Add(xcinfo);
+                        xltTbl.LisColumnInfo.Add(xcinfo);
                     }
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
                     xltTbl.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
-                    sxr.dicDatas.Add(sxr._v + "S1_Tbl1" + idxStr, xltTbl);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1" + idxStr, xltTbl);
                     intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
                     sxrc.ReplaceAction ra = ForSizeSpec;
-                    sxr.dicDatas.Add(sxr._v + "ExtraAction" + idxStr, ra);
+                    sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction" + idxStr, ra);
 
-                    sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[1], 1, 2, true);
-                    sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[2], 1, 3);
-                    sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[3], 1, 0);
+                    sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[1], 1, 2, true);
+                    sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[2], 1, 3);
+                    sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[3], 1, 0);
                     SetColumn1toText(tbl1);
                     SetColumn1toText(tbl2);
                     SetColumn1toText(tbl3);
 
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl1" + idxStr, tbl1);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl2" + idxStr, tbl2);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl3" + idxStr, tbl3); //COLOR list                
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[4]); //Fabric list                
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[5]); //Accessories list                
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[6]);
-                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); //COLOR list                
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[4]); //Fabric list                
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[5]); //Accessories list                
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                     //新增Range Repeat數
-                    sxr.dicDatas.Add(sxr._v + "CR" + idxStr, dts[9].Rows.Count);
+                    sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[9].Rows.Count);
 
                     int idx = 0;
                     foreach (DataRow dr in dts[9].Rows)
@@ -223,14 +223,14 @@ namespace Sci.Production.PPIC
                         string sIdx = idx.ToString();
                         idx += 1;
 
-                        sxr.dicDatas.Add(sxr._v + "S3_SP" + idxStr + sIdx, dr["ID"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_Style" + idxStr + sIdx, dr["sty"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_QTY" + idxStr + sIdx, dr["QTY"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_CUSTCD" + idxStr + sIdx, dr["OrderComboID"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_PoNo" + idxStr + sIdx, dr["CustPONO"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_Order" + idxStr + sIdx, dr["Customize1"].ToString());
-                        sxr.dicDatas.Add(sxr._v + "S3_DELIVERY" + idxStr + sIdx, dr["BuyerDelivery"]);
-                        sxr.dicDatas.Add(sxr._v + "S3_Mark" + idxStr + sIdx, new sxrc.xltLongString(dr["Mark"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sIdx, dr["ID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sIdx, dr["sty"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sIdx, dr["QTY"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sIdx, dr["OrderComboID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sIdx, dr["CustPONO"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sIdx, dr["Customize1"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sIdx, dr["BuyerDelivery"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         System.Data.DataTable[] dts2;
                         List<SqlParameter> lis2 = new List<SqlParameter>();
@@ -241,9 +241,9 @@ namespace Sci.Production.PPIC
 
                         if (res)
                         {
-                            sxrc.xltRptTable stbl = new sxrc.xltRptTable(dts2[0], 1, 2, true);
+                            sxrc.XltRptTable stbl = new sxrc.XltRptTable(dts2[0], 1, 2, true);
                             SetColumn1toText(stbl);
-                            sxr.dicDatas.Add(sxr._v + "S3_Tbl" + idxStr + sIdx, stbl);
+                            sxr.DicDatas.Add(sxr.VPrefix + "S3_Tbl" + idxStr + sIdx, stbl);
                         }
                     }
 
@@ -254,7 +254,7 @@ namespace Sci.Production.PPIC
                 //                sxr.ExcelApp.Visible = true;
                 //#endif
 
-                sxr.boOpenFile = true;
+                sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04"));
             }
             this.HideWaitMessage();
@@ -279,11 +279,11 @@ WHERE MNOrder.POID = @POID
                 return null;
             }
         }
-        void SetColumn1toText(sxrc.xltRptTable tbl)
+        void SetColumn1toText(sxrc.XltRptTable tbl)
         {
-            sxrc.xlsColumnInfo c1 = new sxrc.xlsColumnInfo(1);
+            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1);
             c1.NumberFormate = "@";
-            tbl.lisColumnInfo.Add(c1);
+            tbl.LisColumnInfo.Add(c1);
         }
 
         private int intSizeSpecRowCnt = 0;

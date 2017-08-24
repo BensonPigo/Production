@@ -1234,21 +1234,23 @@ namespace Sci.Production.Planning
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx");
-                xl.boOpenFile = true;
+                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
+                xl.BoOpenFile = true;
 
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dt);
                 Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                xl.dicDatas.Add("##title", title);
+                xl.DicDatas.Add("##title", title);
                 dt1.ShowHeader = false;
-                xl.dicDatas.Add("##dt", dt1);
+                xl.DicDatas.Add("##dt", dt1);
 
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(dt2All);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dt2All);
                 dt2.ShowHeader = false;
-                xl.dicDatas.Add("##dt2", dt2);
+                xl.DicDatas.Add("##dt2", dt2);
 
                 Sci.Utility.Excel.SaveXltReportCls.ReplaceAction a = setRow1;
-                xl.dicDatas.Add("##setRow1", a);           
+                xl.DicDatas.Add("##setRow1", a);
+
+                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
 
                 int startRow = 3; //title有2列
                 int lastRow = dt2.Rows.Count + 3 ;
@@ -1261,7 +1263,8 @@ namespace Sci.Production.Planning
                     wt3 = string.Format("=SUM({0}{1}:{0}{2})", wt2, startRow, lastRow - 1);
                     wks.Cells[lastRow, (i + 2)] = wt3;
                 }
-                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
+
+                xl.FinishSave();
             }
             #endregion
             return true;

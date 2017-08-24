@@ -257,14 +257,14 @@ order by tmpData2.OrderID";
             temfile = strPath + @"\Planning_R12.Matrix.xltx";
 
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
-            sxrc.boOpenFile = true;
+            sxrc.BoOpenFile = true;
 
             tmpData4.Merge(All_tmpData4);
 
-            SaveXltReportCls.xltRptTable xrt1 = new SaveXltReportCls.xltRptTable(tmpData4);
+            SaveXltReportCls.XltRptTable xrt1 = new SaveXltReportCls.XltRptTable(tmpData4);
             //SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(All_tmpData4);
-            SaveXltReportCls.xltRptTable xrt3 = new SaveXltReportCls.xltRptTable(tmpStyleDetail);
-            SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(tmpOrderDetail);
+            SaveXltReportCls.XltRptTable xrt3 = new SaveXltReportCls.XltRptTable(tmpStyleDetail);
+            SaveXltReportCls.XltRptTable xrt4 = new SaveXltReportCls.XltRptTable(tmpOrderDetail);
 
             #region 抬頭
             if (radioRegionNo.Checked)
@@ -282,16 +282,16 @@ order by tmpData2.OrderID";
             xrt3.ShowHeader = false;
             xrt4.ShowHeader = false;
 
-            xrt1.boAutoFitColumn = true;
-            xrt3.boAutoFitColumn = true;
-            xrt4.boAutoFitColumn = true;
+            xrt1.BoAutoFitColumn = true;
+            xrt3.BoAutoFitColumn = true;
+            xrt4.BoAutoFitColumn = true;
 
-            sxrc.dicDatas.Add("##detail", xrt1);
+            sxrc.DicDatas.Add("##detail", xrt1);
             //sxrc.dicDatas.Add("##detailAll", xrt2);
-            sxrc.dicDatas.Add("##StyleDetail", xrt3);
-            sxrc.dicDatas.Add("##OrderDetail", xrt4);
-            sxrc.dicDatas.Add("##title", title);
-            sxrc.dicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
+            sxrc.DicDatas.Add("##StyleDetail", xrt3);
+            sxrc.DicDatas.Add("##OrderDetail", xrt4);
+            sxrc.DicDatas.Add("##title", title);
+            sxrc.DicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
             
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R12.Matrix");
             sxrc.Save(strExcelName);

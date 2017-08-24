@@ -431,7 +431,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region PO Order
             else if ("PO Order".EqualString(this.comboReportType.Text))
             {
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
@@ -462,13 +462,13 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     x1.ExcelApp.Cells[3, 1] = "##SP";
                     x1.ExcelApp.Cells[4, 1] = "";
 
-                    x1.dicDatas.Add("##LocalPOID" + idxstr, TheOrderID.Substring(4));
-                    x1.dicDatas.Add("##Factory" + idxstr, Factory1);
-                    x1.dicDatas.Add("##theorderid" + idxstr, TheOrderID);
-                    x1.dicDatas.Add("##date" + idxstr, date);
-                    Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt = new Sci.Utility.Excel.SaveXltReportCls.xltRptTable(finalda);
-                    dt.boAutoFitColumn = true;
-                    x1.dicDatas.Add("##SP" + idxstr, dt);
+                    x1.DicDatas.Add("##LocalPOID" + idxstr, TheOrderID.Substring(4));
+                    x1.DicDatas.Add("##Factory" + idxstr, Factory1);
+                    x1.DicDatas.Add("##theorderid" + idxstr, TheOrderID);
+                    x1.DicDatas.Add("##date" + idxstr, date);
+                    Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt = new Sci.Utility.Excel.SaveXltReportCls.XltRptTable(finalda);
+                    dt.BoAutoFitColumn = true;
+                    x1.DicDatas.Add("##SP" + idxstr, dt);
 
                     
                     idx += 1;
@@ -481,7 +481,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region Shipping Mark
             if (checkShippingMark.Checked == true)
             {
-                var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
                 //copy sheet by TheOrderID count.
@@ -502,13 +502,13 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     string theorderid = row["theorderid"].ToString();
                     if (!ls.Contains(theorderid)) //lis "不"包含 TheOrderID
                         ls.Add(theorderid);
-                    x1.dicDatas.Add("##id" + idxstr, id);
-                    x1.dicDatas.Add("##name" + idxstr, name);
-                    x1.dicDatas.Add("##theorderid" + idxstr, theorderid);
-                    x1.dicDatas.Add("##A" + idxstr, A);
-                    x1.dicDatas.Add("##B" + idxstr, B);
-                    x1.dicDatas.Add("##C" + idxstr, C);
-                    x1.dicDatas.Add("##D" + idxstr, D);
+                    x1.DicDatas.Add("##id" + idxstr, id);
+                    x1.DicDatas.Add("##name" + idxstr, name);
+                    x1.DicDatas.Add("##theorderid" + idxstr, theorderid);
+                    x1.DicDatas.Add("##A" + idxstr, A);
+                    x1.DicDatas.Add("##B" + idxstr, B);
+                    x1.DicDatas.Add("##C" + idxstr, C);
+                    x1.DicDatas.Add("##D" + idxstr, D);
                     idx += 1;
                 }
                 x1.Save();

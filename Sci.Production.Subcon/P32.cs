@@ -317,13 +317,13 @@ namespace Sci.Production.Subcon
         {
             if (dataSet == null) return;
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dtGrid1);
+            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtGrid1);
             DataView dataView = dtGrid2.DefaultView;
             DataTable NewdataTable = dataView.ToTable(false);
             if (NewdataTable.Columns.Contains("Ukey")) NewdataTable.Columns.Remove("Ukey");
-            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(NewdataTable);
-            x1.dicDatas.Add("##dt1", dt1);
-            x1.dicDatas.Add("##dt2", dt2);
+            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(NewdataTable);
+            x1.DicDatas.Add("##dt1", dt1);
+            x1.DicDatas.Add("##dt2", dt2);
             dt1.ShowHeader = false;
             dt2.ShowHeader = false;
             x1.Save();

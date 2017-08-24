@@ -1726,6 +1726,80 @@
             Used to sort self-referenced table's rows
             </summary>
         </member>
+        <member name="M:Sci.DB.DBColumn.createColumn(System.Data.DataTable)">
+            <summary>
+            依照DBColumn 欄位型態產生 DataColumn 到DataTable (附DefaultValue設定)
+            </summary>
+            <param name="table"></param>
+        </member>
+        <member name="M:Sci.DB.DBColumn.ToString">
+            <summary>
+            依據欄位型態 , 長度 , 精準度 產生String , 如" Varchar(max) , Decimal(9,2) "
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBColumn.ColumnsStringAdd(System.Data.DataTable,System.String,System.String,System.String)">
+            <summary>
+            add String column with default value
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="name"></param>
+            <param name="defaultValue"> default empty String if expression is null</param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBColumn.ColumnsDecimalAdd(System.Data.DataTable,System.String,System.Decimal,System.String)">
+            <summary>
+            add decimal column with default value
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="name"></param>
+            <param name="defaultValue"> default 0 if expression is null</param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBColumn.ColumnsIntAdd(System.Data.DataTable,System.String,System.Int32,System.String)">
+            <summary>
+            add int column with default value
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="name"></param>
+            <param name="defaultValue"> default 0 if expression is null</param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBColumn.ColumnsBooleanAdd(System.Data.DataTable,System.String,System.Boolean,System.String)">
+            <summary>
+            add bool column with default value
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="name"></param>
+            <param name="defaultValue">default false if expression is null</param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBTable.GetByKeyword(System.String)">
+            <summary>
+            透過關鍵字搜尋所有的子類別,
+            keywords = "trade,export" 就會搜尋nameSpace 有 trade ,且class name是export的class
+            </summary>
+            <param name="keywords"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBTable.createDataTable(System.String)">
+            <summary>
+            用正向表列法 ,依據DBTable內欄位設定產生DataColumn
+            </summary>
+            <param name="wantColumns">用逗號區隔是否要指定只產生特定Column</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.DB.DBTable.createDataTableByExcludeColumns(System.String)">
+            <summary>
+            用排除法的方式, 依據DBTable內欄位設定產生DataColumn
+            </summary>
+            <param name="wantColumns">用逗號區隔是否要指定只產生特定Column</param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Exts">
             <summary>
             Static class Exts. Extend utilities.
@@ -1761,6 +1835,165 @@
             </summary>
             <param name="data">destination datarow</param>
             <param name="new">source datarow</param>
+        </member>
+        <member name="F:Sci.SQL.QueryConnectionName">
+            
+             SqlBuliCopy
+             https://msdn.microsoft.com/zh-tw/library/ex21zs8x(v=vs.110).aspx
+             
+             <summary>
+             SQL Bulk merge refer to 
+             http://www.zzzprojects.com/guides/bulk-operations/index.html
+             </summary>
+             
+        </member>
+        <member name="M:Sci.SQL.#cctor">
+            <summary>
+            檢查Query連線是否存在
+            </summary>
+        </member>
+        <member name="P:Sci.SQL.queryConn">
+            <summary>
+            提供常駐的Connection, 並會判斷連線狀態是否關閉做重開
+            </summary>
+        </member>
+        <member name="M:Sci.SQL.createInsertCommand(System.String,System.Data.DataTable,System.Collections.Generic.List{Sci.DB.DBColumn},System.Data.SqlClient.SqlConnection)">
+            <summary>
+            利用已經暫存好的Table Columns設定拼出 Insert Command
+            <para>insert 欄位只排除 identity和 computed 欄位</para>
+            </summary>
+            <param name="tableName"></param>
+            <param name="source"></param>
+            <param name="dbColumns"></param>
+            <param name="conn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.createUpdateCommand(System.String,System.Data.DataTable,System.Collections.Generic.List{Sci.DB.DBColumn},System.Data.SqlClient.SqlConnection)">
+            <summary>
+            利用已經暫存好的Table Columns設定拼出 Update Command
+            <para>update ... set 的部分排除 primary key, identity 和 computed 欄位</para>
+            <para>where 條件式的部分才會使用到primary key</para>
+            </summary>
+            <param name="tableName"></param>
+            <param name="source"></param>
+            <param name="dbColumns"></param>
+            <param name="conn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.createDeleteCommand(System.String,System.Data.DataTable,System.Collections.Generic.List{Sci.DB.DBColumn},System.Data.SqlClient.SqlConnection)">
+            <summary>
+            利用已經暫存好的Table Columns設定拼出 Delete Command
+            <para> 使用到的column 只有 primary key </para>
+            </summary>
+            <param name="tableName"></param>
+            <param name="source"></param>
+            <param name="dbColumns"></param>
+            <param name="conn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.TableUpdate(System.Data.DataTable,System.String,System.Object)">
+            <summary>
+            update DataTable to DB by DataRow.RowState
+            <para>RowState.Added    --> Insert </para>
+            <para>RowState.Modified --> Update </para>
+            <para>RowState.Deleted  --> Delete </para>
+            <para>RowState.Detached --> 還沒寫 </para>
+            <para>RowState.Unchanged--> 還沒寫 </para>
+            </summary>
+            <param name="data"></param>
+            <param name="tableName"></param>
+            <param name="connection"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Sci.SQL.MergeOption.Insert">
+            <summary> 只作Insert into (not Merge) </summary>
+        </member>
+        <member name="F:Sci.SQL.MergeOption.InsertUpdate">
+            <summary> 使用Merge 作Insert / update </summary>
+        </member>
+        <member name="F:Sci.SQL.MergeOption.InsertUpdate_SafeDelete">
+            <summary> 先 Delete (not merge) , 再使用Merge 作Insert / update </summary>
+        </member>
+        <member name="M:Sci.SQL.getFilteredColumns(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="original"></param>
+            <param name="filter"></param>
+            <param name="includeOrNot">true: include ; false: exclude</param>
+            <param name="setBulkMapping"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.FinalizeForMerge(Sci.SQL.MergeOption)" -->
+        <member name="M:Sci.SQL.BulkMergeInsert(Sci.SQL)">
+            <summary>
+            Merge 有問題, 當條件mapping之後, 已存在的話不會被insert
+            </summary>
+            <param name="sql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.BulkMergeInsert(Sci.SQL,System.Data.DataTable@)">
+            <summary>
+            Merge 有問題, 當條件mapping之後, 已存在的話不會被insert
+            </summary>
+            <param name="sql"></param>
+            <param name="table"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.BulkInsert(System.String,System.Data.DataTable)">
+            <summary>
+            to Insert All data into DB table
+            <para> - copyTable 的欄位順序要和DB Table一樣 </para>
+            <para> - connection 使用default connection, 用完自動關閉 </para>
+            <para> - BulkCopy物件透過 connection產生, 用完自動關閉  </para>
+            </summary>
+            <param name="destinationTableName">DB Table name , ex: Brand </param>
+            <param name="copyTable">copyTable 的欄位順序要和DB Table一樣</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.BulkInsert(System.String,System.Data.DataTable,System.Data.SqlClient.SqlConnection)">
+            <summary>
+            to Insert All data in table to DB
+            <para> - copyTable 的欄位順序要和DB Table一樣 </para>
+            <para> - BulkCopy物件透過指定的 connection產生, 用完自動關閉  </para>
+            </summary>
+            <param name="destinationTableName">DB Table name , ex: Brand </param>
+            <param name="copyTable">copyTable 的欄位順序要和DB Table一樣</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.SQL.BulkInsert(System.String,System.Data.DataTable,System.Data.SqlClient.SqlBulkCopy)">
+            <summary>
+            to Insert All data in table to DB
+            <para> - copyTable 的欄位順序要和DB Table一樣 </para>
+            <para> - connection和 BulkCopy物件不會自動關閉  </para>
+            </summary>
+            <param name="destinationTableName">DB Table name , ex: Brand </param>
+            <param name="copyTable">copyTable 的欄位順序要和DB Table一樣</param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate1" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.SQL.example_BulkMergeInsertUpdate2" -->
+        <member name="M:Sci.SQL.example_BulkInsertForColumns_1">
+            <summary>
+            ForColumns 適用狀況1: 
+             - 程式的DataTable只有幾個跟DB相同的欄位  
+             - 每個DataTable 欄位都是DB有的
+            </summary>
+        </member>
+        <member name="M:Sci.SQL.example_BulkInsertForColumns_2">
+            <summary>
+            ForColumns 適用狀況2: 
+             - 程式的DataTable只有幾個跟DB相同的欄位  
+             - 有幾個欄位是DB沒有的
+            </summary>
+        </member>
+        <member name="M:Sci.SQL.GetAllFields(System.Data.DataTable)">
+            <summary>
+            取得Table全部的欄位名稱(逗號隔開)
+            </summary>
+            <param name="sourceTable"></param>
+            <param name="targetTable"></param>
+            <returns></returns>
         </member>
         <member name="T:Sci.Utility.Report.XLSumLocation">
             <summary>
@@ -9283,6 +9516,12 @@
             Input6 subPage.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tems.Input6.RushMode">
+            <summary>
+            <para>1.儲存表身資料時, 是否要用改用批次 insert/delete的做法 (原做法是每筆資料都產生 sql command來執行)</para>
+            <para>2.原本</para>
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tems.Input6.Constructor">
             <summary>
             private method Constructor().
@@ -11790,9 +12029,16 @@
         </member>
         <member name="M:Sci.Win.Tools.BugProc.#ctor(System.Exception)">
             <summary>
-            Constructor of BugProc with parameter. 
+            Constructor of BugProc with parameter.
             </summary>
             <param name="ex">Exception object.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.BugProc.#ctor(System.Exception,System.String)">
+            <summary>
+            put specialMsg in first line of exceptions
+            </summary>
+            <param name="ex">an exception</param>
+            <param name="specialMsg">specified msg</param>
         </member>
         <member name="M:Sci.Win.Tools.BugProc.mailto_Click(System.Object,System.EventArgs)">
             <summary>

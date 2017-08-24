@@ -25,8 +25,7 @@ namespace Sci.Production.Quality
         private bool newOven=false;
         private bool isModify = false;  //註記[Test Date][Article][Inspector][Remark]是否修改
         private bool isSee = false;
-        bool canEdit = true;
-        
+        bool canEdit = true;                
 
         public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr,string Poid)
             : base(canedit, id, keyvalue2, keyvalue3)
@@ -44,6 +43,7 @@ namespace Sci.Production.Quality
             }
           
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -131,6 +131,7 @@ namespace Sci.Production.Quality
 
             return base.OnRequery(out datas);
         }
+
         // 重組grid view 
         protected override void OnRequeryPost(System.Data.DataTable datas)
         {
@@ -194,6 +195,7 @@ and a.seq1=@seq1";
             }
 
         }
+
         // 限定字串長度
         public string SQlText(string sqlInput, int maxLength)
         {
@@ -691,6 +693,7 @@ and a.seq1=@seq1";
                 .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true);
             return true;
         }
+
         protected override bool OnSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
@@ -711,6 +714,7 @@ and a.seq1=@seq1";
             }
             return base.OnSaveBefore();
         }
+
         protected override Ict.DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -1054,11 +1058,16 @@ SET IDENTITY_INSERT oven off";
 
             worksheet.Select();
             MyUtility.Msg.WaitClear();
-            excel.Visible = true;
 
-            if (excel != null) Marshal.FinalReleaseComObject(excel); //釋放sheet
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet); //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P05_Detail_Report");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
 
+            strExcelName.OpenFile();
+            #endregion
         }
 
         private new void TextChanged(object sender, EventArgs e)
@@ -1070,8 +1079,5 @@ SET IDENTITY_INSERT oven off";
         {
             isModify = true;
         }
-
-    
-
     }
 }
