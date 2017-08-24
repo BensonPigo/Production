@@ -302,32 +302,52 @@ order by k.FactoryID,k.ID");
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02_Detail.xltx", 6, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02_Detail.xltx", 6, false, null, objApp);      // 將datatable copy to excel
                 objApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 objSheet.Cells[4, 16] = strDateRange;   // 條件字串寫入excel
                 objSheet.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
                 objSheet.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
-                objApp.Visible = true;
-                if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R02_Detail");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
                 return true;
             }
             else
             {
                 Microsoft.Office.Interop.Excel.Application objApp2 = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02.xltx", 6, true, null, objApp2);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02.xltx", 6, false, null, objApp2);      // 將datatable copy to excel
                 objApp2.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet2 = objApp2.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 objSheet2.Cells[4, 16] = strDateRange;   // 條件字串寫入excel
                 objSheet2.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
                 objSheet2.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
-                objApp2.Visible = true;
-            if (objSheet2 != null) Marshal.FinalReleaseComObject(objSheet2);    //釋放sheet
-            if (objApp2 != null) Marshal.FinalReleaseComObject(objApp2);          //釋放objApp
-            return true;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R02");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp2.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp2.Quit();
+                Marshal.ReleaseComObject(objApp2);
+                Marshal.ReleaseComObject(objSheet2);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
+                return true;
             }
          
         }

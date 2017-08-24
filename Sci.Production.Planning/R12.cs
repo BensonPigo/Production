@@ -293,11 +293,8 @@ order by tmpData2.OrderID";
             sxrc.dicDatas.Add("##title", title);
             sxrc.dicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
             
-
-            //Microsoft.Office.Interop.Excel.Application excel = sxrc.ExcelApp;
-
-            sxrc.Save();
-
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R12.Matrix");
+            sxrc.Save(strExcelName);
             return Result.True;
         }
 

@@ -14,6 +14,7 @@ using Ict;
 using Ict.Win;
 using Sci.Win;
 using Sci.Production.Report;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Planning
@@ -689,9 +690,19 @@ ORDER BY A1.ID";
                     }
                 }
                 #endregion
-                excel.Visible = true;
-                //自動開啟Excel存檔畫面
-                //if (!(result = PrivUtils.Excels.SaveExcel(temfile.Substring(0, temfile.Length - 4), excel))) return result;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R17");
+                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion 
                 return Result.True;
             }
             catch (Exception ex)

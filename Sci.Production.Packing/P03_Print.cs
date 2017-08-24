@@ -159,16 +159,11 @@ namespace Sci.Production.Packing
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                         #region Save & Show Word
-                        string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_BarcodeVN", Sci.Production.Class.WordFileeNameExtension.Docx);
-                        document.SaveAs(strWordName);
-                        document.Close();
-                        winword.Quit();
+                        winword.Visible = true;
                         Marshal.ReleaseComObject(winword);
                         Marshal.ReleaseComObject(document);
-
-                        strWordName.OpenFile();
-                        #endregion                   
-                        winword = null;
+                        Marshal.ReleaseComObject(table);
+                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -227,16 +222,11 @@ namespace Sci.Production.Packing
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                         #region Save & Show Word
-                        string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_Barcode", Sci.Production.Class.WordFileeNameExtension.Docx);
-                        document.SaveAs(strWordName);
-                        document.Close();
-                        winword.Quit();
+                        winword.Visible = true;
                         Marshal.ReleaseComObject(winword);
                         Marshal.ReleaseComObject(document);
-
-                        strWordName.OpenFile();
+                        Marshal.ReleaseComObject(table);
                         #endregion 
-                        winword = null;
                     }
                     catch (Exception ex)
                     {

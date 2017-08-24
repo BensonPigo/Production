@@ -248,7 +248,7 @@ namespace Sci.Production.Planning
                         sheetStart += 3; //每個Artwork間隔 n - 1 格
                     }
 
-                    sxrc.ExcelApp.Visible = true;
+                    sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_Report_R10"));
                     return new DualResult(true);
                 }
                 catch (Exception ex)
@@ -1248,9 +1248,7 @@ namespace Sci.Production.Planning
                 xl.dicDatas.Add("##dt2", dt2);
 
                 Sci.Utility.Excel.SaveXltReportCls.ReplaceAction a = setRow1;
-                xl.dicDatas.Add("##setRow1", a);
-
-                xl.Save();
+                xl.dicDatas.Add("##setRow1", a);           
 
                 int startRow = 3; //title有2列
                 int lastRow = dt2.Rows.Count + 3 ;
@@ -1262,7 +1260,8 @@ namespace Sci.Production.Planning
                     wt2 = MyExcelPrg.GetExcelColumnName(i + 2);
                     wt3 = string.Format("=SUM({0}{1}:{0}{2})", wt2, startRow, lastRow - 1);
                     wks.Cells[lastRow, (i + 2)] = wt3;
-                }                
+                }
+                xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
             }
             #endregion
             return true;

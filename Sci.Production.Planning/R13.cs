@@ -23,7 +23,8 @@ using Sci.Production.Class;
 namespace Sci.Production.Planning
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
-    { private DataTable dt_source; //For Grid用
+    { 
+        private DataTable dt_source; //For Grid用
         private DataTable[] dsData;
         private IDictionary<string, IList<DataRow>> id_to_AdidasKPITarget = new Dictionary<string, IList<DataRow>>();
 
@@ -222,8 +223,8 @@ namespace Sci.Production.Planning
                     xrt2.boFreezePanes = true; // 進行凍結視窗
                     sxrc.dicDatas.Add("##detailTbl", xrt2);  
                 }
-              
-                sxrc.Save();
+
+                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_01"));
             }
             else
             {
@@ -272,17 +273,8 @@ namespace Sci.Production.Planning
                     idxItem += 1;
                 }
 
-                sxrc.Save();
+                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_02"));
             }
-
-
-            //DualResult result = Result.True;
-            //if (excel == null) return true; ShowInfo("報表查詢完成");//自動開啟Excel存檔畫面 
-            //if (!(result = PrivUtils.Excels.SaveExcel(temfile.Substring(0, temfile.Length - 4), excel)))
-            //{
-            //    ShowErr(result);
-            //    return false;
-            //}
             return true;
         }
 
