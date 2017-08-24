@@ -709,13 +709,8 @@ order by x.[Bundle]");
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
             objSheets.get_Range("I1:L1").ColumnWidth = 15;
             objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
-
-<<<<<<< HEAD
+            
             MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
-=======
-
-            objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
->>>>>>> 2e137bf80dd4bc2ffaa209d73d66a680ebd30ad1
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;

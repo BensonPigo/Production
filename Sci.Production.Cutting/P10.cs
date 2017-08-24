@@ -288,8 +288,7 @@ order by bundlegroup"
             #region 填入Bundleno
             int drcount = DetailDatas.Count;
             IList<string> cListBundleno;
-
-            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", Convert.ToDateTime(CurrentMaintain["cDate"]), 3, "Bundleno", batchNumber: drcount, sequenceMode: 2);
+            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", MyUtility.Check.Empty(CurrentMaintain["cDate"])? default(DateTime) : Convert.ToDateTime(CurrentMaintain["cDate"]), 3, "Bundleno", batchNumber: drcount, sequenceMode: 2);
             if (cListBundleno.Count == 0)
             {
                 return new DualResult(false, "Create Bundleno error.");
