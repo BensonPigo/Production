@@ -682,6 +682,8 @@ select  t.*
                                    where ID = t.ID and Seq = t.Seq
                              ) a for xml path(''))
                            , '')
+, [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
+, [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
 from tmpFilterSeperate t
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
@@ -834,6 +836,8 @@ select distinct t.*
                                    where ID = t.ID
                              ) a for xml path(''))
                            , '') 
+, [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
+, [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
 from tmpListPoCombo t
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
@@ -1140,9 +1144,11 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 57] = dr["PFRemark"];
                 objArray[0, 58] = dr["LETA"];  //BG
                 objArray[0, 59] = dr["MTLETA"];  //BH
-                objArray[0, 60] = dr["SewETA"];  //BI
-                objArray[0, 61] = dr["PackETA"];  //BJ
-                objArray[0, 62] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : ""; //BK
+                objArray[0, 59] = dr["Fab_ETA"];  //BI
+                objArray[0, 59] = dr["Acc_ETA"];  //BJ
+                objArray[0, 60] = dr["SewETA"];  //BK
+                objArray[0, 61] = dr["PackETA"];  //BL
+                objArray[0, 62] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : ""; //BM
                 objArray[0, 63] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
                 objArray[0, 64] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();   //MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 65] = dr["ArriveWHDate"];
@@ -1160,7 +1166,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 77] = dr["PulloutQty"];
                 objArray[0, 78] = dr["ActPulloutTime"];
                 objArray[0, 79] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : "";
-                objArray[0, 80] = dr["FtyKPI"]; //cb
+                objArray[0, 80] = dr["FtyKPI"]; 
                 KPIChangeReasonName = dr["KPIChangeReason"].ToString().Trim() + "-" + dr["KPIChangeReasonName"].ToString().Trim();
                 objArray[0, 81] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? KPIChangeReasonName : ""; //cc
                 objArray[0, 82] = dr["PlanDate"];
@@ -1182,14 +1188,14 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 98] = dr["ClogCTN1"];
                 objArray[0, 99] = dr["ClogRcvDate"];
                 objArray[0, 100] = dr["InspDate"];
-                objArray[0, 101] = dr["InspResult"];//CW
-                objArray[0, 102] = dr["InspHandle"];//CX
-                objArray[0, 103] = dr["SewLine"];//CY
-                objArray[0, 104] = dr["ShipModeList"];//CZ
-                objArray[0, 105] = dr["Article"];//DA
-                objArray[0, 106] = dr["SpecialMarkName"];//DB
-                objArray[0, 107] = dr["FTYRemark"];//DC
-                objArray[0, 108] = dr["SampleReasonName"];//DD
+                objArray[0, 101] = dr["InspResult"];
+                objArray[0, 102] = dr["InspHandle"];
+                objArray[0, 103] = dr["SewLine"];
+                objArray[0, 104] = dr["ShipModeList"];
+                objArray[0, 105] = dr["Article"];
+                objArray[0, 106] = dr["SpecialMarkName"];
+                objArray[0, 107] = dr["FTYRemark"];
+                objArray[0, 108] = dr["SampleReasonName"];
                 objArray[0, 109] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 110] = dr["CuttingSP"];
                 objArray[0, 111] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : "";
