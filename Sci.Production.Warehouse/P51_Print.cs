@@ -18,6 +18,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
@@ -86,21 +87,15 @@ LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pa
             return Result.True;
         }
 
-
         public DataRow CurrentDataRow { get; set; }
 
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
-            
-
-
             this.ReportResourceNamespace = typeof(P51_PrintData);
             this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
             this.ReportResourceName = this.radioPanel1.Value == this.radioBackwardSocktakingForm.Value ? "P51_Report1.rdlc" : "P51_Report2.rdlc";
 
         }
-
-      
     }
 }
 

@@ -358,6 +358,7 @@ WHERE   StockType='{0}'
         {
             this.Close();
         }
+
         private void checkReturn_Click(object sender, EventArgs e)
         {
             myFilter();

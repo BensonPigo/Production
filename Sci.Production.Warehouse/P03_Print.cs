@@ -51,6 +51,7 @@ namespace Sci.Production.Warehouse
            // }
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
            
@@ -185,25 +186,12 @@ namespace Sci.Production.Warehouse
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, true, null, objApp);      // 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             else {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-2.xltx", 1, true, null, objApp);      // 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             return true;
         }
-
         }
     }
-
-
-    
-    
-
-

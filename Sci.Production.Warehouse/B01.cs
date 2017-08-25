@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
         }
 
         //copy前清空id
-        protected override void ClickCopyAfter()     
+        protected override void ClickCopyAfter()
         {
              CurrentMaintain["id"] = string.Empty;
         }

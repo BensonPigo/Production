@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             this.CurrentDataRow = row;
         }
+
         string selectOption;
         protected override bool ValidateInput()
         {

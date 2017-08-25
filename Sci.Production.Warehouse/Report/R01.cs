@@ -351,7 +351,7 @@ where 1=1 and c.ThirdCountry = 1"));
             }
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R01.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1, showExcel: false, showSaveMsg: true, excelApp : objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1, showExcel: false, showSaveMsg: false, excelApp : objApp);
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
@@ -364,12 +364,16 @@ where 1=1 and c.ThirdCountry = 1"));
 
             worksheet.Columns[4].ColumnWidth = 50;
             worksheet.Rows.AutoFit();
-            objApp.Visible = true;
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
-            //Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printData);
-            //sdExcel.Save();
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R01");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

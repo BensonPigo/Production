@@ -306,6 +306,5 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
             dr_master["remark"] = remark;
             this.Close();
         }
-
     }
 }

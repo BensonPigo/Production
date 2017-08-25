@@ -472,7 +472,6 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-
         private void comboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
@@ -486,6 +485,7 @@ Where a.id = '{0}'", masterID);
                 }
             }
         }
+
         protected override bool ClickPrint()
         {
             P51_Print p = new P51_Print();

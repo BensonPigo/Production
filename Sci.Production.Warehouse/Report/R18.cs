@@ -65,16 +65,20 @@ namespace Sci.Production.Warehouse
                 if(!MyUtility.Check.Empty(str))
                     worksheet.Cells[i + 1, 18] = str.Trim();
             }
-
-            worksheet.Columns[18].ColumnWidth = 88;
-            objApp.Visible = true;
-
+                        
             objApp.Columns.AutoFit();
-            objApp.Rows.AutoFit();                     
+            objApp.Rows.AutoFit();
+            worksheet.Columns[18].ColumnWidth = 88;
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return false;
 

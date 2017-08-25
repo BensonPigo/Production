@@ -175,12 +175,19 @@ left join MDivisionPoDetail mpd on inv.POID = mpd.POID and inv.Seq2 = mpd.Seq1 a
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R20.xltx");
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R20.xltx", 2, showExcel: true, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R20.xltx", 2, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R20");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             #endregion
             this.HideWaitMessage();
             return true;

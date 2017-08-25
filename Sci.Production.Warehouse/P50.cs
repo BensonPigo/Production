@@ -244,9 +244,7 @@ namespace Sci.Production.Warehouse
             }
             
         }
-
-        
-
+      
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -276,7 +274,6 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-
         //Import
         private void btngenerate_Click(object sender, EventArgs e)
         {
@@ -300,11 +297,7 @@ Where a.id = '{0}'", masterID);
         {
             P50_Print p = new P50_Print(this.CurrentDataRow);
             p.ShowDialog();
-            
-            
             return true;
-
-        }
-       
+        }       
     }
 }

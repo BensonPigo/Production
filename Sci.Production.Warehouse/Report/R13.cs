@@ -141,7 +141,7 @@ Where a.Status = 'Confirmed' and a.type = '{0}'
 
             //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1);
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R13.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
@@ -151,10 +151,16 @@ Where a.Status = 'Confirmed' and a.type = '{0}'
                 if(!MyUtility.Check.Empty(str))
                     objSheets.Cells[i + 1, 10] = str.Trim();
             }
-                objApp.Visible = true;
 
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R13");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

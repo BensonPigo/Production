@@ -1481,8 +1481,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             xlTable.ShowHeader = false;
             xl.DicDatas.Add("##SEQ", xlTable);
 
-            
-            xl.Save();
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P11"));
             return true;
         }
 

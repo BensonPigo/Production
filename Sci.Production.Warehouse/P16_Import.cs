@@ -38,6 +38,7 @@ namespace Sci.Production.Warehouse
             Object localPrice = dtftyinventory.Compute("Sum(qty)", "selected = 1");
             this.displayTotalQty.Value = localPrice.ToString();
         }
+
         private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             gridLack_Detail.ValidateControl();
@@ -195,7 +196,6 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
         {
             this.Close();
         }
-
 
         // Import
         private void btnImport_Click(object sender, EventArgs e)

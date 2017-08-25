@@ -175,6 +175,7 @@ namespace Sci.Production.Warehouse
             CheckControlEnable();
 
         }
+
         private void CheckControlEnable()
         {
             if (radioPLRcvReport.Checked == true)
@@ -188,6 +189,7 @@ namespace Sci.Production.Warehouse
                 txtSPNo.Enabled = true;                                            
             }
         }
+
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (dt.Rows.Count <= 0)
@@ -222,9 +224,15 @@ namespace Sci.Production.Warehouse
                     nRow++;
                 }
 
-                objApp.Visible = true;
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P07_ArriveWearhouseReport");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             else
             {
@@ -251,16 +259,19 @@ namespace Sci.Production.Warehouse
                     nRow++;
                 }
 
-                objApp.Visible = true;
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P07_PackingListReveivingReport");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             
 
             return true;
         }
-
-
-
     }
 }

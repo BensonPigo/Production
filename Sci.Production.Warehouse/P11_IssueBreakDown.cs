@@ -134,6 +134,7 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                 if (dataRow[col_name].Empty()) dataRow[col_name] = 0;
             }
         }
+
         private void btnSet_Click(object sender, EventArgs e)
         {
             if (dtQtyBreakDown == null || DtModifyIssueBDown == null) return;
@@ -143,6 +144,5 @@ order by [OrderID], [Article]", Master["orderid"], sbSizecode.ToString().Substri
                 ((DataTable)gridIssueBreakDownBS.DataSource).ImportRow(tmprow);
             }
         }
-
     }
 }

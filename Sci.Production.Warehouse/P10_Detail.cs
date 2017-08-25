@@ -151,6 +151,7 @@ namespace Sci.Production.Warehouse
             }
             sum_checkedqty();
         }
+
         private void sum_checkedqty()
         {
             grid.EndEdit();

@@ -199,29 +199,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
                 return;
             }
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save();
-            //string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            //System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            //SaveFileDialog dlg = new SaveFileDialog();
-            //dlg.RestoreDirectory = true;
-            //dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            //dlg.Title = "Save as Excel File";
-            //dlg.FileName = "P41_EmbApplique_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
-            //dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            //// Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            //// Get the selected file name and CopyToXls
-            //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            //{
-            //    //DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xltx", 12);
-            //    //else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
-            //}
-            //else
-            //{
-            //    return;
-            //}
+            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P41"));
         }
 
         private void checkEachCons_CheckedChanged(object sender, EventArgs e)
