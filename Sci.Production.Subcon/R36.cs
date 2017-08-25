@@ -46,6 +46,7 @@ namespace Sci.Production.Subcon
             this.comboOrderBy.SelectedIndex = 0;
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             bool dateRange1_Empty = !this.dateDebitDate.HasValue, dateRange2_Empty = !this.dateApprovedDate.HasValue, dateRange3_Empty = !this.dateSettledDate.HasValue, textbox1_Empty = this.txtSDNoStart.Text.Empty(), textbox2_Empty = this.txtSDNoEnd.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
@@ -356,14 +357,14 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 return false;
             }
 
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
 
             if ("Debit Note List".EqualString(this.comboReportType.Text))
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
-                dt1.boAutoFitRow = true;
-                x1.dicDatas.Add("##SD", dt1);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dt);
+                dt1.BoAutoFitRow = true;
+                x1.DicDatas.Add("##SD", dt1);
                 dt1.ShowHeader = false;
                 x1.Save();
                 return true;
@@ -380,21 +381,22 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
                
-                x1.dicDatas.Add("##DebiteDate", d1 + "~" + d2);
-                x1.dicDatas.Add("##ApprovedDate", d3+"~"+d4);
-                x1.dicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.dicDatas.Add("##SDNO",SDNo1+ "~" + SDNo2);
-                x1.dicDatas.Add("##Supplier", Supplier);
-                x1.dicDatas.Add("##Handle", handle);
-                x1.dicDatas.Add("##SMR", smr);
-                x1.dicDatas.Add("##FACTORY", factoryid);
-                x1.dicDatas.Add("##Status", status);
-                x1.dicDatas.Add("##PaymentSettled", payment);
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSummary1 = new SaveXltReportCls.xltRptTable(dtSummary);
-                dtSummary1.boAutoFitColumn = true;
-                x1.dicDatas.Add("##SD", dtSummary1);
+                x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
+                x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
+                x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
+                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
+                x1.DicDatas.Add("##Supplier", Supplier);
+                x1.DicDatas.Add("##Handle", handle);
+                x1.DicDatas.Add("##SMR", smr);
+                x1.DicDatas.Add("##FACTORY", factoryid);
+                x1.DicDatas.Add("##Status", status);
+                x1.DicDatas.Add("##PaymentSettled", payment);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSummary1 = new SaveXltReportCls.XltRptTable(dtSummary);
+                dtSummary1.BoAutoFitColumn = true;
+                x1.DicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
-                x1.Save();
+
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
                 return true;
             }
             else if ("Detail".EqualString(this.comboReportType.Text))
@@ -407,24 +409,24 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
-                x1.dicDatas.Add("##DebiteDate", d1 + "~" + d2);
-                x1.dicDatas.Add("##ApprovedDate", d3 + "~" + d4);
-                x1.dicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.dicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
-                x1.dicDatas.Add("##Supplier", Supplier);
-                x1.dicDatas.Add("##Handle", handle);
-                x1.dicDatas.Add("##SMR", smr);
-                x1.dicDatas.Add("##FACTORY", factoryid);
-                x1.dicDatas.Add("##Status", status);
-                x1.dicDatas.Add("##PaymentSettled", payment);
+                x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
+                x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
+                x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
+                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
+                x1.DicDatas.Add("##Supplier", Supplier);
+                x1.DicDatas.Add("##Handle", handle);
+                x1.DicDatas.Add("##SMR", smr);
+                x1.DicDatas.Add("##FACTORY", factoryid);
+                x1.DicDatas.Add("##Status", status);
+                x1.DicDatas.Add("##PaymentSettled", payment);
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
                 //xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtDetail1 = new SaveXltReportCls.xltRptTable(dtDetail);
-                dtDetail1.boAutoFitColumn = true;
-                x1.dicDatas.Add("##SD", dtDetail1);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtDetail1 = new SaveXltReportCls.XltRptTable(dtDetail);
+                dtDetail1.BoAutoFitColumn = true;
+                x1.DicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
 
-                x1.Save();
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
                 return true;
             }
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
@@ -437,23 +439,24 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
-                x1.dicDatas.Add("##DebiteDate", d1 + "~" + d2);
-                x1.dicDatas.Add("##ApprovedDate", d3 + "~" + d4);
-                x1.dicDatas.Add("##SettledDate", d5 + "~" + d6);
-                x1.dicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
-                x1.dicDatas.Add("##Supplier", Supplier);
-                x1.dicDatas.Add("##Handle", handle);
-                x1.dicDatas.Add("##SMR", smr);
-                x1.dicDatas.Add("##FACTORY", factoryid);
-                x1.dicDatas.Add("##Status", status);
-                x1.dicDatas.Add("##PaymentSettled", payment);
+                x1.DicDatas.Add("##DebiteDate", d1 + "~" + d2);
+                x1.DicDatas.Add("##ApprovedDate", d3 + "~" + d4);
+                x1.DicDatas.Add("##SettledDate", d5 + "~" + d6);
+                x1.DicDatas.Add("##SDNO", SDNo1 + "~" + SDNo2);
+                x1.DicDatas.Add("##Supplier", Supplier);
+                x1.DicDatas.Add("##Handle", handle);
+                x1.DicDatas.Add("##SMR", smr);
+                x1.DicDatas.Add("##FACTORY", factoryid);
+                x1.DicDatas.Add("##Status", status);
+                x1.DicDatas.Add("##PaymentSettled", payment);
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
                 //xdt.boAutoFitColumn = true;
-                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSchedule1 = new SaveXltReportCls.xltRptTable(dtSchedule);
-                dtSchedule1.boAutoFitColumn = true;
-                x1.dicDatas.Add("##SD", dtSchedule1);
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dtSchedule1 = new SaveXltReportCls.XltRptTable(dtSchedule);
+                dtSchedule1.BoAutoFitColumn = true;
+                x1.DicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;
-                x1.Save();
+
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
                 return true;
             }
             return true;

@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci;
 using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -193,7 +194,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
-            MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, true, "", objApp);
+            MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, false, "", objApp);
             objApp.Cells[2, 3] = "Last Date " + dateLastDate.Value.Value.ToShortDateString();
             objApp.Cells[2, 9] = "Update Date " + dateUpdatedDate.Value.Value.ToShortDateString();
             int Number = 3;
@@ -229,6 +230,18 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             objApp.get_Range("U" + 4, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
             objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P02");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
         }
 
         private void dateUpdatedDate_ValueChanged(object sender, EventArgs e)

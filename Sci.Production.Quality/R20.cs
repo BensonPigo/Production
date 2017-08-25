@@ -84,8 +84,7 @@ namespace Sci.Production.Quality
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
-        }
-        
+        }        
 
         // 驗證輸入條件
         protected override bool ValidateInput()
@@ -852,14 +851,22 @@ drop table #tmpall
             if (radioPerLine.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerLine.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerLine.xltx", 1, false, null, objApp);// 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 for (int i = 2; i < printData.Columns.Count; i++)
                 {
                     objSheets.Cells[1, i+1] = printData.Columns[i].ColumnName.ToString();
                 }
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerLine");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             #endregion
 
@@ -867,14 +874,22 @@ drop table #tmpall
             if (radioPerCell.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerCell.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerCell.xltx", 1, false, null, objApp);// 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 for (int i = 2; i < printData.Columns.Count; i++)
                 {
                     objSheets.Cells[1, i + 1] = printData.Columns[i].ColumnName.ToString();
                 }
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerCell");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             #endregion
 
@@ -882,7 +897,7 @@ drop table #tmpall
             if (radioAllData.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, false, null, objApp);// 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int count = printData.Rows.Count;
@@ -895,8 +910,16 @@ drop table #tmpall
                 
                 objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_AllData");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+
+                strExcelName.OpenFile();
+                #endregion
             }
             #endregion
 
@@ -905,9 +928,6 @@ drop table #tmpall
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_Detail.xltx", 1, true, null, objApp);// 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 
@@ -916,9 +936,6 @@ drop table #tmpall
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybySP.xltx", 1, true, null, objApp);// 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 
@@ -927,9 +944,6 @@ drop table #tmpall
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); //預先開啟excel app
                  MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 
@@ -938,9 +952,6 @@ drop table #tmpall
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyDateaAndStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 

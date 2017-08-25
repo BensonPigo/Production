@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+using Ict;
 
 namespace Sci.Production.PPIC
 {
@@ -93,7 +95,19 @@ where ID = '{0}'", Sci.Env.User.Factory));
                 counter++;
             }
             worksheet.Columns.AutoFit();
-            excel.Visible = true;
+
+            #region Save & Show Excel 
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P05_Print");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

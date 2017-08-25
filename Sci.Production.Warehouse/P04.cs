@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
             InitializeComponent();
         }
+
         //Form to Form W/H.P01
         public P04(string P01SPNo)
         {
@@ -36,6 +37,7 @@ namespace Sci.Production.Warehouse
             this.txtSPNo.Text = SPNo.Trim();
             event_Query();
         }
+
         //隨著 P01上下筆SP#切換資料
         public void P04Data(string P01SPNo)
         {            
@@ -44,6 +46,7 @@ namespace Sci.Production.Warehouse
             this.txtSPNo.Text = SPNo.Trim();
             event_Query();
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -161,10 +164,16 @@ where l.OrderID like @spno
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
-                objApp.Visible = true;
 
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P04");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 this.HideWaitMessage();
             }
         }

@@ -819,31 +819,31 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             sxrc sxr = new sxrc(xltPath, true);
             int idx = 0;
             sxr.CopySheet.Add(1, rpt3.Rows.Count - 1);
-            sxr.VarToSheetName = sxr._v + "SP";
+            sxr.VarToSheetName = sxr.VPrefix + "SP";
             Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
             foreach (DataRow row in rpt3.Rows)
             {
                 string sIdx = idx.ToString();
                 idx += 1;
                 string oid = row["ID"].ToString();
-                sxr.dicDatas.Add(sxr._v + "Title" + sIdx, row["Title"].ToString());
-                sxr.dicDatas.Add(sxr._v + "AbbEN" + sIdx, row["AbbEN"].ToString());
-                sxr.dicDatas.Add(sxr._v + "SP" + sIdx, oid);
-                sxr.dicDatas.Add(sxr._v + "Style" + sIdx, row["StyleID"].ToString());
-                sxr.dicDatas.Add(sxr._v + "name" + sIdx, row["name"].ToString());
-                sxr.dicDatas.Add(sxr._v + "addressen" + sIdx, row["AddressEN"].ToString());
-                sxr.dicDatas.Add(sxr._v + "tel" + sIdx, row["Tel"].ToString());
-                sxr.dicDatas.Add(sxr._v + "fax" + sIdx, row["Fax"].ToString());
-                sxr.dicDatas.Add(sxr._v + "remark" + sIdx, row["remark"].ToString());
-                sxr.dicDatas.Add(sxr._v + "season" + sIdx, row["SeasonID"].ToString());
-                sxr.dicDatas.Add(sxr._v + "delivery" + sIdx, row["delivery"].ToString());
-                sxr.dicDatas.Add(sxr._v + "des" + sIdx, row["des"].ToString());
-                sxr.dicDatas.Add(sxr._v + "terms" + sIdx, row["terms"].ToString());
-                sxr.dicDatas.Add(sxr._v + "styleno" + sIdx, row["StyleID"].ToString());
-                sxr.dicDatas.Add(sxr._v + "qty" + sIdx, row["QTY"].ToString());
-                sxr.dicDatas.Add(sxr._v + "descripition" + sIdx, row["descripition"].ToString());
-                sxr.dicDatas.Add(sxr._v + "price" + sIdx, row["price"].ToString());
-                sxr.dicDatas.Add(sxr._v + "amount" + sIdx, row["amount"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "Title" + sIdx, row["Title"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "AbbEN" + sIdx, row["AbbEN"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "SP" + sIdx, oid);
+                sxr.DicDatas.Add(sxr.VPrefix + "Style" + sIdx, row["StyleID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "name" + sIdx, row["name"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "addressen" + sIdx, row["AddressEN"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "tel" + sIdx, row["Tel"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "fax" + sIdx, row["Fax"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "remark" + sIdx, row["remark"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "season" + sIdx, row["SeasonID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "delivery" + sIdx, row["delivery"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "des" + sIdx, row["des"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "terms" + sIdx, row["terms"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "styleno" + sIdx, row["StyleID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "qty" + sIdx, row["QTY"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "descripition" + sIdx, row["descripition"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "price" + sIdx, row["price"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "amount" + sIdx, row["amount"].ToString());
 
                 int l = 79;
                 int la = row["AddressEN"].ToString().Length / l;
@@ -861,35 +861,35 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                 if (!res) continue;
                 if (dts.Length < 3) continue;
 
-                sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
-                sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
-                sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
+                sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
+                sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
                 SetColumn1toText(tbl1);
                 SetColumn1toText(tbl2);
                 SetColumn1toText(tbl3);
-                sxr.dicDatas.Add(sxr._v + "qtybreakdown" + sIdx, tbl1);
-                sxr.dicDatas.Add(sxr._v + "fabcom" + sIdx, tbl2);
-                sxr.dicDatas.Add(sxr._v + "acccom" + sIdx, tbl3);
+                sxr.DicDatas.Add(sxr.VPrefix + "qtybreakdown" + sIdx, tbl1);
+                sxr.DicDatas.Add(sxr.VPrefix + "fabcom" + sIdx, tbl2);
+                sxr.DicDatas.Add(sxr.VPrefix + "acccom" + sIdx, tbl3);
 
-                sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltLongString(row["mark"].ToString().Trim()));
-                sxr.dicDatas.Add(sxr._v + "paching" + sIdx, new sxrc.xltLongString(row["packing"].ToString()));
-                sxr.dicDatas.Add(sxr._v + "labelhantag" + sIdx, new sxrc.xltLongString(row["label"].ToString()));
+                sxr.DicDatas.Add(sxr.VPrefix + "shipmark" + sIdx, new sxrc.XltLongString(row["mark"].ToString().Trim()));
+                sxr.DicDatas.Add(sxr.VPrefix + "paching" + sIdx, new sxrc.XltLongString(row["packing"].ToString()));
+                sxr.DicDatas.Add(sxr.VPrefix + "labelhantag" + sIdx, new sxrc.XltLongString(row["label"].ToString()));
                 string UserName;
                 UserPrg.GetName(Env.User.UserID, out UserName, UserPrg.NameType.idAndNameAndExt);
-                sxr.dicDatas.Add(sxr._v + "userid" + sIdx, UserName);
+                sxr.DicDatas.Add(sxr.VPrefix + "userid" + sIdx, UserName);
 
             }
 
 
-            sxr.isProtect = true; //Excel 加密
-            sxr.Save();
+            sxr.IsProtect = true; //Excel 加密
+            sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_CMPQ"));
             this.HideWaitMessage();
         }
-        void SetColumn1toText(sxrc.xltRptTable tbl)
+        void SetColumn1toText(sxrc.XltRptTable tbl)
         {
-            sxrc.xlsColumnInfo c1 = new sxrc.xlsColumnInfo(1);
+            sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1);
             c1.NumberFormate = "@";
-            tbl.lisColumnInfo.Add(c1);
+            tbl.LisColumnInfo.Add(c1);
         }
       
         //Artwork

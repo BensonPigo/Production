@@ -856,12 +856,12 @@ Where a.id = '{0}'", masterID);
             else
             { detailgridbs.Position = index; }
         }
+
         private void txtwhseReasonRefundReason_Validated(object sender, EventArgs e)
         {
             this.txtwhseRefundAction.TextBox1.Text = "";
             this.txtwhseRefundAction.DisplayBox1.Text = "";
             this.txtwhseRefundAction.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue()); 
-        }
-    
+        }    
     }
 }

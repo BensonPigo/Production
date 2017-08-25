@@ -334,6 +334,7 @@ where exists(
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
+
         //Location  右鍵
         private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {

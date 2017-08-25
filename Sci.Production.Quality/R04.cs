@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         string OUTSTAN = "";
         List<SqlParameter> lis; DualResult res;
         DataTable dt; string cmd;
+
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -48,6 +49,7 @@ namespace Sci.Production.Quality
             //comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             lis = new List<SqlParameter>();
@@ -197,6 +199,7 @@ namespace Sci.Production.Quality
 
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             res = DBProxy.Current.Select("", cmd, lis, out dt);
@@ -206,6 +209,7 @@ namespace Sci.Production.Quality
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -215,34 +219,25 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-           // saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
-            
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R04.xltx");
-           // string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir,"Quality_R04.xltx");
-           // Microsoft.Office.Interop.Excel.Application xlt = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R04.xltx");//預先開啟excel app     
-          
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
+           
+            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R04.xltx", keepApp: true);
+
             string d1 = (MyUtility.Check.Empty(DateRecStart)) ? "" : Convert.ToDateTime(DateRecStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateRecEnd)) ? "" : Convert.ToDateTime(DateRecEnd).ToString("yyyy/MM/dd");
             string d3 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d4 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
-            //sxrc xl = new sxrc(xltPath);
+           
+            xl.DicDatas.Add("##QADate", d1 + "~" + d2);
+            xl.DicDatas.Add("##ArriveDate", d3 + "~" + d4);
+            xl.DicDatas.Add("##Category", Category);
+            xl.DicDatas.Add("##Factory", factory);
+            xl.DicDatas.Add("##Outstanding", OUTSTAN);
+            xl.DicDatas.Add("##body", dt);
 
-            xl.dicDatas.Add("##QADate", d1 + "~" + d2);
-            xl.dicDatas.Add("##ArriveDate", d3 + "~" + d4);
-            xl.dicDatas.Add("##Category", Category);
-            xl.dicDatas.Add("##Factory", factory);
-            xl.dicDatas.Add("##Outstanding", OUTSTAN);
-            xl.dicDatas.Add("##body", dt);
-            //xl.Save(outpath, false);
-            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-            xl.Save();
-            wks.Columns.AutoFit();
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R04"));
+            ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+            xl.FinishSave();
             return true;
         }
     }

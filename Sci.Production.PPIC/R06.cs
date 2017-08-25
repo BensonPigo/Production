@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -213,7 +214,19 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R06_MonthlyMaterialCompletion");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

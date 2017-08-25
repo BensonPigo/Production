@@ -205,6 +205,7 @@ namespace Sci.Production.Thread
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -215,6 +216,7 @@ namespace Sci.Production.Thread
             CurrentMaintain["mDivisionid"] = keyWord;
             
         }
+
         protected override bool ClickDeleteBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -224,6 +226,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickDeleteBefore();
         }
+
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -233,6 +236,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickEditBefore();
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
@@ -280,11 +284,13 @@ namespace Sci.Production.Thread
 
             return base.ClickSaveBefore();
         }
+
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
             dateDate.ReadOnly = true;
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -342,6 +348,7 @@ namespace Sci.Production.Thread
             #endregion
            
         }
+
         private void btnFind_Click(object sender, EventArgs e)
         {
             //移到指定那筆
@@ -363,6 +370,7 @@ namespace Sci.Production.Thread
             Form P06_import = new Sci.Production.Thread.P06_Import(detTable);
             P06_import.ShowDialog();
         }
+
         private void reqty()
         {
             CurrentDetailData["newConeVar"] = (decimal)CurrentDetailData["newcone"] - (decimal)CurrentDetailData["newconebook"];

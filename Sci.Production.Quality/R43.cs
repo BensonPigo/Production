@@ -53,6 +53,7 @@ namespace Sci.Production.Quality
         string Year;
         string Month;
         DataTable dt;
+
         protected override bool ValidateInput()
         {
             Brand = combobrand.Text.ToString();
@@ -122,7 +123,6 @@ namespace Sci.Production.Quality
 
             return result; //base.OnAsyncDataLoad(e);
             }
-           
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -133,9 +133,6 @@ namespace Sci.Production.Quality
             }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R43.xltx"); //預先開啟excel app                         
             MyUtility.Excel.CopyToXls(dt, "", "Quality_R43.xltx", 1, true, null, objApp);      // 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
     }

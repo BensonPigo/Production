@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
            this.checkJunk.ReadOnly = false;
            base.ClickNewAfter();
        }
+
        protected override bool ClickEditBefore()
        {
            this.txtAreaCode.ReadOnly = true;
@@ -30,11 +31,13 @@ namespace Sci.Production.Quality
            return base.ClickEditBefore();
            
        }
+
        protected override void ClickUndo()
        {
            this.txtAreaCode.ReadOnly = true;
            base.ClickUndo();
        }
+
        protected override bool ClickSaveBefore()
        {
            if (MyUtility.Check.Empty(this.txtAreaCode.Text))
@@ -44,12 +47,12 @@ namespace Sci.Production.Quality
            }
            return base.ClickSaveBefore();
        }
+
        protected override Ict.DualResult ClickSave()
        {
            this.txtAreaCode.ReadOnly = true;
            
            return base.ClickSave();
-       }
-       
+       }       
     }
 }

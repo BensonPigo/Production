@@ -73,7 +73,7 @@ namespace Sci.Production.Cutting
                 .Text("Description", header: "Description", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SubProcess", header: "Artwork", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Parts", header: "Parts", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(8), iseditingreadonly: true)
                 ;
 
         }

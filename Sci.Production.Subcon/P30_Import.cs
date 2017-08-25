@@ -359,7 +359,7 @@ and b.PurchaseQty > 0 and b.PoId =''
 
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
-            sdExcel.Save();
+            sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
 
         }
     }

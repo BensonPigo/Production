@@ -27,7 +27,6 @@ namespace Sci.Production.Quality
         DataTable dtDetail = null;
         int rowsCount = 0;
 
-
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -301,6 +300,7 @@ namespace Sci.Production.Quality
             col_WashRemark.DefaultCellStyle.BackColor = Color.SkyBlue;
 
         }
+
         protected override void OnFormLoaded()
         {
             
@@ -342,6 +342,7 @@ namespace Sci.Production.Quality
             }
             detailgrid.SelectRowTo(rowindex);
         }
+
         private void WashTest()
         {
             if (!IsSupportEdit || EditMode) return;          
@@ -353,6 +354,7 @@ namespace Sci.Production.Quality
             this.RenewData();
             OnDetailEntered();
         }
+
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;
@@ -488,7 +490,5 @@ namespace Sci.Production.Quality
             this.detailgrid.Refresh();
 
         }
-
-
     }
 }

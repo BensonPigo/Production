@@ -185,7 +185,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 return false;
             }
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
 select  NameEN
@@ -214,10 +214,16 @@ where id = '{0}'", Sci.Env.User.Keyword));
             }
             objSheets.Columns.AutoFit();
             objSheets.Rows.AutoFit();
-            objApp.Visible = true;
 
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R06");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

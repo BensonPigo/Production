@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -780,7 +781,7 @@ EXEC sp_executesql @sql
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); //預先開啟excel app
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            if (ptb1.Rows.Count > 0)
+            if (ptb1 != null && ptb1.Rows.Count > 0)
             {
                 for (int i = 0; i < columns1; i++)
                 {
@@ -794,7 +795,7 @@ EXEC sp_executesql @sql
                 objSheets.get_Range("A2", r1 + "2").AutoFilter(1);
             }
 
-            if (ptb2.Rows.Count > 0)
+            if (ptb2 != null && ptb2.Rows.Count > 0)
             {
                 objSheets = objApp.ActiveWorkbook.Worksheets[2];
                 for (int i = 0; i < columns2; i++)
@@ -811,7 +812,7 @@ EXEC sp_executesql @sql
                 objSheets.get_Range("A3", r2 + "3").AutoFilter(1);
             }
 
-            if (ptb3.Rows.Count > 0)
+            if (ptb3 != null && ptb3.Rows.Count > 0)
             {
                 objSheets = objApp.ActiveWorkbook.Worksheets[3];
                 for (int i = 0; i < columns3; i++)
@@ -828,7 +829,7 @@ EXEC sp_executesql @sql
                 objSheets.get_Range("A3", r3 + "3").AutoFilter(1);
             }
 
-            if (ptb4.Rows.Count > 0)
+            if (ptb4 != null && ptb4.Rows.Count > 0)
             {
                 objSheets = objApp.ActiveWorkbook.Worksheets[4];
                 for (int i = 0; i < columns4; i++)
@@ -838,7 +839,7 @@ EXEC sp_executesql @sql
                 string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
                 objSheets.get_Range("A1", r4 + "1").Merge(false);
                 objSheets.get_Range("A2", r4 + "2").Merge(false);
-                MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 3, true, null, objApp, wSheet: objSheets);
+                MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 3, false, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
                 objSheets.Cells[2, 1] = "PO Combination :" + displayDeliveryPOCombination.Text;
                 objSheets.get_Range("A1", r4 + "3").Interior.Color = Color.LightGreen;
@@ -850,6 +851,19 @@ EXEC sp_executesql @sql
                 objSheets = objApp.ActiveWorkbook.Worksheets[i];
                 objSheets.Columns.AutoFit();
             }
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_Qtybreakdown");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
         }        
     }
 }

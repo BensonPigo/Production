@@ -224,9 +224,7 @@ namespace Sci.Production.PPIC
                 displaySMR.Value = "";
              
             }
-        }
-
-        
+        }                
      
         private bool TPEUserValidating(string userID)
         {
@@ -495,7 +493,6 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P13.xltx");
             MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P13.xltx", 1, true, "", objApp);
-
         }
 
         private void setcuttingdate()
@@ -632,7 +629,8 @@ DROP TABLE #updatetemp  ", sewdate, Sci.Env.User.Factory);
             DBProxy.Current.DefaultTimeout = 0;
 
         }
-            //MR
+
+        //MR
         private void txtMR_Validating(object sender, CancelEventArgs e)
         {
             string textBox4Value = txtMR.Text;
@@ -658,10 +656,6 @@ DROP TABLE #updatetemp  ", sewdate, Sci.Env.User.Factory);
                 displayMR.Value = "";
              
             }
-        }
-       
-        
-
-
+        }       
     }
 }

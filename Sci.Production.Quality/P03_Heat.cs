@@ -30,8 +30,8 @@ namespace Sci.Production.Quality
             ID = id.Trim();
             
         }
-        //編輯事件觸發     
 
+        //編輯事件觸發     
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -93,6 +93,7 @@ where a.ID='{0}'"
 
             return base.OnRequery();
         }
+
         //Grid View DataTable 新增欄位資料供撈取顯示
         protected override void OnRequeryPost(DataTable datas)
         {
@@ -143,6 +144,7 @@ where a.ID='{0}'"
             }
 
         }
+
         //GridView 設定
         protected override bool OnGridSetup()
         {
@@ -449,6 +451,7 @@ where a.ID='{0}'"
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;
         }
+
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)gridbs.DataSource;
@@ -465,6 +468,7 @@ where a.ID='{0}'"
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
         }
+
         //判斷Grid View有無空白
         protected override bool OnSaveBefore()
         {
@@ -551,6 +555,7 @@ where a.ID='{0}'"
 
             return base.OnSaveBefore();
         }
+
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -644,6 +649,7 @@ where a.ID='{0}'"
             }
             return upResult;
         }
+
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
@@ -747,6 +753,7 @@ where a.ID='{0}'"
 
             OnRequery();
         }
+
         //編輯權限設定
         private void button_enable()
         {
@@ -757,6 +764,7 @@ where a.ID='{0}'"
             this.btnToExcel.Enabled =  !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
+
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
@@ -816,7 +824,7 @@ where a.ID='{0}'"
           
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
 
-            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Heat_Test.xltx", fileName: "Quality_P03_Heat_Test", headerline: 5, openfile: true, excelAppObj: excel);
+            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Heat_Test.xltx", headerline: 5, openfile: false, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
             excelSheets.Cells[2, 2] = txtSP.Text.ToString();
             excelSheets.Cells[2, 4] = txtSEQ.Text.ToString();
@@ -837,11 +845,17 @@ where a.ID='{0}'"
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-            if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
-                
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P03_Heat_Test");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(excelSheets);
 
+            strExcelName.OpenFile();
+            #endregion
         }
+
         /// <summary>
         /// Calculation HorizontalRate Value
         /// </summary>
@@ -861,6 +875,7 @@ where a.ID='{0}'"
             decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
             dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
         }
+
         /// <summary>
         /// Calculation VerticalRate Value
         /// </summary>
@@ -880,7 +895,6 @@ where a.ID='{0}'"
             }
             decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
             dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-        }
-   
+        }   
     }
 }

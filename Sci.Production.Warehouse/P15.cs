@@ -679,7 +679,6 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             CurrentMaintain["type"] = dr["type"].ToString();
         }
 
-
         protected override bool ClickPrint()
         {
             if (CurrentMaintain["Status"].ToString() != "Confirmed")

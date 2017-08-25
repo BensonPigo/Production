@@ -310,7 +310,7 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R01.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R01.xltx", 4, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Planning_R01.xltx", 4, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -339,17 +339,28 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
                         row.Borders.Color = Color.Black;
 
                     }
+                    Marshal.ReleaseComObject(firstCell);
                 }
                 count++;
             }
             objSheets.Columns.AutoFit();
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
             objSheets.Cells[3, 2] = DateTime.Now.ToShortDateString();  // 列印日期寫入excel
-            objApp.Visible = true;
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            objSheets = null;
-            objApp = null;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R01");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(usedRange);
+            Marshal.ReleaseComObject(rows);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

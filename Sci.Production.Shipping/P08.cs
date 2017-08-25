@@ -588,7 +588,6 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
             return base.ClickPrint();
         }
-
       
         //計算表身Grid欄位的Amount值
         private void CalculateGridAmount(DataRow dr)
@@ -680,7 +679,6 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 OnDetailEntered();
             }
         }
-
 
         private void comboType_SelectedIndexChanged(object sender, EventArgs e)
         {

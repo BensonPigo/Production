@@ -387,22 +387,22 @@ order by data", out FinalALLData);
             temfile = strPath + @"\Centralized_R01.Matrix.xltx";
 
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
-            sxrc.boOpenFile = true;
+            sxrc.BoOpenFile = true;
 
-            SaveXltReportCls.xltRptTable xrt1 = new SaveXltReportCls.xltRptTable(FinalDetailData);
-            SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(FinalALLData);
-            SaveXltReportCls.xltRptTable xrt3 = new SaveXltReportCls.xltRptTable(FinalStyleDetail);
-            SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(FinalOrderDetail);
+            SaveXltReportCls.XltRptTable xrt1 = new SaveXltReportCls.XltRptTable(FinalDetailData);
+            SaveXltReportCls.XltRptTable xrt2 = new SaveXltReportCls.XltRptTable(FinalALLData);
+            SaveXltReportCls.XltRptTable xrt3 = new SaveXltReportCls.XltRptTable(FinalStyleDetail);
+            SaveXltReportCls.XltRptTable xrt4 = new SaveXltReportCls.XltRptTable(FinalOrderDetail);
 
             xrt1.ShowHeader = false;
             xrt2.ShowHeader = false;
             xrt3.ShowHeader = false;
             xrt4.ShowHeader = false;
 
-            sxrc.dicDatas.Add("##detail", xrt1);
-            sxrc.dicDatas.Add("##detailAll", xrt2);
-            sxrc.dicDatas.Add("##StyleDetail", xrt3);
-            sxrc.dicDatas.Add("##OrderDetail", xrt4);
+            sxrc.DicDatas.Add("##detail", xrt1);
+            sxrc.DicDatas.Add("##detailAll", xrt2);
+            sxrc.DicDatas.Add("##StyleDetail", xrt3);
+            sxrc.DicDatas.Add("##OrderDetail", xrt4);
 
 
             sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R01.Matrix"));

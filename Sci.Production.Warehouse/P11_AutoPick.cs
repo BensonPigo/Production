@@ -553,8 +553,6 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             this.Close();
         }
 
-
-
         private void btnPick_Click(object sender, EventArgs e)
         {
             gridAutoPick.ValidateControl();
@@ -566,6 +564,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             }
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
         {
             result = null;
@@ -669,11 +668,13 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
             return tmpDt;
         }
+
         public DataRow getNeedChangeDataRow(int RowIndex)
         {
             DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
             return tmpDt;
         }
+
         public void dictionaryDatasRejectChanges()
         {
             var d = dictionaryDatas.AsEnumerable().ToList();
@@ -688,6 +689,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
             //    item.Value.RejectChanges();
             //}
         }
+
         public void dictionaryDatasAcceptChanges()
         {
             //批次RejectChanges

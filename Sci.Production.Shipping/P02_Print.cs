@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Shipping
@@ -152,7 +153,16 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
 
                     rownum++;
                 }
-                excel.Visible = true;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailList");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 #endregion
             }
             else if (reportType == "2")
@@ -237,8 +247,16 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 worksheet.Cells[rownum + 4, 3] = "            BY:";
                 worksheet.Range[String.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
                 worksheet.Range[String.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
-                
-                excel.Visible = true;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_PackingList");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 #endregion
             }
             else
@@ -328,7 +346,15 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 worksheet.Range[String.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
                 worksheet.Range[String.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
 
-                excel.Visible = true;
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailPackingList");
+                excel.ActiveWorkbook.SaveAs(strExcelName);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
+                #endregion
                 #endregion
             }
 

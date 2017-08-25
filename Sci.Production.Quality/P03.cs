@@ -20,9 +20,9 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-
         int index;
         DataRow[] find_dr;
+
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -41,12 +41,14 @@ namespace Sci.Production.Quality
             //contextMenuStrip1.VisibleChanged += contextMenuStrip1_VisibleChanged;
 
         }
+
         override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
             //非編輯狀態不顯示
             if (!EditMode) return DetailGridContextMenuMode.Editable;
             return DetailGridContextMenuMode.None;
         }
+
         void contextMenuStrip1_VisibleChanged(object sender, EventArgs e)
         {
             if (contextMenuStrip1.Visible && this.EditMode)
@@ -57,6 +59,7 @@ namespace Sci.Production.Quality
                 }
             }
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -194,6 +197,7 @@ order by a.seq1,a.seq2,a.Refno "
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();

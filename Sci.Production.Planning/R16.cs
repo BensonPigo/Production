@@ -302,7 +302,7 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R16.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R16.xltx", 2, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Planning_R16.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -647,11 +647,20 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                 }
 
             }
-            objApp.Visible = true;
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R16");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheet);
+            Marshal.ReleaseComObject(range);
+            Marshal.ReleaseComObject(workbook);
 
-            //if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

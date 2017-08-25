@@ -86,6 +86,5 @@ ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
                 this.selectData();
             };
         }
-
     }
 }

@@ -119,7 +119,6 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
 
         }
 
-
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
@@ -407,11 +406,13 @@ where id = '{4}'"
             base.ClickConfirm();
             updateStatus(CurrentMaintain["status"].ToString(), "Confirmed", false);
         }
+
         protected override bool ClickNew()
         {
             dateReceiveDate.ReadOnly = true;
             return base.ClickNew();
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

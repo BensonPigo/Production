@@ -41,6 +41,7 @@ namespace Sci.Production.Subcon
             comboStockType.DisplayMember = "Value";
         
         }
+
         protected override void ClickCopyAfter()
         {
             txtID.ReadOnly = false;
@@ -73,6 +74,7 @@ namespace Sci.Production.Subcon
             base.ClickSaveAfter();
             txtID.ReadOnly = true;
         }
+
         protected override void ClickUndo()
         {
             base.ClickUndo();

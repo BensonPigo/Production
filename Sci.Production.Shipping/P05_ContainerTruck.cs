@@ -31,6 +31,7 @@ namespace Sci.Production.Shipping
 
             return true;
         }
+
         protected override bool OnSaveBefore()
         {
             DataTable dt = (DataTable)gridbs.DataSource;

@@ -90,8 +90,7 @@ namespace Sci.Production.Subcon
 
             this.txtmfactory.ReadOnly = true;
             return base.ClickEditBefore();
-        }
-       
+        }       
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -665,6 +664,5 @@ inner join (
             imoprt.ShowDialog(this);
           
         }
-
     }
 }

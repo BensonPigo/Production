@@ -175,8 +175,6 @@ namespace Sci.Production.Subcon
             this.Close();
         }
 
-
-
         private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();

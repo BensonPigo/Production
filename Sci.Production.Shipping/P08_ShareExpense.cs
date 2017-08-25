@@ -916,6 +916,7 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
             ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
 
         }
+
         //Delete All
         private void btnDeleteAll_Click(object sender, EventArgs e)
         {

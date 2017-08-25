@@ -1448,18 +1448,18 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             #endregion 
             string xlt = @"Warehouse_P11.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            xl.boOpenFile = true;
+            xl.BoOpenFile = true;
 
-            xl.dicDatas.Add("##RptTitle", RptTitle);
-            xl.dicDatas.Add("##ID", id);
-            xl.dicDatas.Add("##cutplanid", request);
-            xl.dicDatas.Add("##issuedate", issuedate);
-            xl.dicDatas.Add("##remark", remark);
-            xl.dicDatas.Add("##cCutNo", cutno);
-            xl.dicDatas.Add("##cLineNo", LineNo);
-            xl.dicDatas.Add("##OrderID", OrderID);
-            xl.dicDatas.Add("##cCellNo", CellNo);
-            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
+            xl.DicDatas.Add("##RptTitle", RptTitle);
+            xl.DicDatas.Add("##ID", id);
+            xl.DicDatas.Add("##cutplanid", request);
+            xl.DicDatas.Add("##issuedate", issuedate);
+            xl.DicDatas.Add("##remark", remark);
+            xl.DicDatas.Add("##cCutNo", cutno);
+            xl.DicDatas.Add("##cLineNo", LineNo);
+            xl.DicDatas.Add("##OrderID", OrderID);
+            xl.DicDatas.Add("##cCellNo", CellNo);
+            SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(dtseq);
             int allColumns = dtseq.Columns.Count;
             int sizeColumns = dtSizecode.Rows.Count;
             Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
@@ -1479,10 +1479,9 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             xlTable.Borders.OnlyHeaderBorders = true;
             xlTable.Borders.AllCellsBorders = true;
             xlTable.ShowHeader = false;
-            xl.dicDatas.Add("##SEQ", xlTable);
+            xl.DicDatas.Add("##SEQ", xlTable);
 
-            
-            xl.Save();
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P11"));
             return true;
         }
 

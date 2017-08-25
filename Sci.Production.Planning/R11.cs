@@ -407,16 +407,25 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
                 #endregion
 
                 objSheets.Cells[3, 11 + i] = strArtworkType;
-
             }
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
-            objApp.Visible = true;
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R11");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }

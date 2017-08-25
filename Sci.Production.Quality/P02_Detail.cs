@@ -185,6 +185,7 @@ namespace Sci.Production.Quality
                 #endregion
             }
         }
+
         //Save and Edit
         private void btnEdit_Click(object sender, EventArgs e)
         {
@@ -410,6 +411,7 @@ namespace Sci.Production.Quality
                 this.Close();
             }            
         }
+
         /// <summary>
         /// 將CurrentData 返回原來的值
         /// 特別針對Undo去處理
@@ -456,8 +458,6 @@ namespace Sci.Production.Quality
         {
             ChangeData();
         }
-
-
 
         /// <summary>
         /// 重新ReloadData

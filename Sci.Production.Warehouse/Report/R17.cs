@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
 
             //MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
@@ -64,10 +64,16 @@ namespace Sci.Production.Warehouse
             }
             objSheets.Columns[10].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
-            objApp.Visible = true;
 
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R17_Location_List");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return false;
         }

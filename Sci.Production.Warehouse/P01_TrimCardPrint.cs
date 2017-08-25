@@ -14,6 +14,7 @@ using Sci.Win;
 using System.IO;
 using Word = Microsoft.Office.Interop.Word;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Warehouse
@@ -486,19 +487,18 @@ and not ob.SuppID = 'fty-c'
                 }
                 #endregion
                 winword.Visible = true;
-               // winword.Quit(ref missing, ref missing, ref missing);     //close word application
-                winword = null;
-
+               // winword.Quit(ref missing, ref missing, ref missing);     //close word application                
                 return Result.True;
             }
             catch (Exception ex)
             {
                 if (null != winword)
-                    winword.Quit();
+                    winword.Quit();                
                 return new DualResult(false, "Export word error.", ex);
             }
             finally
             {
+                Marshal.ReleaseComObject(winword);
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 

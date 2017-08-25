@@ -38,6 +38,7 @@ namespace Sci.Production.Quality
             maindr = mainDr;
             ID = keyvalue1;            
         }
+
         protected override void OnEditModeChanged()
         {
             
@@ -503,7 +504,7 @@ namespace Sci.Production.Quality
             ToExcel(false);
         }
 
-        private bool ToExcel(bool autoSave)
+        private bool ToExcel(bool isSendMail)
         {
             #region Excel Grid Value
             DataTable dt;
@@ -560,23 +561,18 @@ namespace Sci.Production.Quality
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            if (autoSave)
-            {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "QA_P01_ShadeBond - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                objSheets.SaveAs(excelFile);
-                objApp.Workbooks.Close();
-                objApp.Quit();
-                objApp = null;
-            }
-            else
-            {
-                objApp.Visible = true;
-            }
+            #region Save Excel
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBond");
+            objApp.ActiveWorkbook.SaveAs(excelFile);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            #endregion 
 
-
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (!isSendMail)
+            {
+                excelFile.OpenFile();
+            }
             return true;
         }
 

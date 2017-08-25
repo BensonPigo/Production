@@ -393,8 +393,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-
-
             DataRow row = this.dr;
             string id = row["ID"].ToString();
             string seq1 = row["seq1"].ToString();
@@ -435,7 +433,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                                            where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2", pars, out dtt);
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dtt, "", "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
 select NameEn
@@ -449,13 +446,12 @@ where id = '{0}'", Sci.Env.User.Keyword));
             objSheets.Cells[4, 4] = MyUtility.Convert.GetString(dt.Rows[0]["Released_Qty_by_Seq"].ToString());
             objSheets.Cells[4, 6] = MyUtility.Convert.GetString(dt.Rows[0]["Bal_Qty"].ToString());
             objSheets.Cells[5, 2] = MyUtility.Convert.GetString(dt.Rows[0]["Description"].ToString());
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            
+
+            MyUtility.Excel.CopyToXls(dtt, "", "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
+
+            Marshal.ReleaseComObject(objSheets);
             return; 
         }
-
-
     }
 }
 

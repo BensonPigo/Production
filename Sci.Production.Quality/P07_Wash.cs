@@ -19,7 +19,6 @@ namespace Sci.Production.Quality
         string sql;
         DataRow DR;
 
-
         public P07_Wash(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
         {
             InitializeComponent();
@@ -295,8 +294,5 @@ PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuserL
                 this.btnEncode.Enabled = true;
             }
         }
-
-
-
     }
 }

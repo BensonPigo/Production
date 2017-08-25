@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -20,6 +21,7 @@ namespace Sci.Production.Quality
         string spStrat; string spEnd; string Sea; string Brand; string Ref; string Category; string Supp; string Over;
         List<SqlParameter> lis;
         DataTable dt; string cmd;
+
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -42,6 +44,7 @@ namespace Sci.Production.Quality
 
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             bool date_Arrive_Empty = !this.dateArriveWHDate.HasValue, date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
@@ -238,6 +241,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             #endregion
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -248,6 +252,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -257,7 +262,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
             //saveDialog.ShowDialog();
             //string outpath = saveDialog.FileName;
             //if (outpath.Empty())
@@ -265,7 +270,7 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             //    return false;
             //}
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R02.xltx");
+            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R02.xltx", keepApp: true);
 
             string d1 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
@@ -275,21 +280,22 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             string d6 = (MyUtility.Check.Empty(DateSewEnd)) ? "" : Convert.ToDateTime(DateSewEnd).ToString("yyyy/MM/dd");
             string d7 = (MyUtility.Check.Empty(DateEstStart)) ? "" : Convert.ToDateTime(DateEstStart).ToString("yyyy/MM/dd");
             string d8 = (MyUtility.Check.Empty(DateEstEnd)) ? "" : Convert.ToDateTime(DateEstEnd).ToString("yyyy/MM/dd");
-            xl.dicDatas.Add("##Arr", d1 + "~" + d2);
-            xl.dicDatas.Add("##SCI", d3 + "~" + d4);
-            xl.dicDatas.Add("##Sew", d5 + "~" + d6);
-            xl.dicDatas.Add("##Est", d7 + "~" + d8);
-            xl.dicDatas.Add("##SP", spStrat + "~" + spEnd);
-            xl.dicDatas.Add("##Sea", Sea);
-            xl.dicDatas.Add("##Brand", Brand);
-            xl.dicDatas.Add("##Ref", Ref);
-            xl.dicDatas.Add("##Cate", Category);
-            xl.dicDatas.Add("##supp", Supp);
-            xl.dicDatas.Add("##Over", Over);
-            xl.dicDatas.Add("##body", dt);
-            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-            xl.Save("", false);
-            wks.Columns.AutoFit();
+            xl.DicDatas.Add("##Arr", d1 + "~" + d2);
+            xl.DicDatas.Add("##SCI", d3 + "~" + d4);
+            xl.DicDatas.Add("##Sew", d5 + "~" + d6);
+            xl.DicDatas.Add("##Est", d7 + "~" + d8);
+            xl.DicDatas.Add("##SP", spStrat + "~" + spEnd);
+            xl.DicDatas.Add("##Sea", Sea);
+            xl.DicDatas.Add("##Brand", Brand);
+            xl.DicDatas.Add("##Ref", Ref);
+            xl.DicDatas.Add("##Cate", Category);
+            xl.DicDatas.Add("##supp", Supp);
+            xl.DicDatas.Add("##Over", Over);
+            xl.DicDatas.Add("##body", dt);
+
+            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R02"), false);
+            ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();
+            xl.FinishSave();
             return true;
 
         }

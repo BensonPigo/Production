@@ -15,14 +15,15 @@ namespace Sci.Production.Quality
 {
     public partial class R07 : Sci.Win.Tems.PrintForm
     {
-        DateTime? DateArrStart; DateTime? DateArrEnd;
-        DateTime? DateSCIStart; DateTime? DateSCIEnd;
-        DateTime? DateSewStart; DateTime? DateSewEnd;
-        DateTime? DateEstStart; DateTime? DateEstEnd;
-        string spStrat; string spEnd; string Season; string Brand; string RefNo; string Category; string Supp;
+        DateTime? DateArrStart, DateArrEnd;
+        DateTime? DateSCIStart, DateSCIEnd;
+        DateTime? DateSewStart, DateSewEnd;
+        DateTime? DateEstStart, DateEstEnd;
+        string spStrat, spEnd, Season, Brand, RefNo, Category, Supp;
         string MaterialType, Factory;
         List<SqlParameter> lis;
         DataTable dt; string cmd;
+
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -63,6 +64,7 @@ namespace Sci.Production.Quality
             comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             bool date_Arrive_Empty = !this.dateArriveWHDate.HasValue, date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
@@ -264,6 +266,7 @@ namespace Sci.Production.Quality
             #endregion
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -274,6 +277,7 @@ namespace Sci.Production.Quality
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -317,11 +321,17 @@ namespace Sci.Production.Quality
             worksheet.Cells[2, 20] = Factory; //##Factory
 
             worksheet.Rows.AutoFit();
-            objApp.Visible = true;
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R07");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion 
             this.HideWaitMessage();
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
             return true;
         }
     }

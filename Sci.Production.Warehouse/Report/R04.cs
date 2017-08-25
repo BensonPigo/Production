@@ -203,12 +203,12 @@ where "
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R04.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R04.xltx", 3, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R04.xltx"); //預先開啟excel app            
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R04.xltx", 3, true, null, objApp);      // 將datatable copy to excel
+
+            Marshal.ReleaseComObject(objSheets);
             return true;
         }
 

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -213,15 +214,13 @@ namespace Sci.Production.Subcon
           
             if ("List".EqualString(this.comboReportType.Text))
             {
-               
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
                 string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
                 string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
                 string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                MyUtility.Excel.CopyToXls(dtList, "", "Subcon_R37_List.xltx", 3, true, null, objApp);    
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
                 objSheets.Cells[2, 2] = d1 + " ~ " + d2;
                 objSheets.Cells[2, 4] = d3 + " ~ " + d4;
@@ -231,19 +230,20 @@ namespace Sci.Production.Subcon
                 objSheets.Cells[2, 13] = smr;
                 objSheets.Cells[2, 17] = fac;
                 objSheets.Cells[2, 19] = Pay;
+                MyUtility.Excel.CopyToXls(dtList, "", "Subcon_R37_List.xltx", 3, true, null, objApp);
+
+                Marshal.ReleaseComObject(objSheets);
                 return true;
             }
             else if ("Detail List".EqualString(this.comboReportType.Text))
             {
-                
-                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");
                 string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
                 string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
                 string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R37_DetailList.xltx", 3, true, null, objApp);
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
                 objSheets.Cells[2, 2] = d1 + " ~ " + d2;
                 objSheets.Cells[2, 4] = d3 + " ~ " + d4;
@@ -253,12 +253,13 @@ namespace Sci.Production.Subcon
                 objSheets.Cells[2, 13] = smr;
                 objSheets.Cells[2, 17] = fac;
                 objSheets.Cells[2, 19] = Pay;
+                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R37_DetailList.xltx", 3, true, null, objApp);
+
+                Marshal.ReleaseComObject(objSheets);
                 return true;
             }
             
             return true;
         }
-
-       
     }
 }

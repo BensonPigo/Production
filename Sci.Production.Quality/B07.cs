@@ -29,6 +29,7 @@ namespace Sci.Production.Quality
              InitializeComponent();
 
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtbrand.Text))
@@ -47,6 +48,7 @@ namespace Sci.Production.Quality
             }
             return base.ClickSaveBefore();
         }
+
         protected override Ict.DualResult ClickSave()
         {
             
@@ -60,11 +62,13 @@ namespace Sci.Production.Quality
             return base.ClickSave();
             
         }
+
         protected override void ClickLocate()
         {           
             base.ClickLocate();
             OnDetailEntered();
         }
+
         protected override void OnDetailEntered()
         {
             if (CurrentMaintain.Empty())
@@ -95,11 +99,13 @@ namespace Sci.Production.Quality
             radioOption1.Checked = true;
             base.ClickNewAfter();
         }
+
         protected override bool ClickEditBefore()
         {
             this.txtbrand.ReadOnly = true;           
             return base.ClickEditBefore();
         }
+
         private void radioOption1_CheckedChanged(object sender, EventArgs e)
         {
             if (radioOption1.Checked)

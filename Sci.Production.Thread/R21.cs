@@ -25,6 +25,7 @@ namespace Sci.Production.Thread
             this.comboMDivision.setDefalutIndex(true);
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
 
@@ -108,6 +109,7 @@ namespace Sci.Production.Thread
 
             return base.ValidateInput();
         }
+
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -118,6 +120,7 @@ namespace Sci.Production.Thread
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (dt == null || dt.Rows.Count == 0)
@@ -136,11 +139,16 @@ namespace Sci.Production.Thread
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
-            objApp.Visible = true;
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_R21");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
 
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }
@@ -212,6 +220,7 @@ namespace Sci.Production.Thread
             if (result == DialogResult.Cancel) { return; }
             txtShade.Text = item.GetSelectedString();
         }
+
         private void txtShade_Validating(object sender, CancelEventArgs e)
         {
             if (txtShade.Text.ToString() == "") return;
@@ -226,6 +235,7 @@ namespace Sci.Production.Thread
                 MyUtility.Msg.WarningBox("Shade is not exist!!", "Data not found");
             }
         }
+
         private void txtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
@@ -336,7 +346,5 @@ namespace Sci.Production.Thread
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
-
-        
     }
 }

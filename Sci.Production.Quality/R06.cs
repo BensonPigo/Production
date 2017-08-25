@@ -16,13 +16,17 @@ namespace Sci.Production.Quality
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
         List<SqlParameter> lis; 
-        DataTable dt; string cmd; string Supp,refno,brand,season;
+        DataTable dt; 
+        string cmd; 
+        string Supp,refno,brand,season;
+
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             lis = new List<SqlParameter>();
@@ -383,6 +387,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
            #endregion
             return base.ValidateInput();
         }
+
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
@@ -393,6 +398,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             }
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
@@ -404,10 +410,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             }
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R06.xltx");
             MyUtility.Excel.CopyToXls(dt, "", "Quality_R06.xltx", 6, true, null, objApp);           
-            
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            return true;
-           
+            return true;           
         }
     }
 }

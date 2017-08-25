@@ -23,7 +23,8 @@ using Sci.Production.Class;
 namespace Sci.Production.Planning
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
-    { private DataTable dt_source; //For Grid用
+    { 
+        private DataTable dt_source; //For Grid用
         private DataTable[] dsData;
         private IDictionary<string, IList<DataRow>> id_to_AdidasKPITarget = new Dictionary<string, IList<DataRow>>();
 
@@ -172,30 +173,30 @@ namespace Sci.Production.Planning
             {
 
                 SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xltx");
-                sxrc.boOpenFile = true;
-                sxrc.dicDatas.Add("##Year", strYear);
-                sxrc.dicDatas.Add("##Month", strMonth);
-                sxrc.dicDatas.Add("##ReportType", strReportType);
-                sxrc.dicDatas.Add("##SourceType", strSourceType);
+                sxrc.BoOpenFile = true;
+                sxrc.DicDatas.Add("##Year", strYear);
+                sxrc.DicDatas.Add("##Month", strMonth);
+                sxrc.DicDatas.Add("##ReportType", strReportType);
+                sxrc.DicDatas.Add("##SourceType", strSourceType);
 
-                sxrc.dicDatas.Add("##YearMonth1", dsData[0].Rows[0]["Month"]);
-                sxrc.dicDatas.Add("##YearMonth2", dsData[0].Rows[1]["Month"]);
-                sxrc.dicDatas.Add("##YearMonth3", dsData[0].Rows[2]["Month"]);
+                sxrc.DicDatas.Add("##YearMonth1", dsData[0].Rows[0]["Month"]);
+                sxrc.DicDatas.Add("##YearMonth2", dsData[0].Rows[1]["Month"]);
+                sxrc.DicDatas.Add("##YearMonth3", dsData[0].Rows[2]["Month"]);
 
-                sxrc.dicDatas.Add("##Pct1", getGetTarget("MDP"));
-                sxrc.dicDatas.Add("##Pct2", getGetTarget("Dol-MDP"));
-                sxrc.dicDatas.Add("##Pct3", getGetTarget("SDP"));
-                sxrc.dicDatas.Add("##Pct4", getGetTarget("OCP-New"));
-                sxrc.dicDatas.Add("##Pct5", getGetTarget("PDP in Line"));
-                sxrc.dicDatas.Add("##Pct6", getGetTarget("SDol 0"));
-                sxrc.dicDatas.Add("##Pct7", getGetTarget("SLT PDP"));
+                sxrc.DicDatas.Add("##Pct1", getGetTarget("MDP"));
+                sxrc.DicDatas.Add("##Pct2", getGetTarget("Dol-MDP"));
+                sxrc.DicDatas.Add("##Pct3", getGetTarget("SDP"));
+                sxrc.DicDatas.Add("##Pct4", getGetTarget("OCP-New"));
+                sxrc.DicDatas.Add("##Pct5", getGetTarget("PDP in Line"));
+                sxrc.DicDatas.Add("##Pct6", getGetTarget("SDol 0"));
+                sxrc.DicDatas.Add("##Pct7", getGetTarget("SLT PDP"));
 
-                SaveXltReportCls.xltRptTable xrt = new SaveXltReportCls.xltRptTable(dsData[1]);
+                SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(dsData[1]);
                 xrt.ShowHeader = false;
                 //xrt.Borders.AllCellsBorders = true;
                 xrt.Borders.DependOnColumn.Add(1, 3);
                 
-                sxrc.dicDatas.Add("##tbl", xrt);
+                sxrc.DicDatas.Add("##tbl", xrt);
                 
                 if (boDetail)
                 {
@@ -205,34 +206,34 @@ namespace Sci.Production.Planning
                     wksnew.Name = "Detail Log";
                     wksnew.Cells[1, 1].Value = "##detailTbl";
                  
-                    SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(dsData[2]);
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("CRDDate")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("BuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("SciDelivery")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("PlanDate")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("PulloutDate")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("OrigBuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("FirstProduction")) { NumberFormate = "yyyy/MM/dd" });
-                    xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("dLastProduction")) { NumberFormate = "yyyy/MM/dd" });
+                    SaveXltReportCls.XltRptTable xrt2 = new SaveXltReportCls.XltRptTable(dsData[2]);
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("CRDDate")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("BuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("SciDelivery")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("PlanDate")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("PulloutDate")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("OrigBuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("FirstProduction")) { NumberFormate = "yyyy/MM/dd" });
+                    xrt2.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(GCN("dLastProduction")) { NumberFormate = "yyyy/MM/dd" });
                 
-                    xrt2.boAddFilter = true;
-                    xrt2.boTitleBold = true;
-                    xrt2.boAutoFitColumn = true;
+                    xrt2.BoAddFilter = true;
+                    xrt2.BoTitleBold = true;
+                    xrt2.BoAutoFitColumn = true;
                     xrt2.HeaderColor = Color.FromArgb(204, 255, 204);//背景顏色
-                    xrt2.boFreezePanes = true; // 進行凍結視窗
-                    sxrc.dicDatas.Add("##detailTbl", xrt2);  
+                    xrt2.BoFreezePanes = true; // 進行凍結視窗
+                    sxrc.DicDatas.Add("##detailTbl", xrt2);  
                 }
-              
-                sxrc.Save();
+
+                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_01"));
             }
             else
             {
                 SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xltx");
-                sxrc.boOpenFile = true;
-                sxrc.dicDatas.Add("##Year", strYear);
-                sxrc.dicDatas.Add("##Month", strMonth);
-                sxrc.dicDatas.Add("##ReportType", strReportType);
-                sxrc.dicDatas.Add("##SourceType", strSourceType);
+                sxrc.BoOpenFile = true;
+                sxrc.DicDatas.Add("##Year", strYear);
+                sxrc.DicDatas.Add("##Month", strMonth);
+                sxrc.DicDatas.Add("##ReportType", strReportType);
+                sxrc.DicDatas.Add("##SourceType", strSourceType);
 
                 Microsoft.Office.Interop.Excel.Workbook wkb = sxrc.ExcelApp.ActiveWorkbook;
                 Microsoft.Office.Interop.Excel.Worksheet wks = wkb.Sheets[1];
@@ -245,7 +246,7 @@ namespace Sci.Production.Planning
                     string k1 = "##item" + idxItem.ToString();
                     wks.Cells[idxRow, 2].Value = k1;
                     wks.Cells[idxRow, 2].Interior.Color = Color.Yellow;
-                    sxrc.dicDatas.Add(k1, row["item"]);
+                    sxrc.DicDatas.Add(k1, row["item"]);
 
                     DataTable[] dtMons = getTablesByMonth(dsData[idxItem]);
                     foreach (DataTable dtMon in dtMons)
@@ -253,17 +254,17 @@ namespace Sci.Production.Planning
                         string k2 = "##tbl" + idxItem.ToString() + dtMon.Columns[0].ColumnName;                        
                         wks.Cells[idxRow + 1, 1].Value = k2;                                             
 
-                        SaveXltReportCls.xltRptTable xrt = new SaveXltReportCls.xltRptTable(dtMon);
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("PO") { NumberFormate = "##,###,##0" });
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("QTY") { NumberFormate = "##,###,##0" });
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("MDP") { NumberFormate = "##,###,##0" });
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("%") { NumberFormate = "###,##0.00%" });
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("Failed-PO") { NumberFormate = "##,###,##0" });
-                        xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("Failed-QTY") { NumberFormate = "##,###,##0" });
+                        SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(dtMon);
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("PO") { NumberFormate = "##,###,##0" });
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("QTY") { NumberFormate = "##,###,##0" });
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("MDP") { NumberFormate = "##,###,##0" });
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("%") { NumberFormate = "###,##0.00%" });
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("Failed-PO") { NumberFormate = "##,###,##0" });
+                        xrt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo("Failed-QTY") { NumberFormate = "##,###,##0" });
                         xrt.Borders.AllCellsBorders = true;
                         //xrt.boAutoFitColumn = true;
                        
-                        sxrc.dicDatas.Add(k2, xrt);
+                        sxrc.DicDatas.Add(k2, xrt);
 
                         idxRow += 2;    //多跨一行，所以+2                       
                     }
@@ -272,17 +273,8 @@ namespace Sci.Production.Planning
                     idxItem += 1;
                 }
 
-                sxrc.Save();
+                sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R13_02"));
             }
-
-
-            //DualResult result = Result.True;
-            //if (excel == null) return true; ShowInfo("報表查詢完成");//自動開啟Excel存檔畫面 
-            //if (!(result = PrivUtils.Excels.SaveExcel(temfile.Substring(0, temfile.Length - 4), excel)))
-            //{
-            //    ShowErr(result);
-            //    return false;
-            //}
             return true;
         }
 

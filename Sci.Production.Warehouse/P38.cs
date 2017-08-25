@@ -343,17 +343,21 @@ t.LockName
             MyUtility.Tool.ProcessWithDatatable(dt, "", sql, out k, "#Tmp");
             if (k.Rows.Count == 0) return;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 1, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
 
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);//釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-
+            strExcelName.OpenFile();
+            #endregion
         }
     }
 }

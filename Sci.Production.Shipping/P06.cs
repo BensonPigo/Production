@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Shipping
@@ -419,7 +420,15 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             worksheet.Cells[rownum + 1, 7] = TtlQty.Rows[0]["TtlQty"];
             worksheet.Cells[rownum + 1, 8] = ExcelData.Compute("sum(ShipQty)", "");
 
-            excel.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P06");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             return base.ClickPrint();
         }
 

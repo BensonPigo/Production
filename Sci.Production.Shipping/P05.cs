@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Transactions;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -721,8 +722,16 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 objArray[0, 12] = dr["NNW"];
                 worksheet.Range[String.Format("A{0}:M{0}", rownum)].Value2 = objArray;
             }
-            excel.Visible = true;
-            
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P05");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             return base.ClickPrint();
         }
 
@@ -1321,7 +1330,5 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         {
             MyUtility.Msg.InfoBox("validated");
         }
-     
-
     }
 }

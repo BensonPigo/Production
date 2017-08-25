@@ -123,6 +123,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         }
 
         celllocalitem refno = (celllocalitem)celllocalitem.GetGridCell("Thread", null, ",,,description");
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -322,6 +323,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             this.detailgrid.CellValidated += detailgrid_CellValidated;
             
         }
+
+
         private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || EditMode == false) { return; }
@@ -348,6 +351,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 col_Remark.IsEditingReadOnly = false;
             }
         }
+
         void detailgrid_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
             if (!this.EditMode 
@@ -358,6 +362,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 )return;
             this.update_detailgrid_CellValidated(e.RowIndex);
         }
+
         void update_detailgrid_CellValidated(int RowIndex) {
             int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
             int uc = Convert.ToInt32(CurrentDetailData["UsedCone"]);
@@ -381,6 +386,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
             return base.ClickDeleteBefore();
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -413,6 +419,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //}
             return base.ClickSaveBefore();
         }
+
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -723,10 +730,12 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             base.OnDetailGridDataInserted(data);
             CurrentDetailData["AutoCreate"] = 0;
         }
+
         protected override void OnDetailGridRowChanged()
         {         
             base.OnDetailGridRowChanged();
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -761,6 +770,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
            
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -794,6 +804,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             
         }
+
         #region 是否可編輯與變色
         private void change_record()
         {          
@@ -961,11 +972,18 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            }
-            objApp.Visible = true;
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                Marshal.ReleaseComObject(objSheets);   //釋放sheet
+            }
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Thread_P02");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            strExcelName.OpenFile();
+            #endregion
             return base.ClickPrint();
         }
     }

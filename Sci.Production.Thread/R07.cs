@@ -235,11 +235,16 @@ namespace Sci.Production.Thread
 
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
-            objApp.Visible = true;
+            
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(radioDetail.Checked == true ? "Thread_R07" : "Thread_R07_Summary");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
-
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
             return true;
         }
@@ -355,7 +360,5 @@ namespace Sci.Production.Thread
                 txtLocationEnd.Text = item.GetSelectedString();
             }
         }
-
-       
     }
 }

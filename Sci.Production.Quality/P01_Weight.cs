@@ -25,6 +25,7 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         string excelFile;
+
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
@@ -33,6 +34,7 @@ namespace Sci.Production.Quality
             maindr = mainDr;
             this.textID.Text = keyvalue1;
         }
+
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
@@ -131,6 +133,7 @@ namespace Sci.Production.Quality
                 dr["SEQ2"] = maindr["SEQ2"];
             }
         }
+
         protected override bool OnGridSetup()
         {
 
@@ -228,6 +231,7 @@ namespace Sci.Production.Quality
             return true;
 
         }
+
         protected override void OnInsert()
         {
             DataTable Dt = (DataTable)gridbs.DataSource;
@@ -510,7 +514,7 @@ namespace Sci.Production.Quality
             ToExcel(false);
         }
 
-        private bool ToExcel(bool AutoSave)
+        private bool ToExcel(bool isSendMail)
         {
             #region Excel Grid Value
             DataTable dt;
@@ -563,22 +567,18 @@ namespace Sci.Production.Quality
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            if (AutoSave)
-            {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "QA_P01_Weight - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
-                objSheets.SaveAs(excelFile);
-                objApp.Workbooks.Close();
-                objApp.Quit();
-                objApp = null;
-            }
-            else
-            {
-                objApp.Visible = true;
-            }
+            #region Save Excel
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
+            objApp.ActiveWorkbook.SaveAs(excelFile);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+            #endregion
 
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (!isSendMail)
+            {
+                excelFile.OpenFile();
+            }
             return true;
         }
     }

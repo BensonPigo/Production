@@ -109,16 +109,11 @@ namespace Sci.Production.Logistic
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
-                #region Save & Show Word
-                string strWordName = Sci.Production.Class.MicrosoftFile.GetName("Logistic_B01_Barcode", Sci.Production.Class.WordFileeNameExtension.Docx);
-                document.SaveAs(strWordName);
-                document.Close();
-                winword.Quit();
+                #region Show Word                
+                winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
                 Marshal.ReleaseComObject(document);
                 Marshal.ReleaseComObject(table);
-
-                strWordName.OpenFile();
                 #endregion
             }
             catch (Exception ex)

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -213,7 +214,16 @@ where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((type == "1" ? "Shipping_P40_CommercialInvoice" : "Shipping_P40_FormForCustomSystem"));
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
 

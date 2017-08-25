@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -199,6 +200,8 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                     Microsoft.Office.Interop.Excel.Worksheet worksheet2 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2]);
                     Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
                     worksheet2.Copy(worksheetn);
+                    Marshal.ReleaseComObject(worksheet2);
+                    Marshal.ReleaseComObject(worksheetn);
                 }
             }
 
@@ -295,6 +298,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("L:L", Type.Missing).EntireColumn;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
             }
             else if (reasonData.Rows.Count < 8)
@@ -305,6 +309,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 {
                     Microsoft.Office.Interop.Excel.Range rngToDelete = worksheet.get_Range(string.Format("{0}:{0}", columnEng), Type.Missing).EntireColumn;
                     rngToDelete.Delete(Type.Missing);
+                    Marshal.ReleaseComObject(rngToDelete);
                 }
             }
             //  Summary -- Content
@@ -334,6 +339,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 {
                     worksheet.Cells[row, 7 + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
                 }
+                Marshal.ReleaseComObject(rng);
             }
             //刪除Summary多出來的資料行
             ((Microsoft.Office.Interop.Excel.Range)worksheet.Rows[2, Type.Missing]).Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
@@ -350,7 +356,19 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             }
             worksheet.Cells[row, (reportType == 0 ? 8 : 7) + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((reportType == 0 ? "PPIC_R04_FabricBCS" : "PPIC_R04_AccessoryBCS"));
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

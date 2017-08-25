@@ -310,7 +310,18 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 rownum++;
             }
 
-            excel.Visible = true;
+            #region Save & Show Excel 
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
         }
     }
 }

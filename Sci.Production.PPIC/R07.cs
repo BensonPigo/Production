@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -420,6 +421,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
                             Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[intRowsStart + 1, Type.Missing];
                             rng.Select();
                             rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                            Marshal.ReleaseComObject(rng);
                         }
                     }                    
 
@@ -436,6 +438,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
                             Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Columns[monthDays + 2, Type.Missing];
                             rng.Select();
                             rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                            Marshal.ReleaseComObject(rng);
                         }
                     }
                 }
@@ -461,6 +464,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
                     //先插入一行
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(intRowsStart + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
 
                     line = MyUtility.Convert.GetString(dr["SewingLineID"]);
                     worksheet.Cells[intRowsStart, 1] = line;
@@ -525,6 +529,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
                 }
                 #endregion
                 colCount = colCount + (startCol - colCount-1) + totalDays;
+                Marshal.ReleaseComObject(selrng);
             }
 
             if (colCount - 1 != monthDays)
@@ -540,6 +545,7 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[intRowsStart + 1, Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                Marshal.ReleaseComObject(rng);
             }
 
             //刪除多的Sheet
@@ -553,7 +559,18 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
             worksheet.Select();
 
             this.HideWaitMessage();
-            excel.Visible = true;
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R07_SewingScheduleGanttChart");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
     }

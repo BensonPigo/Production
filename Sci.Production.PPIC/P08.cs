@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -256,7 +257,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             return base.ClickPrint();
         }
 
-        private bool ToExcel(bool autoSave)
+        private bool ToExcel(bool isSendMail)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
@@ -348,18 +349,20 @@ order by rd.Seq1,rd.Seq2", masterID);
             }
 
             worksheet.Protect(Password: "Sport2006");
-            if (autoSave)
+
+            #region Save Excel
+            this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P08");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(this.excelFile);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+            #endregion 
+            if (!isSendMail)
             {
-                Random random = new Random();
-                excelFile = Env.Cfg.ReportTempDir + "Fabric replacement report - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000))+".xlsx";
-                worksheet.SaveAs(excelFile);
-                excel.Workbooks.Close();
-                excel.Quit();
-                excel = null;
-            }
-            else
-            {
-                excel.Visible = true;
+                this.excelFile.OpenFile();
             }
             return true;
         }
@@ -660,22 +663,22 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                 {
                     //當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
                     content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
-                    totalFile = excelFile;
+                    totalFile = this.excelFile;
                 }
                 else
                 {
-                    totalFile = excelFile + allFile.ToString();
+                    totalFile = this.excelFile + allFile.ToString();
                 }
 
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
 
                 //刪除Excel File
-                if (System.IO.File.Exists(excelFile))
+                if (System.IO.File.Exists(this.excelFile))
                 {
                     try
                     {
-                        System.IO.File.Delete(excelFile);
+                        System.IO.File.Delete(this.excelFile);
                     }
                     catch (System.IO.IOException)
                     {

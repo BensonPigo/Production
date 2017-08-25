@@ -20,7 +20,6 @@ namespace Sci.Production.Quality
         string sql;
         DataRow DR;
 
-
         public P07_Oven(bool canedit, string id, string Poid, string seq1, string seq2, DataRow mainDr)
         {
             InitializeComponent();
@@ -42,13 +41,14 @@ namespace Sci.Production.Quality
                 SetUpdate(maindr);
             }
             #endregion
-
         }
+
         protected override void OnEditModeChanged()
         {
             bool edit= this.EditMode;
             base.OnEditModeChanged();
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -261,6 +261,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormClosed(e);
         }
+
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (this.btnEdit.Text == "Edit")
@@ -309,6 +310,5 @@ PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuserL
           
             
         }
-
     }
 }
