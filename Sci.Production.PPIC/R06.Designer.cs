@@ -38,6 +38,10 @@
             this.checkPOMaterialCompletion = new Sci.Win.UI.CheckBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.lbsp = new Sci.Win.UI.Label();
+            this.labelSign = new Sci.Win.UI.Label();
+            this.textSPEnd = new Sci.Win.UI.TextBox();
+            this.textSPStart = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -57,8 +61,7 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
-            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 12);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 41);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(84, 23);
             this.labelSCIDelivery.TabIndex = 94;
@@ -66,8 +69,7 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
-            this.labelM.Location = new System.Drawing.Point(13, 48);
+            this.labelM.Location = new System.Drawing.Point(13, 71);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(84, 23);
             this.labelM.TabIndex = 95;
@@ -75,8 +77,7 @@
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
-            this.labelOrderType.Location = new System.Drawing.Point(13, 119);
+            this.labelOrderType.Location = new System.Drawing.Point(13, 130);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(84, 23);
             this.labelOrderType.TabIndex = 96;
@@ -85,10 +86,10 @@
             // dateSCIDelivery
             // 
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(102, 12);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(102, 41);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 0;
+            this.dateSCIDelivery.TabIndex = 2;
             // 
             // comboM
             // 
@@ -96,10 +97,10 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(102, 47);
+            this.comboM.Location = new System.Drawing.Point(102, 70);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(80, 24);
-            this.comboM.TabIndex = 1;
+            this.comboM.TabIndex = 3;
             // 
             // comboOrderType
             // 
@@ -107,19 +108,19 @@
             this.comboOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderType.FormattingEnabled = true;
             this.comboOrderType.IsSupportUnselect = true;
-            this.comboOrderType.Location = new System.Drawing.Point(102, 119);
+            this.comboOrderType.Location = new System.Drawing.Point(102, 130);
             this.comboOrderType.Name = "comboOrderType";
             this.comboOrderType.Size = new System.Drawing.Size(110, 24);
-            this.comboOrderType.TabIndex = 3;
+            this.comboOrderType.TabIndex = 5;
             // 
             // checkExcludedReplacementItem
             // 
             this.checkExcludedReplacementItem.AutoSize = true;
             this.checkExcludedReplacementItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkExcludedReplacementItem.Location = new System.Drawing.Point(13, 158);
+            this.checkExcludedReplacementItem.Location = new System.Drawing.Point(13, 160);
             this.checkExcludedReplacementItem.Name = "checkExcludedReplacementItem";
             this.checkExcludedReplacementItem.Size = new System.Drawing.Size(201, 21);
-            this.checkExcludedReplacementItem.TabIndex = 4;
+            this.checkExcludedReplacementItem.TabIndex = 6;
             this.checkExcludedReplacementItem.Text = "Excluded Replacement Item";
             this.checkExcludedReplacementItem.UseVisualStyleBackColor = true;
             // 
@@ -129,17 +130,16 @@
             this.checkPOMaterialCompletion.Checked = true;
             this.checkPOMaterialCompletion.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkPOMaterialCompletion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkPOMaterialCompletion.Location = new System.Drawing.Point(13, 186);
+            this.checkPOMaterialCompletion.Location = new System.Drawing.Point(13, 188);
             this.checkPOMaterialCompletion.Name = "checkPOMaterialCompletion";
             this.checkPOMaterialCompletion.Size = new System.Drawing.Size(183, 21);
-            this.checkPOMaterialCompletion.TabIndex = 5;
+            this.checkPOMaterialCompletion.TabIndex = 7;
             this.checkPOMaterialCompletion.Text = "PO# Material Completion";
             this.checkPOMaterialCompletion.UseVisualStyleBackColor = true;
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(13, 84);
+            this.labelFactory.Location = new System.Drawing.Point(13, 100);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(84, 23);
             this.labelFactory.TabIndex = 111;
@@ -151,14 +151,58 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(102, 84);
+            this.comboFactory.Location = new System.Drawing.Point(102, 100);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 2;
+            this.comboFactory.TabIndex = 4;
+            // 
+            // lbsp
+            // 
+            this.lbsp.Location = new System.Drawing.Point(13, 12);
+            this.lbsp.Name = "lbsp";
+            this.lbsp.Size = new System.Drawing.Size(84, 23);
+            this.lbsp.TabIndex = 112;
+            this.lbsp.Text = "SP#";
+            // 
+            // labelSign
+            // 
+            this.labelSign.BackColor = System.Drawing.Color.Transparent;
+            this.labelSign.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.labelSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSign.Location = new System.Drawing.Point(222, 15);
+            this.labelSign.Name = "labelSign";
+            this.labelSign.Size = new System.Drawing.Size(27, 23);
+            this.labelSign.TabIndex = 115;
+            this.labelSign.Text = "~";
+            this.labelSign.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelSign.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSign.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // textSPEnd
+            // 
+            this.textSPEnd.BackColor = System.Drawing.Color.White;
+            this.textSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textSPEnd.Location = new System.Drawing.Point(252, 12);
+            this.textSPEnd.Name = "textSPEnd";
+            this.textSPEnd.Size = new System.Drawing.Size(117, 23);
+            this.textSPEnd.TabIndex = 1;
+            // 
+            // textSPStart
+            // 
+            this.textSPStart.BackColor = System.Drawing.Color.White;
+            this.textSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textSPStart.Location = new System.Drawing.Point(102, 12);
+            this.textSPStart.Name = "textSPStart";
+            this.textSPStart.Size = new System.Drawing.Size(117, 23);
+            this.textSPStart.TabIndex = 0;
             // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(516, 243);
+            this.ClientSize = new System.Drawing.Size(516, 242);
+            this.Controls.Add(this.labelSign);
+            this.Controls.Add(this.textSPEnd);
+            this.Controls.Add(this.textSPStart);
+            this.Controls.Add(this.lbsp);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.checkPOMaterialCompletion);
@@ -174,9 +218,6 @@
             this.IsSupportToPrint = false;
             this.Name = "R06";
             this.Text = "R06. Monthly Material Completion";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelOrderType, 0);
@@ -187,6 +228,13 @@
             this.Controls.SetChildIndex(this.checkPOMaterialCompletion, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.lbsp, 0);
+            this.Controls.SetChildIndex(this.textSPStart, 0);
+            this.Controls.SetChildIndex(this.textSPEnd, 0);
+            this.Controls.SetChildIndex(this.labelSign, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,5 +252,9 @@
         private Win.UI.CheckBox checkPOMaterialCompletion;
         private Win.UI.Label labelFactory;
         private Win.UI.ComboBox comboFactory;
+        private Win.UI.Label lbsp;
+        private Win.UI.Label labelSign;
+        private Win.UI.TextBox textSPEnd;
+        private Win.UI.TextBox textSPStart;
     }
 }

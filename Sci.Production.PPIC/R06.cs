@@ -16,8 +16,10 @@ namespace Sci.Production.PPIC
     {
         DataTable _printData;
         DateTime? _sciDate1, _sciDate2;
-        string _mDivision, _orderType, _factory, _category;
+        string _mDivision, _orderType, _factory, _category, _SPStart, _SPEnd;
+        
         int _excludeReplacement, _complection;
+        
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -41,6 +43,20 @@ namespace Sci.Production.PPIC
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
+            if (!MyUtility.Check.Empty(textSPStart.Text.Trim()) && MyUtility.Check.Empty(textSPEnd.Text.Trim()))
+            {
+                MyUtility.Msg.WarningBox("SP# need between two values!");
+                textSPEnd.Focus();
+                return false;
+            }
+            else if (MyUtility.Check.Empty(textSPStart.Text.Trim()) && !MyUtility.Check.Empty(textSPEnd.Text.Trim()))
+            {
+                MyUtility.Msg.WarningBox("SP# need between two values!");
+                textSPStart.Focus();
+                return false;
+            }
+            _SPStart = textSPStart.Text;
+            _SPEnd = textSPEnd.Text;
             _sciDate1 = dateSCIDelivery.Value1;
             _sciDate2 = dateSCIDelivery.Value2;
             _mDivision = comboM.Text;
@@ -90,13 +106,15 @@ Category =
         WHEN o.Category = 'O' THEN 'Other'
         WHEN o.Category = 'M' THEN 'Material'
         END)
-,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
-o.BrandID,o.CPU,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
-dbo.getTPEPass1(o.MCHandle) as MCHandle,dbo.getTPEPass1(o.MRHandle) as MRHandle,
-dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
-dbo.getTPEPass1(p.POHandle) as POHandle,o.Qty,o.CPU*o.Qty*o.CPUFactor as tCPU,o.MTLComplete,
-isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 0 for XML PATH('')),'') as SeqNo,
-isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
+    ,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
+    o.BrandID,o.CPU,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
+    dbo.getTPEPass1(o.MCHandle) as MCHandle,dbo.getTPEPass1(o.MRHandle) as MRHandle,
+    dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
+    dbo.getTPEPass1(p.POHandle) as POHandle,o.Qty,o.CPU*o.Qty*o.CPUFactor as tCPU,o.MTLComplete,
+    isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 0 for XML PATH('')),'') as SeqNo,
+    isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
+    , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
+    , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
 where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""));
@@ -112,6 +130,11 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
             if (!MyUtility.Check.Empty(_mDivision))
             {
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", _mDivision));
+            }
+
+            if (!MyUtility.Check.Empty(_SPStart))
+            {
+                sqlCmd.Append(string.Format(" and o.id between '{0}' and '{1}'", _SPStart, _SPEnd));
             }
 
             if (!MyUtility.Check.Empty(_factory))
@@ -177,7 +200,7 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
 
             //填內容值
             int intRowsStart = 4;
-            object[,] objArray = new object[1, 27];
+            object[,] objArray = new object[1, 29];
             foreach (DataRow dr in _printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
@@ -195,18 +218,20 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
                 objArray[0, 12] = dr["Seq3rd"];
                 objArray[0, 13] = dr["SewETA"];
                 objArray[0, 14] = dr["PackETA"];
-                objArray[0, 15] = dr["MDivisionID"];
-                objArray[0, 16] = dr["FactoryID"];
-                objArray[0, 17] = dr["LocalMR"];
-                objArray[0, 18] = dr["MCHandle"];
-                objArray[0, 19] = dr["MRHandle"];
-                objArray[0, 20] = dr["SMR"];
-                objArray[0, 21] = dr["POHandle"];
-                objArray[0, 22] = dr["POSMR"];
-                objArray[0, 23] = dr["Qty"];
-                objArray[0, 24] = dr["tCPU"];
-                objArray[0, 25] = _complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
-                objArray[0, 26] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? "" : "Y"; ;
+                objArray[0, 15] = dr["Fab_ETA"];
+                objArray[0, 16] = dr["Acc_ETA"];
+                objArray[0, 17] = dr["MDivisionID"];
+                objArray[0, 18] = dr["FactoryID"];
+                objArray[0, 19] = dr["LocalMR"];
+                objArray[0, 20] = dr["MCHandle"];
+                objArray[0, 21] = dr["MRHandle"];
+                objArray[0, 22] = dr["SMR"];
+                objArray[0, 23] = dr["POHandle"];
+                objArray[0, 24] = dr["POSMR"];
+                objArray[0, 25] = dr["Qty"];
+                objArray[0, 26] = dr["tCPU"];
+                objArray[0, 27] = _complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
+                objArray[0, 28] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? "" : "Y"; ;
                 worksheet.Range[String.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
