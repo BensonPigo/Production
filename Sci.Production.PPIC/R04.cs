@@ -91,6 +91,7 @@ select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
 	,[Type] = IIF(l.Type='R','Replacement','Lacking')
 	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
 	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N')
+	,l.Remark
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
@@ -206,7 +207,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             //填各工廠的明細資料
             string xlsFactory = "";
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 16];
+            object[,] objArray = new object[1, 17];
             foreach (DataRow dr in printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
@@ -254,6 +255,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                     objArray[0, 13] = dr["Type"];
                     objArray[0, 14] = dr["Description"];
                     objArray[0, 15] = dr["OnTime"];
+                    objArray[0, 16] = dr["Remark"];
                 }
                 else
                 {
@@ -264,8 +266,9 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                     objArray[0, 13] = dr["Description"];
                     objArray[0, 14] = dr["OnTime"];
                     objArray[0, 15] = "";
+                    objArray[0, 16] = "";
                 }
-                worksheet.Range[String.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[String.Format("A{0}:Q{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
