@@ -2,29 +2,31 @@
 using Ict.Win;
 using Sci.Production.Class;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Sci.Win;
 using Sci.Data;
 using System.Transactions;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using Ict.Win.UI;
 
 namespace Sci.Production.Thread
 {
-    public partial class P02 : Sci.Win.Tems.Input8
+    public partial class P02 : Win.Tems.Input8
     {
         private string factory = Sci.Env.User.Factory;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         Ict.Win.UI.DataGridViewTextBoxColumn col_color;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_cons;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_Remark;
+        DataGridViewNumericBoxColumn col_cons;
+        DataGridViewNumericBoxColumn col_Allowance;
+        DataGridViewNumericBoxColumn col_NewCone;
+        DataGridViewNumericBoxColumn col_UsedCone;
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -131,9 +133,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             DataGridViewGeneratorNumericColumnSettings UsedCone = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings poqty1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings poqty2 = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings poqty3 = new DataGridViewGeneratorNumericColumnSettings();
-            #region Refno Cell
-            refno.CellValidating += (s, e) =>
+            DataGridViewGeneratorNumericColumnSettings poqty3 = new DataGridViewGeneratorNumericColumnSettings();          
+            #region Refno Cell     
+             refno.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
@@ -245,6 +247,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             #endregion
             #region useStock CellValidating by (NewCone)+UsedCone
+            
             NewCone.CellValidating += (s, e) =>
             {
                 /*int nc = Convert.ToInt32(e.FormattedValue);
@@ -256,6 +259,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
             #endregion
             #region useStock CellValidating by NewCone+(UsedCone)
+           
             UsedCone.CellValidating += (s, e) =>
             {
                 /*int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
@@ -278,16 +282,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
             #endregion
             #region poqty CellValidating by TotalQty + (AllowanceQty) - UseStockQty
-            poqty2.CellValidating += (s, e) =>
-            {
-                /*int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
-                int aq = Convert.ToInt32(e.FormattedValue);
-                int usq = Convert.ToInt32(CurrentDetailData["UseStockQty"]);
-                if (!this.EditMode) return;
-                CurrentDetailData["AllowanceQty"] = aq;
-                CurrentDetailData["PurchaseQty"] = tq + aq - usq;
-                CurrentDetailData.EndEdit();*/
-            };
+           
             #endregion
             #region poqty CellValidating by TotalQty + AllowanceQty - (UseStockQty)
             poqty3.EditingValueChanged += (s, e) =>
@@ -299,59 +294,58 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 CurrentDetailData["PurchaseQty"] = tq + aq - usq;
                 CurrentDetailData.EndEdit();*/
             };
-            #endregion
-            
+            #endregion           
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)         
-           .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(10), settings: refno).Get(out col_refno)
-           .Text("description", header: "Thread Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
-           .Text("ThreadColorid", header: "Thread\r\nColor", width: Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
-           .Text("Colordesc", header: "Thread Color Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
-           .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
-           .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
-           .Numeric("TotalQty", header: "No. of\r\nCones", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
+           .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), settings: refno).Get(out col_refno)
+           .Text("description", header: "Thread Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
+           .Text("ThreadColorid", header: "Thread\r\nColor", width: Ict.Win.Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
+           .Text("Colordesc", header: "Thread Color Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
+           .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
+           .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Ict.Win.Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
+           .Numeric("TotalQty", header: "No. of\r\nCones", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
 
-           .Numeric("AllowanceQty", header: "20%\r\nallowance", width: Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
-           .Numeric("NewCone", header: "New\r\nCone", width: Widths.AnsiChars(2), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
-           .Numeric("UsedCone", header: "Use\r\nCone", width: Widths.AnsiChars(2), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
+           .Numeric("AllowanceQty", header: "20%\r\nallowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out col_Allowance)
+           .Numeric("NewCone", header: "New\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
+           .Numeric("UsedCone", header: "Use\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
 
-           .Numeric("UseStockQty", header: "Use\r\nStock", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
-           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
-           .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
-           .Text("POID", header: "PO ID", width: Widths.AnsiChars(12), iseditingreadonly: true);
-            this.detailgrid.Columns["AllowanceQty"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+           .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
+           .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
+           .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_Remark)
+           .Text("POID", header: "PO ID", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true);
+
             #endregion
-            change_record();
 
+            //設定detailGrid Rows 是否可以編輯
+            this.detailgrid.RowEnter += detailgrid_RowEnter;           
+            change_record();            
             this.detailgrid.CellValidated += detailgrid_CellValidated;
-            this.detailgrid.RowEnter+=detailgrid_RowEnter;
-
+            
         }
-        DataGridViewColumn col_Allowance;
-        DataGridViewColumn col_NewCone;
-        DataGridViewColumn col_UsedCone;
         private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || EditMode == false) { return; }
             var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
             if (data == null) { return; }
-
-            if (data["autoCreate"].ToString() == "True")
+            if (data["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(data["POID"]))
             {
-                this.col_refno.IsEditingReadOnly = true;
-                this.col_color.IsEditingReadOnly = true;
-                this.col_cons.IsEditingReadOnly = true;
-                this.refno.SupportPopup = false;
+                col_refno.IsEditingReadOnly = true;
+                col_color.IsEditingReadOnly = true;
+                col_cons.IsEditingReadOnly = true;
+                col_Allowance.IsEditingReadOnly = true;
+                col_NewCone.IsEditingReadOnly = true;
+                col_UsedCone.IsEditingReadOnly = true;
+                col_Remark.IsEditingReadOnly = true;
             }
             else
             {
-                this.col_refno.IsEditingReadOnly = false;
-                this.col_color.IsEditingReadOnly = false;
-                this.col_cons.IsEditingReadOnly = false;
-                this.refno.SupportPopup = true;
+                col_refno.IsEditingReadOnly = false;
+                col_color.IsEditingReadOnly = false;
+                col_cons.IsEditingReadOnly = false;
+                col_Allowance.IsEditingReadOnly = false;
+                col_NewCone.IsEditingReadOnly = false;
+                col_UsedCone.IsEditingReadOnly = false;
+                col_Remark.IsEditingReadOnly = false;
             }
         }
         void detailgrid_CellValidated(object sender, DataGridViewCellEventArgs e)
@@ -802,43 +796,27 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         }
         #region 是否可編輯與變色
         private void change_record()
-        {
-            //col_color.EditingControlShowing += (s, e) =>
-            //{
-            //    if (e.RowIndex == -1) return;
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-            //    else e.Control.Enabled = true;
-
-            //};
-            col_color.CellFormatting += (s, e) =>
+        {          
+             col_color.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True")
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.ForeColor = Color.Black;      
+                                 
                 }
                 else
                 {
                     e.CellStyle.BackColor = Color.Pink;
-                    //e.CellStyle.ForeColor = Color.Red;
                 }
             };
-            //col_cons.EditingControlShowing += (s, e) =>
-            //{
-            //    if (CurrentDetailData == null) return;
-            //    if (e.RowIndex == -1) return;
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-            //    else e.Control.Enabled = true;
-            //};
             col_cons.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True")
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -847,21 +825,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 else
                 {
                     e.CellStyle.BackColor = Color.Pink;
-                    //e.CellStyle.ForeColor = Color.Red;
                 }
             };
-            //col_refno.EditingControlShowing += (s, e) =>
-            //{
-            //    if (e.RowIndex == -1) return;
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-            //    else e.Control.Enabled = true;
-            //};
             col_refno.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True")
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -869,11 +839,66 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 else
                 {
                     e.CellStyle.BackColor = Color.Pink;
-                    //e.CellStyle.ForeColor = Color.Red;
 
                 }
             };
-            
+            col_Allowance.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_NewCone.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_UsedCone.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_Remark.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
         }
         #endregion
         private void ReQty(DataRow dr) //重算Qty
