@@ -96,8 +96,15 @@ namespace Sci.Production.Planning
             sqlCmd.Append(string.Format(@"
 SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.StyleUkey,o.id
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
+    ,oa.Article
 into #tmpo
 FROM Orders o
+outer apply(
+	select Article= STUFF((select distinct CONCAT(',',Article) 
+					from Order_Article oa
+					where oa.id=o.ID
+					for xml path('')),1,1,'')
+) oa
 Where 1=1 "));
             #region --- 條件組合  ---
             condition.Clear();
@@ -175,10 +182,17 @@ Where 1=1 "));
 
             sqlCmd.Append(string.Format(@"
 --
-select o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
+select distinct o.FtyGroup,o.Styleid,oa.Article,
+o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
 into #tmpol
 from #tmpo o
-group by o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU
+outer apply(
+	select Article= STUFF((select distinct CONCAT(',',Article) 
+					from #tmpo oa
+					where oa.styleid=o.styleid
+					for xml path('')),1,1,'')
+) oa
+group by o.FtyGroup,o.Styleid,oa.Article,o.SeasonID,o.CdCodeID,o.CPU
 --
 select 
 	o.StyleID
@@ -278,7 +292,7 @@ pivot
     sum(price_tms)
     for artworktypeid in ( [SEWING],[BONDING (MACHINE)],[BONDING (HAND)],[LASER],[SEAMSEAL],[ULTRASONIC],[HEAT TRANSFER],[WELDED],[CUTTING],[DOWN],[INSPECTION],[DIE CUT],[SUBLIMATION PRINT],[QUILTING(AT)],[SUBLIMATION SPRAY],[SUBLIMATION ROLLER],[FEEDOFARM],[FLATLOCK],[4FLATLOCK-S],[4FLATLOCK-H],[3FLATLOCK],[EYEBUTTON],[SMALL HOT PRESS],[BIG HOT PRESS],[DOWN FILLING],[ZIG ZAG],[QUILTING(HAND)],[D-chain ZIG ZAG],[REAL FLATSEAM],[Fusible],[BIG HOT FOR BONDING],[EMBROIDERY],[PRINTING],[EMBOSS/DEBOSS],[GMT WASH],[PAD PRINTING],[Garment Dye],[SP_THREAD],[CARTON])
 )as pvt 
-select o.FtyGroup,o.StyleID,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
+select o.FtyGroup,o.StyleID,o.Article,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
 ,a.A,isnull(r.R,'New Style') as R,W = iif(w.P=0 or w.P is null,'N','Y'),isnull([SEWING],0)[SEWING],isnull([BONDING (MACHINE)],0)[BONDING (MACHINE)],isnull([BONDING (HAND)],0)[BONDING (HAND)],isnull([LASER],0)[LASER],isnull([SEAMSEAL],0)[SEAMSEAL],isnull([ULTRASONIC],0)[ULTRASONIC],isnull([HEAT TRANSFER],0)[HEAT TRANSFER],isnull([WELDED],0)[WELDED],isnull([CUTTING],0)[CUTTING],isnull([DOWN],0)[DOWN],isnull([INSPECTION],0)[INSPECTION],isnull([DIE CUT],0)[DIE CUT],isnull([SUBLIMATION PRINT],0)[SUBLIMATION PRINT],isnull([QUILTING(AT)],0)[QUILTING(AT)],isnull([SUBLIMATION SPRAY],0)[SUBLIMATION SPRAY],isnull([SUBLIMATION ROLLER],0)[SUBLIMATION ROLLER],isnull([FEEDOFARM],0)[FEEDOFARM],isnull([FLATLOCK],0)[FLATLOCK],isnull([4FLATLOCK-S],0)[4FLATLOCK-S],isnull([4FLATLOCK-H],0)[4FLATLOCK-H],isnull([3FLATLOCK],0)[3FLATLOCK],isnull([EYEBUTTON],0)[EYEBUTTON],isnull([SMALL HOT PRESS],0)[SMALL HOT PRESS],isnull([BIG HOT PRESS],0)[BIG HOT PRESS],isnull([DOWN FILLING],0)[DOWN FILLING],isnull([ZIG ZAG],0)[ZIG ZAG],isnull([QUILTING(HAND)],0)[QUILTING(HAND)],isnull([D-chain ZIG ZAG],0)[D-chain ZIG ZAG],isnull([REAL FLATSEAM],0)[REAL FLATSEAM],isnull([Fusible],0)[Fusible],isnull([BIG HOT FOR BONDING],0)[BIG HOT FOR BONDING],isnull([EMBROIDERY],0)[EMBROIDERY],isnull([PRINTING],0)[PRINTING],isnull([EMBOSS/DEBOSS],0)[EMBOSS/DEBOSS],isnull([GMT WASH],0)[GMT WASH],isnull([PAD PRINTING],0)[PAD PRINTING],isnull([Garment Dye],0)[Garment Dye],isnull([SP_THREAD],0)[SP_THREAD],isnull([CARTON],0)[CARTON]
 from #tmpol o
 left join #tmp_A a on a.StyleID = o.StyleID
