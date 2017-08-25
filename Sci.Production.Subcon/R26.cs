@@ -18,8 +18,7 @@ using Sci.Utility.Excel;
 namespace Sci.Production.Subcon
 {
     public partial class R26 : Sci.Win.Tems.PrintForm
-    {
-       
+    {       
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -398,9 +397,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
            
             return result;//base.OnAsyncDataLoad(e);  
         }
-
-
-       
+               
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.Report_Type == "PO List" && (dtt == null || dtt.Rows.Count == 0))
@@ -473,7 +470,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     
                     idx += 1;
                 }
-                x1.Save();
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_Order"));
                 return true;
             }
             #endregion
@@ -511,7 +508,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     x1.DicDatas.Add("##D" + idxstr, D);
                     idx += 1;
                 }
-                x1.Save();
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Shipping_Mark"));
                 return true;
             }
             #endregion
@@ -563,7 +560,6 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
             }
         }
-
     }
 }
 

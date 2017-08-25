@@ -106,6 +106,8 @@ Where 1=1
                 Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
                 Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
                 worksheet1.Copy(worksheetn);
+                Marshal.ReleaseComObject(worksheet1);
+                Marshal.ReleaseComObject(worksheetn);
             }
             
             int c = 1;
@@ -131,6 +133,7 @@ Where 1=1
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                         ds.Tables[0].Dispose();
                         ds.Tables.Clear();
+                        Marshal.ReleaseComObject(objSheets);
                     }
                 }
             }
@@ -138,9 +141,15 @@ Where 1=1
             {
                 objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
             }
-            objApp.Visible = true;
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp 
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R50");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
     }

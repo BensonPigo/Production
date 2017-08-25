@@ -45,6 +45,7 @@ namespace Sci.Production.Subcon
             };
 
         }
+
         string Amount;
         string Grandtotal;
         // 新增時預設資料
@@ -488,7 +489,6 @@ namespace Sci.Production.Subcon
             #endregion
 
         }
-
         
         //Special Record
         private void btnSpecialRecord_Click(object sender, EventArgs e)

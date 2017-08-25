@@ -330,7 +330,5 @@ namespace Sci.Production.Subcon
                 }
             }
         }
-
-
     }
 }

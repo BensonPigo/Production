@@ -518,30 +518,31 @@ drop table #CBDate
             {
                 #region By Factory
                 objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
-                #endregion
                 #region set CheckDate & Factory
                 worksheet.Cells[2, 2] = SewingStart + " - " + SewingEnd;
                 worksheet.Cells[2, 5] = Factory;
+                #endregion
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);                
                 #endregion
             }
             else
             {
                 #region By SPNO
                 objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
-                #endregion
                 #region set CheckDate & Factory
                 worksheet.Cells[2, 3] = SewingStart + " - " + SewingEnd;
                 worksheet.Cells[2, 6] = Factory;
                 #endregion
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);                
+                #endregion
+                
             }
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+
+            Marshal.ReleaseComObject(worksheet);
             this.HideWaitMessage();
             return true;
         }

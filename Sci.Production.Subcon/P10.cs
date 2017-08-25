@@ -697,8 +697,5 @@ namespace Sci.Production.Subcon
 
             return true;
         }
-
-        
-
     }
 }

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
@@ -767,8 +768,16 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Select();
 
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Sewing_R03_ProdEfficiencyAnalysisReport");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             this.HideWaitMessage();
-            excel.Visible = true;
             return true;
 
         }

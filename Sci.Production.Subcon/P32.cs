@@ -313,6 +313,7 @@ namespace Sci.Production.Subcon
             orderid = parent["orderid"].ToString();
             listControlBindingSource2.Filter = " orderid = '"+ orderid+"'";
         }
+
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             if (dataSet == null) return;
@@ -326,10 +327,9 @@ namespace Sci.Production.Subcon
             x1.DicDatas.Add("##dt2", dt2);
             dt1.ShowHeader = false;
             dt2.ShowHeader = false;
-            x1.Save();
+            x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P32"));
             return ;
 
         }
-
     }
 }

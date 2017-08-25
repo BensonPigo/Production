@@ -46,6 +46,7 @@ namespace Sci.Production.Subcon
             this.comboOrderBy.SelectedIndex = 0;
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
             bool dateRange1_Empty = !this.dateDebitDate.HasValue, dateRange2_Empty = !this.dateApprovedDate.HasValue, dateRange3_Empty = !this.dateSettledDate.HasValue, textbox1_Empty = this.txtSDNoStart.Text.Empty(), textbox2_Empty = this.txtSDNoEnd.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
@@ -394,7 +395,8 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 dtSummary1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
-                x1.Save();
+
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier)"));
                 return true;
             }
             else if ("Detail".EqualString(this.comboReportType.Text))
@@ -424,7 +426,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.DicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
 
-                x1.Save();
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitNoteDetail(LocalSupplier)"));
                 return true;
             }
             else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
@@ -453,7 +455,8 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 dtSchedule1.BoAutoFitColumn = true;
                 x1.DicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;
-                x1.Save();
+
+                x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_R36_DebitScheduleDetail(LocalSupplier)"));
                 return true;
             }
             return true;

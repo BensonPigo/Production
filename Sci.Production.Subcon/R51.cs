@@ -145,15 +145,22 @@ group by AP.ID, AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, A
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R51.xltx");
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R51.xltx", 2, showExcel: true, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R51.xltx", 2, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[1, 2] = DateTime.Today.AddMonths(-2).ToShortDateString();
             worksheet.Cells[1, 4] = DateTime.Today.ToShortDateString();
             worksheet.Cells[1, 6] = MyUtility.GetValue.Lookup(@"SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
             worksheet.Columns.AutoFit();
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R51");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             #endregion
             this.HideWaitMessage();
             return true;

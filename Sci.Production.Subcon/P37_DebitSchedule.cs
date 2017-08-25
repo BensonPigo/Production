@@ -37,7 +37,6 @@ namespace Sci.Production.Subcon
                 ;
             return true;
         }
-
      
         protected override void OnRequeryPost(DataTable datas)
         {

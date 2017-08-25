@@ -24,7 +24,6 @@ namespace Sci.Production.Subcon
 {
     public partial class P30 : Sci.Win.Tems.Input6
     {
-
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

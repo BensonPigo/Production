@@ -129,12 +129,19 @@ ORDER BY  BD.BundleNo", filte.JoinToString("\r\n"));
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R32.xltx");
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R32.xltx", 1, showExcel: true, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R32.xltx", 1, showExcel: false, excelApp: objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Columns.AutoFit();
 
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
-            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R32");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             #endregion 
             this.HideWaitMessage();            
             return true;

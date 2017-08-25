@@ -754,6 +754,5 @@ inner join (
             P03_Import imoprt = new P03_Import(P03_Import.Subcon_P03, this.txtartworktype_ftyArtworkType.Text, ((DataTable)((BindingSource)detailgrid.DataSource).DataSource));
             imoprt.ShowDialog(this);
         }
-
     }
 }

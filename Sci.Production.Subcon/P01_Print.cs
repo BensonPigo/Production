@@ -257,7 +257,5 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                 this.HideWaitMessage();
             }
         }
-
-     
     }
 }

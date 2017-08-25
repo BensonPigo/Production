@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
@@ -193,7 +194,7 @@ order by BTD.orderid", CurrentMaintain["ID"].ToString());
                 return false;
             }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_P23.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(print, "", "Subcon_P23.xltx", 3, true, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(print, "", "Subcon_P23.xltx", 3, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 2] = CurrentMaintain["ID"].ToString();
             objSheets.Cells[1, 5] = CurrentMaintain["StartProcess"].ToString();
@@ -202,6 +203,16 @@ order by BTD.orderid", CurrentMaintain["ID"].ToString());
             objSheets.Cells[2, 2] = CurrentMaintain["EndSite"].ToString() + "-" + labb;
             string fabb = MyUtility.GetValue.Lookup("abb", CurrentMaintain["StartSite"].ToString(), "Factory", "ID");
             objSheets.Cells[2, 5] = CurrentMaintain["StartSite"].ToString() + "-" + fabb;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_P23");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
 

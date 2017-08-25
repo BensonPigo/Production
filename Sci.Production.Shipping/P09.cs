@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -183,7 +184,16 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
                 objArray[0, 13] = dr["OSRemark"];
                 worksheet.Range[String.Format("A{0}:N{0}", rownum)].Value2 = objArray;
             }
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P09");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
         }
 
         //Close

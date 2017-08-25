@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
@@ -608,6 +609,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 //插入一筆Record
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToInsert);
             }
             //將多出來的Record刪除
             DeleteExcelRow(2, insertRow, excel);
@@ -642,6 +644,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
             }
             objArray = new object[1, 4];
@@ -656,6 +659,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 insertRow++;
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToInsert);
             }
 
             DeleteExcelRow(2, insertRow, excel);
@@ -687,6 +691,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                     //插入一筆Record
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
             }
             insertRow = insertRow + 3;
@@ -723,6 +728,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                         //插入一筆Record
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        Marshal.ReleaseComObject(rngToInsert);
                     }
                     else
                     {
@@ -751,6 +757,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                         //插入一筆Record
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        Marshal.ReleaseComObject(rngToInsert);        
                     }
 
                 }
@@ -773,7 +780,16 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             }
 
             this.HideWaitMessage();
-            excel.Visible = true;
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine"));
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(worksheet);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;
         }
 

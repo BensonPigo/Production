@@ -24,7 +24,6 @@ namespace Sci.Production.Subcon
 {
     public partial class P35 : Sci.Win.Tems.Input6
     {
-
         public P35(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -281,6 +280,7 @@ where lapd.id = '{0}'"
             this.detailgrid.AutoResizeColumn(10);
             this.detailgrid.AutoResizeColumn(11);
         }
+
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
