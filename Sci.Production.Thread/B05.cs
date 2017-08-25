@@ -33,6 +33,7 @@ namespace Sci.Production.Thread
             dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
             dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["refno"].ToString();
@@ -49,6 +50,7 @@ namespace Sci.Production.Thread
 
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override bool OnGridSetup()
         {
              Helper.Controls.Grid.Generator(this.detailgrid)
@@ -71,6 +73,7 @@ namespace Sci.Production.Thread
              .Text("editname", header: "Last update", width: Widths.AnsiChars(20), iseditingreadonly: true);
              return base.OnGridSetup();
         }
+
         protected override void OnRefreshClick()
         {
             int dgi = detailgrid.GetSelectedRowIndex();
@@ -85,6 +88,7 @@ namespace Sci.Production.Thread
             detailgrid.SelectRowTo(dgi);
             //OnDetailGridRowChanged();
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -100,6 +104,7 @@ namespace Sci.Production.Thread
             OnDetailGridRowChanged();
             grid1.DataSource = gridTb; //重新Binding Grid1
         }
+
         protected override void OnDetailGridRowChanged()
         {
             base.OnDetailGridRowChanged();

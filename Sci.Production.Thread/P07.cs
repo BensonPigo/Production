@@ -23,6 +23,7 @@ namespace Sci.Production.Thread
             this.DefaultFilter = string.Format("mDivisionid = '{0}'", keyWord);
             InitializeComponent();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -40,6 +41,7 @@ left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno and d.threadColorid =
 left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID, keyWord);
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override bool OnGridSetup()
         {
 
@@ -250,6 +252,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -260,6 +263,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             CurrentMaintain["mDivisionid"] = keyWord;
             
         }
+
         protected override bool ClickDeleteBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -269,6 +273,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             }
             return base.ClickDeleteBefore();
         }
+
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -278,6 +283,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             }
             return base.ClickEditBefore();
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
@@ -341,11 +347,13 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
 
             return base.ClickSaveBefore();
         }
+
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
             dateDate.ReadOnly = true;
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -486,6 +494,7 @@ insert  ThreadStock(refno, mDivisionid, threadcolorid, threadlocationid, newcone
             #endregion
            
         }
+
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -619,12 +628,12 @@ insert  ThreadStock (refno, mDivisionid, threadcolorid, threadlocationid, newcon
             #endregion
            
         }
+
         private void btnImportFromStock_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P07_import = new Sci.Production.Thread.P07_Import(detTable);
             P07_import.ShowDialog();
         }
-
     }
 }

@@ -32,6 +32,7 @@ namespace Sci.Production.Thread
             comboForwardBack.DisplayMember = "Value";
             comboForwardBack.DataSource = new BindingSource(comboBox1_RowSource2, null);
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
@@ -43,6 +44,7 @@ namespace Sci.Production.Thread
             left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override bool OnGridSetup()
         {
 
@@ -213,6 +215,7 @@ namespace Sci.Production.Thread
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
         }
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -224,6 +227,7 @@ namespace Sci.Production.Thread
             CurrentMaintain["StockType"] = "Fordward";
             
         }
+
         protected override bool ClickDeleteBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -233,6 +237,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickDeleteBefore();
         }
+
         protected override bool ClickEditBefore()
         {
             if (CurrentMaintain["Status"].ToString() != "New")
@@ -242,6 +247,7 @@ namespace Sci.Production.Thread
             }
             return base.ClickEditBefore();
         }
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
@@ -291,6 +297,7 @@ namespace Sci.Production.Thread
 
             return base.ClickSaveBefore();
         }
+
         protected override bool ClickNewBefore()
         {
             try
@@ -308,11 +315,13 @@ namespace Sci.Production.Thread
             }
             return base.ClickNewBefore();
         }
+
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
             dateDate.ReadOnly = true;
         }
+
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -435,6 +444,7 @@ namespace Sci.Production.Thread
                 dr.Delete();
             }
         }
+
         private void reqty()
         {
             CurrentDetailData["newConeVar"] = (decimal)CurrentDetailData["newcone"] - (decimal)CurrentDetailData["newconebook"];
