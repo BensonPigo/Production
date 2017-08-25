@@ -90,6 +90,7 @@ select distinct 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SciDelivery,c.Seaso
 ,[std_price]=round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3) 
 ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
 ,c.FactoryID ,c.SewInLine
+,delivery = a.EstCTNArrive
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID 	
@@ -161,6 +162,7 @@ select distinct 1 as Selected,c.POID ,a.OrderID ,a.StyleID,c.SciDelivery,a.Seaso
 ,a.OrderID as requestid
 , '' as id
 ,c.FactoryID ,c.SewInLine
+,delivery = a.EstArriveDate
 from dbo.ThreadRequisition a WITH (NOLOCK) 
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
@@ -357,7 +359,8 @@ and b.PurchaseQty > 0 and b.PoId =''
         private void btnToExcel_Click(object sender, EventArgs e)
         {
 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).Copy();
+            dt.Columns.RemoveAt(dt.Columns.Count-1);
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
             sdExcel.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P30_Import"));
 
