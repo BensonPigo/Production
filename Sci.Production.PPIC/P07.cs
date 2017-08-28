@@ -62,6 +62,7 @@ namespace Sci.Production.PPIC
                 return;
             }
 
+            deleteCutting();
             setcuttingdate();
 
             this.HideWaitMessage();
@@ -74,10 +75,9 @@ namespace Sci.Production.PPIC
             this.Close();
         }
 
-        private void setcuttingdate()
+        private void deleteCutting()
         {
             string sewdate = DateTime.Now.AddDays(90).ToShortDateString();
-            DualResult dresult;
 
             this.HideWaitMessage();
             this.ShowWaitMessage("Data Update...");
@@ -91,35 +91,52 @@ namespace Sci.Production.PPIC
             on cutting.id = f.ID", sewdate, Sci.Env.User.Factory);
 
             DBProxy.Current.DefaultTimeout = 600;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
-            {
-                try
-                {
-                    if (!(dresult = DBProxy.Current.Execute(null, sqlcmd)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlcmd, dresult);
-                        return;
-                    }
 
-                    _transactionscope.Complete();
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
+            DualResult Result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!Result)
+            {
+                MyUtility.Msg.WaitClear();
+                ShowErr(sqlcmd, Result);
+                this.HideWaitMessage();
+                return;
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            #region 移除使用TransactionScope
+            //TransactionScope _transactionscope = new TransactionScope();
+            //using (_transactionscope)
+            //{
+            //    try
+            //    {
+            //        if (!(dresult = DBProxy.Current.Execute(null, sqlcmd)))
+            //        {
+            //            _transactionscope.Dispose();
+            //            ShowErr(sqlcmd, dresult);
+            //            return;
+            //        }
+
+            //        _transactionscope.Complete();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _transactionscope.Dispose();
+            //        ShowErr("Commit transaction error.", ex);
+            //        return;
+            //    }
+            //}
+            //_transactionscope.Dispose();
+            //_transactionscope = null;
             #endregion
 
+            #endregion
+        }
+
+
+        private void setcuttingdate()
+        {
+            string sewdate = DateTime.Now.AddDays(90).ToShortDateString();
             this.HideWaitMessage();
             this.ShowWaitMessage("Data Update.....");
             #region 找出需新增或update 的Cutting
-           // DataTable cuttingtb;
+            // DataTable cuttingtb;
             string updsql = "";
             updsql = string.Format(@"
 insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate)
@@ -182,6 +199,16 @@ from
 	group by ord.CuttingSp 
 )s
 where id = s.CuttingSP", sewdate, Sci.Env.User.Factory);
+
+            DualResult Result = DBProxy.Current.Execute(null, updsql);
+            if (!Result)
+            {
+                MyUtility.Msg.WaitClear();
+                ShowErr(updsql, Result);
+                this.HideWaitMessage();
+                return;
+            }
+
             //dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             //foreach (DataRow dr in cuttingtb.Rows)
             //{
@@ -192,28 +219,30 @@ where id = s.CuttingSP", sewdate, Sci.Env.User.Factory);
 
             //    updsql = updsql + string.Format("update cutting set SewInLine ='{0}',sewoffline = '{1}' where id = '{2}'; ", sewin, sewof, dr["cuttingsp"]);
             //}
-            TransactionScope _transactionscope2 = new TransactionScope();
-            using (_transactionscope2)
-            {
-                try
-                {
-                    if (!(dresult = DBProxy.Current.Execute(null, updsql)))
-                    {
-                        _transactionscope2.Dispose();
-                        ShowErr(updsql, dresult);
-                        return;
-                    }
-                    _transactionscope2.Complete();
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope2.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-            _transactionscope2.Dispose();
-            _transactionscope2 = null;
+            #region 修改資料,移除使用TransactionScope
+            //TransactionScope _transactionscope = new TransactionScope();
+            //using (_transactionscope)
+            //{
+            //    try
+            //    {
+            //        if (!(dresult = DBProxy.Current.Execute(null, updsql)))
+            //        {
+            //            _transactionscope.Dispose();
+            //            ShowErr(updsql, dresult);
+            //            return;
+            //        }
+            //        _transactionscope.Complete();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _transactionscope.Dispose();
+            //        ShowErr("Commit transaction error.", ex);
+            //        return;
+            //    }
+            //}
+            //_transactionscope.Dispose();
+            //_transactionscope = null;
+            #endregion
             #endregion
 
             DBProxy.Current.DefaultTimeout = 0;
