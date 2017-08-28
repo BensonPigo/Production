@@ -568,14 +568,24 @@ WHERE   StockType='{0}'
             {
                 if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"
+                    string strCheckOrders = string.Format(@"
+select  o.id
+from Orders o
+inner join dbo.Factory f on o.FactoryID = f.ID
+where   o.id = '{0}'
+        and f.MDivisionID = '{1}' 
+", e.FormattedValue, Sci.Env.User.Keyword);
+
+                    string strCheckInventory = string.Format(@"
 select  c.POID 
 from Inventory c WITH (NOLOCK) 
-inner join dbo.Orders on c.POID = orders.id
-inner join dbo.Factory on orders.FactoryID = factory.ID
+inner join dbo.Orders o on c.POID = o.id
+inner join dbo.Factory f on o.FactoryID = f.ID
 where   c.POID = '{0}'
-        and factory.MDivisionID = '{1}' 
-", e.FormattedValue, Sci.Env.User.Keyword)))
+        and f.MDivisionID = '{1}' 
+", e.FormattedValue, Sci.Env.User.Keyword);
+
+                    if (!MyUtility.Check.Seek(strCheckOrders) && !MyUtility.Check.Seek(strCheckInventory))
                     {
                         this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
                         MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
