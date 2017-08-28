@@ -427,7 +427,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
-
+            objSheets.get_Range("C1:C1").ColumnWidth = 50;
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R11");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
