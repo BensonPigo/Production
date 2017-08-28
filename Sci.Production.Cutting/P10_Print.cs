@@ -436,7 +436,7 @@ order by x.[Bundle]");
             objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
             objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
             objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             objSheets.get_Range("D1:D1").ColumnWidth = 11;
             objSheets.get_Range("E1:E1").Columns.AutoFit();
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
@@ -444,8 +444,16 @@ order by x.[Bundle]");
 
 
             objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count+5)].Borders.Weight = 2;//設定全框線
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+            #region Save & Shwo Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P10");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
 
