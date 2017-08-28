@@ -119,20 +119,14 @@ where ed.ID = '{0}'", masterID);
             {
                 if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) < Convert.ToDateTime(CurrentMaintain["Eta"]))
                 {
-                    DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    //if (buttonResult == System.Windows.Forms.DialogResult.No)
-                    //{
+                    MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?");
+                    
                     return false;
-                    //}
                 }
 
                 if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10))
                 {
-                    DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > later than < ETA > + 10 days. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    //if (buttonResult == System.Windows.Forms.DialogResult.No)
-                    //{
-                    return false;
-                    //}
+                    MyUtility.Msg.WarningBox("<Arrive Prot DAte> later than <ETA> +10 days. Cannot be saved.");
                 }
             }
 
