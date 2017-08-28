@@ -126,17 +126,17 @@ namespace Sci.Production.Shipping
             bool result;
             if ((type == "Import" || type == "") && printImport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printImport, "", xltfile: "Shipping_R41_Import.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             if ((type == "Export" || type == "") && printExport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printExport, "", xltfile: "Shipping_R41_Export.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             if ((type == "Adjust" || type == "") && printAdjust.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printAdjust, "", xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             this.HideWaitMessage();
