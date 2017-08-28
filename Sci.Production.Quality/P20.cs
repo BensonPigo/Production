@@ -389,6 +389,13 @@ namespace Sci.Production.Quality
                 return false;
             }
             DataTable detaildt = (DataTable)detailgridbs.DataSource;
+            for (int i = detaildt.Rows.Count - 1; i >=0; i--)
+            {
+                if (MyUtility.Convert.GetDecimal(detaildt.Rows[i]["Qty"]) == 0)
+                {
+                    detaildt.Rows[i].Delete();
+                }
+            }
             DataTable afterDT = new DataTable();
             //將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷! 
             afterDT.Merge(detaildt, true);
