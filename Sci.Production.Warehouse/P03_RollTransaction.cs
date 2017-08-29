@@ -403,34 +403,45 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             pars.Add(new SqlParameter("@seq2", seq2));
             DualResult result;
             DataTable dtt, dt;
-            string sqlcmd = string.Format(@"select a.id [SP]
-                      ,a.SEQ1+'-'+a.SEQ2 [SEQ]
-                      ,a.Refno [Ref]
-                      ,a.ColorID [Color]
-                      ,b.InQty [Arrived_Qty_by_Seq]
-                      ,b.OutQty [Released_Qty_by_Seq]
-                      ,b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
-                      ,[Description]=dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) 
-                   from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-		           inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-                   where a.id=@ID and a.seq1=@seq1 and a.seq2=@seq2");
+            string sqlcmd = string.Format(@"
+select  a.id [SP]
+        , a.SEQ1+'-'+a.SEQ2 [SEQ]
+        , a.Refno [Ref]
+        , a.ColorID [Color]
+        , b.InQty [Arrived_Qty_by_Seq]
+        , b.OutQty [Released_Qty_by_Seq]
+        , b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
+        , [Description] = dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) 
+from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id = b.POID 
+                                                    and a.SEQ1 = b.Seq1 
+                                                    and a.SEQ2=b.Seq2
+where   a.id = @ID 
+        and a.seq1 = @seq1 
+        and a.seq2=@seq2");
             result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
             if (!result)
             {
                 ShowErr(result);
                 return;
             }
-            DBProxy.Current.Select("",
-             @"                                   select c.Roll[Roll]
-                                                  ,c.Dyelot [Dyelot]
-                                                  ,Case c.StockType when 'B' THEN 'Bulk' WHEN 'I' THEN 'Inventory' ELSE 'Scrap' END as [Stock_Type]
-                                                  ,c.InQty [Arrived_Qty]
-                                                  ,c.OutQty [Released_Qty]
-                                                  ,c.AdjustQty [Adjust_Qty]
-                                                  ,c.InQty-c.OutQty+c.AdjustQty [Balance]
-                                                  ,[Location]=dbo.Getlocation(c.Ukey)
-                                           from dbo.FtyInventory c WITH (NOLOCK) 
-                                           where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2", pars, out dtt);
+            DBProxy.Current.Select("", @"
+select  c.Roll[Roll]
+        , c.Dyelot [Dyelot]
+        , [Stock_Type] = Case c.StockType 
+                            when 'B' THEN 'Bulk' 
+                            WHEN 'I' THEN 'Inventory' 
+                            ELSE 'Scrap' 
+                         END
+        , c.InQty [Arrived_Qty]
+        , c.OutQty [Released_Qty]
+        , c.AdjustQty [Adjust_Qty]
+        , c.InQty-c.OutQty+c.AdjustQty [Balance]
+        , [Location]=dbo.Getlocation(c.Ukey)
+from dbo.FtyInventory c WITH (NOLOCK) 
+where   c.poid = @ID 
+        and c.seq1 = @seq1 
+        and c.seq2 = @seq2", pars, out dtt);
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -454,4 +465,3 @@ where id = '{0}'", Sci.Env.User.Keyword));
         }
     }
 }
-

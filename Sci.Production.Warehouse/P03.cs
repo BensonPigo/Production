@@ -277,8 +277,9 @@ namespace Sci.Production.Warehouse
             ;
             #endregion
 
-            gridMaterialStatus.Columns["fabrictype2"].Frozen = true;  //Fabric Type
-            gridMaterialStatus.Columns["id"].Width = 40;
+            this.gridMaterialStatus.ColumnFrozen(gridMaterialStatus.Columns["fabrictype2"].Index); 
+            gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["seq1"].Width = 40;
         }
 
