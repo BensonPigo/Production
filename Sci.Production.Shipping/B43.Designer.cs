@@ -299,7 +299,7 @@
             this.btnAddNewNLCode.Name = "btnAddNewNLCode";
             this.btnAddNewNLCode.Size = new System.Drawing.Size(151, 30);
             this.btnAddNewNLCode.TabIndex = 14;
-            this.btnAddNewNLCode.Text = "Add New NL Code";
+            this.btnAddNewNLCode.Text = "Add New Customs Code";
             this.btnAddNewNLCode.UseVisualStyleBackColor = true;
             this.btnAddNewNLCode.Click += new System.EventHandler(this.btnAddNewNLCode_Click);
             // 

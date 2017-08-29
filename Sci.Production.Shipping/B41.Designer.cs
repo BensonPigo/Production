@@ -168,7 +168,7 @@
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(90, 23);
             this.labelNLCode.TabIndex = 6;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelHSCode
             // 
@@ -434,7 +434,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B41";
-            this.Text = "B41. NL Code - Local Purchase Item";
+            this.Text = "B41. Customs Code - Local Purchase Item";
             this.UniqueExpress = "RefNo";
             this.WorkAlias = "LocalItem";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

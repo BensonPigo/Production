@@ -134,6 +134,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
         //Import From Barcode
         private void btnImportFromBarcode_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading...");
             //設定只能選txt檔
             openFileDialog1.Filter = "txt files (*.txt)|*.txt";
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
@@ -172,12 +173,14 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                         else
                         {
                             DataRow dr = selectDataTable.NewRow();
-                            dr["ID"] = "";
-                            dr["selected"] = 1;                          
-                            dr["PackingListID"] = sl[1].Substring(0, 13);
-                            dr["CTNStartNo"] = sl[1].Substring(13,sl[1].Length-13);                           
-                           
-                            string sqlCmd = string.Format(@"
+                            if (sl[1].Length >= 13)
+                            {
+                                dr["ID"] = "";
+                                dr["selected"] = 1;
+                                dr["PackingListID"] = sl[1].Substring(0, 13);
+                                dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13);
+
+                                string sqlCmd = string.Format(@"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
         , o.MDivisionID
@@ -188,24 +191,24 @@ where   pd.ID = '{0}'
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
 ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
-                            if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                            {
-                                #region checkM & checkTransfer
-                                if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
-                                    loginMErr.Rows.Add(dr.ItemArray);
-                                    continue;
-                                }
-                                if (!seekData["TransferDate"].ToString().Empty())
-                                {
-                                    transferErr.Rows.Add(dr.ItemArray);
-                                    continue;
-                                }
-                                #endregion 
-                              
-                                dr["OrderID"] = seekData["OrderID"].ToString().Trim();
-                                string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                sqlCmd = string.Format(@"
+                                    #region checkM & checkTransfer
+                                    if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                    {
+                                        loginMErr.Rows.Add(dr.ItemArray);
+                                        continue;
+                                    }
+                                    if (!seekData["TransferDate"].ToString().Empty())
+                                    {
+                                        transferErr.Rows.Add(dr.ItemArray);
+                                        continue;
+                                    }
+                                    #endregion
+
+                                    dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                    string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                    sqlCmd = string.Format(@"
 select  a.StyleID
         , a.SeasonID
         , a.BrandID
@@ -217,18 +220,23 @@ from Orders a WITH (NOLOCK)
 left join Country b WITH (NOLOCK) on b.ID = a.Dest
 left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{1}'
 where   a.ID = '{0}'", dr["OrderID"].ToString(), seq);
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                                {
-                                    dr["StyleID"] = seekData["StyleID"].ToString().Trim();
-                                    dr["SeasonID"] = seekData["SeasonID"].ToString().Trim();
-                                    dr["BrandID"] = seekData["BrandID"].ToString().Trim();
-                                    dr["Customize1"] = seekData["Customize1"].ToString().Trim();
-                                    dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
-                                    dr["Alias"] = seekData["Alias"].ToString().Trim();
-                                    dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["StyleID"] = seekData["StyleID"].ToString().Trim();
+                                        dr["SeasonID"] = seekData["SeasonID"].ToString().Trim();
+                                        dr["BrandID"] = seekData["BrandID"].ToString().Trim();
+                                        dr["Customize1"] = seekData["Customize1"].ToString().Trim();
+                                        dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
+                                        dr["Alias"] = seekData["Alias"].ToString().Trim();
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
 
-                                    selectDataTable.Rows.Add(dr);
-                                    insertCount++;
+                                        selectDataTable.Rows.Add(dr);
+                                        insertCount++;
+                                    }
+                                    else
+                                    {
+                                        notFoundErr.Rows.Add(dr.ItemArray);
+                                    }
                                 }
                                 else
                                 {
@@ -241,6 +249,9 @@ where   a.ID = '{0}'", dr["OrderID"].ToString(), seq);
                             }
                         }
                     }
+
+                    this.HideWaitMessage();
+
                     if (insertCount == 0)
                     {
                         MyUtility.Msg.WarningBox("All data were not found or order's M is not equal to login M or transferred.");

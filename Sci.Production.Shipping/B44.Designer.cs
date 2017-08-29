@@ -93,7 +93,7 @@
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(91, 23);
             this.labelNLCode.TabIndex = 2;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelEnglishDesc
             // 
@@ -174,7 +174,7 @@
             this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "NLCode";
             this.Name = "B44";
-            this.Text = "B44. NL Code Description";
+            this.Text = "B44. Customs Code Description";
             this.UniqueExpress = "NLCode";
             this.WorkAlias = "VNNLCodeDesc";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

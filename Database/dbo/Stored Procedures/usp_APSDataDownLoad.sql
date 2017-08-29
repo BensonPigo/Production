@@ -708,14 +708,14 @@ BEGIN
 	BEGIN
 		Begin Try
 			Begin Transaction
-			IF @orderinline <> @sewinginline or @orderoffline <> @sewingoffline or @ordersewline <> @sewline
+			IF @orderinline <> @sewinginline or @orderoffline <> @sewingoffline or @ordersewline <> @sewline or @orderinline is null or @orderoffline is null or @ordersewline is null
 				update Orders set SewInLine = @sewinginline, SewOffLine = @sewingoffline, SewLine = isnull(@sewline,'') where ID = @orderid
 
-			IF @orderinline <> @sewinginline
+			IF @orderinline <> @sewinginline or @orderinline is null
 				insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 				values (@orderid,'SewInOffLine',IIF(@orderinline is null,'',CONVERT(char(8), @orderinline, 112)),IIF(@sewinginline is null,'',CONVERT(char(8), @sewinginline, 112)),'Sewing Inline Update',@login,GETDATE())
 			
-			IF @orderoffline <> @sewingoffline
+			IF @orderoffline <> @sewingoffline or @orderoffline is null
 				insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 				values (@orderid,'SewInOffLine',IIF(@orderoffline is null,'',CONVERT(char(8), @orderoffline, 112)),IIF(@sewingoffline is null,'',CONVERT(char(8), @sewingoffline, 112)),'Sewing Offline Update',@login,GETDATE())
 

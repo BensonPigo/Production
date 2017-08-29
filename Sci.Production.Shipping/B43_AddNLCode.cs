@@ -47,7 +47,7 @@ namespace Sci.Production.Shipping
             this.gridAddNewNLCode.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(gridAddNewNLCode)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10))
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7))
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7))
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), settings: unit)
                 .Numeric("Waste", header: "Waste", decimal_places: 3)
@@ -170,18 +170,18 @@ MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["LocalP
 MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0", Sci.Env.User.UserID));
                 if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {
-                    dupNLCode.Append(string.Format("NL Code: {0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));
+                    dupNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));
                 }
                 if (MyUtility.Convert.GetString(dr["WrongUnit"]) == "1")
                 {
-                    wrongUnit.Append(string.Format("NL Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
+                    wrongUnit.Append(string.Format("Customs Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
                 }
             }
 
             if (!MyUtility.Check.Empty(dupNLCode.ToString()) || !MyUtility.Check.Empty(wrongUnit.ToString()))
             {
                 MyUtility.Msg.WarningBox(string.Format("{0}{1}",
-                    !MyUtility.Check.Empty(dupNLCode.ToString()) ? "Below 'NL Code' already exist, please delete below 'NL Code' then save again.\r\n" + dupNLCode.ToString()+"\r\n\r\n" : "",
+                    !MyUtility.Check.Empty(dupNLCode.ToString()) ? "Below 'Customs Code' already exist, please delete below 'Customs Code' then save again.\r\n" + dupNLCode.ToString() + "\r\n\r\n" : "",
                     !MyUtility.Check.Empty(wrongUnit.ToString()) ? "Below data is 'Unit' not correct.\r\n" + wrongUnit.ToString() : ""));
                 return;
             }

@@ -52,44 +52,40 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(19, 12);
             this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(80, 23);
+            this.labelDate.Size = new System.Drawing.Size(101, 23);
             this.labelDate.TabIndex = 94;
             this.labelDate.Text = "Date";
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Lines = 0;
             this.labelNLCode.Location = new System.Drawing.Point(19, 48);
             this.labelNLCode.Name = "labelNLCode";
-            this.labelNLCode.Size = new System.Drawing.Size(80, 23);
+            this.labelNLCode.Size = new System.Drawing.Size(101, 23);
             this.labelNLCode.TabIndex = 95;
-            this.labelNLCode.Text = "NL Code";
+            this.labelNLCode.Text = "Customs Code";
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(19, 84);
             this.labelType.Name = "labelType";
-            this.labelType.Size = new System.Drawing.Size(80, 23);
+            this.labelType.Size = new System.Drawing.Size(101, 23);
             this.labelType.TabIndex = 96;
             this.labelType.Text = "Type";
             // 
             // labelContractNo
             // 
-            this.labelContractNo.Lines = 0;
             this.labelContractNo.Location = new System.Drawing.Point(19, 120);
             this.labelContractNo.Name = "labelContractNo";
-            this.labelContractNo.Size = new System.Drawing.Size(80, 23);
+            this.labelContractNo.Size = new System.Drawing.Size(101, 23);
             this.labelContractNo.TabIndex = 97;
             this.labelContractNo.Text = "Contract no.";
             // 
             // dateDate
             // 
             this.dateDate.IsRequired = false;
-            this.dateDate.Location = new System.Drawing.Point(103, 12);
+            this.dateDate.Location = new System.Drawing.Point(123, 12);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(226, 23);
             this.dateDate.TabIndex = 98;
@@ -98,7 +94,7 @@
             // 
             this.txtNLCode.BackColor = System.Drawing.Color.White;
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(103, 48);
+            this.txtNLCode.Location = new System.Drawing.Point(123, 48);
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(70, 23);
             this.txtNLCode.TabIndex = 99;
@@ -107,7 +103,7 @@
             // 
             this.txtContractNo.BackColor = System.Drawing.Color.White;
             this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtContractNo.Location = new System.Drawing.Point(103, 120);
+            this.txtContractNo.Location = new System.Drawing.Point(123, 120);
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
             this.txtContractNo.TabIndex = 100;
@@ -119,7 +115,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(103, 83);
+            this.comboType.Location = new System.Drawing.Point(123, 83);
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(100, 24);
             this.comboType.TabIndex = 101;
@@ -137,7 +133,7 @@
             this.Controls.Add(this.labelDate);
             this.IsSupportToPrint = false;
             this.Name = "R41";
-            this.Text = "R41. NL Code Import/Export/Adjust detail list";
+            this.Text = "R41. Customs Code Import/Export/Adjust detail list";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

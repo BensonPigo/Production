@@ -84,7 +84,7 @@ order by CONVERT (int, SUBSTRING (vd.NLCode, 3, 3))", contraceNo, masterID);
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(dr["UserCreate"]).ToUpper() == "TRUE")
                     {
-                        MyUtility.Msg.InfoBox("This NL Code is not create by the system, so no more detail can be show.");
+                        MyUtility.Msg.InfoBox("This Customs Code is not create by the system, so no more detail can be show.");
                     }
                     else
                     {
@@ -128,7 +128,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
 
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: Nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty)
@@ -858,7 +858,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                         (MyUtility.Convert.GetString(dr["Type"]) != "F" && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && MyUtility.Check.Empty(dr["UnitRate"])) ||
                         (MyUtility.Convert.GetString(dr["Type"]) != "F" && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"])))
                     {
-                        wrongUnit.Append(string.Format("NL Code:{0}  RefNo:{1}   Unit:{2} transfer to Unit:{3}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["UsageUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
+                        wrongUnit.Append(string.Format("Customs Code:{0}  RefNo:{1}   Unit:{2} transfer to Unit:{3}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["UsageUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     }
                 }
             }
@@ -932,7 +932,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             #region 組要顯示的訊息
             if (!MyUtility.Check.Empty(emptyNLCode.ToString()))
             {
-                allMessage.Append(string.Format("Below data is no NL Code in B40, B41:\r\n{0}\r\n", emptyNLCode.ToString()));
+                allMessage.Append(string.Format("Below data is no Customs Code in B40, B41:\r\n{0}\r\n", emptyNLCode.ToString()));
             }
             if (!MyUtility.Check.Empty(wrongUnit.ToString()))
             {
@@ -971,7 +971,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtili
                 {
                     lackNLCode.Append(MyUtility.Convert.GetString(dr["NLCode"]) + ",");
                 }
-                MyUtility.Msg.WarningBox(string.Format("Lacking regular NL code: {0}. Please double check.", lackNLCode.ToString(0, lackNLCode.ToString().Length - 1)));
+                MyUtility.Msg.WarningBox(string.Format("Lacking regular Customs Code: {0}. Please double check.", lackNLCode.ToString(0, lackNLCode.ToString().Length - 1)));
             }
 
             string updateCmds = string.Format("update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",

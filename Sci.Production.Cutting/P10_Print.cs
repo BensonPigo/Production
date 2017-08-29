@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.IO;
 
 
 namespace Sci.Production.Cutting
@@ -422,11 +423,11 @@ order by x.[Bundle]");
             SetCount(dtt.Rows.Count);
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1,1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'",CurrentDataRow["ID"].ToString().Substring(0,3)));
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", CurrentDataRow["ID"].ToString().Substring(0, 3)));
             objSheets.Cells[3, 1] = "To Line: " + CurrentDataRow["sewinglineid"].ToString();
             objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
             objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
-            objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString()=="" ? ""
+            objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
                 : MyUtility.GetValue.Lookup(string.Format(@"select MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
             objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
             objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
@@ -436,7 +437,7 @@ order by x.[Bundle]");
             objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
             objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
             objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             objSheets.get_Range("D1:D1").ColumnWidth = 11;
             objSheets.get_Range("E1:E1").Columns.AutoFit();
             objSheets.get_Range("G1:H1").ColumnWidth = 9;
@@ -444,14 +445,21 @@ order by x.[Bundle]");
 
 
             objSheets.Range[String.Format("A6:L{0}", dtt.Rows.Count+5)].Borders.Weight = 2;//設定全框線
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+            #region Save & Shwo Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_P10");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion 
             return true;
         }
 
         protected override bool OnToPrint(ReportDefinition report)
         {
-            
             if (radioBundleCard.Checked)
             {
                 #region Bundle Card
@@ -462,6 +470,7 @@ order by x.[Bundle]");
                 }
                 // 顯示筆數於PrintForm上Count欄位
                 SetCount(dt.Rows.Count);
+
 
                 DataTable dt1, dt2, dt3;
                 //int count =dt.Rows.Count;
@@ -589,7 +598,7 @@ order by x.[Bundle]");
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P10.xltx"); //預先開啟excel app
                 pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
-                if (MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 6, false, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, false, null, objApp, false))
                 {
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
@@ -607,7 +616,6 @@ order by x.[Bundle]");
                     objSheets.Cells[4, 7] = "Cutting#: " + CurrentDataRow["cutno"].ToString();
                     objSheets.Cells[4, 9] = "MasterSP#: " + CurrentDataRow["POID"].ToString();
                     objSheets.Cells[4, 11] = "DATE: " + DateTime.Today.ToShortDateString();
-                    MyUtility.Excel.CopyToXls(dtt, "", "Cutting_P10.xltx", 5, true, null, objApp);      // 將datatable copy to excel
                     objSheets.get_Range("D1:D1").ColumnWidth = 11;
                     objSheets.get_Range("E1:E1").Columns.AutoFit();
                     objSheets.get_Range("G1:H1").ColumnWidth = 9;
@@ -618,7 +626,14 @@ order by x.[Bundle]");
                     //Random Excle名稱
                     Random random = new Random();
                     pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_BundleChecklist - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                    pathName = Path.GetFullPath(pathName);
                     objBook.SaveAs(pathName);
+                    PrintDialog pd = new PrintDialog();
+                    if (pd.ShowDialog() == DialogResult.OK)
+                    {
+                        string printer = pd.PrinterSettings.PrinterName;
+                        objBook.PrintOutEx(ActivePrinter: printer);
+                    }
                     objBook.Close();
                     objApp.Workbooks.Close();
                     objApp.Quit();
@@ -628,27 +643,26 @@ order by x.[Bundle]");
                     if (objBook != null) Marshal.FinalReleaseComObject(objBook);
                     objApp = null;
                 }
-
-                PrintExcel(pathName);
+                System.IO.File.Delete(pathName);
+                //刪除存檔
                 #endregion
             }
-            return true;            
-        }
-
-        public bool PrintExcel(string filePath)
-        {
-            // 1. 判斷檔案是否存在
-            if (!System.IO.File.Exists(filePath)) return false;
-            PrintDocument printDoc = new PrintDocument();
-            PrintDialog pd = new PrintDialog();
-            printDoc.DocumentName = filePath;
-            pd.Document = printDoc;
-            if (pd.ShowDialog() == DialogResult.OK)
-                printDoc.Print();
-            //刪除存檔
-            System.IO.File.Delete(filePath);
             return true;
         }
+
+        //public bool PrintExcel(string filePath)
+        //{
+        //    // 1. 判斷檔案是否存在
+        //    //if (!System.IO.File.Exists(filePath)) return false;
+        //    PrintDocument printDoc = new PrintDocument();
+        //    PrintDialog pd = new PrintDialog();
+        //    printDoc.DocumentName = filePath;
+        //    pd.Document = printDoc;
+        //    if (pd.ShowDialog() == DialogResult.OK)
+        //        printDoc.Print();
+        //    //System.IO.File.Delete(filePath);
+        //    return true;
+        //}
 
         private void radioPanel1_Paint(object sender, PaintEventArgs e)
         {

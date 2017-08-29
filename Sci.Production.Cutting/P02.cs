@@ -1593,6 +1593,7 @@ where w.ID = '{0}'", masterID);
                   From workorder WITH (NOLOCK) 
                   Where (CutNo is not null ) and (cutref is null or cutref ='') 
                     and (estcutdate is not null and estcutdate !='' )
+                    and (CutCellid is not null and CutCellid !='' )
                     and id = '{0}' and mDivisionid = '{1}'
                 order by FabricCombo,cutno", CurrentMaintain["ID"], keyWord);//找出空的cutref
             cutrefresult = DBProxy.Current.Select(null, cmdsql, out workordertmp);

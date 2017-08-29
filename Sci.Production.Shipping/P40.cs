@@ -127,7 +127,7 @@ namespace Sci.Production.Shipping
                                 dr["Qty"] = 0;
                                 dr["UnitID"] = "";
                                 e.Cancel = true;
-                                MyUtility.Msg.WarningBox("NL Code not found!!");
+                                MyUtility.Msg.WarningBox("Customs Code not found!!");
                                 return;
                             }
                             else
@@ -165,7 +165,7 @@ namespace Sci.Production.Shipping
                 base.OnDetailGridSetup();
                 Helper.Controls.Grid.Generator(this.detailgrid)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
+                    .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
                     .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
                     .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
@@ -904,7 +904,7 @@ order by CONVERT(int,SUBSTRING(NLCode,3,3))", out GroupNoInPOData);
                 StringBuilder wrongData = new StringBuilder();
                 if (NoNLCode.Rows.Count > 0)
                 {
-                    wrongData.Append("Below data is no NL Code in B40, B41:\r\n");
+                    wrongData.Append("Below data is no Customs Code in B40, B41:\r\n");
                     foreach (DataRow dr in NoNLCode.Rows)
                     {
                         wrongData.Append(string.Format("RefNo: {0}, Brand: {1}\r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["BrandID"])));

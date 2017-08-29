@@ -261,13 +261,14 @@ namespace Sci.Production.PPIC
                     }
                     else
                     {
-                        if (MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where ID = '{0}'", txtBrand.Text)))
-                        {
-                            CurrentMaintain["BrandID"] = "";
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", txtBrand.Text));
-                            return;
-                        }
+                        //舊系統任意輸入都可以，感覺沒有檢核才對，先註解
+                        //if (MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where ID = '{0}'", txtBrand.Text)))
+                        //{
+                        //    CurrentMaintain["BrandID"] = "";
+                        //    e.Cancel = true;
+                        //    MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", txtBrand.Text));
+                        //    return;
+                        //}
                     }
                 }
             }
