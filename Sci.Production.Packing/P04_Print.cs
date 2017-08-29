@@ -64,7 +64,7 @@ namespace Sci.Production.Packing
                 destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
                 string sqlCmd = string.Format(@"select pd.OrderID,o.StyleID,o.Customize1,o.CustPONo,pd.CTNStartNo,pd.CTNEndNo,pd.CTNQty,pd.Article,
 pd.Color,pd.SizeCode,pd.ShipQty,pd.NW,pd.GW,pd.NNW,pd.NWPerPcs,pd.NW*pd.CTNQty as TtlNW,
-pd.GW*pd.CTNQty as TtlGW,pd.NNW*pd.CTNQty as TtlNNW
+pd.GW*pd.CTNQty as TtlGW,pd.NNW*pd.CTNQty as TtlNNW,o.FactoryID
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 where pd.ID = '{0}'
@@ -174,8 +174,9 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 worksheet.Cells[3, 1] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(masterData["INVNo"]);
-                worksheet.Cells[3, 6] = MyUtility.Convert.GetString(masterData["ShipModeID"]);
+                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(masterData["FactoryID"]);
+                worksheet.Cells[3, 4] = MyUtility.Convert.GetString(masterData["INVNo"]);
+                worksheet.Cells[3, 5] = MyUtility.Convert.GetString(masterData["ShipModeID"]);
                 worksheet.Cells[3, 9] = MyUtility.Convert.GetString(masterData["ShipQty"]);
                 worksheet.Cells[3, 11] = MyUtility.Convert.GetInt(masterData["CTNQty"]);
                 worksheet.Cells[3, 12] = MyUtility.Convert.GetString(masterData["CBM"]);
