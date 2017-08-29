@@ -2206,11 +2206,11 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Patterncode.Value</Value>
+                                      <Value>=Fields!Patterncode2.Value</Value>
                                       <Style />
                                     </TextRun>
                                     <TextRun>
-                                      <Value>=Fields!Desc.Value</Value>
+                                      <Value>=Fields!Desc2.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -3281,11 +3281,11 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!Patterncode.Value</Value>
+                                      <Value>=Fields!Patterncode3.Value</Value>
                                       <Style />
                                     </TextRun>
                                     <TextRun>
-                                      <Value>=Fields!Desc.Value</Value>
+                                      <Value>=Fields!Desc3.Value</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
