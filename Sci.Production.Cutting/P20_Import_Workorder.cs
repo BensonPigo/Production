@@ -82,10 +82,13 @@ namespace Sci.Production.Cutting
                 return;
             }
             gridTable.Clear();
+            StringBuilder strSQLCmd = new StringBuilder();
             string estcutdate = dateEstCutDate.Text;
+            string cutRef = this.txtCutRef.Text;
+            string SPNo = this.txtSP.Text;
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
-            if (MyUtility.Check.Empty(condition)) condition = @"''";
-            string sqlcmd = string.Format(
+            if (MyUtility.Check.Empty(condition)) condition = @"''";            
+            strSQLCmd.Append(string.Format(
                 @"Select 0 as sel,a.*, a.id as Cuttingid,a.ukey as workorderukey,    
                 (
                 Select orderid+'/' 
@@ -101,9 +104,19 @@ namespace Sci.Production.Cutting
                 ) as SizeRatio from WorkOrder a WITH (NOLOCK) where mDivisionid = '{0}' and a.estcutdate = '{1}'
                 and a.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail WITH (NOLOCK)) 
                 and CutRef != ''
-                and CutRef not in ( {2} )
-                order by cutref", keyWord, estcutdate, condition);
-            DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
+                and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
+            if (!MyUtility.Check.Empty(cutRef))
+            {
+                strSQLCmd.Append(string.Format(@" 
+                and a.CutRef = '{0}'", cutRef));
+            }
+            if (!MyUtility.Check.Empty(SPNo))
+            {
+                strSQLCmd.Append(string.Format(@"
+                and a.orderID='{0}'",SPNo));
+            }
+            strSQLCmd.Append(@" order by cutref");
+            DualResult dResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out detailTable);
             if (dResult)
             {
                 gridTable = detailTable.Copy();
@@ -111,7 +124,7 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                ShowErr(sqlcmd, dResult);
+                ShowErr(strSQLCmd.ToString(), dResult);
                 return;
             }
         }
