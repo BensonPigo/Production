@@ -2019,10 +2019,10 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
-                              <Top>1.97468cm</Top>
-                              <Left>5.54438cm</Left>
+                              <Top>1.80482cm</Top>
+                              <Left>5.39cm</Left>
                               <Height>3.4576cm</Height>
-                              <Width>0.84625cm</Width>
+                              <Width>0.91773cm</Width>
                               <ZIndex>24</ZIndex>
                               <Style>
                                 <Border>
@@ -3055,10 +3055,10 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
-                              <Top>1.92958cm</Top>
-                              <Left>5.62302cm</Left>
+                              <Top>1.80482cm</Top>
+                              <Left>5.46cm</Left>
                               <Height>3.43215cm</Height>
-                              <Width>0.84625cm</Width>
+                              <Width>0.94637cm</Width>
                               <ZIndex>24</ZIndex>
                               <Style>
                                 <Border>
