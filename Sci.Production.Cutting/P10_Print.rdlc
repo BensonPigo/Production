@@ -678,7 +678,7 @@
                               <Top>1.74336cm</Top>
                               <Left>1.82515cm</Left>
                               <Height>0.52944cm</Height>
-                              <Width>4.37036cm</Width>
+                              <Width>3.63957cm</Width>
                               <ZIndex>14</ZIndex>
                               <Style>
                                 <Border>
@@ -888,7 +888,7 @@
                               <Top>2.30808cm</Top>
                               <Left>1.55cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>4.6455cm</Width>
+                              <Width>3.91472cm</Width>
                               <ZIndex>21</ZIndex>
                               <Style>
                                 <Border>
@@ -1158,7 +1158,7 @@
                                       <Value>="*" + Fields!Barcode.Value + "*"</Value>
                                       <Style>
                                         <FontFamily>C39HrP24DhTt</FontFamily>
-                                        <FontSize>20pt</FontSize>
+                                        <FontSize>22pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1168,10 +1168,10 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
-                              <Top>2.59857cm</Top>
+                              <Top>1.80482cm</Top>
                               <Left>5.5cm</Left>
-                              <Height>2.75333cm</Height>
-                              <Width>0.84625cm</Width>
+                              <Height>3.34748cm</Height>
+                              <Width>0.88833cm</Width>
                               <ZIndex>30</ZIndex>
                               <Style>
                                 <Border>
@@ -2009,7 +2009,7 @@
                                       <Value>="*" + Fields!Barcode2.Value + "*"</Value>
                                       <Style>
                                         <FontFamily>C39HrP24DhTt</FontFamily>
-                                        <FontSize>20pt</FontSize>
+                                        <FontSize>22pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -2019,9 +2019,9 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
-                              <Top>2.67895cm</Top>
+                              <Top>1.97468cm</Top>
                               <Left>5.54438cm</Left>
-                              <Height>2.75333cm</Height>
+                              <Height>3.4576cm</Height>
                               <Width>0.84625cm</Width>
                               <ZIndex>24</ZIndex>
                               <Style>
@@ -2053,7 +2053,7 @@
                               <Top>2.38846cm</Top>
                               <Left>1.59438cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>4.6455cm</Width>
+                              <Width>3.84417cm</Width>
                               <ZIndex>25</ZIndex>
                               <Style>
                                 <Border>
@@ -2113,7 +2113,7 @@
                               <Top>1.82374cm</Top>
                               <Left>1.86953cm</Left>
                               <Height>0.52944cm</Height>
-                              <Width>4.37036cm</Width>
+                              <Width>3.56902cm</Width>
                               <ZIndex>27</ZIndex>
                               <Style>
                                 <Border>
@@ -3045,7 +3045,7 @@
                                       <Value>="*" + Fields!Barcode3.Value + "*"</Value>
                                       <Style>
                                         <FontFamily>C39HrP24DhTt</FontFamily>
-                                        <FontSize>20pt</FontSize>
+                                        <FontSize>22pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -3055,9 +3055,9 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
-                              <Top>2.6084cm</Top>
+                              <Top>1.92958cm</Top>
                               <Left>5.62302cm</Left>
-                              <Height>2.75333cm</Height>
+                              <Height>3.43215cm</Height>
                               <Width>0.84625cm</Width>
                               <ZIndex>24</ZIndex>
                               <Style>
@@ -3089,7 +3089,7 @@
                               <Top>2.31791cm</Top>
                               <Left>1.67302cm</Left>
                               <Height>0.6cm</Height>
-                              <Width>4.6455cm</Width>
+                              <Width>3.77361cm</Width>
                               <ZIndex>25</ZIndex>
                               <Style>
                                 <Border>
@@ -3149,7 +3149,7 @@
                               <Top>1.75319cm</Top>
                               <Left>1.94817cm</Left>
                               <Height>0.52944cm</Height>
-                              <Width>4.37036cm</Width>
+                              <Width>3.49846cm</Width>
                               <ZIndex>27</ZIndex>
                               <Style>
                                 <Border>
