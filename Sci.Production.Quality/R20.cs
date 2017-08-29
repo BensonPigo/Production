@@ -207,8 +207,16 @@ WHERE 1=1 AND A.InspectQty<>0
                 sqlCmd.Append(@"
 group by  A.FACTORYID,A.SEWINGLINEID,A.CDATE
 
-Order by [Factory], [Line],[CDate]
+Order by [Factory], [Line],[CDate]'
 
+if @cols = '' or @cols is null
+	set @sql += '
+select *
+into #tmpnn
+from #tmpall as S
+'
+else 
+	set @sql += '
 select *
 into #tmpnn
 from #tmpall as S
@@ -216,11 +224,24 @@ pivot(
   AVG(RFT)
   for [CDate] in ('+@cols+')
 ) as X
+'
 
-select  [Factory], [Line],'+@cols2+'
+if @cols2 = '' or @cols2 is null
+	set @sql += '
+select  [Factory]
+		, [Line]
 from #tmpnn
+'
+else
+	set @sql += '
+select	[Factory]
+		, [Line]
+		,'+@cols2+'
+from #tmpnn
+'
 
-drop table #tmpall,#tmpnn'
+set @sql += 'drop table #tmpall,#tmpnn'
+
 EXEC sp_executesql @sql
 ");
             }
