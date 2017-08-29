@@ -553,7 +553,26 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                 }
             }
 
-            callP03 = new P03(CurrentMaintain["ID"].ToString());            
+            ToolStripMenuItem P03MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
+                            {
+                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            callP03 = new P03(CurrentMaintain["ID"].ToString(), P03MenuItem);            
             callP03.MdiParent = MdiParent;                      
             callP03.Show();
             callP03.Query();

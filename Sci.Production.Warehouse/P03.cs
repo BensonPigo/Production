@@ -28,16 +28,6 @@ namespace Sci.Production.Warehouse
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form is Sci.Production.Warehouse.P03)
-                {
-                    form.Activate();
-                    this.Shown += (s, e) => { this.Close(); };
-                    break;
-                }
-            }
-
             InitializeComponent();
             this.EditMode = true;
 
@@ -61,7 +51,8 @@ namespace Sci.Production.Warehouse
         }
 
         //Form to Form W/H.P01
-        public P03(string P01SPNo)
+        public P03(string P01SPNo, ToolStripMenuItem menuitem)
+            : base(menuitem)
         {            
             InitializeComponent();
             this.EditMode = true;
