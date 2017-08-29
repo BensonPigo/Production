@@ -89,13 +89,13 @@ namespace Sci.Production.Cutting
 	        from WorkOrder a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) 
 	        Where a.id = '{0}' 
 	        and a.ukey = b.WorkOrderUkey
-	        and a.Ukey = c.WorkOrderUkey 
+	        and a.Ukey = c.WorkOrderUkey and a.FabricPanelCode=c.FabricPanelCode
 	        group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
         )
         , c as(
 	        Select a.* ,b.cutqty, b.cutqty - a.qty as Variance 
 	        from a 
-	        left join b on a.id = b.orderid 
+	        inner join b on a.id = b.orderid 
 	        and a.Article = b.Article 
 	        and a.PatternPanel = b.PatternPanel 
 	        and a.SizeCode = b.SizeCode
