@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtCell = new Sci.Production.Class.txtCell();
+            this.txtLine = new Sci.Production.Class.txtsewingline();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.txtDefectCode = new Sci.Win.UI.TextBox();
             this.radioSummybyDateandStyle = new Sci.Win.UI.RadioButton();
@@ -49,9 +52,6 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelPeriod = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtLine = new Sci.Production.Class.txtsewingline();
-            this.txtCell = new Sci.Production.Class.txtCell();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,6 +96,35 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(391, 407);
             this.panel1.TabIndex = 94;
+            // 
+            // txtCell
+            // 
+            this.txtCell.BackColor = System.Drawing.Color.White;
+            this.txtCell.FactoryId = "";
+            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell.Location = new System.Drawing.Point(100, 123);
+            this.txtCell.Name = "txtCell";
+            this.txtCell.Size = new System.Drawing.Size(30, 23);
+            this.txtCell.TabIndex = 24;
+            // 
+            // txtLine
+            // 
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.factoryobjectName = this.ComboFactory;
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(100, 94);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(60, 23);
+            this.txtLine.TabIndex = 23;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(100, 65);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(66, 23);
+            this.txtBrand.TabIndex = 22;
             // 
             // txtDefectType
             // 
@@ -215,6 +244,7 @@
             this.ComboFactory.Name = "ComboFactory";
             this.ComboFactory.Size = new System.Drawing.Size(121, 24);
             this.ComboFactory.TabIndex = 9;
+            this.ComboFactory.TextChanged += new System.EventHandler(this.ComboFactory_TextChanged);
             // 
             // datePeriod
             // 
@@ -295,35 +325,6 @@
             this.label9.Size = new System.Drawing.Size(97, 22);
             this.label9.TabIndex = 97;
             this.label9.Text = "Paper Size A4";
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(100, 65);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(66, 23);
-            this.txtBrand.TabIndex = 22;
-            // 
-            // txtLine
-            // 
-            this.txtLine.BackColor = System.Drawing.Color.White;
-            this.txtLine.factoryobjectName = null;
-            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(100, 94);
-            this.txtLine.Name = "txtLine";
-            this.txtLine.Size = new System.Drawing.Size(60, 23);
-            this.txtLine.TabIndex = 23;
-            // 
-            // txtCell
-            // 
-            this.txtCell.BackColor = System.Drawing.Color.White;
-            this.txtCell.FactoryId = "";
-            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(100, 123);
-            this.txtCell.Name = "txtCell";
-            this.txtCell.Size = new System.Drawing.Size(30, 23);
-            this.txtCell.TabIndex = 24;
             // 
             // R20
             // 

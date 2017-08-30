@@ -24,7 +24,7 @@ namespace Sci.Production.Quality
             InitializeComponent();
             DBProxy.Current.Select(null, "select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(ComboFactory, 1, factory);
-            ComboFactory.Text = Sci.Env.User.Keyword;
+            ComboFactory.Text = Sci.Env.User.Keyword;            
         }
 
         private void radioPerLine_CheckedChanged(object sender, EventArgs e)
@@ -879,6 +879,9 @@ drop table #tmpall
                     objSheets.Cells[1, i+1] = printData.Columns[i].ColumnName.ToString();
                 }
 
+                objSheets.Columns.AutoFit();
+                objSheets.Rows.AutoFit();
+
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerLine");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
@@ -901,6 +904,9 @@ drop table #tmpall
                 {
                     objSheets.Cells[1, i + 1] = printData.Columns[i].ColumnName.ToString();
                 }
+
+                objSheets.Columns.AutoFit();
+                objSheets.Rows.AutoFit();
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R20_PerCell");
@@ -977,6 +983,13 @@ drop table #tmpall
             #endregion
 
             return true;
+        }
+
+        private void ComboFactory_TextChanged(object sender, EventArgs e)
+        {
+            this.txtBrand.Text = "";
+            this.txtLine.Text = "";
+            this.txtCell.Text = "";
         }
     }
 }

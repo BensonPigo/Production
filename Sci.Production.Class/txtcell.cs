@@ -36,9 +36,9 @@ namespace Sci.Production.Class
                 //where = where + string.Format(" and mdivisionid = '{0}'", fty);
                 where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", fty);
             }
-            sql = "select id from CutCell WITH (NOLOCK) " + where;
+            sql = "select distinct id from CutCell WITH (NOLOCK) " + where;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
-            
+            item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -49,7 +49,12 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                string tmp = MyUtility.GetValue.Lookup("id", fty + str, "Cutcell", "mdivisionid+id");
+                string tmp = null;
+                if (!string.IsNullOrWhiteSpace(fty))
+                    tmp = MyUtility.GetValue.Lookup("id", fty + str, "Cutcell", "mdivisionid+id");
+                else
+                    tmp = MyUtility.GetValue.Lookup("id", str, "Cutcell", "id");
+
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
                     this.Text = "";
@@ -59,7 +64,12 @@ namespace Sci.Production.Class
                 }
                 else
                 {
-                    string cJunk = MyUtility.GetValue.Lookup("Junk", fty + str, "CutCell", "mdivisionid+id");
+                    string cJunk = null;
+                    if (!string.IsNullOrWhiteSpace(fty))
+                        cJunk = MyUtility.GetValue.Lookup("Junk", fty + str, "CutCell", "mdivisionid+id");
+                    else
+                        cJunk = MyUtility.GetValue.Lookup("Junk", str, "CutCell", "id");
+
                     if (cJunk == "True")
                     {
                         this.Text = "";
