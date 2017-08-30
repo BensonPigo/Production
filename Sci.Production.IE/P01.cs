@@ -49,6 +49,7 @@ namespace Sci.Production.IE
             this.DetailSelectCommand = string.Format(@"
 select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[ID]
+      ,td.[SEQ]
 	  ,td.[OperationID]
       ,td.[Annotation]
       ,td.[PcsPerHour]
@@ -61,7 +62,9 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[OldKey]
       ,td.[SeamLength]
       ,td.[Ukey] 
- ,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
+      ,o.DescEN as OperationDescEN
+      ,o.MtlFactorID as OperationMtlFactorID
+      , m.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
