@@ -29,7 +29,8 @@ namespace Sci.Production.Warehouse
         }
 
         //Form to Form W/H.P01
-        public P04(string P01SPNo)
+        public P04(string P01SPNo, ToolStripMenuItem menuitem)
+            :base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
@@ -98,7 +99,7 @@ namespace Sci.Production.Warehouse
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void event_Query()
+        public void event_Query()
         {
             #region check SP#
             if (txtSPNo.Text.Empty())
@@ -187,6 +188,11 @@ where l.OrderID like @spno
         {
             txtSPNo.ResetText();
             txtSPNo.Select();
+        }
+
+        public void setTxtSPNo(string spNo)
+        {
+            this.txtSPNo.Text = spNo;
         }
     }
 }
