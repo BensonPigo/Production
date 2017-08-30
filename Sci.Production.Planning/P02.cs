@@ -380,10 +380,8 @@ SELECT  selected = 0
                      for xml path(''))
         , b.qty
         , b.InhouseOSP
-        , b.LocalSuppID
-        , suppnm = (select Abb 
-                    from LocalSupp WITH (NOLOCK) 
-                    where id = b.LocalSuppID) 
+        , LocalSuppID = iif(b.LocalSuppID='',SuppL.LocalSuppId,b.LocalSuppID)		
+		, suppnm = iif(b.LocalSuppID='',SuppL.Abb,SuppAbb.Abb)
         , b.ArtworkInLine
         , b.ArtworkOffLine
         , a.SewInLine
@@ -411,6 +409,19 @@ SELECT  selected = 0
 FROM Orders a WITH (NOLOCK) 
 inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID
 inner join factory WITH (NOLOCK) on factory.id = a.factoryid
+outer apply (
+	select top 1 SAQ.LocalSuppId , LS.Abb
+	from style_artwork SA
+	left join style_artwork_quot SAQ on SAQ.Ukey=SA.Ukey
+	left join LocalSupp LS on LS.ID=SAQ.LocalSuppId
+	where SA.StyleUkey=a.StyleUkey and SA.ArtworkTypeID='PRINTING' and SAQ.PriceApv='Y' 
+	order by Mockup desc 
+) as SuppL
+outer apply(
+	select Abb 
+	from LocalSupp WITH (NOLOCK) 
+    where id = b.LocalSuppID
+) SuppAbb
 where	a.Finished = 0 
 		and a.Category !='M' 
 		and b.ArtworkTypeID = 'PRINTING' 
