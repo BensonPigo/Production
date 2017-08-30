@@ -133,18 +133,21 @@ where   OrderID = '{0}'
             
             setThreadColor.EditingMouseDown += (s, e) =>
             {
-                DataTable selectDt;
-                string strSelectSqlCmd = string.Format(@"
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = string.Format(@"
 select  distinct ThreadColorID
 from LocalInventory
 where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
-                DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
-                DialogResult result = selectItem.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                this.CurrentDetailData["ThreadColorID"] = selectItem.GetSelectedString();
-                this.CurrentDetailData.EndEdit();
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentDetailData["ThreadColorID"] = selectItem.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
             };
 
             setThreadColor.CellValidating += (s, e) =>
@@ -187,20 +190,23 @@ where   OrderID = '{0}'
 
             setUnit.EditingMouseDown += (s, e) =>
             {
-                DataTable selectDt;
-                string strSelectSqlCmd = string.Format(@"
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = string.Format(@"
 select  distinct unit = UnitID
 from LocalInventory
 where   OrderID = '{0}'
         and refno = '{1}'", this.CurrentDetailData["OrderID"]
-                          , this.CurrentDetailData["Refno"]);
-                DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+                              , this.CurrentDetailData["Refno"]);
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
 
-                Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
-                DialogResult result = selectItem.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                this.CurrentDetailData["unit"] = selectItem.GetSelectedString();
-                this.CurrentDetailData.EndEdit();
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentDetailData["unit"] = selectItem.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
             };
 
             setUnit.CellValidating += (s, e) =>
