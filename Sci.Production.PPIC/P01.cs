@@ -1206,7 +1206,57 @@ where POID = @poid group by POID,b.spno";
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
+        PublicForm.Material.P03 callP03 = null;
+        private void P03FormOpen()
+        {
+            foreach (Form form in System.Windows.Forms.Application.OpenForms)
+            {
+                if (form is PublicForm.Material.P03)
+                {
+                    form.Activate();
+                    PublicForm.Material.P03 activateForm = (PublicForm.Material.P03)form;
+                    activateForm.setTxtSPNo(CurrentMaintain["ID"].ToString());
+                    activateForm.Query();
+                    return;
+                }
+            }
 
+            callP03 = new PublicForm.Material.P03(CurrentMaintain["ID"].ToString());
+            callP03.MdiParent = MdiParent;
+            callP03.Show();
+            callP03.Query();
+        }
+        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        {
+            if (callP03 != null && callP03.Visible == true)
+            {
+                callP03.P03Data(CurrentMaintain["ID"].ToString());
+                callP03.Activate();
+            }
+            else
+            {
+                P03FormOpen();
+            }
+        }
+
+        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        {
+            if (callP04 != null && callP04.Visible == true)
+            {
+                callP04.P04Data(CurrentMaintain["ID"].ToString());
+            }
+            else
+            {
+                P04FormOpen();
+            }
+        }
+        PublicForm.Material.P04 callP04 = null;
+        private void P04FormOpen()
+        {            
+            callP04 = new PublicForm.Material.P04(CurrentMaintain["ID"].ToString());
+            callP04.MdiParent = MdiParent;
+            callP04.Show();
+        }
     }
 
 }
