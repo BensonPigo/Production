@@ -67,6 +67,9 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -171,6 +174,503 @@
     <Compile Include="EachConsumption_SwitchWorkOrder.Designer.cs">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Material\P01_PhysicalInspection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P01_PhysicalInspection.designer.cs">
+      <DependentUpon>P01_PhysicalInspection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P01_PhysicalInspection_Defect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P01_PhysicalInspection_Defect.designer.cs">
+      <DependentUpon>P01_PhysicalInspection_Defect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P01_PhysicalInspection_PointRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P01_PhysicalInspection_PointRecord.designer.cs">
+      <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03.designer.cs">
+      <DependentUpon>P03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_BulkLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_BulkLocation.designer.cs">
+      <DependentUpon>P03_BulkLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_InspectionList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_InspectionList.designer.cs">
+      <DependentUpon>P03_InspectionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_InventoryStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_InventoryStatus.Designer.cs">
+      <DependentUpon>P03_InventoryStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Print.Designer.cs">
+      <DependentUpon>P03_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Refno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Refno.Designer.cs">
+      <DependentUpon>P03_Refno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_RollTransaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_RollTransaction.Designer.cs">
+      <DependentUpon>P03_RollTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Scrap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Scrap.Designer.cs">
+      <DependentUpon>P03_Scrap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Supplier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Supplier.Designer.cs">
+      <DependentUpon>P03_Supplier.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_TaipeiInventory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_TaipeiInventory.Designer.cs">
+      <DependentUpon>P03_TaipeiInventory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Transaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Transaction.Designer.cs">
+      <DependentUpon>P03_Transaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P03_Wkno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P03_Wkno.Designer.cs">
+      <DependentUpon>P03_Wkno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P04.designer.cs">
+      <DependentUpon>P04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P04_LocalTransaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P04_LocalTransaction.designer.cs">
+      <DependentUpon>P04_LocalTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07.designer.cs">
+      <DependentUpon>P07.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_AccumulatedQty.designer.cs">
+      <DependentUpon>P07_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_ExcelImport.designer.cs">
+      <DependentUpon>P07_ExcelImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_ModifyRollDyelot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_ModifyRollDyelot.designer.cs">
+      <DependentUpon>P07_ModifyRollDyelot.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_Print.designer.cs">
+      <DependentUpon>P07_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_PrintData.cs" />
+    <Compile Include="Material\P07_Sticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_Sticker.designer.cs">
+      <DependentUpon>P07_Sticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P07_Sticker_Data.cs" />
+    <Compile Include="Material\P07_UpdateActualWeight.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P07_UpdateActualWeight.designer.cs">
+      <DependentUpon>P07_UpdateActualWeight.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P08.designer.cs">
+      <DependentUpon>P08.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P08_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P08_AccumulatedQty.designer.cs">
+      <DependentUpon>P08_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P10.designer.cs">
+      <DependentUpon>P10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P10_CutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P10_CutRef.designer.cs">
+      <DependentUpon>P10_CutRef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P10_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P10_Detail.designer.cs">
+      <DependentUpon>P10_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P10_Detail_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P10_Detail_Detail.designer.cs">
+      <DependentUpon>P10_Detail_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P10_PrintData.cs" />
+    <Compile Include="Material\P11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11.designer.cs">
+      <DependentUpon>P11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P11_AutoPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11_AutoPick.designer.cs">
+      <DependentUpon>P11_AutoPick.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P11_AutoPick_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11_AutoPick_Detail.designer.cs">
+      <DependentUpon>P11_AutoPick_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P11_BOA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11_BOA.designer.cs">
+      <DependentUpon>P11_BOA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P11_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11_Detail.designer.cs">
+      <DependentUpon>P11_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P11_IssueBreakDown.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P11_IssueBreakDown.designer.cs">
+      <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P12.designer.cs">
+      <DependentUpon>P12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P12_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P12_Import.designer.cs">
+      <DependentUpon>P12_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P12_PrintData.cs" />
+    <Compile Include="Material\P13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P13.designer.cs">
+      <DependentUpon>P13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P13_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P13_AccumulatedQty.designer.cs">
+      <DependentUpon>P13_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P13_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P13_Import.designer.cs">
+      <DependentUpon>P13_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P13_PrintData.cs" />
+    <Compile Include="Material\P15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P15.designer.cs">
+      <DependentUpon>P15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P15_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P15_AccumulatedQty.designer.cs">
+      <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P15_PrintData.cs" />
+    <Compile Include="Material\P15_Unfinish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P15_Unfinish.designer.cs">
+      <DependentUpon>P15_Unfinish.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P16.designer.cs">
+      <DependentUpon>P16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P16_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P16_AccumulatedQty.designer.cs">
+      <DependentUpon>P16_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P16_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P16_Import.designer.cs">
+      <DependentUpon>P16_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P16_PrintData.cs" />
+    <Compile Include="Material\P17.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P17.designer.cs">
+      <DependentUpon>P17.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P17_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P17_AccumulatedQty.designer.cs">
+      <DependentUpon>P17_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P17_PrintData.cs" />
+    <Compile Include="Material\P18.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P18.designer.cs">
+      <DependentUpon>P18.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P18_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P18_AccumulatedQty.designer.cs">
+      <DependentUpon>P18_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P18_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P18_Import.designer.cs">
+      <DependentUpon>P18_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P18_PrintData.cs" />
+    <Compile Include="Material\P19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P19.designer.cs">
+      <DependentUpon>P19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P19_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P19_AccumulatedQty.designer.cs">
+      <DependentUpon>P19_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P19_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P19_Import.designer.cs">
+      <DependentUpon>P19_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P19_PrintData.cs" />
+    <Compile Include="Material\P22.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P22.designer.cs">
+      <DependentUpon>P22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P22_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P22_AccumulatedQty.designer.cs">
+      <DependentUpon>P22_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P22_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P22_Import.designer.cs">
+      <DependentUpon>P22_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P22_PrintData.cs" />
+    <Compile Include="Material\P23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P23.designer.cs">
+      <DependentUpon>P23.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P23_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P23_AccumulatedQty.designer.cs">
+      <DependentUpon>P23_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P23_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P23_Import.designer.cs">
+      <DependentUpon>P23_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P23_PrintData.cs" />
+    <Compile Include="Material\P24.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P24.designer.cs">
+      <DependentUpon>P24.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P24_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P24_AccumulatedQty.designer.cs">
+      <DependentUpon>P24_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P24_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P24_Import.designer.cs">
+      <DependentUpon>P24_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P24_PrintData.cs" />
+    <Compile Include="Material\P25.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P25.designer.cs">
+      <DependentUpon>P25.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P25_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P25_AccumulatedQty.designer.cs">
+      <DependentUpon>P25_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P25_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P25_Import.designer.cs">
+      <DependentUpon>P25_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P25_PrintData.cs" />
+    <Compile Include="Material\P31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P31.designer.cs">
+      <DependentUpon>P31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P31_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P31_AccumulatedQty.designer.cs">
+      <DependentUpon>P31_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P31_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P31_Import.designer.cs">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P31_PrintData.cs" />
+    <Compile Include="Material\P32.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P32.designer.cs">
+      <DependentUpon>P32.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P32_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P32_AccumulatedQty.designer.cs">
+      <DependentUpon>P32_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P32_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P32_Import.designer.cs">
+      <DependentUpon>P32_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P32_PrintData.cs" />
+    <Compile Include="Material\P34.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P34.designer.cs">
+      <DependentUpon>P34.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P34_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P34_Import.designer.cs">
+      <DependentUpon>P34_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P35.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P35.designer.cs">
+      <DependentUpon>P35.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P35_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P35_Import.designer.cs">
+      <DependentUpon>P35_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P36.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P36.designer.cs">
+      <DependentUpon>P36.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P36_AccumulatedQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P36_AccumulatedQty.designer.cs">
+      <DependentUpon>P36_AccumulatedQty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P36_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Material\P36_Import.designer.cs">
+      <DependentUpon>P36_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Material\P36_PrintData.cs" />
     <Compile Include="StdGSDList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,11 +704,255 @@
     <EmbeddedResource Include="EachConsumption_SwitchWorkOrder.resx">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Material\P01_PhysicalInspection.resx">
+      <DependentUpon>P01_PhysicalInspection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P01_PhysicalInspection_Defect.resx">
+      <DependentUpon>P01_PhysicalInspection_Defect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P01_PhysicalInspection_PointRecord.resx">
+      <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03.resx">
+      <DependentUpon>P03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_BulkLocation.resx">
+      <DependentUpon>P03_BulkLocation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_InspectionList.resx">
+      <DependentUpon>P03_InspectionList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_InventoryStatus.resx">
+      <DependentUpon>P03_InventoryStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Print.resx">
+      <DependentUpon>P03_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Refno.resx">
+      <DependentUpon>P03_Refno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_RollTransaction.resx">
+      <DependentUpon>P03_RollTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Scrap.resx">
+      <DependentUpon>P03_Scrap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Supplier.resx">
+      <DependentUpon>P03_Supplier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_TaipeiInventory.resx">
+      <DependentUpon>P03_TaipeiInventory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Transaction.resx">
+      <DependentUpon>P03_Transaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P03_Wkno.resx">
+      <DependentUpon>P03_Wkno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P04.resx">
+      <DependentUpon>P04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P04_LocalTransaction.resx">
+      <DependentUpon>P04_LocalTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07.resx">
+      <DependentUpon>P07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_AccumulatedQty.resx">
+      <DependentUpon>P07_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_ExcelImport.resx">
+      <DependentUpon>P07_ExcelImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_ModifyRollDyelot.resx">
+      <DependentUpon>P07_ModifyRollDyelot.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_Print.resx">
+      <DependentUpon>P07_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_Sticker.resx">
+      <DependentUpon>P07_Sticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P07_UpdateActualWeight.resx">
+      <DependentUpon>P07_UpdateActualWeight.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P08.resx">
+      <DependentUpon>P08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P08_AccumulatedQty.resx">
+      <DependentUpon>P08_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P10.resx">
+      <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P10_CutRef.resx">
+      <DependentUpon>P10_CutRef.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P10_Detail.resx">
+      <DependentUpon>P10_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P10_Detail_Detail.resx">
+      <DependentUpon>P10_Detail_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11.resx">
+      <DependentUpon>P11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11_AutoPick.resx">
+      <DependentUpon>P11_AutoPick.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11_AutoPick_Detail.resx">
+      <DependentUpon>P11_AutoPick_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11_BOA.resx">
+      <DependentUpon>P11_BOA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11_Detail.resx">
+      <DependentUpon>P11_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P11_IssueBreakDown.resx">
+      <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P12.resx">
+      <DependentUpon>P12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P12_Import.resx">
+      <DependentUpon>P12_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P13.resx">
+      <DependentUpon>P13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P13_AccumulatedQty.resx">
+      <DependentUpon>P13_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P13_Import.resx">
+      <DependentUpon>P13_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P15.resx">
+      <DependentUpon>P15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P15_AccumulatedQty.resx">
+      <DependentUpon>P15_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P15_Unfinish.resx">
+      <DependentUpon>P15_Unfinish.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P16.resx">
+      <DependentUpon>P16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P16_AccumulatedQty.resx">
+      <DependentUpon>P16_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P16_Import.resx">
+      <DependentUpon>P16_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P17.resx">
+      <DependentUpon>P17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P17_AccumulatedQty.resx">
+      <DependentUpon>P17_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P18.resx">
+      <DependentUpon>P18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P18_AccumulatedQty.resx">
+      <DependentUpon>P18_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P18_Import.resx">
+      <DependentUpon>P18_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P19.resx">
+      <DependentUpon>P19.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P19_AccumulatedQty.resx">
+      <DependentUpon>P19_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P19_Import.resx">
+      <DependentUpon>P19_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P22.resx">
+      <DependentUpon>P22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P22_AccumulatedQty.resx">
+      <DependentUpon>P22_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P22_Import.resx">
+      <DependentUpon>P22_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P23.resx">
+      <DependentUpon>P23.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P23_AccumulatedQty.resx">
+      <DependentUpon>P23_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P23_Import.resx">
+      <DependentUpon>P23_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P24.resx">
+      <DependentUpon>P24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P24_AccumulatedQty.resx">
+      <DependentUpon>P24_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P24_Import.resx">
+      <DependentUpon>P24_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P25.resx">
+      <DependentUpon>P25.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P25_AccumulatedQty.resx">
+      <DependentUpon>P25_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P25_Import.resx">
+      <DependentUpon>P25_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P31.resx">
+      <DependentUpon>P31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P31_AccumulatedQty.resx">
+      <DependentUpon>P31_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P31_Import.resx">
+      <DependentUpon>P31_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P32.resx">
+      <DependentUpon>P32.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P32_AccumulatedQty.resx">
+      <DependentUpon>P32_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P32_Import.resx">
+      <DependentUpon>P32_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P34.resx">
+      <DependentUpon>P34.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P34_Import.resx">
+      <DependentUpon>P34_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P35.resx">
+      <DependentUpon>P35.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P35_Import.resx">
+      <DependentUpon>P35_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P36.resx">
+      <DependentUpon>P36.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P36_AccumulatedQty.resx">
+      <DependentUpon>P36_AccumulatedQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Material\P36_Import.resx">
+      <DependentUpon>P36_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StdGSDList.resx">
       <DependentUpon>StdGSDList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
