@@ -10,7 +10,7 @@
     [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_MarkerLength] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (8, 4) CONSTRAINT [DF_Order_MarkerList_ConsPC] DEFAULT ((0)) NOT NULL,
     [Cuttingpiece]        BIT            CONSTRAINT [DF_Order_MarkerList_Cuttingpiece] DEFAULT ((0)) NULL,
-    [ActCuttingPerimeter] VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_ActCuttingPerimeter] DEFAULT ('') NULL,
+    [ActCuttingPerimeter] NVARCHAR(15)   CONSTRAINT [DF_Order_MarkerList_ActCuttingPerimeter] DEFAULT ('') NULL,
     [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_StraightLength] DEFAULT ('') NULL,
     [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_CurvedLength] DEFAULT ('') NULL,
     [Efficiency]          VARCHAR (9)    CONSTRAINT [DF_Order_MarkerList_Efficiency] DEFAULT ('') NULL,
