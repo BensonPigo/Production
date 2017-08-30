@@ -587,7 +587,38 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         Sci.Production.Warehouse.P04 callP04 = null;
         private void P04FormOpen()
         {
-            callP04 = new P04(CurrentMaintain["ID"].ToString());
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P04)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P04 activateForm = (Sci.Production.Warehouse.P04)form;
+                    activateForm.setTxtSPNo(CurrentMaintain["ID"].ToString());
+                    activateForm.event_Query();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P04MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
+                            {
+                                P04MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            callP04 = new P04(CurrentMaintain["ID"].ToString(), P04MenuItem);
             callP04.MdiParent = MdiParent;
             callP04.Show();
         }
