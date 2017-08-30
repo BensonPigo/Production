@@ -28,28 +28,31 @@ namespace Sci.Production.Thread
         {
             InitializeComponent();
 
-
-            string sql = string.Format(
-            @"with a as (
-            Select b.combotype,b.seq,threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
-            from threadcolorcomb a WITH (NOLOCK) , threadcolorcomb_Operation b WITH (NOLOCK) ,style f WITH (NOLOCK) 
-            where a.id = b.id and a.styleukey = f.ukey and 
-            f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'),
-            b as(
-            Select c.ComboType,seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
-            from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
-            join operation e on e.id = d.operationid
-            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0)
-
-            select 0 as sel,a.id,b.*,a.threadcombid from b WITH (NOLOCK) left join a WITH (NOLOCK) 
-			on a.operationid = b.operationid and b.styleid = a.styleid 
-            and a.seasonid  = b.seasonid and a.brandid = b.brandid and a.combotype= b.ComboType and a.seq=b.Seq
-            order by seq
-            ", str_styleid, str_season, str_brandid);
             styleUkey = str_styleukey;
             strstyleid = str_styleid;
-            strseason=str_season;
+            strseason = str_season;
             strbrandid = str_brandid;
+
+            string sql = string.Format(
+            @"
+with a as (
+    Select b.combotype,b.seq,threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
+    from threadcolorcomb a WITH (NOLOCK) , threadcolorcomb_Operation b WITH (NOLOCK) ,style f WITH (NOLOCK) 
+    where a.id = b.id and a.styleukey = f.ukey and 
+    f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'
+),b as(
+    Select c.ComboType,seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
+    from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
+    join operation e on e.id = d.operationid
+    where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0
+)
+
+select 0 as sel,a.id,b.*,a.threadcombid
+from b WITH (NOLOCK) 
+left join a WITH (NOLOCK) on a.operationid = b.operationid and b.styleid = a.styleid 
+and a.seasonid  = b.seasonid and a.brandid = b.brandid and a.combotype= b.ComboType and a.seq=b.Seq
+order by seq"
+, str_styleid, str_season, str_brandid);
             DualResult dResult = DBProxy.Current.Select(null, sql, out gridTable);
             if (dResult)
             {
@@ -60,7 +63,7 @@ namespace Sci.Production.Thread
                 ShowErr(sql);
                 return;
             }
-           
+
             DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
             //自動複製相同machinetypeid && operationid的Threadcombid到第二筆，JK：不需此功能，先註解掉
             //// DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
@@ -84,7 +87,7 @@ namespace Sci.Production.Thread
             Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
             .Text("ComboType", header: "ComboType", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("Seq", header: "SEQ", width: Widths.Auto(true),iseditingreadonly:true)
+            .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
@@ -107,22 +110,16 @@ namespace Sci.Production.Thread
                 gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", txtMachineType.Text) : string.Format("MachineTypeid = '{0}'", txtMachineType.Text);
             }
         }
-
         //close
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        
         //save到DB
         private void btnGenerate_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             DataTable groupTable, operTable, gridTable3;
-            StringBuilder delesql = new StringBuilder();
-            string sql = "", str_Select;
-            List<string> SqlList = new List<string>();
-            List<string> gridList = new List<string>();
 
             gridTable3 = gridTable.Clone();//複製結構
             #region 準備有輸入資料的row到gridTable3,並判斷Threadcombid是否符合規則
@@ -130,147 +127,82 @@ namespace Sci.Production.Thread
             {
                 //Threadcombid欄位有資料複製到gridTable3
                 gridTable3 = gridTable.Select("threadcombid is not null and Threadcombid <> ''").CopyToDataTable();
-
-                //2017/1/19 Ricky修改 JK：目前允許一個Thread Comb用在兩個以上的Machine type，所以先註解掉
-                //#region 判斷Threadcombid是否符合規則
-                ////從gridTable3選threadcombid,Machinetypeid groupby後groupTable
-                //MyUtility.Tool.ProcessWithDatatable(gridTable3, "threadcombid,Machinetypeid", @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group by threadcombid,machinetypeid", out groupTable);
-                ////從groupTable計數不同的Machinetypeid確有相同的Threadcombid
-                //MyUtility.Tool.ProcessWithDatatable(groupTable, "threadcombid,Machinetypeid", @"Select count(Threadcombid) as tt , threadcombid from #tmp  group by threadcombid having count(Threadcombid) > 1", out countTable);
-                ////countTable不為空則表示Threadcombid不符規則
-                //StringBuilder overmsg = new StringBuilder();
-                //if (countTable.Rows.Count != 0)
-                //{
-                //    overmsg.Append("There is <Thread Combination > over use two <Machine Type> \n");
-                //    foreach (DataRow dr in countTable.Rows)
-                //    {
-                //        overmsg.Append(dr["ThreadCombid"] + "\n");
-                //    }
-                //    MyUtility.Msg.WarningBox(overmsg.ToString());
-                //    return;
-                //}
-                //#endregion
             }
             #endregion
-            
-            //請三思按下YES就回不了頭
-            DialogResult buttonFinished = MyUtility.Msg.QuestionBox("All related data of this style will be clear, please confirm"
-                                                                    , "Question", MessageBoxButtons.YesNo);
-            if (buttonFinished == DialogResult.No) return;
-            
-            #region 準備刪除資料字串
-            foreach (DataRow dr in gridTable.Rows)
+            DualResult DResult;
+            //準備未改變前ThreadColorComb_Detail的ID (Table)
+            DataTable old_Detail;
+            string old_Detailsql = string.Format("select distinct tcd.id from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}", styleUkey);
+            DResult = DBProxy.Current.Select(null, old_Detailsql, out old_Detail);
+            if (!DResult)
             {
-                delesql.Append(string.Format(@"Delete from threadcolorcomb_operation where id='{1}'
-                                               Delete from threadcolorcomb_Detail where id='{1}'
-                                               Delete from threadcolorcomb where StyleUkey='{0}'"
-                                              , styleUkey, dr["ID"].ToString()));
+                ShowErr(DResult);
+                return;
             }
-            #endregion
-
-            //sum(seamlength)
-            MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength",
-                                    @"Select threadcombid,Machinetypeid ,isnull(sum(seamlength),0) as Length
-                                    from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' 
-                                    group by threadcombid,machinetypeid", out groupTable, "#tmp");
-            //operationid,threadcombid ,Machinetypeid
-            MyUtility.Tool.ProcessWithDatatable(gridTable3, "ComboType,SEQ,threadcombid,operationid,Machinetypeid",
-                                    @"Select ComboType,SEQ,threadcombid,operationid,Machinetypeid
-                                    from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' 
-                                    group by ComboType,SEQ,threadcombid,operationid,Machinetypeid", out operTable, "#tmp");
-
-            #region 準備新增字串
-            foreach (DataRow dr in groupTable.Rows)
+            //先Delete threadcolorcomb_operation,在更新ThreadColorComb之前,要先刪除threadcolorcomb_operation
+            //因為更新ThreadColorComb後ID會更新,threadcolorcomb_operation需要用未變更前的ID當條件,去清乾淨
+            string deleteo_peration = string.Format("Delete from threadcolorcomb_operation where id in (select id from ThreadColorComb where styleukey = {0})", styleUkey);
+            DResult = DBProxy.Current.Execute(null, deleteo_peration);
+            if (!DResult)
             {
-                //前面全部都刪除不會有updata狀況
-                //準備新增字串且取得新增此筆的IDENTITY要用來存入ThreadColorComb_operation
-                sql = string.Format(@"Insert into ThreadColorComb 
-                                    (threadcombid,machinetypeid,styleukey,length) 
-                                    values('{0}','{1}','{2}',{3})
-                                    select @@IDENTITY as ii",
-                                    dr["threadcombid"].ToString(), dr["machinetypeid"].ToString(), styleUkey, dr["Length"]);
-                //用List是為了可各筆執行後分別取回IDENTITY
-                SqlList.Add(sql);
-                str_Select = string.Format("threadcombid ='{0}' and machinetypeid = '{1}'",
-                                            dr["threadcombid"].ToString(), dr["machinetypeid"].ToString());
-                gridList.Add(str_Select);
+                ShowErr(DResult);
+                return;
             }
-            #endregion
+            //更新ThreadColorComb
+            //先準備#source,  id一樣update欄位,沒有的新增,多餘的刪去,再撈出更新後的表身
+            DResult = MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength",
+                                    string.Format(@"
+select id = iif(id = LAG(id,1) over(order by id),'',id),threadcombid,Machinetypeid,styleUkey,Length
+into #source
+from
+(
+    Select id = max(id),threadcombid,Machinetypeid,styleUkey = {0} ,Length = isnull(sum(seamlength),0)
+    from #tmp 
+    group by threadcombid,machinetypeid
+)a
 
-            #region  執行Delete,Update,Insert字串
-            DualResult upResult;
-            DataTable dt;
-            StringBuilder sql2 = new StringBuilder();
+merge ThreadColorComb as t
+using(select * from #source) as s
+on t.id = s.id
+when matched then
+	update set
+	t.ThreadCombID	 = s.ThreadCombID
+	,t.Machinetypeid = s.Machinetypeid
+	,t.Length		 = s.Length
+when not matched by target then
+	insert(ThreadCombID,Machinetypeid,StyleUkey,Length)
+	values(s.ThreadCombID,s.Machinetypeid,s.StyleUkey,s.Length)
+when not matched by source and t.StyleUkey = {0} then
+	delete;
 
-            TransactionScope _transactionscope = new TransactionScope();
-
-            using (_transactionscope)
+select * from ThreadColorComb where StyleUkey = {0}"
+                , styleUkey), out groupTable);
+            if (!DResult)
             {
-                try
-                {
-                    if (!MyUtility.Check.Empty(delesql.ToString()))
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, delesql.ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(delesql.ToString(), upResult);
-                            return;
-                        }
-                    }
-
-                    if (SqlList.Count>0)
-                    {
-                        for (int i = 0; i < SqlList.Count; i++)
-                        {
-                            //執行新增ThreadColorComb,並取回此筆IDENTITY存入dt
-                            if (!(upResult = DBProxy.Current.Select(null, SqlList[i], out dt)))
-                            {
-                                _transactionscope.Dispose();
-                                ShowErr(SqlList[i], upResult);
-                                return;
-                            }
-                            else
-                            {
-                                //新增 ThreadColorComb_operation字串                               
-                                if (dt.Rows.Count != 0) //沒有dt 表示為原本就存在的不需要新增Operation
-                                {
-                                    DataRow[] rowSelect = operTable.Select(gridList[i]);
-                                    for (int j = 0; j < rowSelect.Length; j++)
-                                    {
-                                        if (!MyUtility.Check.Seek(string.Format("Select * from ThreadColorComb_operation WITH (NOLOCK) where id='{0}' and operationid = '{1}'", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString())))
-                                        {
-                                            sql2.Append(string.Format("Insert into ThreadColorComb_operation (id,operationid,ComboType,SEQ) values({0},'{1}','{2}','{3}');", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString(), rowSelect[j]["ComboType"].ToString(), rowSelect[j]["Seq"].ToString()));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (!(upResult = DBProxy.Current.Execute(null, sql2.ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(sql2.ToString(), upResult);
-                            return;
-                        }
-                    }                   
-                    _transactionscope.Complete();
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
+                ShowErr(DResult);
+                return;
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
 
-            #endregion
+            //threadcolorcomb_Operation 其他欄位先用grid上的table組好, 但id要從已經存到DB的ThreadColorComb
+            MyUtility.Tool.ProcessWithDatatable(gridTable3, "operationid,ComboType,SEQ,threadcombid,Machinetypeid",
+                                    string.Format(@"
+Select distinct operationid,ComboType,SEQ,threadcombid,Machinetypeid
+into #new
+from #tmp
+--
+insert into threadcolorcomb_Operation
+select t.id,n.operationid,n.ComboType,n.SEQ
+from #new n inner join ThreadColorComb t on t.threadcombid = n.threadcombid and t.Machinetypeid = n.Machinetypeid
+where t.styleukey = {0}
 
+select tco.* from threadcolorcomb_Operation tco inner join ThreadColorComb t on t.id = tco.Id where  styleukey = {0}"
+                ,styleUkey), out operTable);
+
+            //更新ThreadColorComb.ConsPC, 要在更新threadcolorcomb_Operation之後做
             string computeConsPC = string.Format(@"
 update Tcc
 	Set ConsPC = ROUND(ConsPC.ConsPC, 2)
-from Style S
-inner join ThreadColorComb Tcc on S.Ukey = Tcc.StyleUkey
+from ThreadColorComb Tcc
 Outer Apply(
     Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(MtTr.UseRatioNumeric, 0) + isnull(MtTr.Allowance, 0))
     From ThreadColorComb_operation TccO
@@ -278,8 +210,42 @@ Outer Apply(
     left join MachineType_ThreadRatio MtTr on Tcc.Machinetypeid = MtTr.ID
     where   Tcc.ID = TccO.Id
 ) ConsPC
-where S.Ukey = '{0}'", styleUkey);
-            DBProxy.Current.Execute(null, computeConsPC);
+where Tcc.StyleUkey = '{0}'", styleUkey);
+            DResult = DBProxy.Current.Execute(null, computeConsPC);
+            if (!DResult)
+            {
+                ShowErr(DResult);
+                return;
+            }
+            //更新ThreadColorComb_Detail,只會有兩種況狀,減少就Delete, ThreadCombid變動就更新
+            DataTable tcc_Detail;
+            if (old_Detail.Rows.Count > 0)
+            {
+                DResult = MyUtility.Tool.ProcessWithDatatable(old_Detail, "id",
+                    string.Format(@"
+delete ThreadColorComb_Detail where id in
+(
+    select a.id
+    from #tmp a left join (select distinct tcd.id from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0})b
+    on a.id = b.id
+    where isnull(b.id,'') =''
+)
+
+update tcd
+    set tcd.ThreadCombid = t.ThreadCombid
+from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id and tcd.Machinetypeid = t.Machinetypeid
+where styleukey = {0}
+
+select tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}
+"
+                , styleUkey), out tcc_Detail);
+                
+                if (!DResult)
+                {
+                    ShowErr(DResult);
+                    return;
+                }
+            }
             this.Close();
         }
 
@@ -319,7 +285,7 @@ where S.Ukey = '{0}'", styleUkey);
             {
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
-                {                   
+                {
                     this.txtMachineType.Text = "";
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
