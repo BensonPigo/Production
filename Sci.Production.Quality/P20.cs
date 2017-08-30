@@ -400,11 +400,11 @@ namespace Sci.Production.Quality
             //將刪除資料過的grid 重新丟進新datatable 並將資料以完全刪除來做判斷! 
             afterDT.Merge(detaildt, true);
             afterDT.AcceptChanges();
-            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["GarmentDefectCodeID"])))
-            {
-                MyUtility.Msg.WarningBox("<Defect Code> cannot be null!");
-                return false;
-            }
+            //if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["GarmentDefectCodeID"])))
+            //{
+            //    MyUtility.Msg.WarningBox("<Defect Code> cannot be null!");
+            //    return false;
+            //}
             foreach (DataRow dr in afterDT.Rows)
             {
                 DataRow[] daArray = afterDT.Select(string.Format("GarmentDefectCodeID ='{0}'", MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
