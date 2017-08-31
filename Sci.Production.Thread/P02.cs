@@ -330,11 +330,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (e.RowIndex < 0 || EditMode == false) { return; }
             var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
             if (data == null) { return; }
-            if (data["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(data["POID"]))
+            if (!MyUtility.Check.Empty(data["POID"]))
             {
-                col_refno.IsEditingReadOnly = true;
-                col_color.IsEditingReadOnly = true;
-                col_cons.IsEditingReadOnly = true;
                 col_Allowance.IsEditingReadOnly = true;
                 col_NewCone.IsEditingReadOnly = true;
                 col_UsedCone.IsEditingReadOnly = true;
@@ -342,13 +339,24 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
             else
             {
-                col_refno.IsEditingReadOnly = false;
-                col_color.IsEditingReadOnly = false;
-                col_cons.IsEditingReadOnly = false;
                 col_Allowance.IsEditingReadOnly = false;
                 col_NewCone.IsEditingReadOnly = false;
                 col_UsedCone.IsEditingReadOnly = false;
                 col_Remark.IsEditingReadOnly = false;
+            }
+            if (data["autoCreate"].ToString() == "True" )
+            {
+                col_refno.IsEditingReadOnly = true;
+                col_color.IsEditingReadOnly = true;
+                col_cons.IsEditingReadOnly = true;
+                this.refno.SupportPopup = false;
+            }
+            else
+            {
+                col_refno.IsEditingReadOnly = false;
+                col_color.IsEditingReadOnly = false;
+                col_cons.IsEditingReadOnly = false;
+                this.refno.SupportPopup = true;
             }
         }
 
@@ -812,7 +820,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if (dr["autoCreate"].ToString() == "True")
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;      
@@ -827,7 +835,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if (dr["autoCreate"].ToString() == "True" )
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -842,7 +850,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if (dr["autoCreate"].ToString() == "True" )
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -857,7 +865,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if (!MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -871,7 +879,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if ( !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -885,7 +893,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if ( !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -899,7 +907,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
+                if ( !MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
