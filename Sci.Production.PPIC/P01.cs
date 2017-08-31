@@ -21,7 +21,7 @@ using Sci.Utility.Excel;
 using Sci.Utility.Drawing;
 
 using System.Runtime.InteropServices;
-
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.PPIC
 {
@@ -1206,6 +1206,13 @@ where POID = @poid group by POID,b.spno";
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
-    }
 
+        private void btneachconsprint_Click(object sender, EventArgs e)
+        {
+            if (null == this.CurrentMaintain) return;
+            string ID = this.CurrentMaintain["ID"].ToString();
+            var frm = new Print_OrderList(ID);
+            frm.ShowDialog();
+        }
+    }
 }
