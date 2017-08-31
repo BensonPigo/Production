@@ -254,11 +254,19 @@ namespace Sci.Production.Packing
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format(@"Select oqd.SizeCode 
-from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on o.ID = oqd.Id
-left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = oqd.SizeCode
-where oqd.ID = '{0}' and oqd.Seq = '{1}' and oqd.Article = '{2}' 
+                            sqlCmd = string.Format(@"
+select a.SizeCode,a.qty
+from
+(
+	Select oqd.SizeCode, qty = isnull(oq.Qty,0) - isnull(sum(pdd.ShipQty),0),oqd.id
+	from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	left join Order_Qty oq WITH (NOLOCK) on oq.id = oqd.id and oq.Article = oqd.Article and oq.SizeCode = oqd.SizeCode
+	left join Pullout_Detail_Detail pdd WITH (NOLOCK) on pdd.OrderID = oqd.id and pdd.Article = oqd.Article and pdd.SizeCode = oqd.SizeCode
+	where oqd.ID = '{0}' and oqd.Seq = '{1}' and oqd.Article = '{2}' 
+	group by oqd.SizeCode,oq.Qty,oqd.id,oqd.Article
+)a
+left join Orders o WITH (NOLOCK) on o.ID = a.Id
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.SizeCode
 order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
