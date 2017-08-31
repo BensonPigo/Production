@@ -132,7 +132,7 @@ order by seq"
             DualResult DResult;
             //準備未改變前ThreadColorComb_Detail的ID (Table)
             DataTable old_Detail;
-            string old_Detailsql = string.Format("select distinct tcd.id from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}", styleUkey);
+            string old_Detailsql = string.Format("select distinct tcd.id,tcd.Machinetypeid,tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}", styleUkey);
             DResult = DBProxy.Current.Select(null, old_Detailsql, out old_Detail);
             if (!DResult)
             {
@@ -221,20 +221,20 @@ where Tcc.StyleUkey = '{0}'", styleUkey);
             DataTable tcc_Detail;
             if (old_Detail.Rows.Count > 0)
             {
-                DResult = MyUtility.Tool.ProcessWithDatatable(old_Detail, "id",
+                DResult = MyUtility.Tool.ProcessWithDatatable(old_Detail, "id,Machinetypeid,ThreadCombid",
                     string.Format(@"
 delete ThreadColorComb_Detail where id in
 (
     select a.id
-    from #tmp a left join (select distinct tcd.id from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0})b
-    on a.id = b.id
+    from #tmp a left join (select distinct id,Machinetypeid,ThreadCombid from ThreadColorComb where styleukey = {0})b
+    on a.Machinetypeid = b.Machinetypeid and a.ThreadCombid = b.ThreadCombid
     where isnull(b.id,'') =''
 )
 
 update tcd
-    set tcd.ThreadCombid = t.ThreadCombid
-from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id and tcd.Machinetypeid = t.Machinetypeid
-where styleukey = {0}
+    set tcd.id = t.id
+from ThreadColorComb_Detail tcd inner join ThreadColorComb t on tcd.Machinetypeid = t.Machinetypeid and tcd.ThreadCombid = t.ThreadCombid
+where styleukey = {0} and tcd.id in (select distinct id from #tmp)
 
 select tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}
 "
