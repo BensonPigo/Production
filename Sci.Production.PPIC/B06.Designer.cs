@@ -206,7 +206,7 @@
             // 
             this.txtCellNo.BackColor = System.Drawing.Color.White;
             this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
-            this.txtCellNo.FactoryId = "displayBox1";
+            this.txtCellNo.MDivisionID = "displayBox1";
             this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCellNo.Location = new System.Drawing.Point(112, 137);
             this.txtCellNo.Name = "txtCellNo";

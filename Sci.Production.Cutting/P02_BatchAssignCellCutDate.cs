@@ -22,8 +22,8 @@ namespace Sci.Production.Cutting
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
             InitializeComponent();
-            txtCutCell.FactoryId = Sci.Env.User.Keyword;
-            txtCell2.FactoryId = Sci.Env.User.Keyword;
+            txtCutCell.MDivisionID = Sci.Env.User.Keyword;
+            txtCell2.MDivisionID = Sci.Env.User.Keyword;
             detailTb = cursor;
             curTb = cursor.Copy();
             curTb.Columns.Add("Sel", typeof(bool));
