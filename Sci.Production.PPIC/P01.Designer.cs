@@ -280,6 +280,7 @@
             this.labeOrderCombo = new Sci.Win.UI.Label();
             this.displayOrderCombo = new Sci.Win.UI.DisplayBox();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.btneachconsprint = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -465,6 +466,7 @@
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
             this.tabPage1.Controls.Add(this.btnEachCons);
+            this.tabPage1.Controls.Add(this.btneachconsprint);
             this.tabPage1.Controls.Add(this.btnBacktoPPICMasterList);
             this.tabPage1.Controls.Add(this.btnShipmentFinished);
             this.tabPage1.Controls.Add(this.btnVASSHASInstruction);
@@ -593,7 +595,7 @@
             // 
             // btnBacktoPPICMasterList
             // 
-            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(600, 628);
+            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 628);
             this.btnBacktoPPICMasterList.Name = "btnBacktoPPICMasterList";
             this.btnBacktoPPICMasterList.Size = new System.Drawing.Size(194, 27);
             this.btnBacktoPPICMasterList.TabIndex = 110;
@@ -3131,6 +3133,16 @@
             this.shapeContainer3.TabIndex = 45;
             this.shapeContainer3.TabStop = false;
             // 
+            // btneachconsprint
+            // 
+            this.btneachconsprint.Location = new System.Drawing.Point(600, 628);
+            this.btneachconsprint.Name = "btneachconsprint";
+            this.btneachconsprint.Size = new System.Drawing.Size(194, 27);
+            this.btneachconsprint.TabIndex = 110;
+            this.btneachconsprint.Text = "Each Cons. Print";
+            this.btneachconsprint.UseVisualStyleBackColor = true;
+            this.btneachconsprint.Click += new System.EventHandler(this.btneachconsprint_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3414,5 +3426,6 @@
         private Win.UI.Label labeOrderCombo;
         private Win.UI.DisplayBox displayOrderCombo;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
+        private Win.UI.Button btneachconsprint;
     }
 }
