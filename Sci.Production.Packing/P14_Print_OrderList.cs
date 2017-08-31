@@ -53,7 +53,6 @@ namespace Sci.Production.Packing
                             select new PackData
                             {
                                 TTL_Qty = m.Count(r => !r["CTNStartNo"].Empty()).ToString(),
-                                TransferDate = m.First()["TransferDate"].ToString(),
                                 PackID = m.First()["PackingListID"].ToString(),
                                 OrderID = m.First()["OrderID"].ToString(),
                                 PONo = m.First()["CustPONo"].ToString(),
@@ -64,7 +63,6 @@ namespace Sci.Production.Packing
                 //
                 string sql = @"
 select  t.TTL_Qty, 
-        t.TransferDate,
         t.PackID, 
         t.OrderID, 
         t.PONo, 
@@ -86,6 +84,7 @@ outer apply(
 	),1,1,'')
 )a
             ";
+                string TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
 
                 DataTable k;
                 MyUtility.Tool.ProcessWithObject(Slip, "", sql, out k, "#Tmp");
@@ -117,7 +116,7 @@ outer apply(
 
             #region Set Login M & Transfer Date
             if (date1 != null && date2 != null)
-                objSheets.Cells[3, 2] = date1 + " ~ " + date2;
+                objSheets.Cells[3, 8] = date1 + " ~ " + date2;
 
             string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
             if (!strLoginM.Empty())
@@ -186,7 +185,6 @@ outer apply(
         public class PackData
         {
             public string TTL_Qty { get; set; }
-            public string TransferDate { get; set; }
             public string PackID { get; set; }
             public string OrderID { get; set; }
             public string PONo { get; set; }
