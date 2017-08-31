@@ -62,6 +62,8 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -74,7 +76,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 152);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(692, 350);
+            this.panel5.Size = new System.Drawing.Size(849, 350);
             this.panel5.TabIndex = 21;
             // 
             // gridImport
@@ -97,7 +99,7 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.Size = new System.Drawing.Size(692, 350);
+            this.gridImport.Size = new System.Drawing.Size(849, 350);
             this.gridImport.TabIndex = 10;
             this.gridImport.TabStop = false;
             // 
@@ -105,7 +107,7 @@
             // 
             this.txtPONo.BackColor = System.Drawing.Color.White;
             this.txtPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPONo.Location = new System.Drawing.Point(240, 15);
+            this.txtPONo.Location = new System.Drawing.Point(203, 15);
             this.txtPONo.Name = "txtPONo";
             this.txtPONo.Size = new System.Drawing.Size(153, 23);
             this.txtPONo.TabIndex = 3;
@@ -129,7 +131,7 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Location = new System.Drawing.Point(196, 15);
+            this.labelPONo.Location = new System.Drawing.Point(159, 15);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(40, 23);
             this.labelPONo.TabIndex = 2;
@@ -137,7 +139,7 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(433, 15);
+            this.labelPackID.Location = new System.Drawing.Point(359, 15);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(52, 23);
             this.labelPackID.TabIndex = 4;
@@ -147,7 +149,7 @@
             // 
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID.Location = new System.Drawing.Point(489, 15);
+            this.txtPackID.Location = new System.Drawing.Point(415, 15);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(120, 23);
             this.txtPackID.TabIndex = 5;
@@ -155,7 +157,7 @@
             // btnFind
             // 
             this.btnFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFind.Location = new System.Drawing.Point(623, 12);
+            this.btnFind.Location = new System.Drawing.Point(777, 12);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(80, 30);
             this.btnFind.TabIndex = 6;
@@ -166,7 +168,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(702, 152);
+            this.panel2.Location = new System.Drawing.Point(859, 152);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 350);
             this.panel2.TabIndex = 18;
@@ -174,7 +176,7 @@
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSave.Location = new System.Drawing.Point(539, 117);
+            this.btnSave.Location = new System.Drawing.Point(693, 117);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -186,7 +188,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(625, 117);
+            this.btnClose.Location = new System.Drawing.Point(779, 117);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -205,7 +207,7 @@
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 78);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(681, 78);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
             this.btnImportFromBarcode.TabIndex = 7;
@@ -218,7 +220,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(0, 502);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(712, 10);
+            this.panel4.Size = new System.Drawing.Size(869, 10);
             this.panel4.TabIndex = 20;
             // 
             // openFileDialog1
@@ -227,6 +229,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtTransferSlipNo);
+            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.txtfactory);
             this.panel3.Controls.Add(this.lbFactory);
             this.panel3.Controls.Add(this.dateTimePicker2);
@@ -250,7 +254,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(712, 152);
+            this.panel3.Size = new System.Drawing.Size(869, 152);
             this.panel3.TabIndex = 19;
             // 
             // txtfactory
@@ -349,7 +353,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(712, 152);
+            this.shapeContainer2.Size = new System.Drawing.Size(819, 152);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -393,9 +397,26 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // txtTransferSlipNo
+            // 
+            this.txtTransferSlipNo.BackColor = System.Drawing.Color.White;
+            this.txtTransferSlipNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferSlipNo.Location = new System.Drawing.Point(641, 16);
+            this.txtTransferSlipNo.Name = "txtTransferSlipNo";
+            this.txtTransferSlipNo.Size = new System.Drawing.Size(130, 23);
+            this.txtTransferSlipNo.TabIndex = 37;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(538, 15);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(100, 23);
+            this.label3.TabIndex = 38;
+            this.label3.Text = "TransferSlipNo";
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(712, 512);
+            this.ClientSize = new System.Drawing.Size(869, 512);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -453,5 +474,7 @@
         private System.Windows.Forms.Label label2;
         private Class.txtfactory txtfactory;
         private Win.UI.Label lbFactory;
+        private Win.UI.TextBox txtTransferSlipNo;
+        private Win.UI.Label label3;
     }
 }
