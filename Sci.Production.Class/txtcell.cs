@@ -19,22 +19,21 @@ namespace Sci.Production.Class
   
     public partial class txtCell : Sci.Win.UI.TextBox
     {
-        private string fty = "";
+        private string mdivision = "";
         private string where = "";   //" Where junk = 0";
         [Category("Custom Properties")]
-        public string FactoryId
+        public string MDivisionID
         {
-            set { fty = value; }
-            get { return fty; }
+            set { mdivision = value; }
+            get { return mdivision; }
         }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             string sql;
-            if (!string.IsNullOrWhiteSpace(fty))
+            if (!string.IsNullOrWhiteSpace(mdivision))
             {
-                //where = where + string.Format(" and mdivisionid = '{0}'", fty);
-                where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", fty);
+                where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", mdivision);
             }
             sql = "select distinct id from CutCell WITH (NOLOCK) " + where;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
@@ -50,8 +49,8 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
                 string tmp = null;
-                if (!string.IsNullOrWhiteSpace(fty))
-                    tmp = MyUtility.GetValue.Lookup("id", fty + str, "Cutcell", "mdivisionid+id");
+                if (!string.IsNullOrWhiteSpace(mdivision))
+                    tmp = MyUtility.GetValue.Lookup("id", mdivision + str, "Cutcell", "mdivisionid+id");
                 else
                     tmp = MyUtility.GetValue.Lookup("id", str, "Cutcell", "id");
 
@@ -65,8 +64,8 @@ namespace Sci.Production.Class
                 else
                 {
                     string cJunk = null;
-                    if (!string.IsNullOrWhiteSpace(fty))
-                        cJunk = MyUtility.GetValue.Lookup("Junk", fty + str, "CutCell", "mdivisionid+id");
+                    if (!string.IsNullOrWhiteSpace(mdivision))
+                        cJunk = MyUtility.GetValue.Lookup("Junk", mdivision + str, "CutCell", "mdivisionid+id");
                     else
                         cJunk = MyUtility.GetValue.Lookup("Junk", str, "CutCell", "id");
 

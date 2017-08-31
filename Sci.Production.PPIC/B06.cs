@@ -35,7 +35,7 @@ namespace Sci.Production.PPIC
 
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
-            txtCellNo.FactoryId = Sci.Env.User.Factory;
+            txtCellNo.MDivisionID = Sci.Env.User.Factory;
         }
 
         protected override void ClickNewAfter()

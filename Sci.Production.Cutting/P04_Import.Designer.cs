@@ -131,7 +131,7 @@
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.FactoryId = "";
+            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell.Location = new System.Drawing.Point(343, 11);
             this.txtCutCell.Name = "txtCutCell";

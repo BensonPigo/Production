@@ -100,7 +100,7 @@
             // txtCell
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
-            this.txtCell.FactoryId = "";
+            this.txtCell.MDivisionID = Sci.Env.User.Keyword;
             this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCell.Location = new System.Drawing.Point(100, 123);
             this.txtCell.Name = "txtCell";

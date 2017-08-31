@@ -59,7 +59,7 @@ namespace Sci.Production.Cutting
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
-            txtCutCell.FactoryId = Sci.Env.User.Factory;
+            txtCutCell.MDivisionID = Sci.Env.User.Factory;
             /*
              *設定Binding Source for Text
             */
