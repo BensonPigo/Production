@@ -23,6 +23,7 @@ namespace Sci.Production.Packing
         string date1, date2, packID, SPNo;
         public P14_Print_OrderList(DataTable dt, string date1, string date2, string packID, string SPNo)
         {
+            
             this.dt = dt;
             this.date1 = date1;
             this.date2 = date2;
@@ -52,6 +53,7 @@ namespace Sci.Production.Packing
                             select new PackData
                             {
                                 TTL_Qty = m.Count(r => !r["CTNStartNo"].Empty()).ToString(),
+                                TransferDate = m.First()["TransferDate"].ToString(),
                                 PackID = m.First()["PackingListID"].ToString(),
                                 OrderID = m.First()["OrderID"].ToString(),
                                 PONo = m.First()["CustPONo"].ToString(),
@@ -62,6 +64,7 @@ namespace Sci.Production.Packing
                 //
                 string sql = @"
 select  t.TTL_Qty, 
+        t.TransferDate,
         t.PackID, 
         t.OrderID, 
         t.PONo, 
@@ -103,6 +106,7 @@ outer apply(
             this.ShowWaitMessage("Excel Processing...");
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile); //預先開啟excel app
+            objApp.Visible = true;
             bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -147,7 +151,7 @@ outer apply(
             {
                 strExcelProcessName = "Packing_P14";
                 int r = ExcelTable.Rows.Count;
-                objSheets.get_Range(string.Format("A5:L{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
             }
@@ -182,6 +186,7 @@ outer apply(
         public class PackData
         {
             public string TTL_Qty { get; set; }
+            public string TransferDate { get; set; }
             public string PackID { get; set; }
             public string OrderID { get; set; }
             public string PONo { get; set; }

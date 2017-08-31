@@ -36,6 +36,7 @@ namespace Sci.Production.Packing
             Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Date("TransferDate", header: "Transfer Date",iseditable:false)
+                .Text("TransferSlipNo", header: "TransferSlipNo", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
@@ -99,6 +100,7 @@ select  *
 from (
     select  1 as selected
             , t.TransferDate
+            , t.TransferSlipNo
             , t.PackingListID
             , t.OrderID
             , t.CTNStartNo
@@ -138,6 +140,10 @@ from (
             if (!MyUtility.Check.Empty(txtfactory.Text))
             {
                 sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", MyUtility.Convert.GetString(txtfactory.Text)));
+            }
+            if (!MyUtility.Check.Empty(txtTransferSlipNo.Text))
+            {
+                sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(txtTransferSlipNo.Text)));
             }
             sqlCmd.Append(@"
 ) X order by rn");
@@ -182,8 +188,8 @@ from (
             }
             //將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate",
-             @"select TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate from #tmp where selected=1", out selectData, "#tmp");
+            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate",
+             @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate from #tmp where selected=1", out selectData, "#tmp");
             
             //
             

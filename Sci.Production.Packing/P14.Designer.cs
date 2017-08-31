@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label2 = new System.Windows.Forms.Label();
@@ -48,8 +50,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.labelFactory = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtTransferSlipNo);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Controls.Add(this.txtfactory);
             this.panel3.Controls.Add(this.dateTimePicker2);
@@ -93,28 +97,47 @@
             this.panel3.Size = new System.Drawing.Size(719, 80);
             this.panel3.TabIndex = 3;
             // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(435, 44);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.TabIndex = 28;
+            this.labelFactory.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(513, 44);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 5;
+            // 
             // dateTimePicker2
             // 
             this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker2.Location = new System.Drawing.Point(271, 13);
+            this.dateTimePicker2.Location = new System.Drawing.Point(277, 44);
             this.dateTimePicker2.Name = "dateTimePicker2";
             this.dateTimePicker2.Size = new System.Drawing.Size(146, 23);
-            this.dateTimePicker2.TabIndex = 26;
+            this.dateTimePicker2.TabIndex = 4;
             this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker1.Location = new System.Drawing.Point(99, 12);
+            this.dateTimePicker1.Location = new System.Drawing.Point(105, 43);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(146, 23);
-            this.dateTimePicker1.TabIndex = 25;
+            this.dateTimePicker1.TabIndex = 3;
             this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(247, 15);
+            this.label2.Location = new System.Drawing.Point(253, 46);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(22, 17);
             this.label2.TabIndex = 24;
@@ -144,14 +167,14 @@
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(279, 49);
+            this.txtSP.Location = new System.Drawing.Point(52, 11);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(130, 23);
-            this.txtSP.TabIndex = 5;
+            this.txtSP.TabIndex = 0;
             // 
             // labelSP
             // 
-            this.labelSP.Location = new System.Drawing.Point(240, 49);
+            this.labelSP.Location = new System.Drawing.Point(13, 11);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(35, 23);
             this.labelSP.TabIndex = 4;
@@ -161,14 +184,14 @@
             // 
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID.Location = new System.Drawing.Point(67, 49);
+            this.txtPackID.Location = new System.Drawing.Point(249, 11);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(130, 23);
-            this.txtPackID.TabIndex = 3;
+            this.txtPackID.TabIndex = 1;
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(7, 49);
+            this.labelPackID.Location = new System.Drawing.Point(189, 11);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(56, 23);
             this.labelPackID.TabIndex = 2;
@@ -176,7 +199,7 @@
             // 
             // labelTransferDate
             // 
-            this.labelTransferDate.Location = new System.Drawing.Point(7, 13);
+            this.labelTransferDate.Location = new System.Drawing.Point(13, 44);
             this.labelTransferDate.Name = "labelTransferDate";
             this.labelTransferDate.Size = new System.Drawing.Size(89, 23);
             this.labelTransferDate.TabIndex = 0;
@@ -227,14 +250,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -243,24 +266,22 @@
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
-            // txtfactory
+            // label1
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = true;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(514, 11);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 27;
+            this.label1.Location = new System.Drawing.Point(382, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "TransferSlipNo";
             // 
-            // labelFactory
+            // txtTransferSlipNo
             // 
-            this.labelFactory.Location = new System.Drawing.Point(436, 12);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(75, 23);
-            this.labelFactory.TabIndex = 28;
-            this.labelFactory.Text = "Factory";
+            this.txtTransferSlipNo.BackColor = System.Drawing.Color.White;
+            this.txtTransferSlipNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferSlipNo.Location = new System.Drawing.Point(485, 12);
+            this.txtTransferSlipNo.Name = "txtTransferSlipNo";
+            this.txtTransferSlipNo.Size = new System.Drawing.Size(130, 23);
+            this.txtTransferSlipNo.TabIndex = 2;
             // 
             // P14
             // 
@@ -310,5 +331,7 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker2;
         private Win.UI.Label labelFactory;
         private Class.txtfactory txtfactory;
+        private Win.UI.TextBox txtTransferSlipNo;
+        private Win.UI.Label label1;
     }
 }
