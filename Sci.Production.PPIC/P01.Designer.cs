@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
-            this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnEachCons = new Sci.Win.UI.Button();
             this.btnBacktoPPICMasterList = new Sci.Win.UI.Button();
             this.btnShipmentFinished = new Sci.Win.UI.Button();
@@ -466,8 +464,6 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
-            this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
-            this.tabPage1.Controls.Add(this.btnMeterialStatus);
             this.tabPage1.Controls.Add(this.btnEachCons);
             this.tabPage1.Controls.Add(this.btnBacktoPPICMasterList);
             this.tabPage1.Controls.Add(this.btnShipmentFinished);
@@ -583,28 +579,6 @@
             this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
-            // 
-            // btnMeterialStatus_Local
-            // 
-            this.btnMeterialStatus_Local.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMeterialStatus_Local.Location = new System.Drawing.Point(204, 535);
-            this.btnMeterialStatus_Local.Name = "btnMeterialStatus_Local";
-            this.btnMeterialStatus_Local.Size = new System.Drawing.Size(194, 27);
-            this.btnMeterialStatus_Local.TabIndex = 189;
-            this.btnMeterialStatus_Local.Text = "Material Status (Local)";
-            this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
-            // 
-            // btnMeterialStatus
-            // 
-            this.btnMeterialStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMeterialStatus.Location = new System.Drawing.Point(6, 535);
-            this.btnMeterialStatus.Name = "btnMeterialStatus";
-            this.btnMeterialStatus.Size = new System.Drawing.Size(194, 27);
-            this.btnMeterialStatus.TabIndex = 188;
-            this.btnMeterialStatus.Text = "Material Status";
-            this.btnMeterialStatus.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus.Click += new System.EventHandler(this.btnMeterialStatus_Click);
             // 
             // btnEachCons
             // 
@@ -3439,8 +3413,6 @@
         private Win.UI.Button btnEachCons;
         private Win.UI.Label labeOrderCombo;
         private Win.UI.DisplayBox displayOrderCombo;
-        private Win.UI.Button btnMeterialStatus_Local;
-        private Win.UI.Button btnMeterialStatus;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
     }
 }
