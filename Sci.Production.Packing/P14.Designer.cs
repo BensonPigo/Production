@@ -33,6 +33,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
@@ -50,8 +52,6 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -96,6 +96,23 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(719, 80);
             this.panel3.TabIndex = 3;
+            // 
+            // txtTransferSlipNo
+            // 
+            this.txtTransferSlipNo.BackColor = System.Drawing.Color.White;
+            this.txtTransferSlipNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferSlipNo.Location = new System.Drawing.Point(485, 12);
+            this.txtTransferSlipNo.Name = "txtTransferSlipNo";
+            this.txtTransferSlipNo.Size = new System.Drawing.Size(130, 23);
+            this.txtTransferSlipNo.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(382, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "TransferSlipNo";
             // 
             // labelFactory
             // 
@@ -265,23 +282,6 @@
             this.gridDetail.Size = new System.Drawing.Size(719, 327);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(382, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
-            this.label1.TabIndex = 29;
-            this.label1.Text = "TransferSlipNo";
-            // 
-            // txtTransferSlipNo
-            // 
-            this.txtTransferSlipNo.BackColor = System.Drawing.Color.White;
-            this.txtTransferSlipNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTransferSlipNo.Location = new System.Drawing.Point(485, 12);
-            this.txtTransferSlipNo.Name = "txtTransferSlipNo";
-            this.txtTransferSlipNo.Size = new System.Drawing.Size(130, 23);
-            this.txtTransferSlipNo.TabIndex = 2;
             // 
             // P14
             // 
