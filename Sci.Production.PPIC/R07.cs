@@ -363,7 +363,7 @@ END
 CLOSE cursor_factoryline
 DEALLOCATE cursor_factoryline
 
-select * from @tempPintData order by FactoryID,SewingLineID,InLine");
+select * from @tempPintData WHERE StyleID !='' order by FactoryID,SewingLineID,InLine");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
