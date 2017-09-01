@@ -81,6 +81,8 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
             this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "shc", true));
+            this.displayBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerNo", true));
+
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
 
@@ -1908,8 +1910,7 @@ where w.ID = '{0}'", masterID);
             //與marklength變更規則不一樣
             decimal cp = MyUtility.Convert.GetDecimal(CurrentDetailData["Conspc"]);
             decimal la = MyUtility.Convert.GetDecimal(CurrentDetailData["Layer"]);
-            decimal ttsr = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.Qty) as TotalSizeRatio
-From WorkOrder_SizeRatio b with (NOLOCK) where b.workorderukey='{0}'", CurrentDetailData["Ukey"].ToString()), null));
+            decimal ttsr = MyUtility.Convert.GetDecimal(sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}' and newkey = '{1}'", CurrentDetailData["Ukey"], CurrentDetailData["newkey"])));
             CurrentDetailData["Cons"] = cp * la * ttsr;
         }
 
@@ -1920,7 +1921,7 @@ From WorkOrder_SizeRatio b with (NOLOCK) where b.workorderukey='{0}'", CurrentDe
 
             int sizeRatioQty;
             object comput;
-            comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}'", CurrentDetailData["Ukey"]));
+            comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}' and newkey = '{1}'", CurrentDetailData["Ukey"], CurrentDetailData["newkey"]));
             if (comput == DBNull.Value) sizeRatioQty = 0;
             else sizeRatioQty = Convert.ToInt32(comput);
 
