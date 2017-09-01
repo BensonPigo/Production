@@ -780,8 +780,6 @@ from SummaryData
                 DataRow[] packData = AllPackData.Select(string.Format("DataType = 'S' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                 if (packData.Length <= 0)  //存在表身，但資料已被修改，就必須把第3層資料刪除，表身資料的Ship Qty改成0
                 {
-                    if (!MyUtility.Check.Empty(dr["ShipQty"]) && dr.RowState == DataRowState.Modified)
-                    {
                         //刪除第3層資料
                         DataTable SubDetailData;
                         GetSubDetailDatas(dr, out SubDetailData);
@@ -799,7 +797,6 @@ from SummaryData
                         dr["PackingListID"] = "";
                         dr["INVNo"] = "";
                         dr["ReviseDate"] = DateTime.Now;
-                    }
                 }
                 else
                 {
