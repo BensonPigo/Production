@@ -23,14 +23,13 @@ namespace Sci.Production.Warehouse
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
         string userCountry = "";
-        string SpNo = "";
+        string SpNo = "";                   
         bool ButtonOpen = false;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            this.EditMode = true;
-
+            this.EditMode = true;            
             #region set userCountry
             string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
@@ -76,6 +75,45 @@ namespace Sci.Production.Warehouse
             SpNo = P01SPNo;
             this.txtSPNo.Text = SpNo.Trim();
             ButtonOpen = true;
+            
+        }
+
+        //PPIC_P01 Called        
+        public static void Call(string PPIC_SPNo)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P03)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    activateForm.setTxtSPNo(PPIC_SPNo);
+                    activateForm.Query();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P03MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
+                            {
+                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }            
+            P03 call = new P03(PPIC_SPNo, P03MenuItem);            
+            call.Show();                            
+            call.Query();   
         }
 
         //隨著 P01上下筆SP#切換資料
@@ -93,6 +131,7 @@ namespace Sci.Production.Warehouse
         {
 
             base.OnFormLoaded();
+            
             comboSortBy.SelectedIndex = 1;
 
             #region Supp 開窗

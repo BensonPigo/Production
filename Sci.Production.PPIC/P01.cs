@@ -22,6 +22,8 @@ using Sci.Utility.Drawing;
 
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
+using System.IO;
+using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -1213,6 +1215,35 @@ where POID = @poid group by POID,b.spno";
             string ID = this.CurrentMaintain["ID"].ToString();
             var frm = new Print_OrderList(ID);
             frm.ShowDialog();
+        }
+
+        private void btnMeterialStatus_Click(object sender, EventArgs e)
+        {            
+            var fullpath = Path.GetFullPath("Sci.Production.Warehouse.dll");
+            var assemblys = Assembly.LoadFile(fullpath);
+            var types = assemblys.GetTypes().ToList();
+            var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P03").First();
+
+            if (myClass != null)
+            {                
+                var callMethod = myClass.GetMethod("Call");
+                callMethod.Invoke(null, new object[] { CurrentMaintain["ID"].ToString()});                
+            }
+              
+        }
+
+        private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
+        {
+            var fullpath = Path.GetFullPath("Sci.Production.Warehouse.dll");
+            var assemblys = Assembly.LoadFile(fullpath);
+            var types = assemblys.GetTypes().ToList();
+            var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P04").First();
+
+            if (myClass != null)
+            {
+                var callMethod = myClass.GetMethod("Call");
+                callMethod.Invoke(null, new object[] { CurrentMaintain["ID"].ToString() });
+            }
         }
     }
 }
