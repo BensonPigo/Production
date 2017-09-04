@@ -239,7 +239,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
-                }
+                }                
             };
 
             dryScaleCell.CellValidating += (s, e) =>
@@ -318,11 +318,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             };        
             InspDateCell.CellValidating += (s, e) =>
             {
-                string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
-                DataRow drResult;
-                if (!MyUtility.Check.Seek(result_cmd, out drResult))
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
+                    e.Cancel = true;
                     return;
                 }
             };
