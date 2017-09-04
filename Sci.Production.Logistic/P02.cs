@@ -145,6 +145,11 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(@" and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()));
             }
+
+            if (!MyUtility.Check.Empty(this.txtTransferSlipNo.Text))
+            {
+                sqlCmd.Append(string.Format(@" and t.TransferSlipNo = '{0}'", this.txtTransferSlipNo.Text.Trim()));
+            }
             sqlCmd.Append(")X order by rn");
 
             DualResult selectResult;

@@ -330,27 +330,152 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (e.RowIndex < 0 || EditMode == false) { return; }
             var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
             if (data == null) { return; }
-            if (data["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(data["POID"]))
+            //AutoCrate為1表示資料來源為(P01計算出來的就不能再讓使用者修改線種,顏色,總長度)
+            if (data["autoCreate"].ToString() == "True")
             {
                 col_refno.IsEditingReadOnly = true;
                 col_color.IsEditingReadOnly = true;
                 col_cons.IsEditingReadOnly = true;
-                col_Allowance.IsEditingReadOnly = true;
-                col_NewCone.IsEditingReadOnly = true;
-                col_UsedCone.IsEditingReadOnly = true;
-                col_Remark.IsEditingReadOnly = true;
+                this.refno.SupportPopup = false;
             }
             else
             {
                 col_refno.IsEditingReadOnly = false;
                 col_color.IsEditingReadOnly = false;
                 col_cons.IsEditingReadOnly = false;
+                this.refno.SupportPopup = true;
+            }
+            //POID應為全鎖，因為 POID表示在SubconP30已有建立採購單並Confrim，
+            //不能再給使用者修改請購單的所有項目。
+            if (!MyUtility.Check.Empty(data["POID"]))
+            {
+                col_Allowance.IsEditingReadOnly = true;
+                col_NewCone.IsEditingReadOnly = true;
+                col_UsedCone.IsEditingReadOnly = true;
+                col_Remark.IsEditingReadOnly = true;
+                col_refno.IsEditingReadOnly = true;
+                col_color.IsEditingReadOnly = true;
+                col_cons.IsEditingReadOnly = true;
+            }
+            else
+            {
                 col_Allowance.IsEditingReadOnly = false;
                 col_NewCone.IsEditingReadOnly = false;
                 col_UsedCone.IsEditingReadOnly = false;
                 col_Remark.IsEditingReadOnly = false;
+                col_refno.IsEditingReadOnly = false;
+                col_color.IsEditingReadOnly = false;
+                col_cons.IsEditingReadOnly = false;
             }
+            
         }
+        #region 是否可編輯與變色
+        private void change_record()
+        {
+            col_color.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True"|| !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_cons.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True"|| !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_refno.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True"|| !MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+
+                }
+            };
+            col_Allowance.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_NewCone.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_UsedCone.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_Remark.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["POID"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
+        }
+        #endregion
 
         void detailgrid_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
@@ -805,113 +930,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             
         }
 
-        #region 是否可編輯與變色
-        private void change_record()
-        {          
-             col_color.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;      
-                                 
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            col_cons.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            col_refno.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-
-                }
-            };
-            col_Allowance.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            col_NewCone.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            col_UsedCone.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            col_Remark.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-
-        }
-        #endregion
+       
         private void ReQty(DataRow dr) //重算Qty
         {
             dr["TotalQty"] = Convert.ToDecimal(dr["MeterToCone"]) != 0 ? Math.Ceiling(Convert.ToDecimal(dr["ConsumptionQty"]) / Convert.ToDecimal(dr["MeterToCone"])) : 0;

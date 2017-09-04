@@ -17,6 +17,7 @@
     [AddDate]           DATETIME       NULL,
     [EditName]          VARCHAR (10)   CONSTRAINT [DF_MachineType_EditName] DEFAULT ('') NULL,
     [EditDate]          DATETIME       NULL,
+    [isThread]			BIT			   NULL, 
     CONSTRAINT [PK_MachineType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

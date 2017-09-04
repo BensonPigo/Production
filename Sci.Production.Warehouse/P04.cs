@@ -19,23 +19,60 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
-        DataTable dataTable;
+        DataTable dataTable;        
         string SPNo;
         public P04(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             this.EditMode = true;
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         //Form to Form W/H.P01
-        public P04(string P01SPNo)
+        public P04(string P01SPNo, ToolStripMenuItem menuitem)
+            :base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
             SPNo = P01SPNo;
             this.txtSPNo.Text = SPNo.Trim();
             event_Query();
+        }
+
+        //PPIC_P01 Called
+        public static void Call(string PPIC_SPNo)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P04)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P04 activateForm = (Sci.Production.Warehouse.P04)form;
+                    activateForm.setTxtSPNo(PPIC_SPNo);
+                    activateForm.event_Query();
+                    return;
+                }
+            }
+            ToolStripMenuItem P04MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P04. Material Status (Local)"))
+                            {
+                                P04MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            P04 callform = new P04(PPIC_SPNo, P04MenuItem);
+            callform.Show();                       
         }
 
         //隨著 P01上下筆SP#切換資料
@@ -98,7 +135,7 @@ namespace Sci.Production.Warehouse
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void event_Query()
+        public void event_Query()
         {
             #region check SP#
             if (txtSPNo.Text.Empty())
@@ -187,6 +224,11 @@ where l.OrderID like @spno
         {
             txtSPNo.ResetText();
             txtSPNo.Select();
+        }
+
+        public void setTxtSPNo(string spNo)
+        {
+            this.txtSPNo.Text = spNo;
         }
     }
 }

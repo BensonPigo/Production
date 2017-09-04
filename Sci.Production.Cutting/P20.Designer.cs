@@ -364,6 +364,7 @@
             this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
             this.btnImportfromRealtimeBundleTracking.Text = "Import from Realtime Bundle Tracking";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
+            this.btnImportfromRealtimeBundleTracking.Visible = false;
             // 
             // label1
             // 

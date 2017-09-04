@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
+            this.InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -41,29 +42,229 @@ select  LID.ID
         , [Desc] = Litem.Description
         , [unit] = Linv.UnitID
         , LID.Qty
+        , [Location] = Linv.ALocation
         , LID.ukey
 from LocalIssue LI
-join LocalIssue_Detail LID on LI.ID = LID.ID
-join LocalInventory Linv on LID.OrderID = Linv.OrderID and LID.Refno = Linv.Refno and LID.ThreadColorID = Linv.ThreadColorID
+inner join LocalIssue_Detail LID on LI.ID = LID.ID
+left join LocalInventory Linv on LID.OrderID = Linv.OrderID 
+                                 and LID.Refno = Linv.Refno 
+                                 and LID.ThreadColorID = Linv.ThreadColorID
 left join LocalItem Litem on LID.Refno = Litem.Refno
-where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
+where   LI.ID = '{0}' 
+        and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
         protected override void OnDetailGridSetup()
         {
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
-            SupportNegative.IsSupportNegative = true;
+            #region RefNo Setting
+            DataGridViewGeneratorTextColumnSettings setRefno = new DataGridViewGeneratorTextColumnSettings();
+
+            setRefno.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = string.Format(@"
+select  distinct refno
+from LocalInventory
+where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "refno", "20", this.CurrentDetailData["Refno"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentDetailData["Refno"] = selectItem.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
+            setRefno.CellValidating += (s, e) =>
+            {
+                string strNewRefno = e.FormattedValue.ToString();
+                this.CurrentDetailData["Refno"] = strNewRefno;
+
+                #region check Refno
+                string strCheckRefno = string.Format(@"
+select  distinct refno
+from LocalInventory
+where   orderID = '{0}'
+        and refno = '{1}'", this.CurrentDetailData["OrderID"]
+                          , strNewRefno);
+
+                if (!strNewRefno.Empty() && !MyUtility.Check.Seek(strCheckRefno))
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
+                    e.Cancel = true;
+                    return;
+                }
+                #endregion
+                #region set Desc 
+                if (strNewRefno.Empty())
+                {
+                    this.CurrentDetailData["desc"] = "";                    
+                }
+                else
+                {
+                    string strDescValue = string.Format(@"
+select Description
+from LocalItem
+where refno = '{0}'", strNewRefno);
+                    this.CurrentDetailData["desc"] = MyUtility.GetValue.Lookup(strDescValue);
+                }
+                #endregion 
+                #region set Location
+                string strLocationValue = string.Format(@"
+select ALocation
+from LocalInventory
+where   OrderID = '{0}'
+        and refno = '{1}'
+        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"]
+              , strNewRefno
+              , this.CurrentDetailData["ThreadColorID"]);
+                this.CurrentDetailData["Location"] = MyUtility.GetValue.Lookup(strLocationValue);
+                #endregion
+
+                this.CurrentDetailData.EndEdit();
+            };
+            #endregion 
+            #region ThreadColor Setting
+            DataGridViewGeneratorTextColumnSettings setThreadColor = new DataGridViewGeneratorTextColumnSettings();
+            
+            setThreadColor.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = string.Format(@"
+select  distinct ThreadColorID
+from LocalInventory
+where OrderID = '{0}'", this.CurrentDetailData["OrderID"]);
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "ThreadColorID", "20", this.CurrentDetailData["ThreadColorID"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentDetailData["ThreadColorID"] = selectItem.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
+            setThreadColor.CellValidating += (s, e) =>
+            {
+                string strNewThreadColor = e.FormattedValue.ToString();
+                this.CurrentDetailData["ThreadColorID"] = strNewThreadColor;
+
+                #region check ThreadColor
+                string strCheckThreadColor = string.Format(@"
+select  distinct ThreadColorID
+from LocalInventory
+where   orderID = '{0}'
+        and ThreadColorID = '{1}'", this.CurrentDetailData["OrderID"]
+                          , strNewThreadColor);
+
+                if (!strNewThreadColor.Empty() && !MyUtility.Check.Seek(strCheckThreadColor))
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
+                    e.Cancel = true;
+                    return;
+                }
+                #endregion
+                #region set Location
+                string strLocationValue = string.Format(@"
+select ALocation
+from LocalInventory
+where   OrderID = '{0}'
+        and refno = '{1}'
+        and ThreadColorID = '{2}'", this.CurrentDetailData["OrderID"]
+              , this.CurrentDetailData["Refno"]
+              , strNewThreadColor);
+                this.CurrentDetailData["Location"] = MyUtility.GetValue.Lookup(strLocationValue);
+                #endregion
+
+                this.CurrentDetailData.EndEdit();
+            };
+            #endregion
+            #region Unit
+            DataGridViewGeneratorTextColumnSettings setUnit = new DataGridViewGeneratorTextColumnSettings();
+
+            setUnit.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataTable selectDt;
+                    string strSelectSqlCmd = string.Format(@"
+select  distinct unit = UnitID
+from LocalInventory
+where   OrderID = '{0}'
+        and refno = '{1}'", this.CurrentDetailData["OrderID"]
+                              , this.CurrentDetailData["Refno"]);
+                    DBProxy.Current.Select(null, strSelectSqlCmd, out selectDt);
+
+                    Sci.Win.Tools.SelectItem selectItem = new Win.Tools.SelectItem(selectDt, "Unit", "20", this.CurrentDetailData["unit"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    this.CurrentDetailData["unit"] = selectItem.GetSelectedString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
+            setUnit.CellValidating += (s, e) =>
+            {
+                string strNewUnit = e.FormattedValue.ToString();
+                this.CurrentDetailData["unit"] = strNewUnit;
+
+                #region check ThreadColor
+                string strCheckUnit = string.Format(@"
+select  distinct UnitID
+from LocalInventory
+where   orderID = '{0}'
+        and Refno = '{1}'
+        and UnitID = '{2}'", this.CurrentDetailData["OrderID"]
+                         , this.CurrentDetailData["Refno"]
+                         , strNewUnit);
+
+                if (!strNewUnit.Empty() && !MyUtility.Check.Seek(strCheckUnit))
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
+                    e.Cancel = true;
+                    return;
+                }
+                #endregion
+
+                this.CurrentDetailData.EndEdit();
+            };
+            #endregion
+            #region Issue Qty Setting
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings setIssueQty = new DataGridViewGeneratorNumericColumnSettings();
+            setIssueQty.IsSupportNegative = true;
+            setIssueQty.CellValidating += (s, e) =>
+            {
+                decimal validateValue = Convert.ToDecimal(e.FormattedValue);
+                if (validateValue > 99999999)
+                {
+                    validateValue = 99999999;
+                }
+                CurrentDetailData["Qty"] = validateValue;
+                CurrentDetailData.EndEdit();
+            };
+            #endregion
 
             #region Set Grid
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false)
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: false)
-                .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(4), iseditingreadonly: false)
-                .EditText("desc", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: false)
-                .Text("unit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: false)
-                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: SupportNegative);
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: setRefno)
+                .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(4), iseditingreadonly: false, settings: setThreadColor)
+                .EditText("desc", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("unit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: setUnit)
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: setIssueQty)
+                .EditText("Location", header: "Bulk Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
             #endregion 
+
+            for (int i = 0; i < detailgrid.Columns.Count; i++)
+            {
+                detailgrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         protected override void ClickNewAfter()

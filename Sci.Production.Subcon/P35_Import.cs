@@ -70,7 +70,7 @@ namespace Sci.Production.Subcon
                                                                                 ,b.unitid
                                                                                 ,b.price
                                                                                 ,b.inqty - apqty unpaid
-                                                                                ,0 as qty
+                                                                                ,b.inqty - apqty as qty  --預帶待付款，[已收數]-[已付款]
                                                                                 ,b.ukey localpo_detailukey
                                                                                 ,'' id
                                                                                 

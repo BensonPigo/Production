@@ -924,7 +924,8 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 ;
             #endregion
             #region workRange
-            string strWorkRange = (boolMultiple) ? "A6:A6" : "A8:A8"
+            // strWorkRange 取 A8 & A10 是因為框線設定
+            string strWorkRange = (boolMultiple) ? "A8:A8" : "A10:A10"
                     , strColumnsRange = (boolMultiple) ? "A{0}:S{0}" : "A{0}:O{0}";
             #endregion
             #region Get Sci Delivery
@@ -968,6 +969,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(strWorkRange, Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
             }
 
@@ -1081,7 +1083,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(bodyRowIndex + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
-                    Marshal.ReleaseComObject(rngToCopy);
+                    Marshal.ReleaseComObject(rngToInsert);
                 }
                 Marshal.ReleaseComObject(rngToCopy);
             }

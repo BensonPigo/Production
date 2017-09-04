@@ -106,7 +106,7 @@ outer apply(select o1.POID
 where a.ApvToPurchase = 1 
     and a.LocalPOID =''
     and d.localsuppid= '{3}'
-    and a.factoryid = '{0}'    
+    --and a.factoryid = '{0}'    
     and a.mdivisionid='{1}'
 	and c.Category !='M'
     and c.Junk=0
@@ -176,7 +176,7 @@ outer apply(select o1.POID
 	        where o1.poid= c.poid and ot.ArtworkTypeID='{2}'
 	        group by o1.poid) y
 where a.status = 'Approved' 
-    and a.factoryid = '{0}'
+    --and a.factoryid = '{0}'
     and d.localsuppid= '{3}'
     and a.Mdivisionid = '{1}'
 	and c.Category !='M'

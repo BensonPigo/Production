@@ -575,6 +575,7 @@ when matched then
 		,t.AddDate			=s.AddDate		
 		,t.EditName			=s.EditName		
 		,t.EditDate			=s.EditDate		
+		,t.isThread         =s.isThread
 when not matched by target then
 	insert(
 		ID
@@ -595,6 +596,7 @@ when not matched by target then
 		,AddDate
 		,EditName
 		,EditDate
+		,isThread
 	)
 	values(
 		ID
@@ -615,6 +617,7 @@ when not matched by target then
 		,AddDate
 		,EditName
 		,EditDate
+		,isThread
 	)
 when not matched by source then
 	delete;
@@ -2667,7 +2670,7 @@ on t.type=s.type and t.id=s.id
 				,SCIRefno
 
 		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
-		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID)
+		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno)
 
 --------Color_Multiple---------------
 

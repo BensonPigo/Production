@@ -521,7 +521,22 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
             foreach (DataRow dr in PullOrder.Rows)
             {
-                updateCmds.Add(string.Format("update Orders set ActPulloutDate = (select max(p.PulloutDate) from Pullout_Detail pd, Pullout p where pd.OrderID = Orders.ID and pd.ID = p.ID and p.Status = 'Confirmed'), PulloutComplete = iif((select count(p.ID) from Pullout_Detail pd, Pullout p where pd.OrderID = '' and pd.ID = p.ID and p.Status = 'Confirmed' and pd.Status = 'C') > 0, 1, 0) where ID = '{0}'", MyUtility.Convert.GetString(dr["OrderID"])));
+                updateCmds.Add(string.Format(@"
+UPDATE orders 
+SET    actpulloutdate = (SELECT Max(p.pulloutdate) 
+FROM   pullout_detail pd, 
+    pullout p 
+WHERE  pd.orderid = orders.id 
+    AND pd.id = p.id 
+    AND p.status = 'Confirmed'), 
+pulloutcomplete = Iif((SELECT Count(p.id) 
+FROM   pullout_detail pd, 
+        pullout p 
+WHERE  pd.orderid = orders.id 
+        AND pd.id = p.id 
+        AND p.status = 'Confirmed' 
+        AND pd.status = 'C') > 0, 1, 0) 
+WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
             }
 
             result = DBProxy.Current.Executes(null, updateCmds);
@@ -765,8 +780,6 @@ from SummaryData
                 DataRow[] packData = AllPackData.Select(string.Format("DataType = 'S' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                 if (packData.Length <= 0)  //存在表身，但資料已被修改，就必須把第3層資料刪除，表身資料的Ship Qty改成0
                 {
-                    if (!MyUtility.Check.Empty(dr["ShipQty"]) && dr.RowState == DataRowState.Modified)
-                    {
                         //刪除第3層資料
                         DataTable SubDetailData;
                         GetSubDetailDatas(dr, out SubDetailData);
@@ -784,7 +797,6 @@ from SummaryData
                         dr["PackingListID"] = "";
                         dr["INVNo"] = "";
                         dr["ReviseDate"] = DateTime.Now;
-                    }
                 }
                 else
                 {

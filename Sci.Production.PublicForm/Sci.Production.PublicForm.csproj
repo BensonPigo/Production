@@ -67,6 +67,9 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -171,6 +174,12 @@
     <Compile Include="EachConsumption_SwitchWorkOrder.Designer.cs">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Print_OrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Print_OrderList.Designer.cs">
+      <DependentUpon>Print_OrderList.cs</DependentUpon>
+    </Compile>
     <Compile Include="StdGSDList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,11 +213,18 @@
     <EmbeddedResource Include="EachConsumption_SwitchWorkOrder.resx">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Print_OrderList.resx">
+      <DependentUpon>Print_OrderList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StdGSDList.resx">
       <DependentUpon>StdGSDList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
+      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
+      <Name>Sci.Production.Class</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>

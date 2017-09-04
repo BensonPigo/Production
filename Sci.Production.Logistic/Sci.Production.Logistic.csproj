@@ -167,7 +167,6 @@
     </Compile>
     <Compile Include="Logistic.cs">
       <DependentUpon>Logistic.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Logistic.Designer.cs">
       <AutoGen>True</AutoGen>

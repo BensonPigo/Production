@@ -111,15 +111,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(909, 429);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(903, 383);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(903, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -170,6 +170,7 @@
             // 
             this.txtShipMode.BackColor = System.Drawing.Color.White;
             this.txtShipMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.txtShipMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtShipMode.FormattingEnabled = true;
             this.txtShipMode.IsSupportUnselect = true;
@@ -191,7 +192,6 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Lines = 0;
             this.labelForwarder.Location = new System.Drawing.Point(7, 41);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(70, 23);
@@ -200,7 +200,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(422, 9);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(73, 23);
@@ -209,7 +208,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(7, 9);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(70, 23);
@@ -262,7 +260,6 @@
             // 
             // labelAddress
             // 
-            this.labelAddress.Lines = 0;
             this.labelAddress.Location = new System.Drawing.Point(7, 105);
             this.labelAddress.Name = "labelAddress";
             this.labelAddress.Size = new System.Drawing.Size(70, 23);
@@ -271,7 +268,6 @@
             // 
             // labelMobile
             // 
-            this.labelMobile.Lines = 0;
             this.labelMobile.Location = new System.Drawing.Point(422, 73);
             this.labelMobile.Name = "labelMobile";
             this.labelMobile.Size = new System.Drawing.Size(73, 23);
@@ -280,7 +276,6 @@
             // 
             // labelTel
             // 
-            this.labelTel.Lines = 0;
             this.labelTel.Location = new System.Drawing.Point(7, 73);
             this.labelTel.Name = "labelTel";
             this.labelTel.Size = new System.Drawing.Size(70, 23);
@@ -289,7 +284,6 @@
             // 
             // labelContact
             // 
-            this.labelContact.Lines = 0;
             this.labelContact.Location = new System.Drawing.Point(422, 41);
             this.labelContact.Name = "labelContact";
             this.labelContact.Size = new System.Drawing.Size(73, 23);
@@ -315,6 +309,7 @@
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "WhseNo";
             this.DefaultOrder = "BrandID,ShipModeID,Forwarder";
+            this.EditMode = true;
             this.GridAlias = "ForwarderWhse_Detail";
             this.GridUniqueKey = "WhseNo";
             this.IsSupportDelete = false;

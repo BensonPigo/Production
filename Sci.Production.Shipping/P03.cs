@@ -100,33 +100,38 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             //Arrive Port Date 不可晚於 Arrive W/H Date
-            if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]) && Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
+            if (MyUtility.Convert.GetString(CurrentMaintain["ExportCountry"]).ToUpper() == MyUtility.Convert.GetString(CurrentMaintain["ImportCountry"]).ToUpper()
+                && MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]).ToUpper() == "TRUCK")
+            { }
+            else
             {
-                MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
-                return false;
-            }
-
-            //ETA <= Arrive Port Date <= ETA+10
-            if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["Eta"]))
-            {
-                if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) < Convert.ToDateTime(CurrentMaintain["Eta"]))
+                if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"])&& !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
                 {
-                    DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    if (buttonResult == System.Windows.Forms.DialogResult.No)
+                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
                     {
+                        MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
                         return false;
                     }
                 }
 
-                if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10))
+                //ETA <= Arrive Port Date <= ETA+10
+                if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["Eta"]))
                 {
-                    DialogResult buttonResult = MyUtility.Msg.WarningBox("< Arrive Port Date > later than < ETA > + 10 days. Are you sure you want to save this data?", "Warning", MessageBoxButtons.YesNo);
-                    if (buttonResult == System.Windows.Forms.DialogResult.No)
+                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) < Convert.ToDateTime(CurrentMaintain["Eta"]))
                     {
+                        MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?");
+                        return false;
+                    }
+
+                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10))
+                    {
+                        MyUtility.Msg.WarningBox("<Arrive Prot DAte> later than <ETA> +10 days. Cannot be saved.");
                         return false;
                     }
                 }
+                
             }
+
 
             return base.ClickSaveBefore();
         }

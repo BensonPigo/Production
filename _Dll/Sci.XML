@@ -15341,6 +15341,12 @@
             </summary>
             <param name="e"></param>
         </member>
+        <member name="M:Sci.Win.UI.Grid.ColumnFrozen(System.Int32)">
+            <summary>
+            to perform column frozen by RightClick
+            </summary>
+            <param name="columnIdx"> column's index</param>
+        </member>
         <member name="M:Sci.Win.UI.Grid.OnColumnHeaderMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)">
             <summary>
             On column header mouse click event method.

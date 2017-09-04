@@ -8,7 +8,7 @@
     [FabricPanelCode]          VARCHAR (2)    CONSTRAINT [DF_Order_EachCons_FabricPanelCode] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (8, 4) CONSTRAINT [DF_Order_EachCons_ConsPC] DEFAULT ((0)) NOT NULL,
     [CuttingPiece]        BIT            CONSTRAINT [DF_Order_EachCons_CuttingPiece] DEFAULT ((0)) NULL,
-    [ActCuttingPerimeter] VARCHAR (15)   CONSTRAINT [DF_Order_EachCons_ActCuttingPerimeter] DEFAULT ('') NULL,
+    [ActCuttingPerimeter] NVARCHAR(15)   CONSTRAINT [DF_Order_EachCons_ActCuttingPerimeter] DEFAULT ('') NULL,
     [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_EachCons_StraightLength] DEFAULT ('') NULL,
     [FabricCode]          VARCHAR (3)    CONSTRAINT [DF_Order_EachCons_FabricCode] DEFAULT ('') NOT NULL,
     [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_EachCons_CurvedLength] DEFAULT ('') NULL,

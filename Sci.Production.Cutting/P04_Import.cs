@@ -23,7 +23,8 @@ namespace Sci.Production.Cutting
         public P04_Import()
         {
             InitializeComponent();
-            txtCutCell.FactoryId = keyWord;
+            txtCutCell.MDivisionID = keyWord;
+
         }
         protected override void OnFormLoaded()
         {
@@ -55,12 +56,17 @@ namespace Sci.Production.Cutting
                 return;
             }
             gridTable.Rows.Clear();  //開始查詢前先清空資料
+            string factory = txtfactory.Text;
             string estcutdate = dateEstCutDate.Text;
             string cutcellid = txtCutCell.Text;
             string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and a.CutRef != ''  and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
             if (!MyUtility.Check.Empty(cutcellid))
             {
                 sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
+            }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlcmd = sqlcmd + string.Format(" and a.factoryid = '{0}'", factory);
             }
             DataRow queryRow,ordersRow;
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);

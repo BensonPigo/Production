@@ -59,7 +59,7 @@ namespace Sci.Production.Cutting
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
-            txtCutCell.FactoryId = Sci.Env.User.Factory;
+            txtCutCell.MDivisionID = Sci.Env.User.Keyword;
             /*
              *設定Binding Source for Text
             */
@@ -81,6 +81,8 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
             this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "shc", true));
+            this.displayBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerNo", true));
+
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
 
@@ -1593,6 +1595,7 @@ where w.ID = '{0}'", masterID);
                   From workorder WITH (NOLOCK) 
                   Where (CutNo is not null ) and (cutref is null or cutref ='') 
                     and (estcutdate is not null and estcutdate !='' )
+                    and (CutCellid is not null and CutCellid !='' )
                     and id = '{0}' and mDivisionid = '{1}'
                 order by FabricCombo,cutno", CurrentMaintain["ID"], keyWord);//找出空的cutref
             cutrefresult = DBProxy.Current.Select(null, cmdsql, out workordertmp);
@@ -1907,8 +1910,7 @@ where w.ID = '{0}'", masterID);
             //與marklength變更規則不一樣
             decimal cp = MyUtility.Convert.GetDecimal(CurrentDetailData["Conspc"]);
             decimal la = MyUtility.Convert.GetDecimal(CurrentDetailData["Layer"]);
-            decimal ttsr = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.Qty) as TotalSizeRatio
-From WorkOrder_SizeRatio b with (NOLOCK) where b.workorderukey='{0}'", CurrentDetailData["Ukey"].ToString()), null));
+            decimal ttsr = MyUtility.Convert.GetDecimal(sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}' and newkey = '{1}'", CurrentDetailData["Ukey"], CurrentDetailData["newkey"])));
             CurrentDetailData["Cons"] = cp * la * ttsr;
         }
 
@@ -1919,7 +1921,7 @@ From WorkOrder_SizeRatio b with (NOLOCK) where b.workorderukey='{0}'", CurrentDe
 
             int sizeRatioQty;
             object comput;
-            comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}'", CurrentDetailData["Ukey"]));
+            comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}' and newkey = '{1}'", CurrentDetailData["Ukey"], CurrentDetailData["newkey"]));
             if (comput == DBNull.Value) sizeRatioQty = 0;
             else sizeRatioQty = Convert.ToInt32(comput);
 

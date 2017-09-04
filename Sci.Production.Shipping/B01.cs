@@ -19,6 +19,14 @@ namespace Sci.Production.Shipping
             InitializeComponent();
         }
 
+        protected override bool ClickEditBefore()
+        {
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtubconForwarder.TextBox1.IsSupportEditMode = false;
+            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            return base.ClickEditBefore();
+        }
+
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -26,8 +34,6 @@ namespace Sci.Production.Shipping
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("WhseNo", header: "Warehouse#", width: Widths.AnsiChars(50))
                 .EditText("Address", header: "Address", width: Widths.AnsiChars(30));
-
-
         }
 
         protected override bool ClickSaveBefore()
@@ -70,8 +76,18 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
+            this.txtbrand.IsSupportEditMode = true;
+            this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
+            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickUndo()
+        {
+            this.txtbrand.IsSupportEditMode = true;
+            this.txtubconForwarder.TextBox1.IsSupportEditMode = true;
+            this.txtShipMode.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            base.ClickUndo();
+        }
     }
 }
