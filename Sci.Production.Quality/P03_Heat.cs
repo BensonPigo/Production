@@ -661,9 +661,9 @@ where a.ID='{0}'"
                     DataTable dyelotdt;
                     string cmd = string.Format(
                         @"
-Select DISTINCT Dyelot from Receiving_Detail
+Select DISTINCT Dyelot from Receiving_Detail a
 where a.id='{0}' and a.poid='{1}' and a.seq1 ='{2}' and a.seq2='{3}'  
-and not exists (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Heat FLH INNER JOIN FIR_Laboratory FL ON FLH.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
+and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Heat FLH INNER JOIN FIR_Laboratory FL ON FLH.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
                         , maindr["receivingid"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult;
                     if (dResult = DBProxy.Current.Select(null, cmd, out dyelotdt))
