@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridImport = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
@@ -38,6 +38,10 @@
             this.panelTOP = new Sci.Win.UI.Panel();
             this.panelBOTTOM = new Sci.Win.UI.Panel();
             this.panelMIDDLE = new Sci.Win.UI.Panel();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.txtCutRef = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
@@ -59,14 +63,14 @@
             this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridImport.Location = new System.Drawing.Point(0, 0);
             this.gridImport.Name = "gridImport";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
@@ -109,7 +113,6 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(13, 12);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(99, 23);
@@ -125,6 +128,10 @@
             // 
             // panelTOP
             // 
+            this.panelTOP.Controls.Add(this.txtCutRef);
+            this.panelTOP.Controls.Add(this.label1);
+            this.panelTOP.Controls.Add(this.txtSP);
+            this.panelTOP.Controls.Add(this.labelLocateForSP);
             this.panelTOP.Controls.Add(this.labelEstCutDate);
             this.panelTOP.Controls.Add(this.dateEstCutDate);
             this.panelTOP.Controls.Add(this.btnQuery);
@@ -153,6 +160,40 @@
             this.panelMIDDLE.Size = new System.Drawing.Size(944, 439);
             this.panelMIDDLE.TabIndex = 8;
             // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(304, 12);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(145, 23);
+            this.txtSP.TabIndex = 17;
+            // 
+            // labelLocateForSP
+            // 
+            this.labelLocateForSP.Location = new System.Drawing.Point(261, 12);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(40, 23);
+            this.labelLocateForSP.TabIndex = 18;
+            this.labelLocateForSP.Text = "SP#";
+            // 
+            // txtCutRef
+            // 
+            this.txtCutRef.BackColor = System.Drawing.Color.White;
+            this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRef.Location = new System.Drawing.Point(530, 12);
+            this.txtCutRef.Name = "txtCutRef";
+            this.txtCutRef.Size = new System.Drawing.Size(101, 23);
+            this.txtCutRef.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(464, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(63, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "CutRef#";
+            // 
             // P20_Import_Workorder
             // 
             this.ClientSize = new System.Drawing.Size(944, 522);
@@ -164,6 +205,7 @@
             this.Text = "P20_Import";
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.panelTOP.ResumeLayout(false);
+            this.panelTOP.PerformLayout();
             this.panelBOTTOM.ResumeLayout(false);
             this.panelMIDDLE.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -181,5 +223,9 @@
         private Win.UI.Panel panelTOP;
         private Win.UI.Panel panelBOTTOM;
         private Win.UI.Panel panelMIDDLE;
+        private Win.UI.TextBox txtCutRef;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelLocateForSP;
     }
 }

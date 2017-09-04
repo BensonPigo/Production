@@ -2667,7 +2667,7 @@ on t.type=s.type and t.id=s.id
 				,SCIRefno
 
 		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
-		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID)
+		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno)
 
 --------Color_Multiple---------------
 

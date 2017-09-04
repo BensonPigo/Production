@@ -5,7 +5,7 @@
 -- =============================================
 CREATE FUNCTION [dbo].[GetStockUnitBySPSeq]
 (
-	@poid varchar(10)
+	@poid varchar(16)
 	, @seq1 varchar(3)
 	, @seq2 varchar(3)
 )

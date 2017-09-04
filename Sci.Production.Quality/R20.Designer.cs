@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtCell = new Sci.Production.Class.txtCell();
+            this.txtLine = new Sci.Production.Class.txtsewingline();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.txtDefectCode = new Sci.Win.UI.TextBox();
             this.radioSummybyDateandStyle = new Sci.Win.UI.RadioButton();
@@ -38,9 +41,6 @@
             this.radioAllData = new Sci.Win.UI.RadioButton();
             this.radioPerCell = new Sci.Win.UI.RadioButton();
             this.radioPerLine = new Sci.Win.UI.RadioButton();
-            this.txtCell = new Sci.Win.UI.TextBox();
-            this.txtLine = new Sci.Win.UI.TextBox();
-            this.txtBrand = new Sci.Win.UI.TextBox();
             this.ComboFactory = new Sci.Win.UI.ComboBox();
             this.datePeriod = new Sci.Win.UI.DateRange();
             this.labelDefectType = new Sci.Win.UI.Label();
@@ -70,6 +70,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtCell);
+            this.panel1.Controls.Add(this.txtLine);
+            this.panel1.Controls.Add(this.txtBrand);
             this.panel1.Controls.Add(this.txtDefectType);
             this.panel1.Controls.Add(this.txtDefectCode);
             this.panel1.Controls.Add(this.radioSummybyDateandStyle);
@@ -79,9 +82,6 @@
             this.panel1.Controls.Add(this.radioAllData);
             this.panel1.Controls.Add(this.radioPerCell);
             this.panel1.Controls.Add(this.radioPerLine);
-            this.panel1.Controls.Add(this.txtCell);
-            this.panel1.Controls.Add(this.txtLine);
-            this.panel1.Controls.Add(this.txtBrand);
             this.panel1.Controls.Add(this.ComboFactory);
             this.panel1.Controls.Add(this.datePeriod);
             this.panel1.Controls.Add(this.labelDefectType);
@@ -96,6 +96,35 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(391, 407);
             this.panel1.TabIndex = 94;
+            // 
+            // txtCell
+            // 
+            this.txtCell.BackColor = System.Drawing.Color.White;
+            this.txtCell.MDivisionID = Sci.Env.User.Keyword;
+            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell.Location = new System.Drawing.Point(100, 123);
+            this.txtCell.Name = "txtCell";
+            this.txtCell.Size = new System.Drawing.Size(30, 23);
+            this.txtCell.TabIndex = 24;
+            // 
+            // txtLine
+            // 
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.factoryobjectName = this.ComboFactory;
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(100, 94);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(60, 23);
+            this.txtLine.TabIndex = 23;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(100, 65);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(66, 23);
+            this.txtBrand.TabIndex = 22;
             // 
             // txtDefectType
             // 
@@ -205,36 +234,6 @@
             this.radioPerLine.UseVisualStyleBackColor = true;
             this.radioPerLine.CheckedChanged += new System.EventHandler(this.radioPerLine_CheckedChanged);
             // 
-            // txtCell
-            // 
-            this.txtCell.BackColor = System.Drawing.Color.White;
-            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(100, 124);
-            this.txtCell.MaxLength = 1;
-            this.txtCell.Name = "txtCell";
-            this.txtCell.Size = new System.Drawing.Size(36, 23);
-            this.txtCell.TabIndex = 12;
-            // 
-            // txtLine
-            // 
-            this.txtLine.BackColor = System.Drawing.Color.White;
-            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(100, 95);
-            this.txtLine.MaxLength = 2;
-            this.txtLine.Name = "txtLine";
-            this.txtLine.Size = new System.Drawing.Size(36, 23);
-            this.txtLine.TabIndex = 11;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(100, 66);
-            this.txtBrand.MaxLength = 10;
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(100, 23);
-            this.txtBrand.TabIndex = 10;
-            // 
             // ComboFactory
             // 
             this.ComboFactory.BackColor = System.Drawing.Color.White;
@@ -245,6 +244,7 @@
             this.ComboFactory.Name = "ComboFactory";
             this.ComboFactory.Size = new System.Drawing.Size(121, 24);
             this.ComboFactory.TabIndex = 9;
+            this.ComboFactory.TextChanged += new System.EventHandler(this.ComboFactory_TextChanged);
             // 
             // datePeriod
             // 
@@ -256,7 +256,6 @@
             // 
             // labelDefectType
             // 
-            this.labelDefectType.Lines = 0;
             this.labelDefectType.Location = new System.Drawing.Point(9, 371);
             this.labelDefectType.Name = "labelDefectType";
             this.labelDefectType.Size = new System.Drawing.Size(88, 23);
@@ -265,7 +264,6 @@
             // 
             // labelDefectCode
             // 
-            this.labelDefectCode.Lines = 0;
             this.labelDefectCode.Location = new System.Drawing.Point(9, 342);
             this.labelDefectCode.Name = "labelDefectCode";
             this.labelDefectCode.Size = new System.Drawing.Size(88, 23);
@@ -274,7 +272,6 @@
             // 
             // labelFormal
             // 
-            this.labelFormal.Lines = 0;
             this.labelFormal.Location = new System.Drawing.Point(9, 153);
             this.labelFormal.Name = "labelFormal";
             this.labelFormal.Size = new System.Drawing.Size(88, 23);
@@ -283,7 +280,6 @@
             // 
             // labelCell
             // 
-            this.labelCell.Lines = 0;
             this.labelCell.Location = new System.Drawing.Point(9, 123);
             this.labelCell.Name = "labelCell";
             this.labelCell.Size = new System.Drawing.Size(88, 23);
@@ -292,7 +288,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(9, 94);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(88, 23);
@@ -301,7 +296,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(9, 65);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(88, 23);
@@ -310,7 +304,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(9, 36);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(88, 23);
@@ -319,7 +312,6 @@
             // 
             // labelPeriod
             // 
-            this.labelPeriod.Lines = 0;
             this.labelPeriod.Location = new System.Drawing.Point(9, 7);
             this.labelPeriod.Name = "labelPeriod";
             this.labelPeriod.Size = new System.Drawing.Size(88, 23);
@@ -328,7 +320,6 @@
             // 
             // label9
             // 
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(410, 117);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(97, 22);
@@ -366,9 +357,6 @@
         private Win.UI.RadioButton radioAllData;
         private Win.UI.RadioButton radioPerCell;
         private Win.UI.RadioButton radioPerLine;
-        private Win.UI.TextBox txtCell;
-        private Win.UI.TextBox txtLine;
-        private Win.UI.TextBox txtBrand;
         private Win.UI.ComboBox ComboFactory;
         private Win.UI.DateRange datePeriod;
         private Win.UI.Label labelDefectType;
@@ -380,5 +368,8 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelPeriod;
         private Win.UI.Label label9;
+        private Class.txtCell txtCell;
+        private Class.txtsewingline txtLine;
+        private Class.txtbrand txtBrand;
     }
 }

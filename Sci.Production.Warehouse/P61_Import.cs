@@ -66,7 +66,8 @@ namespace Sci.Production.Warehouse
                 .Text("unit", header: "Unit", iseditingreadonly: true)
                 .Numeric("stockQty", header: "Stock Qty", iseditingreadonly: true)
                 .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: setQty)
-                .EditText("desc", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .EditText("desc", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .EditText("Location", header: "Bulk Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
             #endregion 
         }
 
@@ -85,6 +86,7 @@ from (
 			, unit = Linv.UnitId
 			, StockQty = Linv.InQty - Linv.OutQty + Linv.AdjustQty
 			, [Desc] = LItem.Description
+            , Location = Linv.ALocation
 	from LocalInventory Linv
 	left join LocalItem LItem on Linv.Refno = LItem.RefNo
     inner join dbo.Orders on Linv.OrderID = orders.id

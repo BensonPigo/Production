@@ -46,12 +46,30 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select 0 as Selected, isnull(o.SeamLength,0) SeamLength, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
-                                                        from TimeStudy_Detail td WITH (NOLOCK) 
-                                                        left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-                                                        left join Mold m WITH (NOLOCK) on m.ID=td.Mold
-                                                        where td.ID = '{0}'
-                                                        order by td.Seq", masterID);
+            this.DetailSelectCommand = string.Format(@"
+select 0 as Selected, isnull(o.SeamLength,0) SeamLength
+      ,td.[ID]
+      ,td.[SEQ]
+	  ,td.[OperationID]
+      ,td.[Annotation]
+      ,td.[PcsPerHour]
+      ,td.[Sewer]
+      ,td.[MachineTypeID]
+      ,td.[Frequency]
+      ,td.[IETMSSMV]
+      ,td.[Mold]
+      ,td.[SMV]
+      ,td.[OldKey]
+      ,td.[SeamLength]
+      ,td.[Ukey] 
+      ,o.DescEN as OperationDescEN
+      ,o.MtlFactorID as OperationMtlFactorID
+      , m.DescEN
+from TimeStudy_Detail td WITH (NOLOCK) 
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+left join Mold m WITH (NOLOCK) on m.ID=td.Mold
+where td.ID = '{0}'
+order by td.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -486,9 +504,23 @@ namespace Sci.Production.IE
                 MyUtility.Msg.WarningBox("Sewing output > 0, can't be deleted!!");
                 return false;
             }
+            #region 用來增加CurrentDataRow ID的欄位
+            /* 
+             * 如果不給browse增加ID欄位mapping 表身table
+             * 刪除時,就無法正確對應並刪除表身的資料
+             * 所以必須給currentDataRow增加ID
+             */
+            DataRow dr = CurrentDataRow;
+            if (!dr.Table.Columns.Contains("ID"))
+            {
+                dr.Table.ColumnsIntAdd("ID");
+            }
+            dr["ID"] = CurrentMaintain["ID"].ToString();
+            dr.AcceptChanges();
+            #endregion
             return true;
         }
-      
+        
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位

@@ -29,7 +29,10 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
+            this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnEachCons = new Sci.Win.UI.Button();
+            this.btneachconsprint = new Sci.Win.UI.Button();
             this.btnBacktoPPICMasterList = new Sci.Win.UI.Button();
             this.btnShipmentFinished = new Sci.Win.UI.Button();
             this.btnVASSHASInstruction = new Sci.Win.UI.Button();
@@ -181,8 +184,8 @@
             this.btnMCHandleCFM = new Sci.Win.UI.Button();
             this.btnLocalMRCFM = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelBuyerDlv = new Sci.Win.UI.Label();
@@ -279,6 +282,8 @@
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.labeOrderCombo = new Sci.Win.UI.Label();
             this.displayOrderCombo = new Sci.Win.UI.DisplayBox();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -287,11 +292,6 @@
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailcont
             // 
@@ -426,12 +426,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -468,7 +468,10 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
+            this.tabPage1.Controls.Add(this.btnMeterialStatus);
             this.tabPage1.Controls.Add(this.btnEachCons);
+            this.tabPage1.Controls.Add(this.btneachconsprint);
             this.tabPage1.Controls.Add(this.btnBacktoPPICMasterList);
             this.tabPage1.Controls.Add(this.btnShipmentFinished);
             this.tabPage1.Controls.Add(this.btnVASSHASInstruction);
@@ -577,12 +580,34 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnMeterialStatus_Local
+            // 
+            this.btnMeterialStatus_Local.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMeterialStatus_Local.Location = new System.Drawing.Point(204, 535);
+            this.btnMeterialStatus_Local.Name = "btnMeterialStatus_Local";
+            this.btnMeterialStatus_Local.Size = new System.Drawing.Size(194, 27);
+            this.btnMeterialStatus_Local.TabIndex = 189;
+            this.btnMeterialStatus_Local.Text = "Material Status (Local)";
+            this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
+            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
+            // 
+            // btnMeterialStatus
+            // 
+            this.btnMeterialStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMeterialStatus.Location = new System.Drawing.Point(6, 535);
+            this.btnMeterialStatus.Name = "btnMeterialStatus";
+            this.btnMeterialStatus.Size = new System.Drawing.Size(194, 27);
+            this.btnMeterialStatus.TabIndex = 188;
+            this.btnMeterialStatus.Text = "Material Status";
+            this.btnMeterialStatus.UseVisualStyleBackColor = true;
+            this.btnMeterialStatus.Click += new System.EventHandler(this.btnMeterialStatus_Click);
             // 
             // btnEachCons
             // 
@@ -595,9 +620,19 @@
             this.btnEachCons.UseVisualStyleBackColor = true;
             this.btnEachCons.Click += new System.EventHandler(this.btnEachCons_Click);
             // 
+            // btneachconsprint
+            // 
+            this.btneachconsprint.Location = new System.Drawing.Point(600, 628);
+            this.btneachconsprint.Name = "btneachconsprint";
+            this.btneachconsprint.Size = new System.Drawing.Size(194, 27);
+            this.btneachconsprint.TabIndex = 110;
+            this.btneachconsprint.Text = "Each Cons. Print";
+            this.btneachconsprint.UseVisualStyleBackColor = true;
+            this.btneachconsprint.Click += new System.EventHandler(this.btneachconsprint_Click);
+            // 
             // btnBacktoPPICMasterList
             // 
-            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(600, 628);
+            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 628);
             this.btnBacktoPPICMasterList.Name = "btnBacktoPPICMasterList";
             this.btnBacktoPPICMasterList.Size = new System.Drawing.Size(194, 27);
             this.btnBacktoPPICMasterList.TabIndex = 110;
@@ -1613,7 +1648,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2072,22 +2107,10 @@
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.lineShape3});
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
-            // 
-            // lineShape4
-            // 
-            this.lineShape4.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.lineShape4.Name = "lineShape4";
-            this.lineShape4.X1 = 0;
-            this.lineShape4.X2 = 987;
-            this.lineShape4.Y1 = 474;
-            this.lineShape4.Y2 = 474;
             // 
             // lineShape3
             // 
@@ -2097,6 +2120,15 @@
             this.lineShape3.X2 = 695;
             this.lineShape3.Y1 = 416;
             this.lineShape3.Y2 = 416;
+            // 
+            // lineShape4
+            // 
+            this.lineShape4.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape4.Name = "lineShape4";
+            this.lineShape4.X1 = 0;
+            this.lineShape4.X2 = 987;
+            this.lineShape4.Y1 = 474;
+            this.lineShape4.Y2 = 474;
             // 
             // lineShape2
             // 
@@ -3125,6 +3157,28 @@
             this.displayOrderCombo.Size = new System.Drawing.Size(424, 21);
             this.displayOrderCombo.TabIndex = 60;
             // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Size = new System.Drawing.Size(1000, 660);
+            this.shapeContainer3.TabIndex = 45;
+            this.shapeContainer3.TabStop = false;
+            // 
+            // shapeContainer4
+            // 
+            this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer4.Name = "shapeContainer1";
+            this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape4,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer4.Size = new System.Drawing.Size(1000, 660);
+            this.shapeContainer4.TabIndex = 45;
+            this.shapeContainer4.TabStop = false;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3407,5 +3461,10 @@
         private Win.UI.Button btnEachCons;
         private Win.UI.Label labeOrderCombo;
         private Win.UI.DisplayBox displayOrderCombo;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
+        private Win.UI.Button btneachconsprint;
+        private Win.UI.Button btnMeterialStatus_Local;
+        private Win.UI.Button btnMeterialStatus;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
     }
 }

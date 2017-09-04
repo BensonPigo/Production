@@ -733,8 +733,11 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                                     returnData = true;
                                     break;
                                 case "S":
-                                    msg = "category: < Sample>, it can't be created!";
-                                    returnData = true;
+                                    if (orderData["LocalOrder"].ToString() == "True")
+                                    {
+                                        msg = " is < Local order >, it can't be created!";
+                                        returnData = true;
+                                    }
                                     break;
                                 default:
                                     if (orderData["IsForecast"].ToString() == "True")

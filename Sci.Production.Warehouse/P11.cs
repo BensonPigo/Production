@@ -708,6 +708,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                         }
                     }
                 }
+                _detail.DefaultView.Sort = "seq";
             }
         }
 
@@ -1624,6 +1625,10 @@ where   orders.id='{0}'
             Detail_Reload();
             Ismatrix_Reload = true;
             matrix_Reload();
+            detailgridbs.Position = 0;
+            detailgrid.Focus();
+            detailgrid.CurrentCell = detailgrid[10, 0];
+            detailgrid.BeginEdit(true);
         }
 
         private DualResult Detail_Reload()
@@ -1668,27 +1673,24 @@ order by b.ID, b.seq1, b.seq2", Sci.Env.User.Keyword, this.poid, 0), out subData
             //將資料塞入表身
             foreach (DataRow dr in subData.Rows)
             {
-                base.OnDetailGridInsert();
-                //DataRow ndr = ((DataTable)detailgridbs.DataSource).NewRow();
-                CurrentDetailData["poid"] = dr["poid"];
-                CurrentDetailData["seq"] = dr["seq"];
-                CurrentDetailData["Description"] = dr["Description"];
-                CurrentDetailData["Colorid"] = dr["Colorid"];
-                CurrentDetailData["SizeSpec"] = dr["SizeSpec"];
-                CurrentDetailData["usedqty"] = dr["usedqty"];
-                CurrentDetailData["SizeUnit"] = dr["SizeUnit"];
-                CurrentDetailData["location"] = dr["location"];
-                CurrentDetailData["balanceqty"] = dr["balanceqty"];
-                //((DataTable)detailgridbs.DataSource).Rows.Add(ndr);
+                DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
+                DataRow ndr = detailDt.NewRow();
+                ndr["poid"] = dr["poid"];
+                ndr["seq"] = dr["seq"];
+                ndr["Description"] = dr["Description"];
+                ndr["Colorid"] = dr["Colorid"];
+                ndr["SizeSpec"] = dr["SizeSpec"];
+                ndr["usedqty"] = dr["usedqty"];
+                ndr["SizeUnit"] = dr["SizeUnit"];
+                ndr["location"] = dr["location"];
+                ndr["balanceqty"] = dr["balanceqty"];
+                ndr["seq1"] = dr["seq1"];
+                ndr["seq2"] = dr["seq2"];
+                ndr["stocktype"] = dr["stocktype"];
+                ndr["ftyinventoryukey"] = dr["ukey"];
+                ndr["StockUnit"] = dr["StockUnit"];
 
-                CurrentDetailData["seq1"] = dr["seq1"];
-                CurrentDetailData["seq2"] = dr["seq2"];
-                //CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
-                CurrentDetailData["stocktype"] = dr["stocktype"];
-                CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
-                CurrentDetailData["StockUnit"] = dr["StockUnit"];
-
-//                DetailDatas.Add(ndr);
+                detailDt.Rows.Add(ndr);
 
                 DataTable sizeRange, subDetails;
                 if (GetSubDetailDatas(CurrentDetailData, out subDetails))

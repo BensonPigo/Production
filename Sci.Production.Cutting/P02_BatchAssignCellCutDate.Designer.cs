@@ -337,7 +337,7 @@
             // txtCell2
             // 
             this.txtCell2.BackColor = System.Drawing.Color.White;
-            this.txtCell2.FactoryId = "";
+            this.txtCell2.MDivisionID = "";
             this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCell2.Location = new System.Drawing.Point(107, 87);
             this.txtCell2.Name = "txtCell2";
@@ -347,7 +347,7 @@
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.FactoryId = "";
+            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell.Location = new System.Drawing.Point(693, 46);
             this.txtCutCell.Name = "txtCutCell";

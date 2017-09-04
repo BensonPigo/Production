@@ -106,6 +106,8 @@
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lbshc = new System.Windows.Forms.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBoxMarkerNo = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -190,7 +192,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5657, 561);
+            this.refresh.Location = new System.Drawing.Point(5713, 561);
             // 
             // detailgridcont
             // 
@@ -199,7 +201,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(629, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
             // 
             // detail2
             // 
@@ -1006,9 +1008,9 @@
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.FactoryId = "";
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell.Location = new System.Drawing.Point(336, 2);
+            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.Name = "txtCutCell";
             this.txtCutCell.Size = new System.Drawing.Size(30, 23);
             this.txtCutCell.TabIndex = 10;
@@ -1044,6 +1046,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.displayBoxMarkerNo);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
             this.splitContainer1.Panel1.Controls.Add(this.labelQtyBreakdown);
@@ -1098,10 +1102,27 @@
             this.lbshc.AutoSize = true;
             this.lbshc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.lbshc.ForeColor = System.Drawing.Color.Red;
-            this.lbshc.Location = new System.Drawing.Point(3, 189);
+            this.lbshc.Location = new System.Drawing.Point(5, 189);
             this.lbshc.Name = "lbshc";
             this.lbshc.Size = new System.Drawing.Size(0, 13);
             this.lbshc.TabIndex = 60;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(141, 362);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 23);
+            this.label1.TabIndex = 61;
+            this.label1.Text = "Marker No.";
+            // 
+            // displayBoxMarkerNo
+            // 
+            this.displayBoxMarkerNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerNo.Location = new System.Drawing.Point(217, 362);
+            this.displayBoxMarkerNo.Name = "displayBoxMarkerNo";
+            this.displayBoxMarkerNo.Size = new System.Drawing.Size(150, 23);
+            this.displayBoxMarkerNo.TabIndex = 62;
             // 
             // P02
             // 
@@ -1228,5 +1249,7 @@
         private Win.UI.Button btn_Refresh;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label lbshc;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBoxMarkerNo;
     }
 }

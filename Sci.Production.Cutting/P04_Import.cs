@@ -23,8 +23,8 @@ namespace Sci.Production.Cutting
         public P04_Import()
         {
             InitializeComponent();
-            txtCutCell.FactoryId = keyWord;
-            txtfactory.FilteMDivision = true;
+            txtCutCell.MDivisionID = keyWord;
+
         }
         protected override void OnFormLoaded()
         {
