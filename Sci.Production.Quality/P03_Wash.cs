@@ -865,10 +865,32 @@ where a.ID='{0}'"
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
-            if (MyUtility.Check.Empty(CurrentData))
+            if (!MyUtility.Convert.GetBool(maindr["WashEncode"]))
             {
-                MyUtility.Msg.WarningBox("Data is not found! Each Dyelot must be tested! ");
-                return;
+                if (!MyUtility.Convert.GetBool(maindr["nonWash"]))//判斷有勾選可Encode
+                {
+                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
+                    DataTable dyelotdt;
+                    string cmd = string.Format(
+                        @"
+Select DISTINCT Dyelot from Receiving_Detail
+Where id='{0}' and poid ='{1}' and seq1 = '{2} ' and seq2 ='{3}'
+and not exists (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Wash FLW
+INNER JOIN FIR_Laboratory FL ON FLW.ID=FL.ID 
+WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
+                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+                    DualResult dResult;
+                    if (dResult = DBProxy.Current.Select(null, cmd, out dyelotdt))
+                    {
+                        if (dyelotdt.Rows.Count > 0)
+                        {
+                            string d = string.Join(",", dyelotdt.AsEnumerable().Select(row => row["Dyelot"].ToString()));
+                            MyUtility.Msg.WarningBox(string.Format(@"<Dyelot> {0}
+Test not found!!!
+Each Dyelot must be tested!", d));
+                        }
+                    }
+                }
             }
             if (!MyUtility.Convert.GetBool(maindr["WashEncode"]))
             {
