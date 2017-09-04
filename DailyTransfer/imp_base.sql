@@ -575,6 +575,7 @@ when matched then
 		,t.AddDate			=s.AddDate		
 		,t.EditName			=s.EditName		
 		,t.EditDate			=s.EditDate		
+		,t.isThread         =s.isThread
 when not matched by target then
 	insert(
 		ID
@@ -595,6 +596,7 @@ when not matched by target then
 		,AddDate
 		,EditName
 		,EditDate
+		,isThread
 	)
 	values(
 		ID
@@ -615,6 +617,7 @@ when not matched by target then
 		,AddDate
 		,EditName
 		,EditDate
+		,isThread
 	)
 when not matched by source then
 	delete;
