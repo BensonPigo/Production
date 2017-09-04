@@ -36,6 +36,7 @@ namespace Sci.Production.Packing
             Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Date("TransferDate", header: "Transfer Date",iseditable:false)
+                .Text("TransferSlipNo", header: "TransferSlipNo", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
@@ -87,7 +88,7 @@ namespace Sci.Production.Packing
             //
         
         }
-
+        string cmd;
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
@@ -99,6 +100,7 @@ select  *
 from (
     select  1 as selected
             , t.TransferDate
+            , t.TransferSlipNo
             , t.PackingListID
             , t.OrderID
             , t.CTNStartNo
@@ -108,6 +110,7 @@ from (
             , isnull(o.FactoryID,'') as FactoryID
             , convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery
             , t.AddDate
+            , tid = t.id
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -139,6 +142,10 @@ from (
             {
                 sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", MyUtility.Convert.GetString(txtfactory.Text)));
             }
+            if (!MyUtility.Check.Empty(txtTransferSlipNo.Text))
+            {
+                sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(txtTransferSlipNo.Text)));
+            }
             sqlCmd.Append(@"
 ) X order by rn");
            
@@ -147,6 +154,7 @@ from (
             {
                 MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
             }
+            cmd = sqlCmd.ToString();
             if (gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -182,8 +190,8 @@ from (
             }
             //將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate",
-             @"select TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate from #tmp where selected=1", out selectData, "#tmp");
+            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid",
+             @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp where selected=1", out selectData, "#tmp");
             
             //
             
@@ -197,7 +205,7 @@ from (
             date2 = (!MyUtility.Check.Empty(dateTimePicker2.Text)) ? dateTimePicker2.Text : null;
             packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
             SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
-            P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo);
+            P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo, cmd);
             frm.ShowDialog();
         }
 
