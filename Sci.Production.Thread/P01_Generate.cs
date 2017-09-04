@@ -42,9 +42,9 @@ with a as (
     f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'
 ),b as(
     Select c.ComboType,seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
-    from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
-    join operation e on e.id = d.operationid
-    where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0
+    from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK)  
+    join operation e on e.id = d.operationid left join MachineType f on d.MachineTypeID=f.id
+    where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 and f.isThread=1
 )
 
 select 0 as sel,a.id,b.*,a.threadcombid
