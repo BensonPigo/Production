@@ -865,10 +865,31 @@ where a.ID='{0}'"
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
-            if (MyUtility.Check.Empty(CurrentData))
+            if (!MyUtility.Convert.GetBool(maindr["WashEncode"]))
             {
-                MyUtility.Msg.WarningBox("Data is not found! Each Dyelot must be tested! ");
-                return;
+                if (!MyUtility.Convert.GetBool(maindr["nonWash"]))//判斷有勾選可Encode
+                {
+                    //至少檢驗一卷 並且出現在Fir_Continuity.Roll
+                    DataTable dyelotdt;
+                    string cmd = string.Format(
+                        @"
+Select DISTINCT Dyelot from Receiving_Detail
+Where id='{0}' and poid ='{1}' and seq1 = '{2} ' and seq2 ='{3}'
+and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Wash FLW INNER JOIN FIR_Laboratory FL ON FLW.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
+                        , maindr["receivingid"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+                    DualResult dResult;
+                    if (dResult = DBProxy.Current.Select(null, cmd, out dyelotdt))
+                    {
+                        if (dyelotdt.Rows.Count > 0)
+                        {
+                            string d = string.Join(",", dyelotdt.AsEnumerable().Select(row => row["Dyelot"].ToString()));
+                            MyUtility.Msg.WarningBox(string.Format(@"<Dyelot> {0}
+Test not found!!!
+Each Dyelot must be tested!", d));
+                            return;
+                        }
+                    }
+                }
             }
             if (!MyUtility.Convert.GetBool(maindr["WashEncode"]))
             {
@@ -897,27 +918,29 @@ where a.ID='{0}'"
                 string result = "Pass";
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
-                string Today = DateTime.Now.ToShortDateString();
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
-                if (MyUtility.Check.Empty(dt)) return;
-                if (dt.Rows.Count == 0) return;
-                DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
-                for (int i = 0; i < dt.Rows.Count; i++)
+                
+                if (dt.Rows.Count != 0)
                 {
-                    DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
-                    //代表newDate 比  lastDate還晚 就取代lastDate
-                    if (DateTime.Compare(newDate, lastDate) > 0)
+                    DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        lastDate = newDate;
+                        DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
+                        //代表newDate 比  lastDate還晚 就取代lastDate
+                        if (DateTime.Compare(newDate, lastDate) > 0)
+                        {
+                            lastDate = newDate;
+                        }
                     }
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
                 }
-                #endregion
-                #region 寫入實體Table
-                updatesql = string.Format(
-                @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
-
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',inspdate='{2}' where id='{1}'", loginID, maindr["ID"], Today);
+                else
+                {
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"]);
+                }
                 #endregion
             }
 
