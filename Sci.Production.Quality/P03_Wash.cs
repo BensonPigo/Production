@@ -921,8 +921,6 @@ Each Dyelot must be tested!", d));
                 string Today = DateTime.Now.ToShortDateString();
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
-                if (MyUtility.Check.Empty(dt)) return;
-                if (dt.Rows.Count == 0) return;
                 DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
