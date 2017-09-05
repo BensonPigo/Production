@@ -674,6 +674,7 @@ and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Heat FLH INNER JOI
                             MyUtility.Msg.WarningBox(string.Format(@"<Dyelot> {0}
 Test not found!!!
 Each Dyelot must be tested!", d));
+                            return;
                         }
                     }
                 }

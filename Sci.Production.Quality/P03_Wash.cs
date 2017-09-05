@@ -875,10 +875,8 @@ where a.ID='{0}'"
                         @"
 Select DISTINCT Dyelot from Receiving_Detail
 Where id='{0}' and poid ='{1}' and seq1 = '{2} ' and seq2 ='{3}'
-and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Wash FLW
-INNER JOIN FIR_Laboratory FL ON FLW.ID=FL.ID 
-WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
-                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+and Dyelot not in (SELECT DISTINCT Dyelot FROM FIR_Laboratory_Wash FLW INNER JOIN FIR_Laboratory FL ON FLW.ID=FL.ID WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
+                        , maindr["receivingid"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult;
                     if (dResult = DBProxy.Current.Select(null, cmd, out dyelotdt))
                     {
@@ -888,6 +886,7 @@ WHERE FL.POID='{1}' AND FL.SEQ1='{2}' AND FL.SEQ2='{3}')"
                             MyUtility.Msg.WarningBox(string.Format(@"<Dyelot> {0}
 Test not found!!!
 Each Dyelot must be tested!", d));
+                            return;
                         }
                     }
                 }
