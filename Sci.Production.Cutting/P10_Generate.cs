@@ -126,7 +126,7 @@ group by sizeCode"
             #endregion
             //計算左上TotalQty
             calsumQty();
-            if (detailTb.Rows.Count != 0) exist_Table_Query();
+            if (detailTb.Rows.Count != 0 && maindatarow.RowState!=DataRowState.Added) exist_Table_Query();
             else noexist_Table_Query();
 
             grid_setup();
@@ -240,8 +240,16 @@ group by sizeCode"
         {
             //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid", "Select  PatternCode,PatternDesc,Parts,subProcessid from #tmp", out tmp);
-            MyUtility.Tool.ProcessWithDatatable(bundle_detail_artTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp", out artTb);
+            //用來當判斷條件的DataTable,避免DetailTB dataRow被刪除後無法用index撈出資料
+            DataTable detailAccept = detailTb.Copy();
+            detailAccept.AcceptChanges();
+            string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup", string.Format(@"
+Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup 
+from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
+            //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
+            //foreach (DataRow dr in tmp.Select("BundleNO<>''"))
             foreach (DataRow dr in tmp.Rows)
             {
                 DataRow ndr = patternTb.NewRow();
@@ -731,6 +739,7 @@ group by sizeCode"
             grid_allpart.ValidateControl();
             grid_art.ValidateControl();
             grid_qty.ValidateControl();
+            if (MyUtility.Check.Empty(grid_art.DataSource)|| grid_art.Rows.Count == 0) return;            
             DataRow selectartDr = ((DataRowView)grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS") return;
@@ -822,7 +831,7 @@ group by sizeCode"
 
         public void caltotalpart() //計算total part
         {
-            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
+            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));           
         }
 
         public void calAllPart() //計算all part
@@ -833,7 +842,29 @@ group by sizeCode"
                     .Where(row => row.RowState != DataRowState.Deleted)
                     .Sum(row => Convert.ToInt32(row["Parts"]));
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
-            if (dr.Length > 0) dr[0]["Parts"] = allpart;
+            if (dr.Length > 0)
+            {
+                dr[0]["Parts"] = allpart;
+            }
+            if (dr.Length == 0 && allpart > 0)
+            {
+                DataRow drAll = patternTb.NewRow();
+                drAll["PatternCode"] = "ALLPARTS";
+                drAll["PatternDesc"] = "All Parts";
+                drAll["parts"] = allpart;
+                patternTb.Rows.Add(drAll);
+
+            }
+
+            //將AllPart Parts=0給刪除
+            for (int i = 0; i < patternTb.Rows.Count; i++)
+            {
+                if (MyUtility.Check.Empty(patternTb.Rows[i]["Parts"]))
+                {
+                    patternTb.Rows[i].Delete();
+                }
+            }           
+            
         }
 
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -976,7 +1007,10 @@ group by sizeCode"
                 }
                 detailRow++;
             }
-            if (tmpRow < detailTb.Rows.Count) //當舊的比較多就要刪除
+            //判斷當前表身的筆數(排除掉已刪除的Row)
+            DataTable dtCount = detailTb.Copy();
+            dtCount.AcceptChanges();
+            if (tmpRow < dtCount.Rows.Count) //當舊的比較多就要刪除
             {
                 int detailrow = detailTb.Rows.Count;
                 for (int i = detailrow - 1; i >= tmpRow; i--) //因為delete時Rowcount 會改變所以要重後面往前刪
@@ -1037,6 +1071,71 @@ group by sizeCode"
                     }
                 }
             }
+
+            #region 新增AllParts
+            /*
+           *確認右下All Part 有無資料
+           *有資料就加總右下Parts數量
+           *並且新增一個AllPart在左下 並填上AllPart總數量
+           */
+            DataTable allpartTb_Copy = allpartTb.Copy();
+            allpartTb_Copy.AcceptChanges();
+            if (!MyUtility.Check.Empty(allpartTb_Copy) && allpartTb_Copy.Rows.Count > 0)
+            {
+                decimal Parts = 0;
+                for (int i = 0; i < allpartTb_Copy.Rows.Count; i++)
+                {
+                    Parts = Parts + MyUtility.Convert.GetDecimal(allpartTb_Copy.Rows[i]["Parts"]);
+                }
+                DataRow[] AllPart = detailTb.Select("PatternCode='ALLPARTS'");
+                if (!MyUtility.Check.Empty(Parts))
+                {
+                    if (AllPart.Length == 0)                   
+                    {
+                        DataTable dtAllPart;
+                        DataTable dtMax = detailTb.Copy();
+                        dtMax.AcceptChanges();
+                        MyUtility.Tool.ProcessWithDatatable(dtMax, @"BundleGroup,SizeCode,qty", @"select distinct BundleGroup,SizeCode,qty from #tmp", out dtAllPart);
+                        if (dtAllPart.Rows.Count > 0)
+                        {
+                            for (int i = 0; i < dtAllPart.Rows.Count; i++)
+                            {
+
+                                List<int> ukey1 = dtMax.AsEnumerable().Select(numb => numb.Field<int>("ukey1")).Distinct().ToList();
+                                int MaxUkey = ukey1.Max();
+                                DataRow drAll = detailTb.NewRow();
+                                drAll["PatternCode"] = "ALLPARTS";
+                                drAll["PatternDesc"] = "All Parts";
+                                drAll["Qty"] = dtAllPart.Rows[i]["qty"].ToString();
+                                drAll["SizeCode"] = dtAllPart.Rows[i]["SizeCode"].ToString();
+                                drAll["parts"] = Parts;
+                                drAll["BundleGroup"] = dtAllPart.Rows[i]["BundleGroup"].ToString();
+                                drAll["ukey1"] = MaxUkey + 1;
+                                detailTb.Rows.Add(drAll);
+
+                            }
+
+                        }
+                        else
+                        {
+                            MyUtility.Tool.ProcessWithDatatable(detailTb2, @"BundleGroup,SizeCode,qty", @"select distinct BundleGroup,SizeCode,qty from #tmp", out dtAllPart);
+                            DataRow drAll = detailTb.NewRow();
+                            drAll["PatternCode"] = "ALLPARTS";
+                            drAll["PatternDesc"] = "All Parts";
+                            drAll["Qty"] = dtAllPart.Rows[0]["qty"].ToString();
+                            drAll["SizeCode"] = dtAllPart.Rows[0]["SizeCode"].ToString();
+                            drAll["parts"] = Parts;
+                            drAll["BundleGroup"] = dtAllPart.Rows[0]["BundleGroup"].ToString();
+                            drAll["ukey1"] = 1;
+                            detailTb.Rows.Add(drAll);
+
+                        }
+
+                    }
+                }
+            }
+            #endregion
+
 
             #region 把處理好的資料塞回上層Table
             detailTb2.Clear();

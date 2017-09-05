@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
             if (history == "0")
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
             else
-                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);           
         }
 
         protected override void OnFormLoaded()
@@ -326,7 +326,9 @@ order by bundlegroup"
             #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
             DataTable allparttmp, arttmp, qtytmp;
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
+            //string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
+            //直接撈Bundle_Detail_Allpart就行,不然在算新舊資料筆數來判斷新刪修時,會因為表頭表身join造成count過多
+            string allPart_cmd = string.Format(@"select * from Bundle_Detail_Allpart where id='{0}'  ", masterID);
             string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
             string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
@@ -353,13 +355,19 @@ order by bundlegroup"
 
             foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
             {
-
-                if (row >= allpart_old_rowCount) //新增
-                {
+                //新的AllPartDetail 數量大於原本資料庫裡的,就進來
+                if (bundle_Detail_allpart_Tb.Rows.Count > allpart_old_rowCount)
+                {                  
                     allpart_cmd = allpart_cmd + string.Format(
                     @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
                     , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
                 }
+                //if (row >= allpart_old_rowCount) //新增
+                //{
+                //    allpart_cmd = allpart_cmd + string.Format(
+                //    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
+                //    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+                //}
                 else //覆蓋
                 {
                     allpart_cmd = allpart_cmd + string.Format(
@@ -385,14 +393,20 @@ order by bundlegroup"
 
             foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
             {
-
-                if (row >= art_old_rowCount) //新增
+                if (bundle_Detail_Art_Tb.Rows.Count> art_old_rowCount)
                 {
                     Art_cmd = Art_cmd + string.Format(
                    @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
-                    values('{0}','{1}','{2}','{3}');"
+                        values('{0}','{1}','{2}','{3}');"
                     , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
                 }
+                //if (row >= art_old_rowCount) //新增
+                //{
+                //    Art_cmd = Art_cmd + string.Format(
+                //   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
+                //    values('{0}','{1}','{2}','{3}');"
+                //    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
+                //}
                 else //覆蓋
                 {
                     Art_cmd = Art_cmd + string.Format(
@@ -420,13 +434,20 @@ order by bundlegroup"
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (row >= Qty_old_rowCount) //新增
+                    if (bundle_Detail_Qty_Tb.Rows.Count> Qty_old_rowCount)
                     {
                         Qty_cmd = Qty_cmd + string.Format(
                         @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
                     values('{0}','{1}',{2});"
                         , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
                     }
+                    //if (row >= Qty_old_rowCount) //新增
+                    //{
+                    //    Qty_cmd = Qty_cmd + string.Format(
+                    //    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
+                    //values('{0}','{1}',{2});"
+                    //    , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
+                    //}
                     else //覆蓋
                     {
                         Qty_cmd = Qty_cmd + string.Format(
@@ -783,6 +804,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb);
             frm.ShowDialog(this);
+            dt.DefaultView.Sort = "BundleGroup";
+
         }
         protected override bool ClickPrint()
         {
