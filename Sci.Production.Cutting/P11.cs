@@ -538,6 +538,8 @@ Where   a.ukey = b.workorderukey
             }
             #endregion
 
+            query_cmd = query_cmd + " order by ord.poid,a.estcutdate,b.patternPanel,a.cutno";
+
             DualResult query_dResult = DBProxy.Current.Select(null, query_cmd, out CutRefTb);
             if (!query_dResult)
             {
