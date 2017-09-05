@@ -44,6 +44,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnThreadRatio = new Sci.Win.UI.Button();
+            this.checkThreadcons = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkThreadcons);
             this.detailcont.Controls.Add(this.btnThreadRatio);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label10);
@@ -270,6 +272,18 @@
             this.btnThreadRatio.UseVisualStyleBackColor = true;
             this.btnThreadRatio.Click += new System.EventHandler(this.btnThreadRatio_Click);
             // 
+            // checkThreadcons
+            // 
+            this.checkThreadcons.AutoSize = true;
+            this.checkThreadcons.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "isthread", true));
+            this.checkThreadcons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkThreadcons.Location = new System.Drawing.Point(495, 30);
+            this.checkThreadcons.Name = "checkThreadcons";
+            this.checkThreadcons.Size = new System.Drawing.Size(173, 21);
+            this.checkThreadcons.TabIndex = 16;
+            this.checkThreadcons.Text = "Calculate Thread cons.";
+            this.checkThreadcons.UseVisualStyleBackColor = true;
+            // 
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
@@ -317,5 +331,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
         private Win.UI.Button btnThreadRatio;
+        private Win.UI.CheckBox checkThreadcons;
     }
 }
