@@ -918,25 +918,29 @@ Each Dyelot must be tested!", d));
                 string result = "Pass";
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
-                string Today = DateTime.Now.ToShortDateString();
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
-                DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
-                for (int i = 0; i < dt.Rows.Count; i++)
+                
+                if (dt.Rows.Count != 0)
                 {
-                    DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
-                    //代表newDate 比  lastDate還晚 就取代lastDate
-                    if (DateTime.Compare(newDate, lastDate) > 0)
+                    DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        lastDate = newDate;
+                        DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
+                        //代表newDate 比  lastDate還晚 就取代lastDate
+                        if (DateTime.Compare(newDate, lastDate) > 0)
+                        {
+                            lastDate = newDate;
+                        }
                     }
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
                 }
-                #endregion
-                #region 寫入實體Table
-                updatesql = string.Format(
-                @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
-
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',inspdate='{2}' where id='{1}'", loginID, maindr["ID"], Today);
+                else
+                {
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"]);
+                }
                 #endregion
             }
 
