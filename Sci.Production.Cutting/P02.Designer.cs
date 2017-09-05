@@ -192,7 +192,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5769, 561);
+            this.refresh.Location = new System.Drawing.Point(5881, 561);
             // 
             // detailgridcont
             // 
@@ -1101,16 +1101,16 @@
             // 
             this.displayBoxMarkerNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerNo.Location = new System.Drawing.Point(217, 280);
+            this.displayBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
             this.displayBoxMarkerNo.Name = "displayBoxMarkerNo";
-            this.displayBoxMarkerNo.Size = new System.Drawing.Size(150, 23);
+            this.displayBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.displayBoxMarkerNo.TabIndex = 62;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(141, 280);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 23);
+            this.label1.Size = new System.Drawing.Size(86, 23);
             this.label1.TabIndex = 61;
             this.label1.Text = "Marker No.";
             // 
