@@ -53,15 +53,18 @@ namespace Sci.Production.Sewing
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"
-select sd.*,
-[RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  ),                 
-[Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
-[QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
+select  sd.*
+        , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
+        , [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
+        , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
+        , [isAutoCreate] = iif (sd.AutoCreate = 1, 'Y', '')
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
-left join Rft WITH (NOLOCK) on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
-			    and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
-			    and rft.Team = s.Team
+left join Rft WITH (NOLOCK) on rft.OrderID = sd.OrderId 
+                               and rft.CDate = s.OutputDate 
+			                   and rft.SewinglineID = s.SewingLineID 
+                               and rft.Shift = s.Shift 
+			                   and rft.Team = s.Team
 where sd.ID = '{0}'"
                 , masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -437,7 +440,8 @@ where   o.FtyGroup = @factoryid
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 //.Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true);
+                .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("isAutoCreate", header: "Auto Create", iseditingreadonly: true);
         }
         //設定表身RFT的預設值
         protected override void OnDetailGridInsert(int index = -1)
@@ -1043,6 +1047,8 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
             {
                 foreach (DataRow dr in it.Value.Rows)
                 {
+                    if (dr.RowState == DataRowState.Deleted)
+                        continue;
                     if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
                         deleteList.Add(dr); 
                     else{
