@@ -84,10 +84,10 @@ from (
                                                         and pd.CTNQty > 0
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
-    where t.MDivisionID = 'MAI' and t.TransferSlipNo in (select TransferSlipNo from #tmp_TransferSlipNo)
+    where t.MDivisionID = '{1}' and t.TransferSlipNo in (select TransferSlipNo from #tmp_TransferSlipNo)
 ) X order by rn
 
-", TransferSlipNo, _cmd);
+", TransferSlipNo, Sci.Env.User.Keyword);
                 MyUtility.Tool.ProcessWithDatatable(dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
                 #endregion
                 DataTable b;
