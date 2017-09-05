@@ -93,7 +93,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         {
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(@"
-SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone
+SELECT  a.*
+        , b.description
+        , b.MetertoCone 
+        , c.description as colordesc
+        , X.newCone
+        , X.usedcone
+        , Article = stuff((select concat (',', Article)
+                           from (
+						        select distinct Article 
+                                from ThreadRequisition_Detail_Cons trdc 
+                                where a.Ukey = trdc.ThreadRequisition_DetailUkey
+						   ) art
+                           for xml path('')
+                          ), 1, 1, '')
 FROM ThreadRequisition_Detail a WITH (NOLOCK) 
 Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
 Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
@@ -297,19 +310,18 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
             #endregion           
             #region set grid
-            Helper.Controls.Grid.Generator(this.detailgrid)         
+            Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), settings: refno).Get(out col_refno)
            .Text("description", header: "Thread Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
+           .EditText("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("ThreadColorid", header: "Thread\r\nColor", width: Ict.Win.Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
            .Text("Colordesc", header: "Thread Color Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
            .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Ict.Win.Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
-
            .Numeric("AllowanceQty", header: "20%\r\nallowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out col_Allowance)
            .Numeric("NewCone", header: "New\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
            .Numeric("UsedCone", header: "Use\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
-
            .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
            .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_Remark)
@@ -323,7 +335,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             this.detailgrid.CellValidated += detailgrid_CellValidated;
             
         }
-
 
         private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
@@ -363,9 +374,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 col_NewCone.IsEditingReadOnly = false;
                 col_UsedCone.IsEditingReadOnly = false;
                 col_Remark.IsEditingReadOnly = false;
-                col_refno.IsEditingReadOnly = false;
-                col_color.IsEditingReadOnly = false;
-                col_cons.IsEditingReadOnly = false;
             }
             
         }
@@ -568,7 +576,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             foreach (Control item in masterpanel.Controls)
             {
-                if (item is Sci.Win.UI.Label || item == displayM || item == txtSP) { }
+                if (item is Sci.Win.UI.Label || item is Sci.Win.UI.Button || item == displayM || item == txtSP) { }
                 else
                 {
                     item.Text = "";                
@@ -612,27 +620,46 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["factoryid"] = drOrder["FtyGroup"].ToString();
             CurrentMaintain["OrderID"] = id;
             //事先整理資料
-            sqlpre = string.Format(@"Select a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
-	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
-	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,isnull(g.MeterToCone,0.00) as MeterToCone,
-	                                g.Description as Threadcombdesc,h.Description as colordesc
-	                                from ThreadColorComb_Detail a WITH (NOLOCK) 
-	                                cross join ThreadColorComb_Operation b WITH (NOLOCK) 
-	                                left join ThreadColorcomb c WITH (NOLOCK) on a.id=c.id 
-	                                left join MachineType_ThreadRatio d WITH (NOLOCK) on a.Machinetypeid=d.Id and a.seq=d.seq
-	                                left join Operation e WITH (NOLOCK) on b.OperationId= e.Id
-	                                Left join (Select a.Article,sum(a.qty) as OrderQty 
-                                               from Order_Qty a WITH (NOLOCK) inner join orders b WITH (NOLOCK) on a.id=b.id  where b.POID='{0}' group by Article) f 
-                                              on a.Article=f.Article
-	                                Left join LocalItem g WITH (NOLOCK) on a.Refno=g.Refno
-	                                Left join threadcolor h WITH (NOLOCK) on h.id = a.threadcolorid
-                                    
-	                                where c.Styleukey =(select o.Styleukey from Orders o WITH (NOLOCK) where o.id = '{0}')
-	                                and a.ThreadColorId is not null and a.ThreadColorId !=''
-	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0
-	                                and a.id=b.id
-                                    and f.OrderQty !='0'",
-                                    id);
+            sqlpre = string.Format(@"
+Select  a.ThreadColorId
+        , d.Allowance
+        , a.Article
+        , a.ThreadCombId
+        , b.OperationId
+        , e.SeamLength
+        , a.Seq
+        , a.ThreadLocationId
+        , a.Refno
+        , d.UseRatioNumeric
+        , a.MachineTypeId
+        , isnull(f.OrderQty,0) as OrderQty 
+        , isnull(g.MeterToCone,0.00) as MeterToCone
+        , g.Description as Threadcombdesc
+        , h.Description as colordesc
+from ThreadColorComb_Detail a WITH (NOLOCK) 
+cross join ThreadColorComb_Operation b WITH (NOLOCK) 
+left join ThreadColorcomb c WITH (NOLOCK) on a.id=c.id 
+left join MachineType_ThreadRatio d WITH (NOLOCK) on a.Machinetypeid=d.Id and a.seq=d.seq
+left join Operation e WITH (NOLOCK) on b.OperationId= e.Id
+Left join (
+    Select  a.Article,sum(a.qty) as OrderQty 
+    from Order_Qty a WITH (NOLOCK) 
+    inner join orders b WITH (NOLOCK) on a.id = b.id  
+    where b.POID = '{0}' 
+    group by Article
+) f on a.Article = f.Article
+Left join LocalItem g WITH (NOLOCK) on a.Refno = g.Refno
+Left join threadcolor h WITH (NOLOCK) on h.id = a.threadcolorid                                    
+where   c.Styleukey = (select o.Styleukey 
+                       from Orders o WITH (NOLOCK) 
+                       where o.id = '{0}')
+        and a.ThreadColorId is not null 
+        and a.ThreadColorId !=''
+        and a.Refno is not null 
+        and a.Refno != '' 
+        and Seamlength != 0
+        and a.id = b.id
+        and f.OrderQty != '0'", id);
 
             DualResult result;
             result = DBProxy.Current.Select(null, sqlpre, out pretb_cons);
@@ -650,17 +677,36 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            
 
             //做資料匯整select group 後填入ThreadRequisition_Detail
-            sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
-                        Threadcombdesc,colordesc,
-                        #tmp.MeterToCone,
-                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100) as ConsumptionQty,
-                        IIF(#tmp.MeterToCone > 0 ,CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone),0) as TotalQty,
-                        IIF(#tmp.MeterToCone > 0 ,CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2),0.00) as AllowanceQty,
-                        IIF(#tmp.MeterToCone > 0 ,CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)+
-                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2),0.00) as PurchaseQty,
-                        'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
-                        from #tmp
-                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
+            sqltr_duk = string.Format(@"
+select  Orderid = '{0}'
+        , #tmp.Refno
+        , ThreadColorId
+        , Threadcombdesc
+        , colordesc
+        , #tmp.MeterToCone
+        , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
+        , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+                                              , 0)
+        , AllowanceQty = IIF(#tmp.MeterToCone > 0, CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
+                                                 , 0.00) 
+        , PurchaseQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+                                                  + CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
+                                                , 0.00) 
+        , AutoCreate = 'true' 
+        , UseStockQty = 0
+        , POID = ''
+        , Remark = ''
+        , Article = stuff((select concat (',', Article)
+                           from (
+						       select distinct Article 
+                               from #tmp t
+                               where  t.refno = #tmp.refno 
+                                   and t.threadColorid = #tmp.threadColorid
+						   ) art
+                           for xml path('')
+                          ), 1, 1, '')
+from #tmp
+group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
                         ", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
@@ -691,6 +737,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 newdr["NewCone"] = 0;
                 newdr["UsedCone"] = 0;
                 newdr["UseStockQty"] = 0;
+                newdr["Article"] = dr["Article"];
                 detailtb.Rows.Add(newdr);
             }
 
@@ -732,6 +779,88 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 }
                 #endregion                
             }
+
+            #region 確認此訂單所有 Article 是否有在 Thread P01 設定 Refno & Color
+            string strCheckP01Detail = string.Format(@"
+select	tcc.ThreadCombID
+		, mttr.ID
+		, Refno = isnull(tccd.Refno, '')
+		, ThreadColorID = isnull(tccd.ThreadColorID, '')
+		, Article = isnull(tccd.Article, '')
+into #tmp_P01
+from Orders o
+inner join Style s on o.StyleUkey = s.Ukey
+left join ThreadColorComb tcc on s.Ukey = tcc.StyleUkey
+left join MachineType_ThreadRatio mttr on tcc.Machinetypeid = mttr.ID
+left join ThreadColorComb_Detail tccd on mttr.ID = tccd.Machinetypeid
+										    and mttr.SEQ = tccd.SEQ			
+										    and tcc.id = tccd.Id
+
+where	o.ID = '{0}'
+
+select distinct ThreadCombID 
+from (
+	-- Thread P01 資料都有但是缺少訂單中的 Article --
+	select	distinct ThreadCombID
+	from (	
+		select *
+		from (		
+			select	distinct tcc.ThreadCombID
+			from ThreadColorComb tcc
+			inner join Orders o on tcc.StyleUkey = o.StyleUkey
+			where o.id = '{0}'
+		) tmp
+		cross apply (
+			select	Article
+			from Order_Article
+			where id = '{0}'
+		) orders
+
+		Except
+		select	ThreadCombID
+				, Article
+		from #tmp_P01
+	) ExceptP01
+
+	union all 
+	-- Thread P01 資料只填一半，只需判斷訂單中的 Article --
+	select ThreadCombID
+	from #tmp_P01 t
+	where (t.ThreadColorid = '' or t.Refno = '')
+		  and Article in (select	Article
+				   		  from Order_Article
+						  where id = '{0}')
+
+	union all
+	-- Thread P01 某一項 Refno, Color, Article 都是空值 --
+	select ThreadCombID
+	from #tmp_P01 t
+	where t.ThreadColorID = ''
+		  and t.Refno = ''
+		  and t.Article = ''
+) a
+drop table #tmp_P01", id);
+
+            DataTable dtCheckP01Detail;
+            result = DBProxy.Current.Select(null, strCheckP01Detail, out dtCheckP01Detail);
+            if (result)
+            {
+                if (dtCheckP01Detail != null && dtCheckP01Detail.Rows.Count > 0)
+                {
+                    StringBuilder strCheckMsg = new StringBuilder();
+                    foreach (DataRow row in dtCheckP01Detail.Rows)
+                    {
+                        strCheckMsg.Append(string.Format("Thread Combination：{0} Refno or Color Not all set up." + Environment.NewLine, row["ThreadCombID"]));
+                    }
+                    MyUtility.Msg.InfoBox(strCheckMsg.ToString());
+                }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+
+            #endregion 
         }
                 
         #region 舊公式
@@ -929,7 +1058,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             
         }
-
        
         private void ReQty(DataRow dr) //重算Qty
         {
@@ -1004,6 +1132,11 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             strExcelName.OpenFile();
             #endregion
             return base.ClickPrint();
+        }
+
+        private void buttonQtyBreakdown_Click(object sender, EventArgs e)
+        {
+            new P02_QtyBreakdownByColorway(CurrentMaintain).ShowDialog();
         }
     }
 }

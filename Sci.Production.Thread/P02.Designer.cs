@@ -47,6 +47,7 @@
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labelSP = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
+            this.buttonQtyBreakdown = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.buttonQtyBreakdown);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.displayM);
             this.masterpanel.Controls.Add(this.displayBrand);
@@ -103,6 +105,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.buttonQtyBreakdown, 0);
             // 
             // detailpanel
             // 
@@ -323,6 +326,16 @@
             this.label7.TabIndex = 39;
             this.label7.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // buttonQtyBreakdown
+            // 
+            this.buttonQtyBreakdown.Location = new System.Drawing.Point(772, 44);
+            this.buttonQtyBreakdown.Name = "buttonQtyBreakdown";
+            this.buttonQtyBreakdown.Size = new System.Drawing.Size(132, 45);
+            this.buttonQtyBreakdown.TabIndex = 40;
+            this.buttonQtyBreakdown.Text = "Q\'ty breakdown by colorway";
+            this.buttonQtyBreakdown.UseVisualStyleBackColor = true;
+            this.buttonQtyBreakdown.Click += new System.EventHandler(this.buttonQtyBreakdown_Click);
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -388,5 +401,6 @@
         private Win.UI.TextBox txtSP;
         private Win.UI.Label labelSP;
         private Win.UI.Label label7;
+        private Win.UI.Button buttonQtyBreakdown;
     }
 }
