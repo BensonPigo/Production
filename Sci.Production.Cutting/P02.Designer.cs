@@ -105,9 +105,9 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.lbshc = new System.Windows.Forms.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.displayBoxMarkerNo = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.lbshc = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -192,7 +192,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5713, 561);
+            this.refresh.Location = new System.Drawing.Point(5769, 561);
             // 
             // detailgridcont
             // 
@@ -721,7 +721,7 @@
             // 
             // labelCutplanNo
             // 
-            this.labelCutplanNo.Location = new System.Drawing.Point(141, 279);
+            this.labelCutplanNo.Location = new System.Drawing.Point(141, 309);
             this.labelCutplanNo.Name = "labelCutplanNo";
             this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
             this.labelCutplanNo.TabIndex = 45;
@@ -729,7 +729,7 @@
             // 
             // labelTotalCutQty
             // 
-            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 306);
+            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 336);
             this.labelTotalCutQty.Name = "labelTotalCutQty";
             this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
             this.labelTotalCutQty.TabIndex = 46;
@@ -739,7 +739,7 @@
             // 
             this.displayCutplanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCutplanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutplanNo.Location = new System.Drawing.Point(231, 279);
+            this.displayCutplanNo.Location = new System.Drawing.Point(231, 309);
             this.displayCutplanNo.Name = "displayCutplanNo";
             this.displayCutplanNo.Size = new System.Drawing.Size(135, 23);
             this.displayCutplanNo.TabIndex = 22;
@@ -961,7 +961,7 @@
             // 
             this.displayTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 333);
+            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 363);
             this.displayTotalCutQty.Name = "displayTotalCutQty";
             this.displayTotalCutQty.Size = new System.Drawing.Size(225, 23);
             this.displayTotalCutQty.TabIndex = 23;
@@ -1097,6 +1097,23 @@
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 61;
             // 
+            // displayBoxMarkerNo
+            // 
+            this.displayBoxMarkerNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerNo.Location = new System.Drawing.Point(217, 280);
+            this.displayBoxMarkerNo.Name = "displayBoxMarkerNo";
+            this.displayBoxMarkerNo.Size = new System.Drawing.Size(150, 23);
+            this.displayBoxMarkerNo.TabIndex = 62;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(141, 280);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 23);
+            this.label1.TabIndex = 61;
+            this.label1.Text = "Marker No.";
+            // 
             // lbshc
             // 
             this.lbshc.AutoSize = true;
@@ -1106,23 +1123,6 @@
             this.lbshc.Name = "lbshc";
             this.lbshc.Size = new System.Drawing.Size(0, 13);
             this.lbshc.TabIndex = 60;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(141, 362);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 23);
-            this.label1.TabIndex = 61;
-            this.label1.Text = "Marker No.";
-            // 
-            // displayBoxMarkerNo
-            // 
-            this.displayBoxMarkerNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerNo.Location = new System.Drawing.Point(217, 362);
-            this.displayBoxMarkerNo.Name = "displayBoxMarkerNo";
-            this.displayBoxMarkerNo.Size = new System.Drawing.Size(150, 23);
-            this.displayBoxMarkerNo.TabIndex = 62;
             // 
             // P02
             // 
