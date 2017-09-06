@@ -150,13 +150,24 @@ Balacne Qty is not enough!!
 Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore) 
 {0}
 
-Update m 
-set m.LobQty= (f.InQty-f.OutQty+f.AdjustQty)
-from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-inner join MDivisionPoDetail m  WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d. Seq2
-where d.Id = '{1}'
-and d.StockType = 'O'
+update m2 set 
+LObQty = b.l
+from(
+	select l=sum(a.InQty-a.OutQty+a.AdjustQty),POID,Seq1,Seq2
+	from
+	(
+		select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
+		from dbo.Adjust_Detail d WITH (NOLOCK) 
+		inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
+		inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
+		where d.Id = '{1}'
+		and f.StockType = 'O'
+		group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
+	)a
+	group by POID,Seq1,Seq2
+)b
+,MDivisionPoDetail m2
+where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
 
 update Adjust set Status ='Confirmed' where id = '{1}'
 ", sql, CurrentMaintain["id"]);
@@ -211,13 +222,24 @@ Balacne Qty is not enough!!
 Update f set f.AdjustQty = f.AdjustQty -(d.QtyAfter- d.QtyBefore) 
 {0}
 
-Update m 
-set m.LobQty= (f.InQty-f.OutQty+f.AdjustQty)
-from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-inner join MDivisionPoDetail m  WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d. Seq2
-where d.Id = '{1}'
-and d.StockType = 'O'
+update m2 set 
+LObQty = b.l
+from(
+	select l=sum(a.InQty-a.OutQty-a.AdjustQty),POID,Seq1,Seq2
+	from
+	(
+		select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
+		from dbo.Adjust_Detail d WITH (NOLOCK) 
+		inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
+		inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
+		where d.Id = '{1}'
+		and f.StockType = 'O'
+		group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
+	)a
+	group by POID,Seq1,Seq2
+)b
+,MDivisionPoDetail m2
+where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
 
 update Adjust set Status ='New' where id = '{1}'
 ", sql, CurrentMaintain["id"]);
