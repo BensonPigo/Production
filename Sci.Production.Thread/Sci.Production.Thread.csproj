@@ -90,6 +90,12 @@
     <Compile Include="P02_Detail.Designer.cs">
       <DependentUpon>P02_Detail.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_QtyBreakdownByColorway.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_QtyBreakdownByColorway.Designer.cs">
+      <DependentUpon>P02_QtyBreakdownByColorway.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -232,6 +238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_Detail.resx">
       <DependentUpon>P02_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_QtyBreakdownByColorway.resx">
+      <DependentUpon>P02_QtyBreakdownByColorway.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03.resx">
       <DependentUpon>P03.cs</DependentUpon>
