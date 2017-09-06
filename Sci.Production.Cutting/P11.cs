@@ -1254,7 +1254,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                     if (autono == 0)//auto
                     {
                         #region startno
-                        string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle WITH (NOLOCK) Where OrderID = '{0}'", artar["Orderid"]);
+                        string max_cmd = string.Format("Select isnull(Max(startno+Qty),1) as Start from Bundle WITH (NOLOCK) Where OrderID = '{0}'", artar["Orderid"]);
                         DataTable max_st;
                         if (DBProxy.Current.Select(null, max_cmd, out max_st))
                         {
