@@ -880,7 +880,6 @@ SET
       ,a.KitId	      =b.KitId	
       ,a.ExpressGroup	      =b.ExpressGroup	
       ,a.IECode	      =b.IECode	
-      ,a.NegoRegion	      =b.NegoRegion	
       ,a.AddName	      =b.AddName	
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
