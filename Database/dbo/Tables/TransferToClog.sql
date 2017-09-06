@@ -7,6 +7,7 @@ CREATE TABLE [dbo].[TransferToClog] (
     [CTNStartNo]    VARCHAR (6)  CONSTRAINT [DF_TransferToClog_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME     NULL,
     [OldID]         VARCHAR (13) CONSTRAINT [DF_TransferToClog_Detail_OldID] DEFAULT ('') NULL,
+    [TransferSlipNo] VARCHAR(13) NULL, 
     CONSTRAINT [PK_TransferToClog_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
