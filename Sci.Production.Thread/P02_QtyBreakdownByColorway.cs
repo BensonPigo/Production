@@ -41,7 +41,7 @@ namespace Sci.Production.Thread
 select  oa.Article
         , ttl = isnull (sum(oq.Qty), 0)
 from Order_Article oa WITH (NOLOCK) 
-left join Order_Qty oq WITH (NOLOCK) on oa.ID = oq.ID
+inner join Order_Qty oq WITH (NOLOCK) on oa.ID = oq.ID
 									     and oa.Article = oq.Article
 where oa.ID = '{0}'
 group by oa.Article

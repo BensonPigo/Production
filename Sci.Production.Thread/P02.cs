@@ -812,7 +812,7 @@ from (
 		) tmp
 		cross apply (
 			select	Article
-			from Order_Article
+			from Order_Qty
 			where id = '{0}'
 		) orders
 
@@ -828,7 +828,7 @@ from (
 	from #tmp_P01 t
 	where (t.ThreadColorid = '' or t.Refno = '')
 		  and Article in (select	Article
-				   		  from Order_Article
+				   		  from Order_Qty
 						  where id = '{0}')
 
 	union all
