@@ -191,14 +191,20 @@ namespace Sci.Production.Packing
                     cmds.Add(sp3);
                     cmds.Add(sp4);
 
-                    string sqlCmd = @"select isnull(li.Weight, 0) as CTNWeight,
-                                                                                     isnull(sw.NW, isnull(sw2.NW, 0)) as NW,
-                                                                                     isnull(sw.NNW, isnull(sw2.NNW, 0)) as NNW
-                                                                          from Orders o WITH (NOLOCK) 
-                                                                          left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw.Article = @article and sw.SizeCode = @sizecode
-                                                                          left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = @sizecode
-                                                                          left join LocalItem li WITH (NOLOCK) on li.RefNo = @refno and li.Category = 'CARTON'
-                                                                          where o.ID = @orderid";
+                    string sqlCmd = @"
+select  isnull(li.CtnWeight, 0) as CTNWeight
+        , isnull(sw.NW, isnull(sw2.NW, 0)) as NW
+        , isnull(sw.NNW, isnull(sw2.NNW, 0)) as NNW
+from Orders o WITH (NOLOCK) 
+left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey 
+                                               and sw.Article = @article 
+                                               and sw.SizeCode = @sizecode
+left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey 
+                                                and sw2.Article = '----' 
+                                                and sw2.SizeCode = @sizecode
+left join LocalItem li WITH (NOLOCK) on li.RefNo = @refno 
+                                        and li.Category = 'CARTON'
+where o.ID = @orderid";
                     DataTable selectedData;
                     DualResult result;
                     if (result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectedData))
