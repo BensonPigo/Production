@@ -158,6 +158,12 @@
     <Compile Include="B04.Designer.cs">
       <DependentUpon>B04.cs</DependentUpon>
     </Compile>
+    <Compile Include="B06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B06.Designer.cs">
+      <DependentUpon>B06.cs</DependentUpon>
+    </Compile>
     <Compile Include="CrossM\P71_PrintData.cs" />
     <Compile Include="CrossM\P72_PrintData.cs" />
     <Compile Include="CrossM\P73_PrintData.cs" />
@@ -195,6 +201,12 @@
     </Compile>
     <Compile Include="P04_LocalTransaction.Designer.cs">
       <DependentUpon>P04_LocalTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P04_ScrapQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_ScrapQty.Designer.cs">
+      <DependentUpon>P04_ScrapQty.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_ExcelImport.cs">
       <SubType>Form</SubType>
@@ -276,8 +288,50 @@
     </Compile>
     <Compile Include="P31_PrintData.cs" />
     <Compile Include="P32_PrintData.cs" />
+    <Compile Include="P45_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P45_Import.Designer.cs">
+      <DependentUpon>P45_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P36_PrintData.cs" />
     <Compile Include="P37_PrintData.cs" />
+    <Compile Include="P39.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P39.Designer.cs">
+      <DependentUpon>P39.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P45.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P45.Designer.cs">
+      <DependentUpon>P45.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P44.Designer.cs">
+      <DependentUpon>P44.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P44_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P44_Import.Designer.cs">
+      <DependentUpon>P44_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P46.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P46.Designer.cs">
+      <DependentUpon>P46.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P46_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P46_Import.Designer.cs">
+      <DependentUpon>P46_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P50_PrintData.cs" />
     <Compile Include="P50_Print.cs">
       <SubType>Form</SubType>
@@ -292,6 +346,25 @@
       <DependentUpon>P51_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="P51_PrintData.cs" />
+    <Compile Include="P52.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P52.Designer.cs">
+      <DependentUpon>P52.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P52_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P52_Import.Designer.cs">
+      <DependentUpon>P52_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P52_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P52_Print.Designer.cs">
+      <DependentUpon>P52_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P52_PrintData.cs" />
     <Compile Include="P60_PrintData.cs" />
     <Compile Include="P61.cs">
       <SubType>Form</SubType>
@@ -582,6 +655,18 @@
     <Compile Include="P35_Import.Designer.cs">
       <DependentUpon>P35_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="P43.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P43.Designer.cs">
+      <DependentUpon>P43.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P43_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P43_Import.Designer.cs">
+      <DependentUpon>P43_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P36.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -629,6 +714,12 @@
     </Compile>
     <Compile Include="P24_Import.Designer.cs">
       <DependentUpon>P24_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P47.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P47.Designer.cs">
+      <DependentUpon>P47.cs</DependentUpon>
     </Compile>
     <Compile Include="P25.cs">
       <SubType>Form</SubType>
@@ -996,17 +1087,35 @@
     <Compile Include="Report\R21.Designer.cs">
       <DependentUpon>R21.cs</DependentUpon>
     </Compile>
-    <Compile Include="Report\R40.cs">
+    <Compile Include="Report\R22.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Report\R40.Designer.cs">
-      <DependentUpon>R40.cs</DependentUpon>
+    <Compile Include="Report\R22.Designer.cs">
+      <DependentUpon>R22.cs</DependentUpon>
     </Compile>
     <Compile Include="B05.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B05.Designer.cs">
       <DependentUpon>B05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P27.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P27.Designer.cs">
+      <DependentUpon>P27.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P27_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P27_Import.Designer.cs">
+      <DependentUpon>P27_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P39_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P39_Import.Designer.cs">
+      <DependentUpon>P39_Import.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1025,6 +1134,9 @@
     <EmbeddedResource Include="B04.resx">
       <DependentUpon>B04.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B06.resx">
+      <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CrossM\P71_Print.rdlc" />
     <EmbeddedResource Include="CrossM\P72.rdlc" />
@@ -1048,6 +1160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P04_LocalTransaction.resx">
       <DependentUpon>P04_LocalTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_ScrapQty.resx">
+      <DependentUpon>P04_ScrapQty.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P07_ExcelImport.resx">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
@@ -1110,6 +1225,19 @@
       <DependentUpon>P07.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P45_Import.resx">
+      <DependentUpon>P45_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P45.resx">
+      <DependentUpon>P45.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P44.resx">
+      <DependentUpon>P44.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P44_Import.resx">
+      <DependentUpon>P44_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P12_Print.rdlc" />
     <EmbeddedResource Include="P13_Print.rdlc" />
     <EmbeddedResource Include="P15_Print.rdlc" />
@@ -1131,6 +1259,15 @@
     <EmbeddedResource Include="P32_Print.rdlc" />
     <EmbeddedResource Include="P36_Print.rdlc" />
     <EmbeddedResource Include="P37_Print.rdlc" />
+    <EmbeddedResource Include="P39.resx">
+      <DependentUpon>P39.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P46.resx">
+      <DependentUpon>P46.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P46_Import.resx">
+      <DependentUpon>P46_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P50BookQty_Print.rdlc" />
     <EmbeddedResource Include="P50List_Print.rdlc" />
     <EmbeddedResource Include="P50_Print.resx">
@@ -1141,6 +1278,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P51_Report1.rdlc" />
     <EmbeddedResource Include="P51_Report2.rdlc" />
+    <EmbeddedResource Include="P52.resx">
+      <DependentUpon>P52.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P52_Import.resx">
+      <DependentUpon>P52_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P52_Print.resx">
+      <DependentUpon>P52_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P52_StocktakingListBack.rdlc" />
+    <EmbeddedResource Include="P52_StocktakingWithoutBookQtyBack.rdlc" />
+    <EmbeddedResource Include="P52_StocktakingWithoutBookQty.rdlc" />
     <EmbeddedResource Include="P60_Print.rdlc" />
     <EmbeddedResource Include="P61.resx">
       <DependentUpon>P61.cs</DependentUpon>
@@ -1301,6 +1450,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P35_Import.resx">
       <DependentUpon>P35_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P35.resx">
+      <DependentUpon>P43.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P35_Import.resx">
+      <DependentUpon>P43_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P36.resx">
@@ -1542,13 +1699,25 @@
     <EmbeddedResource Include="Report\R21.resx">
       <DependentUpon>R21.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Report\R40.resx">
-      <DependentUpon>R40.cs</DependentUpon>
+    <EmbeddedResource Include="Report\R22.resx">
+      <DependentUpon>R22.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B05.resx">
       <DependentUpon>B05.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P27.resx">
+      <DependentUpon>P27.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P27_Import.resx">
+      <DependentUpon>P27_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P39_Import.resx">
+      <DependentUpon>P39_Import.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P52_StocktakingList.rdlc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -1748,6 +1917,7 @@
     <None Include="Properties\DataSources\P51_PrintData1.datasource" />
     <None Include="Properties\DataSources\P51_PrintData2.datasource" />
     <None Include="Properties\DataSources\P51_PrintData3.datasource" />
+    <None Include="Properties\DataSources\P52_PrintData.datasource" />
     <None Include="Properties\DataSources\P60.datasource" />
     <None Include="Properties\DataSources\P60_Import.datasource" />
     <None Include="Properties\DataSources\P60_PrintData.datasource" />
