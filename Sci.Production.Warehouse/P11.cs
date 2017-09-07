@@ -15,6 +15,7 @@ using Sci.Production.PublicPrg;
 using Sci.Win;
 using Sci.Utility.Excel;
 using System.Data.SqlClient;
+using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
@@ -1296,7 +1297,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataRow issue = this.CurrentMaintain;
             string id = issue["ID"].ToString();
             string request = issue["cutplanid"].ToString();
-            string issuedate = Convert.ToDateTime(issue["issuedate"]).ToString("yyyy-MM-dd");
+            string issuedate = Convert.ToDateTime(issue["issuedate"]).ToString("yyyy/MM/dd");
             string remark = issue["remark"].ToString();
             string cutno = this.editCutNo.Text;
             string article = this.editArticle.Text;
@@ -1313,8 +1314,7 @@ select NameEN
 from Factory 
 where id = @MDivision", pars, out dt);
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", RptTitle));
+           
             #endregion
             #region SP
             DataTable dtsp;
@@ -1328,7 +1328,7 @@ where id = @MDivision", pars, out dt);
             else
                 poID = dtsp.Rows[0]["POID"].ToString();
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", poID));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", poID));
             #endregion
             #region SizeCode
             DualResult result;
@@ -1402,7 +1402,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
             string SEQ = dtseq.Rows[0]["SEQ"].ToString();
             //string tQty = dtseq.Rows[0]["tQTY"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
             //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
             #endregion
             #region LineNo
@@ -1422,7 +1422,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             else
                 cLineNo = dtlineno.Rows[0]["sewline"].ToString();
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("sewline", cLineNo));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("sewline", cLineNo));
             #endregion
             #region CellNo
             DataTable dtcutcell;
@@ -1445,44 +1445,113 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             else
                 cCellNo = dtcutcell.Rows[0]["CutCellID"].ToString();
 
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CutCellID", cCellNo));
+            //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CutCellID", cCellNo));
             #endregion 
-            string xlt = @"Warehouse_P11.xltx";
-            SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            xl.BoOpenFile = true;
 
-            xl.DicDatas.Add("##RptTitle", RptTitle);
-            xl.DicDatas.Add("##ID", id);
-            xl.DicDatas.Add("##cutplanid", request);
-            xl.DicDatas.Add("##issuedate", issuedate);
-            xl.DicDatas.Add("##remark", remark);
-            xl.DicDatas.Add("##cCutNo", cutno);
-            xl.DicDatas.Add("##cLineNo", LineNo);
-            xl.DicDatas.Add("##OrderID", OrderID);
-            xl.DicDatas.Add("##cCellNo", CellNo);
-            SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(dtseq);
-            int allColumns = dtseq.Columns.Count;
-            int sizeColumns = dtSizecode.Rows.Count;
-            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-            string cc = MyUtility.Excel.ConvertNumericToExcelColumn(dtseq.Columns.Count);
-            // 合併儲存格
-            wks.get_Range("G9", cc + "9").Merge(false);
-            wks.Cells[9, 7] = "SIZE";
-            //框線
-            wks.Range["G9", cc + "10"].Borders.LineStyle = 1;
-            //置中
-            wks.get_Range("G9", cc + "9").HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+         
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanid", request));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCutNo", cutno));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cLineNo", LineNo));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", OrderID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", CellNo));
+            //取得size欄位名稱
             for (int i = 6; i < dtseq.Columns.Count; i++)
-			{
-                wks.Cells[10, i+1] = dtseq.Columns[i].ColumnName;
-			}
-            
-            xlTable.Borders.OnlyHeaderBorders = true;
-            xlTable.Borders.AllCellsBorders = true;
-            xlTable.ShowHeader = false;
-            xl.DicDatas.Add("##SEQ", xlTable);
+            {
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("size" +( i  - 5).ToString(), dtseq.Columns[i].ColumnName));
+            }
 
-            xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P11"));
+
+            //將size的欄位加到10個
+            for (int i = dtseq.Columns.Count - 1; i < 16; i++)
+            {
+                dtseq.Columns.Add(i.ToString());
+            }
+
+            List<P11_PrintData> data = dtseq.AsEnumerable()
+                                       .Select(row1 => new P11_PrintData()
+                                       {
+                                           SEQ = row1["SEQ"].ToString().Trim(),
+                                           Description = row1["Description"].ToString().Trim(),
+                                           Color = row1["Color"].ToString().Trim(),
+                                           Location = row1["Location"].ToString().Trim(),
+                                           TransferQTY = row1["TransferQTY"].ToString().Trim(),
+                                           Unit = row1["Unit"].ToString().Trim(),
+                                           size1 = row1[6].ToString().Trim(),
+                                           size2 = row1[7].ToString().Trim(),
+                                           size3 = row1[8].ToString().Trim(),
+                                           size4 = row1[9].ToString().Trim(),
+                                           size5 = row1[10].ToString().Trim(),
+                                           size6 = row1[11].ToString().Trim(),
+                                           size7 = row1[12].ToString().Trim(),
+                                           size8 = row1[13].ToString().Trim(),
+                                           size9 = row1[14].ToString().Trim(),
+                                           size10 = row1[15].ToString().Trim()
+                                       }).ToList();
+
+            report.ReportDataSource = data;
+
+            #region  指定是哪個 RDLC
+            Type ReportResourceNamespace = typeof(P11_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P11_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                //this.ShowException(result);
+                return false;
+            }
+            
+            report.ReportResource = reportresource;
+
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+            #endregion
+
+            //string xlt = @"Warehouse_P11.xltx";
+            //SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            //xl.BoOpenFile = true;
+
+            //xl.DicDatas.Add("##RptTitle", RptTitle);
+            //xl.DicDatas.Add("##ID", id);
+            //xl.DicDatas.Add("##cutplanid", request);
+            //xl.DicDatas.Add("##issuedate", issuedate);
+            //xl.DicDatas.Add("##remark", remark);
+            //xl.DicDatas.Add("##cCutNo", cutno);
+            //xl.DicDatas.Add("##cLineNo", LineNo);
+            //xl.DicDatas.Add("##OrderID", OrderID);
+            //xl.DicDatas.Add("##cCellNo", CellNo);
+            //SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(dtseq);
+            //int allColumns = dtseq.Columns.Count;
+            //int sizeColumns = dtSizecode.Rows.Count;
+            //Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
+            //string cc = MyUtility.Excel.ConvertNumericToExcelColumn(dtseq.Columns.Count);
+            //// 合併儲存格
+            //wks.get_Range("G9", cc + "9").Merge(false);
+            //wks.Cells[9, 7] = "SIZE";
+            ////框線
+            //wks.Range["G9", cc + "10"].Borders.LineStyle = 1;
+            ////置中
+            //wks.get_Range("G9", cc + "9").HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+            //for (int i = 6; i < dtseq.Columns.Count; i++)
+            //{
+            //    wks.Cells[10, i+1] = dtseq.Columns[i].ColumnName;
+            //}
+            
+            //xlTable.Borders.OnlyHeaderBorders = true;
+            //xlTable.Borders.AllCellsBorders = true;
+            //xlTable.ShowHeader = false;
+            //xl.DicDatas.Add("##SEQ", xlTable);
+
+            //xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P11"));
             return true;
         }
 
