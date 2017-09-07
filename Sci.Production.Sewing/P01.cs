@@ -470,8 +470,21 @@ where   o.FtyGroup = @factoryid
                 //CalculateDefectQty(CurrentDetailData);
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
-                e.Detail["QAQty"] = QAQty;                
-                e.Detail["InlineQty"] =e.Detail["RFT"].ToString().Substring(0,4)=="0.00"?0: QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,4))/100);
+                e.Detail["QAQty"] = QAQty;
+                //e.Detail["InlineQty"] =e.Detail["RFT"].ToString().Substring(0,4)=="0.00"?0: QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,4))/100);
+                if (QAQty == 0)
+                {
+                    e.Detail["InlineQty"] = 0;
+                }
+                else if (e.Detail["RFT"].ToString().Substring(0, 4) =="0.00")
+                {
+                    e.Detail["InlineQty"] = 1;
+                }
+                else
+                {
+                    e.Detail["InlineQty"] = QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0, 4)) / 100);
+                }
+                //e.Detail["InlineQty"] = QAQty==0?0: e.Detail["RFT"].ToString().Substring(0, 4) == "0.00" ? 0 : QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0, 4)) / 100);
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
@@ -644,12 +657,44 @@ order by a.OrderId,os.Seq";
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
             }
+            #region 判斷不可以有出貨紀錄
+            DataTable dtCheckQty;
+            DualResult result;
+            string sqlSewQty = string.Format(@"
+select 
+a.OrderId
+,a.Article
+,sum(b.ShipQty) ShipQty
+from SewingOutput_Detail_Detail a
+inner join PackingList_Detail b on a.OrderId= b.OrderID 
+and a. Article = b. Article and a. SizeCode = b. SizeCode
+inner join PackingList c on b.id=c.ID
+where c.Status='Confirmed'
+and a.id='{0}'
+group by a.OrderId,a.Article"
+, CurrentMaintain["ID"].ToString());
+            if (!(result = DBProxy.Current.Select(null, sqlSewQty, out dtCheckQty)))
+            {
+                ShowErr(sqlSewQty, result);
+                return false;
+            }
+            string error = "";
+            for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+            {
+                error = error + string.Format(@"Order<{0}> Article<{1}> have ShipQty<{2}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["ShipQty"].ToString()) + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(error.ToString()))
+            {
+                MyUtility.Msg.WarningBox(error.ToString());
+                return false;
+            }
+            #endregion
 
             //第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
             string sqlcmdD ="Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
             List<SqlParameter> ps = new List<SqlParameter>();
             ps.Add(new SqlParameter("@K", CurrentDetailData["Ukey"]));
-            DualResult result;
             if (!(result =DBProxy.Current.Execute(null, sqlcmdD, ps)))
             {
                 ShowErr(result);
@@ -847,6 +892,46 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     return false; 
                 }
             }
+            #endregion
+
+            #region 產出數量不能小於已出貨的數量
+            DataTable dtCheckQty;
+            DualResult result;
+            string sqlSewQty = string.Format(@"
+select * from
+(
+    select
+    sum(a.QAQty) as SewQty
+    , sum(b.ShipQty) as PackQty
+    , a.OrderId
+    , a.Article
+    from SewingOutput_Detail_Detail a
+    inner join PackingList_Detail b on a.OrderId = b.OrderID
+        and a.Article = b.Article and a.SizeCode = b.SizeCode
+    inner join PackingList c on b.id = c.ID
+    where c.Status = 'Confirmed'
+    and a.id = '{0}'
+    group by a.OrderId, a.Article
+) a
+where SewQty < PackQty
+", CurrentMaintain["ID"].ToString());
+            if (!(result = DBProxy.Current.Select(null, sqlSewQty,out dtCheckQty)))
+            {
+                ShowErr(sqlSewQty, result);
+                return false;
+            }
+            string error = "";
+            for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+            {
+                error = error + string.Format(@"Order<{0}> Article<{1}> QAQty<{2}> less than ShipQty<{3}>", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["SewQty"].ToString(), dtCheckQty.Rows[i]["PackQty"].ToString()) + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(error.ToString()))
+            {
+                MyUtility.Msg.WarningBox(error.ToString());
+                return false;
+            }
+
             #endregion
 
             #region GetID
