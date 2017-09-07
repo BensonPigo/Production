@@ -11,7 +11,7 @@
     [PayTermARID]              VARCHAR (5)     CONSTRAINT [DF_GMTBooking_PayTermARID] DEFAULT ('') NOT NULL,
     [Forwarder]                VARCHAR (6)     CONSTRAINT [DF_GMTBooking_Forwarder] DEFAULT ('') NOT NULL,
     [FCRDate]                  DATE            NULL,
-    [Vessel]                   VARCHAR (30)    CONSTRAINT [DF_GMTBooking_Vessel] DEFAULT ('') NULL,
+    [Vessel]                   VARCHAR (60)    CONSTRAINT [DF_GMTBooking_Vessel] DEFAULT ('') NULL,
     [CutOffDate]               DATETIME        NULL,
     [ETD]                      DATE            NULL,
     [ETA]                      DATE            NULL,
