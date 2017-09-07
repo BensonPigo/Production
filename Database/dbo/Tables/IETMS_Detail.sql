@@ -9,6 +9,8 @@
     [SMV]         NUMERIC (6, 4) CONSTRAINT [DF_IETMS_Detail_SMV] DEFAULT ((0)) NULL,
     [SeamLength]  NUMERIC (8, 2) NULL DEFAULT ((0)),
     [UKey] BIGINT NOT NULL DEFAULT ((0)), 
+    [MtlFactorID] VARCHAR(3) NULL, 
+    [MtlFactorRate] NUMERIC(8, 2) NULL, 
     CONSTRAINT [PK_IETMS_Detail] PRIMARY KEY CLUSTERED ([UKey])
 );
 

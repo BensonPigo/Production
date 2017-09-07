@@ -12,6 +12,7 @@
     [SMV]           NUMERIC (9, 4) CONSTRAINT [DF_TimeStudyHistory_Detail_SMV] DEFAULT ((0)) NULL,
     [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudyHistory_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (9, 2) NULL,
+    [MtlFactorID] VARCHAR(3) NULL, 
     CONSTRAINT [PK_TimeStudyHistory_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
 );
 
