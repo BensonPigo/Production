@@ -289,13 +289,13 @@ when matched then
 				, t.HourlyStandardOutput = s.HourlyStandardOutput
 when not matched by target then
 	insert (
-		ID			, OrderID				, ComboType			, Article		, Color
-		, TMS		, HourlyStandardOutput	, WorkHour			, QaQty			, DefectQty
-		, InlineQty
+		ID			    , OrderID				, ComboType			, Article		, Color
+		, TMS		    , HourlyStandardOutput	, WorkHour			, QaQty			, DefectQty
+		, InlineQty     , AutoCreate
 	) values (
-		s.soID		, s.ToOrderID			, s.ComboType		, s.sodArticle	, s.sodColor
-		, TMS		, s.HourlyStandardOutput, 0					, s.TakeQty		, s.DefectQty
-		, s.InlineQty
+		s.soID		    , s.ToOrderID			, s.ComboType		, s.sodArticle	, s.sodColor
+		, TMS		    , s.HourlyStandardOutput, 0					, s.TakeQty		, s.DefectQty
+		, s.InlineQty   , 1
 	);
 
 -- 子單 Merge SewingOutput_Detail_Detail --
@@ -446,6 +446,7 @@ where	oq.id = @ToOrderID
             listSqlParameter.Add(new SqlParameter("@FromSP", this.textBoxFromSpNum.Text));
             listSqlParameter.Add(new SqlParameter("@StartDate", (this.dateRangeBuyerDelivery.Value1.Empty()) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             listSqlParameter.Add(new SqlParameter("@EndDate", (this.dateRangeBuyerDelivery.Value2.Empty()) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
+            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
             #endregion 
             #region SQL Filte
             #region BuyerDelivery Filte
@@ -525,13 +526,14 @@ outer apply (
 	select value = FromSPSewingOutputQty.value - FromSPPackingQty.value
 ) FromSPAvailableQty
 where	ToSPBalance.value > 0
+        and ToSPOrders.FtyGroup = @Factory
 		-- ToSP
 		{0}
 		-- FromSP
 		{1}
 		-- BuyerDelivery
 		{2}
-order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery DESC", dicSqlFilte["ToSP"]
+order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery", dicSqlFilte["ToSP"]
                                                         , dicSqlFilte["FromSP"]
                                                         , dicSqlFilte["BuyerDelivery"]);
             #endregion
