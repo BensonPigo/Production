@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
             id = row["ID"].ToString();
             Date1 = (MyUtility.Check.Empty(row["PackingReceive"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
             Date2 = (MyUtility.Check.Empty(row["WhseArrival"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
-            ETA = ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
+            ETA = MyUtility.Check.Empty(row["ETA"]) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
             Invoice = row["invno"].ToString();
             Wk = row["exportid"].ToString();
             FTYID = row["Mdivisionid"].ToString();
