@@ -235,6 +235,7 @@
     <Compile Include="P11_IssueBreakDown.Designer.cs">
       <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11_PrintData.cs" />
     <Compile Include="P12_Import.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1183,6 +1184,9 @@
     <EmbeddedResource Include="P11_IssueBreakDown.resx">
       <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P11_Print.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="P12_Import.resx">
       <DependentUpon>P12_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1830,6 +1834,8 @@
     <None Include="Properties\DataSources\P11_BOA.datasource" />
     <None Include="Properties\DataSources\P11_Detail.datasource" />
     <None Include="Properties\DataSources\P11_IssueBreakDown.datasource" />
+    <None Include="Properties\DataSources\P11_Print.datasource" />
+    <None Include="Properties\DataSources\P11_PrintData.datasource" />
     <None Include="Properties\DataSources\P12.datasource" />
     <None Include="Properties\DataSources\P12_Import.datasource" />
     <None Include="Properties\DataSources\P12_PrintData.datasource" />
