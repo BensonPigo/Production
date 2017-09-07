@@ -490,6 +490,7 @@ when matched then
                 #endregion 
                 if (dtDetailGrid.AsEnumerable().Any(row => !row["QtyAfter"].EqualDecimal(row["QtyBefore"])))
                 {
+                    dtDetailGrid = dtDetailGrid.AsEnumerable().Where(row => !row["QtyAfter"].EqualDecimal(row["QtyBefore"])).CopyToDataTable();
                     #region 庫存足夠，【QtyAfter != QtyBefore】建立調整單
                     #region 取 Adjust 單號
                     string strLBLC = CurrentMaintain["StockType"].EqualString("O") ? "LC" : "LB";
@@ -526,16 +527,18 @@ values
                     #region 新增 Adjust 表身
                     DataTable dtInsertAdjustLocalDetail;
                     string strInsertAdjustLocalDetail = string.Format(@"
-insert into AdjustLocal_Detail
-    (ID				, MDivisionID	, POID		, Refno		, Color
-    , QtyBefore		, QtyAfter		, ReasonId)
-select '{0}'				, '{1}'			, #tmp.POID	, #tmp.Refno, #tmp.Color
-    , #tmp.QtyBefore	, #tmp.QtyAfter	, ReasonID.value
+insert into AdjustLocal_Detail (
+        ID				    , MDivisionID	    , POID		    , Refno		        , Color
+        , StockType         , QtyBefore		    , QtyAfter	    , ReasonId
+)
+select  '{0}'			    , '{1}'			    , #tmp.POID	    , #tmp.Refno        , #tmp.Color
+        , '{2}'              , #tmp.QtyBefore	, #tmp.QtyAfter	, ReasonID.value
 from #tmp
 outer apply (
-select value = iif (#tmp.QtyAfter > #tmp.QtyBefore, '00010', '00011')
+    select value = iif (#tmp.QtyAfter > #tmp.QtyBefore, '00010', '00011')
 ) ReasonID", strAdjustID
-           , CurrentMaintain["MDivisionID"]);
+           , CurrentMaintain["MDivisionID"]
+           , CurrentMaintain["StockType"]);
                     result = MyUtility.Tool.ProcessWithDatatable(dtDetailGrid, null, strInsertAdjustLocalDetail, out dtInsertAdjustLocalDetail);
                     if (!result)
                     {
