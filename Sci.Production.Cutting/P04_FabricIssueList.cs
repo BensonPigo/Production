@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             cutplanid = str;
-            DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out gridTb);
+            DBProxy.Current.Select(null, string.Format("Select id,issuedate,Status from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out gridTb);
             gridFabricIssueList.DataSource = gridTb;
         }
         protected override void OnFormLoaded()
@@ -36,7 +36,8 @@ namespace Sci.Production.Cutting
             base.OnFormLoaded();
             Helper.Controls.Grid.Generator(this.gridFabricIssueList)
             .Text("id", header: "Issue ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
+            .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         private void btnClose_Click(object sender, EventArgs e)
