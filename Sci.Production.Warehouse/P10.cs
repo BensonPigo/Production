@@ -155,6 +155,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion 
         }
+
         protected override void OpenSubDetailPage()
         {
             base.OpenSubDetailPage();
@@ -461,79 +462,99 @@ outer apply(
                 else
                 {
                     sqlcmd = string.Format(@" 
- with 
-main as(
-    select 
-        poid,
-        t.SCIRefno,
-        t.ColorID,
-        t.SizeSpec,
-        t.POUnit as unit,
-        sum(cons)requestqty,0.00 as qty,
-        --isnull((select sum(qty) from Issue_Summary a WITH (NOLOCK) inner join Issue b WITH (NOLOCK) on a.Id=b.Id inner join Cutplan d on b.CutplanID=d.ID where d.ID='{0}' and b.status='Confirmed'), 0.00) as accu_issue,
-        isnull((
-            select 
-	            sum(qty) 
-            from Issue a WITH (NOLOCK) 
-	            inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
-            where  
-				c.poid = b.poid and
-				a.CutplanID = '{0}' and
-	            t.SCIRefno = b.SCIRefno and
-				t.Colorid = b.Colorid and
-	            a.status='Confirmed'and
-				a.id != '{1}')
-            , 0.00) as accu_issue,
-
-        '{1}' as id,
-        --'' [Description], 
-        (select DescDetail from fabric WITH (NOLOCK) where scirefno= t.scirefno)as [description], 
-        t.SEQ1,
-        t.SEQ2
+with main as(
+    select poid
+           , t.SCIRefno
+           , t.ColorID
+           , t.SizeSpec
+           , t.Refno
+           , unit = t.POUnit
+           , requestqty = sum(cons)
+           , qty = 0.00
+           , accu_issue = isnull ((select sum(qty) 
+                                   from Issue a WITH (NOLOCK) 
+                                   inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
+                                   where c.poid = b.poid 
+                                         and a.CutplanID = '{0}' 
+                                         and t.SCIRefno = b.SCIRefno 
+                                         and t.Colorid = b.Colorid 
+                                         and a.status = 'Confirmed'
+                                         and a.id != '{1}'), 0.00)
+           , id = '{1}'
+           , [description] = (select DescDetail 
+                              from fabric WITH (NOLOCK) 
+                              where scirefno = t.scirefno)
+           , t.SEQ1
+           , t.SEQ2
     from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
-        inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
-    where 
-        c.ID='{0}'
-    group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2,t.POUnit
+    inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id = c.Poid 
+                                                     and t.seq1 = c.seq1 
+                                                     and t.seq2 = c.Seq2
+    where c.ID = '{0}'
+    group by poid, t.SCIRefno, t.ColorID, t.SizeSpec, t.SEQ1, t.SEQ2, t.POUnit, t.Refno
 ),
 NetQty as(
-    select DISTINCT  
-        a.NETQty,
-        a.ID,
-        a.SEQ1,
-        a.SEQ2,
-        a.SCIRefno,
-        a.ColorID 
+    select DISTINCT a.NETQty
+           , a.ID
+           , a.SEQ1
+           , a.SEQ2
+           , a.SCIRefno
+           , a.ColorID 
     from PO_Supp_Detail a WITH (NOLOCK) 
-        left join Issue_Summary b WITH (NOLOCK) on  a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.ID=b.Poid 
-    where 
-        a.STOCKPOID =''
-        and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail WITH (NOLOCK) where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
+    left join Issue_Summary b WITH (NOLOCK) on a.seq1 = b.seq1 
+                                               and a.seq2 = b.seq2 
+                                               and a.ID = b.Poid 
+    where a.STOCKPOID =''
+          and a.SEQ1 = (select min(seq1) 
+                        from dbo.PO_Supp_Detail WITH (NOLOCK) 
+                        where id = a.id 
+                              and seq1 = a.SEQ1 
+                              and seq2 = a.seq2)
 )
-select a.*,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq, isnull(b.NETQty,0) as NETQty 
-,tmpQty.arqty 
-,tmpQty.aiqqty
-,tmpQty.arqty -tmpQty.aiqqty as [avqty] 
+select a.*
+       , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+       , NETQty = isnull(b.NETQty,0)
+       , tmpQty.arqty 
+       , tmpQty.aiqqty
+       , [avqty] = tmpQty.arqty - tmpQty.aiqqty
 from main a 
-left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
-                    outer apply(
-                        select arqty = a.requestqty 
-                                     + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c WITH (NOLOCK)  
-                                                                  inner join (Select distinct s.Poid
-                                                                                             ,s.seq1
-                                                                                             ,s.seq2
-                                                                                             ,i.CutplanID 
-                                                                                     from Issue_Summary s WITH (NOLOCK) 
-                                                                                     inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' 
-                                                                                     where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
-                                                                             ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
-                                              ,0.00)
-                              ,aiqqty = isnull((select a.qty from dbo.Issue c WITH (NOLOCK) where c.id=a.id and c.status!='Confirmed' ),0.00)
-                                       +isnull((select sum(s.Qty) 
-                                                from Issue_Summary s WITH (NOLOCK) 
-                                                inner join Issue i WITH (NOLOCK) on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed')
-                                              , 0.00)
-                    ) as tmpQty
+left join NetQty b on a.Poid = b.ID 
+                      and a.seq1 = b.seq1 
+                      and a.seq2 = b.seq2
+outer apply(
+    select arqty = a.requestqty 
+                   + isnull ((select sum(c.Cons) 
+                              from  dbo.Cutplan_Detail_Cons c WITH (NOLOCK)  
+                              inner join (
+                                  Select distinct s.Poid
+                                                  , s.seq1
+                                                  , s.seq2
+                                                  , i.CutplanID 
+                                  from Issue_Summary s WITH (NOLOCK) 
+                                  inner join Issue i WITH (NOLOCK) on s.Id = i.Id 
+                                                                      and i.CutplanID != '{0}' 
+                                                                      and i.status = 'Confirmed' 
+                                  where a.Poid = s.Poid 
+                                        and a.SCIRefno = s.SCIRefno 
+                                        and a.ColorID = s.ColorID
+                              ) s on c.Poid = s.poid 
+                                     and c.SEQ1 = s.SEQ1 
+                                     and c.SEQ2 = s.SEQ2 
+                                     and c.ID = s.CutplanID
+                            ), 0.00)
+           , aiqqty = isnull ((select a.qty 
+                               from dbo.Issue c WITH (NOLOCK) 
+                               where c.id = a.id 
+                                     and c.status != 'Confirmed' 
+                              ), 0.00)
+                      + isnull((select sum(s.Qty) 
+                                from Issue_Summary s WITH (NOLOCK) 
+                                inner join Issue i WITH (NOLOCK) on s.Id = i.Id 
+                                where s.Poid = a.poid 
+                                      and s.SCIRefno = a.SCIRefno 
+                                      and s.Colorid = a.ColorID 
+                                      and i.status = 'Confirmed'), 0.00)
+) as tmpQty
 ", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
