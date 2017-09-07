@@ -1469,7 +1469,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             //將size的欄位加到10個
             for (int i = dtseq.Columns.Count - 1; i < 16; i++)
             {
-                dtseq.Columns.Add(i.ToString());
+                dtseq.Columns.Add("#!#!##"+i.ToString());
             }
 
             List<P11_PrintData> data = dtseq.AsEnumerable()
