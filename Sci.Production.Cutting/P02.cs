@@ -934,13 +934,8 @@ where w.ID = '{0}'", masterID);
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
 
-                // 不可輸入空白
-                if (e.FormattedValue.ToString().Empty())
-                {
-                    MyUtility.Msg.WarningBox("Cell can't be empty.");
-                    e.Cancel = true;
-                    return;
-                }
+                // 空白不檢查
+                if (e.FormattedValue.ToString().Empty()) return;
 
                 string oldvalue = dr["cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();               
