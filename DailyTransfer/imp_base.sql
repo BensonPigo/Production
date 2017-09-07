@@ -3102,15 +3102,15 @@ when not matched by source then
 --------GMTBooking---------------
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
-SET  	
-      a.Vessel	      =SUBSTRING(b.Vessel,1,30)	
-      ,a.ETD	      =b.ETD	
-      ,a.ETA	      =b.ETA	
-      ,a.InvDate	  =b.InvDate	
-      ,a.FCRDate	  =b.FCRDate	
+SET   
+      a.Vessel     =b.Vessel
+      ,a.ETD       =b.ETD 
+      ,a.ETA       =b.ETA 
+      ,a.InvDate   =b.InvDate 
+      ,a.FCRDate   =b.FCRDate 
 
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
-
+where b.InvDate is not null
 END
 
 
