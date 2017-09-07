@@ -483,6 +483,7 @@ where   o.FtyGroup = @factoryid
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
                 e.Detail["QAQty"] = QAQty;
+
                 if (QAQty == 0)
                 {
                     e.Detail["InlineQty"] = 0;
@@ -945,8 +946,6 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
                 }
                 
             }
-           
-
             #endregion
 
             #region GetID
