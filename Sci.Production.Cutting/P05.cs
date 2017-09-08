@@ -302,31 +302,35 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 else
                     dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
-                string marker2sql = string.Format(
-                @"Select b.Orderid,b.MarkerName,sum(b.Layer) as layer,
-                b.MarkerNo,a.WorkOrderUkey,b.fabricCombo,
-                (
-                    Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-                    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                    Where a.WorkOrderUkey =c.WorkOrderUkey            
-                    For XML path('')
-                ) as SizeRatio,
-                {
-                    Select PatternPanel+'+ ' 
-                    From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                    Where c.WorkOrderUkey =a.WorkOrderUkey 
-                    For XML path('')
-                } as PatternPanel,
-                (
-                    Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-                    where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
-                ) as cuttingwidth,
-				o.styleid,o.seasonid
-                From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
-                left join Orders o WITH (NOLOCK) on b.orderid=o.id
-                Where a.workorderukey = b.ukey and a.id = '{0}'
-			    Group by b.Orderid,b.MarkerName,b.MarkerNo,
-                    b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", txtCutplan.Text);
+                string marker2sql = string.Format(@"
+Select b.Orderid
+       , b.MarkerName
+       , layer = sum(b.Layer)
+       , b.MarkerNo
+       , a.WorkOrderUkey
+       , b.fabricCombo
+       , SizeRatio = (Select c.sizecode + '*' + convert (varchar(8), c.qty) + '/' 
+                      From WorkOrder_SizeRatio c WITH (NOLOCK) 
+                      Where a.WorkOrderUkey = c.WorkOrderUkey            
+                      For XML path('')) 
+       , PatternPanel = (Select PatternPanel+'+ ' 
+                         From WorkOrder_PatternPanel c WITH (NOLOCK) 
+                         Where c.WorkOrderUkey =a.WorkOrderUkey 
+                         For XML path(''))
+       , cuttingwidth = (Select cuttingwidth 
+                         from Order_EachCons b WITH (NOLOCK)
+                              , WorkOrder e WITH (NOLOCK) 
+                         where e.Order_EachconsUkey = b.Ukey 
+                               and a.WorkOrderUkey = e.Ukey)
+       , o.styleid
+       , o.seasonid
+From Cutplan_Detail a WITH (NOLOCK) 
+     , WorkOrder b WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on b.orderid = o.id
+Where a.workorderukey = b.ukey 
+      and a.id = '{0}'
+Group by b.Orderid,b.MarkerName,b.MarkerNo
+         , b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", txtCutplan.Text);
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
