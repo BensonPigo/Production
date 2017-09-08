@@ -15,6 +15,7 @@ namespace Sci.Production.Sewing
 {
     public partial class P01 : Sci.Win.Tems.Input8
     {
+        DataTable dtQACheck;
         Ict.Win.DataGridViewGeneratorTextColumnSettings qaoutput = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -453,6 +454,13 @@ where   o.FtyGroup = @factoryid
             {
                 StringBuilder QAOutput = new StringBuilder();
                 int QAQty = 0;
+                //新建DataTable 用來存放第三層資料
+                DataTable dtQAQtyCheck = new DataTable();
+                dtQAQtyCheck.Columns.Add("OrderID", typeof(string));                
+                dtQAQtyCheck.Columns.Add("Article", typeof(string));
+                dtQAQtyCheck.Columns.Add("SizeCode", typeof(string));
+                dtQAQtyCheck.Columns.Add("QAQty", typeof(int));
+
                 foreach (DataRow dr in e.SubDetails.Rows)
                 {
                     if (dr.RowState != DataRowState.Deleted)
@@ -462,17 +470,30 @@ where   o.FtyGroup = @factoryid
                             QAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
                             QAQty = QAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
                         }
+                        DataRow dr1 = dtQAQtyCheck.NewRow();
+                        dr1["OrderID"] = dr["Orderid"];
+                        dr1["Article"] = dr["Article"];
+                        dr1["SizeCode"] = dr["SizeCode"];
+                        dr1["QAQty"] = MyUtility.Convert.GetInt(dr["AccumQty"])+MyUtility.Convert.GetInt( dr["QAQty"]);
+                        dtQAQtyCheck.Rows.Add(dr1);
                     }                    
                 }
-                //CurrentDetailData["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
-                //CurrentDetailData["QAQty"] = QAQty;
-                //CurrentDetailData.EndEdit();
-                //CalculateDefectQty(CurrentDetailData);
+                //將第三層資料丟進DataTable
+                dtQACheck = dtQAQtyCheck.Copy();
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
-                e.Detail["QAQty"] = QAQty;                
-                e.Detail["InlineQty"] =e.Detail["RFT"].ToString().Substring(0,4)=="0.00"?0: QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,4))/100);
-                //e.Detail.EndEdit();
+                e.Detail["QAQty"] = QAQty;
+
+                if (QAQty == 0)
+                {
+                    e.Detail["InlineQty"] = 0;
+                }
+                else
+                {
+                    e.Detail["InlineQty"] = e.Detail["RFT"].ToString().Substring(0, 4) == "0.00" ? QAQty : QAQty /
+                        (decimal.Parse(e.Detail["RFT"].ToString().Substring(0, 4)) / 100);
+                }
+                
                 CalculateDefectQty(e.Detail);
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
                 CurrentMaintain["InlineQty"] =MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
@@ -644,12 +665,46 @@ order by a.OrderId,os.Seq";
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
             }
+            #region 判斷不可以有出貨紀錄
+            DataTable dtCheckQty;
+            DualResult result;
+            string sqlSewQty = string.Format(@"
+select 
+a.OrderId
+,a.Article
+,a.SizeCode
+,sum(b.ShipQty) ShipQty
+from SewingOutput_Detail_Detail a
+inner join PackingList_Detail b on a.OrderId= b.OrderID 
+and a. Article = b. Article and a. SizeCode = b. SizeCode
+inner join PackingList c on b.id=c.ID
+where c.Status='Confirmed'
+and a.id='{0}'
+group by a.OrderId,a.Article,a.SizeCode"
+, CurrentMaintain["ID"].ToString());
+            if (!(result = DBProxy.Current.Select(null, sqlSewQty, out dtCheckQty)))
+            {
+                ShowErr(sqlSewQty, result);
+                return false;
+            }
+            string error = "";
+            for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+            {
+                error = error + string.Format(@"Order: <{0}> Article: <{1}> Size: <{2}> 
+have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["SizeCode"].ToString(), dtCheckQty.Rows[i]["ShipQty"].ToString()) + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(error.ToString()))
+            {
+                MyUtility.Msg.WarningBox(error.ToString());
+                return false;
+            }
+            #endregion
 
             //第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
             string sqlcmdD ="Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
             List<SqlParameter> ps = new List<SqlParameter>();
             ps.Add(new SqlParameter("@K", CurrentDetailData["Ukey"]));
-            DualResult result;
             if (!(result =DBProxy.Current.Execute(null, sqlcmdD, ps)))
             {
                 ShowErr(result);
@@ -831,9 +886,9 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
             DateTime? Sod = MyUtility.Convert.GetDate(CurrentMaintain["outputDate"]);
             DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
-            if (Sod<=sl)
-            {                
-                decimal NQ=0;
+            if (Sod <= sl)
+            {
+                decimal NQ = 0;
                 foreach (DataRow dr in DetailDatas)
                 {
                     if (!MyUtility.Check.Empty(dr["QAQty"]))
@@ -844,8 +899,52 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                 if (NQ != oldttlqaqty)
                 {
                     MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
-                    return false; 
+                    return false;
                 }
+            }
+            #endregion
+
+            #region 產出數量不能小於已出貨的數量
+            DataTable dtCheckQty;
+            if (!MyUtility.Check.Empty(dtQACheck) && dtQACheck.Rows.Count> 0)
+            {
+               
+                MyUtility.Tool.ProcessWithDatatable(dtQACheck, 
+                    "OrderID,Article,SizeCode,QAQty",
+@" SELECT * 
+FROM   (SELECT ( t.qaqty )    AS SewQty, 
+               (pack.PackQty) AS PackQty, 
+               t.orderid, 
+               t.article, 
+               t.sizecode 
+        FROM   #tmp t 
+		outer apply
+		(
+			select Sum(b.shipqty) AS PackQty
+			from PackingList a
+			inner join PackingList_Detail b on a.ID=b.ID
+			where b.OrderID=t.OrderId
+			and b.Article=t.Article and b.SizeCode=t.SizeCode
+			and a.Status= 'Confirmed'
+		) pack
+       ) a 
+WHERE  sewqty < packqty ", out dtCheckQty);
+                string error = "";
+                if (!MyUtility.Check.Empty(dtCheckQty) || dtCheckQty.Rows.Count>0)
+                {
+                    for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+                    {
+                        error = error + string.Format(@"Order: <{0}> Article: <{1}> Size: <{2}> 
+QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["SizeCode"].ToString(), dtCheckQty.Rows[i]["SewQty"].ToString(), dtCheckQty.Rows[i]["PackQty"].ToString()) + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(error.ToString()))
+                    {
+                        MyUtility.Msg.WarningBox(error.ToString());
+                        return false;
+                    }
+                }
+                
             }
             #endregion
 

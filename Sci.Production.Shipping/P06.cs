@@ -9,7 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -705,62 +705,119 @@ and (s.Status != 'Confirmed' or p.Status = 'New')", Convert.ToDateTime(CurrentMa
 
             //撈所有符合條件的Packing List資料
             #region 組SQL
-            sqlCmd = string.Format(@"with ShipPlanData
-as
-(
-select pd.ID as PackingListID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty as OrderQty,oq.Qty as OrderShipQty,oqd.Qty as SeqQty,sum(pd.ShipQty) as Shipqty,p.INVNo,o.StyleID,o.BrandID,o.Dest
-from PackingList p WITH (NOLOCK) 
-left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
-left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
-left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
-where (p.Type = 'B' or p.Type = 'S')
-and s.Status = 'Confirmed'
-and p.MDivisionID = '{0}'
-and p.PulloutDate = '{1}'
-and ( (p.PulloutID != '{2}' or p.PulloutID = '') 
-or p.PulloutID='{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
-group by pd.ID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty,oq.Qty,oqd.Qty,p.INVNo,o.StyleID,o.BrandID,o.Dest
+            sqlCmd = string.Format(@"
+with ShipPlanData as (
+    select  pd.ID as PackingListID
+            , p.Type
+            , p.ShipModeID
+            , pd.OrderID
+            , pd.OrderShipmodeSeq
+            , pd.Article
+            , pd.SizeCode
+            , o.Qty as OrderQty
+            , oq.Qty as OrderShipQty
+            , oqd.Qty as SeqQty
+            , sum(pd.ShipQty) as Shipqty
+            , p.INVNo
+            , o.StyleID
+            , o.BrandID
+            , o.Dest
+    from PackingList p WITH (NOLOCK) 
+    left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+    left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
+    left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
+                                                and oq.Seq = pd.OrderShipmodeSeq
+    left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID 
+                                                        and oqd.Seq = pd.OrderShipmodeSeq 
+                                                        and oqd.Article = pd.Article 
+                                                        and oqd.SizeCode = pd.SizeCode
+    where (p.Type = 'B' or p.Type = 'S')
+          and s.Status = 'Confirmed'
+          and p.MDivisionID = '{0}'
+          and p.PulloutDate = '{1}'
+          and ( (p.PulloutID != '{2}' or p.PulloutID = '') 
+          or p.PulloutID='{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
+    group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
+          , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
 ),
-FLPacking
-as
-(
-select pd.ID as PackingListID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty as OrderQty,oq.Qty as OrderShipQty,oqd.Qty as SeqQty,sum(pd.ShipQty) as Shipqty,p.INVNo,o.StyleID,o.BrandID,o.Dest
-from PackingList p WITH (NOLOCK) 
-left join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
-left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
-where (p.Type = 'F' or p.Type = 'L')
-and p.Status = 'Confirmed'
-and p.MDivisionID = '{0}'
-and p.PulloutDate = '{1}'
-and (p.PulloutID != '{2}' or p.PulloutID = '')
-group by pd.ID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty,oq.Qty,oqd.Qty,p.INVNo,o.StyleID,o.BrandID,o.Dest 
+FLPacking as (
+    select  pd.ID as PackingListID
+            , p.Type
+            , p.ShipModeID
+            , pd.OrderID
+            , pd.OrderShipmodeSeq
+            , pd.Article
+            , pd.SizeCode
+            , o.Qty as OrderQty
+            , oq.Qty as OrderShipQty
+            , oqd.Qty as SeqQty
+            , sum(pd.ShipQty) as Shipqty
+            , p.INVNo
+            , o.StyleID
+            , o.BrandID
+            , o.Dest
+    from PackingList p WITH (NOLOCK) 
+    left join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+    left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
+                                                and oq.Seq = pd.OrderShipmodeSeq
+    left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID 
+                                                        and oqd.Seq = pd.OrderShipmodeSeq 
+                                                        and oqd.Article = pd.Article 
+                                                        and oqd.SizeCode = pd.SizeCode
+    where   (p.Type = 'F' or p.Type = 'L')
+            and p.Status = 'Confirmed'
+            and p.MDivisionID = '{0}'
+            and p.PulloutDate = '{1}'
+            and (p.PulloutID != '{2}' or p.PulloutID = '')
+    group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
+             , o.Qty, oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest 
 ),
-AllPackData
-as
-(
-select * from ShipPlanData
-union all
-select * from FLPacking
+AllPackData as (
+    select * 
+    from ShipPlanData
+
+    union all
+    select * 
+    from FLPacking
 ),
-SummaryData
-as
-(
-select PackingListID,Type,ShipModeID,OrderID,OrderShipmodeSeq,'' as Article,'' as SizeCode,OrderQty,OrderShipQty,0 as SeqQty,sum(Shipqty) as Shipqty,INVNo,StyleID,BrandID,Dest 
-from AllPackData
-group by PackingListID,Type,ShipModeID,OrderID,OrderShipmodeSeq,OrderQty,OrderShipQty,INVNo,StyleID,BrandID,Dest 
+SummaryData as (
+    select  PackingListID
+            , Type
+            , ShipModeID
+            , OrderID
+            , OrderShipmodeSeq
+            , '' as Article
+            , '' as SizeCode
+            , OrderQty
+            , OrderShipQty
+            , 0 as SeqQty
+            , sum(Shipqty) as Shipqty
+            , INVNo
+            , StyleID
+            , BrandID
+            , Dest 
+    from AllPackData
+    group by PackingListID, Type, ShipModeID, OrderID, OrderShipmodeSeq, OrderQty, OrderShipQty
+             , INVNo, StyleID, BrandID, Dest 
 )
-select 'D' as DataType,*, 0 as AllShipQty from ShipPlanData
+select  'D' as DataType
+        , *
+        , 0 as AllShipQty 
+from ShipPlanData
+
 union all
-select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where ID <> '{2}'  and OrderID = SummaryData.OrderID),0) + 
-isnull((select sum(DiffQty) from InvAdjust_Qty iq WITH (NOLOCK) 
---20161208.willy修改
-inner join InvAdjust i WITH (NOLOCK) on iq.ID=i.id 
-inner join SummaryData b on i.OrderID=b.OrderID  
-),0))as AllShipQty 
+select  'S' as DataType
+        , *
+        , AllShipQty = (isnull ((select sum(ShipQty) 
+                                 from Pullout_Detail WITH (NOLOCK) 
+                                 where ID <> '{2}'  
+                                       and OrderID = SummaryData.OrderID), 0) 
+                        + isnull ((select sum(DiffQty) 
+                                   from InvAdjust_Qty iq WITH (NOLOCK) 
+                                   inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+                                   inner join SummaryData b on i.OrderID = b.OrderID), 0))  
 from SummaryData
 ", Sci.Env.User.Keyword, Convert.ToDateTime(CurrentMaintain["PulloutDate"]).ToString("d"), MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             #endregion
@@ -780,28 +837,57 @@ from SummaryData
                 DataRow[] packData = AllPackData.Select(string.Format("DataType = 'S' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                 if (packData.Length <= 0)  //存在表身，但資料已被修改，就必須把第3層資料刪除，表身資料的Ship Qty改成0
                 {
-                        //刪除第3層資料
-                        DataTable SubDetailData;
-                        GetSubDetailDatas(dr, out SubDetailData);
-                        List<DataRow> drArray = new List<DataRow>();
-                        foreach (DataRow ddr in SubDetailData.Rows)
-                        {
-                            drArray.Add(ddr);
-                        }
-                        foreach (DataRow ddr in drArray)
-                        {
-                            ddr.Delete();
-                        }
-                        dr["ShipQty"] = 0;
-                        dr["Status"] = "";
-                        dr["PackingListID"] = "";
-                        dr["INVNo"] = "";
-                        dr["ReviseDate"] = DateTime.Now;
+                    //刪除第3層資料
+                    DataTable SubDetailData;
+                    GetSubDetailDatas(dr, out SubDetailData);
+                    List<DataRow> drArray = new List<DataRow>();
+                    foreach (DataRow ddr in SubDetailData.Rows)
+                    {
+                        drArray.Add(ddr);
+                    }
+                    foreach (DataRow ddr in drArray)
+                    {
+                        ddr.Delete();
+                    }
+
+                    #region 判斷 Status
+                    #region 合併計算 ShipQty
+                    int sumShipQty = 0;
+                    if (AllPackData.AsEnumerable().Any(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")))
+                    {
+                        sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
+                    }
+                    string strAllShipQty = string.Format(@"
+select AllShipQty = (isnull ((select sum(ShipQty) 
+                             from Pullout_Detail WITH (NOLOCK) 
+                             where ID <> '{0}'  
+                                   and OrderID = '{1}'), 0) 
+                     + isnull ((select sum(DiffQty) 
+                                from InvAdjust_Qty iq WITH (NOLOCK) 
+                                inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+                                where i.OrderID = '{1}'), 0))", MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(CurrentMaintain["ID"])
+                                                              , dr["OrderID"]);
+                    int allShipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(strAllShipQty));
+                    int totalShipQty = sumShipQty + allShipQty;
+                    #endregion                
+                    string newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
+                    #endregion
+
+                    dr["ShipQty"] = 0;
+                    dr["Status"] = newStatus;
+                    dr["StatusExp"] = GetStatusName(newStatus);
+                    dr["PackingListID"] = "";
+                    dr["INVNo"] = "";
+                    dr["ReviseDate"] = DateTime.Now;
                 }
                 else
                 {
-                    int totalShipQty = MyUtility.Convert.GetInt(packData[0]["ShipQty"]) + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);
+                    #region 合併計算 ShipQty
+                    int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
+                    #endregion
+                    int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);                    
                     string newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
+
                     //shipQty,OrderQty,InvNo 修改過才會更換資料
                     if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
                     {
@@ -900,7 +986,10 @@ from SummaryData
                     }
                     if (PullDetail == null || PullDetail.Length <= 0)
                     {
-                        int totalShipQty = MyUtility.Convert.GetInt(dr["ShipQty"]) + MyUtility.Convert.GetInt(dr["AllShipQty"]);
+                        #region 合併計算 ShipQty
+                        int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));                        
+                        #endregion
+                        int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(dr["AllShipQty"]);
                         string newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
 
                         DataRow DetailNewRow = ((DataTable)detailgridbs.DataSource).NewRow();
