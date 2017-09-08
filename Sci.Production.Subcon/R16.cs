@@ -127,7 +127,7 @@ as
             #region -- 條件組合 --
             switch (statusindex)
             {
-                case 0:
+                case 0: //Only Approve
                     if (!MyUtility.Check.Empty(Issuedate1) && !MyUtility.Check.Empty(Issuedate2))
                     {
                     sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
@@ -145,25 +145,25 @@ as
                     }
                     break;
 
-                case 1:
+                case 1:  //Only Unapprove
                     sqlCmd.Append(@" where a.apvdate is null");
                     break;
 
-                case 2:
+                case 2: //ALL
                     if (!MyUtility.Check.Empty(Issuedate1) && !MyUtility.Check.Empty(Issuedate2))
                     {
-                        sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
+                        sqlCmd.Append(string.Format(@" where (a.issuedate between '{0}' and '{1}')"
                             , Convert.ToDateTime(Issuedate1).ToString("d"), Convert.ToDateTime(Issuedate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(Issuedate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate >= '{0}') ", Convert.ToDateTime(Issuedate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(Issuedate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(Issuedate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate <= '{0}' )", Convert.ToDateTime(Issuedate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(Issuedate2).ToString("d")));
                         }
                     }
                     break;
@@ -328,6 +328,22 @@ outer apply(
 	group by orders.poid,ArtworkTypeID) y
 where po_qty > 0
 ", ratetype));
+            }
+            #endregion
+
+            #region -- sqlCmd 條件組合 --
+            switch (statusindex)
+            {
+                case 0:  //Only Approve
+                    break;
+
+                case 1:  //Only Unapprove
+                    sqlCmd.Replace("AND ap.Status = 'Approved'", "AND ap.Status = 'New'");
+                    break;
+
+                case 2:  //All
+                    sqlCmd.Replace("AND ap.Status = 'Approved'", " ");
+                    break;
             }
             #endregion
 
