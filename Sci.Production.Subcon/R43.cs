@@ -68,64 +68,70 @@ namespace Sci.Production.Subcon
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region sqlcmd
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select
-            [M] = b.MDivisionid,
-            [Factory] = o.FtyGroup,
-            [SPNo] = b.Orderid,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Sub-process] = bio.SubProcessId,
-            [Receive Qty] =sum(bd.qty),
-            [Release Qty] = (select sum(bd.qty)  where (bio.InComing-bio.OutGoing) <= s.BCSDate),
-            [BCS] = sum(bd.qty) /(select sum(bd.qty)  where (bio.InComing-bio.OutGoing) <= s.BCSDate)
-
-            from Bundle b WITH (NOLOCK) 
-            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-            inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-            left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
-            left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
-
-            where 1=1
-            ");
-            #endregion
-            #region Append畫面上的條件
+            #region 畫面上的條件
             IList<SqlParameter> cmds = new List<SqlParameter>();
-            if (!MyUtility.Check.Empty(SubProcess))
-            {
-                sqlCmd.Append(@" and (bio.SubprocessId = @SubProcess or @SubProcess = 'ALL')");
-                cmds.Add(new SqlParameter("@SubProcess", SubProcess));
-            }
-            if (!MyUtility.Check.Empty(dateBundleReceive1))
-            {
-                sqlCmd.Append(@" and bio.InComing >= @BundleReceive1");
-                cmds.Add(new SqlParameter("@BundleReceive1", Convert.ToDateTime(dateBundleReceive1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundleReceive2))
-            {
-                sqlCmd.Append(@" and bio.InComing <= @BundleReceive2 ");
-                cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(M))
-            {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = @M"));
-                cmds.Add(new SqlParameter("@M", M));
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlCmd.Append(string.Format(@" and o.FtyGroup = @Factory"));
-                cmds.Add(new SqlParameter("@Factory", Factory));
-            }
+            cmds.Add(new SqlParameter("@SubProcess", SubProcess));
+            cmds.Add(new SqlParameter("@BundleReceive1", Convert.ToDateTime(dateBundleReceive1).ToString("d")));
+            cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d")));
+            cmds.Add(new SqlParameter("@M", M));
+            cmds.Add(new SqlParameter("@Factory", Factory));
+
+            Dictionary<string, string> listDicFilte = new Dictionary<string, string>();
+            listDicFilte.Add("SubProcess", (!MyUtility.Check.Empty(SubProcess)) ? "and (bio.SubprocessId = @SubProcess or @SubProcess = 'ALL')" : "");
+            listDicFilte.Add("BundleReceive1", (!MyUtility.Check.Empty(dateBundleReceive1)) ? "and bio.InComing >= @BundleReceive1" : "");
+            listDicFilte.Add("BundleReceive2", (!MyUtility.Check.Empty(dateBundleReceive2)) ? "and bio.InComing <= @BundleReceive2 " : "");
+            listDicFilte.Add("M", (!MyUtility.Check.Empty(M)) ? "and b.MDivisionid = @M" : "");
+            listDicFilte.Add("Factory", (!MyUtility.Check.Empty(Factory)) ? "and o.FtyGroup = @Factory" : "");            
             #endregion
-            #region group order
-            sqlCmd.Append(@"
-            group by 
-            b.MDivisionid, o.FtyGroup, b.Orderid, o.StyleID, o.SeasonID, o.BrandID, bio.SubProcessId, bio.InComing, bio.OutGoing, s.BCSDate
-            order by 
-            [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process], [Receive Qty], [Release Qty], [BCS]");
+            #region sqlcmd
+            string sqlCmd = String.Format(@"
+select DetailData.M
+       , DetailData.Factory
+       , DetailData.SPNo
+       , DetailData.Style
+       , DetailData.Season
+       , DetailData.Brand
+       , DetailData.[Sub-Process]
+       , [Receive Qty] = sum (DetailData.[Receive Qty])
+       , [Release Qty] = sum (DetailData.[Release Qty])
+       , BCS = Round ((sum (DetailData.[Receive Qty]) / sum (DetailData.[Release Qty]) * 100), 2)
+from (
+    select [M] = b.MDivisionid
+           , [Factory] = o.FtyGroup
+           , [SPNo] = b.Orderid
+           , [Style] = o.StyleID
+           , [Season] = o.SeasonID
+           , [Brand] = o.BrandID
+           , [Sub-process] = bio.SubProcessId
+           , [Receive Qty] = sum(bd.qty)
+           , [Release Qty] = (select sum(bd.qty)  
+                              where (bio.InComing-bio.OutGoing) <= s.BCSDate)
+    from Bundle b WITH (NOLOCK) 
+    inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+    inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id 
+                                                      and bda.Bundleno = bd.Bundleno
+    inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+    left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
+    left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
+    where 1=1
+          -- SubProcess --
+          {0}  
+          -- BundleReceive1 --
+          {1}  
+          -- BundleReceive2 --
+          {2}  
+          -- M --
+          {3}  
+          -- Factory --
+          {4}  
+    group by b.MDivisionid, o.FtyGroup, b.Orderid, o.StyleID, o.SeasonID, o.BrandID, bio.SubProcessId, bio.InComing, bio.OutGoing, s.BCSDate    
+) DetailData
+group by [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process]
+order by [M], [Factory], [SPNo], [Style], [Season], [Brand], [Sub-process], [Receive Qty], [Release Qty], [BCS]", listDicFilte["SubProcess"]
+                                                                                                                , listDicFilte["BundleReceive1"]
+                                                                                                                , listDicFilte["BundleReceive2"]
+                                                                                                                , listDicFilte["M"]
+                                                                                                                , listDicFilte["Factory"]);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
