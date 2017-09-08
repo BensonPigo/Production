@@ -36,6 +36,10 @@ BEGIN
 	Set @Cmd = N'
 	Begin Try
 		Begin tran
+
+		declare @MaxSid varchar(100)
+		select @MaxSid = max(Sid) from Rfid_Bundle
+
 			Merge Production.dbo.BundleTransfer as t
 			Using (select a.Sid,a.ReaderId,b.Type,b.processId as SubProcessId,a.TagId,a.EpcId as BundleNo, a.TransDate,GetDate() as AddDate
 				   FROM '+@RFIDServerName+'.'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+' a left join  RFIDReader b on a.ReaderId = b.Id) as s
@@ -67,7 +71,8 @@ BEGIN
 				insert(OutGoing,EditDate)
 				values(s.TransDate,s.AddDate);
 
-			Delete Middleware.dbo.Rfid_Bundle
+			--Delete Middleware.dbo.Rfid_Bundle
+			Delete '+@RFIDServerName+'.'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+' where Sid<=@MaxSid
 
 			Commit tran
 	End Try
