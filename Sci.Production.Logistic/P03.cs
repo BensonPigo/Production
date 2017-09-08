@@ -117,7 +117,7 @@ from (
             , b.ReceiveDate
             , a.Id as PackingListID
             , c.FtyGroup
-            , a.OrderID
+            , b.OrderID
             , b.CTNStartNo
 	        , c.CustPONo
             , c.StyleID
