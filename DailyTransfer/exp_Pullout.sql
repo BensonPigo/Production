@@ -64,7 +64,9 @@ FROM #CUR_PULLOUT1 A, Production.dbo.Pullout_Revise_Detail B
 WHERE A.ID = B.ID 
 ORDER BY B.ID
 
-SELECT b.* ,'G' AS DataFrom ,'             'AS HCID
+SELECT distinct b.* 
+	   , DataFrom = 'G'
+	   , HCID = '             '
 INTO  #tmpFtyBooking1
 FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
 WHERE a. INVNo = b.id 
@@ -72,14 +74,29 @@ ORDER BY b.id
 
 Update #tmpFtyBooking1 set Status = 'N'
 
-select a.PackingListID as ID
-, po1.PulloutDate as  InvDate, po1.PulloutDate as ETD, po1.PulloutDate as FCRDate, p1.BrandID, 'ZZ' as Dest , p1. FactoryID as Shupper
-, p1.ShipQty as TotalShipQty, IIF(po1.LockDate is null,'N','F') as Status, (select top(1) PackingListType from Production.dbo.Pullout_Detail where PackingListID = a.PackingListID) as DataFrom, p1. ExpressID as HCID
+select ID = a.PackingListID 
+	   , InvDate = po1.PulloutDate 
+	   , ETD = po1.PulloutDate 
+	   , FCRDate = po1.PulloutDate
+	   , p1.BrandID
+	   , Dest = 'ZZ'
+	   , Shupper = p1.FactoryID 
+	   , TotalShipQty = p1.ShipQty
+	   , Status = IIF(po1.LockDate is null, 'N', 'F')
+	   , DataFrom = (select top(1) PackingListType 
+					 from Production.dbo.Pullout_Detail 
+					 where PackingListID = a.PackingListID) 
+	   , HCID = p1. ExpressID
 into #tmpFtyBooking2
- from (	
-select distinct PackingListID from Production.dbo.Pullout_Detail where (PackingListType = 'F' or PackingListType = 'I') and PackingListID <> ''
-except
-select ID as PackingListID from #tmpFtyBooking1
+from (	
+	select distinct PackingListID 
+	from Production.dbo.Pullout_Detail 
+	where (PackingListType = 'F' or PackingListType = 'I') 
+		  and PackingListID <> ''
+	
+	except
+	select PackingListID = ID
+	from #tmpFtyBooking1
 ) a
 left join Production.dbo.PackingList p1 on a. PackingListID = p1.ID
 left join Production.dbo.Pullout po1 on p1.PullOutID = po1.ID
@@ -88,23 +105,86 @@ left join Production.dbo.Pullout po1 on p1.PullOutID = po1.ID
 select * 
 into GMTBooking 
 from (
-select ID,Shipper, InvSerial ,InvDate,BrandID,CustCDID,Dest, ShipModeID, ShipTermID, PayTermARID, Forwarder 
-,FCRDate
-, Vessel, CutOffDate , ETD , ETA ,  SONo ,  SOCFMDate , ForwarderWhse_DetailUKey ,  Remark ,TotalShipQty, TotalCTNQty
-, TotalNW ,  TotalGW ,  TotalNNW ,  TotalCBM
-, Status, Handle, Description ,  SendToTPE
-, ShipPlanID, CYCFS, AddName, AddDate , EditName , EditDate, DataFrom,HCID
-from #tmpFtyBooking1
-union all
-select ID,Shupper as Shipper,
-'' as InvSerial ,InvDate,BrandID,
-null as CustCDID,Dest,''as ShipModeID,''as ShipTermID,'' as PayTermARID,'' as Forwarder
-,FCRDate,'' as Vessel,null as CutOffDate , ETD ,null as ETA ,
- '' as SONo ,  null as SOCFMDate ,''as ForwarderWhse_DetailUKey , '' as Remark ,TotalShipQty,'' as TotalCTNQty
-,0.00 as TotalNW , 0.00 as TotalGW , 0.00 as TotalNNW , 0.00 as TotalCBM
-, Status,'' as Handle,'' as Description , null as SendToTPE
-,'' as ShipPlanID,'' as CYCFS,'' as AddName,null as AddDate ,''as EditName ,null as EditDate, DataFrom,HCID
-from #tmpFtyBooking2
+	select ID
+		   , Shipper
+		   , InvSerial 
+		   , InvDate
+		   , BrandID
+		   , CustCDID
+		   , Dest
+		   , ShipModeID
+		   , ShipTermID
+		   , PayTermARID
+		   , Forwarder 
+		   ,FCRDate
+		   , Vessel
+		   , CutOffDate 
+		   , ETD 
+		   , ETA 
+		   , SONo 
+		   , SOCFMDate 
+		   , ForwarderWhse_DetailUKey 
+		   , Remark 
+		   , TotalShipQty
+		   , TotalCTNQty
+		   , TotalNW 
+		   , TotalGW 
+		   , TotalNNW 
+		   , TotalCBM
+		   , Status
+		   , Handle
+		   , Description 
+		   , SendToTPE
+		   , ShipPlanID
+		   , CYCFS
+		   , AddName
+		   , AddDate 
+		   , EditName 
+		   , EditDate
+		   , DataFrom
+		   , HCID
+	from #tmpFtyBooking1
+
+	union all
+	select ID
+		   , Shipper = Shupper
+		   , InvSerial = ''
+		   , InvDate
+		   , BrandID
+		   , CustCDID = null
+		   , Dest
+		   , ShipModeID = ''
+		   , ShipTermID = ''
+		   , PayTermARID = ''
+		   , Forwarder = ''
+		   , FCRDate
+		   , Vessel = '' 
+		   , CutOffDate = null
+		   , ETD 
+		   , ETA = null
+		   , SONo = ''
+		   , SOCFMDate = null
+		   , ForwarderWhse_DetailUKey = ''
+		   , Remark = '' 
+		   , TotalShipQty
+		   , TotalCTNQty = ''
+		   , TotalNW = 0.00
+		   , TotalGW = 0.00
+		   , TotalNNW = 0.00
+		   , TotalCBM = 0.00
+		   , Status
+		   , Handle = ''
+		   , Description = ''
+		   , SendToTPE = null
+		   , ShipPlanID = ''
+		   , CYCFS = ''
+		   , AddName = ''
+		   , AddDate = null
+		   , EditName = ''
+		   , EditDate = null
+		   , DataFrom
+		   , HCID
+	from #tmpFtyBooking2
 ) a 
 
 
