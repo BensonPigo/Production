@@ -97,7 +97,8 @@ BEGIN
 		where s1.ID is null
 
 ----------------取得 BuyerDelivery & SciDelivery 日期在 Trade 給的日期範圍中 Orders 的資料------------------------
-	select * into #tmpOrders 
+	select * 
+	into #tmpOrders 
 	from Production.dbo.Orders a WITH (NOLOCK)
 	where	(
 				a.BuyerDelivery between @Odate_s and @Odate_e 
@@ -140,8 +141,7 @@ BEGIN
 		Using (	select a.*
 				from #tmpOrders a
 				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID
-				where b.id is null
-					  and b.FactoryID in (select ID from Production.dbo.Factory)) as s
+				where b.id is null) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then
 			update set
