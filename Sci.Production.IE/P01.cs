@@ -280,9 +280,12 @@ order by td.Seq", masterID);
                             {
                                 dr["SMV"] = 0;
                                 dr["IETMSSMV"] = 0;
+                                dr["MtlFactorID"] = "";
                             }
                             else
                             {
+                                string MtlFactorID = MyUtility.GetValue.Lookup(string.Format("select MtlFactorID from Operation WITH (NOLOCK) where ID = '{0}'", dr["OperationID"].ToString()));
+                                dr["MtlFactorID"] = MtlFactorID;
                                 dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(smv) * MyUtility.Convert.GetDecimal(dr["Frequency"]);
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(smv) * MyUtility.Convert.GetDecimal(dr["Frequency"]) * 60;
                             }
