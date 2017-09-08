@@ -87,6 +87,8 @@ a.IETMSUkey	= b.IETMSUkey
 ,a.Frequency	= b.Frequency
 ,a.SMV	= b.SMV
 ,a.SeamLength	= b.SeamLength
+,a.MtlFactorID   =b.MtlFactorID
+,a.MtlFactorRate  =b.MtlFactorRate
 --,a.UKey	= b.UKey
 
 from Production.dbo.IETMS_Detail as a 
@@ -103,7 +105,8 @@ IETMSUkey
 ,SMV
 ,SeamLength
 ,UKey
-
+,MtlFactorID
+,MtlFactorRate
 )
 select 
 IETMSUkey
@@ -116,6 +119,8 @@ IETMSUkey
 ,SMV
 ,SeamLength
 ,UKey
+,MtlFactorID
+,MtlFactorRate
 
 from Trade_To_Pms.dbo.IETMS_Detail as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.IETMS_Detail as a WITH (NOLOCK) where a.UKey = b.UKey)

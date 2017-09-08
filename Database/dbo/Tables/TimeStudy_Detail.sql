@@ -13,6 +13,7 @@
     [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudy_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (9, 2) NULL,
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    [MtlFactorID] VARCHAR(3) NULL, 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

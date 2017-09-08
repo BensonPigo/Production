@@ -70,7 +70,7 @@ namespace Sci.Production.IE
 
             //撈Grid資料
             sqlCmd = @"select th.ID,th.TotalSewingTime,th.NumberSewer,thd.Seq,thd.OperationID,o.DescEN,
-thd.Annotation,thd.Frequency,o.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
+thd.Annotation,thd.Frequency,thd.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
 thd.PcsPerHour,thd.Sewer,thd.IETMSSMV,
 LEFT(th.Phase+REPLICATE(' ',10),10)+' VER-'+th.Version as Status,
 IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))) as sort
@@ -103,7 +103,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                 .EditText("DescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("Frequency", header: "Frequency", decimal_places: 2, iseditingreadonly: true)
-                .Text("OperationMtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)",  decimal_places: 4, iseditingreadonly: true)
                 .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), iseditingreadonly: true)

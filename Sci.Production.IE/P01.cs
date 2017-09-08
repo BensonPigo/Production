@@ -63,7 +63,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[SeamLength]
       ,td.[Ukey] 
       ,o.DescEN as OperationDescEN
-      ,o.MtlFactorID as OperationMtlFactorID
+      ,td.MtlFactorID
       , m.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
@@ -161,7 +161,7 @@ order by td.Seq", masterID);
                                     dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
                                     dr["DescEN"] = "";  //將[Attachment Description]清空
-                                    dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
+                                    dr["MtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
@@ -176,7 +176,7 @@ order by td.Seq", masterID);
                                 dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
                                 dr["DescEN"] = "";  //將[Attachment Description]清空
-                                dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
+                                dr["MtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
                                 dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
@@ -207,7 +207,7 @@ order by td.Seq", masterID);
                             dr["MachineTypeID"] = "";
                             dr["Mold"] = "";
                             dr["DescEN"] = "";  //將[Attachment Description]清空
-                            dr["OperationMtlFactorID"] = "";
+                            dr["MtlFactorID"] = "";
                             dr["Frequency"] = 0;
                             dr["SeamLength"] = 0;
                             dr["SMV"] = 0;
@@ -240,7 +240,7 @@ order by td.Seq", masterID);
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
                                     //dr["Mold"] = opData.Rows[0]["MoldID"].ToString();  //目前看到的都是空，先不塞資料
                                     //dr["DescEN"] = "";  //目前看到的都是空，先不塞資料
-                                    dr["OperationMtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
+                                    dr["MtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
@@ -437,7 +437,7 @@ order by td.Seq", masterID);
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: frequency)
-                .Text("OperationMtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: smvsec)
                 .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), settings: machine)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: mold)
@@ -455,7 +455,7 @@ order by td.Seq", masterID);
             dr["MachineTypeID"] = "";
             dr["Mold"] = "";
             dr["DescEN"] = "";
-            dr["OperationMtlFactorID"] = "";
+            dr["MtlFactorID"] = "";
             dr["Frequency"] = 0;
             dr["SeamLength"] = 0;
             dr["SMV"] = 0;
@@ -718,8 +718,8 @@ select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSe
 declare @id bigint
 select @id = @@IDENTITY
 
-insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV)
-select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV from TimeStudy_Detail where ID = {0}
+insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID)
+select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID from TimeStudy_Detail where ID = {0}
 
 update TimeStudy 
 set Version = (select iif(isnull(max(Version),0)+1 < 10,'0'+cast(isnull(max(Version),0)+1 as varchar),cast(max(Version)+1as varchar)) from TimeStudy where ID = {0}) ,
@@ -774,8 +774,8 @@ select StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSe
 declare @id bigint
 select @id = @@IDENTITY
 
-insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV)
-select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV from TimeStudy_Detail where ID = {0}
+insert into TimeStudyHistory_Detail(ID,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID)
+select @id,Seq,OperationID,Annotation,PcsPerHour,Sewer,MachineTypeID,Frequency,IETMSSMV,Mold,SMV,SeamLength,MtlFactorID from TimeStudy_Detail where ID = {0}
 
 declare @phase varchar(10)
 select @phase = isnull(Phase,'') from TimeStudy where ID = {0}
@@ -876,15 +876,15 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
 
             DataTable ietmsData;
             string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
-                            iif(round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
+                            iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
-                            id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID as OperationMtlFactorID,
-                            round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
+                            id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,
+                            round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
                             from Style s WITH (NOLOCK) 
                             inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
                             inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
                             left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-                            left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
+                            --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
                             where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
             //if (isComboType) sqlCmd += " and id.Location = @location ";
             sqlCmd += " and id.Location = @location ";
