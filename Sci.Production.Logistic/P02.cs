@@ -101,56 +101,82 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > or <Receive Date> can not be empty!");
                 return;
             }
-            StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"
-select *,
-rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))),
-rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+            #region SQL Filte 
+            // 若有輸入 TransferSlipNo 必須增加條件對應至 PackingList_Detail 【OrderID, CtnNum】
+            string strTransferSlipNoFilte = string.Format(@"and t.TransferSlipNo = '{0}' and b.OrderID = t.OrderID and b.CTNStartNo = t.CTNStartNo", this.txtTransferSlipNo.Text.Trim());
+
+            Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>();
+            dicSqlFilte.Add("PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : "");
+            dicSqlFilte.Add("PackingList_Detail OrderID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : "");
+            dicSqlFilte.Add("Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : "");
+            dicSqlFilte.Add("Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : "");
+            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()) : "");
+            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()) : "");
+            dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : "");
+            #endregion    
+
+            string sqlCmd = string.Format(@"
+select *
+       , rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+       , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-Select Distinct '' as ID, 0 as selected,b.TransferDate, a.Id as PackingListID, b.OrderID, 
-b.CTNStartNo, 
-c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,c.FtyGroup,'' as Remark 
-from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
-where b.OrderId = c.Id 
-and a.Id = b.Id 
-and b.CTNStartNo != '' 
-and b.CTNQty = 1
-and b.TransferDate is not null
-and b.ReceiveDate is null
-and c.Dest = d.ID 
-and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
-and a.id = t.PackingListID", Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
-            {
-                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.txtPONo.Text))
-            {
-                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.txtPackID.Text))
-            {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
-            {
-                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.dateTimePicker2.Text))
-            {
-                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.txtfactory.Text))
-            {
-                sqlCmd.Append(string.Format(@" and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtTransferSlipNo.Text))
-            {
-                sqlCmd.Append(string.Format(@" and t.TransferSlipNo = '{0}'", this.txtTransferSlipNo.Text.Trim()));
-            }
-            sqlCmd.Append(")X order by rn");
+      Select Distinct '' as ID
+             , 0 as selected
+             , b.TransferDate
+             , a.Id as PackingListID
+             , b.OrderID
+             , b.CTNStartNo
+             , c.CustPONo
+             , c.StyleID
+             , c.SeasonID
+             , c.BrandID
+             , c.Customize1
+             , d.Alias
+             , c.BuyerDelivery
+             ,'' as ClogLocationId
+             ,c.FtyGroup
+             ,'' as Remark 
+      from PackingList a WITH (NOLOCK) 
+           , PackingList_Detail b WITH (NOLOCK) 
+           , Orders c WITH (NOLOCK) 
+           , Country d WITH (NOLOCK)
+           , TransferToClog t WITH (NOLOCK)
+      where b.OrderId = c.Id 
+            and a.Id = b.Id 
+            and b.CTNStartNo != '' 
+            and b.CTNQty = 1
+            and b.TransferDate is not null
+            and b.ReceiveDate is null
+            and c.Dest = d.ID 
+            and a.MDivisionID = '{0}' 
+            and (a.Type = 'B' or a.Type = 'L') 
+            and c.MDivisionID = '{0}'
+            and a.id = t.PackingListID            
+            -- PackingList ID --
+            {1}
+            -- PackingList_Detail OrderID --
+            {2}
+            -- Orders CustPONo --
+            {3}
+            -- Orders FtyGroup --
+            {4}
+            -- TransferToClog AddDate Start --
+            {5}
+            -- TransferToClog AddDate End --
+            {6}
+            -- TransferToClog TransferSlipNo --
+            {7}
+)X 
+order by rn", Sci.Env.User.Keyword
+            , dicSqlFilte["PackingList ID"]
+            , dicSqlFilte["PackingList_Detail OrderID"]
+            , dicSqlFilte["Orders CustPONo"]
+            , dicSqlFilte["Orders FtyGroup"]
+            , dicSqlFilte["TransferToClog AddDate Start"]
+            , dicSqlFilte["TransferToClog AddDate End"]
+            , dicSqlFilte["TransferToClog TransferSlipNo"]);
+            
 
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
