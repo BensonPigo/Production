@@ -213,7 +213,7 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-                        dr["Result"] = "pass";
+                        dr["Result"] = "Pass";
                         dr["Grade"] = "A";
                         dr["totalpoint"] = 0.00;
                         redefect();
@@ -283,7 +283,7 @@ namespace Sci.Production.Quality
                                                                         from Fabric 
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]), null, null);
-                    dr["Result"] = "pass";
+                    dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
                     redefect();
@@ -471,7 +471,7 @@ namespace Sci.Production.Quality
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd = update_cmd + string.Format(
-                    @"Delete From Fir_physical Where DetailUkey = {0} ;Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ;",
+                    @"Delete From Fir_physical Where DetailUkey = {0} ;Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     dr["DetailUKey", DataRowVersion.Original]);
                     continue;
                 }
@@ -532,12 +532,12 @@ Where DetailUkey = {15};",
             string update_cmd1 = "";
             foreach (DataRow dr in Fir_physical_Defect.Rows)
             {
-
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd1 = update_cmd1 + string.Format(
                     @"Delete From Fir_physical_Defect Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation ='{2}';",
                     dr["ID", DataRowVersion.Original], dr["FIR_PhysicalDetailUKey", DataRowVersion.Original], dr["DefectLocation", DataRowVersion.Original]);
+
                 }
                 if (dr.RowState == DataRowState.Added)
                 {
@@ -549,8 +549,8 @@ Where DetailUkey = {15};",
                 if (dr.RowState == DataRowState.Modified)
                 {
                     update_cmd1 = update_cmd1 + string.Format(
-                        @"Update Fir_Physical_Defect set DefectLocation = '{2}',DefectRecord = '{3}',Point = {4}
-                            Where ID = {0} and FIR_PhysicalDetailUKey = {1};",
+                        @"Update Fir_Physical_Defect set DefectRecord = '{3}',Point = {4}
+                            Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation = '{2}';",
                             dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation"], dr["DefectRecord"], dr["Point"]);
                 }
             }
@@ -1084,5 +1084,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
             this.HideWaitMessage();
             return true;
         }
+
+       
     }
 }
