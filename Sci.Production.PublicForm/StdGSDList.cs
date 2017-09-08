@@ -29,16 +29,16 @@ namespace Sci.Production.PublicForm
 
             #region Std. GSD
             string sqlCmd = string.Format(@"select id.SEQ,id.Location,id.OperationID,isnull(m.Description,'') as MachineDesc,id.Mold,isnull(o.DescEN,'') as OperationDescEN,id.Annotation,id.Frequency,
-isnull(o.MtlFactorID,'') as MtlFactorID,isnull(o.SMV,0) as SMV,isnull(o.SeamLength,0) as SeamLength,
+isnull(id.MtlFactorID,'') as MtlFactorID,isnull(o.SMV,0) as SMV,isnull(o.SeamLength,0) as SeamLength,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1),4) as newSMV,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength,
-round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60,4) as gsdsec
+round(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1),4) as newSMV,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength,
+round(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60,4) as gsdsec
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
+--left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0} order by id.SEQ", styleUkey);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData1);
             if (!result)
@@ -51,13 +51,13 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
             #region Summary by artwork
             sqlCmd = string.Format(@"select id.Location,M.ArtworkTypeID,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
+round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
+--left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 --LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where s.Ukey = {0}
 group by id.Location,M.ArtworkTypeID
@@ -74,13 +74,13 @@ ORDER BY id.Location,M.ArtworkTypeID", styleUkey);
             sqlCmd = string.Format(@"select id.Location,o.MachineTypeID,isnull(m.Description,'') as Description,isnull(m.DescCH,'') as DescCH,
 isnull(m.RPM,0) as RPM,isnull(m.Stitches,0.0) as Stitches,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
+round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
+--left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0}
 group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''),isnull(m.RPM,0),isnull(m.Stitches,0.0)
 ORDER BY id.Location,o.MachineTypeID", styleUkey);
@@ -149,12 +149,12 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion,
- round(sum(isnull(o.SMV,0)*isnull(id.Frequency,0)*(isnull(m.Rate,0)/100+1)*60),4) as ttlTMS
+ round(sum(isnull(o.SMV,0)*isnull(id.Frequency,0)*(isnull(id.MtlFactorRate,0)/100+1)*60),4) as ttlTMS
  from Style s WITH (NOLOCK) 
  left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
  left join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
  left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
- left join MtlFactor m WITH (NOLOCK) on m.Type = 'F' and o.MtlFactorID = m.ID
+ --left join MtlFactor m WITH (NOLOCK) on m.Type = 'F' and o.MtlFactorID = m.ID
  left join MachineType mt WITH (NOLOCK) on o.MachineTypeID = mt.ID
  LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
  left join ArtworkType a WITH (NOLOCK) on ATD.ArtworkTypeID = a.ID and a.IsTMS = 1
