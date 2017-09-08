@@ -88,7 +88,7 @@ namespace Sci.Production.Sewing
             //每一筆單獨計算
             foreach (DataRow dr in dtSelectData.Rows)
             {
-                DualResult boolResult = setSewingOutput(dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"], dr["ToSPBalance"]);
+                DualResult boolResult = setSewingOutput(dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"], dr["ToSPBalance"], dr["FromSPPackingQty"]);
 
                 if (!boolResult)
                 {
@@ -111,7 +111,7 @@ namespace Sci.Production.Sewing
         /// <param name="Article">Color Way</param>
         /// <param name="SizeCode">Size</param>
         /// <param name="NeedQty">ToSPQty</param>
-        private DualResult setSewingOutput(object ToOrderID, object FromOrderID, object ComboType, object Article, object SizeCode, object NeedQty)
+        private DualResult setSewingOutput(object ToOrderID, object FromOrderID, object ComboType, object Article, object SizeCode, object NeedQty, object FromPackingQty)
         {
             DualResult boolResult;
 
@@ -122,6 +122,7 @@ namespace Sci.Production.Sewing
             listSqlPara.Add(new SqlParameter("@Article", Article));
             listSqlPara.Add(new SqlParameter("@SizeCode", SizeCode));
             listSqlPara.Add(new SqlParameter("@NeedQty", NeedQty));
+            listSqlPara.Add(new SqlParameter("@FromPackingQty", FromPackingQty));
 
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
@@ -138,36 +139,74 @@ select	OutputData.*
         , DefectQty = DefectQty.value
 into #tmp
 from (
-	select	soID = so.ID
-			, soSewingLineID = so.SewingLineID
-            , sodInlineQty = sod.InlineQty
-            , sodDefectQty = sod.DefectQty
-			, sodArticle = sod.Article
-			, sodColor = sod.Color
-			, FromOrderID = sodd.OrderId
-			, ToOrderID = @ToOrderID
-			, Article = sodd.Article
-			, ComboType = sodd.ComboType
-			, SizeCode = sodd.SizeCode
-			, sodQAQty = sod.QAQty
-			, soddQaQty = sodd.QaQty
-			, soddQaQtyRunningTotal = sum (sodd.QaQty) over (order by OutPutDate)
-			, sodUkey = sod.UKey
-	from SewingOutput so
-	inner join SewingOutput_Detail sod on so.id = sod.id
-	inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
-	where	sodd.OrderId = @FromOrderID
-			and sodd.ComboType = @ComboType
-			and sodd.Article = @Article
-			and sodd.SizeCode = @SizeCode
+	select Reserve.*
+		   , ReserveStatus = ReserveStatus.value
+		   , ReserveQty = ReserveQty.value
+		   , ReserveBeforeQty = ReserveBeforeQty.value
+		   , soddQaQtyRunningTotal = sum(ReserveBeforeQty.value) over (order by rowNum)
+	from (
+		select	rowNum = ROW_NUMBER()over (order by OutPutDate, so.ID)
+				, soID = so.ID
+				, soSewingLineID = so.SewingLineID
+				, sodInlineQty = sod.InlineQty
+				, sodDefectQty = sod.DefectQty
+				, sodArticle = sod.Article
+				, sodColor = sod.Color
+				, FromOrderID = sodd.OrderId
+				, ToOrderID = @ToOrderID
+				, Article = sodd.Article
+				, ComboType = sodd.ComboType
+				, SizeCode = sodd.SizeCode
+				, sodQAQty = sod.QAQty
+				, soddQaQty = sodd.QaQty
+				, ReserveRunningTotal = sum (sodd.QaQty) over (order by OutPutDate, so.ID)
+				, sodUkey = sod.UKey
+		from SewingOutput so
+		inner join SewingOutput_Detail sod on so.id = sod.id
+		inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
+		where	sodd.OrderId = @FromOrderID
+				and sodd.ComboType = @ComboType
+				and sodd.Article = @Article
+				and sodd.SizeCode = @SizeCode
+	) Reserve
+	-- ReserveStatus --
+	-- 預留母單的結果 => ReserveD = 不能使用
+	--					 ReserveU = 部分可以使用
+	--					 ReserveN = 全部可以使用
+	outer apply (
+		select value = case 
+						 when ReserveRunningTotal <= @FromPackingQty then 'ReserveD'
+						 when (Reserve.ReserveRunningTotal > @FromPackingQty and Reserve.ReserveRunningTotal - Reserve.soddQaQty < @FromPackingQty) then 'ReserveU'
+						 else 'ReserveN'
+					   end
+	) ReserveStatus
+	-- ReserveQty --
+	-- 預留母單的數量 --
+	outer apply (
+		select value = case ReserveStatus.value
+						 when 'ReserveN' then 0 
+						 when 'ReserveU' then soddQaQty - (ReserveRunningTotal - @FromPackingQty)
+					   end
+	) ReserveQty 
+	-- ReserveBeforeQty --
+	-- 預留母單後的數量 --
+	outer apply (
+		select value = case ReserveStatus.value
+						 when 'ReserveN' then soddQaQty 
+						 when 'ReserveU' then ReserveRunningTotal - @FromPackingQty
+					   end
+	) ReserveBeforeQty 
+	where ReserveStatus.value != 'ReserveD'
 ) OutputData
 -- SoddStatus -- 
 -- 判斷 SewingOutput_Detail_Detail => D = 刪除
 --                                    U = 修改
 --                                    N = 不會使用到
+--									  ReserveU_U = 只能使用部分
 outer apply (
 	select	value = case 	
-						when (OutputData.soddQaQtyRunningTotal <= @NeedQty) then 'D'
+						when (OutputData.soddQaQtyRunningTotal <= @NeedQty and OutputData.ReserveStatus = 'ReserveN') then 'D'
+						when (OutputData.soddQaQtyRunningTotal <= @NeedQty and OutputData.ReserveStatus = 'ReserveU') then 'ReserveU_U'
 						when (OutputData.soddQaQtyRunningTotal > @NeedQty and OutputData.soddQaQtyRunningTotal - OutputData.soddQaQty < @NeedQty) then 'U'
 						else 'N'
 					end
@@ -176,7 +215,8 @@ outer apply (
 -- 計算 SewingOutput_Detail_Detail 拆單後剩餘數量 --
 outer apply (
 	select value = case SoddStatus.value
-						when 'U' then soddQaQtyRunningTotal - @NeedQty
+						when 'U' then soddQaQtyRunningTotal - @NeedQty + OutputData.ReserveQty
+						when 'ReserveU_U' then OutputData.ReserveQty
 						when 'D' then 0
 				   end
 ) SoddNewQaQty
@@ -188,7 +228,7 @@ outer apply (
 	select	value = case 	
 						when (SoddStatus.value = 'D' and OutputData.sodQAQty = OutputData.soddQAQty) then 'D'
 						when (SoddStatus.value = 'D' and OutputData.sodQAQty != OutputData.soddQAQty) then 'U'
-						when (SoddStatus.value = 'U') then 'U'
+						when (SoddStatus.value = 'U' or SoddStatus.value = 'ReserveU_U') then 'U'
 						else 'N'
 					end
 ) SodStatus
@@ -197,6 +237,7 @@ outer apply (
 outer apply (
 	select value = case SodStatus.value
 						when 'U' then OutputData.sodQAQty - (OutputData.soddQaQty - SoddNewQaQty.value)
+						when 'ReserveU_U' then OutputData.ReserveQty
 				   end
 ) SodNewQaQty
 -- TakeQty --
@@ -204,6 +245,7 @@ outer apply (
 outer apply (
 	select value = case SodStatus.value
 						when 'U' then OutputData.soddQaQty - SoddNewQaQty.value
+						when 'ReserveU_U' then OutputData.soddQaQty - SoddNewQaQty.value - OutputData.ReserveQty
 						else OutputData.soddQaQty
 				   end
 ) TakeQty
@@ -235,7 +277,7 @@ update sod
 	set	sod.QAQty = #tmp.SodNewQaQty
 from SewingOutput_Detail sod
 inner join #tmp on sod.UKey = #tmp.sodUkey
-where	#tmp.SodStatus = 'U'
+where	#tmp.SodStatus in ('U', 'ReserveU_U')
 
 -- 母單 Delete & Update SewingOutput_Detail_Detail --
 Delete sodd
@@ -257,7 +299,7 @@ inner join #tmp on sodd.SewingOutput_DetailUKey = #tmp.sodUkey
 				   and sodd.ComboType = #tmp.ComboType
 				   and sodd.Article = #tmp.Article
 				   and sodd.SizeCode = #tmp.SizeCode
-where	#tmp.SoddStatus = 'U'
+where	#tmp.SoddStatus in ('U', 'ReserveU_U')
 
 -- 子單 Merge SewingOutput_Detail --
 Merge SewingOutput_Detail as t
@@ -383,7 +425,7 @@ declare @SewingTtlQty int = 0;
 select	@PackingTtlQty = isnull (sum (pld.ShipQty), 0)
 from PackingList pl
 inner join PackingList_Detail pld on pl.ID = pld.ID							  
-where	pl.OrderID = @FromOrderID
+where	pld.OrderID = @FromOrderID
 		and pl.Status = 'Confirmed'		
 
 select	@SewingTtlQty = isnull (sum (sodd.QAQty), 0)
