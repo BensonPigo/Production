@@ -1218,8 +1218,8 @@ where POID = @poid group by POID,b.spno";
         }
 
         private void btnMeterialStatus_Click(object sender, EventArgs e)
-        {            
-            var fullpath = Path.GetFullPath("Sci.Production.Warehouse.dll");
+        {           
+            string fullpath = System.Windows.Forms.Application.StartupPath+ ".\\Sci.Production.Warehouse.dll";
             var assemblys = Assembly.LoadFile(fullpath);
             var types = assemblys.GetTypes().ToList();
             var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P03").First();
@@ -1234,7 +1234,7 @@ where POID = @poid group by POID,b.spno";
 
         private void btnMeterialStatus_Local_Click(object sender, EventArgs e)
         {
-            var fullpath = Path.GetFullPath("Sci.Production.Warehouse.dll");
+            var fullpath = System.Windows.Forms.Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
             var assemblys = Assembly.LoadFile(fullpath);
             var types = assemblys.GetTypes().ToList();
             var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P04").First();
