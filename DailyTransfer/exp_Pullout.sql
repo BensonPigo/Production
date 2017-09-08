@@ -66,7 +66,7 @@ ORDER BY B.ID
 
 SELECT b.* ,'G' AS DataFrom ,'             'AS HCID
 INTO  #tmpFtyBooking1
-FROM Production.dbo.Pullout_Detail  a, Production.dbo.GMTBooking b 
+FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
 WHERE a. INVNo = b.id 
 ORDER BY b.id 
 

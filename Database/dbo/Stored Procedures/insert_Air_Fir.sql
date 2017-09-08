@@ -107,7 +107,39 @@ else
 RAISERROR('insert_Air_Fir - Starts',0,0)
 Merge dbo.Fir as t
 using (
-	select * from #tempTableAll	where fabricType='F'
+	--select * from #tempTableAll	where fabricType='F'
+	select 	ID,
+			PoId,
+			SEQ1,
+			SEQ2,
+			SuppID,
+			SCIRefno,
+			Refno,
+			ReceivingID,
+			SUM(ArriveQty) ArriveQty,
+			AddName,
+			AddDate,
+			MinSciDelivery  ,
+			KPILETA,
+			Category,
+			WhseArrival ,
+			fabricType from #tempTableAll	where fabricType='F' 
+			GROUP BY 
+			ID,
+			PoId,
+			SEQ1,
+			SEQ2,
+			SuppID,
+			SCIRefno,
+			Refno,
+			ReceivingID,
+			AddName,
+			AddDate,
+			MinSciDelivery  ,
+			KPILETA,
+			Category,
+			WhseArrival ,
+			fabricType
  ) as s
 on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
 when matched then
