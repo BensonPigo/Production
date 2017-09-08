@@ -299,11 +299,11 @@ where ap_qty > 0
                     break;
 
                 case 1:  //Only Unapprove
-                    sqlCmd.Replace("AND ap.Status = 'Approved'", "AND ap.Status = 'New'");
+                    sqlCmd.Replace("AND AP.Status = 'Approved'", "AND AP.Status = 'New'");
                     break;
 
                 case 2:  //All
-                    sqlCmd.Replace("AND ap.Status = 'Approved'", " ");
+                    sqlCmd.Replace("AND AP.Status = 'Approved'", " ");
                     break;
             }
             #endregion
