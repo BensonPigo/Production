@@ -541,7 +541,7 @@ Cutplanid, str_PIVOT);
                 WorkorderSizeArry = WorkorderSizeTb.Select(string.Format("Cutref='{0}'", cutref));
                 WorkorderPatternArry = WorkorderPatternTb.Select(string.Format("Cutref='{0}'", cutref), "PatternPanel");
                 WorkorderOrderIDArry = CutDisOrderIDTb.Select(string.Format("Cutref='{0}'", cutref), "Orderid");
-                SizeArry = CutSizeTb.Select(string.Format("Cutref='{0}'", cutref), "SEQ");
+                SizeArry = (CutSizeTb.DefaultView.ToTable(true, new string[] { "Cutref" , "SizeCode" })).Select(string.Format("Cutref='{0}'", cutref));
                 SizeCodeArry = SizeTb.Select(string.Format("Cutref='{0}'", cutref), "SEQ");
                 #endregion
 
@@ -709,7 +709,7 @@ Cutplanid, str_PIVOT);
                 (
                     Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
                     #tmp
-                    Where Cutref = '{0} '
+                    Where Cutref = '{0}'
                 ) as mTb
                 Pivot(Sum(TotalQty)
                 for SizeCode in ({1})) as pIvT 
@@ -719,7 +719,12 @@ cutref, str_PIVOT);
                 {
                     CutQtyTb.Clear();
                 }
-                MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "Cutno,Colorid,SizeCode,Qty,Layer,Cutref,Cons", Pivot_cmd, out CutQtyTb);
+                DualResult drwst = MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "Cutno,Colorid,SizeCode,Qty,Layer,Cutref,Cons", Pivot_cmd, out CutQtyTb);
+                if (!drwst)
+                {
+                    MyUtility.Msg.ErrorBox("SQL command Pivot_cmd error!");
+                    return false;
+                }
                 nrow = nrow + 2;
                 int copyrow = 0;
                 TotConsRowS = nrow; //第一個Cons
