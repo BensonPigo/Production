@@ -12,8 +12,11 @@
     [SQLServerName]   VARCHAR (130) CONSTRAINT [DF_MDivision_SQLServerName] DEFAULT ('') NULL,
     [APSDatabaseName] VARCHAR (15)  CONSTRAINT [DF_MDivision_APSDatabaseName] DEFAULT ('') NULL,
     [KeyWord]         VARCHAR (3)   CONSTRAINT [DF_MDivision_KeyWord] DEFAULT ('') NOT NULL,
+    [NameEN]          VARCHAR (40)  CONSTRAINT [DF_MDivision_NameEN] DEFAULT ('')  NULL,
     CONSTRAINT [PK_MDivision] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -87,3 +90,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS SQL Ser
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'APS Database Name', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MDivision', @level2type = N'COLUMN', @level2name = N'APSDatabaseName';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'全名EN', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MDivision', @level2type = N'COLUMN', @level2name = N'NameEN';

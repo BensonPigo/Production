@@ -114,7 +114,7 @@ namespace Sci.Production.Warehouse
             DataTable dt1;
             DualResult result1 = DBProxy.Current.Select("",
             @"select    
-            b.name 
+            b.nameEN 
             from dbo.Borrowback  a WITH (NOLOCK) 
             inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
@@ -128,7 +128,7 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            string RptTitle = dt1.Rows[0]["name"].ToString();
+            string RptTitle = dt1.Rows[0]["nameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));

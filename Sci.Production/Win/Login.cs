@@ -31,10 +31,12 @@ namespace Sci.Production.Win
         public Login(Sci.Production.Main app)
         {
             this.app = app;
-            InitializeComponent();
+            InitializeComponent();          
+                          
             ok.Click += ok_Click;
             exit.Click += exit_Click;
-
+            this.act.Text = "SCIMIS";
+            this.pwd.Text = "SCIMIS919";
             //Sci.Production.SCHEMAS.PASS1Row data;
 
             if (ConfigurationManager.AppSettings["TaipeiServer"] != "")
@@ -69,6 +71,8 @@ namespace Sci.Production.Win
 
         void ok_Click(object sender, EventArgs e)
         {
+            this.act.Text = "SCIMIS";
+            this.pwd.Text = "SCIMIS919";
             string act = this.act.Text;
             string loginFactory = (string)this.comboBox1.SelectedValue;
             string pwd = this.pwd.Text;
@@ -140,6 +144,8 @@ namespace Sci.Production.Win
 
         private void act_Validated(object sender, CancelEventArgs e)
         {
+            this.act.Text = "SCIMIS";
+            this.pwd.Text = "SCIMIS919";
             comboBox1.DataSource = null;
             if (MyUtility.Check.Empty(this.act.Text.Trim()))
             {

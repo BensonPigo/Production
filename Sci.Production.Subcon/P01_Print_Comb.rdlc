@@ -602,7 +602,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Issuedate</rd:DefaultName>
-                          <Top>0.09409cm</Top>
+                          <Top>0.14136cm</Top>
                           <Left>4.93859cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.91324cm</Width>
@@ -635,7 +635,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Delivery</rd:DefaultName>
-                          <Top>0.13173cm</Top>
+                          <Top>0.14136cm</Top>
                           <Left>9.95721cm</Left>
                           <Height>0.6cm</Height>
                           <Width>2.5cm</Width>
@@ -668,7 +668,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.10961cm</Top>
+                          <Top>0.14136cm</Top>
                           <Left>14.3725cm</Left>
                           <Height>0.6cm</Height>
                           <Width>3.25342cm</Width>
@@ -704,7 +704,7 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
-                          <Top>0.07786cm</Top>
+                          <Top>0.14136cm</Top>
                           <Left>18.16354cm</Left>
                           <Height>0.6cm</Height>
                           <Width>1.699cm</Width>
@@ -955,7 +955,7 @@
                           </Style>
                         </Line>
                         <Line Name="Line17">
-                          <Top>0.68908cm</Top>
+                          <Top>0.75258cm</Top>
                           <Left>0.1487cm</Left>
                           <Height>0cm</Height>
                           <Width>19.73581cm</Width>
@@ -1219,7 +1219,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>3.24698cm</Top>
-          <Left>1.14168cm</Left>
+          <Left>1.16814cm</Left>
           <Height>0.6cm</Height>
           <Width>1.65333cm</Width>
           <ZIndex>4</ZIndex>
@@ -1251,7 +1251,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>3.2117cm</Top>
+          <Top>3.24698cm</Top>
           <Left>2.92731cm</Left>
           <Height>0.6cm</Height>
           <Width>8.52053cm</Width>
@@ -1597,7 +1597,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>5.08177cm</Top>
+          <Top>5.11704cm</Top>
           <Left>9.15134cm</Left>
           <Height>0.63527cm</Height>
           <Width>4.69076cm</Width>
@@ -1829,7 +1829,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>7.02056cm</Top>
+          <Top>6.98529cm</Top>
           <Left>3.75945cm</Left>
           <Height>0.6cm</Height>
           <Width>1.63946cm</Width>
@@ -1930,7 +1930,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>6.92355cm</Top>
+          <Top>6.98529cm</Top>
           <Left>11.21109cm</Left>
           <Height>0.6cm</Height>
           <Width>2.50781cm</Width>
@@ -1963,7 +1963,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>6.91473cm</Top>
+          <Top>6.98529cm</Top>
           <Left>15.05946cm</Left>
           <Height>0.6cm</Height>
           <Width>2.3803cm</Width>
@@ -1996,7 +1996,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>6.95883cm</Top>
+          <Top>6.98529cm</Top>
           <Left>18.8505cm</Left>
           <Height>0.6cm</Height>
           <Width>1.699cm</Width>
