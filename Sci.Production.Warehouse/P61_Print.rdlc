@@ -12,7 +12,7 @@
               <Width>3.58126cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>8.28087cm</Width>
+              <Width>6.59848cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.8169cm</Width>
@@ -21,7 +21,7 @@
               <Width>1.74275cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.28044cm</Width>
+              <Width>2.38534cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -182,17 +182,33 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Rectangle Name="Rectangle4">
+                    <Textbox Name="Location">
+                      <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
-                      <Visibility>
-                        <Hidden>true</Hidden>
-                      </Visibility>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Location.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Location</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
                         </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
                       </Style>
-                    </Rectangle>
+                    </Textbox>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -220,7 +236,7 @@
         <Top>0.03528cm</Top>
         <Left>0.762cm</Left>
         <Height>0.70083cm</Height>
-        <Width>19.27752cm</Width>
+        <Width>19.70003cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -603,7 +619,7 @@
           <Top>4.01821cm</Top>
           <Left>6.91675cm</Left>
           <Height>0.60028cm</Height>
-          <Width>8.28268cm</Width>
+          <Width>6.60029cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -631,7 +647,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
           <Top>4.01821cm</Top>
-          <Left>15.19943cm</Left>
+          <Left>13.51704cm</Left>
           <Height>0.6cm</Height>
           <Width>2.8169cm</Width>
           <ZIndex>12</ZIndex>
@@ -663,7 +679,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox18</rd:DefaultName>
           <Top>4.01877cm</Top>
-          <Left>18.01631cm</Left>
+          <Left>16.33392cm</Left>
           <Height>0.6cm</Height>
           <Width>1.74277cm</Width>
           <ZIndex>13</ZIndex>
@@ -767,6 +783,38 @@
           <Style>
             <Border>
               <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox20">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Bulk Location</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox18</rd:DefaultName>
+          <Top>4.01877cm</Top>
+          <Left>18.07669cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.38534cm</Width>
+          <ZIndex>17</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
             </Border>
             <PaddingLeft>2pt</PaddingLeft>
             <PaddingRight>2pt</PaddingRight>
@@ -1003,6 +1051,10 @@
       <Fields>
         <Field Name="DESCRIPTION">
           <DataField>DESCRIPTION</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Location">
+          <DataField>Location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="POID">

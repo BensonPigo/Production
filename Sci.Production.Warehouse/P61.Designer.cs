@@ -96,7 +96,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(760, 104);
+            this.gridicon.Location = new System.Drawing.Point(753, 104);
             // 
             // detailgridcont
             // 
@@ -104,11 +104,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(885, 486);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(879, 440);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -143,7 +147,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(6, 39);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -187,7 +190,6 @@
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.lblStatus.Lines = 0;
             this.lblStatus.Location = new System.Drawing.Point(761, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
@@ -197,7 +199,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(231, 9);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
@@ -206,7 +207,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(6, 9);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -268,7 +268,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(5, 108);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
