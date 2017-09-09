@@ -39,17 +39,16 @@ namespace Sci.Production
                     Name = "WINDOW",
                     Alignment = ToolStripItemAlignment.Right,
                 });
-                string InitDirectory = Directory.GetCurrentDirectory();
-                DirectoryInfo DI = new DirectoryInfo(InitDirectory);
-                if (System.IO.File.Exists(DI.Parent.FullName+ "\\Logo.bmp"))
+                DirectoryInfo DI = new DirectoryInfo(Sci.Env.Cfg.XltPathDir);
+                if (System.IO.File.Exists(DI.Parent.Parent.FullName + "\\Logo.bmp"))
                 {
-                    Image Image = Image.FromFile(DI.Parent.FullName + "\\Logo.bmp");
+                    Image Image = Image.FromFile(DI.Parent.Parent.FullName + "\\Logo.bmp");
                     this.BackgroundImage = Image;
                     this.BackgroundImageLayout = ImageLayout.Tile;
                 }
-                if (System.IO.File.Exists(DI.Parent.FullName + "\\Logo.jpg"))
+                if (System.IO.File.Exists(DI.Parent.Parent.FullName + "\\Logo.jpg"))
                 {
-                    Image Image = Image.FromFile(DI.Parent.FullName + "\\Logo.jpg");
+                    Image Image = Image.FromFile(DI.Parent.Parent.FullName + "\\Logo.jpg");
                     this.BackgroundImage = Image;
                     this.BackgroundImageLayout = ImageLayout.Tile;
                 }
