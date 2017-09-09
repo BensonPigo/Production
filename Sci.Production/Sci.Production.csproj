@@ -1246,7 +1246,6 @@
     <Content Include="KEYREG.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\Logo.bmp" />
     <Content Include="Ymodem_pd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

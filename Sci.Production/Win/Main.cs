@@ -11,6 +11,7 @@ using System.Configuration;
 using Ict;
 using Ict.Win;
 using System.Diagnostics;
+using System.IO;
 
 namespace Sci.Production
 {
@@ -38,9 +39,21 @@ namespace Sci.Production
                     Name = "WINDOW",
                     Alignment = ToolStripItemAlignment.Right,
                 });
-                var img = Sci.Production.Properties.Resources.Logo;
-                this.BackgroundImage = img;
-                this.BackgroundImageLayout = ImageLayout.Tile;
+                string InitDirectory = Directory.GetCurrentDirectory();
+                DirectoryInfo DI = new DirectoryInfo(InitDirectory);
+                if (System.IO.File.Exists(DI.Parent.FullName+ "\\Logo.bmp"))
+                {
+                    Image Image = Image.FromFile(DI.Parent.FullName + "\\Logo.bmp");
+                    this.BackgroundImage = Image;
+                    this.BackgroundImageLayout = ImageLayout.Tile;
+                }
+                if (System.IO.File.Exists(DI.Parent.FullName + "\\Logo.jpg"))
+                {
+                    Image Image = Image.FromFile(DI.Parent.FullName + "\\Logo.jpg");
+                    this.BackgroundImage = Image;
+                    this.BackgroundImageLayout = ImageLayout.Tile;
+                }
+                
             //}
         }
         protected override void OnFormLoaded()
