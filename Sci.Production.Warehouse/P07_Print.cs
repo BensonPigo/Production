@@ -61,14 +61,14 @@ namespace Sci.Production.Warehouse
            
             DataTable dtTitle;
             DualResult titleResult = DBProxy.Current.Select("",
-           @"select m.name
+           @"select m.nameEN
              from  dbo.Receiving r WITH (NOLOCK) 
              left join dbo.MDivision m WITH (NOLOCK) 
              on m.id = r.MDivisionID 
              where m.id = r.MDivisionID
              and r.id = @ID", pars, out dtTitle);
             if (!titleResult) { this.ShowErr(titleResult); }
-            string RptTitle = dtTitle.Rows[0]["name"].ToString();
+            string RptTitle = dtTitle.Rows[0]["nameEN"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
           
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", ETA));
