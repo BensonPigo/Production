@@ -38,6 +38,9 @@ namespace Sci.Production
                     Name = "WINDOW",
                     Alignment = ToolStripItemAlignment.Right,
                 });
+                var img = Sci.Production.Properties.Resources.Logo;
+                this.BackgroundImage = img;
+                this.BackgroundImageLayout = ImageLayout.Tile;
             //}
         }
         protected override void OnFormLoaded()
