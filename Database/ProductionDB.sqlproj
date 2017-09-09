@@ -2223,6 +2223,7 @@
     <Build Include="dbo\Tables\ShrinkageConcern.sql" />
     <Build Include="dbo\Functions\getstdq.sql" />
     <Build Include="dbo\Functions\GetColorMultipleID.sql" />
+    <Build Include="dbo\Tables\Order_Qty_Garment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

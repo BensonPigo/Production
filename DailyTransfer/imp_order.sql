@@ -545,9 +545,37 @@ BEGIN
 			, AddDate	, EditName	, EditDate		, OriQty 
 		) values (
 			s.ID		, s.Article	, s.SizeCode	, s.Qty		,s.AddName 
-			,s.AddDate	, s.EditName, s.EditDate	, s.OriQty 
+			, s.AddDate	, s.EditName, s.EditDate	, s.OriQty 
 		)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then
+		delete;
+
+	----------Order_Qty_Garment--------------
+	Merge Production.dbo.Order_Qty_Garment as t
+	Using (
+		select a.*
+		from Trade_To_Pms.dbo.Order_Qty_Garment a With (NoLock) 
+		inner join #Torder b on a.id = b.id
+	) as s on t.ID = s.ID
+			  and t.OrderIDFrom = s.OrderIDFrom
+			  and t.Article = s.Article
+			  and t.SizeCode = s.SizeCode
+  	when matched then 
+  		update set
+  			t.Qty			= s.Qty 
+			, t.AddName		= s.AddName 
+			, t.AddDate		= s.AddDate 
+			, t.EditName	= s.EditName 
+			, t.EditDate	= s.EditDate
+	when not matched by target then
+		insert (
+			ID 			, OrderIDFrom	, Article 		, SizeCode 		, Qty
+			, AddName 	, AddDate		, EditName 		, EditDate
+		) values (
+			s.ID 		, s.OrderIDFrom	, s.Article 	, s.SizeCode 	, s.Qty
+			, s.AddName , s.AddDate		, s.EditName 	, s.EditDate
+		)
+	when not matched by source and t.ID in (select ID from #Torder) then 
 		delete;
 
 	----------Order_QtyShip--------------
@@ -1860,6 +1888,11 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_Qty
 Delete b
 from Production.dbo.Order_Qty b
+where id in (select id from #tmpOrders as t 
+where not exists(select 1 from #TOrder as s where t.id=s.ID))
+-------------------------------------Order_Qty_Garment
+Delete b
+from Production.dbo.Order_Qty_Garment b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_QtyCTN
