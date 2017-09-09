@@ -570,7 +570,8 @@ where id = '{0}'", Sci.Env.User.Keyword));
                     Refno = row["Refno"].ToString().Trim(),
                     DESCRIPTION = row["Desc"].ToString().Trim(),
                     ThreadColorID = row["ThreadColorID"].ToString().Trim(),
-                    QTY = row["Qty"].ToString().Trim()
+                    QTY = row["Qty"].ToString().Trim(),
+                    Location = row["Location"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;
