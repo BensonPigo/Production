@@ -33,53 +33,47 @@ BEGIN
 	--Datas處理
 	declare @Cmd varchar(max)
 	declare @RaisError varchar(max)
+
 	Set @Cmd = N'
 	Begin Try
 		Begin tran
 
-		declare @MaxSid varchar(100)
-		select @MaxSid = max(Sid) from Rfid_Bundle
+		select  *  into #tmp from ['+@RFIDServerName+'].'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'
 
-			Merge Production.dbo.BundleTransfer as t
-			Using (select a.Sid,a.ReaderId,b.Type,b.processId as SubProcessId,a.TagId,a.EpcId as BundleNo, a.TransDate,GetDate() as AddDate
-				   FROM '+@RFIDServerName+'.'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+' a left join  RFIDReader b on a.ReaderId = b.Id) as s
-			on t.Sid = s.Sid
-			when matched and (t.AddDate <> s.AddDate) then
-				update set
-				t.Sid  =s.SId,
-				t.RFIDReaderId = s.ReaderId,
-				t.SubprocessId = s.SubProcessId,
-				t.TagId = s.TagId,
-				t.BundleNo = s.BundleNo,
-				t.TransferDate = s.TransDate,
-				t.AddDate = s.AddDate
-			when not matched by target then  
-				insert(Sid,RFIDReaderId,SubprocessId,TagId,BundleNo,TransferDate,AddDate)
-				values(s.Sid,s.ReaderId,s.SubProcessId,s.TagId,s.BundleNo,s.TransDate,s.AddDate);
-			
+		declare @MaxSid bigint
+		select @MaxSid = max(Sid) from  #tmp
+
+			--add BundleTransfer	
+			INSERT INTO BundleTransfer
+			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
+			FROM  #tmp  RB
+			left join RFIDReader RR on RB.readerid=RR.Id
+						
+			--add update BundleInOut			
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.Sid,a.ReaderId,b.Type,b.processId as SubProcessId,a.TagId,a.EpcId as BundleNo, a.TransDate,GetDate() as AddDate
-				   FROM '+@RFIDServerName+'.'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+' a left join  RFIDReader b on a.ReaderId = b.Id) as s
-			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId
-			when matched and (t.AddDate <> s.AddDate) then
+			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate
+			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
+			group by a.EpcId,b.processId) as s
+			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId 
+			when matched then
 				update set
-				t.BundleNo = s.BundleNo,
-				t.SubProcessId = s.SubProcessId,
-				t.InComing = s.TransDate,
-				t.AddDate = s.AddDate
+				t.OutGoing = s.TransDate,
+				t.EditDate = s.AddDate
 			when not matched by target then
-				insert(OutGoing,EditDate)
-				values(s.TransDate,s.AddDate);
-
-			--Delete Middleware.dbo.Rfid_Bundle
-			Delete '+@RFIDServerName+'.'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+' where Sid<=@MaxSid
+				insert(BundleNo, SubProcessId, InComing, AddDate)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate);
 
 			Commit tran
+
+			DELETE ['+@RFIDServerName+'].'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'
+			where sid<=@MaxSid
+
 	End Try
 	Begin Catch
 		RollBack Tran
-	End Catch
-	'
+	End Catch	'
+
 	EXEC(@Cmd)
+
 END
 ------------------------------------------------------------------------------------------------------------------------
