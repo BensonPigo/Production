@@ -700,7 +700,7 @@ Where a.id = '{0}'", masterID);
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEn
-from factory
+from MDivision
 where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["NameEn"].ToString();
