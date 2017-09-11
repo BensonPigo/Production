@@ -758,6 +758,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
 	                ,a.LocalSuppID+'-'+c.Name [Supplier]
 	                ,c.Tel [Tel]
 	                ,c.Address [Address]
+                    ,a.FactoryID
             from dbo.localpo a WITH (NOLOCK) 
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
@@ -766,6 +767,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["RptTitle"].ToString();
             string Supplier = dt.Rows[0]["Supplier"].ToString();
+            string FactoryID = dt.Rows[0]["FactoryID"].ToString();
             string Tel = dt.Rows[0]["Tel"].ToString();
             string Address = dt.Rows[0]["Address"].ToString();
             ReportDefinition report = new ReportDefinition();
@@ -775,6 +777,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
 
             #endregion
             #region  抓表身資料
