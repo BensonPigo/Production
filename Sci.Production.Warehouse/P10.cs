@@ -953,7 +953,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEN
-from Factory
+from MDivision
 where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["NameEn"].ToString();
