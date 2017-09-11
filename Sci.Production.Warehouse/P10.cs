@@ -949,7 +949,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Factory));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEN
