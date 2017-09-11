@@ -392,7 +392,7 @@ namespace Sci.Production.Warehouse
 	        and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
 	        or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
 	
-    UNION ALL
+    UNION
 	Select  POID
             , SEQ1
             , SEQ2
@@ -403,9 +403,8 @@ namespace Sci.Production.Warehouse
 ) 
 select *
 from(
-    select  ROW_NUMBER() over (partition by mdivisionid,id,seq1,seq2 order by mdivisionid,id,seq1,seq2,len_D) as ROW_NUMBER_D
+    select  ROW_NUMBER() over (partition by id,seq1,seq2 order by id,seq1,seq2,len_D) as ROW_NUMBER_D
             , ukey
-            , mdivisionid
             , id
             , seq1
             , seq2
@@ -452,8 +451,7 @@ from(
         select  *
                 , -len(description) as len_D 
         from (
-            select  m.ukey
-                    , f.mdivisionid
+            select  distinct m.ukey
                     , a.id
                     , a.seq1
                     , a.seq2
@@ -537,8 +535,7 @@ from(
 --很重要要看到,修正欄位要上下一起改
             union
 
-            select  m.ukey
-                    , f.mdivisionid
+            select  distinct m.ukey
                     , a.id
                     , a.seq1
                     , a.seq2
