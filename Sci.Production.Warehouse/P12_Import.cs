@@ -67,8 +67,10 @@ inner join Orders on c.poid = orders.id
 inner join factory on orders.factoryID = factory.id
 inner join fabric WITH (NOLOCK) on fabric.scirefno = a.scirefno
 inner join mtltype WITH (NOLOCK) on mtltype.id = fabric.mtltypeid
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
-    and upper(dbo.mtltype.Issuetype) = 'PACKING' and factory.MDivisionID = '{1}'
+Where a.id = '{0}' 
+      and c.lock = 0 
+      and upper(dbo.mtltype.Issuetype) = 'PACKING' 
+      and factory.MDivisionID = '{1}'
 ", sp_b, Sci.Env.User.Keyword);
 
                 Ict.DualResult result;
