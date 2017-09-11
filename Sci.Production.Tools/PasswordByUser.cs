@@ -208,7 +208,7 @@ namespace Sci.Production.Tools
             this.txtUserSupervisor.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
             this.txtUserDeputy.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
             this.txtEMailAddr.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.txtPosition.ReadOnly = true;
+            this.txtPosition.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
 
             this.dateDateHired.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
             this.dateResign.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
