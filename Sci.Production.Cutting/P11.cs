@@ -1070,8 +1070,10 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             DataRow[] ArtDrAy = ArticleSizeTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
             DataRow[] oldPatternDr = patternTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
             DataRow[] oldAllPartDr = allpartTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
-            DataTable patternDv = patternTb.DefaultView.ToTable();
-            DataTable allpartDv = allpartTb.DefaultView.ToTable();
+
+
+            DataRow[] oldPatternDr_selected = patternTb.Select(string.Format("Cutref='{0}' and iden={1}", cutref, iden));
+            DataRow[] oldAllPartDr_selected = allpartTb.Select(string.Format("Cutref='{0}' and iden={1}", cutref, iden));
             foreach (DataRow dr in oldPatternDr)
             {
                 dr.Delete();
@@ -1083,7 +1085,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             foreach (DataRow dr in ArtDrAy) //抓出iden
             {
                 //新增Pattern
-                foreach (DataRow dr2 in patternDv.Rows)
+                foreach (DataRow dr2 in oldPatternDr_selected)
                 {
                     DataRow ndr = patternTb.NewRow();
                     ndr["iden"] = dr["iden"];
@@ -1095,7 +1097,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                     ndr["Parts"] = dr2["Parts"];
                     patternTb.Rows.Add(ndr);
                 }
-                foreach (DataRow dr2 in allpartDv.Rows)
+                foreach (DataRow dr2 in oldAllPartDr_selected)
                 {
                     DataRow ndr = allpartTb.NewRow();
                     ndr["iden"] = dr["iden"];
