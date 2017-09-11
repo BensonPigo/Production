@@ -458,21 +458,21 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
 
         private void btnSendMail_Click(object sender, EventArgs e)
         {
+          
             //createfolder();
             if (!ToExcel(true))
             {
                 return;
             }
             DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='005'", out seekdr))
             {
                 string mailFrom = Sci.Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
-                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
-
-                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, false);
+                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString(); 
+                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, true);
                 DialogResult DR = email.ShowDialog(this);
                 if (DR == DialogResult.OK)
                 {
