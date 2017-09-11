@@ -110,8 +110,9 @@ namespace Sci.Production.Warehouse
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEn
-from Factory
-where MDivisionID = @MDivision", pars, out dt);
+from MDivision
+where id = @MDivision", pars, out dt);
+
             if (!result) { this.ShowErr(result); }
 
             if (dt == null || dt.Rows.Count == 0)

@@ -13,6 +13,8 @@
     [APSDatabaseName] VARCHAR (15)  CONSTRAINT [DF_MDivision_APSDatabaseName] DEFAULT ('') NULL,
     [KeyWord]         VARCHAR (3)   CONSTRAINT [DF_MDivision_KeyWord] DEFAULT ('') NOT NULL,
     [NameEN]          VARCHAR (40)  CONSTRAINT [DF_MDivision_NameEN] DEFAULT ('')  NULL,
+    [AddressEN] NVARCHAR(200) CONSTRAINT [DF_MDivision_AddressEN] NULL DEFAULT (''), 
+    [Tel] VARCHAR(30) CONSTRAINT [DF_MDivision_Tel] NULL DEFAULT (''), 
     CONSTRAINT [PK_MDivision] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
