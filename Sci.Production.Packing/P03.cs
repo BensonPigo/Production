@@ -1272,7 +1272,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 return;
             }
 
-            Prgs.RecaluateCartonWeight((DataTable)detailgridbs.DataSource, CurrentMaintain);
+            Prgs.RecaluateCartonWeight(((DataTable)detailgridbs.DataSource), CurrentMaintain);
         }
 
         //Confirm
