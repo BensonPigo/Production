@@ -695,7 +695,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEn
-from Factory
+from MDivision
 where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
 

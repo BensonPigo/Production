@@ -1066,7 +1066,7 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select NameEn from Factory where id = @MDivision", pars, out dt);
+            @"select NameEn from MDivision where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
 
             if (dt == null || dt.Rows.Count == 0)
