@@ -682,36 +682,40 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
         private void comboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (base.CurrentMaintain == null)
+            if (comboType.SelectedValue == null)
                 return;
 
-            if (EditMode == true && !MyUtility.Check.Empty(comboType.OldValue))
+            if (!EditMode)
             {
-                if (!comboType.OldValue.EqualString(comboType.SelectedValue))
-                {
-                    switch (CurrentMaintain["Type"].ToString())
-                    {
-                        case "IMPORT":
-                            //comboxbs2_1.Position = 0;
-                            comboType2.DataSource = subType_1;
-                            //CurrentMaintain["SubType"] = temp;
-                            break;
-                        case "EXPORT":
-                            //comboxbs2_2.Position = 0;
-                            comboType2.DataSource = subType_2;
-                            //CurrentMaintain["SubType"] = temp;
-                            break;
-                        default:
-                            //comboxbs2_1.Position = 0;
-                            comboType2.DataSource = subType_1;
-                            //CurrentMaintain["SubType"] = temp;
-                            break;
-                    }
-
-                    CurrentMaintain["SubType"] = "";
-                    comboType2.SelectedIndex = -1;
-                }
+                return;
             }
+
+            //switch (CurrentMaintain["Type"].ToString())
+            switch (comboType.SelectedValue.ToString())
+            {
+                case "IMPORT":
+                    //comboxbs2_1.Position = 0;
+                    comboType2.DataSource = subType_1;
+
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+                case "EXPORT":
+                    //comboxbs2_2.Position = 0;
+                    comboType2.DataSource = subType_2;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+                default:
+                    //comboxbs2_1.Position = 0;
+                    comboType2.DataSource = subType_1;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+            }
+
+            //CurrentMaintain["SubType"] = "";
+            comboType2.SelectedIndex = -1;
+            
+            
         }
+
     }
 }
