@@ -190,7 +190,7 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
         /// <returns></returns>
         public static void RecaluateCartonWeight(DataTable PackingListDetaildata, DataRow PackingListData)
         {
-            if (PackingListDetaildata.Rows.Count <= 0)
+            if (PackingListDetaildata.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted).Count() == 0)// PackingListDetaildata.Rows.Count <= 0)
             {
                 return;
             }
@@ -207,6 +207,9 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
             //檢查是否所有的SizeCode都有存在Style_WeightData中
             foreach (DataRow dr in PackingListDetaildata.Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
                 string filter = string.Format("BrandID = '{0}' and StyleID = '{1}' and SeasonID = '{2}'", PackingListData["BrandID"].ToString(), dr["StyleID"].ToString(), dr["SeasonID"].ToString());
                 weight = weightData.Select(filter);
                 if (weight.Length == 0)
@@ -257,10 +260,22 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             DataTable tmpPacklistWeight;
             result = DBProxy.Current.Select(null, "select CTNStartNo, NW, NNW, GW from PackingList_Detail WITH (NOLOCK) where 1=0", out tmpPacklistWeight);
             DataRow tmpPacklistRow;
-            string ctnNo = PackingListDetaildata.Rows[0]["CTNStartNo"].ToString();
+
+            string ctnNo = "";
+            foreach (DataRow dr in PackingListDetaildata.Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    ctnNo = dr["CTNStartNo"].ToString();
+                    break;
+                }
+            }
 
             foreach (DataRow dr in PackingListDetaildata.Rows)
             {
+                if(dr.RowState == DataRowState.Deleted)
+                    continue;
+
                 if (!MyUtility.Check.Empty(dr["CTNQty"]))
                 {
                     if (ctnNo != dr["CTNStartNo"].ToString())
@@ -316,6 +331,9 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             {
                 foreach (DataRow dr1 in PackingListDetaildata.Rows)
                 {
+                    if (dr1.RowState == DataRowState.Deleted)
+                        continue;
+
                     if (dr["CTNStartNo"].ToString() == dr1["CTNStartNo"].ToString())
                     {
                         if (!MyUtility.Check.Empty(dr1["CTNQty"]))

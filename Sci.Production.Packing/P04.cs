@@ -374,6 +374,10 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             CurrentMaintain["Type"] = "S";
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+
+            gridicon.Append.Enabled = true;
+            gridicon.Insert.Enabled = true;
+            gridicon.Remove.Enabled = true;
         }
 
         protected override bool ClickEditBefore()
@@ -403,6 +407,9 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             else
             {
                 DetailGridEditing(true);
+                gridicon.Append.Enabled = true;
+                gridicon.Insert.Enabled = true;
+                gridicon.Remove.Enabled = true;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]))
