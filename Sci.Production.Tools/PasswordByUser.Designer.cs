@@ -150,7 +150,7 @@
             this.checkAdmin.AutoSize = true;
             this.checkAdmin.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsAdmin", true));
             this.checkAdmin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkAdmin.Location = new System.Drawing.Point(99, 81);
+            this.checkAdmin.Location = new System.Drawing.Point(96, 81);
             this.checkAdmin.Name = "checkAdmin";
             this.checkAdmin.Size = new System.Drawing.Size(66, 21);
             this.checkAdmin.TabIndex = 53;
@@ -163,7 +163,7 @@
             this.txtPosition.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Position", true));
             this.txtPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtPosition.IsSupportEditMode = false;
-            this.txtPosition.Location = new System.Drawing.Point(93, 315);
+            this.txtPosition.Location = new System.Drawing.Point(96, 297);
             this.txtPosition.Name = "txtPosition";
             this.txtPosition.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtPosition.ReadOnly = true;
@@ -222,7 +222,7 @@
             // dateDateHired
             // 
             this.dateDateHired.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoard", true));
-            this.dateDateHired.Location = new System.Drawing.Point(99, 331);
+            this.dateDateHired.Location = new System.Drawing.Point(96, 331);
             this.dateDateHired.Name = "dateDateHired";
             this.dateDateHired.Size = new System.Drawing.Size(130, 23);
             this.dateDateHired.TabIndex = 12;
@@ -231,7 +231,7 @@
             // 
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(99, 365);
+            this.editRemark.Location = new System.Drawing.Point(96, 365);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(356, 125);
