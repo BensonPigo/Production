@@ -278,7 +278,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             if (this.IsDetailInserting)
             {
                 string date = dateDate.Text;
-                string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}'", date, CurrentMaintain["ID"]);
+                string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}' and FactoryID ='{2}'", date, CurrentMaintain["ID"], txtfactoryByM1.Text);
                 if (MyUtility.Check.Seek(sql, null))
                 {
                     MyUtility.Msg.WarningBox("The <Date> had been existed already.");
