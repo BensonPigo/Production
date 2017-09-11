@@ -95,7 +95,7 @@
             this.txtpaytermarPaymentTerm = new Sci.Production.Class.txtpaytermar();
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtfactoryShipper = new Sci.Production.Class.txtfactory();
+            this.txtfactoryShipper = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +112,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
             this.masterpanel.Controls.Add(this.txtCutoffDate);
             this.masterpanel.Controls.Add(this.txtTerminalWhse);
@@ -160,7 +161,6 @@
             this.masterpanel.Controls.Add(this.txtpaytermarPaymentTerm);
             this.masterpanel.Controls.Add(this.txtCountryDestination);
             this.masterpanel.Controls.Add(this.txtbrand);
-            this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.displayInvoiceNo);
             this.masterpanel.Controls.Add(this.labelRemark);
@@ -200,7 +200,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayInvoiceNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvSerial, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactoryShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCountryDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtpaytermarPaymentTerm, 0);
@@ -248,8 +247,9 @@
             this.masterpanel.Controls.SetChildIndex(this.comboContainerType, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTerminalWhse, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCutoffDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactoryShipper, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -271,15 +271,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(990, 600);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(984, 554);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(984, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -318,7 +318,6 @@
             // labelInvoiceNo
             // 
             this.labelInvoiceNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelInvoiceNo.Lines = 0;
             this.labelInvoiceNo.Location = new System.Drawing.Point(4, 4);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(66, 23);
@@ -328,7 +327,6 @@
             // labelInvSerial
             // 
             this.labelInvSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelInvSerial.Lines = 0;
             this.labelInvSerial.Location = new System.Drawing.Point(4, 31);
             this.labelInvSerial.Name = "labelInvSerial";
             this.labelInvSerial.Size = new System.Drawing.Size(66, 23);
@@ -338,7 +336,6 @@
             // labelInvDate
             // 
             this.labelInvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelInvDate.Lines = 0;
             this.labelInvDate.Location = new System.Drawing.Point(4, 58);
             this.labelInvDate.Name = "labelInvDate";
             this.labelInvDate.Size = new System.Drawing.Size(66, 23);
@@ -348,7 +345,6 @@
             // labelShipper
             // 
             this.labelShipper.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelShipper.Lines = 0;
             this.labelShipper.Location = new System.Drawing.Point(4, 85);
             this.labelShipper.Name = "labelShipper";
             this.labelShipper.Size = new System.Drawing.Size(66, 23);
@@ -358,7 +354,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(4, 112);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(66, 23);
@@ -368,7 +363,6 @@
             // labelFCRDate
             // 
             this.labelFCRDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelFCRDate.Lines = 0;
             this.labelFCRDate.Location = new System.Drawing.Point(4, 139);
             this.labelFCRDate.Name = "labelFCRDate";
             this.labelFCRDate.Size = new System.Drawing.Size(66, 23);
@@ -378,7 +372,6 @@
             // labelCustCD
             // 
             this.labelCustCD.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(4, 166);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(66, 23);
@@ -388,7 +381,6 @@
             // labelDestination
             // 
             this.labelDestination.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(4, 193);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(66, 23);
@@ -398,7 +390,6 @@
             // labelPaymentTerm
             // 
             this.labelPaymentTerm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPaymentTerm.Lines = 0;
             this.labelPaymentTerm.Location = new System.Drawing.Point(4, 220);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(84, 23);
@@ -408,7 +399,6 @@
             // labelDescription
             // 
             this.labelDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(4, 247);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(66, 23);
@@ -418,7 +408,6 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(4, 274);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(66, 23);
@@ -488,7 +477,6 @@
             // labelShippingMode
             // 
             this.labelShippingMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelShippingMode.Lines = 0;
             this.labelShippingMode.Location = new System.Drawing.Point(327, 4);
             this.labelShippingMode.Name = "labelShippingMode";
             this.labelShippingMode.Size = new System.Drawing.Size(90, 23);
@@ -498,7 +486,6 @@
             // labelShipmentTerm
             // 
             this.labelShipmentTerm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelShipmentTerm.Lines = 0;
             this.labelShipmentTerm.Location = new System.Drawing.Point(327, 31);
             this.labelShipmentTerm.Name = "labelShipmentTerm";
             this.labelShipmentTerm.Size = new System.Drawing.Size(90, 23);
@@ -508,7 +495,6 @@
             // labelttlQty
             // 
             this.labelttlQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelttlQty.Lines = 0;
             this.labelttlQty.Location = new System.Drawing.Point(327, 58);
             this.labelttlQty.Name = "labelttlQty";
             this.labelttlQty.Size = new System.Drawing.Size(90, 23);
@@ -518,7 +504,6 @@
             // labelttlCarton
             // 
             this.labelttlCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelttlCarton.Lines = 0;
             this.labelttlCarton.Location = new System.Drawing.Point(327, 85);
             this.labelttlCarton.Name = "labelttlCarton";
             this.labelttlCarton.Size = new System.Drawing.Size(90, 23);
@@ -528,7 +513,6 @@
             // labelttlGW
             // 
             this.labelttlGW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelttlGW.Lines = 0;
             this.labelttlGW.Location = new System.Drawing.Point(327, 112);
             this.labelttlGW.Name = "labelttlGW";
             this.labelttlGW.Size = new System.Drawing.Size(90, 23);
@@ -538,7 +522,6 @@
             // labelttlMeas
             // 
             this.labelttlMeas.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelttlMeas.Lines = 0;
             this.labelttlMeas.Location = new System.Drawing.Point(327, 139);
             this.labelttlMeas.Name = "labelttlMeas";
             this.labelttlMeas.Size = new System.Drawing.Size(90, 23);
@@ -548,7 +531,6 @@
             // labelttlNW
             // 
             this.labelttlNW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelttlNW.Lines = 0;
             this.labelttlNW.Location = new System.Drawing.Point(327, 166);
             this.labelttlNW.Name = "labelttlNW";
             this.labelttlNW.Size = new System.Drawing.Size(90, 23);
@@ -558,7 +540,6 @@
             // labellttlNNW
             // 
             this.labellttlNNW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labellttlNNW.Lines = 0;
             this.labellttlNNW.Location = new System.Drawing.Point(327, 193);
             this.labellttlNNW.Name = "labellttlNNW";
             this.labellttlNNW.Size = new System.Drawing.Size(90, 23);
@@ -704,7 +685,6 @@
             // labelHandle
             // 
             this.labelHandle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(560, 4);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(94, 23);
@@ -714,7 +694,6 @@
             // labelForwarder
             // 
             this.labelForwarder.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelForwarder.Lines = 0;
             this.labelForwarder.Location = new System.Drawing.Point(560, 31);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(94, 23);
@@ -724,7 +703,6 @@
             // labelContainerType
             // 
             this.labelContainerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelContainerType.Lines = 0;
             this.labelContainerType.Location = new System.Drawing.Point(560, 58);
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(94, 23);
@@ -734,7 +712,6 @@
             // labelSONo
             // 
             this.labelSONo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSONo.Lines = 0;
             this.labelSONo.Location = new System.Drawing.Point(560, 85);
             this.labelSONo.Name = "labelSONo";
             this.labelSONo.Size = new System.Drawing.Size(94, 23);
@@ -744,7 +721,6 @@
             // labelTerminalWhse
             // 
             this.labelTerminalWhse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTerminalWhse.Lines = 0;
             this.labelTerminalWhse.Location = new System.Drawing.Point(560, 112);
             this.labelTerminalWhse.Name = "labelTerminalWhse";
             this.labelTerminalWhse.Size = new System.Drawing.Size(94, 23);
@@ -754,7 +730,6 @@
             // labelCutoffDate
             // 
             this.labelCutoffDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCutoffDate.Lines = 0;
             this.labelCutoffDate.Location = new System.Drawing.Point(560, 139);
             this.labelCutoffDate.Name = "labelCutoffDate";
             this.labelCutoffDate.Size = new System.Drawing.Size(94, 23);
@@ -764,7 +739,6 @@
             // labelSOCfmDate
             // 
             this.labelSOCfmDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSOCfmDate.Lines = 0;
             this.labelSOCfmDate.Location = new System.Drawing.Point(560, 166);
             this.labelSOCfmDate.Name = "labelSOCfmDate";
             this.labelSOCfmDate.Size = new System.Drawing.Size(94, 23);
@@ -774,7 +748,6 @@
             // labelVslvoyFltNo
             // 
             this.labelVslvoyFltNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelVslvoyFltNo.Lines = 0;
             this.labelVslvoyFltNo.Location = new System.Drawing.Point(560, 193);
             this.labelVslvoyFltNo.Name = "labelVslvoyFltNo";
             this.labelVslvoyFltNo.Size = new System.Drawing.Size(94, 23);
@@ -784,7 +757,6 @@
             // labelShipPlanNo
             // 
             this.labelShipPlanNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelShipPlanNo.Lines = 0;
             this.labelShipPlanNo.Location = new System.Drawing.Point(560, 220);
             this.labelShipPlanNo.Name = "labelShipPlanNo";
             this.labelShipPlanNo.Size = new System.Drawing.Size(94, 23);
@@ -794,7 +766,6 @@
             // labelETDETA
             // 
             this.labelETDETA.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelETDETA.Lines = 0;
             this.labelETDETA.Location = new System.Drawing.Point(560, 247);
             this.labelETDETA.Name = "labelETDETA";
             this.labelETDETA.Size = new System.Drawing.Size(74, 23);
@@ -804,7 +775,6 @@
             // labelSendtoTPE
             // 
             this.labelSendtoTPE.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSendtoTPE.Lines = 0;
             this.labelSendtoTPE.Location = new System.Drawing.Point(560, 274);
             this.labelSendtoTPE.Name = "labelSendtoTPE";
             this.labelSendtoTPE.Size = new System.Drawing.Size(74, 23);
@@ -871,7 +841,6 @@
             // 
             // label31
             // 
-            this.label31.Lines = 0;
             this.label31.Location = new System.Drawing.Point(770, 247);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(10, 23);
@@ -1088,8 +1057,10 @@
             this.txtfactoryShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryShipper.Location = new System.Drawing.Point(73, 85);
             this.txtfactoryShipper.Name = "txtfactoryShipper";
-            this.txtfactoryShipper.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryShipper.Size = new System.Drawing.Size(64, 23);
             this.txtfactoryShipper.TabIndex = 0;
+            this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactoryShipper_PopUp);
+            this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactoryShipper_Validating);
             // 
             // P05
             // 
@@ -1146,7 +1117,6 @@
         private Class.txtcountry txtCountryDestination;
         private Win.UI.DateBox dateFCRDate;
         private Class.txtbrand txtbrand;
-        private Class.txtfactory txtfactoryShipper;
         private Win.UI.DateBox dateInvDate;
         private Win.UI.TextBox txtInvSerial;
         private Win.UI.DisplayBox displayInvoiceNo;
@@ -1200,5 +1170,6 @@
         private Win.UI.ComboBox comboContainerType;
         private Win.UI.TextBox txtTerminalWhse;
         private Win.UI.TextBox txtCutoffDate;
+        private Win.UI.TextBox txtfactoryShipper;
     }
 }
