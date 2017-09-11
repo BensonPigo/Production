@@ -126,7 +126,8 @@ group by sizeCode"
             #endregion
             //計算左上TotalQty
             calsumQty();
-            if (detailTb.Rows.Count != 0 && maindatarow.RowState!=DataRowState.Added) exist_Table_Query();
+            //if (detailTb.Rows.Coun!= 0 && maindatarow.RowState!=DataRowState.Added) 
+            if (detailTb.Rows.Count != 0 ) exist_Table_Query();
             else noexist_Table_Query();
 
             grid_setup();
@@ -932,10 +933,18 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         nDetail["bundlegroup"] = bundlegroup;
                         nDetail["ukey1"] = ukey;
 
-                        if (dr2["PatternCode"].ToString() != "ALLPARTS") //為了跟外面相同多加一個"+"
+                        if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
-                            nDetail["subprocessid"] = dr2["art"].ToString() + "+";
-                        }
+                            nDetail["subprocessid"] = dr2["art"].ToString();
+                            //if (dr2["art"].ToString().Substring(dr2["art"].ToString().Length - 1) != "+")
+                            //{
+                            //    nDetail["subprocessid"] = dr2["art"].ToString() + "+";
+                            //}
+                            //else
+                            //{
+                            //    nDetail["subprocessid"] = dr2["art"].ToString();
+                            //}
+                        }                       
                         ukey++;
 
                         bundle_detail_tmp.Rows.Add(nDetail);
@@ -990,15 +999,15 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                             #endregion
 
                         }
-                        DataRow[] artary = artTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
+                        DataRow[] artary = patternTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
                         foreach (DataRow artdr in artary)
                         {
                             if (artdr.RowState != DataRowState.Deleted)
                             {
                                 DataRow art_ndr = bundle_detail_artTb.NewRow();
                                 art_ndr["Bundleno"] = dr["Bundleno"];
-                                art_ndr["PatternCode"] = artdr["PatternCode"];
-                                art_ndr["Subprocessid"] = artdr["Subprocessid"];
+                                art_ndr["PatternCode"] = artdr["PatternCode"]; 
+                                art_ndr["Subprocessid"] = artdr["art"];
                                 art_ndr["ukey1"] = dr["ukey1"];
                                 bundle_detail_artTb.Rows.Add(art_ndr);
                             }
@@ -1056,7 +1065,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         #endregion
 
                     }
-                    DataRow[] artary = artTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
+                    DataRow[] artary = patternTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
                     foreach (DataRow artdr in artary)
                     {
                         if (artdr.RowState != DataRowState.Deleted)
@@ -1064,7 +1073,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                             DataRow art_ndr = bundle_detail_artTb.NewRow();
 
                             art_ndr["PatternCode"] = artdr["PatternCode"];
-                            art_ndr["Subprocessid"] = artdr["Subprocessid"];
+                            art_ndr["Subprocessid"] = artdr["art"];
                             art_ndr["ukey1"] = tmpdr["ukey1"];
                             bundle_detail_artTb.Rows.Add(art_ndr);
                         }
