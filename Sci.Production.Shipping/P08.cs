@@ -526,8 +526,8 @@ where sd.ID = '{0}'", masterID);
             else
             {
                 DataTable FactoryData,LocalSpuuData,Report_ShippingAPDetail;
-                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'",
-               MyUtility.Convert.GetString(CurrentMaintain["ID"]).Substring(0, 3));// ShippingAp沒有紀錄Factoryid,所以抓取id前３碼來當factoryID
+                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from MDivision WITH (NOLOCK) where ID = '{0}'",
+               MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]));
                 result = DBProxy.Current.Select(null,sqlCmd,out FactoryData);
                 if(!result)
                 {
