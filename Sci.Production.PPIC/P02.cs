@@ -105,23 +105,32 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
         //Query Data
         private void QueryDate(string factoryID, DateTime? updateDate)
         {
-            string sqlCmd = string.Format(@"select FactoryID,OrderId,OriginalStyleID,iif(convert(varchar,OriginalQty) = 0,'',convert(varchar,OriginalQty)) as OriginalQty,
-RIGHT(CONVERT(VARCHAR(20),OriginalBuyerDelivery,111),5) as OriginalBuyerDelivery,
-RIGHT(CONVERT(VARCHAR(20),OriginalSCIDelivery,111),5) as OriginalSCIDelivery,
-RIGHT(CONVERT(VARCHAR(20),OriginalLETA,111),5) as OriginalLETA,
-RIGHT(CONVERT(VARCHAR(20),KPILETA,111),5) as KPILETA,
-TransferToFactory,iif(convert(varchar,NewQty) = 0,'',convert(varchar,NewQty)) as NewQty,
-RIGHT(CONVERT(VARCHAR(20),NewBuyerDelivery,111),5) as NewBuyerDelivery,
-RIGHT(CONVERT(VARCHAR(20),NewSCIDelivery,111),5) as NewSCIDelivery,
-RIGHT(CONVERT(VARCHAR(20),NewLETA,111),5) as NewLETA,
-IIF(NewOrder = 1, 'V','') as NewOrder,
-iif(DeleteOrder=1,'V','') as DeleteOrder,iif(JunkOrder=1,'V','') as JunkOrder,
-iif(NewCMPQDate is null,'','V') as CMPQDate,
-iif(NewEachConsApv is null,iif(OriginalEachConsApv is null,'','★'),'V') as EachConsApv,
-iif(NewMnorderApv is null,'','V') as NewMnorder,iif(NewSMnorderApv is null,'','V') as NewSMnorderApv,
-iif(MnorderApv2 is null,'','V') as MnorderApv2, TransferDate
+            string sqlCmd = string.Format(@"
+select FactoryID
+	   , OrderId
+	   , OriginalStyleID
+	   , OriginalQty
+	   , OriginalBuyerDelivery = RIGHT(CONVERT(VARCHAR(20),OriginalBuyerDelivery,111),5)
+	   , OriginalSCIDelivery = RIGHT(CONVERT(VARCHAR(20),OriginalSCIDelivery,111),5)
+	   , OriginalLETA = RIGHT(CONVERT(VARCHAR(20),OriginalLETA,111),5)
+	   , KPILETA = RIGHT(CONVERT(VARCHAR(20),KPILETA,111),5)
+	   , TransferToFactory
+	   , NewQty
+	   , NewBuyerDelivery = RIGHT(CONVERT(VARCHAR(20),NewBuyerDelivery,111),5)
+	   , NewSCIDelivery = RIGHT(CONVERT(VARCHAR(20),NewSCIDelivery,111),5)
+	   , NewLETA = RIGHT(CONVERT(VARCHAR(20),NewLETA,111),5)
+	   , NewOrder = IIF(NewOrder = 1, 'V','')
+	   , DeleteOrder = iif(DeleteOrder=1,'V','')
+	   , JunkOrder = iif(JunkOrder=1,'V','')
+	   , CMPQDate = iif(NewCMPQDate is null,'','V')
+	   , EachConsApv = iif(NewEachConsApv is null,iif(OriginalEachConsApv is null,'','★'),'V')
+	   , NewMnorder = iif(NewMnorderApv is null,'','V')
+	   , NewSMnorderApv = iif(NewSMnorderApv is null,'','V')
+	   , MnorderApv2 = iif(MnorderApv2 is null,'','V')
+	   , TransferDate
 from OrderComparisonList WITH (NOLOCK) 
-where {0} and UpdateDate {1}
+where {0} 
+	  and UpdateDate {1}
 order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID), MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
@@ -129,7 +138,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 MyUtility.Msg.ErrorBox("Query fail!\r\n"+result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
-            if (gridData.Rows.Count == 0)
+            if (gridData != null && gridData.Rows.Count == 0)
             {
                 dateLastDate.Value = null;
             }
