@@ -466,14 +466,20 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 if (detailData.Length <= 0)
                 {
                     //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
-    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-    left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
-    left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
-    left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
-    where oqd.Id = '{1}'
-    and oqd.Seq = '{2}'
-    group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                    sqlCmd = string.Format(@"
+select oqd.Id as OrderID
+, oqd.Seq as OrderShipmodeSeq
+, oqd.Article
+, oqd.SizeCode
+--, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+,Qty= oqd.Qty 
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
+left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
+left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
+where oqd.Id = '{1}'
+and oqd.Seq = '{2}'
+", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
