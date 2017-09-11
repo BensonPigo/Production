@@ -720,6 +720,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                                 ndr2["Parts"] = dr["alone"];
                                 ndr2["art"] = art;
                                 ndr2["POID"] = poid;
+                                ndr2["Cutref"] = cutref;
                                 ndr2["iden"] = iden;
                                 patternTb.Rows.Add(ndr2);
                             }
@@ -731,6 +732,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                             ndr["PatternDesc"] = dr["PatternDesc"];
                             ndr["Annotation"] = dr["Annotation"];
                             ndr["POID"] = poid;
+                            ndr["Cutref"] = cutref;
                             ndr["iden"] = iden;
                             ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
                             npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
@@ -745,6 +747,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["Annotation"] = dr["Annotation"];
                         ndr["POID"] = poid;
+                        ndr["Cutref"] = cutref;
                         ndr["iden"] = iden;
                         ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
                         npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
@@ -1070,8 +1073,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             DataRow[] ArtDrAy = ArticleSizeTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
             DataRow[] oldPatternDr = patternTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
             DataRow[] oldAllPartDr = allpartTb.Select(string.Format("Cutref='{0}' and iden<>{1}", cutref, iden));
-
-
+            
             DataRow[] oldPatternDr_selected = patternTb.Select(string.Format("Cutref='{0}' and iden={1}", cutref, iden));
             DataRow[] oldAllPartDr_selected = allpartTb.Select(string.Format("Cutref='{0}' and iden={1}", cutref, iden));
             foreach (DataRow dr in oldPatternDr)
