@@ -16,13 +16,16 @@ namespace Sci.Production.Class
     public partial class txtfactory : Sci.Win.UI.TextBox
     {
         private bool _IssupportJunk = false;
+        private bool _FilteMDivision = false;
+
+        [Description("是否要顯示 Junk 的資料")]
         public bool IssupportJunk
         {
             get { return _IssupportJunk; }
             set { _IssupportJunk = value; }
         }
-
-        private bool _FilteMDivision = false;
+        
+        [Description("是否需要排除非同 MDivition 的資料")]
         public bool FilteMDivision
         {
             get { return _FilteMDivision; }
