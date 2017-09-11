@@ -111,7 +111,7 @@ namespace Sci.Production.Warehouse
             DualResult result = DBProxy.Current.Select("", @"
 select NameEn
 from Factory
-where id = @MDivision", pars, out dt);
+where MDivisionID = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
 
             if (dt == null || dt.Rows.Count == 0)
