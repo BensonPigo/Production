@@ -382,7 +382,8 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                 //Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
 
-                if (MyUtility.Excel.CopyToXls(ExcelTb,"", "Cutting_P05.xltx", 5, !autoSave, null, objApp, false))
+                //if (MyUtility.Excel.CopyToXls(ExcelTb,"", "Cutting_P05.xltx", 5, !autoSave, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P05.xltx", 5, showExcel: false, excelApp: objApp))
                 {// 將datatable copy to excel
 
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -394,10 +395,11 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                     objSheet.Cells[3, 4] = Convert.ToDateTime(CurrentMaintain["EstCutDate"]).ToShortDateString();
                     objSheet.Cells[3, 6] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
-
+                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request");
+                    objBook.SaveAs(strExcelName);
                     if (autoSave)
                     {
-                        objBook.SaveAs(Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request"));
+                        
                         objBook.Close();
                         objApp.Workbooks.Close();
                         objApp.Quit();
@@ -412,11 +414,24 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                         objApp = null;
                         //System.IO.File.Delete(tmpName);
                         fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
+
                     }
                     else
                     {
+                   
+                        objBook.Close();
+                        objApp.Workbooks.Close();
+                        objApp.Quit();
+
+                        Marshal.ReleaseComObject(objApp);
+                        Marshal.ReleaseComObject(objSheet);
+                        Marshal.ReleaseComObject(objBook);
+
                         if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
                         if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                        strExcelName.OpenFile();
                     }
                 }
             }
@@ -430,6 +445,7 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
 
         private void btnSendMail_Click(object sender, EventArgs e)
         {
+
             //createfolder();
             if (!ToExcel(true))
             {
@@ -444,7 +460,7 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                 string content = seekdr["content"].ToString();
                 string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
 
-                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, false);
+                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, true);
                 DialogResult DR = email.ShowDialog(this);
                 if (DR == DialogResult.OK)
                 {
