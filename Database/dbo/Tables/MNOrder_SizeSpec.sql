@@ -4,7 +4,8 @@
     [Seq]      VARCHAR (2)  CONSTRAINT [DF_MNOrder_SizeSpec_Seq] DEFAULT ('') NULL,
     [SizeCode] VARCHAR (8)  CONSTRAINT [DF_MNOrder_SizeSpec_SizeCode] DEFAULT ('') NOT NULL,
     [SizeSpec] VARCHAR (15) CONSTRAINT [DF_MNOrder_SizeSpec_SizeSpec] DEFAULT ('') NULL,
-    [Ukey]     BIGINT       NULL
+    [Ukey]     BIGINT       NOT NULL, 
+    CONSTRAINT [PK_MNOrder_SizeSpec] PRIMARY KEY ([Ukey])
 );
 
 
