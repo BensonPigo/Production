@@ -114,12 +114,15 @@ tmpArtWork as (
     ) a
 ), 
 tmpOrderArtwork as (
-    select  ID
-            , ( select   CONCAT(Artwork,', ') 
-                from tmpArtWork 
-                where ID = t.ID 
-                order by Artwork for xml path('')) as Artwork 
-    from tmpArtWork t
+    select  tmpArtWorkID.ID
+            , Artwork = (select   CONCAT(Artwork,', ') 
+						 from tmpArtWork 
+						 where ID = tmpArtWorkID.ID 
+						 order by Artwork for xml path(''))  
+    from (
+		select distinct ID
+		from tmpArtWork
+	) tmpArtWorkID
 )
 select  SewingLineID
         , MDivisionID
