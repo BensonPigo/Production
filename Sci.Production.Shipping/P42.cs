@@ -91,12 +91,15 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                     }
                 };
             #endregion
+            DataGridViewGeneratorNumericColumnSettings stockQtySetting = new DataGridViewGeneratorNumericColumnSettings();
+            stockQtySetting.IsSupportNegative = true;
 
             base.OnDetailGridSetup();
+
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode)
-                .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
+                .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings:stockQtySetting)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true);
         }
 
