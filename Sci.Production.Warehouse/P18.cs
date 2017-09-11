@@ -133,7 +133,7 @@ where   b.id = a.mdivisionid
             //抓M的EN NAME
             DataTable dtNAME;
             DBProxy.Current.Select("",
-            string.Format(@"select NameEN from Factory where ID='{0}'", Sci.Env.User.Factory), out dtNAME);
+            string.Format(@"select NameEN from MDivision where ID='{0}'", Sci.Env.User.Keyword), out dtNAME);
             //
             string RptTitle = dtNAME.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();

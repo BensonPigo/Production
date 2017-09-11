@@ -686,11 +686,11 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Factory));
+            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("", @"
 select NameEN
-from Factory
+from MDivision
 where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
