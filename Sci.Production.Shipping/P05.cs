@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -117,8 +118,7 @@ where {0}", masterID);
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(comboContainerType, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");         
            
-        }      
-       
+        }             
 
         protected override void OnDetailEntered()
         {
@@ -275,7 +275,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Shipper"] = Sci.Env.User.Keyword;
+            CurrentMaintain["Shipper"] = Sci.Env.User.Factory;
             CurrentMaintain["InvDate"] = DateTime.Today;
             CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             CurrentMaintain["ShipModeID"] = "SEA";
@@ -1329,6 +1329,48 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         private void maskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
+        }
+
+        private void txtfactoryShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT Factory = ID
+from Factory WITH (NOLOCK) 
+where Junk = 0
+order by ID");
+            #endregion
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.txtfactoryShipper.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtfactoryShipper.Text = item.GetSelectedString();
+        }
+
+        private void txtfactoryShipper_Validating(object sender, CancelEventArgs e)
+        {
+            #region SQL Parameter
+            List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@str", this.txtfactoryShipper.Text));
+            #endregion
+            string str = this.txtfactoryShipper.Text;
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT Factory = ID
+from Factory WITH (NOLOCK) 
+where Junk = 0
+      and ID = @str
+order by ID");
+            #endregion
+            if (!string.IsNullOrWhiteSpace(str) && str != this.txtfactoryShipper.OldValue)
+            {
+                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
+                {
+                    this.txtfactoryShipper.Text = "";
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
+                    return;
+                }
+            }
         }
     }
 }
