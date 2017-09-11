@@ -349,123 +349,200 @@ order by bundlegroup"
 
             }
             #endregion
-            int row = 0;
-            #region 處理Bundle_Detail_AllPart
-            int allpart_old_rowCount = allparttmp.Rows.Count;
+            //int row = 0;
+            #region 處理Bundle_Detail_AllPart 修改版
 
+            /*
+             * 先刪除原有資料
+             * 再新增更改的資料             
+             */
+            allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where id ='{0}'", masterID);
             foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
             {
-                //新的AllPartDetail 數量大於原本資料庫裡的,就進來
-                if (bundle_Detail_allpart_Tb.Rows.Count > allpart_old_rowCount)
-                {                  
-                    allpart_cmd = allpart_cmd + string.Format(
-                    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
-                    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
-                }
-                //if (row >= allpart_old_rowCount) //新增
-                //{
-                //    allpart_cmd = allpart_cmd + string.Format(
-                //    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
-                //    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
-                //}
-                else //覆蓋
+                if (dr.RowState != DataRowState.Deleted)
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                @"update bundle_Detail_allpart set PatternCode ='{0}',PatternDesc = '{1}',
-                Parts ={2}  Where ukey ={3};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"], allparttmp.Rows[row]["ukey"]);
+                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
+                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
                 }
-                row++;
+            }
+            #endregion
 
-            }
-            bundle_Detail_allpart_Tb.AcceptChanges();//變更Row Status 狀態
-            int allpart_new_rowCount = bundle_Detail_allpart_Tb.Rows.Count;
-            if (allpart_old_rowCount > allpart_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            #region 處理Bundle_Detail_AllPart
+            //int allpart_old_rowCount = allparttmp.Rows.Count;
+
+            //foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
+            //{
+            //    //新的AllPartDetail 數量大於原本資料庫裡的,就進來
+            //    if (bundle_Detail_allpart_Tb.Rows.Count > allpart_old_rowCount)
+            //    {                  
+            //        allpart_cmd = allpart_cmd + string.Format(
+            //        @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
+            //        , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+            //    }
+            //    //if (row >= allpart_old_rowCount) //新增
+            //    //{
+            //    //    allpart_cmd = allpart_cmd + string.Format(
+            //    //    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
+            //    //    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+            //    //}
+            //    else //覆蓋
+            //    {
+            //        allpart_cmd = allpart_cmd + string.Format(
+            //    @"update bundle_Detail_allpart set PatternCode ='{0}',PatternDesc = '{1}',
+            //    Parts ={2}  Where ukey ={3};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"], allparttmp.Rows[row]["ukey"]);
+            //    }
+            //    row++;
+
+            //}
+            //bundle_Detail_allpart_Tb.AcceptChanges();//變更Row Status 狀態
+            //int allpart_new_rowCount = bundle_Detail_allpart_Tb.Rows.Count;
+            //if (allpart_old_rowCount > allpart_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            //{
+            //    for (int i = allpart_new_rowCount; i < allpart_old_rowCount; i++)
+            //    {
+            //        allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where ukey ='{0}';", allparttmp.Rows[i]["ukey"]);
+            //    }
+            //}
+            #endregion
+
+            #region 處理Bundle_Detail_Art 修改版
+            /*
+            * 先刪除原有資料
+            * 再新增更改的資料             
+            */
+            Art_cmd = Art_cmd + string.Format(@"delete from bundle_Detail_Art where id='{0}'", masterID);
+            //將SubProcessID不是單一筆的資料拆開 
+            DataTable bundle_Detail_Art_Tb_copy = bundle_Detail_Art_Tb.Copy();
+            bundle_Detail_Art_Tb_copy.Clear();// 只有結構,沒有資料
+            int ukey=1;
+            foreach (DataRow dr1 in bundle_Detail_Art_Tb.Rows)
             {
-                for (int i = allpart_new_rowCount; i < allpart_old_rowCount; i++)
+                string[] subprocss = dr1["subprocessid"].ToString().Split('+');
+                for (int i = 0; i < subprocss.Length; i++)
                 {
-                    allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where ukey ='{0}';", allparttmp.Rows[i]["ukey"]);
+                    DataRow drArt = bundle_Detail_Art_Tb_copy.NewRow();
+                    drArt["Bundleno"] = dr1["Bundleno"];
+                    drArt["SubProcessID"] = subprocss[i].ToString();
+                    drArt["PatternCode"] = dr1["PatternCode"];
+                    drArt["id"] = dr1["id"];
+                    drArt["ukey"] = dr1["ukey"];
+                    drArt["ukey1"] = ukey;
+                    bundle_Detail_Art_Tb_copy.Rows.Add(drArt);
+                    ukey++;
+                }
+               
+            }
+            //新增資料
+            foreach (DataRow dr in bundle_Detail_Art_Tb_copy.Rows) //處理Bundle_Detail_Art
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    Art_cmd = Art_cmd + string.Format(
+               @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
+                        values('{0}','{1}','{2}','{3}');"
+                , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
                 }
             }
+
             #endregion
             #region 處理Bundle_Detail_Art
-            row = 0;
-            int art_old_rowCount = arttmp.Rows.Count;
-
-            foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
-            {
-                if (bundle_Detail_Art_Tb.Rows.Count> art_old_rowCount)
-                {
-                    Art_cmd = Art_cmd + string.Format(
-                   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
-                        values('{0}','{1}','{2}','{3}');"
-                    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
-                }
-                //if (row >= art_old_rowCount) //新增
-                //{
-                //    Art_cmd = Art_cmd + string.Format(
-                //   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
-                //    values('{0}','{1}','{2}','{3}');"
-                //    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
-                //}
-                else //覆蓋
-                {
-                    Art_cmd = Art_cmd + string.Format(
-                    @"update bundle_Detail_Art set PatternCode ='{0}',SubProcessid = '{1}',bundleno ='{2}' 
-                    Where ukey ={3};", dr["PatternCode"], dr["SubProcessid"], dr["Bundleno"], arttmp.Rows[row]["ukey"]);
-                }
-                row++;
-            }
-            bundle_Detail_Art_Tb.AcceptChanges();//變更Row Status 狀態
-            int art_new_rowCount = bundle_Detail_Art_Tb.Rows.Count;
-            if (art_old_rowCount > art_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
-            {
-                for (int i = art_new_rowCount; i < art_old_rowCount; i++)
-                {
-                    Art_cmd = Art_cmd + string.Format(@"Delete from bundle_Detail_Art where ukey ='{0}';", arttmp.Rows[i]["ukey"]);
-                }
-            }
+            //int art_old_rowCount = arttmp.Rows.Count;           
+            //foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
+            //{
+            //    if (bundle_Detail_Art_Tb.Rows.Count > art_old_rowCount)
+            //    {
+            //        Art_cmd = Art_cmd + string.Format(
+            //       @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
+            //            values('{0}','{1}','{2}','{3}');"
+            //        , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
+            //    }
+            //    //if (row >= art_old_rowCount) //新增
+            //    //{
+            //    //    Art_cmd = Art_cmd + string.Format(
+            //    //   @"insert into bundle_Detail_Art(ID,Bundleno,PatternCode,SubProcessid) 
+            //    //    values('{0}','{1}','{2}','{3}');"
+            //    //    , CurrentMaintain["ID"], dr["Bundleno"], dr["PatternCode"], dr["SubProcessid"]);
+            //    //}
+            //    else //覆蓋
+            //    {
+            //        Art_cmd = Art_cmd + string.Format(
+            //        @"update bundle_Detail_Art set PatternCode ='{0}',SubProcessid = '{1}',bundleno ='{2}' 
+            //        Where ukey ={3};", dr["PatternCode"], dr["SubProcessid"], dr["Bundleno"], arttmp.Rows[row]["ukey"]);
+            //    }
+            //    //row++;
+            //}
+            //bundle_Detail_Art_Tb.AcceptChanges();//變更Row Status 狀態
+            //int art_new_rowCount = bundle_Detail_Art_Tb.Rows.Count;
+            //if (art_old_rowCount < art_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            //{
+            //    for (int i = art_new_rowCount; i < art_old_rowCount; i++)
+            //    {
+            //        Art_cmd = Art_cmd + string.Format(@"Delete from bundle_Detail_Art where ukey ='{0}';", arttmp.Rows[i]["ukey"]);
+            //    }
+            //}
             #endregion
 
-            #region 處理Bundle_Detail_Qty
-            row = 0;
-            int Qty_old_rowCount = qtytmp.Rows.Count;
+            #region 處理Bundle_Detail_Qty 修改版
 
+            /*
+           * 先刪除原有資料
+           * 再新增更改的資料             
+           */
+            Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where id ='{0}'", masterID);
             foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows) //處理Bundle_Detail_Art
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (bundle_Detail_Qty_Tb.Rows.Count> Qty_old_rowCount)
-                    {
-                        Qty_cmd = Qty_cmd + string.Format(
-                        @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
+                    Qty_cmd = Qty_cmd + string.Format(
+                    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
                     values('{0}','{1}',{2});"
-                        , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
-                    }
-                    //if (row >= Qty_old_rowCount) //新增
-                    //{
-                    //    Qty_cmd = Qty_cmd + string.Format(
-                    //    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
-                    //values('{0}','{1}',{2});"
-                    //    , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
-                    //}
-                    else //覆蓋
-                    {
-                        Qty_cmd = Qty_cmd + string.Format(
-                        @"update bundle_Detail_Qty set SizeCode ='{0}',Qty = {1} 
-                    Where ukey = {2};", dr["SizeCode"], dr["Qty"], qtytmp.Rows[row]["ukey"]);
-                    }
+                    , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
                 }
-                row++;
-            }
-            bundle_Detail_Qty_Tb.AcceptChanges();//變更Row Status 狀態
-            int Qty_new_rowCount = bundle_Detail_Qty_Tb.Rows.Count;
-            if (Qty_old_rowCount > Qty_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
-            {
-                for (int i = Qty_new_rowCount; i < Qty_old_rowCount; i++)
-                {
-                    Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where ukey ={0};", qtytmp.Rows[i]["ukey"]);
-                }
-            }
+                   
+            }   
+
+            #endregion
+            #region 處理Bundle_Detail_Qty
+            //row = 0;
+            //int Qty_old_rowCount = qtytmp.Rows.Count;
+
+            //foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows) //處理Bundle_Detail_Art
+            //{
+            //    if (dr.RowState != DataRowState.Deleted)
+            //    {
+            //        if (bundle_Detail_Qty_Tb.Rows.Count> Qty_old_rowCount)
+            //        {
+            //            Qty_cmd = Qty_cmd + string.Format(
+            //            @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
+            //        values('{0}','{1}',{2});"
+            //            , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
+            //        }
+            //        //if (row >= Qty_old_rowCount) //新增
+            //        //{
+            //        //    Qty_cmd = Qty_cmd + string.Format(
+            //        //    @"insert into bundle_Detail_Qty(ID,SizeCode,Qty) 
+            //        //values('{0}','{1}',{2});"
+            //        //    , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
+            //        //}
+            //        else //覆蓋
+            //        {
+            //            Qty_cmd = Qty_cmd + string.Format(
+            //            @"update bundle_Detail_Qty set SizeCode ='{0}',Qty = {1} 
+            //        Where ukey = {2};", dr["SizeCode"], dr["Qty"], qtytmp.Rows[row]["ukey"]);
+            //        }
+            //    }
+            //    row++;
+            //}
+            //bundle_Detail_Qty_Tb.AcceptChanges();//變更Row Status 狀態
+            //int Qty_new_rowCount = bundle_Detail_Qty_Tb.Rows.Count;
+            //if (Qty_old_rowCount > Qty_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
+            //{
+            //    for (int i = Qty_new_rowCount; i < Qty_old_rowCount; i++)
+            //    {
+            //        Qty_cmd = Qty_cmd + string.Format(@"Delete from bundle_Detail_Qty where ukey ={0};", qtytmp.Rows[i]["ukey"]);
+            //    }
+            //}
             #endregion
             DualResult upResult;
             if (!MyUtility.Check.Empty(allpart_cmd))
