@@ -166,7 +166,31 @@ namespace Sci.Production.Subcon
             #region sqlcmd
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-Select {0}
+Select DISTINCT
+    [Bundleno] = bd.BundleNo,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+    [Master SP#] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+	[Fab_Panel Code] = b.FabricPanelCode,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Artwork] = sub.sub,
+    [Qty] = bd.Qty,
+    [Sub-process] = s.Id,
+    [InComing] = bio.InComing,
+    [Out (Time)] = bio.OutGoing
 
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
@@ -217,57 +241,28 @@ where 1=1
             }
             #endregion
 
-            string cmdct = string.Format(sqlCmd.ToString(), "count(*) ct");
-            sqlCmd.Append(@"order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc");
-            string cmd1 = string.Format(sqlCmd.ToString(), @"DISTINCT
-    [Bundleno] = bd.BundleNo,
-    [Cut Ref#] = b.CutRef,
-    [SP#] = b.Orderid,
-    [Master SP#] = b.POID,
-    [M] = b.MDivisionid,
-    [Factory] = o.FtyGroup,
-    [Style] = o.StyleID,
-    [Season] = o.SeasonID,
-    [Brand] = o.BrandID,
-    [Comb] = b.PatternPanel,
-	[Fab_Panel Code] = b.FabricPanelCode,
-    [Article] = b.Article,
-    [Color] = b.ColorId,
-    [Line] = b.SewinglineId,
-    [Cell] = b.SewingCell,
-    [Pattern] = bd.PatternCode,
-    [PtnDesc] = bd.PatternDesc,
-    [Group] = bd.BundleGroup,
-    [Size] = bd.SizeCode,
-    [Artwork] = sub.sub,
-    [Qty] = bd.Qty,
-    [Sub-process] = s.Id,
-    [InComing] = bio.InComing,
-    [Out (Time)] = bio.OutGoing");
-
+            
+            string cmdct = string.Format("select count(*) ct from ({0})aaa", sqlCmd.ToString());
             int ct = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmdct));
+            sqlCmd.Append(@"order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc");
+            string cmd1 = sqlCmd.ToString();
             SetCount(ct);
             if (ct <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
+            if (ct > 1000000)
+            {
+                MyUtility.Msg.WarningBox("The number of data more than one million, please use more condition !!");
+                return false;
+            }
             //預先開啟excel app
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R41_Bundle tracking list (RFID).xltx");
 
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 200000;
-            int Cpage = ct / num;
-            for (int i = 0; i < Cpage; i++)
-            {
-                Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-                Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
-                worksheet1.Copy(worksheetn);
-                Marshal.ReleaseComObject(worksheet1);
-                Marshal.ReleaseComObject(worksheetn);
-            }
 
-            int c = 1;
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("").ConnectionString))
             using (var cm = cn.CreateCommand())
             {
@@ -280,25 +275,24 @@ where 1=1
                     while ((cnt = adp.Fill(ds, start, num, "Bundle_Detail")) > 0)
                     {
                         System.Diagnostics.Debug.WriteLine("load {0} records", cnt);
-                        start += num;
 
                         //do some jobs                       
-                        Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[c];
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1, false, null, objApp, wSheet: objSheets);
-                        c++;
+                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R41_Bundle tracking list (RFID).xltx", 1+ start, false, null, objApp, wSheet: objSheets);
+                        
+                        start += num;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                         ds.Tables[0].Dispose();
                         ds.Tables.Clear();
-                        Marshal.ReleaseComObject(objSheets);
                     }
                 }
             }
-            if (Cpage > 0)
-            {
-                objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
-            }
+            //if (Cpage > 0)
+            //{
+            //    objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
+            //}
 
+            Marshal.ReleaseComObject(objSheets);
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
