@@ -243,8 +243,13 @@ order by PackingListID, OrderID, rn");
 
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword), out dr, null);
-            objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RECEIVING REPORT";
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);
+
+            if (dr != null)
+                objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RECEIVING REPORT";
+            else
+                objSheets.Cells[1, 1] = "CARTON RECEIVING REPORT";
+
             string d1 = "", d2 = "";
             if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
             {
