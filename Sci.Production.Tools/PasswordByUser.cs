@@ -208,11 +208,22 @@ namespace Sci.Production.Tools
             this.txtUserSupervisor.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
             this.txtUserDeputy.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
             this.txtEMailAddr.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.txtPosition.ReadOnly = true;
+            this.txtPosition.ReadOnly = true;//!(this.EditMode && Sci.Env.User.IsAdmin);
+            if (this.EditMode && Sci.Env.User.IsAdmin)
+            {
+                this.txtPosition.ForeColor = Color.Red;
+                this.txtPosition.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            }
+            else
+            {
+                this.txtPosition.ForeColor = Color.Blue;
+                this.txtPosition.BackColor = Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));                
+            }
 
             this.dateDateHired.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
             this.dateResign.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
             this.editRemark.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.checkAdmin.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
 
             sqlCmd = string.Format(@"SELECT A.*, B.MenuNo, B.BarNo 
                                                 FROM Pass2 as A
