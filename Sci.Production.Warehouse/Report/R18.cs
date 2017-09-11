@@ -181,7 +181,7 @@ with cte as (
                 sqlcmd.Append(@"
     inner join (
                 select  distinct 
-                        ,fi.poid
+                        fi.poid
                         ,fi.seq1
                         ,fi.seq2 
                 from dbo.FtyInventory fi WITH (NOLOCK) 
