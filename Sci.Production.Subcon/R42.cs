@@ -171,7 +171,7 @@ namespace Sci.Production.Subcon
             foreach (DataRow rd in printData.Rows)
             {
                 object[] itemarr = rd.ItemArray;
-                itemarr[itemarr.Length - 1] = (rd["TransferDate"].ToString() == "") ? "" : Convert.ToDateTime(rd["TransferDate"]).ToShortDateString();
+                itemarr[itemarr.Length - 1] = (rd["TransferDate"].ToString() == "") ? "" : Convert.ToDateTime(rd["TransferDate"]).ToString("yyyy/MM/dd HH:mm:ss");
 
                 printData2.LoadDataRow(itemarr, true);
             }
