@@ -43,7 +43,8 @@ select  oa.Article
 from Order_Article oa WITH (NOLOCK) 
 inner join Order_Qty oq WITH (NOLOCK) on oa.ID = oq.ID
 									     and oa.Article = oq.Article
-where oa.ID = '{0}'
+inner join Orders o on oa.id=o.ID
+where o.POID = '{0}'
 group by oa.Article
 ", this.P02CurrentMaintain["OrderID"]);
             #endregion
