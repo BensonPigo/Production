@@ -303,16 +303,12 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
                 string marker2sql = string.Format(@"
+;with t as (
 Select b.Orderid
        , b.MarkerName
        , layer = sum(b.Layer)
        , b.MarkerNo
-       , a.WorkOrderUkey
        , b.fabricCombo
-       , SizeRatio = (Select c.sizecode + '*' + convert (varchar(8), c.qty) + '/' 
-                      From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                      Where a.WorkOrderUkey = c.WorkOrderUkey            
-                      For XML path('')) 
        , PatternPanel = (Select PatternPanel+'+ ' 
                          From WorkOrder_PatternPanel c WITH (NOLOCK) 
                          Where c.WorkOrderUkey =a.WorkOrderUkey 
@@ -330,7 +326,47 @@ left join Orders o WITH (NOLOCK) on b.orderid = o.id
 Where a.workorderukey = b.ukey 
       and a.id = '{0}'
 Group by b.Orderid,b.MarkerName,b.MarkerNo
-         , b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", txtCutplan.Text);
+         , b.fabricCombo,a.WorkOrderUkey
+		 ,o.styleid,o.seasonid
+)
+select StyleID,Seasonid,OrderID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth,sum(layer)as layer 
+into #temp1
+from t
+group by StyleID,Seasonid,OrderID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth
+
+
+
+Select b.Orderid
+       , b.MarkerName
+       , b.MarkerNo
+       , b.fabricCombo
+       , SizeRatio = (Select c.sizecode + '*' + convert (varchar(8), c.qty) + '/' 
+                      From WorkOrder_SizeRatio c WITH (NOLOCK) 
+                      Where a.WorkOrderUkey = c.WorkOrderUkey            
+                      For XML path(''))        
+       , o.styleid
+       , o.seasonid
+	   into #temp2
+From Cutplan_Detail a WITH (NOLOCK) 
+     , WorkOrder b WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on b.orderid = o.id
+Where a.workorderukey = b.ukey 
+      and a.id = '{0}'
+
+
+select a.* 
+,sizeRatio= (select  b.SizeRatio +''
+	from #temp2 b
+	where b.orderid=a.orderid
+	and a.styleid=b.styleid
+	and a.seasonid=b.seasonid
+	and a.MarkerName=b.MarkerName
+	and a.MarkerNo=b.MarkerNo
+	and a.fabricCombo=b.fabricCombo
+	For XML path(''))
+from #temp1 a
+
+DROP TABLE #temp1,#temp2", txtCutplan.Text);
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
