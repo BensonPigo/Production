@@ -324,7 +324,7 @@
             this.DefaultOrder = "issuedate,id";
             this.DefaultSubDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.GridAlias = "Issue_Summary";
-            this.GridUniqueKey = "poid,scirefno,colorid,sizespec";
+            this.GridUniqueKey = "id,ukey";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
