@@ -6,7 +6,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>20.828cm</Width>
+              <Width>20.63433cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -21,12 +21,12 @@
                           <TablixBody>
                             <TablixColumns>
                               <TablixColumn>
-                                <Width>20.828cm</Width>
+                                <Width>20.63433cm</Width>
                               </TablixColumn>
                             </TablixColumns>
                             <TablixRows>
                               <TablixRow>
-                                <Height>1.2cm</Height>
+                                <Height>0.6cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
@@ -300,7 +300,37 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
-                                          <Textbox Name="Textbox27">
+                                        </ReportItems>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Style>
+                                          <Border>
+                                            <Style>None</Style>
+                                          </Border>
+                                        </Style>
+                                      </Rectangle>
+                                    </CellContents>
+                                  </TablixCell>
+                                </TablixCells>
+                              </TablixRow>
+                              <TablixRow>
+                                <Height>0.6cm</Height>
+                                <TablixCells>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Rectangle Name="Rectangle2">
+                                        <ReportItems>
+                                          <Line Name="Line2">
+                                            <Top>0.3cm</Top>
+                                            <Left>0.42333cm</Left>
+                                            <Height>0cm</Height>
+                                            <Width>16.80198cm</Width>
+                                            <Style>
+                                              <Border>
+                                                <Style>Dashed</Style>
+                                              </Border>
+                                            </Style>
+                                          </Line>
+                                          <Textbox Name="Textbox72">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -314,12 +344,11 @@
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox19</rd:DefaultName>
-                                            <Top>0.6cm</Top>
+                                            <rd:DefaultName>Textbox72</rd:DefaultName>
                                             <Left>17.22531cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>1.81616cm</Width>
-                                            <ZIndex>9</ZIndex>
+                                            <Width>1.04479cm</Width>
+                                            <ZIndex>1</ZIndex>
                                             <Style>
                                               <Border>
                                                 <Style>None</Style>
@@ -330,26 +359,14 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
-                                          <Line Name="Line2">
-                                            <Top>0.80257cm</Top>
-                                            <Left>0.10583cm</Left>
-                                            <Height>0cm</Height>
-                                            <Width>17.11948cm</Width>
-                                            <ZIndex>10</ZIndex>
-                                            <Style>
-                                              <Border>
-                                                <Style>Dashed</Style>
-                                              </Border>
-                                            </Style>
-                                          </Line>
-                                          <Textbox Name="Textbox28">
+                                          <Textbox Name="Textbox73">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!TotalQTY.Value</Value>
+                                                    <Value>=First(Fields!TotalQTY.Value)</Value>
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
@@ -358,12 +375,11 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox19</rd:DefaultName>
-                                            <Top>0.6cm</Top>
-                                            <Left>19.04147cm</Left>
+                                            <rd:DefaultName>Textbox72</rd:DefaultName>
+                                            <Left>18.2701cm</Left>
                                             <Height>0.6cm</Height>
-                                            <Width>1.59286cm</Width>
-                                            <ZIndex>11</ZIndex>
+                                            <Width>2.36423cm</Width>
+                                            <ZIndex>2</ZIndex>
                                             <Style>
                                               <Border>
                                                 <Style>None</Style>
@@ -396,13 +412,30 @@
                           <TablixRowHierarchy>
                             <TablixMembers>
                               <TablixMember>
-                                <Group Name="詳細資料" />
+                                <Group Name="Group1">
+                                  <GroupExpressions>
+                                    <GroupExpression>=Fields!POID.Value &amp; " " &amp; Fields!SEQ.Value</GroupExpression>
+                                  </GroupExpressions>
+                                </Group>
+                                <SortExpressions>
+                                  <SortExpression>
+                                    <Value>=Fields!POID.Value &amp; " " &amp; Fields!SEQ.Value</Value>
+                                  </SortExpression>
+                                </SortExpressions>
+                                <TablixMembers>
+                                  <TablixMember>
+                                    <Group Name="詳細資料" />
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <KeepWithGroup>Before</KeepWithGroup>
+                                  </TablixMember>
+                                </TablixMembers>
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
                           <DataSetName>DataSet1</DataSetName>
                           <Height>1.2cm</Height>
-                          <Width>20.828cm</Width>
+                          <Width>20.63433cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -430,40 +463,12 @@
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
           <TablixMembers>
-            <TablixMember>
-              <Group Name="SEQ">
-                <GroupExpressions>
-                  <GroupExpression>=Fields!SEQ.Value</GroupExpression>
-                </GroupExpressions>
-              </Group>
-              <SortExpressions>
-                <SortExpression>
-                  <Value>=Fields!SEQ.Value</Value>
-                </SortExpression>
-              </SortExpressions>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="POID">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!POID.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!POID.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
-                  <TablixMembers>
-                    <TablixMember />
-                  </TablixMembers>
-                </TablixMember>
-              </TablixMembers>
-            </TablixMember>
+            <TablixMember />
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
         <Height>1.2cm</Height>
-        <Width>20.828cm</Width>
+        <Width>20.63433cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -474,7 +479,7 @@
     <Height>0.47244in</Height>
     <Style />
   </Body>
-  <Width>8.2in</Width>
+  <Width>8.12375in</Width>
   <Page>
     <PageHeader>
       <Height>4.2201cm</Height>
