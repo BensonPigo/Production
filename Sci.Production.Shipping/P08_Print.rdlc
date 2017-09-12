@@ -2383,9 +2383,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox158</rd:DefaultName>
         <Top>2.35162cm</Top>
-        <Left>13.78162cm</Left>
+        <Left>13.49587cm</Left>
         <Height>0.6cm</Height>
-        <Width>4.54949cm</Width>
+        <Width>5.01163cm</Width>
         <ZIndex>57</ZIndex>
         <Style>
           <Border>
@@ -2417,9 +2417,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox159</rd:DefaultName>
         <Top>2.98662cm</Top>
-        <Left>13.78162cm</Left>
+        <Left>13.49587cm</Left>
         <Height>0.555cm</Height>
-        <Width>4.54949cm</Width>
+        <Width>5.01163cm</Width>
         <ZIndex>58</ZIndex>
         <Style>
           <Border>
@@ -2435,7 +2435,7 @@
     <Height>6.65354in</Height>
     <Style />
   </Body>
-  <Width>21.03985cm</Width>
+  <Width>18.95cm</Width>
   <Page>
     <PageFooter>
       <Height>0.62745cm</Height>
