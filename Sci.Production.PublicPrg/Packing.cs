@@ -806,7 +806,7 @@ BEGIN
 	FETCH NEXT FROM cursor_SizeData INTO @sizecode, @dataseq
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		select @qty = sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article and SizeCode = @sizecode
+		select @qty = isnull (sum(ShipQty), 0) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article and SizeCode = @sizecode
 		SET @datalen = len(@qty)
 		SET @tmpdata = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + CONVERT(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 		SET @tmpdatalist = @tmpdatalist  + @tmpdata
@@ -820,7 +820,7 @@ BEGIN
 	SET @tmpdata2 = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 	IF(@reporttype = 2)
 		BEGIN
-			select @qty = Sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article
+			select @qty = isnull (Sum(CTNQty), 0) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article
 			SET @datalen = len(@qty)
 			SET @tmpdata2 = @tmpdata2 + IIF(@datalen = 1,'      ',IIF(@datalen = 2 or @datalen = 3,'     ',IIF(@datalen = 4 or @datalen = 5,'    ',IIF(@datalen = 6 or @datalen = 7,'   ',IIF(@datalen = 8 or @datalen = 9 or @datalen = 10,'  ',IIF(@datalen = 11 or @datalen = 12,' ','')))))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'        ',IIF(@datalen = 3 or @datalen = 4,'       ',IIF(@datalen = 5 or @datalen = 6,'      ',IIF(@datalen = 7 or @datalen = 8,'     ',IIF(@datalen = 9,'    ',IIF(@datalen = 10 or @datalen = 11,'   ',IIF(@datalen = 12 or @datalen = 13,'  ',' ')))))))
 
