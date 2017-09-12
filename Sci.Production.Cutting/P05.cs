@@ -322,7 +322,7 @@ Select b.Orderid
        , o.seasonid
 From Cutplan_Detail a WITH (NOLOCK) 
      , WorkOrder b WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on b.orderid = o.id
+inner join Orders o WITH (NOLOCK) on b.orderid = o.poid
 Where a.workorderukey = b.ukey 
       and a.id = '{0}'
 Group by b.Orderid,b.MarkerName,b.MarkerNo
@@ -349,7 +349,7 @@ Select b.Orderid
 	   into #temp2
 From Cutplan_Detail a WITH (NOLOCK) 
      , WorkOrder b WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on b.orderid = o.id
+inner join Orders o WITH (NOLOCK) on b.orderid = o.poid
 Where a.workorderukey = b.ukey 
       and a.id = '{0}'
 
