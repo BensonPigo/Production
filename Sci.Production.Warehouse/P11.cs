@@ -1762,7 +1762,7 @@ order by b.ID, b.seq1, b.seq2", Sci.Env.User.Keyword, this.poid, 0), out subData
                 detailDt.Rows.Add(ndr);
 
                 DataTable sizeRange, subDetails;
-                if (GetSubDetailDatas(CurrentDetailData, out subDetails))
+                if (GetSubDetailDatas(ndr, out subDetails))
                 {
                     DBProxy.Current.Select(null, string.Format(@"
 select  a.SizeCode
@@ -1774,7 +1774,10 @@ left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode
                                             and b.id = '{1}' 
                                             --and b.Issue_DetailUkey = {2}
 where   a.id = '{0}' 
-order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
+order by Seq ", this.poid, CurrentMaintain["id"], ndr["ukey"]), out sizeRange);
+                    if (sizeRange == null)
+                        continue;
+
                     foreach (DataRow drr in sizeRange.Rows)
                     {
                         drr.AcceptChanges();
