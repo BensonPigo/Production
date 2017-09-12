@@ -377,8 +377,8 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
             {
                 string str = Sci.Env.Cfg.XltPathDir;
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P05.xltx"); //預先開啟excel app
-                pathName = Sci.Env.Cfg.ReportTempDir + "Bulk_Marker_Request" + DateTime.Now.ToFileTime() + ".xls";
-                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
+                
+               
                 //Microsoft.Office.Interop.Excel._Workbook objBook = null;
 
 
@@ -395,11 +395,11 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                     objSheet.Cells[3, 4] = Convert.ToDateTime(CurrentMaintain["EstCutDate"]).ToShortDateString();
                     objSheet.Cells[3, 6] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 8] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
-                    string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request");
-                    objBook.SaveAs(strExcelName);
+                    pathName = Sci.Production.Class.MicrosoftFile.GetName("Bulk_Marker_Request");
+                    objBook.SaveAs(pathName);
                     if (autoSave)
                     {
-                        
+                    
                         objBook.Close();
                         objApp.Workbooks.Close();
                         objApp.Quit();
@@ -431,7 +431,7 @@ Group by b.Orderid,b.MarkerName,b.MarkerNo
                         if (objBook != null) Marshal.FinalReleaseComObject(objBook);
                         if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
 
-                        strExcelName.OpenFile();
+                        pathName.OpenFile();
                     }
                 }
             }

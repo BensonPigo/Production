@@ -403,11 +403,11 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
             if (dResult)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_P04.xltx"); //預先開啟excel app
-                pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
-                string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
+              
 
                 //createfolder();
-                if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
+                //if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
+                if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, showExcel: false, excelApp: objApp))
                 {// 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
@@ -417,10 +417,11 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
-
+                    pathName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
+                    objBook.SaveAs(pathName);
                     if (autoSave)
                     {
-                        objBook.SaveAs(Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan"));
+                      
                         objBook.Close();
                         objApp.Workbooks.Close();
                         objApp.Quit();
@@ -437,8 +438,19 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     }
                     else
                     {
+                        objBook.Close();
+                        objApp.Workbooks.Close();
+                        objApp.Quit();
+
+                        Marshal.ReleaseComObject(objApp);
+                        Marshal.ReleaseComObject(objSheet);
+                        Marshal.ReleaseComObject(objBook);
+
                         if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                        if (objBook != null) Marshal.FinalReleaseComObject(objBook);
                         if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
+                        pathName.OpenFile();
                     }
                 }
             }
