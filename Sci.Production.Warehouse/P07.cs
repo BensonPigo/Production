@@ -416,6 +416,8 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
                     CurrentDetailData["pounit"] = x[0]["pounit"];
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    CurrentDetailData["PoidSeq1"] = CurrentDetailData["Poid"].ToString() + x[0]["seq1"];
+                    CurrentDetailData["PoidSeq"] = CurrentDetailData["Poid"].ToString() + x[0]["seq"];
                     //CurrentDetailData["shipqty"] = 0m;
                     //CurrentDetailData["Actualqty"] = 0m;
                     CurrentDetailData.EndEdit();
@@ -437,6 +439,8 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
                         CurrentDetailData["fabrictype"] = "";
                         CurrentDetailData["shipqty"] = 0m;
                         CurrentDetailData["Actualqty"] = 0m;
+                        CurrentDetailData["PoidSeq1"] = CurrentDetailData["Poid"];
+                        CurrentDetailData["PoidSeq"] = CurrentDetailData["Poid"];
                     }
                     else
                     {
@@ -473,6 +477,8 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
                             CurrentDetailData["seq2"] = seq[1];
                             CurrentDetailData["pounit"] = dr["pounit"];
                             CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                            CurrentDetailData["PoidSeq1"] = CurrentDetailData["Poid"] + seq[0];
+                            CurrentDetailData["PoidSeq"] = CurrentDetailData["Poid"].ToString() + e.FormattedValue;
                             //CurrentDetailData["shipqty"] = 0m;
                             //CurrentDetailData["Actualqty"] = 0m;
                         }
