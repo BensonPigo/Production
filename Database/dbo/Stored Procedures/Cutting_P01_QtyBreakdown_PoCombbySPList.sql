@@ -7,12 +7,6 @@ CREATE PROCEDURE [dbo].[Cutting_P01_QtyBreakdown_PoCombbySPList]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
-	DECLARE @Id VARCHAR(13) = ''
-	SELECT TOP 1 @Id = ID FROM WorkOrder WHERE ID = @OrderID
-	IF @Id = ''
-	BEGIN
-		RETURN;
-	END
 
 	
 	select distinct sizecode,Seq
