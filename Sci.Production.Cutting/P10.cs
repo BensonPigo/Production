@@ -611,7 +611,10 @@ order by bundlegroup"
             }
 
             string cmd = string.Format(@"
-Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
+Select a.*
+--,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline 
+,b.Sewline
+,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
 (
     Select Top(1) OrderID
     From Workorder_Distribute WD WITH (NOLOCK) 
