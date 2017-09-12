@@ -14,7 +14,6 @@ namespace Sci.Production.Subcon
     public partial class R42 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        DataTable printData2;
 
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
         DateTime?  dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
@@ -104,7 +103,8 @@ namespace Sci.Production.Subcon
 			              when bt.Type = '2' then 'Out'
 			              when bt.Type = '3' then 'In/Out' end,
             [TagId] = bt.TagId,
-            [TransferDate] = bt.TransferDate
+            [TransferDate] = CONVERT(varchar,TransferDate,111),
+            [TransferTime] = CONVERT(varchar,TransferDate,108)
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
 
             from Bundle b WITH (NOLOCK) 
@@ -164,17 +164,8 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(@"order by [Bundle#],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size]");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+     
             
-            printData2 = printData.Clone();
-            printData2.Columns["TransferDate"].DataType = typeof(string);
-            
-            foreach (DataRow rd in printData.Rows)
-            {
-                object[] itemarr = rd.ItemArray;
-                itemarr[itemarr.Length - 1] = (rd["TransferDate"].ToString() == "") ? "" : Convert.ToDateTime(rd["TransferDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-
-                printData2.LoadDataRow(itemarr, true);
-            }
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -200,7 +191,7 @@ namespace Sci.Production.Subcon
          
             
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            MyUtility.Excel.CopyToXls(printData2, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
             return true;
         }
         #endregion
