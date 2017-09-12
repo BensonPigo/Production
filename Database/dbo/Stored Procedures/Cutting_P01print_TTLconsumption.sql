@@ -7,15 +7,18 @@ BEGIN
 	--抓取ID為POID
 	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
 
-	SELECT ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
+	--SELECT ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
+	SELECT d.POComboList as OrderNo,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY = (select FactoryID from Orders where Id = @OrderID) ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
 	FROM dbo.Orders a WITH (NOLOCK)
 	inner join dbo.Style b WITH (NOLOCK) on a.StyleID = b.Id and a.BrandID = b.BrandID and a.SeasonID = b.SeasonID
 	inner join dbo.LossRateFabric c WITH (NOLOCK) on b.FabricType = c.WeaveTypeID
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
+	  Left Join dbo.Order_POComboList as d On a.POID = d.ID
+	--OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
 	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Production.dbo.Order_EachCons WITH (NOLOCK) WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
 	WHERE POID = @OrderID
-	GROUP BY CuttingSP,POID,d.spno,StyleID,a.SeasonID,FactoryID,b.FabricType,c.TWLimitUp,e.MarkerDownloadID
-
+	GROUP BY CuttingSP,POID,d.POComboList,StyleID,a.SeasonID,b.FabricType,c.TWLimitUp,e.MarkerDownloadID
+	--GROUP BY CuttingSP,POID,d.spno,StyleID,a.SeasonID,FactoryID,b.FabricType,c.TWLimitUp,e.MarkerDownloadID
+	/*
 	SELECT Order_EachCons.TYPE,Style_BOF.ConsPC,Fabric.Width,CuttingPiece,Orders.StyleUnit
 	,[COLOR]=Color.Name
 	,Order_EachCons_Color.YDS
@@ -81,5 +84,89 @@ BEGIN
 	ORDER BY FabricCode,COLOR
 	
 	drop table #tmp
-	
+	*/
+	Select CuttingSP Into #tmpCuttingList From Production.dbo.Orders Where Orders.POID = @OrderID Group by CuttingSP;
+
+	Select * Into #tmpFabLoss From dbo.GetLossFabric(@OrderID, '');
+
+	With tmpTtlEachCons as
+	(
+		Select Order_BOF.FabricCode, Order_BOF.SCIRefno, Order_BOF.Refno
+			 , Order_EachCons_Color.ColorID, IsNull(Color.Name, Order_EachCons_Color.ColorID) as ColorName
+			 , IsNull(Fabric.UsageUnit, '') as UsageUnit
+			 , IsNull(Fabric_Supp.POUnit, '') as POUnit
+			 , IsNull(Fabric.Description, '') as Description
+			 , IsNull(Fabric.Width, 0) as Width
+			 , IsNull(Fabric.Weight, 0) as Weight
+			 , Supp.CountryID as SuppCountry
+			 , Order_BOF.LossType
+			 , Order_BOF.LossPercent
+			 , Unit.UnitRound, Unit.RoundStep, Unit.UsageRound
+			 , Max(Order_EachCons.MarkerLength) as Yds
+			 , Max(Order_EachCons.ConsPC) as PCS
+			 , Max(Order_BOF.ConsPC) as ConsPC
+			 , Sum(tmpQty.Qty) as Qty
+			 , Sum(tmpQty49.Qty49) as Qty49
+		  From #tmpCuttingList
+		 Inner Join dbo.Orders
+			On Orders.ID = #tmpCuttingList.CuttingSP
+		 Inner Join dbo.Order_EachCons
+			On Order_EachCons.ID = #tmpCuttingList.CuttingSP
+		 Inner Join dbo.Order_EachCons_Color
+			On Order_EachCons_Color.Order_EachConsUkey = Order_EachCons.Ukey
+		 Inner Join dbo.Order_FabricCode
+			On Order_FabricCode.ID = Orders.POID
+			   And Order_FabricCode.FabricPanelCode = Order_EachCons.FabricPanelCode
+		 Inner Join dbo.Order_BOF
+			On	   Order_BOF.ID = Orders.POID
+			   And Order_BOF.FabricCode = Order_FabricCode.FabricCode
+		  Left Join dbo.Color
+			On	   Color.BrandId = Orders.BrandID
+			   And Color.ID = Order_EachCons_Color.ColorID
+		  Left Join dbo.Fabric
+			On Fabric.SCIRefno = Order_BOF.SCIRefno
+		  Left Join dbo.Fabric_Supp
+			On	   Fabric_Supp.SCIRefno = Order_BOF.SCIRefno
+			   And Fabric_Supp.SuppID = OrdeR_BOF.SuppID
+		  Left Join dbo.Supp
+			On Supp.Id = OrdeR_BOF.SuppID
+		 Cross Apply (Select ProphetSingleSizeDeduct From dbo.System) as tmpTradeSystem
+		 Cross Apply (Select IIF(Order_EachCons.CuttingPiece = 0 And Orders.EachConsSource = 'S', Order_EachCons_Color.YDS * IsNull(tmpTradeSystem.ProphetSingleSizeDeduct, 0) / 100, 0) as Deduct) tmpDeduct
+		 Cross Apply (Select (Order_EachCons_Color.Yds - tmpDeduct.Deduct) as Qty) as tmpQty
+		 Cross Apply (Select IIF(Order_EachCons.CuttingPiece = 1 And Order_EachCons.Type != 'T', Order_EachCons_Color.Yds - tmpDeduct.Deduct, 0) Qty49) as tmpQty49
+		 Outer Apply (Select * From dbo.GetUnitRound(Orders.BrandID, Orders.ProgramID, Orders.Category, Fabric.UsageUnit)) as Unit
+		 Group by Order_BOF.FabricCode, Order_BOF.SCIRefno, Order_BOF.Refno
+			 , Order_EachCons_Color.ColorID, Color.Name, Fabric.UsageUnit, Fabric_Supp.POUnit, Fabric.Description
+			 , Fabric.Width, Fabric.Weight, Supp.CountryID, Order_BOF.LossType, Order_BOF.LossPercent
+			 , Unit.UnitRound, Unit.RoundStep, Unit.UsageRound
+	)
+	Select [REF# FABRIC] = tmpTtlEachCons.Refno + CHAR(10) + tmpTtlEachCons.[Description]
+		 , [COLOR] = tmpTtlEachCons.ColorName
+		 , [UNIT] = IIF(tmpTtlEachCons.UsageUnit = tmpTtlEachCons.POUnit, Null, tmpTtlEachCons.UsageUNIT)
+		 , [CONSUMPTION] = IIF(tmpTtlEachCons.UsageUnit = tmpTtlEachCons.POUnit, Null, Cast(tmpTtlEachCons.Qty as decimal(10,2)))	--UsageCONSUMPTION
+		 , [UNIT.]=POUnit --PurchaseUNIT
+		 , [CONSUMPTION.] = Cast(tmpQty2.NetQty as Decimal(10,2)) --PurchaseCONSUMPTION
+		 , [PLUS(YDS/%)] = IIF(IsNumeric(tmpFabLoss.PlusName) = 1, Cast(Cast(dbo.GetCeiling(tmpFabLoss.PlusName,1,0) as Numeric(8,2)) As Varchar), tmpFabLoss.PlusName)
+		 , [TOTAL(Inclcut. use)] = Cast(tmpTtlQty.Qty as Decimal(10,2))
+		 , [CUTTING USE]=floor(cast(tmpQty2.NetQty49 as Decimal(10,2))) --不顯示小數
+		 , [M/WIDTH] = Cast(tmpTtlEachCons.Width as varchar(5)) + '"'
+		 , [M/WEIGHT] = Cast(Cast(Round(tmpTtlEachCons.[Weight], 1, 1) as Decimal(10,1)) as NVarchar) + 'g'
+		 , [TTL CONS(KG)] = ''
+		 , [CONS/PC] = ''
+		 , [STYLE DATA CONS/PC] = IIF(tmpTtlEachCons.ConsPC = 0, '', Cast(tmpTtlEachCons.ConsPC as Varchar(20)))
+	  From tmpTtlEachCons
+	 Outer Apply (Select * From #tmpFabLoss Where #tmpFabLoss.FabricCode = tmpTtlEachCons.FabricCode And #tmpFabLoss.ColorID = tmpTtlEachCons.ColorID) as tmpFabLoss
+	 --計算轉換單位
+	 Outer Apply (Select dbo.GetUnitQty(UsageUnit,POUnit,Qty) as Qty
+					   , dbo.GetUnitQty(UsageUnit,POUnit,Qty49) as Qty49
+					   , dbo.GetUnitQty(UsageUnit,POUnit,RealLoss) as LossQty
+				 ) as tmpQty
+	 --計算小數進位
+	 Outer Apply (Select dbo.GetCeiling(tmpQty.Qty, tmpTtlEachCons.UsageRound, tmpTtlEachCons.RoundStep) as NetQty
+					   , dbo.GetCeiling(tmpQty.Qty49, tmpTtlEachCons.UsageRound, tmpTtlEachCons.RoundStep) as NetQty49
+					   , dbo.GetCeiling(tmpQty.LossQty, tmpTtlEachCons.UsageRound, tmpTtlEachCons.RoundStep) AS LossQty
+				 ) as tmpQty2
+	 Outer Apply (Select dbo.GetCeiling(tmpQty2.NetQty + tmpQty2.LossQty, tmpTtlEachCons.UnitRound, tmpTtlEachCons.RoundStep) as Qty) as tmpTtlQty
+
+	Drop Table #tmpCuttingList
 END
