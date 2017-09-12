@@ -324,9 +324,9 @@ select  t.*
         , sb.ConsPC
         , sc.ColorID
         , f.UsageUnit
-        , f.HSCode
-        , f.NLCode
-        , f.CustomsUnit
+        , HSCode = isnull (f.HSCode, '')
+        , NLCode = isnull (f.NLCode, '')
+        , CustomsUnit = isnull (f.CustomsUnit, '')
         , f.PcsWidth
         , f.PcsLength
         , f.PcsKg
@@ -421,7 +421,7 @@ select  t.*
         , li.MeterToCone
         , li.NLCode
         , li.HSCode
-        , li.CustomsUnit
+        , CustomsUnit = isnull (li.CustomsUnit, '')
         , li.PcsWidth
         , li.PcsLength
         , li.PcsKg
@@ -554,7 +554,7 @@ select  t.StyleID
         , t.OrderBrandID
         , t.Category
         , t.SizeCode
-        , t.Article
+        , Article = isnull (t.Article, '')
         , t.GMTQty
         , vfd.* 
         , sa.TissuePaper as ArticleTissuePaper
