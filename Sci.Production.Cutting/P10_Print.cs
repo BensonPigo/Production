@@ -73,7 +73,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
         ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -108,7 +108,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
         ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -161,7 +161,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
 			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -189,7 +189,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
 			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -428,7 +428,7 @@ order by x.[Bundle]");
             objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
             objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
             objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                : MyUtility.GetValue.Lookup(string.Format(@"select MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
+                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
             objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
             objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
             objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
@@ -607,7 +607,7 @@ order by x.[Bundle]");
                     objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
                     objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
                     objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                        : MyUtility.GetValue.Lookup(string.Format(@"select MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
+                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
                     objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
                     objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
                     objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
