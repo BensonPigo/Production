@@ -828,8 +828,8 @@ select distinct t.*
                                 where OrderID = t.ID)
                               , 0) 
         , t.TotalCTN
-        , FtyCtn = t.TotalCTN - t.FtyCTN
-        , t.ClogCTN
+        , FtyCtn = isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0)
+        , ClogCTN = isnull(t.ClogCTN,0)
         , ClogRcvDate = t.ClogLastReceiveDate
         , Article = isnull ((select CONCAT(Article, ',') 
                              from (select distinct Article 
