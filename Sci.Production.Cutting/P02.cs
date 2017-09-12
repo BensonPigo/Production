@@ -1411,9 +1411,24 @@ where w.ID = '{0}'", masterID);
             #region 根據左邊Grid Filter 右邊資訊
             if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
             {
+           
                 sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
-                distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
-                gridDistributetoSPNo.SelectRowTo(0);               
+                distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}' ", CurrentDetailData["Ukey"]);
+
+                gridDistributetoSPNo.SelectRowTo(0);  
+                for (int i = 0; i < gridDistributetoSPNo.Rows.Count; i++) {
+                    if (gridDistributetoSPNo.Rows[i].Cells["OrderID"].Value.Equals(CurrentDetailData["OrderID"]) &&
+                        gridDistributetoSPNo.Rows[i].Cells["Article"].Value.Equals(CurrentDetailData["Article"]) &&
+                        CurrentDetailData["SizeCode"].ToString().Contains(gridDistributetoSPNo.Rows[i].Cells["SizeCode"].Value.ToString()))
+                    {
+                        gridDistributetoSPNo.SelectRowTo(i);
+
+                        break;
+                    }
+                }
+
+
+                                 
             }
             if (MyUtility.Convert.GetString(CurrentDetailData["Ukey"]) == "0")
             {
