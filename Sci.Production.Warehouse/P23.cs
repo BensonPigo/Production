@@ -497,17 +497,27 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             
             #region -- 更新庫存數量 ftyinventory --
             var data_Fty_4T = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("frompoid"),
-                             seq1 = m.Field<string>("fromseq1"),
-                             seq2 = m.Field<string>("fromseq2"),
-                             stocktype = m.Field<string>("fromstocktype"),
-                             qty = m.Field<decimal>("qty"),
-                             location = m.Field<string>("tolocation"),
-                             roll = m.Field<string>("fromroll"),
-                             dyelot = m.Field<string>("fromdyelot"),
-                         }).ToList();
+                               group m by new
+                               {
+                                   poid = m.Field<string>("frompoid"),
+                                   seq1 = m.Field<string>("fromseq1"),
+                                   seq2 = m.Field<string>("fromseq2"),
+                                   stocktype = m.Field<string>("fromstocktype"),
+                                   location = m.Field<string>("tolocation"),
+                                   roll = m.Field<string>("fromroll"),
+                                   dyelot = m.Field<string>("fromdyelot")
+                               } into g
+                               select new
+                               {
+                                   poid = g.Key.poid,
+                                   seq1 = g.Key.seq1,
+                                   seq2 = g.Key.seq2,
+                                   stocktype = g.Key.stocktype,
+                                   qty = g.Sum(m => m.Field<decimal>("qty")),
+                                   location = g.Key.location,
+                                   roll = g.Key.roll,
+                                   dyelot = g.Key.dyelot,
+                               }).ToList();
 
             DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -866,17 +876,28 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #region -- 更新庫存數量  ftyinventory --
             var data_Fty_4F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("frompoid"),
-                             seq1 = m.Field<string>("fromseq1"),
-                             seq2 = m.Field<string>("fromseq2"),
-                             stocktype = m.Field<string>("fromstocktype"),
-                             qty = - (m.Field<decimal>("qty")),
-                             location = m.Field<string>("tolocation"),
-                             roll = m.Field<string>("fromroll"),
-                             dyelot = m.Field<string>("fromdyelot"),
-                         }).ToList();
+                               group m by new
+                               {
+                                   poid = m.Field<string>("frompoid"),
+                                   seq1 = m.Field<string>("fromseq1"),
+                                   seq2 = m.Field<string>("fromseq2"),
+                                   stocktype = m.Field<string>("fromstocktype"),
+                                   location = m.Field<string>("tolocation"),
+                                   roll = m.Field<string>("fromroll"),
+                                   dyelot = m.Field<string>("fromdyelot")
+                               } into g
+                               select new
+                               {
+                                   poid = g.Key.poid,
+                                   seq1 = g.Key.seq1,
+                                   seq2 = g.Key.seq2,
+                                   stocktype = g.Key.stocktype,
+                                   qty = g.Sum(m => m.Field<decimal>("qty")),
+                                   location = g.Key.location,
+                                   roll = g.Key.roll,
+                                   dyelot = g.Key.dyelot,
+                               }).ToList();
+
             var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                            select new
                            {
