@@ -196,7 +196,7 @@ order by PackingListID, OrderID, rn");
             objSheets.get_Range(string.Format("A4:L{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from MDivision where id = '{0}'", Sci.Env.User.Keyword), out dr, null);
             objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RETURN REPORT";
 
             string d1 = "", d2 = "";
