@@ -83,14 +83,14 @@ select 	a.NLCode
 into #tmpDeclare 
 from (
 	select 	vid.NLCode
-			,vid.Qty
+			,Qty = round(vid.Qty,6)
 	from VNImportDeclaration vi WITH (NOLOCK) 
 	inner join VNImportDeclaration_Detail vid WITH (NOLOCK) on vid.ID = vi.ID
 	where vi.VNContractID = @contract and vi.Status = 'Confirmed'
 
 	union all
 	select 	vcd.NLCode
-			, 0 - round(((vcd.Qty * ved.ExportQty)+(vcd.Qty * ved.ExportQty)* vctd.Waste),3)
+			, 0 - round(((vcd.Qty * ved.ExportQty)+(vcd.Qty * ved.ExportQty)* vctd.Waste),6)
 	from VNExportDeclaration ve WITH (NOLOCK) 
 	inner join VNExportDeclaration_Detail ved WITH (NOLOCK) on ved.ID = ve.ID
 	inner join VNConsumption vc WITH (NOLOCK) on vc.VNContractID = ve.VNContractID and ved.CustomSP = vc.CustomSP
@@ -100,7 +100,7 @@ from (
 
 	union all
 	select 	vcd.NLCode
-			,vcd.Qty
+			,Qty = round(vcd.Qty,6)
 	from VNContractQtyAdjust vc WITH (NOLOCK) 
 	inner join VNContractQtyAdjust_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 	where vc.VNContractID = @contract and vc.Status != 'New'
