@@ -380,24 +380,25 @@ namespace Sci.Production.Warehouse
             string sqlcmd
                 = string.Format(@"
 ;WITH QA AS (
-	Select  POID
-            , SEQ1
-            , SEQ2
+	Select  c.InvNo InvNo
+            ,a.POID POID
+            ,a.SEQ1 SEQ1
+            ,a.SEQ2 SEQ2
             , CASE 
 	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
 	            else a.result
 	          END as [Result] 
     from dbo.FIR a WITH (NOLOCK) 
-    where   a.POID LIKE @sp1 
-	        and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
-	        or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
-	
+    left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
+    where   a.POID LIKE @sp1
     UNION
-	Select  POID
-            , SEQ1
-            , SEQ2
+	Select   c.InvNo InvNo
+            ,a.POID POID
+            ,a.SEQ1 SEQ1
+            ,a.SEQ2 SEQ2
             , a.result as [Result] 
 	from dbo.AIR a WITH (NOLOCK) 
+    left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
     where   a.POID LIKE @sp1 
             and a.Result !=''
 ) 
@@ -499,12 +500,12 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
-                    , stuff((select Concat('/',t.Result) from ( SELECT Result 
+                    , stuff((select Concat('/',t.Result) from ( SELECT invNo,Result 
                                                                 FROM QA 
                                                                 where   poid = m.POID 
                                                                         and seq1 = m.seq1 
                                                                         and seq2 = m.seq2 
-                                                                )t for xml path('')),1,1,'') FIR
+                                                                )t order by invNo  for xml path('')),1,1,'') FIR
                     ,(Select cast(tmp.Remark as nvarchar)+',' 
                       from (
 			                    select b1.remark 
@@ -582,7 +583,7 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
-                    , stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
+                    , stuff((select Concat('/',t.Result) from (SELECT invNo, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by invNo for xml path('')),1,1,'') FIR
                     , (Select cast(tmp.Remark as nvarchar)+',' 
                        from (
 			                    select b1.remark 
@@ -635,6 +636,13 @@ where ROW_NUMBER_D =1
             {
                 if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
+
+                //foreach (DataRow rw in dtData.Rows) {
+                //    if (rw["FIR"].ToString().Contains("null")) { rw["FIR"] = ""; }
+                //    else if (rw["FIR"].ToString().Contains("Fail")) { rw["FIR"] = "Fail"; }
+                   
+                //}
+
                 listControlBindingSource1.DataSource = dtData;
                 grid1_sorting();
                 ChangeDetailColor();
