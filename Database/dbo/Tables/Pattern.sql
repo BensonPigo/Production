@@ -17,7 +17,7 @@ CREATE TABLE [dbo].[Pattern] (
     [HisRemark]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_HisRemark] DEFAULT ('') NULL,
     [PendingRemark] NVARCHAR (MAX) CONSTRAINT [DF_Pattern_PendingRemark] DEFAULT ('') NULL,
     [SizeRound]     BIT            CONSTRAINT [DF_Pattern_SizeRound] DEFAULT ((0)) NULL,
-    [SizeRange]     NVARCHAR (100) CONSTRAINT [DF_Pattern_SizeRange] DEFAULT ('') NULL,
+    [SizeRange]     NVARCHAR (MAX) CONSTRAINT [DF_Pattern_SizeRange] DEFAULT ('') NULL,
     [StyleUkey]     BIGINT         CONSTRAINT [DF_Pattern_StyleUkey] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Pattern_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
