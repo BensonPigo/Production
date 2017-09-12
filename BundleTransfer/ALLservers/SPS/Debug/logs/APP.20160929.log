@@ -1,0 +1,105 @@
+﻿[2016/09/29 15:02:15.671][9] ***** ***** ***** [2016/09/23 18:00:43.878] ***** ***** *****
+
+** 應用程式開始 [2016/09/29 15:02:15.676][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/29 15:02:15.679][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/29 15:02:15.679][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/29 15:02:15.679][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/29 15:02:18.980][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/29 15:44:56.596][9] ***** ***** ***** [2016/09/29 15:02:19.372] ***** ***** *****
+
+** 應用程式開始 [2016/09/29 15:44:56.602][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/29 15:44:56.604][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/29 15:44:56.605][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/29 15:44:56.605][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/29 15:44:58.971][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+
+[2016/09/29 16:45:40.364][9] ***** ***** ***** [2016/09/29 15:45:00.942] ***** ***** *****
+
+** 應用程式開始 [2016/09/29 16:45:40.370][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1607.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1606.1200, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1604.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1603.700, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1604.2500, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2016/09/29 16:45:40.372][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2016/09/29 16:45:40.373][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\Production.Daily\bin\Debug\' 載入組件。
+[2016/09/29 16:45:40.373][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+** 應用程式結束 [2016/09/29 16:45:42.500][9] - Production.Daily, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+

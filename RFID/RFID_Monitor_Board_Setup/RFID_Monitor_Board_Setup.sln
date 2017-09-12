@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RFID_Monitor_Board_Setup", "RFID_Monitor_Board_Setup\RFID_Monitor_Board_Setup.csproj", "{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC926CB4-64AC-4A53-A8A8-FA7F4EA2A1ED}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

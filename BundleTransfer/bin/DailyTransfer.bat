@@ -1,0 +1,1 @@
+x86\Release\Production.Daily.exe "DailyTransfer"

@@ -1,5 +1,0 @@
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\Debug\RFIDmiddleware.exe.config
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\Debug\RFIDmiddleware.csprojResolveAssemblyReference.cache
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\Debug\RFIDmiddleware.Properties.Resources.resources
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\Debug\RFIDmiddleware.csproj.GenerateResource.Cache
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\Debug\RFIDmiddleware.RFIDmiddleware.resources

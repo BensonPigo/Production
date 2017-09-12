@@ -1,0 +1,99 @@
+﻿[2017/01/04 11:54:20.487] [1] ***** ***** ***** [2017/01/04 11:54:19.748] ***** ***** *****
+[2017/01/04 11:54:20.488] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:54:21.018] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:54:21.020] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:54:21.103] [4] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):83
+[2017/01/04 11:54:21.128] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2017/01/04 11:54:21.128] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:54:21.129] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2017/01/04 11:54:21.163] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:54:21.198] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2017/01/04 11:54:21.198] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:54:21.198] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:54:21.204] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2017/01/04 11:54:21.208] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/04 11:54:21.208] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:54:21.208] [1] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2017/01/04 11:57:41.637] [9] ***** ***** ***** [2017/01/04 11:47:54.529] ***** ***** *****
+[2017/01/04 11:57:41.638] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:57:41.824] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:57:53.670] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/01/04 11:58:40.180] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:58:40.184] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:58:59.853] [10] ***** ***** ***** [2017/01/04 11:58:58.224] ***** ***** *****
+[2017/01/04 11:58:59.853] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:58:59.982] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:59:01.381] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/01/04 11:59:09.986] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:59:09.991] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:59:40.367] [12] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):30375
+[2017/01/04 11:59:40.369] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2017/01/04 11:59:40.369] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:59:40.369] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2017/01/04 11:59:51.495] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:59:51.526] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2017/01/04 11:59:51.526] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:59:51.527] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:59:51.536] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2017/01/04 11:59:51.549] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+System.Data.SqlClient.SqlException (0x80131904): 已超過連接 Timeout 的設定。在作業完成之前超過逾時等待的時間，或者是伺服器未回應。 ---> System.ComponentModel.Win32Exception (0x80004005): 等候操作已逾時。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 PMSUploadDataToAPS.Daily.Main.AsyncUpdateExport(SqlConnection conn) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 179
+ClientConnectionId:6dab80a9-5801-4f6f-8055-cf2ab40d03d7
+[2017/01/04 11:59:51.595] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/04 11:59:51.597] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/04 11:59:58.783] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/04 11:59:58.826] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/04 11:59:58.826] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/04 11:59:58.826] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 11:59:58.826] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/04 11:59:58.827] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/04 11:59:58.832] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]EXECUTE
+[2017/01/04 12:01:04.852] [9] ***** ***** ***** [2017/01/04 12:00:02.331] ***** ***** *****
+[2017/01/04 12:01:04.852] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/04 12:01:04.962] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/01/04 12:01:06.518] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/01/04 12:02:04.517] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2017/01/04 12:02:04.521] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/01/04 12:02:34.694] [15] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):30172
+[2017/01/04 12:02:34.697] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2017/01/04 12:02:34.697] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 12:02:34.698] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2017/01/04 12:02:34.763] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2017/01/04 12:02:34.796] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2017/01/04 12:02:34.796] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 12:02:34.796] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2017/01/04 12:02:34.805] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2017/01/04 12:02:34.817] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+System.Data.SqlClient.SqlException (0x80131904): 已超過連接 Timeout 的設定。在作業完成之前超過逾時等待的時間，或者是伺服器未回應。 ---> System.ComponentModel.Win32Exception (0x80004005): 等候操作已逾時。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 PMSUploadDataToAPS.Daily.Main.AsyncUpdateExport(SqlConnection conn) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 179
+ClientConnectionId:29c92d30-3a06-4931-bcb1-c69059613ddb
+[2017/01/04 12:02:34.860] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/04 12:02:34.861] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/04 12:03:29.568] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/04 12:03:29.611] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/04 12:03:29.611] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/04 12:03:29.611] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 12:03:29.612] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/04 12:03:29.612] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/04 12:03:29.618] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]EXECUTE
+[2017/01/04 12:24:59.417] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/04 12:24:59.417] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/04 12:24:59.418] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、

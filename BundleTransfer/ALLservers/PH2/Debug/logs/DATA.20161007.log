@@ -1,0 +1,22 @@
+﻿[2016/10/07 09:37:59.050][3] ***** ***** ***** [2016/10/06 09:55:10.511] ***** ***** *****
+[2016/10/07 09:37:59.065][3] Error: Sci.dll  Sci.Data.DBProxy.SelectByConn  取得資料庫資料時發生錯誤。
+Select 1 as Seq, 'Export' as TransState, Name, DateStart, DateEnd From Pms_To_Trade.dbo.DateInfoUnion AllSelect 2 as Seq, 'Upload' as TransState, Name, DateStart, DateEnd From Trade_To_Pms.dbo.DateInfo Order by Seq
+System.Data.SqlClient.SqlException (0x80131904): Incorrect syntax near '2'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   於 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   於 System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader(CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   於 Sci.Data.DBProxy.SelectByConn[TABLE](SqlConnection conn, String cmdtext, IList`1 parameters, TABLE& datas) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1551
+ClientConnectionId:6ee1f635-e360-451d-a585-9d20998e5be4

@@ -1,0 +1,25 @@
+﻿[2016/10/14 10:03:27.057][12] ***** ***** ***** [2016/10/14 09:58:37.739] ***** ***** *****
+[2016/10/14 10:03:27.083][12] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+
+USE master
+if db_id('Trade_To_Pms') is not null
+BEGIN
+    ALTER DATABASE Trade_To_Pms SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    execute sp_detach_db 'Trade_To_Pms' ;  -- 卸載SQL實體檔案
+END
+
+exec sp_attach_db N'Trade_To_Pms', N'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms.mdf'
+
+System.Data.SqlClient.SqlException (0x80131904): Unable to open the physical file "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)".
+Changed database context to 'master'.
+File activation failure. The physical file name "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf" may be incorrect.
+New log file 'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms_log.ldf' was created.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteNonQueryTds(String methodName, Boolean async, Int32 timeout)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:a5636bc4-affc-4094-8800-1672226779ef
