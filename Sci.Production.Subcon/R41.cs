@@ -177,6 +177,7 @@ Select DISTINCT
     [Season] = o.SeasonID,
     [Brand] = o.BrandID,
     [Comb] = b.PatternPanel,
+    b.Cutno,
 	[Fab_Panel Code] = b.FabricPanelCode,
     [Article] = b.Article,
     [Color] = b.ColorId,
