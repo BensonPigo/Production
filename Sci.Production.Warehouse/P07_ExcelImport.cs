@@ -116,16 +116,17 @@ namespace Sci.Production.Warehouse
                 .Text("dyelot", header: "Lot No", width: Widths.AnsiChars(4))
                 .Text("pounit", header: "Po Unit", width: Widths.AnsiChars(4))
                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(4))
-                .Numeric("Qty", header: "Qty",settings:ns)
-                .Numeric("foc", header: "F.O.C", settings: ns2)
-                .Numeric("weight", header: "WeiKg")
-                .Numeric("actualWeight", header: "NetKg")
+                .Numeric("Qty", header: "Qty", decimal_places: 2,settings:ns)
+                .Numeric("foc", header: "F.O.C", decimal_places: 2, settings: ns2)
+                .Numeric("weight", header: "WeiKg", decimal_places: 2)
+                .Numeric("actualWeight", header: "NetKg", decimal_places: 2)
                 .Text("location", header: "Location", width: Widths.AnsiChars(8))
-                .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
+                .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < gridPoid.ColumnCount; i++)
             {
                 gridPoid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridPoid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; 
             }
         }
 
@@ -254,6 +255,7 @@ namespace Sci.Production.Warehouse
                                 intRowsRead++;
                                 range = worksheet.Range[String.Format("A{0}:AE{0}", intRowsRead)];
                                 objCellArray = range.Value;
+                                List<string> listNewRowErrMsg = new List<string>();
 
                                 DataRow newRow = grid2Data.NewRow();
                                 newRow["wkno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
@@ -271,11 +273,53 @@ namespace Sci.Production.Warehouse
                                 newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "N");
                                 newRow["location"] = (objCellArray[1, ItemPosition[11]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]], "C");
 
-                                if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["exportid"].ToString())
+                                #region check Columns length
+                                List<string> listColumnLengthErrMsg = new List<string>();
+
+                                // Poid varchar(13)
+                                if (newRow["poid"].ToString().Length > 13)
+                                    listColumnLengthErrMsg.Add("<SP#> length can't be more than 13 Characters.");
+
+                                // Seq1 varchar(3)
+                                if (newRow["Seq1"].ToString().Length > 3)
+                                    listColumnLengthErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
+
+                                // Seq2 varchar(2)
+                                if (newRow["Seq2"].ToString().Length > 2)
+                                    listColumnLengthErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
+
+                                // Roll varchar(8)
+                                if (newRow["Roll"].ToString().Length > 8)
+                                    listColumnLengthErrMsg.Add("<C/No> length can't be more than 8 Characters.");
+
+                                // Dyelot varchar(4)
+                                if (newRow["Dyelot"].ToString().Length > 4)
+                                    listColumnLengthErrMsg.Add("<LOT NO.> length can't be more than 4 Characters.");
+
+                                // qty + foc  numeric (11, 2)
+                                if (decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString()) > 999999999)
+                                    listColumnLengthErrMsg.Add("<Qty + F.O.C> value can't be more than 999,999,999");
+
+                                // actualWeight numeric (7, 2)
+                                if (decimal.Parse(newRow["actualWeight"].ToString()) > 99999)
+                                    listColumnLengthErrMsg.Add("<NetKg> value can't be more than 99,999");
+
+                                // Weight numeric (7, 2)
+                                if (decimal.Parse(newRow["Weight"].ToString()) > 99999)
+                                    listColumnLengthErrMsg.Add("<WeiKg> value can't be more than 99,999");
+
+                                // Location varchar(60)
+                                if (newRow["Location"].ToString().Length > 60)
+                                    listColumnLengthErrMsg.Add("<Location> length can't be more than 60 Characters.");
+
+                                if (listColumnLengthErrMsg.Count > 0){
+                                    listNewRowErrMsg.Add(listColumnLengthErrMsg.JoinToString(Environment.NewLine));
+                                }
+                                #endregion
+
+                                if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["InvNo"].ToString())
                                 {
-                                    dr["Status"] = string.Format("WK# is not match {0}", master["exportid"]);
-                                    grid2Data.Clear();
-                                    return;
+                                    listNewRowErrMsg.Add(string.Format("WK# is not match {0}", master["InvNo"]));
                                 }
 
                                 if (MyUtility.Check.Empty(newRow["poid"]) || MyUtility.Check.Empty(newRow["seq1"]) || MyUtility.Check.Empty(newRow["seq2"]))
@@ -285,9 +329,9 @@ namespace Sci.Production.Warehouse
 
                                 if (newRow["seq1"].ToString().Substring(0, 1) == "7")
                                 {
-                                    continue;
-                                    //MyUtility.Msg.WarningBox(string.Format("Can't not import 7X item (SP#:{0}-Seq1:{1}-Seq2:{2})!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
-                                    //return;
+                                    listNewRowErrMsg.Add(string.Format("Can't not import 7X item (SP#:{0}-Seq1:{1}-Seq2:{2})!!", newRow["poid"]
+                                                                                                                             , newRow["seq1"]
+                                                                                                                             , newRow["seq2"]));                                   
                                 }
 
                                 DataRow dr2;
@@ -301,7 +345,7 @@ from dbo.PO_Supp_Detail pd WITH (NOLOCK)
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
-where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRow["seq1"], newRow["seq2"], newRow["shipqty"]);
+where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"].ToString().Trim(), newRow["seq1"].ToString().Trim(), newRow["seq2"].ToString().Trim(), newRow["shipqty"].ToString().Trim());
 
                                 if (MyUtility.Check.Seek(sql, out dr2))
                                 {
@@ -314,19 +358,16 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                     // po unit 空白不匯入
                                     if (MyUtility.Check.Empty(dr2["pounit"]))
                                     {
-                                        excel.Workbooks.Close();
-                                        excel.Quit();
-                                        MyUtility.Msg.WarningBox(string.Format("PO Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
-                                        return;
+                                        listNewRowErrMsg.Add(string.Format("PO Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"]
+                                                                                                                          , newRow["seq1"]
+                                                                                                                          , newRow["seq2"]));
                                     }
                                     // stock unit空白不匯入
                                     if (MyUtility.Check.Empty(dr2["stockunit"]))
                                     {
-                                        
-                                        excel.Workbooks.Close();
-                                        excel.Quit();
-                                        MyUtility.Msg.WarningBox(string.Format("Stock Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
-                                        return;
+                                        listNewRowErrMsg.Add(string.Format("Stock Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"]
+                                                                                                                             , newRow["seq1"]
+                                                                                                                             , newRow["seq2"]));
                                     }
                                     newRow["fabrictype"] = dr2["fabrictype"].ToString();
                                     newRow["Pounit"] = dr2["pounit"].ToString();
@@ -356,24 +397,28 @@ where   stocktype='{0}'
         and junk != '1'
         and id='{1}'", newRow["stocktype"], i)))
                                             {
-                                                MyUtility.Msg.WarningBox(string.Format("Location ({3}) of SP#:{0}-Seq1:{1}-Seq2:{2} in stock ({4}) is not found!!"
-                                                    , newRow["poid"], newRow["seq1"], newRow["seq2"], i, newRow["stocktype"]));
-                                                excel.Workbooks.Close();
-                                                excel.Quit();
-                                                return;
+                                                listNewRowErrMsg.Add(string.Format("Location ({3}) of SP#:{0}-Seq1:{1}-Seq2:{2} in stock ({4}) is not found!!", newRow["poid"]
+                                                                                                                                                            , newRow["seq1"]
+                                                                                                                                                            , newRow["seq2"]
+                                                                                                                                                            , i
+                                                                                                                                                            , newRow["stocktype"]));
                                             }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    MyUtility.Msg.WarningBox(string.Format("SP#:{0}-Seq1:{1}-Seq2:{2} is not found!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
-                                    return;
+                                    listNewRowErrMsg.Add(string.Format("SP#:{0}-Seq1:{1}-Seq2:{2} is not found!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
                                 }
+
+                                if (listNewRowErrMsg.Count == 0)
+                                    count++;
+                                else
+                                    newRow["ErrMsg"] = listNewRowErrMsg.JoinToString(Environment.NewLine);
+
                                 grid2Data.Rows.Add(newRow);
-                                count++;
                             }
-                            dr["Status"] = "Check & Import Completed.";
+                            dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                             dr["Count"] = count;
                         }
 
@@ -386,12 +431,29 @@ where   stocktype='{0}'
             #endregion
 
             gridPoid.ResumeLayout();
+            foreach (DataGridViewRow dr in gridPoid.Rows)
+            {
+                if (!dr.Cells["ErrMsg"].Value.Empty())
+                {
+                    dr.DefaultCellStyle.ForeColor = Color.Red;
+                }
+            }
         }
 
         //Write in
         private void btnWriteIn_Click(object sender, EventArgs e)
         {
             DataTable tmpPacking = (DataTable)listControlBindingSource2.DataSource;
+            //if (((DataTable)listControlBindingSource2.DataSource).AsEnumerable().Any(row => row["ErrMsg"].Empty()))
+            //{
+            //    tmpPacking = ((DataTable)listControlBindingSource2.DataSource).AsEnumerable().Where(row => row["ErrMsg"].Empty()).CopyToDataTable();
+            //} else
+            //{
+            //    MyUtility.Msg.InfoBox("Write in completed!!");
+            //    DialogResult = System.Windows.Forms.DialogResult.OK;
+            //    return;
+            //}
+
             try
             {
                 var q = from p in tmpPacking.AsEnumerable()
