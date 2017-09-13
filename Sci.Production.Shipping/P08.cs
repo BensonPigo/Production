@@ -39,6 +39,10 @@ namespace Sci.Production.Shipping
             InsertDetailGridOnDoubleClick = false;
             txtSserAccountant.TextBox1.IsSupportEditMode = false;
             txtSserAccountant.TextBox1.ReadOnly = true;
+            DataTable factory;
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
+            MyUtility.Tool.SetupCombox(comboFactory1, 1, factory);
+            comboFactory1.SelectedIndex = 0;
             
             #region 輸入Supplier後自動帶出Currency & Terms，清空表身Grid資料
             txtSubconSupplier.TextBox1.Validated += (s, e) =>
@@ -287,6 +291,9 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["Type"] = "IMPORT";
             comboType2.DataSource = subType_1;
             CurrentMaintain["SubType"] = "MATERIAL";
+            CurrentMaintain["Factory"] = Sci.Env.User.Factory;
+            //this.comboFactory1.SelectedValue = Sci.Env.User.Factory;
+            //this.comboFactory1.SelectedValue2 = Sci.Env.User.Factory;
             numTotal.Value = 0;
             gridicon.Append.Enabled = true;
             gridicon.Insert.Enabled = true;
@@ -526,8 +533,8 @@ where sd.ID = '{0}'", masterID);
             else
             {
                 DataTable FactoryData,LocalSpuuData,Report_ShippingAPDetail;
-                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from MDivision WITH (NOLOCK) where ID = '{0}'",
-               MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]));
+                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from factory WITH (NOLOCK) where ID = '{0}'",
+               MyUtility.Convert.GetString(CurrentMaintain["Factory"]));
                 result = DBProxy.Current.Select(null,sqlCmd,out FactoryData);
                 if(!result)
                 {
@@ -717,5 +724,9 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             
         }
 
+        private void masterpanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
