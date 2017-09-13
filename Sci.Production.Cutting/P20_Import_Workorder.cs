@@ -87,6 +87,7 @@ namespace Sci.Production.Cutting
             string estcutdate = dateEstCutDate.Text;
             string cutRef = this.txtCutRef.Text;
             string SPNo = this.txtSP.Text;
+            string FactoryID = this.txtfactory.Text;
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";            
             strSQLCmd.Append(string.Format(
@@ -116,6 +117,14 @@ namespace Sci.Production.Cutting
                 strSQLCmd.Append(string.Format(@"
                 and a.orderID='{0}'",SPNo));
             }
+
+            if (!MyUtility.Check.Empty(FactoryID))
+            {
+                strSQLCmd.Append(string.Format(@"
+                and a.FactoryID='{0}'", FactoryID));
+            }
+
+
             strSQLCmd.Append(@" order by cutref");
             DualResult dResult = DBProxy.Current.Select(null, strSQLCmd.ToString(), out detailTable);
             if (dResult)
