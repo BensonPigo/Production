@@ -55,6 +55,17 @@ namespace Sci.Production.Subcon
             
         }
 
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+
+            //讓非SCIMIS使用者可以[新增][修改][刪除]
+            this.toolbar.cmdNew.Enabled = !this.EditMode;
+            this.toolbar.cmdEdit.Enabled = !this.EditMode;
+            this.toolbar.cmdDelete.Enabled = !this.EditMode;
+
+        }
+
         protected override bool ClickNewBefore()
         {
             bool flag = false;
