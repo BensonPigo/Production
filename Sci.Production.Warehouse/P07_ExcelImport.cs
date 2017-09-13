@@ -317,9 +317,9 @@ namespace Sci.Production.Warehouse
                                 }
                                 #endregion
 
-                                if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["exportid"].ToString())
+                                if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["InvNo"].ToString())
                                 {
-                                    listNewRowErrMsg.Add(string.Format("WK# is not match {0}", master["exportid"]));
+                                    listNewRowErrMsg.Add(string.Format("WK# is not match {0}", master["InvNo"]));
                                 }
 
                                 if (MyUtility.Check.Empty(newRow["poid"]) || MyUtility.Check.Empty(newRow["seq1"]) || MyUtility.Check.Empty(newRow["seq2"]))

@@ -177,9 +177,13 @@ namespace Sci.Production.Warehouse
             #region 確認此單中，是否存在同【SP#, Seq1, Seq2, Roll】
             DataTable dtCheckDuplicateData;
             string strCheckDuplicateData = @"
-select count (*)
+select *
 from (
-    select  value = count(*)
+    select  Poid
+            , Seq1
+            , Seq2
+            , Roll
+            , value = count(*)
     from #tmp
     group by Poid, Seq1, Seq2, Roll
 ) x
@@ -190,11 +194,15 @@ where x.value > 1
             {
                 if (dtCheckDuplicateData != null && dtCheckDuplicateData.Rows.Count != 0)
                 {
-                    if (!dtCheckDuplicateData.Rows[0][0].EqualDecimal(0))
-                    {
-                        MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate.");
-                        return false;
+                    List<string> listDuplicateData = new List<string>();
+                    foreach (DataRow dr in dtCheckDuplicateData.Rows) {
+                        listDuplicateData.Add(string.Format("<SP#> : {0}, <Seq1> : {1}, <Seq2> : {2}, <Roll#> : {3}", dr["Poid"]
+                                                                                                                    , dr["Seq1"]
+                                                                                                                    , dr["Seq2"]
+                                                                                                                    , dr["Roll"]));
                     }
+                    MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate." + Environment.NewLine + listDuplicateData.JoinToString(Environment.NewLine));
+                    return false;
                 }
             }
             else
