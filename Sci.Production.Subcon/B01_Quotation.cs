@@ -16,10 +16,13 @@ namespace Sci.Production.Subcon
     public partial class B01_Quotation : Sci.Win.Tems.Input1
     {
         protected DataRow dr,dr_detail;
+        bool _canedit;
+
         public B01_Quotation(bool canedit, DataRow data )
         {
             InitializeComponent();
             dr = data;
+            _canedit = canedit;
             string b01_refno = data["refno"].ToString();
             this.DefaultFilter = "refno = '"+ b01_refno+"'";
 
@@ -59,10 +62,10 @@ namespace Sci.Production.Subcon
         {
             base.EnsureToolbarExt();
 
-            //讓非SCIMIS使用者可以[新增][修改][刪除]
-            this.toolbar.cmdNew.Enabled = !this.EditMode;
-            this.toolbar.cmdEdit.Enabled = !this.EditMode;
-            this.toolbar.cmdDelete.Enabled = !this.EditMode;
+            //讓有[SUBCON][B01]EDIT權限的使用者可以[新增][修改][刪除]
+            this.toolbar.cmdNew.Enabled = _canedit;
+            this.toolbar.cmdEdit.Enabled = _canedit;
+            this.toolbar.cmdDelete.Enabled = _canedit;
 
         }
 
