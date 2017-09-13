@@ -375,8 +375,17 @@ outer apply(
                     return false;
                 }
                 CurrentMaintain["id"] = tmpId;
-            }
 
+                //assign 給detail table ID
+                DataTable tmp = (DataTable)detailgridbs.DataSource;
+
+                foreach (DataRow row in tmp.Rows)
+                {
+                    row.SetField("ID", tmpId);
+                }
+                    
+            }
+            
             //AutoPick 前清空資料，避免資料重複儲存
             string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
             DBProxy.Current.Execute(null, sqlst);

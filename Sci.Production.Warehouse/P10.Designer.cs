@@ -78,7 +78,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(982, 105);
+            this.masterpanel.Size = new System.Drawing.Size(892, 105);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -101,7 +101,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 105);
-            this.detailpanel.Size = new System.Drawing.Size(982, 338);
+            this.detailpanel.Size = new System.Drawing.Size(892, 244);
             // 
             // gridicon
             // 
@@ -114,20 +114,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(982, 338);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(982, 481);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(982, 443);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(982, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 244);
             // 
             // browse
             // 
@@ -275,14 +262,14 @@
             this.editCutNo.Multiline = true;
             this.editCutNo.Name = "editCutNo";
             this.editCutNo.ReadOnly = true;
-            this.editCutNo.Size = new System.Drawing.Size(326, 54);
+            this.editCutNo.Size = new System.Drawing.Size(236, 54);
             this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(874, 32);
+            this.btnAutoPick.Location = new System.Drawing.Point(784, 32);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 15;
@@ -295,7 +282,7 @@
             this.labelNotApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(851, 8);
+            this.labelNotApprove.Location = new System.Drawing.Point(761, 8);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 44;
@@ -306,7 +293,7 @@
             // 
             this.btnCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCutRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCutRef.Location = new System.Drawing.Point(874, 64);
+            this.btnCutRef.Location = new System.Drawing.Point(784, 64);
             this.btnCutRef.Name = "btnCutRef";
             this.btnCutRef.Size = new System.Drawing.Size(80, 30);
             this.btnCutRef.TabIndex = 45;
@@ -324,7 +311,6 @@
             this.DefaultOrder = "issuedate,id";
             this.DefaultSubDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.GridAlias = "Issue_Summary";
-            this.GridUniqueKey = "id,ukey";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
