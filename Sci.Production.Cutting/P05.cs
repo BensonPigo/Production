@@ -77,7 +77,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("SizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Markerno", header: "Flow No", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -303,7 +303,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
                 string marker2sql = string.Format(@"
-
 ;with t as (
 Select o.POID
        , b.MarkerName
@@ -372,8 +371,8 @@ order by Markername
 
 DROP TABLE #temp1,#temp2
 
-
 ", txtCutplan.Text);
+
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
@@ -382,7 +381,7 @@ DROP TABLE #temp1,#temp2
                     DataRow ndr = gridTb.NewRow();
                     ndr["styleid"] = dr["styleid"];
                     ndr["seasonid"] = dr["seasonid"];
-                    ndr["OrderID"] = dr["OrderID"];
+                    ndr["orderid"] = dr["poid"];
                     ndr["SizeRatio"] = dr["SizeRatio"];
                     ndr["MarkerName"] = dr["MarkerName"];
                     ndr["Layer"] = dr["Layer"];
