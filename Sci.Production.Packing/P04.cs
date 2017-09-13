@@ -34,6 +34,7 @@ namespace Sci.Production.Packing
         Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
         private DialogResult buttonResult;
         private DualResult result;
         private DataRow dr;
@@ -74,6 +75,14 @@ namespace Sci.Production.Packing
                 else labelConfirmed.Text = "Shipping Lock";
             }
 
+            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            if (!dt.Columns.Contains("OrderQty"))
+                dt.ColumnsIntAdd("OrderQty");
+            if (!dt.Columns.Contains("OtherConfirmQty"))
+                dt.ColumnsIntAdd("OtherConfirmQty");
+            if (!dt.Columns.Contains("InvAdjustQty"))
+                dt.ColumnsIntAdd("InvAdjustQty");
+            ComputeOrderQty();
         }
 
         protected override void OnDetailGridSetup()
@@ -127,6 +136,11 @@ namespace Sci.Production.Packing
                                 dr["Article"] = "";
                                 dr["Color"] = "";
                                 dr["SizeCode"] = "";
+                                dr["OtherConfirmQty"] = 0;
+                                dr["InvAdjustQty"] = 0;
+                                dr["BalanceQty"] = 0;
+                                dr["OrderQty"] = 0;
+                                dr["shipQty"] = 0;
                                 #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                                 DataRow orderQtyData;
                                 sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
@@ -155,6 +169,9 @@ namespace Sci.Production.Packing
                                 dr.EndEdit();
                             }
                         }
+                    }else if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        ClearGridRowData(dr);
                     }
                 }
             };
@@ -178,11 +195,16 @@ namespace Sci.Production.Packing
                             }
                             else
                             {
-                                e.EditingControl.Text = item.GetSelectedString();
+                                dr["OrderShipmodeSeq"] = item.GetSelectedString();
                             }
                             dr["Article"] = "";
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
+                            dr["OtherConfirmQty"] = 0;
+                            dr["InvAdjustQty"] = 0;
+                            dr["BalanceQty"] = 0;
+                            dr["OrderQty"] = 0;
+                            dr["shipQty"] = 0;
                             dr.EndEdit();
                         }
                     }
@@ -216,12 +238,17 @@ namespace Sci.Production.Packing
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
+                        dr["Color"] = "";
+                        dr["SizeCode"] = "";
+                        dr["OtherConfirmQty"] = 0;
+                        dr["InvAdjustQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr["OrderQty"] = 0;
+                        dr["shipQty"] = 0;
                         if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Article"] = "";
-                            dr["Color"] = "";
-                            dr["SizeCode"] = "";
                         }
                         else
                         {
@@ -234,11 +261,19 @@ namespace Sci.Production.Packing
                             {
                                 dr["Color"] = colorData["ColorID"].ToString();
                             }
-                            else
-                            {
-                                dr["Color"] = "";
-                            }
                         }
+                        dr.EndEdit();
+                    }
+                    else if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["Article"] = "";
+                        dr["Color"] = "";
+                        dr["SizeCode"] = "";
+                        dr["OtherConfirmQty"] = 0;
+                        dr["InvAdjustQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr["OrderQty"] = 0;
+                        dr["shipQty"] = 0;
                         dr.EndEdit();
                     }
                 }
@@ -284,14 +319,47 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
+                        dr["OtherConfirmQty"] = 0;
+                        dr["InvAdjustQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr["OrderQty"] = 0;
+                        dr["shipQty"] = 0;
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
                             dr["SizeCode"] = "";
+                            dr.EndEdit();
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
+                        else
+                        {
+                            dr["SizeCode"] = e.FormattedValue;
+                            dr.EndEdit();
+                            ComputeOrderQty();
+                        }
                     }
+                    else if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["SizeCode"] = "";
+                        dr["OtherConfirmQty"] = 0;
+                        dr["InvAdjustQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr["OrderQty"] = 0;
+                        dr["shipQty"] = 0;
+                        dr.EndEdit();
+                    }
+                }
+            };
+
+            this.shipQtySetting.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    dr["ShipQty"] = e.FormattedValue;
+                    dr["BalanceQty"] = Convert.ToDecimal(dr["OrderQty"].ToString()) - Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]) - Convert.ToDecimal(dr["ShipQty"].ToString());
+                    dr.EndEdit();
                 }
             };
             #endregion
@@ -311,7 +379,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size).Get(out col_size)
                 .Numeric("QtyPerCTN", header: "PC/Ctn").Get(out col_qtyperctn)
-                .Numeric("ShipQty", header: "Qty").Get(out col_shipqty)
+                .Numeric("ShipQty", header: "Qty", settings: shipQtySetting).Get(out col_shipqty)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out col_nw)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out col_gw)
@@ -345,7 +413,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     dr.EndEdit();
                 }
                 #endregion
-            };
+            };            
 
             //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
             //{
@@ -357,12 +425,18 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         private void ClearGridRowData(DataRow dr)
         {
             dr["OrderID"] = "";
+            dr["SeasonID"] = "";
             dr["OrderShipmodeSeq"] = "";
             dr["Article"] = "";
             dr["Color"] = "";
             dr["SizeCode"] = "";
             dr["StyleID"] = "";
             dr["CustPONo"] = "";
+            dr["OtherConfirmQty"] = 0;
+            dr["InvAdjustQty"] = 0;
+            dr["BalanceQty"] = 0;
+            dr["OrderQty"] = 0;
+            dr["shipQty"] = 0;
             dr.EndEdit();
         }
 
@@ -378,6 +452,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             gridicon.Append.Enabled = true;
             gridicon.Insert.Enabled = true;
             gridicon.Remove.Enabled = true;
+            DetailGridEditing(true);
         }
 
         protected override bool ClickEditBefore()
@@ -458,6 +533,10 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 MyUtility.Msg.WarningBox("Query  schema fail!");
                 return false;
             }
+
+            //Balance < 0 ErrorMsg
+            List<string> listErrorMsg = new List<string>();
+
             foreach (DataRow dr in DetailDatas)
             {
                 #region 刪除表身SP No.或Qty為空白的資料
@@ -510,14 +589,15 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 if (detailData.Length <= 0)
                 {
                     //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+                    sqlCmd = string.Format(@"
+select oqd.Id as OrderID
+       , oqd.Seq as OrderShipmodeSeq
+       , oqd.Article
+       , oqd.SizeCode
+       , Qty = oqd.Qty 
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
-left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
-left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
-where oqd.Id = '{1}'
-and oqd.Seq = '{2}'
-group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+where oqd.Id = '{0}'
+      and oqd.Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -553,10 +633,40 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                     }
                 }
 
-                dr["BalanceQty"] = needPackQty - ttlShipQty;
+                string strOtherConfirmSQL = string.Format(@"
+select Qty = isnull (sum (pld.ShipQty), 0)
+from Packinglist pl
+inner join Packinglist_detail pld on pl.ID = pld.ID
+where pl.ID != '{0}'
+      and pl.Status = 'Confirmed'
+      and pld.OrderID = '{1}'
+      and pld.OrderShipmodeSeq = '{2}'
+      and pld.Article = '{3}'
+      and pld.SizeCode = '{4}'", dr["ID"]
+                               , dr["OrderID"]
+                               , dr["OrderShipmodeSeq"]
+                               , dr["Article"]
+                               , dr["SizeCode"]);
+
+                string strInvAdjustSQL = string.Format(@"
+select Qty = isnull (sum (InvAQ.DiffQty), 0)
+from InvAdjust InvA
+inner join  InvAdjust_Qty InvAQ WITH (NOLOCK) on InvA.ID = InvAQ.ID
+where InvA.OrderID = '{0}'
+      and InvA.OrderShipmodeSeq = '{1}'
+      and InvAQ.Article = '{2}'
+      and InvAQ.SizeCode = '{3}'", dr["OrderID"]
+                                 , dr["OrderShipmodeSeq"]
+                                 , dr["Article"]
+                                 , dr["SizeCode"]);
+
+                dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
+                dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
+                dr["BalanceQty"] = needPackQty - Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]) - ttlShipQty;
                 if (needPackQty - ttlShipQty < 0)
                 {
                     isNegativeBalQty = true;
+                    listErrorMsg.Add(string.Format("Order Qty: {0}, Shipped Qty: {1}, Qty: {2}", dr["OrderQty"], Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]), dr["ShipQty"]));
                     detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 #endregion
@@ -572,7 +682,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
             if (isNegativeBalQty)
             {
-                MyUtility.Msg.WarningBox("Quantity entered is greater than order quantity!!");
+                MyUtility.Msg.WarningBox(listErrorMsg.JoinToString(Environment.NewLine) + Environment.NewLine + "Balance Quantity cannot < 0");
                 return false;
             }
 
@@ -621,6 +731,19 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            if (!dt.Columns.Contains("OrderQty"))
+                dt.ColumnsIntAdd("OrderQty");
+            if (!dt.Columns.Contains("OtherConfirmQty"))
+                dt.ColumnsIntAdd("OtherConfirmQty");
+            if (!dt.Columns.Contains("InvAdjustQty"))
+                dt.ColumnsIntAdd("InvAdjustQty");
+            ComputeOrderQty();
         }
 
         protected override DualResult ClickSavePre()
@@ -902,6 +1025,110 @@ where ID = @INVNo";
             {
                 CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
             }      
+        }
+
+        private void ComputeOrderQty()
+        {
+            int needPackQty = 0, ttlShipQty = 0;
+            DataTable needPackData, tmpPackData;
+            DualResult selectResult;
+            DataRow[] detailData;
+            //準備needPackData的Schema
+            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
+            if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
+            {
+                MyUtility.Msg.WarningBox("Query  schema fail!");
+            }
+
+            foreach (DataRow dr in DetailDatas)
+            {
+                #region 重算表身Grid的Bal. Qty
+                //目前還有多少衣服尚未裝箱
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                detailData = needPackData.Select(filter);
+
+                if (detailData.Length <= 0)
+                {
+                    //撈取此SP+Seq尚未裝箱的數量
+                    sqlCmd = string.Format(@"
+select oqd.Id as OrderID
+       , oqd.Seq as OrderShipmodeSeq
+       , oqd.Article
+       , oqd.SizeCode
+       , Qty = oqd.Qty 
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+where oqd.Id = '{0}'
+      and oqd.Seq = '{1}'", dr["OrderID"].ToString()
+                          , dr["OrderShipmodeSeq"].ToString());
+                    if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
+                    {
+                        MyUtility.Msg.WarningBox("Query pack qty fail!");
+                    }
+                    else
+                    {
+                        foreach (DataRow tpd in tmpPackData.Rows)
+                        {
+                            tpd.AcceptChanges();
+                            tpd.SetAdded();
+                            needPackData.ImportRow(tpd);
+                        }
+                    }
+                }
+
+                needPackQty = 0;
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                detailData = needPackData.Select(filter);
+                if (detailData.Length > 0)
+                {
+                    needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"]);
+                }
+
+                //加總表身特定Article/SizeCode的Ship Qty數量
+                detailData = ((DataTable)detailgridbs.DataSource).Select(filter);
+                ttlShipQty = 0;
+                if (detailData.Length != 0)
+                {
+                    foreach (DataRow dDr in detailData)
+                    {
+                        ttlShipQty = ttlShipQty + MyUtility.Convert.GetInt(dDr["ShipQty"]);
+                    }
+                }
+
+                string strOtherConfirmSQL = string.Format(@"
+select Qty = isnull (sum (pld.ShipQty), 0)
+from Packinglist pl
+inner join Packinglist_detail pld on pl.ID = pld.ID
+where pl.ID != '{0}'
+      and pl.Status = 'Confirmed'
+      and pld.OrderID = '{1}'
+      and pld.OrderShipmodeSeq = '{2}'
+      and pld.Article = '{3}'
+      and pld.SizeCode = '{4}'", dr["ID"]
+                               , dr["OrderID"]
+                               , dr["OrderShipmodeSeq"]
+                               , dr["Article"]
+                               , dr["SizeCode"]);
+
+                string strInvAdjustSQL = string.Format(@"
+select Qty = isnull (sum (InvAQ.DiffQty), 0)
+from InvAdjust InvA
+inner join  InvAdjust_Qty InvAQ WITH (NOLOCK) on InvA.ID = InvAQ.ID
+where InvA.OrderID = '{0}'
+      and InvA.OrderShipmodeSeq = '{1}'
+      and InvAQ.Article = '{2}'
+      and InvAQ.SizeCode = '{3}'", dr["OrderID"]
+                                 , dr["OrderShipmodeSeq"]
+                                 , dr["Article"]
+                                 , dr["SizeCode"]);
+
+                dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
+                dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
+                dr["BalanceQty"] = needPackQty - Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]) - ttlShipQty;
+                dr["OrderQty"] = needPackQty;
+                dr["shipQty"] = ttlShipQty;
+                dr.EndEdit();
+                #endregion
+            }
         }
     }
 }
