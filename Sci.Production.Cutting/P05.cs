@@ -303,8 +303,9 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
                 string marker2sql = string.Format(@"
+
 ;with t as (
-Select b.Orderid
+Select o.POID
        , b.MarkerName
        , layer = sum(b.Layer)
        , b.MarkerNo
@@ -322,21 +323,22 @@ Select b.Orderid
        , o.seasonid
 From Cutplan_Detail a WITH (NOLOCK) 
      , WorkOrder b WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on b.orderid = o.poid
+inner join Orders o WITH (NOLOCK) on b.orderid = o.ID
 Where a.workorderukey = b.ukey 
-      and a.id = '{0}'
-Group by b.Orderid,b.MarkerName,b.MarkerNo
+      and a.id = '{0}' 
+Group by o.POID,b.MarkerName,b.MarkerNo
          , b.fabricCombo,a.WorkOrderUkey
 		 ,o.styleid,o.seasonid
 )
-select StyleID,Seasonid,OrderID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth,sum(layer)as layer 
+select StyleID,Seasonid,POID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth,sum(layer)as layer 
 into #temp1
 from t
-group by StyleID,Seasonid,OrderID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth
+group by StyleID,Seasonid,POID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth
+order by Markername
 
 
 
-Select b.Orderid
+Select distinct o.POID
        , b.MarkerName
        , b.MarkerNo
        , b.fabricCombo
@@ -349,15 +351,16 @@ Select b.Orderid
 	   into #temp2
 From Cutplan_Detail a WITH (NOLOCK) 
      , WorkOrder b WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on b.orderid = o.poid
+inner join Orders o WITH (NOLOCK) on b.orderid = o.id	
 Where a.workorderukey = b.ukey 
       and a.id = '{0}'
+order by Markername
 
 
 select a.* 
 ,sizeRatio= (select  b.SizeRatio +''
 	from #temp2 b
-	where b.orderid=a.orderid
+	where b.POID=a.POID
 	and a.styleid=b.styleid
 	and a.seasonid=b.seasonid
 	and a.MarkerName=b.MarkerName
@@ -365,8 +368,12 @@ select a.*
 	and a.fabricCombo=b.fabricCombo
 	For XML path(''))
 from #temp1 a
+order by Markername
 
-DROP TABLE #temp1,#temp2", txtCutplan.Text);
+DROP TABLE #temp1,#temp2
+
+
+", txtCutplan.Text);
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
