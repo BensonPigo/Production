@@ -4,7 +4,7 @@
     [NLCode]        VARCHAR (5)     CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (14, 3) CONSTRAINT [DF_VNContract_Detail_Qty] DEFAULT ((0)) NULL,
     [UnitID]        VARCHAR (8)     CONSTRAINT [DF_VNContract_Detail_UnitID] DEFAULT ('') NOT NULL,
-    [Waste]         NUMERIC (5, 3)  CONSTRAINT [DF_VNContract_Detail_Waste] DEFAULT ((0)) NOT NULL,
+    [Waste]         NUMERIC (8, 6)  CONSTRAINT [DF_VNContract_Detail_Waste] DEFAULT ((0)) NOT NULL,
     [Price]         NUMERIC (6, 3)  CONSTRAINT [DF_VNContract_Detail_Price] DEFAULT ((0)) NOT NULL,
     [LocalPurchase] BIT             CONSTRAINT [DF_VNContract_Detail_LocalPurchase] DEFAULT ((0)) NULL,
     [NecessaryItem] BIT             CONSTRAINT [DF_VNContract_Detail_NecessaryItem] DEFAULT ((0)) NULL,
@@ -12,6 +12,8 @@
     [AddDate]       DATETIME        NULL,
     CONSTRAINT [PK_VNContract_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [NLCode] ASC)
 );
+
+
 
 
 
