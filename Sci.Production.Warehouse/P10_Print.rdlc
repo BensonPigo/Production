@@ -81,7 +81,7 @@
                                             <rd:DefaultName>Desc</rd:DefaultName>
                                             <Left>5.38961cm</Left>
                                             <Height>0.52946cm</Height>
-                                            <Width>5.77672cm</Width>
+                                            <Width>4.82422cm</Width>
                                             <ZIndex>1</ZIndex>
                                             <Style>
                                               <Border>
@@ -108,7 +108,7 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Location</rd:DefaultName>
-                                            <Left>11.16633cm</Left>
+                                            <Left>10.21383cm</Left>
                                             <Height>0.52946cm</Height>
                                             <Width>2.13839cm</Width>
                                             <ZIndex>2</ZIndex>
@@ -137,7 +137,7 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Unit</rd:DefaultName>
-                                            <Left>13.30468cm</Left>
+                                            <Left>12.35222cm</Left>
                                             <Height>0.52946cm</Height>
                                             <Width>1.61052cm</Width>
                                             <ZIndex>3</ZIndex>
@@ -166,7 +166,7 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Roll</rd:DefaultName>
-                                            <Left>14.9152cm</Left>
+                                            <Left>13.96274cm</Left>
                                             <Height>0.52946cm</Height>
                                             <Width>2.03263cm</Width>
                                             <ZIndex>4</ZIndex>
@@ -192,14 +192,14 @@
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Left</TextAlign>
+                                                  <TextAlign>Right</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Qty</rd:DefaultName>
-                                            <Left>18.55577cm</Left>
+                                            <Left>17.60332cm</Left>
                                             <Height>0.52946cm</Height>
-                                            <Width>1.19102cm</Width>
+                                            <Width>2.14347cm</Width>
                                             <ZIndex>5</ZIndex>
                                             <Style>
                                               <Border>
@@ -226,7 +226,7 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Dyelot</rd:DefaultName>
-                                            <Left>16.94782cm</Left>
+                                            <Left>15.99537cm</Left>
                                             <Height>0.52946cm</Height>
                                             <Width>1.60795cm</Width>
                                             <ZIndex>6</ZIndex>
@@ -393,7 +393,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Left</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -466,6 +466,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
+        
         <Height>0.42731in</Height>
         <Width>7.94794in</Width>
         <Style>
@@ -478,7 +479,7 @@
     <Height>0.42731in</Height>
     <Style />
   </Body>
-  <Width>7.94794in</Width>
+  <Width>7.98961in</Width>
   <Page>
     <PageHeader>
       <Height>3.59283in</Height>
@@ -964,7 +965,7 @@
           <Top>3.5687cm</Top>
           <Left>16.94782cm</Left>
           <Height>0.59973cm</Height>
-          <Width>2.79897cm</Width>
+          <Width>3.23994cm</Width>
           <ZIndex>15</ZIndex>
           <Style>
             <Border>
@@ -1078,15 +1079,15 @@
                 </TextRun>
               </TextRuns>
               <Style>
-                <TextAlign>Left</TextAlign>
+                <TextAlign>Right</TextAlign>
               </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Qty</rd:DefaultName>
-          <Top>8.63162cm</Top>
-          <Left>18.55584cm</Left>
+          <Top>8.40937cm</Top>
+          <Left>17.60334cm</Left>
           <Height>0.49418cm</Height>
-          <Width>1.19095cm</Width>
+          <Width>2.14345cm</Width>
           <ZIndex>19</ZIndex>
           <Style>
             <Border>
@@ -1120,8 +1121,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Dyelot</rd:DefaultName>
-          <Top>8.63162cm</Top>
-          <Left>16.94782cm</Left>
+          <Top>8.40937cm</Top>
+          <Left>15.99532cm</Left>
           <Height>0.49418cm</Height>
           <Width>1.60795cm</Width>
           <ZIndex>20</ZIndex>
@@ -1160,8 +1161,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Roll</rd:DefaultName>
-          <Top>8.63162cm</Top>
-          <Left>14.91523cm</Left>
+          <Top>8.40937cm</Top>
+          <Left>13.96273cm</Left>
           <Height>0.49418cm</Height>
           <Width>2.0326cm</Width>
           <ZIndex>21</ZIndex>
@@ -1200,8 +1201,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Unit</rd:DefaultName>
-          <Top>8.63162cm</Top>
-          <Left>13.30474cm</Left>
+          <Top>8.40937cm</Top>
+          <Left>12.35224cm</Left>
           <Height>0.49418cm</Height>
           <Width>1.61049cm</Width>
           <ZIndex>22</ZIndex>
@@ -1240,8 +1241,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Location</rd:DefaultName>
-          <Top>8.63162cm</Top>
-          <Left>11.16633cm</Left>
+          <Top>8.40937cm</Top>
+          <Left>10.21383cm</Left>
           <Height>0.49418cm</Height>
           <Width>2.13841cm</Width>
           <ZIndex>23</ZIndex>
@@ -1280,10 +1281,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Desc</rd:DefaultName>
-          <Top>8.63162cm</Top>
+          <Top>8.40937cm</Top>
           <Left>5.38963cm</Left>
           <Height>0.49418cm</Height>
-          <Width>5.7767cm</Width>
+          <Width>4.8242cm</Width>
           <ZIndex>24</ZIndex>
           <Style>
             <Border>
@@ -1320,7 +1321,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Seq</rd:DefaultName>
-          <Top>8.63162cm</Top>
+          <Top>8.40937cm</Top>
           <Left>3.81094cm</Left>
           <Height>0.49418cm</Height>
           <Width>1.5787cm</Width>
@@ -1360,7 +1361,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Poid</rd:DefaultName>
-          <Top>8.63162cm</Top>
+          <Top>8.40937cm</Top>
           <Left>1.34624cm</Left>
           <Height>0.49418cm</Height>
           <Width>2.46471cm</Width>
@@ -1402,7 +1403,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox25</rd:DefaultName>
-          <Top>8.63162cm</Top>
+          <Top>8.40937cm</Top>
           <Left>0.36787cm</Left>
           <Height>0.49418cm</Height>
           <Width>0.97837cm</Width>
@@ -1455,6 +1456,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
+          
           <Left>0.36787cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.02176cm</Width>
@@ -1488,6 +1490,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
+          
           <Left>5.38963cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.4592cm</Width>
@@ -1522,6 +1525,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
+          
           <Left>10.84883cm</Left>
           <Height>0.58208cm</Height>
           <Width>4.06637cm</Width>
@@ -1556,6 +1560,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
+          
           <Left>14.9152cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.27256cm</Width>
