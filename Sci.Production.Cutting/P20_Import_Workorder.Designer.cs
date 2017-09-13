@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridImport = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
@@ -36,12 +36,14 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTOP = new Sci.Win.UI.Panel();
-            this.panelBOTTOM = new Sci.Win.UI.Panel();
-            this.panelMIDDLE = new Sci.Win.UI.Panel();
-            this.txtSP = new Sci.Win.UI.TextBox();
-            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtCutRef = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.panelBOTTOM = new Sci.Win.UI.Panel();
+            this.panelMIDDLE = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
@@ -63,14 +65,14 @@
             this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridImport.Location = new System.Drawing.Point(0, 0);
             this.gridImport.Name = "gridImport";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
@@ -128,6 +130,8 @@
             // 
             // panelTOP
             // 
+            this.panelTOP.Controls.Add(this.label2);
+            this.panelTOP.Controls.Add(this.txtfactory);
             this.panelTOP.Controls.Add(this.txtCutRef);
             this.panelTOP.Controls.Add(this.label1);
             this.panelTOP.Controls.Add(this.txtSP);
@@ -140,6 +144,59 @@
             this.panelTOP.Name = "panelTOP";
             this.panelTOP.Size = new System.Drawing.Size(944, 44);
             this.panelTOP.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(646, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 23);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(712, 12);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 21;
+            // 
+            // txtCutRef
+            // 
+            this.txtCutRef.BackColor = System.Drawing.Color.White;
+            this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRef.Location = new System.Drawing.Point(530, 12);
+            this.txtCutRef.Name = "txtCutRef";
+            this.txtCutRef.Size = new System.Drawing.Size(101, 23);
+            this.txtCutRef.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(464, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(63, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "CutRef#";
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(304, 12);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(145, 23);
+            this.txtSP.TabIndex = 17;
+            // 
+            // labelLocateForSP
+            // 
+            this.labelLocateForSP.Location = new System.Drawing.Point(261, 12);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(40, 23);
+            this.labelLocateForSP.TabIndex = 18;
+            this.labelLocateForSP.Text = "SP#";
             // 
             // panelBOTTOM
             // 
@@ -159,40 +216,6 @@
             this.panelMIDDLE.Name = "panelMIDDLE";
             this.panelMIDDLE.Size = new System.Drawing.Size(944, 439);
             this.panelMIDDLE.TabIndex = 8;
-            // 
-            // txtSP
-            // 
-            this.txtSP.BackColor = System.Drawing.Color.White;
-            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(304, 12);
-            this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(145, 23);
-            this.txtSP.TabIndex = 17;
-            // 
-            // labelLocateForSP
-            // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(261, 12);
-            this.labelLocateForSP.Name = "labelLocateForSP";
-            this.labelLocateForSP.Size = new System.Drawing.Size(40, 23);
-            this.labelLocateForSP.TabIndex = 18;
-            this.labelLocateForSP.Text = "SP#";
-            // 
-            // txtCutRef
-            // 
-            this.txtCutRef.BackColor = System.Drawing.Color.White;
-            this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRef.Location = new System.Drawing.Point(530, 12);
-            this.txtCutRef.Name = "txtCutRef";
-            this.txtCutRef.Size = new System.Drawing.Size(101, 23);
-            this.txtCutRef.TabIndex = 19;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(464, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 23);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "CutRef#";
             // 
             // P20_Import_Workorder
             // 
@@ -227,5 +250,7 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSP;
         private Win.UI.Label labelLocateForSP;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label label2;
     }
 }
