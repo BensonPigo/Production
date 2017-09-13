@@ -738,69 +738,68 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                 }
                 CurrentMaintain["OrderID"] = newvalue;
             }
-            else//Issue#969 當CutRef# 為空時，SP No 清空時，清空MasterID與Item、Line
+            //Issue#969 當CutRef# 為空時，SP No 清空時，清空MasterID與Item、Line            
+            if (MyUtility.Check.Empty(newvalue))
             {
-                if (MyUtility.Check.Empty(newvalue))
+                CurrentMaintain["POID"] = "";
+                CurrentMaintain["Item"] = "";
+                CurrentMaintain["sewinglineid"] = "";
+                DetailDatas.Clear();
+                bundle_Detail_allpart_Tb.Clear();
+                bundle_Detail_Art_Tb.Clear();
+                bundle_Detail_Qty_Tb.Clear();
+            }
+            else
+            {
+                string selectCommand = string.Format("select a.* from orders a WITH (NOLOCK) where a.id = '{0}' and mDivisionid='{1}' ", newvalue, keyword);
+                DataRow cutdr;
+                if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
                 {
-                    CurrentMaintain["POID"] = "";
-                    CurrentMaintain["Item"] = "";
-                    CurrentMaintain["sewinglineid"] = "";
-                    DetailDatas.Clear();
-                    bundle_Detail_allpart_Tb.Clear();
-                    bundle_Detail_Art_Tb.Clear();
-                    bundle_Detail_Qty_Tb.Clear();
-                }
-                else
-                {
-
-                    string selectCommand = string.Format("select a.* from orders a WITH (NOLOCK) where a.id = '{0}' and mDivisionid='{1}' ", newvalue, keyword);
-                    DataRow cutdr;
-                    if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
+                    if (cutdr["Sewline"].ToString().Length > 2)
                     {
-                        if (cutdr["Sewline"].ToString().Length > 2)
-                        {
-                            CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
-                        }
-                        else {
-                            CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
-                        }
-                        
-                        CurrentMaintain["OrderID"] = cutdr["id"].ToString();
-                        CurrentMaintain["POID"] = cutdr["POID"].ToString();
-                        displaySeason.Text = cutdr["Seasonid"].ToString();
-                        displayStyle.Text = cutdr["Styleid"].ToString();
-                        #region Item
-                        string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK)  where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
-                        string item = MyUtility.GetValue.Lookup(item_cmd, null);
-                        CurrentMaintain["ITEM"] = item;
-                        #endregion
-                        #region Cell
-                        if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
-                        {
-                            string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2) + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
-
-                            CurrentMaintain["SewingCell"] = cellid;
-                        }
-                        #endregion
-                        #region startno
-                        int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
-                        CurrentMaintain["startno"] = startno;
-                        #endregion
-                        #region Article colorid
-                        if (MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
-                        {
-                            string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], CurrentMaintain["PatternPanel"]);
-                            DataRow colordr;
-                            if (MyUtility.Check.Seek(ColorComb_cmd, out colordr))
-                            {
-                                CurrentMaintain["Article"] = colordr["Article"];
-                                CurrentMaintain["colorid"] = colordr["colorid"];
-                            }
-
-                        }
-                        #endregion
+                        CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
                     }
+                    else
+                    {
+                        CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
+                    }
+
+                    CurrentMaintain["OrderID"] = cutdr["id"].ToString();
+                    CurrentMaintain["POID"] = cutdr["POID"].ToString();
+                    displaySeason.Text = cutdr["Seasonid"].ToString();
+                    displayStyle.Text = cutdr["Styleid"].ToString();
+                    #region Item
+                    string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK)  where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
+                    string item = MyUtility.GetValue.Lookup(item_cmd, null);
+                    CurrentMaintain["ITEM"] = item;
+                    #endregion
+                    #region Cell
+                    if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
+                    {
+                        string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2) + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
+
+                        CurrentMaintain["SewingCell"] = cellid;
+                    }
+                    #endregion
+                    #region startno
+                    int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
+                    CurrentMaintain["startno"] = startno;
+                    #endregion
+                    #region Article colorid
+                    if (MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
+                    {
+                        string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], CurrentMaintain["PatternPanel"]);
+                        DataRow colordr;
+                        if (MyUtility.Check.Seek(ColorComb_cmd, out colordr))
+                        {
+                            CurrentMaintain["Article"] = colordr["Article"];
+                            CurrentMaintain["colorid"] = colordr["colorid"];
+                        }
+
+                    }
+                    #endregion
                 }
+
             }
         }
 
