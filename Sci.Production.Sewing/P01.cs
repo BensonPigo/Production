@@ -629,6 +629,7 @@ order by a.OrderId,os.Seq";
             CurrentMaintain["Shift"] = "D";
             CurrentMaintain["Team"] = "A";
             CurrentDetailData["RFT"] = "0.00%";
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             
         }
 
