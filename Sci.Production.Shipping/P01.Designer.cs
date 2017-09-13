@@ -1031,7 +1031,6 @@
             // datePayDate
             // 
             this.datePayDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PayDate", true));
-            this.datePayDate.IsSupportEditMode = false;
             this.datePayDate.Location = new System.Drawing.Point(704, 207);
             this.datePayDate.Name = "datePayDate";
             this.datePayDate.ReadOnly = true;
@@ -1982,7 +1981,9 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ResponsibleFtyNo", true));
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(267, 322);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 21);
