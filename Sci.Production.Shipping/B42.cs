@@ -131,8 +131,8 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty)
-                .Numeric("Waste", header: "Waste", decimal_places: 3, iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty)
+                .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
         }
 
