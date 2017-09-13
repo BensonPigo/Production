@@ -629,6 +629,7 @@ order by a.OrderId,os.Seq";
             CurrentMaintain["Shift"] = "D";
             CurrentMaintain["Team"] = "A";
             CurrentDetailData["RFT"] = "0.00%";
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             
         }
 
@@ -758,6 +759,8 @@ have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToStr
             }
           
             #endregion
+
+            CalculateManHour();
 
             #region 新增時檢查Date不可早於Sewing Lock Date
             if (IsDetailInserting)
