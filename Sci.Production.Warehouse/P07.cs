@@ -420,6 +420,13 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
                     CurrentDetailData["PoidSeq"] = CurrentDetailData["Poid"].ToString() + x[0]["seq"];
                     //CurrentDetailData["shipqty"] = 0m;
                     //CurrentDetailData["Actualqty"] = 0m;
+                    if ((decimal)CurrentDetailData["shipqty"] > 0)
+                    {
+
+                        ship_qty_valid((decimal)CurrentDetailData["shipqty"]);
+
+                    } 
+
                     CurrentDetailData.EndEdit();
                 }
             };
@@ -481,6 +488,12 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
                             CurrentDetailData["PoidSeq"] = CurrentDetailData["Poid"].ToString() + e.FormattedValue;
                             //CurrentDetailData["shipqty"] = 0m;
                             //CurrentDetailData["Actualqty"] = 0m;
+                            if ((decimal)CurrentDetailData["shipqty"] > 0)
+                            {
+
+                                ship_qty_valid((decimal)CurrentDetailData["shipqty"]);
+                                
+                            } 
                         }
                     }
                 }
@@ -553,21 +566,7 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                if (CurrentDetailData == null) return;
-                if (this.EditMode && e.FormattedValue != null)
-                {
-                    if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
-                    {
-                        CurrentDetailData["shipqty"] = e.FormattedValue;
-                        CurrentDetailData["Actualqty"] = e.FormattedValue;
-                        string rate = MyUtility.GetValue.Lookup(string.Format(@"
-select RateValue 
-from dbo.View_Unitrate v
-where   v.FROM_U ='{0}' 
-        and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
-                        CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
-                    }
-                }
+                ship_qty_valid((decimal)e.FormattedValue);
             };
 
             #endregion Ship Qty Valid
@@ -645,6 +644,24 @@ where   v.FROM_U ='{0}'
                 }
                 #endregion
             };
+        }
+
+        private void ship_qty_valid(decimal ship_qty) {
+            if (CurrentDetailData == null) return;
+            if (this.EditMode && ship_qty != null)
+            {
+                if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
+                {
+                    CurrentDetailData["shipqty"] = ship_qty;
+                    CurrentDetailData["Actualqty"] = ship_qty;
+                    string rate = MyUtility.GetValue.Lookup(string.Format(@"
+select RateValue 
+from dbo.View_Unitrate v
+where   v.FROM_U ='{0}' 
+        and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
+                    CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(ship_qty.ToString()) * decimal.Parse(rate), 2);
+                }
+            }
         }
 
         //Confirm
