@@ -1417,9 +1417,7 @@ where w.ID = '{0}'", masterID);
 
                 gridDistributetoSPNo.SelectRowTo(0);  
                 for (int i = 0; i < gridDistributetoSPNo.Rows.Count; i++) {
-                    if (gridDistributetoSPNo.Rows[i].Cells["OrderID"].Value.Equals(CurrentDetailData["OrderID"]) &&
-                        gridDistributetoSPNo.Rows[i].Cells["Article"].Value.Equals(CurrentDetailData["Article"]) &&
-                        CurrentDetailData["SizeCode"].ToString().Contains(gridDistributetoSPNo.Rows[i].Cells["SizeCode"].Value.ToString()))
+                    if (gridDistributetoSPNo.Rows[i].Cells["OrderID"].Value.Equals(CurrentDetailData["OrderID"]))
                     {
                         gridDistributetoSPNo.SelectRowTo(i);
 
