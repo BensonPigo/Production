@@ -1015,7 +1015,12 @@ where ID = @INVNo";
         //Import from excel
         private void btnImportFromExcel_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource);
+            
+            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"])) {
+                MyUtility.Msg.WarningBox("Please input < Brand >!!");
+                return;
+            }
+            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource, CurrentMaintain["BrandID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
