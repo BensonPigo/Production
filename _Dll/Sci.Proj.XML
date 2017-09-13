@@ -1461,13 +1461,6 @@
             <param name="dt"> target datatable </param>
             <returns> column name with space </returns>
         </member>
-        <member name="M:Sci.Utility.Excel.MyExcelPrg.GetRandomFileName(System.String)">
-            <summary>
-            Get random fileName
-            </summary>
-            <param name="prefix"> prefix </param>
-            <returns> return random file path </returns>
-        </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
             Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性
@@ -1553,6 +1546,7 @@
             save table to excel
             </summary>
             <param name="path"> save file path </param>
+            <param name="prefix"> save excel file name prefix </param>
             <returns> save success or not </returns>
         </member>
         <member name="M:Sci.Utility.Excel.SaveDataToExcel.FinishSave">
@@ -1779,8 +1773,6 @@
             </summary>
             <param name="path"> 儲存路徑 </param>
             <param name="addHead"> add datatable header </param>
-            <param name="keepApp"> keep application for a moment, please call FinishSave() after you done. </param>
-            <param name="prefix"> save file prefix, default is xlt file name </param>
             <returns> save success or not </returns>
         </member>
         <member name="M:Sci.Utility.Excel.SaveXltReportCls.FinishSave">
