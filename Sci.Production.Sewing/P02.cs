@@ -368,6 +368,8 @@ where   mo.Junk = 0
                 return false;
             }
 
+            CalculateManHour();
+
             DataTable SumQty;
             int recCnt = 0, gridQaQty, gridInlineQty , gridDefectQty;
             decimal gridWHours, gridTms = 0;

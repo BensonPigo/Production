@@ -759,6 +759,8 @@ have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToStr
           
             #endregion
 
+            CalculateManHour();
+
             #region 新增時檢查Date不可早於Sewing Lock Date
             if (IsDetailInserting)
             {
