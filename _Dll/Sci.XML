@@ -411,6 +411,11 @@
             Property of Timeout value
             </summary>
         </member>
+        <member name="P:Sci.Data.IDBProxy.DefaultModuleName">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:Sci.Data.IDBProxy.ExecuteSP(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})">
             <summary>
             Execute Database's stored procedure.
@@ -800,7 +805,7 @@
             <summary>
             Batch process DataRow.
             </summary>
-            <param name="connname">connection object.</param>
+            <param name="conn">connection object.</param>
             <param name="table">Table definition.</param>
             <param name="datas">lists of DataRow which will be processed.</param>
             <returns>result of the SQL command is executed.</returns>
@@ -944,6 +949,24 @@
             <param name="fetchCount">要每幾筆作一次動作</param>
             <param name="parameters">select 資料用的sql parameters</param>
             <returns></returns>
+        </member>
+        <member name="M:Sci.Data.IDBProxy.RushSave(System.String,Sci.Data.ITableSchema,System.Data.DataTable)">
+            <summary>
+            Rush insert/update/delete by DBAdapter.
+            </summary>
+            <param name="connname">name of connection string.</param>
+            <param name="table">Table definition.</param>
+            <param name="datas">DataTable which will be processed.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.IDBProxy.RushSaveByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Data.DataTable)">
+            <summary>
+            Batch insert/update/delete by DBAdapter with specified SqlConnection.
+            </summary>
+            <param name="conn">connection object.</param>
+            <param name="table">Table definition.</param>
+            <param name="datas">lists of DataRow which will be processed.</param>
+            <returns>result of the SQL command is executed.</returns>
         </member>
         <member name="T:Sci.Data.DBProxy">
             <summary>
@@ -1620,6 +1643,24 @@
             <param name="fetchCount">要每幾筆作一次動作</param>
             <param name="parameters">select 資料用的sql parameters</param>
             <returns></returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.RushSave(System.String,Sci.Data.ITableSchema,System.Data.DataTable)">
+            <summary>
+            Batch insert/update/delete by DBAdapter.
+            </summary>
+            <param name="connname">name of connection string.</param>
+            <param name="table">Table definition.</param>
+            <param name="datas">DataTable which will be processed.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.RushSaveByConn(System.Data.SqlClient.SqlConnection,Sci.Data.ITableSchema,System.Data.DataTable)">
+            <summary>
+            Batch insert/update/delete by DBAdapter with specified SqlConnection.
+            </summary>
+            <param name="conn">connection object.</param>
+            <param name="table">Table definition.</param>
+            <param name="datas">lists of DataRow which will be processed.</param>
+            <returns>result of the SQL command is executed.</returns>
         </member>
         <member name="T:Sci.Data.SYS">
              <summary>
@@ -4973,6 +5014,12 @@
             </summary>
             <param name="data">DataRow object</param>
             <returns>Array of object.</returns>
+        </member>
+        <member name="P:Sci.Win.Subs.Input4.RushMode">
+            <summary>
+            <para>1.儲存Grid資料時, 是否要用改用批次 insert/delete的做法 (原做法是每筆資料都產生 sql command來執行)</para>
+            <para>2.原本OnSave會依據method變數 list(DataRow) 來判斷那些資料要儲存, RushMode則是用第二層的DataTable判斷</para>
+            </summary>
         </member>
         <member name="M:Sci.Win.Subs.Input4.#ctor">
             <summary>
@@ -8816,7 +8863,7 @@
         </member>
         <member name="M:Sci.Win.Tems.Input1.OnInternalSavePre">
             <summary>
-            OnInternalSavePre method.
+            Open TransactionScope
             </summary>
             <returns>true or false.</returns>
         </member>
@@ -9519,7 +9566,7 @@
         <member name="P:Sci.Win.Tems.Input6.RushMode">
             <summary>
             <para>1.儲存表身資料時, 是否要用改用批次 insert/delete的做法 (原做法是每筆資料都產生 sql command來執行)</para>
-            <para>2.原本</para>
+            <para>2.原本OnSaveDetail會依據method變數 list(DataRow) 來判斷那些資料要儲存, RushMode則是用第二層的DataTable判斷</para>
             </summary>
         </member>
         <member name="M:Sci.Win.Tems.Input6.Constructor">
@@ -9569,6 +9616,12 @@
             Template used.
             </summary>
             <returns>result of process.</returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Input6.OnInternalSavePre">
+            <summary>
+            開啟TransactionScope前, 作好抓取 TableSchema的動作
+            </summary>
+            <returns>成功or失敗</returns>
         </member>
         <member name="M:Sci.Win.Tems.Input6.OnSaveDetail">
             <summary>
@@ -9693,7 +9746,7 @@
             Template used.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tems.Input6._OnDetailGrid_EnterKeyPressed(System.Object,Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs)">
+        <member name="M:Sci.Win.Tems.Input6.OnInternalDetailGrid_EnterKeyPressed(System.Object,Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs)">
             <summary>
             當最後一Row的最後一個可編輯的Cell按下Enter時, 自動新增一筆新的Row
             </summary>
