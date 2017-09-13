@@ -15,11 +15,13 @@ namespace Sci.Production.Packing
     {
         DataTable grid2Data= new DataTable();
         DataTable detailData;
+        string mBrandID;
 
-        public P04_ExcelImport(DataTable DetailData)
+        public P04_ExcelImport(DataTable DetailData,String BrandID)
         {
             InitializeComponent();
             detailData = DetailData;
+            mBrandID = BrandID;
         }
 
         protected override void OnFormLoaded()
@@ -223,11 +225,11 @@ namespace Sci.Production.Packing
             DataTable tmpPackData;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", @"select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category
+                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", @"select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category,o.SeasonID,o.BrandID
 from #tmp a
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
-left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode", out tmpPackData);
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode where o.Category = 'S'", out tmpPackData);
             }
             catch (Exception ex)
             {
@@ -240,7 +242,8 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
             foreach (DataRow dr in ((DataTable)listControlBindingSource2.DataSource).Rows)
             {
                 count++;
-                DataRow[] findDR = tmpPackData.Select(string.Format("OrderID = '{0}' and BuyerDelivery = {1} and ShipmodeID = '{2}' and Article = '{3}' and SizeCode = '{4}' and Qty = {5}", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("d") + "'", MyUtility.Convert.GetString(dr["ShipmodeID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+                DataRow[] findDR = tmpPackData.Select(string.Format("OrderID = '{0}' and BuyerDelivery = {1} and ShipmodeID = '{2}' and Article = '{3}' and SizeCode = '{4}' and Qty = {5} and BrandID = '{6}'",
+                    MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Check.Empty(dr["BuyerDelivery"]) ? "null" : "'" + Convert.ToDateTime(dr["BuyerDelivery"]).ToString("d") + "'", MyUtility.Convert.GetString(dr["ShipmodeID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), mBrandID));
                 if (findDR.Length > 0)
                 {
                     if (MyUtility.Check.Empty(findDR[0]["ID"]))
@@ -271,6 +274,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
                     insertRow["OrderShipmodeSeq"] = findDR[0]["Seq"];
                     insertRow["StyleID"] = findDR[0]["StyleID"];
                     insertRow["CustPONo"] = findDR[0]["CustPONo"];
+                    insertRow["SeasonID"] = findDR[0]["SeasonID"];
                     insertRow["Article"] = dr["Article"];
                     insertRow["Color"] = dr["ColorID"];
                     insertRow["SizeCode"] = dr["SizeCode"];
