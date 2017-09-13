@@ -166,7 +166,7 @@ namespace Sci.Production.Shipping
                 Helper.Controls.Grid.Generator(this.detailgrid)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
-                    .Numeric("Qty", header: "Stock Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
+                    .Numeric("Qty", header: "Stock Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
                     .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
 
