@@ -1194,7 +1194,9 @@ namespace Sci.Production.Planning
                 {
                     for (int i = 0; i < rows.Length; i++)
                     {
-                        v += Convert.ToDecimal(rows[i].Field<decimal?>("Capacity").GetValueOrDefault(0));
+                        decimal decCapacity;
+                        Decimal.TryParse(rows[i]["Capacity"].ToString(), out decCapacity);
+                        v += decCapacity;
                     }
                 }
                 wks.Cells[sheetStart, mon + 1].Value = v;
