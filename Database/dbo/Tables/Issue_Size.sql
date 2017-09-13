@@ -2,7 +2,7 @@
     [Id]               VARCHAR (13)    CONSTRAINT [DF_Issue_Size_Id] DEFAULT ('') NOT NULL,
     [Issue_DetailUkey] BIGINT          NOT NULL,
     [SizeCode]         VARCHAR (8)     CONSTRAINT [DF_Issue_Size_SizeCode] DEFAULT ('') NOT NULL,
-    [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_Issue_Size_Qty] DEFAULT ((0)) NULL,
+    [Qty]              NUMERIC (11, 2) CONSTRAINT [DF_Issue_Size_Qty] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Issue_Size_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Issue_DetailUkey] ASC, [SizeCode] ASC)
 );
 
