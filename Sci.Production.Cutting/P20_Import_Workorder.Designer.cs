@@ -36,14 +36,14 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTOP = new Sci.Win.UI.Panel();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtCutRef = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
             this.panelBOTTOM = new Sci.Win.UI.Panel();
             this.panelMIDDLE = new Sci.Win.UI.Panel();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
@@ -145,6 +145,25 @@
             this.panelTOP.Size = new System.Drawing.Size(944, 44);
             this.panelTOP.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(646, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 23);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(712, 12);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 21;
+            // 
             // txtCutRef
             // 
             this.txtCutRef.BackColor = System.Drawing.Color.White;
@@ -197,25 +216,6 @@
             this.panelMIDDLE.Name = "panelMIDDLE";
             this.panelMIDDLE.Size = new System.Drawing.Size(944, 439);
             this.panelMIDDLE.TabIndex = 8;
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = true;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(712, 12);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(117, 23);
-            this.txtfactory.TabIndex = 21;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(646, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 23);
-            this.label2.TabIndex = 22;
-            this.label2.Text = "Factory";
             // 
             // P20_Import_Workorder
             // 
