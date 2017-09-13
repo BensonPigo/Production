@@ -487,6 +487,10 @@ where InvA.OrderID = '{0}'
             DataTable dt = ((DataTable)detailgridbs.DataSource);
             if(!dt.Columns.Contains("Qty"))
                 dt.ColumnsIntAdd("Qty");
+            if (!dt.Columns.Contains("OtherConfirmQty"))
+                dt.ColumnsIntAdd("OtherConfirmQty");
+            if (!dt.Columns.Contains("InvAdjustQty"))
+                dt.ColumnsIntAdd("InvAdjustQty");
             ComputeOrderQty();
         }
 
@@ -520,9 +524,9 @@ select oqd.Id as OrderID
        , oqd.SizeCode
        , Qty = oqd.Qty 
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-where oqd.Id = '{1}'
-      and oqd.Seq = '{2}'
-", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+where oqd.Id = '{0}'
+      and oqd.Seq = '{1}'", dr["OrderID"].ToString()
+                          , dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -693,6 +697,10 @@ where InvA.OrderID = '{0}'
                 MyUtility.Msg.WarningBox("Query  schema fail!");
                 return false;
             }
+
+            //Balance < 0 ErrorMsg
+            List<string> listErrorMsg = new List<string>();
+
             foreach (DataRow dr in DetailDatas)
             {
                 #region 刪除表身SP No.或Qty為空白的資料
@@ -754,14 +762,16 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 if (detailData.Length <= 0)
                 {
                     //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+                    sqlCmd = string.Format(@"
+select oqd.Id as OrderID
+	   , oqd.Seq as OrderShipmodeSeq
+	   , oqd.Article
+	   , oqd.SizeCode
+	   , oqd.Qty as Qty
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
-left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
-left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
-where oqd.Id = '{1}'
-and oqd.Seq = '{2}'
-group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+where oqd.Id = '{0}'
+	  and oqd.Seq = '{1}'", dr["OrderID"].ToString()
+                          , dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
@@ -796,11 +806,12 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                         ttlShipQty = ttlShipQty + MyUtility.Convert.GetInt(dDr["ShipQty"]);
                     }
                 }
-
+                
                 dr["BalanceQty"] = needPackQty - Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]) - ttlShipQty;
-                if (needPackQty - ttlShipQty < 0)
+                if (Convert.ToInt32(dr["BalanceQty"]) < 0)
                 {
                     isNegativeBalQty = true;
+                    listErrorMsg.Add(string.Format("Order Qty: {0}, Shipped Qty: {1}, Qty: {2}", dr["Qty"], Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]), dr["ShipQty"]));
                     detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 #endregion
@@ -811,7 +822,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
             if (isNegativeBalQty)
             {
-                MyUtility.Msg.WarningBox("Quantity entered is greater than order quantity!!");
+                MyUtility.Msg.WarningBox(listErrorMsg.JoinToString(Environment.NewLine) + Environment.NewLine + "Balance Quantity cannot < 0");
                 return false;
             }
 
