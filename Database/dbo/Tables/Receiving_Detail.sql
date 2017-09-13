@@ -7,7 +7,7 @@
     [Roll]         VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Roll] DEFAULT ('') NOT NULL,
     [Dyelot]       VARCHAR (4)     CONSTRAINT [DF_Receiving_Detail_Dyelot] DEFAULT ('') NOT NULL,
     [ShipQty]      NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ShipQty] DEFAULT ((0)) NULL,
-    [ActualQty]    NUMERIC (10, 2) CONSTRAINT [DF_Receiving_Detail_ActualQty] DEFAULT ((0)) NULL,
+    [ActualQty]    NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ActualQty] DEFAULT ((0)) NULL,
     [PoUnit]       VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_PoUnit] DEFAULT ('') NULL,
     [Weight]       NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_Weight] DEFAULT ((0)) NULL,
     [ActualWeight] NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_ActualWeight] DEFAULT ((0)) NULL,
@@ -20,6 +20,8 @@
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

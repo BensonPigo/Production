@@ -104,6 +104,59 @@ namespace Sci.Production.Warehouse
             DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
+            #region check Columns length
+            List<string> listColumnLengthErrMsg = new List<string>();
+
+            foreach (DataRow row in DetailDatas)
+            {
+                List<string> listRowErrMsg = new List<string>();
+
+                // Seq1 varchar(3)
+                if (row["Seq1"].ToString().Length > 3)
+                    listRowErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
+
+                // Seq2 varchar(2)
+                if (row["Seq2"].ToString().Length > 2)
+                    listRowErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
+
+                // Roll varchar(8)
+                if (row["Roll"].ToString().Length > 8)
+                    listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
+
+                // Dyelot varchar(4)
+                if (row["Dyelot"].ToString().Length > 4)
+                    listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
+
+                // ShipQty  numeric(11, 2)
+                if (decimal.Parse(row["ShipQty"].ToString()) > 999999999)
+                    listRowErrMsg.Add("<Ship Qty> value can't be more than 999,999,999");
+
+                // ActualQty  numeric (11, 2)
+                if (decimal.Parse(row["ActualQty"].ToString()) > 999999999)
+                    listRowErrMsg.Add("<Actual Qty> value can't be more than 999,999,999");
+
+                // actualWeight numeric (7, 2)
+                if (decimal.Parse(row["actualWeight"].ToString()) > 99999)
+                    listRowErrMsg.Add("<Act.(kg)> value can't be more than 99,999");
+
+                // Weight numeric (7, 2)
+                if (decimal.Parse(row["Weight"].ToString()) > 99999)
+                    listRowErrMsg.Add("<G.W(kg)> value can't be more than 99,999");
+
+                // Location varchar(60)
+                if (row["Location"].ToString().Length > 60)
+                    listRowErrMsg.Add("<Location> length can't be more than 60 Characters.");
+
+                if (listRowErrMsg.Count > 0)
+                    listColumnLengthErrMsg.Add(string.Format("<SP#> : {0}, <Seq> : {1}", row["Poid"], row["Seq"]) + Environment.NewLine + listRowErrMsg.JoinToString(Environment.NewLine));
+            }
+            if (listColumnLengthErrMsg.Count > 0)
+            {
+                MyUtility.Msg.WarningBox(listColumnLengthErrMsg.JoinToString(Environment.NewLine + Environment.NewLine));
+                return false;
+            }
+            #endregion
+
             #region 必輸檢查
 
             if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
@@ -124,9 +177,13 @@ namespace Sci.Production.Warehouse
             #region 確認此單中，是否存在同【SP#, Seq1, Seq2, Roll】
             DataTable dtCheckDuplicateData;
             string strCheckDuplicateData = @"
-select count (*)
+select *
 from (
-    select  value = count(*)
+    select  Poid
+            , Seq1
+            , Seq2
+            , Roll
+            , value = count(*)
     from #tmp
     group by Poid, Seq1, Seq2, Roll
 ) x
@@ -137,11 +194,15 @@ where x.value > 1
             {
                 if (dtCheckDuplicateData != null && dtCheckDuplicateData.Rows.Count != 0)
                 {
-                    if (!dtCheckDuplicateData.Rows[0][0].EqualDecimal(0))
-                    {
-                        MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate.");
-                        return false;
+                    List<string> listDuplicateData = new List<string>();
+                    foreach (DataRow dr in dtCheckDuplicateData.Rows) {
+                        listDuplicateData.Add(string.Format("<SP#> : {0}, <Seq1> : {1}, <Seq2> : {2}, <Roll#> : {3}", dr["Poid"]
+                                                                                                                    , dr["Seq1"]
+                                                                                                                    , dr["Seq2"]
+                                                                                                                    , dr["Roll"]));
                     }
+                    MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate." + Environment.NewLine + listDuplicateData.JoinToString(Environment.NewLine));
+                    return false;
                 }
             }
             else
