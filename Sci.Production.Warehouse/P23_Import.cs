@@ -78,6 +78,8 @@ namespace Sci.Production.Warehouse
                 and i.InventorySeq1 = pd.StockSeq1 
                 and i.PoID = pd.ID 
                 and i.InventorySeq2 = pd.StockSeq2 
+                and i.seq70seq1 = pd.seq1
+                and i.seq70seq2 = pd.seq2
                 and (i.type=2 or i.type=6)
         group by i.InventoryPOID, i.InventorySeq1, i.InventorySeq2
     )x

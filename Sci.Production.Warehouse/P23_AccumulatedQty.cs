@@ -40,6 +40,8 @@ cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(iif(i.type=2,i.Qty,0-i.qty)) taipei_qty
 		from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.ID = i.FactoryID and f.MDivisionID = '{1}'
 		where (i.type=2 OR I.TYPE=6) and i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.Stockseq1 and i.InventorySeq2 = pd.StockSEQ2 and i.PoID = pd.ID
+                and i.seq70seq1 = pd.seq1
+                and i.seq70seq2 = pd.seq2
 	) x
 )
 
