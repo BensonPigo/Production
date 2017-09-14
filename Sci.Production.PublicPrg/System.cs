@@ -176,14 +176,17 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
         /// </summary>
         /// <param name="string styleukey"></param>
         /// <param name="Out DataTable(GarmentList Table)"></param>
-        public static void GetGarmentListTable(string OrderID,out DataTable OutTb)
+        public static void GetGarmentListTable(string cutref, string OrderID,out DataTable OutTb)
         {
             DataTable garmentListTb;
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", OrderID, "Orders", "ID");
 
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             OutTb = null;
-            string patidsql = String.Format(
+            string patidsql;
+            if (MyUtility.Check.Empty(cutref))
+            {
+                patidsql = String.Format(
                             @"SELECT ukey
                               FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
                               WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
@@ -194,6 +197,17 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                                 where styleukey = '{0}' and Status = 'Completed'
                               )
              ", Styleyukey);
+            }
+            else
+            {
+                patidsql = String.Format(
+                            @"select top 1 Ukey 
+                            from Pattern 
+                            where PatternNo = (select substring(MarkerNo,1,9)+'N' from WorkOrder where CutRef = '{0}' and ID='{1}')
+                            and Status = 'Completed'
+                            order by ActFinDate Desc
+                            ", cutref, OrderID);
+            }
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             DataTable headertb;
@@ -234,8 +248,9 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
                 foreach (DataRow lecdr in lecdrar)
                 {
                     string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-                    dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
-                    //dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
+                    //dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                    //Mantis_7045 比照舊系統對應FabricPanelCode
+                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
                 }
                 if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
             }
