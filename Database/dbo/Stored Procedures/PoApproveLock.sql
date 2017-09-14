@@ -15,13 +15,13 @@ BEGIN
 
 	select @poapprovename = POApproveName,@poapproveday = POApproveDay from System
 
-	update LocalPO set ApvName = @poapprovename, ApvDate = GETDATE()
+	update LocalPO set ApvName = @poapprovename, ApvDate = GETDATE(), Status = 'Approved'
 	where ApvDate is null and IssueDate <= DATEADD(DAY,0-@poapproveday,GETDATE())
 
-	update ArtworkPO set ApvName = @poapprovename, ApvDate = GETDATE()
+	update ArtworkPO set ApvName = @poapprovename, ApvDate = GETDATE(), Status = 'Approved'
 	where ApvDate is null and IssueDate <= DATEADD(DAY,0-@poapproveday,GETDATE())
 
-	update Machine.dbo.MiscPO set Approve = @poapprovename, ApproveDate = GETDATE()
+	update Machine.dbo.MiscPO set Approve = @poapprovename, ApproveDate = GETDATE(), Status = 'Approved'
 	where ApproveDate is null and CDate <= DATEADD(DAY,0-@poapproveday,GETDATE()) and PurchaseFrom = 'L'
 
 
