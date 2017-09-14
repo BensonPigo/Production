@@ -447,10 +447,10 @@ as
 select poid.OrderID,isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode, isnull(oq.Qty,0) as Qty, isnull(pedd.PackedShipQty,0)+isnull(pingd.ShipQty,0) as PackQty,isnull(iq.DiffQty,0) as DiffQty, isnull(sd.QAQty,0) as QAQty
 from PackOrderID poid
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = poid.OrderID
-left join PackedData pedd on pedd.Article = oq.Article and pedd.SizeCode = oq.SizeCode
-left join PackingData pingd on pingd.Article = oq.Article and pingd.SizeCode = oq.SizeCode
-left join InvadjQty iq on iq.Article = oq.Article and iq.SizeCode = oq.SizeCode
-left join SewingData sd on sd.Article = oq.Article and sd.SizeCode = oq.SizeCode
+left join PackedData pedd on pedd.OrderID = poid.OrderID and pedd.Article = oq.Article and pedd.SizeCode = oq.SizeCode
+left join PackingData pingd on  pingd.OrderID = poid.OrderID and pingd.Article = oq.Article and pingd.SizeCode = oq.SizeCode
+left join InvadjQty iq on  iq.OrderID = poid.OrderID and iq.Article = oq.Article and iq.SizeCode = oq.SizeCode
+left join SewingData sd on  sd.OrderID = poid.OrderID and sd.Article = oq.Article and sd.SizeCode = oq.SizeCode
 order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
             DataTable queryData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out queryData);
