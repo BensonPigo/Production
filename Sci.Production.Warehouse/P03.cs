@@ -334,7 +334,7 @@ namespace Sci.Production.Warehouse
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells["RevisedETA"].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells["refno"].Style.BackColor = Color.Orange;
                     }
 
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
