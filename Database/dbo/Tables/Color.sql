@@ -2,7 +2,7 @@
     [BrandId]     VARCHAR (8)   CONSTRAINT [DF_Color_BrandId] DEFAULT ('') NOT NULL,
     [ID]          VARCHAR (6)   CONSTRAINT [DF_Color_ID] DEFAULT ('') NOT NULL,
     [Ukey]        BIGINT        CONSTRAINT [DF_Color_Ukey] DEFAULT ((0)) NULL,
-    [Name]        NVARCHAR (90) CONSTRAINT [DF_Color_Name] DEFAULT ('') NULL,
+    [Name]        NVARCHAR (150) CONSTRAINT [DF_Color_Name] DEFAULT ('') NULL,
     [Varicolored] TINYINT       CONSTRAINT [DF_Color_Varicolored] DEFAULT ((0)) NULL,
     [JUNK]        BIT           CONSTRAINT [DF_Color_JUNK] DEFAULT ((0)) NULL,
     [VIVID]       BIT           CONSTRAINT [DF_Color_VIVID] DEFAULT ((0)) NULL,

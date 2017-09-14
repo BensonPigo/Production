@@ -30,7 +30,7 @@
     [FabricType]       VARCHAR (1)     CONSTRAINT [DF_Inventory_FabricType] DEFAULT ('') NOT NULL,
     [MtlTypeID]        VARCHAR (20)    CONSTRAINT [DF_Inventory_MtlTypeID] DEFAULT ('') NULL,
     [ReasonID]         VARCHAR (5)     CONSTRAINT [DF_Inventory_ReasonID] DEFAULT ('') NULL,
-    [Remark]           NVARCHAR (60)   CONSTRAINT [DF_Inventory_Remark] DEFAULT ('') NULL,
+    [Remark]           NVARCHAR (MAX)   CONSTRAINT [DF_Inventory_Remark] DEFAULT ('') NULL,
     [IcrNo]            VARCHAR (13)    CONSTRAINT [DF_Inventory_IcrNo] DEFAULT ('') NULL,
     [DebitID]          VARCHAR (13)    CONSTRAINT [DF_Inventory_DebitID] DEFAULT ('') NULL,
     [Lock]             BIT     CONSTRAINT [DF_Inventory_Lock] DEFAULT ((0)) NULL,
