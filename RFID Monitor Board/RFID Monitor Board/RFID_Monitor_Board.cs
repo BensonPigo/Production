@@ -61,11 +61,6 @@ namespace RFID_Monitor_Board
             DateTime? n1 = MyUtility.Convert.GetDate(dr["NightShiftStart"]);
             DateTime? n2 = n2 = MyUtility.Convert.GetDate(dr["NightShiftEnd"]) < m1 ? MyUtility.Convert.GetDate(dr["NightShiftEnd"]).Value.AddDays(1) : MyUtility.Convert.GetDate(dr["NightShiftEnd"]);
             DateTime? n1b = n1.Value.AddDays(-MyUtility.Convert.GetInt(dr["WIPRange"]));
-            m1 = m1.Value.AddDays(-90);
-            m2 = m2.Value.AddDays(-90);
-            n1 = n1.Value.AddDays(-90);
-            n2 = n2.Value.AddDays(-90);
-            n1b = n1b.Value.AddDays(-90);
 
             string factory = MyUtility.Convert.GetString(dr["factoryID"]);
             string subprocess = MyUtility.Convert.GetString(dr["subprocessID"]);
