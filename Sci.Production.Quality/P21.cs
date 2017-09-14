@@ -375,7 +375,7 @@ where a.ID='{0}'",
         {
             base.ClickConfirm();
             DataTable dt;
-            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
+            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid and status='Confirmed' and Stage='F' order by cDate asc";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
@@ -390,9 +390,18 @@ where a.ID='{0}'",
                 {
                     string updOrders = "update orders set inspdate=@insdate,InspResult=@result,inspHandle=@cfa where id=@id";
                     List<SqlParameter> spamO = new List<SqlParameter>();
-                    spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
-                    spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
-                    spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
+                    if (dt.Rows.Count == 0)
+                    {
+                        spamO.Add(new SqlParameter("@insdate", ""));
+                        spamO.Add(new SqlParameter("@result", ""));
+                        spamO.Add(new SqlParameter("@cfa", ""));
+                    }
+                    else {
+                        spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
+                        spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
+                        spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
+                    }
+
                     spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                     DBProxy.Current.Execute(null, updOrders, spamO);
                    
@@ -406,7 +415,7 @@ where a.ID='{0}'",
             base.ClickUnconfirm();
             DualResult dResult;
             DataTable dt;
-            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
+            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid  and status='Confirmed' and Stage='F'  order by cDate asc";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
@@ -420,9 +429,18 @@ where a.ID='{0}'",
             {
                 string updOrders = "update orders set inspdate=@insdate,InspResult=@result,inspHandle=@cfa where id=@id";
                 List<SqlParameter> spamO = new List<SqlParameter>();
-                spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
-                spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
-                spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
+                if (dt.Rows.Count == 0)
+                {
+                    spamO.Add(new SqlParameter("@insdate", ""));
+                    spamO.Add(new SqlParameter("@result", ""));
+                    spamO.Add(new SqlParameter("@cfa", ""));
+                }
+                else
+                {
+                    spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
+                    spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
+                    spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
+                }
                 spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                 DBProxy.Current.Execute(null, updOrders, spamO);
                 
