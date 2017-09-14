@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
+using System.Linq;
 using Sci.Data;
 
 namespace Sci.Production.Sewing
@@ -52,13 +53,17 @@ namespace Sci.Production.Sewing
         protected override void OnAttached()
         {
             base.OnAttached();
+            string strFilter = string.Format("OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'", CurrentDetailData["OrderID"]
+                                                                                                        , CurrentDetailData["ComboType"]
+                                                                                                        , CurrentDetailData["Article"]);
+            gridbs.Filter = strFilter;
             displaySPNo.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
             displaySPNo2.Value = MyUtility.Convert.GetString(CurrentDetailData["ComboType"]);
             displayArticle.Value = MyUtility.Convert.GetString(CurrentDetailData["Article"]);
             displayColor.Value = MyUtility.Convert.GetString(CurrentDetailData["Color"]);
-            numTotalOrderQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(OrderQty)", ""));
-            numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
-            numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
+            numTotalOrderQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(OrderQty)", strFilter));
+            numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", strFilter));
+            numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", strFilter));
             CalculateTotal();
             //this.grid.AutoResizeColumns();
         }
@@ -113,8 +118,11 @@ namespace Sci.Production.Sewing
         //計算Total QA Q'ty, Total Bal. Q'ty
         private void CalculateTotal()
         {
-            numTotalQAQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(QAQty)", ""));
-            numTotalBalQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(BalQty)", ""));
+            string strFilter = string.Format("OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'", CurrentDetailData["OrderID"]
+                                                                                                        , CurrentDetailData["ComboType"]
+                                                                                                        , CurrentDetailData["Article"]);
+            numTotalQAQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(QAQty)", strFilter));
+            numTotalBalQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(BalQty)", strFilter));
         }
     }
 }
