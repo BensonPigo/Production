@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb;
+        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, f_codeTb;
         string f_code;
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -250,7 +250,7 @@ namespace Sci.Production.Cutting
                 if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and PatternPanel = '{1}'", dr["Ukey"], dr["PatternPanel"]));
 
                 foreach (DataRow row in ArticleAry)
                 {
@@ -443,6 +443,7 @@ Select  distinct 0 as sel
         , a.colorid
         , b.sizecode
         , c.PatternPanel
+		, c.FabricPanelCode
         , '' as Ratio
         , a.cutno
         , Sewingline = ord.SewLine
@@ -546,10 +547,10 @@ Where   a.ukey = b.workorderukey
                 ShowErr(query_cmd, query_dResult);
                 return;
             }
-
+            //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
-group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
-order by b.sizecode,b.orderid,c.PatternPanel";
+group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,c.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
+order by b.sizecode,b.orderid,c.FabricPanelCode";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
@@ -592,11 +593,13 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             #region GarmentList Table
             //將PO# Group by 
             // CutRefTb.DefaultView.
-            DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
-            foreach (DataRow dr in dtDistinct.Rows)
+            //DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
+            DataTable dtDis = null;
+            MyUtility.Tool.ProcessWithDatatable(CutRefTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);            
+            foreach (DataRow dr in dtDis.Rows)
             {
                 DataTable tmpTb;
-                PublicPrg.Prgs.GetGarmentListTable(dr["POID"].ToString(), out tmpTb);
+                PublicPrg.Prgs.GetGarmentListTable(dr["CutRef"].ToString(),dr["POID"].ToString(), out tmpTb);
                 if (GarmentTb == null)
                 {
                     GarmentTb = tmpTb;
@@ -606,6 +609,23 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                     GarmentTb.Merge(tmpTb);
                 }
             }
+            #endregion
+
+            #region ArticleGroup
+            //ArticleGroup
+            string sqlcmd = String.Format(@"
+SELECT pga.ArticleGroup
+FROM Pattern_GL_Article pga WITH (NOLOCK)
+inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
+inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
+WHERE o.ID = '{0}' and p.Status = 'Completed'
+AND p.EDITdATE = (
+	SELECT MAX(p2.EditDate) 
+	from pattern p2 WITH (NOLOCK) 
+	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
+)"
+                , dtDis.Rows[0]["poid"].ToString());
+            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
             #endregion
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
@@ -637,12 +657,13 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                               )
              ", dr["Styleukey"].ToString());
                 string patternukey = MyUtility.GetValue.Lookup(patidsql);
-                createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["PatternPanel"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
+                createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
                 iden++;
             }
             #endregion
+           
 
             gridCutRef.DataSource = CutRefTb;
             gridArticleSize.DataSource = ArticleSizeTb;
@@ -657,14 +678,24 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
             this.HideWaitMessage();
         }
-        public void createPattern(string poid, string article, string patternpanel, string cutref, int iden, string ArticleGroup)
+        public void createPattern(string poid, string article, string FabricPanelCode, string cutref, int iden, string ArticleGroup)
         {
             if (ArticleGroup == "") f_code = "F_Code";
             else f_code = ArticleGroup;
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
 
-            DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}' and orderid = '{2}'", f_code, patternpanel, poid));
+
+
+            StringBuilder w = new StringBuilder();
+            w.Append("1 = 0");
+            foreach (DataRow dr in f_codeTb.Rows)
+            {
+                w.Append(string.Format(" or {0} = '{1}' ", dr[0], FabricPanelCode));
+            }
+
+            //DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}' and orderid = '{2}'", f_code, FabricPanelCode, poid));
+            DataRow[] garmentar = GarmentTb.Select(w.ToString());
             foreach (DataRow dr in garmentar)
             {
                 if (MyUtility.Check.Empty(dr["annotation"])) //若無ANNOTATion直接寫入All Parts
@@ -698,18 +729,28 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
-                                for (int i = 0; i < count; i++)
-                                {
-                                    DataRow ndr2 = patternTb.NewRow();
-                                    ndr2["PatternCode"] = dr["PatternCode"];
-                                    ndr2["PatternDesc"] = dr["PatternDesc"];
-                                    ndr2["Parts"] = 1;
-                                    ndr2["art"] = art;
-                                    ndr2["POID"] = poid;
-                                    ndr2["Cutref"] = cutref;
-                                    ndr2["iden"] = iden;
-                                    patternTb.Rows.Add(ndr2);
-                                }
+                                DataRow ndr2 = patternTb.NewRow();
+                                ndr2["PatternCode"] = dr["PatternCode"];
+                                ndr2["PatternDesc"] = dr["PatternDesc"];
+                                ndr2["Parts"] = count;
+                                ndr2["art"] = art;
+                                ndr2["POID"] = poid;
+                                ndr2["Cutref"] = cutref;
+                                ndr2["iden"] = iden;
+                                patternTb.Rows.Add(ndr2);
+                                //int count = Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                                //for (int i = 0; i < count; i++)
+                                //{
+                                //    DataRow ndr2 = patternTb.NewRow();
+                                //    ndr2["PatternCode"] = dr["PatternCode"];
+                                //    ndr2["PatternDesc"] = dr["PatternDesc"];
+                                //    ndr2["Parts"] = 1;
+                                //    ndr2["art"] = art;
+                                //    ndr2["POID"] = poid;
+                                //    ndr2["Cutref"] = cutref;
+                                //    ndr2["iden"] = iden;
+                                //    patternTb.Rows.Add(ndr2);
+                                //}
                             }
                             else
                             {
@@ -789,7 +830,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
             ArticleSizeTb.DefaultView.RowFilter 
-                = string.Format("Ukey ='{0}' and patternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["patternPanel"]);
+                = string.Format("Ukey ='{0}' and PatternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["PatternPanel"]);
             if (ArticleSizeTb.Rows.Count == 0) return;
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {

@@ -704,7 +704,7 @@ BEGIN
 								-------------------------------------
 								if(@WorkOrder_DisQty>0)
 								begin
-									SET @Cons = @Layer * @SizeRatioQty * @ConsPC
+									SET @Cons = @maxLayer * @SizeRatioQty * @ConsPC
 									--update #Order_EachCons_Color_Article set Layer = Layer - ISNULL(@maxLayer ,0)
 									--Where Article = @Article and Order_EachConsUkey = @Order_EachConsUkey and SizeCode = @SizeCode 
 									Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)

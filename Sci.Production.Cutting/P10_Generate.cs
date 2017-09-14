@@ -53,7 +53,7 @@ namespace Sci.Production.Cutting
 
             #region 準備GarmentList & ArticleGroup
             //GarmentList
-            PublicPrg.Prgs.GetGarmentListTable(maindatarow["poid"].ToString(), out garmentTb);
+            PublicPrg.Prgs.GetGarmentListTable(maindr["cutref"].ToString(), maindatarow["poid"].ToString(), out garmentTb);
             //ArticleGroup
             string sqlcmd = String.Format(@"
 SELECT pga.ArticleGroup
@@ -145,7 +145,7 @@ group by sizeCode"
             w.Append("1 = 0");
             foreach (DataRow dr in f_codeTb.Rows)
             {
-                w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["PatternPanel"]));
+                w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["FabricPanelCode"]));
             }
             DataRow[] garmentar = garmentTb.Select(w.ToString());
             foreach (DataRow dr in garmentar)
@@ -177,15 +177,22 @@ group by sizeCode"
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
-                                for (int i = 0; i < count; i++)
-                                {
-                                    DataRow ndr2 = patternTb.NewRow();
-                                    ndr2["PatternCode"] = dr["PatternCode"];
-                                    ndr2["PatternDesc"] = dr["PatternDesc"];
-                                    ndr2["Parts"] = 1;
-                                    ndr2["art"] = art;
-                                    patternTb.Rows.Add(ndr2);
-                                }
+                                DataRow ndr2 = patternTb.NewRow();
+                                ndr2["PatternCode"] = dr["PatternCode"];
+                                ndr2["PatternDesc"] = dr["PatternDesc"];
+                                ndr2["Parts"] = count;
+                                ndr2["art"] = art;
+                                patternTb.Rows.Add(ndr2);
+                                //int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                                //for (int i = 0; i < count; i++)
+                                //{
+                                //    DataRow ndr2 = patternTb.NewRow();
+                                //    ndr2["PatternCode"] = dr["PatternCode"];
+                                //    ndr2["PatternDesc"] = dr["PatternDesc"];
+                                //    ndr2["Parts"] = 1;
+                                //    ndr2["art"] = art;
+                                //    patternTb.Rows.Add(ndr2);
+                                //}
                             }
                             else
                             {
