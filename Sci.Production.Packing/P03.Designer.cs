@@ -701,7 +701,6 @@
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 3;
             this.txtshipmode.UseFunction = "ORDER";
-            this.txtshipmode.Validated += new System.EventHandler(this.txtshipmode_Validated);
             // 
             // numTtlGW
             // 
