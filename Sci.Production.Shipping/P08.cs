@@ -291,9 +291,7 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["Type"] = "IMPORT";
             comboType2.DataSource = subType_1;
             CurrentMaintain["SubType"] = "MATERIAL";
-            CurrentMaintain["Factory"] = Sci.Env.User.Factory;
-            //this.comboFactory1.SelectedValue = Sci.Env.User.Factory;
-            //this.comboFactory1.SelectedValue2 = Sci.Env.User.Factory;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             numTotal.Value = 0;
             gridicon.Append.Enabled = true;
             gridicon.Insert.Enabled = true;
@@ -534,7 +532,7 @@ where sd.ID = '{0}'", masterID);
             {
                 DataTable FactoryData,LocalSpuuData,Report_ShippingAPDetail;
                 string sqlCmd = string.Format("select NameEN, AddressEN,Tel from factory WITH (NOLOCK) where ID = '{0}'",
-               MyUtility.Convert.GetString(CurrentMaintain["Factory"]));
+               MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]));
                 result = DBProxy.Current.Select(null,sqlCmd,out FactoryData);
                 if(!result)
                 {

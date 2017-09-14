@@ -622,7 +622,7 @@
             // comboFactory1
             // 
             this.comboFactory1.BackColor = System.Drawing.Color.White;
-            this.comboFactory1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Factory", true));
+            this.comboFactory1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FactoryID", true));
             this.comboFactory1.FilteMDivision = false;
             this.comboFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory1.FormattingEnabled = true;
