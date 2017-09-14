@@ -107,11 +107,12 @@ BEGIN
 			and a.LocalOrder = 0
 				
 ---------------------OrderComparisonList (1.Insert, 2.Delete, 3.ChangeFactory, 4.ChangeData, 5.NoChange)-----------------
+---------------------除了 Delete 用區間比對，其餘的都用 PMS Orders
 		----1.Insert 記錄 Trade 有 PMS 沒有的資料 (NewOrder = 1) 
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.* 
 				from Trade_To_Pms.dbo.Orders a
-				left join #tmpOrders b on a.ID = b.ID
+				left join Production.dbo.Orders b on a.ID = b.ID
 				where b.id is null
 					  and a.FactoryID in (select ID from Production.dbo.Factory)) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
@@ -169,7 +170,7 @@ BEGIN
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select	a.*
 						, Transfer2Factroy = b.FactoryID
-				from #tmpOrders a
+				from Production.dbo.Orders a
 				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID 
 					 and a.FactoryID != b.FactoryID
 					 and b.FactoryID in (select ID from Production.dbo.Factory)) as s
@@ -201,7 +202,7 @@ BEGIN
 		 -------3.2.New 新工廠的資料，資料帶入 Trade.Orders
 	    Merge Production.dbo.OrderComparisonList as t
 		Using (	select b.*
-				from #tmpOrders a
+				from Production.dbo.Orders a
 				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID 
 					 and a.FactoryID != b.FactoryID
 					 and b.FactoryID in (select ID from Production.dbo.Factory)) as s
@@ -258,7 +259,7 @@ BEGIN
 						, N_LETA			= IIF(isnull(A.LETA, '') != isnull(B.LETA, ''), b.LETA, null)
 						, O_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , a.StyleID, '')
 						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
-				from #tmpOrders a WITH (NOLOCK)
+				from Production.dbo.Orders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	(isnull(A.QTY, 0) != isnull(B.QTY, 0) 
 						OR isnull(A.BuyerDelivery, '') != isnull(B.BuyerDelivery, '')
@@ -1252,6 +1253,7 @@ BEGIN
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
+
 		--------Order_EachCons_SizeQty----------------Each cons - Size & Qty
 		Merge Production.dbo.Order_EachCons_SizeQty as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_SizeQty a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
@@ -1269,7 +1271,27 @@ BEGIN
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
-
+	-------Order_EachCons_Article--------------------Each cons - 用量展開
+	  Merge Production.dbo.Order_EachCons_Article as t
+	  Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Article a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
+	 on t.Order_EachConsUkey=s.Order_EachConsUkey and t.Article = s.Article
+	 when matched then 
+	 update set 
+	  t.Id     = s.Id,
+	  t.AddName    = s.AddName,
+	  t.AddDate    = s.AddDate,
+	 t.EditName    = s.EditName,
+	 t.EditDate    = s.EditDate
+	 when not matched by target then 
+	  insert (
+	   Id   , Order_EachConsUkey , Article   , AddName  , AddDate
+	  , EditName  , EditDate
+	  ) values (
+	  s.Id  , s.Order_EachConsUkey , s.Article  , s.AddName  , s.AddDate
+	 , s.EditName , s.EditDate
+	  )
+	  when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
+		delete;
 		-------Order_EachCons_Color--------------------Each cons - 用量展開
 		Merge Production.dbo.Order_EachCons_Color as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
