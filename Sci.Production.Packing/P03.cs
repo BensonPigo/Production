@@ -1127,12 +1127,13 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         private void txtshipmode_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtshipmode.OldValue)) return;
+            if (MyUtility.Check.Empty(DetailDatas) || DetailDatas.Count == 0) return;
             if (EditMode && txtshipmode.OldValue != txtshipmode.SelectedValue)
             {
                 //if (MyUtility.Check.Empty(DetailDatas.Count)) return;
                 string tempOldValue = txtshipmode.OldValue.ToString();
 
-                DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
+                DialogResult diresult = MyUtility.Msg.QuestionBox("The detail SEQ will be cleared, are you sure change type?");
                 if (diresult == DialogResult.No)
                 {
                     txtshipmode.OldValue = tempOldValue;
@@ -1140,10 +1141,10 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
-                // 清空表身Grid資料
+                // 清空表身Grid資料                
                 foreach (DataRow dr in DetailDatas)
                 {
-                    dr.Delete();
+                    dr["OrderShipmodeSeq"] = "";
                 }
                 //DeleteDetailData();
             }
