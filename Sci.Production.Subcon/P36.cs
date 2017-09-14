@@ -234,11 +234,12 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 return false;
             }
 
-            if (!PublicPrg.Prgs.GetAuthority(CurrentMaintain["HANDLE"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("You don't have permission to modify!!");
-                return false;
-            }
+            //調成跟舊系統一樣，不管誰都可以編輯
+            //if (!PublicPrg.Prgs.GetAuthority(CurrentMaintain["HANDLE"].ToString()))
+            //{
+            //    MyUtility.Msg.WarningBox("You don't have permission to modify!!");
+            //    return false;
+            //}
 
             if (CurrentMaintain["status"].ToString().ToUpper() == "SENT")
             {
