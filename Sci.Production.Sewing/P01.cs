@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
 
@@ -16,6 +17,7 @@ namespace Sci.Production.Sewing
     public partial class P01 : Sci.Win.Tems.Input8
     {
         DataTable dtQACheck;
+        ITableSchema sub_Schema;
         Ict.Win.DataGridViewGeneratorTextColumnSettings qaoutput = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -38,6 +40,17 @@ namespace Sci.Production.Sewing
                 if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
                 {
                     this.OnDetailGridInsert();
+                }
+            };
+
+            detailgrid.RowsRemoved += (s, e) =>
+            {
+                //重新計算表頭 QAQty, InlineQty, DefectQty
+                if (this.detailgridbs.DataSource != null)
+                {
+                    CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
+                    CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
+                    CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(DefectQty)", "");
                 }
             };
         }
@@ -444,6 +457,7 @@ where   o.FtyGroup = @factoryid
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .Text("isAutoCreate", header: "Auto Create", iseditingreadonly: true);
         }
+
         //設定表身RFT的預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
@@ -487,6 +501,7 @@ where   o.FtyGroup = @factoryid
                 dtQACheck = dtQAQtyCheck.Copy();
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
+                //總計第三層 Qty 填入第二層 QAQty
                 e.Detail["QAQty"] = QAQty;
 
                 if (QAQty == 0)
@@ -500,6 +515,7 @@ where   o.FtyGroup = @factoryid
                 }
                 
                 CalculateDefectQty(e.Detail);
+                //總計第二層 Qty 填入第一層 QAQty
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
                 CurrentMaintain["InlineQty"] =MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
             }
@@ -561,16 +577,10 @@ and Team = @team";
         {
             DataTable SubDetailData;
             GetSubDetailDatas(dr, out SubDetailData);
-            List<DataRow> drArray = new List<DataRow>();
             foreach (DataRow ddr in SubDetailData.Rows)
             {
-                drArray.Add(ddr);
+                ddr["QAQty"] = 0;
             }
-            foreach (DataRow ddr in drArray)
-            {
-                ddr.Delete();
-            }
-           
         }
 
         //產生SubDetail資料
@@ -592,31 +602,59 @@ and Team = @team";
             cmds.Add(sp3);
             cmds.Add(sp4);
 
-            string sqlCmd = @"with AllQty
-as
-(
-select '' as ID, @ukey as SewingOutput_DetailUkey, oq.ID as OrderId, @combotype  as ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,0 as QAQty ,
-isnull((select sum(QAQty) from SewingOutput_Detail_Detail WITH (NOLOCK) where OrderId = oq.ID and ComboType = @combotype and Article = oq.Article and SizeCode = oq.SizeCode),0) as AccumQty
-from Order_Qty oq WITH (NOLOCK) 
-where oq.ID = @orderid
-and oq.Article = @article
+            string sqlCmd = string.Format(@"
+with AllQty as (
+    select '' as ID
+           , @ukey as SewingOutput_DetailUkey
+           , oq.ID as OrderId
+           , @combotype  as ComboType
+           , oq.Article
+           , oq.SizeCode
+           , oq.Qty as OrderQty
+           , 0 as QAQty 
+           , AccumQty = isnull((select sum(QAQty) 
+                                from SewingOutput_Detail_Detail WITH (NOLOCK) 
+                                where OrderId = oq.ID 
+                                      and ComboType = @combotype 
+                                      and Article = oq.Article 
+                                      and SizeCode = oq.SizeCode
+                                      and ID != '{0}'), 0) 
+    from Order_Qty oq WITH (NOLOCK) 
+    where oq.ID = @orderid
+          and oq.Article = @article
 )
-select a.*,a.OrderQty-a.AccumQty as Variance, a.OrderQty-a.AccumQty-a.QAQty as BalQty,isnull(os.Seq,0) as Seq
+select a.*
+       , a.OrderQty - a.AccumQty as Variance
+       , a.OrderQty - a.AccumQty - a.QAQty as BalQty
+       , isnull(os.Seq,0) as Seq
+       , OldDetailKey = ''
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
-left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
-order by a.OrderId,os.Seq";
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID 
+                                             and os.SizeCode = a.SizeCode
+order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
             DataTable OrderQtyData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
             if (result && OrderQtyData.Rows.Count > 0)
             {
                 DataTable SubDetailData;
                 GetSubDetailDatas(dr, out SubDetailData);
-                foreach (DataRow ddr in OrderQtyData.Rows)
+                foreach(DataRow ddr in OrderQtyData.Rows)
                 {
-                    DataRow ndr = SubDetailData.NewRow();
-                    ndr.ItemArray = ddr.ItemArray;
-                    SubDetailData.Rows.Add(ndr);
+                    if (!SubDetailData.AsEnumerable().Any(row => row["ID"].EqualString(ddr["ID"])
+                                                                && row["SewingOutput_DetailUkey"].EqualString(ddr["SewingOutput_DetailUkey"])
+                                                                && row["OrderID"].EqualString(ddr["OrderID"])
+                                                                && row["ComboType"].EqualString(ddr["ComboType"])
+                                                                && row["Article"].EqualString(ddr["Article"])
+                                                                && row["SizeCode"].EqualString(ddr["SizeCode"])))
+                    {
+                        DataRow newDr = SubDetailData.NewRow();
+                        for(int i = 0; i < SubDetailData.Columns.Count; i++)
+                        {
+                            newDr[SubDetailData.Columns[i].ColumnName] = ddr[SubDetailData.Columns[i].ColumnName];
+                        }
+                        SubDetailData.Rows.Add(newDr);
+                    }
                 }
             }
         }
@@ -976,74 +1014,15 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
             CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
         }
-
-        //protected override DualResult ClickSavePost()
-        //{
-        //    List<DataRow> Inserted = new List<DataRow>();
-        //    List<DataRow> Updated = new List<DataRow>();
-        //    List<DataRow> deleteList = new List<DataRow>();
-        //    ITableSchema sub_Schema;
-        //    var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out sub_Schema);
-        //    if (!ok) { return ok; };
-
-
-
-        //    foreach (DataRow detail in this.DetailDatas)
-        //    {
-        //        DataTable subDetails;
-        //        var result = this.GetSubDetailDatas(detail, out subDetails);
-        //        if (!result) { return result; }
-        //        foreach (DataRow dr in subDetails.Rows)
-        //        {
-        //            if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
-        //                deleteList.Add(dr);
-        //            else
-        //            {
-        //                if (dr.RowState == DataRowState.Added && MyUtility.Convert.GetInt(dr["QAQty"]) > 0)
-        //                    Updated.Add(dr);
-        //                else if (MyUtility.Convert.GetInt(dr["QAQty"]) != MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]))
-        //                {
-        //                    Updated.Add(dr);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    //var newT = Updated[0].Table.Clone();
-        //    //List<DataRow> xx = new List<DataRow>();
-        //    //var newOne = newT.NewRow();
-        //    //newOne.ItemArray = Updated[0].ItemArray;
-        //    //xx.Add(newOne);
-        //    //newT.Rows.Add(newOne);
-        //    //newT.AcceptChanges();
-        //    //newOne["QaQty"] = "3";
-        //    //ok = DBProxy.Current.Batch(null, sub_Schema, xx);
-        //    //if (!ok) { return ok; };
-
-
-        //    ok = DBProxy.Current.Deletes(null, sub_Schema, deleteList);
-        //    if (!ok) { return ok; };
-        //    foreach (var row in Updated) {
-        //        bool xx;
-        //        ok = DBProxy.Current.UpdateByChanged(null, sub_Schema, row,out xx);
-        //        if (!ok) { return ok; };
-        //    }
-            
-
-
-        //    ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
-        //    return ok;
-
-        //    //return base.ClickSavePost();
-        //}
+        
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
-            DualResult result = base.ClickSaveSubDetial(e);
-            //return Result.True;
+            DualResult result = base.ClickSaveSubDetial(e);           
+
+            #region 重新 修改、刪除第三層資料
             List<DataRow> Inserted = new List<DataRow>();
             List<DataRow> Updated = new List<DataRow>();
             List<DataRow> deleteList = new List<DataRow>();
-            ITableSchema sub_Schema;
             var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out sub_Schema);
             if (!ok) { return ok; };
 
@@ -1054,8 +1033,9 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
                     if (dr.RowState == DataRowState.Deleted)
                         continue;
                     if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
-                        deleteList.Add(dr); 
-                    else{
+                        deleteList.Add(dr);
+                    else
+                    {
                         if (dr.RowState == DataRowState.Added && MyUtility.Convert.GetInt(dr["QAQty"]) > 0)
                         {
                             Inserted.Add(dr);
@@ -1070,7 +1050,8 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
 
 
             List<DataRow> NewUpdated = new List<DataRow>();
-            if (Updated.Count > 0) {
+            if (Updated.Count > 0)
+            {
                 var newT = Updated[0].Table.Clone();
                 for (int i = 0; i < Updated.Count; i++)
                 {
@@ -1098,23 +1079,23 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
 
             List<DataRow> NewDelete = new List<DataRow>();
             if (deleteList.Count > 0)
-            {                         
+            {
                 var newT = deleteList[0].Table.Clone();
                 for (int i = 0; i < deleteList.Count; i++)
-                {                    
+                {
                     var newOne = newT.NewRow();
                     newOne.ItemArray = deleteList[i].ItemArray;
                     try
                     {
                         if (deleteList[i].RowState != DataRowState.Added)
                         {
-                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];    
+                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
                         }
                         else
                         {
-                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Current];    
+                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Current];
                         }
-                        
+
                     }
                     catch (Exception ec)
                     {
@@ -1136,13 +1117,14 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
                 string x = dr.RowState.ToString();
             }
 
-            
+
             ok = DBProxy.Current.Deletes(null, sub_Schema, NewDelete);
             if (!ok) { return ok; };
             ok = DBProxy.Current.Batch(null, sub_Schema, NewUpdated);
             if (!ok) { return ok; };
             //ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
-            return ok;
+            #endregion
+            return result;
         }
 
         //Date
