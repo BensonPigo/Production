@@ -276,8 +276,8 @@ namespace Sci.Production.Warehouse
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
-            .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
+            .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7            
             .Text("ColorID", header: "Color", iseditingreadonly: true)  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //11
@@ -311,6 +311,7 @@ namespace Sci.Production.Warehouse
             gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["seq1"].Width = 40;
+            this.gridMaterialStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
         }
 
         private void ChangeDetailColor()
@@ -327,14 +328,14 @@ namespace Sci.Production.Warehouse
                 }
                 else
                 {
-                    //if (dr["ThirdCountry"].ToString() == "True")
-                    //{
-                    //    gridMaterialStatus.Rows[i].Cells[4].Style.BackColor = Color.DeepPink;
-                    //}
+                    if (dr["ThirdCountry"].ToString() == "True")
+                    {
+                        gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.DeepPink;
+                    }
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells["refno"].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.Orange;
                     }
 
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
