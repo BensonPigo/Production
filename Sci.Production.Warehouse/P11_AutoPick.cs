@@ -315,8 +315,7 @@ left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
 											    and Fty.seq2 = x.seq2
 											    and Fty.StockType = 'B' 
 											    and Fty.Roll = ''
-order by x.scirefno, x.ColorID, x.SizeSpec, x.Special
-         , x.poid, x.seq1, x.seq2;
+order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
