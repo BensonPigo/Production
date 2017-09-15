@@ -136,7 +136,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 269);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 269);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -188,7 +188,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 269);
-            this.detailpanel.Size = new System.Drawing.Size(892, 80);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 249);
             // 
             // gridicon
             // 
@@ -201,7 +201,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 80);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 249);
             // 
             // detail2
             // 
@@ -217,16 +217,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1000, 556);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1000, 518);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 518);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -772,7 +772,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.ExpressQuery = true;
+
         }
 
         #endregion
