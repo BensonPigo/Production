@@ -171,19 +171,21 @@ namespace Sci.Production.Quality
              double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
             double def_loc = 0d;
             //Act.Yds Inspected更動時剔除Fir_physical_Defect不在範圍的資料
-            foreach (DataRow dr in Fir_physical_Defect.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
+
+            //foreach (DataRow dr in Fir_physical_Defect)
+                for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++ )
                 {
-                    def_loc = MyUtility.Convert.GetDouble(dr["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_loc >= double_ActualYds)
-                    {
-                        dr.Delete();
+                   // if (dr.RowState != DataRowState.Deleted)
+                    //{
+                    def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
+                        if (def_loc >= double_ActualYds)
+                        {
+                           // dr.Delete();
+                            Fir_physical_Defect.Rows.RemoveAt(i);
+                        }
+                   // }
 
-                    }
                 }
-
-            }
 
             Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
