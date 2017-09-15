@@ -165,6 +165,51 @@ namespace Sci.Production.Quality
 
             MyUtility.Tool.ProcessWithDatatable(datas2, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
         }
+
+
+        protected void get_total_point() {
+             double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
+            double def_loc = 0d;
+            //Act.Yds Inspected更動時剔除Fir_physical_Defect不在範圍的資料
+            foreach (DataRow dr in Fir_physical_Defect.Rows)
+            {
+                def_loc = MyUtility.Convert.GetDouble( dr["DefectLocation"].ToString().Split('-')[1]);
+                if (def_loc >= double_ActualYds) {
+                    dr.Delete();
+                   
+                }
+            }
+            Fir_physical_Defect.AcceptChanges();
+
+            Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
+            //PointRate 國際公式每五碼最高20點
+            CurrentData["TotalPoint"] = SumPoint;
+           
+            CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+            #region Grade,Result
+            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
+            string grade_cmd = String.Format(@"
+SELECT MIN(GRADE) grade 
+FROM FIR_Grade WITH (NOLOCK) 
+WHERE   WEAVETYPEID = '{0}' 
+        AND PERCENTAGE >= IIF({1} > 100, 100, {1})", WeaveTypeid, CurrentData["PointRate"]);
+            DataRow grade_dr;
+            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
+            {
+                CurrentData["Grade"] = grade_dr["grade"];
+                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
+Select	[Result] =	case Result	
+						when 'P' then 'Pass'
+						when 'F' then 'Fail'
+					end
+from Fir_Grade WITH (NOLOCK) 
+where	WEAVETYPEID = '{0}' 
+		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
+            }
+
+#endregion
+        }
+
         protected override bool OnGridSetup()
         {
 
@@ -179,7 +224,8 @@ namespace Sci.Production.Quality
                 grid.ValidateControl();
                 P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
-                frm.ShowDialog(this);   
+                frm.ShowDialog(this);
+                get_total_point();
                
             };
             #endregion
@@ -324,8 +370,10 @@ namespace Sci.Production.Quality
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
                 dr["Actualyds"] = e.FormattedValue;
-                dr["totalpoint"] = 0.00;
-                redefect();
+                //dr["totalpoint"] = 0.00;
+               
+
+                //redefect();
                 //string oldvalue = dr["actualyds"].ToString();
                 //string newvalue = e.FormattedValue.ToString();
                 //if (this.EditMode == false) return;
@@ -334,6 +382,7 @@ namespace Sci.Production.Quality
                 //dr["pointrate"] = pointrate;
                 //dr["actualyds"] = newvalue;
                 dr.EndEdit();
+                get_total_point();
             };
             #endregion
            
@@ -1011,6 +1060,7 @@ select  a.ID
                    from Pass1
                    where Pass1.ID = a.Inspector) 
         ,Comment = '' 
+        ,Moisture = a.Moisture
 from FIR_Physical a WITH (NOLOCK) 
 left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
 left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
@@ -1051,7 +1101,10 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
                         excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Remark_w"].ToString();
                         excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Name_w"].ToString();
 
-                        excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result_m"].ToString();
+                        if ((bool)dtcombo.Rows[0]["Moisture"]) {
+                            excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result_m"].ToString();
+                        }
+                        
                         excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[0]["Remark_m"].ToString();
                         excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Name_m"].ToString();
 

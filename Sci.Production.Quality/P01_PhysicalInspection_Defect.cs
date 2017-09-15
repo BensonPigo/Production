@@ -181,32 +181,32 @@ namespace Sci.Production.Quality
                 }
                 #endregion
             }
-            Double SumPoint = MyUtility.Convert.GetDouble(DefectTb.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
-            //PointRate 國際公式每五碼最高20點
-            CurrentData["TotalPoint"] = SumPoint;
-            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
-            CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
-            #region Grade,Result
-            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
-            string grade_cmd = String.Format(@"
-SELECT MIN(GRADE) grade 
-FROM FIR_Grade WITH (NOLOCK) 
-WHERE   WEAVETYPEID = '{0}' 
-        AND PERCENTAGE >= IIF({1} > 100, 100, {1})", WeaveTypeid, CurrentData["PointRate"]);
-            DataRow grade_dr;
-            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
-            {
-                CurrentData["Grade"] = grade_dr["grade"];
-                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
-Select	[Result] =	case Result	
-						when 'P' then 'Pass'
-						when 'F' then 'Fail'
-					end
-from Fir_Grade WITH (NOLOCK) 
-where	WEAVETYPEID = '{0}' 
-		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
-            }
-            #endregion
+//            Double SumPoint = MyUtility.Convert.GetDouble(DefectTb.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
+//            //PointRate 國際公式每五碼最高20點
+//            CurrentData["TotalPoint"] = SumPoint;
+//            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
+//            CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+//            #region Grade,Result
+//            string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
+//            string grade_cmd = String.Format(@"
+//SELECT MIN(GRADE) grade 
+//FROM FIR_Grade WITH (NOLOCK) 
+//WHERE   WEAVETYPEID = '{0}' 
+//        AND PERCENTAGE >= IIF({1} > 100, 100, {1})", WeaveTypeid, CurrentData["PointRate"]);
+//            DataRow grade_dr;
+//            if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
+//            {
+//                CurrentData["Grade"] = grade_dr["grade"];
+//                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format(@"
+//Select	[Result] =	case Result	
+//						when 'P' then 'Pass'
+//						when 'F' then 'Fail'
+//					end
+//from Fir_Grade WITH (NOLOCK) 
+//where	WEAVETYPEID = '{0}' 
+//		and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
+//            }
+//            #endregion
             return base.DoSave();
         }
     }
