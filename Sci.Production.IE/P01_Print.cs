@@ -69,7 +69,8 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od WITH (NOLOCK) on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
-where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and ATD.ArtworkTypeID = '{0}'", artworktype));
+where td.ID = {0}{1}
+order by td.Seq", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and ATD.ArtworkTypeID = '{0}'", artworktype));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
             {

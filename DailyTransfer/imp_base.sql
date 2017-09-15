@@ -864,14 +864,9 @@ SET
       -- a.ID	    =b.ID	
       -- a.MDivisionID	      =b.MDivisionID	
       a.Junk	      =b.Junk	
-      ,a.Abb	      =b.Abb	
       ,a.NameCH	      =b.NameCH	
-      ,a.NameEN	      =b.NameEN	
-      ,a.CountryID	      =b.CountryID	
-      ,a.Tel	      =b.Tel	
-      ,a.Fax	      =b.Fax	
+      ,a.CountryID	      =b.CountryID		
       ,a.AddressCH	      =b.AddressCH	
-      ,a.AddressEN	      =b.AddressEN	
       ,a.CurrencyID	      =b.CurrencyID	
       ,a.CPU	      =b.CPU	
       ,a.ZipCode	      =b.ZipCode	
