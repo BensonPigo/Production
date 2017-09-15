@@ -544,11 +544,35 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 ShowErr(sqlcmd,result2);
                 return;
             }
-            if (MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
+            if (!MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
             {
                 foreach (DataRow tmp in datacheck.Rows)
                 {
                     ids += string.Format("Request ID: {0} is already in LocalPO : {1}" + Environment.NewLine, tmp[0], tmp[1]);
+                }
+                MyUtility.Msg.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
+                return;
+            }
+            #endregion
+
+            #region 檢查明細requestid是否已有回寫poid
+            sqlcmd = string.Format(@"select ThreadRequisition_Detail.OrderID,ThreadRequisition_Detail.Refno,ThreadRequisition_Detail.ThreadColorID,ThreadRequisition_Detail.POID from LocalPO_Detail WITH (NOLOCK) , ThreadRequisition_Detail  WITH (NOLOCK) 
+                                                    where localpo_detail.requestid = ThreadRequisition_Detail.OrderID 
+                                                            and localpo_detail.Refno=ThreadRequisition_Detail.Refno
+                                                            and localpo_detail.ThreadColorID=ThreadRequisition_Detail.ThreadColorID
+                                                            and ThreadRequisition_Detail.POID!='' 
+                                                            and localpo_detail.requestID!=''
+                                                            and localpo_detail.id ='{0}'", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            if (!MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
+            {
+                foreach (DataRow tmp in datacheck.Rows)
+                {
+                    ids += string.Format("Request ID: {0} , Refno: {1} , Color: {2} is already in LocalPO : {3}" + Environment.NewLine, tmp[0], tmp[1], tmp[2], tmp[3]);
                 }
                 MyUtility.Msg.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
                 return;

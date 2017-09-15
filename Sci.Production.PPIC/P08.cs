@@ -565,10 +565,8 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
             }
-           
+            RenewData();
             SendMail();
-
-            //SendMail
         }
 
         //Unconfirm
