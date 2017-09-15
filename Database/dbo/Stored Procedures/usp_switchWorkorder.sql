@@ -361,7 +361,7 @@ BEGIN
 						Select @SizeRatioQty = sum(Qty)
 						From Order_EachCons_SizeQty
 						Where Order_EachConsUkey = @ukey
-						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
+						SET @Cons = @maxLayer * @SizeRatioQty * @ConsPC
 						if(@oldWorkerordernum != @newWorkerordernum)
 						Begin--byworkorder的Group與前一筆不一樣,則新增一筆
 							Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
