@@ -709,7 +709,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                         }
                     }
                 }
-                _detail.DefaultView.Sort = "seq";
+                _detail.DefaultView.Sort = "";
             }
         }
 
@@ -890,7 +890,10 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
+            string strSort = ((DataTable)detailgridbs.DataSource).DefaultView.Sort;
+            ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "";
             base.OnDetailGridInsert(index);
+
             //CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
             CurrentDetailData["poid"] = this.poid;
             DataTable sizeRange, subDetails;
@@ -906,7 +909,7 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
                     subDetails.ImportRow(dr);
                 }
             }
-
+            ((DataTable)detailgridbs.DataSource).DefaultView.Sort = strSort;
         }
 
         protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)

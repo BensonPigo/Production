@@ -22,6 +22,7 @@
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
+    [FactoryID] VARCHAR(8) NULL, 
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
