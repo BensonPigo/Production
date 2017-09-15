@@ -250,13 +250,13 @@ BEGIN
 				Select *
 				into #SEQ2tmp
 				From PO_Supp_Detail b 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq1=@SEQ1 and OutputSeq2 != '' AND Colorid = @colorid
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				SET @Rowno = @@Rowcount
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
 					Select @Seq2 = isnull(OutputSeq2,'')
 					From #SEQ2tmp 
-					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq1=@SEQ1 and OutputSeq2 != '' AND Colorid = @colorid
+					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				End
 				Drop table #SEQ2tmp
 			End
