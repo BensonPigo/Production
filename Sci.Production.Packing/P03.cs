@@ -841,9 +841,11 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                                        };
                  foreach (var chk_item in check_chip_list)
                  {
-                     seekSql = string.Format("select seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' and ShipmodeID = '{2}'", chk_item.SP, chk_item.Seq, CurrentMaintain["ShipModeID"]);
-                     if (!MyUtility.Check.Seek(seekSql, out localItem))
+                     seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
+                     MyUtility.Check.Seek(seekSql, out localItem);
+                     if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString())
                      {
+
                          ctn_no.Clear();
                          var cnt_list = from r2 in DetailDatas.AsEnumerable()
                                         where r2.Field<string>("OrderID") == chk_item.SP &&
@@ -851,10 +853,10 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                                         select new { cnt_no = r2.Field<string>("CTNStartNo") };
                          foreach (var cnt in cnt_list)
                          {
-                             ctn_no.Append(","+cnt.cnt_no );
+                             ctn_no.Append("," + cnt.cnt_no);
                          }
-                         ctn_no.Remove(0,1);
-                         chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no + "] \r\n");
+                         ctn_no.Remove(0, 1);
+                         chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
                      }
 
                  }
