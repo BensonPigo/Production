@@ -213,12 +213,11 @@ BEGIN
 				   @Type = '1',
 				   @MarkerDownLoadId = MarkerDownloadID,
 				   @Order_EachConsUkey = Order_EachConsUkey,
-				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey,
-				   @LongArticle = Article
+				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey
 
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
-
+			set @LongArticle = stuff((select concat(',',Article)from Order_EachCons_Article	where Order_EachConsUkey = @Order_EachConsUkey for xml path('')),1,1,'')
 			--將@LongArticle(例:AI3342  ,AJ4925  ,AY3686  ,AY3687  ,AY3688  ,)依逗號切，放至TEMP TABLE。
 			select * into #LongArticle from dbo.SplitString(@LongArticle , ',');
 			select @LongArticleCount = count(*) from #LongArticle;
