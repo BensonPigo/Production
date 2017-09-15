@@ -40,7 +40,7 @@ namespace Sci.Production.Packing
         private MessageBoxButtons buttons = MessageBoxButtons.YesNo;
         private DialogResult buttonResult;
         private DualResult result;
-
+        private Boolean shipmode_Valid = false;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -604,7 +604,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         {
             base.ClickEditAfter();
             comboSortby.Text = "";
-
+            shipmode_Valid = false;
             if (CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
                 txtbrand.ReadOnly = true;
@@ -696,7 +696,10 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             //sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail WITH (NOLOCK) where OrderID IN ({0})", OrderIDs);
             //needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
 
-            foreach (DataRow dr in DetailDatas)
+           
+
+
+             foreach (DataRow dr in DetailDatas.OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
             {
                 #region 刪除表身SP No.或Qty為空白的資料
                 if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
@@ -808,9 +811,68 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                     detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 #endregion
+
+
                 count = count + 1;
             }
-            if (DetailDatas.Count == 0)
+
+
+             #region ship mode 有變更時 check Order_QtyShip
+
+             if (shipmode_Valid)
+             {
+                 string seekSql = "";
+                 StringBuilder chk_ship_err = new StringBuilder();
+                 StringBuilder ctn_no = new StringBuilder();
+                 DataRow localItem;
+
+
+                 var check_chip_list = from r1 in DetailDatas.AsEnumerable()
+                                       group r1 by new
+                                       {
+                                           SP = r1.Field<string>("OrderID"),
+                                           Seq = r1.Field<string>("OrderShipmodeSeq")
+
+                                       } into g
+                                       select new
+                                       {
+                                           SP = g.Key.SP,
+                                           Seq = g.Key.Seq
+                                       };
+                 foreach (var chk_item in check_chip_list)
+                 {
+                     seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
+                     MyUtility.Check.Seek(seekSql, out localItem);
+                     if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString())
+                     {
+
+                         ctn_no.Clear();
+                         var cnt_list = from r2 in DetailDatas.AsEnumerable()
+                                        where r2.Field<string>("OrderID") == chk_item.SP &&
+                                               r2.Field<string>("OrderShipmodeSeq") == chk_item.Seq
+                                        select new { cnt_no = r2.Field<string>("CTNStartNo") };
+                         foreach (var cnt in cnt_list)
+                         {
+                             ctn_no.Append("," + cnt.cnt_no);
+                         }
+                         ctn_no.Remove(0, 1);
+                         chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
+                     }
+
+                 }
+
+                if (chk_ship_err.Length > 0)
+                {
+                    chk_ship_err.Insert(0, " This shipmode is not equal, please check again:  \r\n");
+
+                    MyUtility.Msg.WarningBox(chk_ship_err.ToString());
+                    return false;
+                }
+             }
+             #endregion
+
+
+             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Detail cannot be empty");
                 return false;
@@ -871,6 +933,9 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
         protected override DualResult ClickSavePre()
         {
+
+
+
             if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
             {
                 string sqlCmd = string.Format(@"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
@@ -1123,29 +1188,32 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
         }
 
-        //ShipMode        
+        //ShipMode       
+        
         private void txtshipmode_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtshipmode.OldValue)) return;
+            if (MyUtility.Check.Empty(DetailDatas) || DetailDatas.Count == 0) return;
             if (EditMode && txtshipmode.OldValue != txtshipmode.SelectedValue)
             {
-                //if (MyUtility.Check.Empty(DetailDatas.Count)) return;
-                string tempOldValue = txtshipmode.OldValue.ToString();
+                ////if (MyUtility.Check.Empty(DetailDatas.Count)) return;
+                //string tempOldValue = txtshipmode.OldValue.ToString();
 
-                DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
-                if (diresult == DialogResult.No)
-                {
-                    txtshipmode.OldValue = tempOldValue;
-                    txtshipmode.SelectedValue = tempOldValue;
-                    txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-                    return;
-                }
-                // 清空表身Grid資料
-                foreach (DataRow dr in DetailDatas)
-                {
-                    dr.Delete();
-                }
+                //DialogResult diresult = MyUtility.Msg.QuestionBox("The detail SEQ will be cleared, are you sure change type?");
+                //if (diresult == DialogResult.No)
+                //{
+                //    txtshipmode.OldValue = tempOldValue;
+                //    txtshipmode.SelectedValue = tempOldValue;
+                //    txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                //    return;
+                //}
+                //// 清空表身Grid資料                
+                //foreach (DataRow dr in DetailDatas)
+                //{
+                //    dr["OrderShipmodeSeq"] = "";
+                //}
                 //DeleteDetailData();
+                shipmode_Valid = true;
             }
         }
 
