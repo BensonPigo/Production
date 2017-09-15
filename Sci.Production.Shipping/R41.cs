@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
             {
                 sqlCondition.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
             }
-            
+
             if (!MyUtility.Check.Empty(nlCode))
             {
                 sqlCondition.Append(string.Format(" and vd.NLCode = '{0}'", nlCode));
@@ -101,42 +101,45 @@ namespace Sci.Production.Shipping
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (printImport.Rows.Count <= 0 && printExport.Rows.Count <= 0 && printAdjust.Rows.Count <= 0)
-            {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return false;
-            }
-
-            if ((type == "Import" || type == "") && printImport.Rows.Count <= 0)
+            if ((type == "Import" || type == "")
+                 && (printImport == null || printImport.Rows.Count <= 0))
             {
                 MyUtility.Msg.WarningBox("Import data not found!");
             }
 
-            if ((type == "Export" || type == "") && printExport.Rows.Count <= 0)
+            if ((type == "Export" || type == "") 
+                 && (printExport == null || printExport.Rows.Count <= 0))
             {
                 MyUtility.Msg.WarningBox("Export data not found!");
             }
 
-            if ((type == "Adjust" || type == "") && printAdjust.Rows.Count <= 0)
+            if ((type == "Adjust" || type == "") 
+                 && (printAdjust == null || printAdjust.Rows.Count <= 0))
             {
                 MyUtility.Msg.WarningBox("Adjust data not found!");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
             bool result;
-            if ((type == "Import" || type == "") && printImport.Rows.Count > 0)
+            if ((type == "Import" || type == "") 
+                 && printImport != null 
+                 && printImport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printImport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Import"), xltfile: "Shipping_R41_Import.xltx", headerRow: 1, showSaveMsg: false);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
-            if ((type == "Export" || type == "") && printExport.Rows.Count > 0)
+            if ((type == "Export" || type == "") 
+                 && printExport != null 
+                 && printExport.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printExport, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Export"), xltfile: "Shipping_R41_Export.xltx", headerRow: 1, showSaveMsg:false);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
-            if ((type == "Adjust" || type == "") && printAdjust.Rows.Count > 0)
+            if ((type == "Adjust" || type == "") 
+                 && printAdjust  != null 
+                 && printAdjust.Rows.Count > 0)
             {
-                result = MyUtility.Excel.CopyToXls(printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(printAdjust, Sci.Production.Class.MicrosoftFile.GetName("Shipping_R41_Adjust"), xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1, showSaveMsg: false);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
             this.HideWaitMessage();
