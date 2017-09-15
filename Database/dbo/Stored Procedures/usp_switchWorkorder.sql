@@ -250,13 +250,13 @@ BEGIN
 				Select *
 				into #SEQ2tmp
 				From PO_Supp_Detail b 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq1=@SEQ1 and OutputSeq2 != '' AND Colorid = @colorid
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				SET @Rowno = @@Rowcount
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
 					Select @Seq2 = isnull(OutputSeq2,'')
 					From #SEQ2tmp 
-					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq1=@SEQ1 and OutputSeq2 != '' AND Colorid = @colorid
+					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				End
 				Drop table #SEQ2tmp
 			End
@@ -361,7 +361,7 @@ BEGIN
 						Select @SizeRatioQty = sum(Qty)
 						From Order_EachCons_SizeQty
 						Where Order_EachConsUkey = @ukey
-						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
+						SET @Cons = @maxLayer * @SizeRatioQty * @ConsPC
 						if(@oldWorkerordernum != @newWorkerordernum)
 						Begin--byworkorder的Group與前一筆不一樣,則新增一筆
 							Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
