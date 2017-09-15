@@ -547,6 +547,12 @@ Where   a.ukey = b.workorderukey
                 ShowErr(query_cmd, query_dResult);
                 return;
             }
+
+            if (CutRefTb.Rows.Count == 0) {
+                MyUtility.Msg.WarningBox("No Data Found!");
+                return;
+            }
+
             //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,c.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
