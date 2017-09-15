@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
+using System.Linq;
 using System.Transactions;
 using System.Runtime.InteropServices;
 
@@ -604,7 +605,17 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             {
                 DataRow orderData;
                 string sqlCmd;
-                sqlCmd = string.Format(@"select o.FactoryID,o.FtyGroup,o.BrandID,o.StyleID,o.Dest,isnull(s.Description,'') as Description,p.POHandle,p.POSMR,o.MRHandle,o.SMR
+                sqlCmd = string.Format(@"
+select o.FactoryID
+       , o.FtyGroup
+       , o.BrandID
+       , o.StyleID
+       , o.Dest
+       , isnull(s.Description,'') as Description
+       , p.POHandle
+       , p.POSMR
+       , o.MRHandle
+       , o.SMR
 from Orders o WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = o.POID
@@ -622,8 +633,15 @@ where o.Id = '{0}'", orderID);
                     CurrentMaintain["MRHandle"] = orderData["MRHandle"];
                     CurrentMaintain["SMR"] = orderData["SMR"];
                     CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", MyUtility.Convert.GetString(orderData["FtyGroup"]),"Factory","ID");
-                    string shipmode = MyUtility.GetValue.Lookup("ShipmodeID", orderID, "Order_QtyShip", "id");
-                    if (shipmode.ToUpper() == "SEA")
+                    DataTable dtCheckShipmode;
+                    string strCheckShipmode = string.Format(@"
+select ShipmodeID
+from Order_QtyShip
+where id = '{0}'", orderID);
+                    DBProxy.Current.Select(null, strCheckShipmode, out dtCheckShipmode);
+                    if (dtCheckShipmode != null 
+                        && dtCheckShipmode.Rows.Count == 1
+                        && dtCheckShipmode.AsEnumerable().Any(row => row["ShipmodeID"].EqualString("SEA")))
                     {
                         MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<SEA>, it can't be created!", orderID));
                         displayStyleNo.Text = "";
@@ -648,12 +666,30 @@ where o.Id = '{0}'", orderID);
                         return;
                     }
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
-                    sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) ,(
-select Id,Seq from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and 
-ShipmodeID in (select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%')
-except
-select OrderID as ID,OrderShipmodeSeq as Seq from AirPP WITH (NOLOCK) where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
-where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                    sqlCmd = string.Format(@"
+select oq.Seq
+       , oq.BuyerDelivery
+       , oq.ShipmodeID
+       , oq.Qty 
+from Order_QtyShip oq WITH (NOLOCK) 
+     , (select Id
+               , Seq 
+        from Order_QtyShip WITH (NOLOCK) 
+        where Id = '{0}' 
+              and 
+              ShipmodeID in (select ID 
+                             from ShipMode WITH (NOLOCK) 
+                             where UseFunction like '%AirPP%')
+        except
+        select OrderID as ID
+               , OrderShipmodeSeq as Seq 
+        from AirPP WITH (NOLOCK) 
+        where OrderID = '{0}' 
+              and ID != '{1}' 
+              and Status <> 'Junked'
+      ) b
+where oq.Id = b.Id 
+      and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     DataTable orderQtyData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out orderQtyData);
 
