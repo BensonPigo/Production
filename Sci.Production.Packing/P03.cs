@@ -696,12 +696,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             //sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail WITH (NOLOCK) where OrderID IN ({0})", OrderIDs);
             //needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
 
-            string old_sp = "", old_seq = "", new_sp = "", new_seq = "";
-            string seekSql = "";
-            StringBuilder chk_ship_err = new StringBuilder();
-            StringBuilder ctn_no = new StringBuilder();
-            Boolean chek_ship_flag = true;
-             DataRow localItem;
+           
 
 
              foreach (DataRow dr in DetailDatas.OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
@@ -817,51 +812,65 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 }
                 #endregion
 
-                #region ship mode 有變更時 check Order_QtyShip
-
-                
-
-                new_sp = dr["OrderID"].ToString();
-                new_seq = dr["OrderShipmodeSeq"].ToString();
-                if ((!new_sp.Equals(old_sp) || !new_seq.Equals(old_seq)) && shipmode_Valid)
-                {
-
-                    if (!chek_ship_flag)
-                    {
-                        chk_ship_err.Append("<SP> " + old_sp + " <Seq> " + old_seq + " <CTN#> [" + ctn_no + "] \r\n");    
-                    }
-                   
-                    chek_ship_flag = true;
-
-                    seekSql = string.Format("select seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' and ShipmodeID = '{2}'", new_sp, new_seq, CurrentMaintain["ShipModeID"]);
-                  if (!MyUtility.Check.Seek(seekSql, out localItem)) {
-                      ctn_no.Clear();
-                      ctn_no.Append(dr["CTNStartNo"].ToString());
-                      chek_ship_flag = false;
-
-                      if (count+1 == DetailDatas.Count) {
-                          chk_ship_err.Append("<SP> " + new_sp + " <Seq> " + new_seq + " <CTN#> [" + ctn_no + "]");  
-                      }
-                  }
-                }
-                else if (!chek_ship_flag) { 
-                    ctn_no.Append("," + dr["CTNStartNo"].ToString()) ;
-                }
-                
-                old_sp = new_sp;
-                old_seq = new_seq;
-                #endregion
 
                 count = count + 1;
             }
-            if (chk_ship_err.Length > 0)
-            {
-                chk_ship_err.Insert(0, " This shipmode is not equal, please check again:  \r\n");
-               
-                MyUtility.Msg.WarningBox(chk_ship_err.ToString());
-                return false;
-            }
-            if (DetailDatas.Count == 0)
+
+
+             #region ship mode 有變更時 check Order_QtyShip
+
+             if (shipmode_Valid)
+             {
+                 string seekSql = "";
+                 StringBuilder chk_ship_err = new StringBuilder();
+                 StringBuilder ctn_no = new StringBuilder();
+                 DataRow localItem;
+
+
+                 var check_chip_list = from r1 in DetailDatas.AsEnumerable()
+                                       group r1 by new
+                                       {
+                                           SP = r1.Field<string>("OrderID"),
+                                           Seq = r1.Field<string>("OrderShipmodeSeq")
+
+                                       } into g
+                                       select new
+                                       {
+                                           SP = g.Key.SP,
+                                           Seq = g.Key.Seq
+                                       };
+                 foreach (var chk_item in check_chip_list)
+                 {
+                     seekSql = string.Format("select seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' and ShipmodeID = '{2}'", chk_item.SP, chk_item.Seq, CurrentMaintain["ShipModeID"]);
+                     if (!MyUtility.Check.Seek(seekSql, out localItem))
+                     {
+                         ctn_no.Clear();
+                         var cnt_list = from r2 in DetailDatas.AsEnumerable()
+                                        where r2.Field<string>("OrderID") == chk_item.SP &&
+                                               r2.Field<string>("OrderShipmodeSeq") == chk_item.Seq
+                                        select new { cnt_no = r2.Field<string>("CTNStartNo") };
+                         foreach (var cnt in cnt_list)
+                         {
+                             ctn_no.Append(","+cnt.cnt_no );
+                         }
+                         ctn_no.Remove(0,1);
+                         chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no + "] \r\n");
+                     }
+
+                 }
+
+                if (chk_ship_err.Length > 0)
+                {
+                    chk_ship_err.Insert(0, " This shipmode is not equal, please check again:  \r\n");
+
+                    MyUtility.Msg.WarningBox(chk_ship_err.ToString());
+                    return false;
+                }
+             }
+             #endregion
+
+
+             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Detail cannot be empty");
                 return false;
