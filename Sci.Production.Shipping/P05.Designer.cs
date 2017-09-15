@@ -112,8 +112,8 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
+            this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.txtCutoffDate);
             this.masterpanel.Controls.Add(this.txtTerminalWhse);
             this.masterpanel.Controls.Add(this.comboContainerType);
@@ -247,9 +247,9 @@
             this.masterpanel.Controls.SetChildIndex(this.comboContainerType, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTerminalWhse, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCutoffDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactoryShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
             // 
             // detailpanel
             // 
@@ -908,7 +908,7 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(784, 274);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(773, 274);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
             this.btnImportfrompackinglist.Size = new System.Drawing.Size(165, 30);
             this.btnImportfrompackinglist.TabIndex = 19;
