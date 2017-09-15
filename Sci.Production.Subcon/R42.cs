@@ -103,8 +103,8 @@ namespace Sci.Production.Subcon
 			              when bt.Type = '2' then 'Out'
 			              when bt.Type = '3' then 'In/Out' end,
             [TagId] = bt.TagId,
-            [TransferDate] = CONVERT(varchar,TransferDate,111),
-            [TransferTime] = CONVERT(varchar,TransferDate,108)
+            [TransferDate] = CAST(TransferDate AS DATE),
+            [TransferTime] = TransferDate
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
 
             from Bundle b WITH (NOLOCK) 
@@ -183,15 +183,22 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-         
-            //預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp
-                = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx");
-            // 將datatable copy to excel
-         
-            
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, true, null, objApp);
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objSheets);    //釋放sheet
+            Marshal.ReleaseComObject(objApp);          //釋放objApp
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion             
             return true;
         }
         #endregion
