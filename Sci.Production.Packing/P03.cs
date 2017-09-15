@@ -696,7 +696,15 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             //sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail WITH (NOLOCK) where OrderID IN ({0})", OrderIDs);
             //needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
 
-            foreach (DataRow dr in DetailDatas)
+            string old_sp = "", old_seq = "", new_sp = "", new_seq = "";
+            string seekSql = "";
+            StringBuilder chk_ship_err = new StringBuilder();
+            StringBuilder ctn_no = new StringBuilder();
+            Boolean chek_ship_flag = true;
+             DataRow localItem;
+
+
+             foreach (DataRow dr in DetailDatas.OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
             {
                 #region 刪除表身SP No.或Qty為空白的資料
                 if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
@@ -808,7 +816,49 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                     detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 #endregion
+
+                #region ship mode 有變更時 check Order_QtyShip
+
+                
+
+                new_sp = dr["OrderID"].ToString();
+                new_seq = dr["OrderShipmodeSeq"].ToString();
+                if (!new_sp.Equals(old_sp) || !new_seq.Equals(old_seq)) {
+
+                    if (!chek_ship_flag)
+                    {
+                        chk_ship_err.Append("<SP> " + old_sp + " <Seq> " + old_seq + " <CTN#> [" + ctn_no + "] \r\n");    
+                    }
+                   
+                    chek_ship_flag = true;
+
+                    seekSql = string.Format("select seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' and ShipmodeID = '{2}'", new_sp, new_seq, CurrentMaintain["ShipModeID"]);
+                  if (!MyUtility.Check.Seek(seekSql, out localItem)) {
+                      ctn_no.Clear();
+                      ctn_no.Append(dr["CTNStartNo"].ToString());
+                      chek_ship_flag = false;
+
+                      if (count+1 == DetailDatas.Count) {
+                          chk_ship_err.Append("<SP> " + new_sp + " <Seq> " + new_seq + " <CTN#> [" + ctn_no + "]");  
+                      }
+                  }
+                }
+                else if (!chek_ship_flag) { 
+                    ctn_no.Append("," + dr["CTNStartNo"].ToString()) ;
+                }
+                
+                old_sp = new_sp;
+                old_seq = new_seq;
+                #endregion
+
                 count = count + 1;
+            }
+            if (chk_ship_err.Length > 0)
+            {
+                chk_ship_err.Insert(0, " This shipmode is not equal, please check again:  \r\n");
+               
+                MyUtility.Msg.WarningBox(chk_ship_err.ToString());
+                return false;
             }
             if (DetailDatas.Count == 0)
             {
@@ -871,6 +921,9 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
         protected override DualResult ClickSavePre()
         {
+
+
+
             if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
             {
                 string sqlCmd = string.Format(@"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
