@@ -1,10 +1,10 @@
 ﻿CREATE TABLE [dbo].[MNOrder_Color] (
     [ID]                VARCHAR (13)  CONSTRAINT [DF_MNOrder_Color_ID] DEFAULT ('') NOT NULL,
     [ColorID]           VARCHAR (6)   CONSTRAINT [DF_MNOrder_Color_ColorID] DEFAULT ('') NOT NULL,
-    [ColorName]         NVARCHAR (90) CONSTRAINT [DF_MNOrder_Color_ColorName] DEFAULT ('') NULL,
+    [ColorName]         NVARCHAR (150) CONSTRAINT [DF_MNOrder_Color_ColorName] DEFAULT ('') NULL,
     [Seqno]             VARCHAR (2)   CONSTRAINT [DF_MNOrder_Color_Seqno] DEFAULT ('') NOT NULL,
     [ColorMultiple]     VARCHAR (6)   CONSTRAINT [DF_MNOrder_Color_ColorMultiple] DEFAULT ('') NULL,
-    [ColorMultipleName] NVARCHAR (90) CONSTRAINT [DF_MNOrder_Color_ColorMultipleName] DEFAULT ('') NULL,
+    [ColorMultipleName] NVARCHAR (150) CONSTRAINT [DF_MNOrder_Color_ColorMultipleName] DEFAULT ('') NULL,
     CONSTRAINT [PK_MNOrder_Color] PRIMARY KEY CLUSTERED ([ID], [ColorID], [Seqno])
 );
 
