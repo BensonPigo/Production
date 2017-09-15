@@ -40,7 +40,7 @@ namespace Sci.Production.Packing
         private MessageBoxButtons buttons = MessageBoxButtons.YesNo;
         private DialogResult buttonResult;
         private DualResult result;
-
+        private Boolean shipmode_Valid = false;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -604,7 +604,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         {
             base.ClickEditAfter();
             comboSortby.Text = "";
-
+            shipmode_Valid = false;
             if (CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
                 txtbrand.ReadOnly = true;
@@ -823,7 +823,8 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
                 new_sp = dr["OrderID"].ToString();
                 new_seq = dr["OrderShipmodeSeq"].ToString();
-                if (!new_sp.Equals(old_sp) || !new_seq.Equals(old_seq)) {
+                if ((!new_sp.Equals(old_sp) || !new_seq.Equals(old_seq)) && shipmode_Valid)
+                {
 
                     if (!chek_ship_flag)
                     {
@@ -1176,30 +1177,32 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
         }
 
-        //ShipMode        
+        //ShipMode       
+        
         private void txtshipmode_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtshipmode.OldValue)) return;
             if (MyUtility.Check.Empty(DetailDatas) || DetailDatas.Count == 0) return;
             if (EditMode && txtshipmode.OldValue != txtshipmode.SelectedValue)
             {
-                //if (MyUtility.Check.Empty(DetailDatas.Count)) return;
-                string tempOldValue = txtshipmode.OldValue.ToString();
+                ////if (MyUtility.Check.Empty(DetailDatas.Count)) return;
+                //string tempOldValue = txtshipmode.OldValue.ToString();
 
-                DialogResult diresult = MyUtility.Msg.QuestionBox("The detail SEQ will be cleared, are you sure change type?");
-                if (diresult == DialogResult.No)
-                {
-                    txtshipmode.OldValue = tempOldValue;
-                    txtshipmode.SelectedValue = tempOldValue;
-                    txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-                    return;
-                }
-                // 清空表身Grid資料                
-                foreach (DataRow dr in DetailDatas)
-                {
-                    dr["OrderShipmodeSeq"] = "";
-                }
+                //DialogResult diresult = MyUtility.Msg.QuestionBox("The detail SEQ will be cleared, are you sure change type?");
+                //if (diresult == DialogResult.No)
+                //{
+                //    txtshipmode.OldValue = tempOldValue;
+                //    txtshipmode.SelectedValue = tempOldValue;
+                //    txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                //    return;
+                //}
+                //// 清空表身Grid資料                
+                //foreach (DataRow dr in DetailDatas)
+                //{
+                //    dr["OrderShipmodeSeq"] = "";
+                //}
                 //DeleteDetailData();
+                shipmode_Valid = true;
             }
         }
 
