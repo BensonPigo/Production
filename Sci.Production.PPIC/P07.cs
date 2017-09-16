@@ -139,8 +139,8 @@ namespace Sci.Production.PPIC
             // DataTable cuttingtb;
             string updsql = "";
             updsql = string.Format(@"
-insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate)
-Select id = ord.cuttingsp,sewInline = min(ord.sewinline),sewoffline = max(ord.sewoffline),mDivisionid = '{2}',FactoryID = '{3}',AddName = '{4}' ,AddDate = GetDate()
+insert into cutting(ID,worktype,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate)
+Select id = ord.cuttingsp,worktype = (select top 1 Type from WorkOrder where ID = ord.cuttingsp),sewInline = min(ord.sewinline),sewoffline = max(ord.sewoffline),mDivisionid = '{2}',FactoryID = '{3}',AddName = '{4}' ,AddDate = GetDate()
 from orders ord WITH (NOLOCK) ,
 (
 	Select * 
