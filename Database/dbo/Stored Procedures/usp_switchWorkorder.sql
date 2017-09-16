@@ -217,9 +217,8 @@ BEGIN
 
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
-			set @LongArticle = stuff((select concat(',',Article)from Order_EachCons_Article	where Order_EachConsUkey = @Order_EachConsUkey for xml path('')),1,1,'')
-			--將@LongArticle(例:AI3342  ,AJ4925  ,AY3686  ,AY3687  ,AY3688  ,)依逗號切，放至TEMP TABLE。
-			select * into #LongArticle from dbo.SplitString(@LongArticle , ',');
+
+			select distinct Article into #LongArticle from Order_EachCons_Article where Order_EachConsUkey=@Order_EachConsUkey
 			select @LongArticleCount = count(*) from #LongArticle;
 
 			SET @SCIRefno = ''
@@ -236,6 +235,7 @@ BEGIN
 			Select @Seq2 = isnull(seq2,'') --先找相同SEQ1,SCIRefno
 			From PO_Supp_Detail b 
 			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
+			and Junk = 0
 
 			--ALGER TEST
 			IF @Seq2 IS NULL
@@ -249,11 +249,11 @@ BEGIN
 				Select *
 				into #SEQ2tmp
 				From PO_Supp_Detail b 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%'
 				SET @Rowno = @@Rowcount
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
-					Select @Seq2 = isnull(OutputSeq2,'')
+					Select top 1 @seq1 = seq1 ,@Seq2 = isnull(OutputSeq2,'')
 					From #SEQ2tmp 
 					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				End
