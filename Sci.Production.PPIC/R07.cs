@@ -112,7 +112,8 @@ DECLARE @factory VARCHAR(8),
 		@cdcode VARCHAR(6),
 		@_i INT, --計算迴圈用
 		@sewingdate DATE, --Sewing Date
-		@workhour INT --Work Hour
+		@workhour INT, --Work Hour
+		@Holiday bit
 
 --將資料展開成每一天
 OPEN cursor_sewingschedule
@@ -222,15 +223,28 @@ BEGIN
 		DEALLOCATE cursor_datedata
 
 		IF @currentstyle = '' AND @tmpstyle <> ''
-			BEGIN
-				INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine)
-				VALUES (@factory,@sewingline,@tmpstyle,@sewingdate)
-				SET @tmpinsertfactory = @factory
-				SET @tmpinsertline = @sewingline
-				SET @tmpinsertsewdate = @sewingdate
-				SET @tmpisholiday = 0
-				SET @currentstyle = @tmpstyle
-				SET @currentDlv = @tmpmindlv
+			BEGIN			
+				SET @workhour = null
+				set @Holiday = 0
+				select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+				IF @workhour is null or @Holiday = 1
+					Begin
+						INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
+						SET @tmpinsertfactory = @factory
+						SET @tmpinsertline = @sewingline
+						SET @tmpinsertsewdate = @sewingdate
+					End
+					Else
+					Begin
+						INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine)
+						VALUES (@factory,@sewingline,@tmpstyle,@sewingdate)
+						SET @tmpinsertfactory = @factory
+						SET @tmpinsertline = @sewingline
+						SET @tmpinsertsewdate = @sewingdate
+						SET @tmpisholiday = 0
+						SET @currentstyle = @tmpstyle
+						SET @currentDlv = @tmpmindlv
+					End
 			END
 		ELSE
 			BEGIN
@@ -250,8 +264,9 @@ BEGIN
 								SET @currentisbulk = @tmpisbulk
 							END
 						SET @workhour = null
-						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-						IF @workhour is null
+						set @Holiday = 0
+						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+						IF @workhour is null or @Holiday = 1
 							BEGIN
 								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
 								SET @tmpisholiday = 1
@@ -282,8 +297,9 @@ BEGIN
 							BEGIN
 								--若為工廠假日則補上資料
 								SET @workhour = null
-								select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-								IF @workhour is null
+								set @Holiday = 0
+								select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+								IF @workhour is null or @Holiday = 1
 									BEGIN
 										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
 										SET @tmpinsertfactory = @factory
@@ -299,8 +315,9 @@ BEGIN
 					BEGIN
 						--若為工廠假日則補上資料
 						SET @workhour = null
-						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-						IF @workhour is null
+						set @Holiday = 0
+						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+						IF @workhour is null or @Holiday = 1
 							BEGIN
 								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
 								SET @tmpisholiday = 1
@@ -320,8 +337,9 @@ BEGIN
 						ELSE
 							BEGIN
 								SET @workhour = null--若為工廠已從假日轉不是假日
-						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = DATEADD(DAY,-1,@sewingdate) and FactoryID = @factory and Hours > 0
-								IF @workhour is null
+								set @Holiday = 0
+						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = DATEADD(DAY,-1,@sewingdate) and FactoryID = @factory and Hours > 0
+								IF @workhour is null or @Holiday = 1
 									BEGIN
 										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine) VALUES (@factory,@sewingline,@tmpstyle,@sewingdate);
 										SET @tmpinsertfactory = @factory
@@ -363,7 +381,8 @@ END
 CLOSE cursor_factoryline
 DEALLOCATE cursor_factoryline
 
-select * from @tempPintData WHERE StyleID !='' order by FactoryID,SewingLineID,InLine");
+select * from @tempPintData WHERE StyleID !='' 
+order by FactoryID,SewingLineID,InLine");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
