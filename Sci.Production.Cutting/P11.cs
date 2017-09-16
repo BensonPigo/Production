@@ -550,6 +550,7 @@ Where   a.ukey = b.workorderukey
 
             if (CutRefTb.Rows.Count == 0) {
                 MyUtility.Msg.WarningBox("No Data Found!");
+                this.HideWaitMessage();
                 return;
             }
 
