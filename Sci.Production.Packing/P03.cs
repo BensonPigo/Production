@@ -18,6 +18,7 @@ namespace Sci.Production.Packing
 {
     public partial class P03 : Sci.Win.Tems.Input6
     {
+        const int DescSort = 0, ASCSort = 1;
         Ict.Win.UI.DataGridViewTextBoxColumn col_orderid;
         Ict.Win.UI.DataGridViewTextBoxColumn col_seq;
         Ict.Win.UI.DataGridViewTextBoxColumn col_ctnno;
@@ -30,7 +31,7 @@ namespace Sci.Production.Packing
         Ict.Win.UI.DataGridViewNumericBoxColumn col_nw;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;        
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -41,6 +42,7 @@ namespace Sci.Production.Packing
         private DialogResult buttonResult;
         private DualResult result;
         private Boolean shipmode_Valid = false;
+        private int RowIndex = 0, ColumnIndex = 0, detailgridSort = 0;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,6 +51,27 @@ namespace Sci.Production.Packing
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
 
+            #region CTN# 排序
+            this.detailgrid.CellClick += (s, e) =>
+            {
+                this.RowIndex = e.RowIndex;
+                this.ColumnIndex = e.ColumnIndex;
+            };
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                if (this.RowIndex == -1 && this.ColumnIndex == 6){
+                    if(this.detailgridSort == DescSort)
+                    {
+                        ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).DefaultView.Sort = "sortCTNNo DESC, CTNStartNo  DESC";
+                        this.detailgridSort = ASCSort;
+                    }
+                    else{
+                        ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).DefaultView.Sort = "sortCTNNo ASC, CTNStartNo ASC";
+                        this.detailgridSort = DescSort;
+                    }
+                }
+            };
+            #endregion
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -216,7 +239,7 @@ where   ID = '{0}'
                         {
                             dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
                             dr["Factory"] = orderData["FtyGroup"].ToString();
-                            dr["StyleID"] = orderData["StyleID"].ToString();
+                            dr["StyleID"] = orderData["StyleID"].ToString();                            
                             dr["CustPONo"] = orderData["CustPONo"].ToString();
                             dr["SeasonID"] = orderData["SeasonID"].ToString();
                             dr["Article"] = "";
@@ -575,10 +598,16 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #endregion
             };
 
-            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            //{
-            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
+            this.detailgrid.CellFormatting += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Red;
+                }else
+                {
+                    this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Black;
+                }
+            };
         }
 
         protected override void ClickNewAfter()
