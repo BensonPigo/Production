@@ -251,7 +251,7 @@ where 1=1"
             }
             sqlCmd.Append(string.Format(@"
 select a.StyleID
-	,A = format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P')	
+	,A = IIF(Sum(a.MH) = 0,' ',format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P'))	
 into #tmp_A
 from #tmp_AR_Basic a 
 group by a.StyleID
