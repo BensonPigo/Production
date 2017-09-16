@@ -16,6 +16,7 @@ namespace Sci.Production.Shipping
     {
         DataTable AllDetailData, MidDetailData;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_CustomSP;
         Ict.Win.DataGridViewGeneratorTextColumnSettings vncontract = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings currentcustom = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings consumption = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -105,7 +106,7 @@ namespace Sci.Production.Shipping
             this.gridBatchCreate.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridBatchCreate)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8))
+                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8)).Get(out col_CustomSP)
                 .Text("CurrentCustomSP", header: "Current Custom", width: Widths.AnsiChars(8), settings: currentcustom, iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract no", width: Widths.AnsiChars(15), settings: vncontract)
                 .Date("CDate", header: "Date", width: Widths.AnsiChars(10))
@@ -118,6 +119,7 @@ namespace Sci.Production.Shipping
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6))
                 .Text("Consumption", header: "Consumption", width: Widths.AnsiChars(40), settings: consumption, iseditingreadonly: true);
 
+            col_CustomSP.MaxLength = 8;
             listControlBindingSource1.DataSource = gridData;
         }
 
@@ -700,7 +702,6 @@ drop table #tmpFixDeclare
 drop table #tmpFinalFixDeclare
 drop table #tlast");
             #endregion
-
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out AllDetailData);
             if (!result)
             {
@@ -1127,6 +1128,11 @@ where t.StyleUKey = x.StyleUkey
                     if (findCustom.Length > 0)
                     {
                         string lastCustomsp = "SP" + (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(findCustom[0]["CustomSP"]).Substring(2)) + 1).ToString("000000");
+                        if (lastCustomsp.Length > 8)
+                        {
+                            MyUtility.Msg.InfoBox(string.Format("<CustomSP : {0}>  length can't be more than 8 Characters", lastCustomsp));
+                            return; 
+                        }
                         findCustom[0]["CustomSP"] = lastCustomsp;
                         dr["CustomSP"] = lastCustomsp;
                     }
@@ -1353,8 +1359,8 @@ Insert into VNConsumption_Detail_Detail (
 	,{5}
 );" , newID
     , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
-    , MyUtility.Convert.GetString(selectedDetailData[j]["SCIRefno"])
-    , MyUtility.Convert.GetString(selectedDetailData[j]["RefNo"])
+    , MyUtility.Convert.GetString(selectedDetailData[j]["SCIRefno"].ToString().Replace("'", "''"))
+    , MyUtility.Convert.GetString(selectedDetailData[j]["RefNo"].ToString().Replace("'", "''"))
     , MyUtility.Convert.GetString(selectedDetailData[j]["Qty"])
     , MyUtility.Convert.GetString(selectedDetailData[j]["LocalItem"])));
                                 }
