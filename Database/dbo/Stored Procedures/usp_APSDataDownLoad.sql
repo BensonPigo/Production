@@ -548,8 +548,10 @@ BEGIN
 				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 
 				delete from #DynamicEff
-
-				set @set = @gsd*@sewer*@maxeff
+				IF @gsd = 0
+				set @set = 0
+				ELSE
+				set @set = (3600/@gsd)*@sewer*@maxeff
 				Begin Try
 					Begin Transaction
 						insert into SewingSchedule
@@ -583,7 +585,7 @@ BEGIN
 						,@sewer
 						,@gsd
 						,CONVERT(numeric(5,2),isnull(@maxeff*100,0))
-						,CONVERT(int,ROUND(iif(@set = 0,0,(3600/@set)),0))--StandardOutput
+						,CONVERT(int,ROUND(@set,0))--StandardOutput
 						,isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0)--WorkDay
 						,CONVERT(numeric(8,3),@duration)
 						,@apsno
@@ -662,13 +664,16 @@ BEGIN
 
 						delete from #DynamicEff
 						
-						set @set = @gsd*@sewer*@maxeff
+						IF @gsd = 0
+						set @set = 0
+						ELSE
+						set @set = (3600/@gsd)*@sewer*@maxeff
 						Begin Try
 							Begin Transaction
 								SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 								update SewingSchedule 
 								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
-									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(iif(@set = 0,0,(3600/@set)),0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
+									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(@set,0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 								where ID = @sewingscheduleid;
 
