@@ -269,35 +269,34 @@ namespace Sci.Production.Warehouse
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.gridMaterialStatus)
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //1
-            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //3
+            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(3))  //2
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))  //3
             //.Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
-            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(15))  //8
+            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(12))  //8
             .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7            
-            .Text("ColorID", header: "Color", iseditingreadonly: true)  //9
+            .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
-            .Text("CurrencyID", header: "Currency", iseditingreadonly: true)  //11
+            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(6))  //11
             .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
             .Numeric("Qty", header: "Order Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
             .Numeric("NETQty", header: "Net Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
             .Numeric("useqty", header: "Use Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
             .Numeric("ShipQty", header: "Ship Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
             .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
-            //.Numeric("ApQty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //18
-            .Numeric("InputQty", header: "Taipei Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
-            .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //20
-            .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //21
-            .Date("FinalETA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
+            .Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
+            .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
+            .Text("Complete", header: "Cmplt", iseditingreadonly: true,width:Widths.AnsiChars(3))  //21
+            .Date("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList)  //23
-            .Numeric("InQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
-            .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //25
-            .Numeric("OutQty", header: "Released Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //26
-            .Numeric("AdjustQty", header: "Adjust Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //27
-            .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts6)    //28
+            .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
+            .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //25
+            .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5)    //26
+            .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true)    //27
+            .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6)    //28
             .Numeric("LInvQty", header: "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
             .Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
