@@ -344,14 +344,12 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //AutoCrate為1表示資料來源為(P01計算出來的就不能再讓使用者修改線種,顏色,總長度)
             if (data["autoCreate"].ToString() == "True")
             {
-                col_refno.IsEditingReadOnly = true;
                 col_color.IsEditingReadOnly = true;
                 col_cons.IsEditingReadOnly = true;
                 this.refno.SupportPopup = false;
             }
             else
             {
-                col_refno.IsEditingReadOnly = false;
                 col_color.IsEditingReadOnly = false;
                 col_cons.IsEditingReadOnly = false;
                 this.refno.SupportPopup = true;
@@ -370,6 +368,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
             else
             {
+                col_refno.IsEditingReadOnly = false;
                 col_Allowance.IsEditingReadOnly = false;
                 col_NewCone.IsEditingReadOnly = false;
                 col_UsedCone.IsEditingReadOnly = false;
@@ -414,7 +413,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (dr["autoCreate"].ToString() == "True"|| !MyUtility.Check.Empty(dr["POID"]))
+                if (!MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
