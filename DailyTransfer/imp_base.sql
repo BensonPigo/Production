@@ -1371,7 +1371,7 @@ SET
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
-
+	  ,a.MaxLossQty		 = b.MaxLossQty
 from Production.dbo.LossRateFabric as a inner join Trade_To_Pms.dbo.LossRateFabric as b ON a.WeaveTypeID=b.WeaveTypeID
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.LossRateFabric(
@@ -1389,6 +1389,7 @@ INSERT INTO Production.dbo.LossRateFabric(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,MaxLossQty
 )
 select 
        WeaveTypeID
@@ -1405,6 +1406,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,MaxLossQty
 from Trade_To_Pms.dbo.LossRateFabric as b WITH (NOLOCK)
 where not exists(select WeaveTypeID from Production.dbo.LossRateFabric as a WITH (NOLOCK) where a.WeaveTypeID = b.WeaveTypeID)
 --Acc_Loss
