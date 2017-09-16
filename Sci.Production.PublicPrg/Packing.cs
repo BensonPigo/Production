@@ -546,12 +546,25 @@ select  a.*
                                    where o.id in (a.OrderID)) s 
                             for xml path('')
                           ),1,1,'')
+        , sortCTNNo = TRY_Convert(int , a.CTNStartNo)
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
-left join AccuPKQty pd on a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq and pd.Article = a.Article and pd.SizeCode = a.SizeCode
-left join PulloutAdjQty paq on a.OrderID = paq.OrderID and a.OrderShipmodeSeq = paq.OrderShipmodeSeq and paq.Article = a.Article and paq.SizeCode = a.SizeCode
-left join PackQty pk on a.OrderID = pk.OrderID and a.OrderShipmodeSeq = pk.OrderShipmodeSeq and pk.Article = a.Article and pk.SizeCode = a.SizeCode
-left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
+left join AccuPKQty pd on a.OrderID = pd.OrderID 
+                          and a.OrderShipmodeSeq = pd.OrderShipmodeSeq 
+                          and pd.Article = a.Article 
+                          and pd.SizeCode = a.SizeCode
+left join PulloutAdjQty paq on a.OrderID = paq.OrderID 
+                               and a.OrderShipmodeSeq = paq.OrderShipmodeSeq 
+                               and paq.Article = a.Article 
+                               and paq.SizeCode = a.SizeCode
+left join PackQty pk on a.OrderID = pk.OrderID 
+                        and a.OrderShipmodeSeq = pk.OrderShipmodeSeq 
+                        and pk.Article = a.Article 
+                        and pk.SizeCode = a.SizeCode
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID 
+                                                    and oqd.Seq = a.OrderShipmodeSeq 
+                                                    and oqd.Article = a.Article 
+                                                    and oqd.SizeCode = a.SizeCode
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 where a.id = '{0}'
 order by a.Seq", packingListID);
