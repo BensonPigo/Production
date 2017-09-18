@@ -131,10 +131,12 @@ where a.ApvToPurchase = 1
                       where RequestID = a.ID 
                       		and Poid = c.POID 
                       		and OrderID = b.OrderID 
-                      		and Refno = b.RefNo)", Env.User.Factory
+                      		and Refno = b.RefNo
+                            and ID !='{4}')", Env.User.Factory
                      , Env.User.Keyword
                      , dr_localPO["category"]
-                     ,dr_localPO["localsuppid"]);
+                     ,dr_localPO["localsuppid"]
+                     , dr_localPO["ID"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -223,10 +225,12 @@ where a.status = 'Approved'
       				  		and Poid = c.POID 
       				  		and OrderID = a.OrderID 
       				  		and Refno = b.RefNo 
-      				  		and ThreadColorID = b.threadcolorid)", Env.User.Factory
+      				  		and ThreadColorID = b.threadcolorid
+                            and ID !='{4}')", Env.User.Factory
                      , Env.User.Keyword
                      , dr_localPO["category"]
-                     , dr_localPO["localsuppid"]);
+                     , dr_localPO["localsuppid"]
+                     , dr_localPO["ID"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
