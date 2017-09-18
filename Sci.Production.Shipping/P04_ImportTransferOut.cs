@@ -57,12 +57,32 @@ namespace Sci.Production.Shipping
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string sqlCmd = @"select 1 as Selected,td.Poid,td.Seq1,td.Seq2,(left(td.Seq1+' ',3)+'-'+td.Seq2) as Seq,isnull(ps.SuppID,'') as SuppID,
-(isnull(ps.SuppID,'')+'-'+isnull(s.AbbEN,'')) as Supp,isnull(psd.Refno,'') as RefNo,isnull(psd.SCIRefno,'') as SCIRefNo,
-isnull(f.DescDetail,'') as Description,isnull(psd.FabricType,'') as FabricType,
-(case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
-isnull(f.MtlTypeID,'') as MtlTypeID,isnull(psd.StockUnit,'') as UnitId,td.Qty,0.0 as NetKg,0.0 as WeightKg,
-o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
+            string sqlCmd = @"
+select Selected = 1
+	   , td.Poid
+	   , td.Seq1
+	   , td.Seq2
+	   , Seq = (left(td.Seq1 + ' ', 3) + '-' + td.Seq2)
+	   , SuppID = isnull(ps.SuppID, '')
+	   , Supp = (isnull(ps.SuppID, '') + '-' + isnull(s.AbbEN, ''))
+	   , RefNo = isnull(psd.Refno, '')
+	   , SCIRefNo = isnull(psd.SCIRefno, '')
+	   , Description = isnull(f.DescDetail, '') 
+	   , FabricType = isnull(psd.FabricType, '')
+	   , Type = (case 
+	   				when psd.FabricType = 'F' then 'Fabric' 
+	   				when psd.FabricType = 'A' then 'Accessory' 
+   				 	else '' 
+			 	 end)
+	   , MtlTypeID = isnull(f.MtlTypeID, '') 
+	   , UnitId = isnull(psd.StockUnit, '') 
+	   , td.Qty
+	   , NetKg = 0.0
+	   , WeightKg = 0.0
+	   , o.BuyerDelivery
+	   , BrandID = isnull(o.BrandID, '')
+	   , FactoryID = isnull(o.FactoryID, '')
+	   , o.SciDelivery
 from TransferOut_Detail td WITH (NOLOCK) 
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
@@ -99,7 +119,35 @@ where td.ID = @id";
             DataRow[] dr = gridData.Select("Selected = 1");
             if (dr.Length > 0)
             {
-                foreach (DataRow currentRow in dr)
+                DataTable dtComputeQty;
+                string strComputeQtySQL = @"
+select Poid
+	   , Seq1
+	   , Seq2
+	   , Seq
+	   , SuppID
+	   , Supp
+	   , RefNo
+	   , SCIRefNo
+	   , Description
+	   , FabricType
+	   , Type 
+	   , MtlTypeID
+	   , UnitId
+	   , Qty = sum(Qty)
+	   , NetKg = sum(NetKg)
+	   , WeightKg = sum(WeightKg)
+	   , BuyerDelivery
+	   , BrandID
+	   , FactoryID
+	   , SciDelivery
+from #tmp
+group by Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
+		 , SCIRefNo, Description, FabricType, Type 
+	   	 , MtlTypeID, UnitId, BuyerDelivery, BrandID
+	   	 , FactoryID, SciDelivery";
+                MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), "", strComputeQtySQL, out dtComputeQty);
+                foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
                     DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
                     if (findrow.Length == 0)
