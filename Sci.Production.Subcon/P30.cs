@@ -29,10 +29,10 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "mdivisionid = '" + Sci.Env.User.Keyword + "'";
-              
+
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-          
+
             this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
@@ -42,11 +42,11 @@ namespace Sci.Production.Subcon
                     {
                         ((DataTable)detailgridbs.DataSource).Rows.Clear();
                     }
-                } 
+                }
             };
 
         }
-      
+
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -112,7 +112,7 @@ namespace Sci.Production.Subcon
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
-                
+
                 this.RenewData();
 
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
@@ -188,7 +188,7 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
-           
+
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
@@ -216,7 +216,145 @@ namespace Sci.Production.Subcon
 
             return base.ClickSaveBefore();
         }
-        
+        protected override DualResult ClickSave()
+        {
+            String sqlupd2 = "", ids = "";
+            DualResult result2;
+
+            #region 檢查表身明細requestid是否已有回寫過poid
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                {
+                    if (dr["requestid"].ToString()!="")
+                    {
+                        string chk = string.Format("select distinct requestid,LocalPOID from packinglist where id = '{0}' and isnull(LocalPOID,'') != ''", dr["requestid"].ToString());
+                        if (MyUtility.Check.Seek(chk))
+                        {
+                            ids += string.Format("Request ID: {0} is already in LocalPO : {1}" + Environment.NewLine, dr["requestid"], dr["POID"]);
+                        }
+                    }
+                }
+                if (ids != "")
+                {
+                    return Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
+                }
+            }
+            #endregion
+
+            #region 檢查明細requestid是否已有回寫poid
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                {
+
+                    if (dr["requestid"].ToString() != "")
+                    {
+                        string chk = string.Format(@"select ThreadRequisition_Detail.OrderID,ThreadRequisition_Detail.Refno,ThreadRequisition_Detail.ThreadColorID,ThreadRequisition_Detail.POID 
+from ThreadRequisition_Detail WITH (NOLOCK)
+where ThreadRequisition_Detail.OrderID = '{0}'
+and ThreadRequisition_Detail.Refno = '{1}'
+and ThreadRequisition_Detail.ThreadColorID = '{2}'
+and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(), dr["Refno"].ToString(), dr["ThreadColorID"].ToString());
+                        if (MyUtility.Check.Seek(chk))
+                        {
+                            ids += string.Format("Request ID: {0} , Refno: {1} , Color: {2} is already in LocalPO : {3}" + Environment.NewLine, dr["requestid"], dr["Refno"], dr["ThreadColorID"], dr["POID"]);
+                        }
+                    }
+                }
+                if (ids != "")
+                {
+                    return Result.F("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids);
+                }
+            }
+            #endregion
+
+            #region 開始更新相關table資料
+            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        if (dr["requestid"].ToString() != "")
+                        {
+                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
+                        }
+                    }
+                }
+            }
+            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            {
+                //針對表身資料將ThreadRequisition_Detail.poid塞值
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
+                                    "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
+                                    , dr["orderid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
+                    }
+                }
+            }
+
+            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                    {
+                        if (dr["requestid"].ToString() != "")
+                        {
+                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '{0}' where id = '{1}'", dr["id"], dr["requestid"]);
+                        }
+                    }
+                }
+            }
+            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            {
+                //針對表身資料將ThreadRequisition_Detail.poid塞值
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                    {
+                            sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
+                                    "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
+                                    , dr["id"].ToString(), dr["orderid"].ToString(), dr["refno"].ToString(), dr["threadcolorid"].ToString());
+                    }
+                }
+            }
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!MyUtility.Check.Empty(sqlupd2))
+                    {
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                        {
+                            _transactionscope.Dispose();
+                            return result2;
+                        }
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    DualResult er = Result.F("Commit transaction error.", ex);
+                    return er;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            #endregion
+
+            return base.ClickSave();
+        }
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
@@ -231,7 +369,7 @@ namespace Sci.Production.Subcon
             DataTable detailDt = (DataTable)detailgridbs.DataSource;
             if (!detailDt.Columns.Contains("Amount"))
             {
-                detailDt.Columns.Add("amount",typeof(decimal));
+                detailDt.Columns.Add("amount", typeof(decimal));
                 detailDt.Columns.Add("std_price", typeof(decimal));
                 decimal std_price;
                 foreach (DataRow dr in detailDt.Rows)
@@ -242,7 +380,7 @@ namespace Sci.Production.Subcon
                                                                                inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
                                                                                where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], CurrentMaintain["category"].ToString())), out std_price);
                     dr["std_price"] = std_price;
-                    dr["Amount"] = MyUtility.Convert.GetDecimal(dr["price"]) *MyUtility.Convert.GetDecimal(dr["Qty"]) ;
+                    dr["Amount"] = MyUtility.Convert.GetDecimal(dr["price"]) * MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
             }
             if (!(CurrentMaintain == null))
@@ -263,14 +401,14 @@ namespace Sci.Production.Subcon
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
-            
+
             #region Batch Import, Special record button
             btnImportThread.Enabled = this.EditMode;
             btnBatchUpdateDellivery.Enabled = this.EditMode;
             #endregion
 
         }
-        
+
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
@@ -296,7 +434,7 @@ namespace Sci.Production.Subcon
                     CurrentDetailData["StyleID"] = "";
                     CurrentDetailData["SciDelivery"] = DBNull.Value;
                     CurrentDetailData["sewinline"] = DBNull.Value;
-                    return; 
+                    return;
                 }
                 if (e.FormattedValue.ToString() == drr["orderid"].ToString()) return;
 
@@ -309,15 +447,15 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                     {
                         if ((decimal)dr["price"] == 0m)
                         {
-                            e.Cancel=true; 
-                            MyUtility.Msg.WarningBox("TmsCost price is Zero","Warning");
+                            e.Cancel = true;
+                            MyUtility.Msg.WarningBox("TmsCost price is Zero", "Warning");
                             return;
                         }
                     }
                     else
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("SP# is not in Order_TmsCost","Data not found");
+                        MyUtility.Msg.WarningBox("SP# is not in Order_TmsCost", "Data not found");
                         return;
                     }
                 }
@@ -350,11 +488,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
-                {                   
-                   Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (string.Format(@"Select refno,description, localsuppid,unitid,price
+                {
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                         (string.Format(@"Select refno,description, localsuppid,unitid,price
                                                     from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                                                                                 , "15,30,8,8,10","",null,"0,0,0,0,4");
+                                                                                                                                  , "15,30,8,8,10", "", null, "0,0,0,0,4");
                     item.Size = new System.Drawing.Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -365,35 +503,35 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 }
             };
             ts.CellValidating += (s, e) =>
-                {
-                    if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
-                    if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
+            {
+                if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
+                if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
                                                                       where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
-                                                                    ,e.FormattedValue.ToString(),CurrentMaintain["category"],CurrentMaintain["localsuppid"])
-                                                                    ,out dr,null))
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Data not found!","Ref#");
-                        return;
-                    }
-                    else
-                    {
-                        CurrentDetailData["refno"] = dr[0];
-                        CurrentDetailData["unitid"] = dr[1];
-                        CurrentDetailData["price"] = dr[2];
-                    }
-                };
+                                                                , e.FormattedValue.ToString(), CurrentMaintain["category"], CurrentMaintain["localsuppid"])
+                                                                , out dr, null))
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!", "Ref#");
+                    return;
+                }
+                else
+                {
+                    CurrentDetailData["refno"] = dr[0];
+                    CurrentDetailData["unitid"] = dr[1];
+                    CurrentDetailData["price"] = dr[2];
+                }
+            };
             #endregion
 
             #region Color shase 右鍵開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
-               
+
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                     if (!(CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" 
-                        || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+                    if (!(CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD"
+                       || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
                         return;
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
                         (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
@@ -416,10 +554,10 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                                                                 , out dr, null))
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Data not found!","Color Shade");
+                    MyUtility.Msg.WarningBox("Data not found!", "Color Shade");
                     return;
                 }
-                
+
             };
             #endregion
 
@@ -460,8 +598,8 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)  //3
             .Date("SciDelivery", header: "Sci Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //5
-            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //6
-            .Text("threadColorid", header: "Color Shade",settings:ts2)    //7
+            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20), settings: ts)    //6
+            .Text("threadColorid", header: "Color Shade", settings: ts2)    //7
             .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)   //8
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns)    //9
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //10
@@ -473,7 +611,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) //16
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) //17
             .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) //18
-            ;     
+            ;
             #endregion
             #region 可編輯欄位變色
             detailgrid.Columns["orderid"].DefaultCellStyle.BackColor = Color.Pink;
@@ -481,8 +619,8 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             detailgrid.Columns["threadColorid"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["delivery"].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink; 
-            
+            detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink;
+
             #endregion
         }
 
@@ -527,101 +665,15 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            var dr = this.CurrentMaintain; 
-            if (null == dr) return;
 
-            String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
-            DataTable datacheck;
-
-            #region 檢查明細requestid是否已有回寫poid
-            sqlcmd = string.Format(@"select requestid,LocalPOID from LocalPO_Detail WITH (NOLOCK) , packinglist  WITH (NOLOCK) 
-                                                    where localpo_detail.requestid = packinglist.id 
-                                                            and LocalPOID!='' 
-                                                            and localpo_detail.id ='{0}' group by requestid,LocalPOID ", CurrentMaintain["id"]);
-            if(!(result2 = DBProxy.Current.Select(null, sqlcmd,out datacheck)))
-            {
-                ShowErr(sqlcmd,result2);
-                return;
-            }
-            if (!MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
-            {
-                foreach (DataRow tmp in datacheck.Rows)
-                {
-                    ids += string.Format("Request ID: {0} is already in LocalPO : {1}" + Environment.NewLine, tmp[0], tmp[1]);
-                }
-                MyUtility.Msg.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
-                return;
-            }
-            #endregion
-
-            #region 檢查明細requestid是否已有回寫poid
-            sqlcmd = string.Format(@"select ThreadRequisition_Detail.OrderID,ThreadRequisition_Detail.Refno,ThreadRequisition_Detail.ThreadColorID,ThreadRequisition_Detail.POID from LocalPO_Detail WITH (NOLOCK) , ThreadRequisition_Detail  WITH (NOLOCK) 
-                                                    where localpo_detail.requestid = ThreadRequisition_Detail.OrderID 
-                                                            and localpo_detail.Refno=ThreadRequisition_Detail.Refno
-                                                            and localpo_detail.ThreadColorID=ThreadRequisition_Detail.ThreadColorID
-                                                            and ThreadRequisition_Detail.POID!='' 
-                                                            and localpo_detail.requestID!=''
-                                                            and localpo_detail.id ='{0}'", CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                ShowErr(sqlcmd, result2);
-                return;
-            }
-            if (!MyUtility.Check.Empty(datacheck) && datacheck.Rows.Count > 0)
-            {
-                foreach (DataRow tmp in datacheck.Rows)
-                {
-                    ids += string.Format("Request ID: {0} , Refno: {1} , Color: {2} is already in LocalPO : {3}" + Environment.NewLine, tmp[0], tmp[1], tmp[2], tmp[3]);
-                }
-                MyUtility.Msg.WarningBox("Below request id already be created in Local PO, can't approve it!!" + Environment.NewLine + ids, "Warning");
-                return;
-            }
-            #endregion
-
-            #region 開始更新相關table資料
-            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
-            {
-                sqlupd2 = string.Format(@"with MyCTE 
-                                        as
-                                        (
-                                            select requestid 
-                                            from localpo_detail WITH (NOLOCK) 
-                                            where localpo_detail.id = '{0}' group by requestid
-                                        )
-                                        update dbo.PackingList
-                                        set LocalPOID = '{0}' 
-                                        where id in (select requestid from mycte)", dr["id"]);
-            }
-            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
-            {
-                //針對表身資料將ThreadRequisition_Detail.poid塞值
-                foreach (DataRow ddr in DetailDatas)
-                {
-                    sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
-                                    "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
-                                    , ddr["id"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
-                }
-            }
-            
-            sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
+            string sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
+                               "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            DualResult result;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    if (!MyUtility.Check.Empty(sqlupd2))
-                    {
-                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(sqlupd2, result2);
-                            return;
-                        } 
-                    }
-
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -642,8 +694,6 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            
-            #endregion
         }
 
         //unApprove
@@ -657,55 +707,21 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 MyUtility.Msg.WarningBox("Detail data has AP Qty, can't unApprove!", "Warning");
                 return;
             }
-            
+
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
-            String sqlupd2 = "", sqlupd3 = "";
-            DualResult result, result2;
-            
-            #region 開始更新相關table資料
-            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
-            {
-                sqlupd2 = string.Format(@"with MyCTE 
-                                        as
-                                        (
-                                            select requestid 
-                                            from localpo_detail WITH (NOLOCK) 
-                                            where localpo_detail.id = '{0}' group by requestid
-                                        )
-                                        update dbo.PackingList
-                                        set LocalPOID = '' 
-                                        where id in (select requestid from mycte)", dr["id"]);
-            }
-            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
-            {
-                foreach (DataRow ddr in DetailDatas)
-                {
-                    sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
-                                    "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
-                                    , ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
-                }
-            }
+            String sqlupd3 = "";
+            DualResult result;
 
             sqlupd3 = string.Format(@"update Localpo set status='New',apvname='', apvdate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-            
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    if (!MyUtility.Check.Empty(sqlupd2))
-                    {
-                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(sqlupd2, result2);
-                            return;
-                        } 
-                    }
-
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -726,9 +742,6 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            
-
-            #endregion
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -736,11 +749,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             //bug fix:0000244:SUBCON_P30_Local Purchase，1.新增資料存檔後，表身資料會不見。
-//            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
-//                                                        from localpo_detail 
-//                                                            inner join orders on localpo_detail.orderid = orders.id
-//                                                            inner join localitem on localitem.refno = localpo_detail.refno 
-//                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
+            //            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+            //                                                        from localpo_detail 
+            //                                                            inner join orders on localpo_detail.orderid = orders.id
+            //                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+            //                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
             this.DetailSelectCommand = string.Format(@"select *,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail WITH (NOLOCK) 
                                                             left join orders WITH (NOLOCK) on localpo_detail.orderid = orders.id
@@ -753,11 +766,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
 
         protected override bool ClickNewBefore()
         {
-//            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
-//                                                        from localpo_detail 
-//                                                            inner join orders on localpo_detail.orderid = orders.id
-//                                                            inner join localitem on localitem.refno = localpo_detail.refno 
-//                                                        where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
+            //            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+            //                                                        from localpo_detail 
+            //                                                            inner join orders on localpo_detail.orderid = orders.id
+            //                                                            inner join localitem on localitem.refno = localpo_detail.refno 
+            //                                                        where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail WITH (NOLOCK) 
                                                             left join orders WITH (NOLOCK) on localpo_detail.orderid = orders.id
@@ -888,7 +901,8 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 {
                     row["Delivery"] = (DateTime)dateDeliveryDate.Value;
                 }
-                else {
+                else
+                {
                     row["Delivery"] = DBNull.Value;
                 }
             }
