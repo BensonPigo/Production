@@ -82,7 +82,7 @@ namespace Sci.Production.Cutting
         {
             this.ShowWaitMessage("Data processing, please wait...");
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
-                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Text.Empty())
+                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Value.Empty())
             {
                 txtCutRefStart.Focus();
                 if (dtt != null) dtt.Clear();
