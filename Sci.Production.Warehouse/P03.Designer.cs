@@ -191,6 +191,7 @@
             this.gridMaterialStatus.Size = new System.Drawing.Size(1002, 504);
             this.gridMaterialStatus.TabIndex = 0;
             this.gridMaterialStatus.TabStop = false;
+            this.gridMaterialStatus.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.gridMaterialStatus_DataError);
             this.gridMaterialStatus.Sorted += new System.EventHandler(this.gridMaterialStatus_Sorted);
             // 
             // P03
