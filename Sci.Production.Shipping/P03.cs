@@ -99,33 +99,49 @@ where ed.ID = '{0}'", masterID);
 
         protected override bool ClickSaveBefore()
         {
+            DialogResult dResult;
             //Arrive Port Date 不可晚於 Arrive W/H Date
             if (MyUtility.Convert.GetString(CurrentMaintain["ExportCountry"]).ToUpper() == MyUtility.Convert.GetString(CurrentMaintain["ImportCountry"]).ToUpper()
                 && MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]).ToUpper() == "TRUCK")
             { }
             else
-            {
+            {   
                 if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"])&& !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
                 {
+                    //到港日不可晚於到W/H日期
                     if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["WhseArrival"]))
                     {
                         MyUtility.Msg.WarningBox("< Arrive Port Date > can't later than < Arrive W/H Date >");
                         return false;
                     }
                 }
-
-                //ETA <= Arrive Port Date <= ETA+10
+                //到港日要在ETA +-10天內 才詢問是否要Save
+                //如果超過+-10就不可存檔                
                 if (!MyUtility.Check.Empty(CurrentMaintain["PortArrival"]) && !MyUtility.Check.Empty(CurrentMaintain["Eta"]))
                 {
-                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) < Convert.ToDateTime(CurrentMaintain["Eta"]))
+                    //到港日=ETA 可正常存檔
+                    if (DateTime.Compare((DateTime)CurrentMaintain["PortArrival"],(DateTime)CurrentMaintain["Eta"])==0)
                     {
-                        MyUtility.Msg.WarningBox("< Arrive Port Date > earlier than < ETA >. Are you sure you want to save this data?");
-                        return false;
+                        return true;
                     }
 
-                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) > Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10))
+                    //到港日早於ETA(到達日) 10天內
+                    if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) >= Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(-10) &&
+                        DateTime.Compare((DateTime)CurrentMaintain["PortArrival"], (DateTime)CurrentMaintain["Eta"]) < 0)
                     {
-                        MyUtility.Msg.WarningBox("<Arrive Prot DAte> later than <ETA> +10 days. Cannot be saved.");
+                        dResult = MyUtility.Msg.QuestionBox("< Arrive Port Date > earlier than < ETA >." + Environment.NewLine + "Are you sure you want to save this data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                        if (dResult == DialogResult.No) return false;
+                    }
+                    //到港日不可晚於ETA 10天內
+                    else if (Convert.ToDateTime(CurrentMaintain["PortArrival"]) <= Convert.ToDateTime(CurrentMaintain["Eta"]).AddDays(10) &&
+                        DateTime.Compare((DateTime)CurrentMaintain["PortArrival"], (DateTime)CurrentMaintain["Eta"]) > 0)
+                    {
+                        dResult = MyUtility.Msg.QuestionBox("< Arrive Prot Date > later than < ETA >." + Environment.NewLine + "Are you sure you want to save this data?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                        if (dResult == DialogResult.No) return false;
+                    }//超過或小於10天就不可存檔
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("< Arrive Port Date > earlier or later more than <ETA> 10 days, Cannot be saved.");
                         return false;
                     }
                 }
