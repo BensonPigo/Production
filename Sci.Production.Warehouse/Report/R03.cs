@@ -321,13 +321,20 @@ where 1=1
 
             //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R03.xltx", 1);
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R03.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
-
+            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R03.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
             this.ShowWaitMessage("Excel Processing...");
-            Excel.Worksheet worksheet = objApp.Sheets[1];
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
+            com.WriteTable(printData,2);
 
-            objApp.Rows.AutoFit();
-            objApp.Columns.AutoFit();
+
+            
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            worksheet.Columns[6].ColumnWidth = 35;
+            worksheet.Columns[23].ColumnWidth = 35;
+            worksheet.Columns[29].ColumnWidth = 35;
+            worksheet.Columns[30].ColumnWidth = 35;
+            //objApp.Rows.AutoFit();
+            //objApp.Columns.AutoFit();
 
             //for (int i = 1; i <= printData.Rows.Count; i++)
             //{
