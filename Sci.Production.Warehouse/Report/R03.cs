@@ -120,7 +120,7 @@ select  F.MDivisionID
                         when 'A' then 'Accessory'
                         when 'O' then 'Other'
                       end 
-        ,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
+        ,LTRIM(RTRIM(dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)))
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -329,12 +329,12 @@ where 1=1
             objApp.Rows.AutoFit();
             objApp.Columns.AutoFit();
 
-            for (int i = 1; i <= printData.Rows.Count; i++)
-            {   
-                string str = worksheet.Cells[i + 1, 12].Value;
-                if(!MyUtility.Check.Empty(str))
-                    worksheet.Cells[i + 1, 12] = str.Trim();
-            }
+            //for (int i = 1; i <= printData.Rows.Count; i++)
+            //{
+            //    string str = worksheet.Cells[i + 1, 12].Value;
+            //    if (!MyUtility.Check.Empty(str))
+            //        worksheet.Cells[i + 1, 12] = str.Trim();
+            //}
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R03");
