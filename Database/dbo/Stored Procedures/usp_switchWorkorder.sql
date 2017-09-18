@@ -242,15 +242,19 @@ BEGIN
 			Begin
 				SET @Seq2 = ''
 			End
-
+			
 			if @Seq2 = ''
 			Begin
 				--若SEQ2 為空就找70大項
 				Select *
 				into #SEQ2tmp
 				From PO_Supp_Detail b 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%'
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
 				SET @Rowno = @@Rowcount
+				set @seq1 = ''
+				Select top 1 @seq1 = isnull(seq1,'')
+				From #SEQ2tmp 
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
 					Select top 1 @seq1 = seq1 ,@Seq2 = isnull(OutputSeq2,'')
