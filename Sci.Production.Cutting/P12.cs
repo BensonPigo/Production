@@ -82,12 +82,12 @@ namespace Sci.Production.Cutting
         {
             this.ShowWaitMessage("Data processing, please wait...");
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
-                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty())
+                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Value.Empty())
             {
                 txtCutRefStart.Focus();
-                if (dtt !=null) dtt.Clear();
+                if (dtt != null) dtt.Clear();
                 this.HideWaitMessage();
-                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
+                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date and Bundle created Date ] can not be all null !!");
                 return;
             }
 

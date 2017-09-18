@@ -123,7 +123,8 @@ namespace PMSUploadDataToAPS.Daily
                 return AsyncUpdateExport(conn);
             });
 
-            mymailTo();
+            if (issucess)
+                mymailTo();            
 
             if (!result)
             {
@@ -131,6 +132,7 @@ namespace PMSUploadDataToAPS.Daily
             }
 
             conn.Close();
+            issucess = true;
         }
 
         private void mymailTo()
@@ -140,8 +142,8 @@ namespace PMSUploadDataToAPS.Daily
 
             #region 完成後發送Mail
             #region 組合 Desc
-            desc = "UPDATE usp_PMSUploadDataToAPS"+ Environment.NewLine ;
-            desc += "Dear All:" + Environment.NewLine + Environment.NewLine +
+            desc = "UPDATE usp_PMSUploadDataToAPS " + Environment.NewLine;
+            desc += Environment.NewLine+"Dear All:" + Environment.NewLine + Environment.NewLine +
                    "             (**Please don't reply this mail. **)" + Environment.NewLine + Environment.NewLine +
                    "PMS system already uploaded data to APS." + Environment.NewLine +
                    "Pls confirm and take notes." + Environment.NewLine +
@@ -152,12 +154,20 @@ namespace PMSUploadDataToAPS.Daily
             #endregion
 
             subject = mailTo["Subject"].ToString().TrimEnd() +" - ["+ this.CurrentData["RgCode"].ToString() + "]";
+            if (issucess)
+            {
+                subject += " Sucess";
+            }
+            else
+            {
+                subject += " Error!";
+            }
 
             SendMail(subject, desc);
             #endregion
         }
         #endregion
-
+        bool issucess = true;
         #region Export/Update (非同步)
         private DualResult AsyncUpdateExport(SqlConnection conn)
         {
@@ -183,6 +193,8 @@ namespace PMSUploadDataToAPS.Daily
                 catch (SqlException se)
                 {
                     //return Result.F("執行資料庫預存程序時發生錯誤。", se);
+                    issucess = false;
+                    mymailTo();
                     return Ict.Result.F(se);
                 }
                 return Ict.Result.True;
@@ -213,6 +225,8 @@ namespace PMSUploadDataToAPS.Daily
                 catch (SqlException se)
                 {
                     //return Result.F("執行資料庫預存程序時發生錯誤。", se);
+                    issucess = false;
+                    mymailTo();
                     return Ict.Result.F(se);
                 }
                 return Ict.Result.True;
