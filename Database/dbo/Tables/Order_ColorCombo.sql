@@ -9,8 +9,11 @@
     [AddDate]         DATETIME     NULL,
     [EditName]        VARCHAR (10) CONSTRAINT [DF_Order_ColorCombo_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME     NULL,
+    [FabricType]      VARCHAR (1)  DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Order_ColorCombo] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 
