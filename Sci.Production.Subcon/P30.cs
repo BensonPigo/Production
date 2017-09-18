@@ -770,8 +770,8 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
         {
 
             DataRow row = this.CurrentMaintain;
-            string id = row["ID"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string id = row["ID"].ToString().Trim();
+            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString().Trim();
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -789,11 +789,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             where b.id = a.factoryid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
-            string RptTitle = dt.Rows[0]["RptTitle"].ToString();
-            string Supplier = dt.Rows[0]["Supplier"].ToString();
-            string FactoryID = dt.Rows[0]["FactoryID"].ToString();
-            string Tel = dt.Rows[0]["Tel"].ToString();
-            string Address = dt.Rows[0]["Address"].ToString();
+            string RptTitle = dt.Rows[0]["RptTitle"].ToString().Trim();
+            string Supplier = dt.Rows[0]["Supplier"].ToString().Trim();
+            string FactoryID = dt.Rows[0]["FactoryID"].ToString().Trim();
+            string Tel = dt.Rows[0]["Tel"].ToString().Trim();
+            string Address = dt.Rows[0]["Address"].ToString().Trim();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
@@ -817,34 +817,26 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                     ,a.Price [UPrice]
                     ,a.Qty [Order_Qty]
                     ,a.UnitId [Unit]
-                     ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
-                    ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
-			        ,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
-                    ,[Total3]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )as decimal(30,2)),'#,###,###,##0.00')
-			        ,[Total4]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )as decimal(30,2)),'#,###,###,##0.00')
+                     ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]                    
             from dbo.LocalPO_Detail a WITH (NOLOCK) 
             left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
-          
+
             // 傳 list 資料            
             List<P30_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P30_PrintData()
                 {
-                    SP = row1["SP"].ToString(),
-                    Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString(),
-                    Refno = row1["Refno"].ToString(),
-                    Color_Shade = row1["Color_Shade"].ToString(),
-                    Description = row1["Description"].ToString(),
-                    UPrice = row1["UPrice"].ToString(),
-                    Order_Qty = row1["Order_Qty"].ToString(),
-                    Unit = row1["Unit"].ToString(),
-                    Amount = row1["Amount"].ToString(),
-                    Total1 = row1["Total1"].ToString(),
-                    Total2 = row1["Total2"].ToString(),
-                    Total3 = row1["Total3"].ToString(),
-                    Total4 = row1["Total4"].ToString()
+                    SP = row1["SP"].ToString().Trim(),
+                    Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
+                    Refno = row1["Refno"].ToString().Trim(),
+                    Color_Shade = row1["Color_Shade"].ToString().Trim(),
+                    Description = row1["Description"].ToString().Trim(),
+                    UPrice = row1["UPrice"].ToString().Trim(),
+                    Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
+                    Unit = row1["Unit"].ToString().Trim(),
+                    Amount = Convert.ToDecimal(row1["Amount"]),
                 }).ToList();
 
             report.ReportDataSource = data;
