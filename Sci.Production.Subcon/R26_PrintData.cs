@@ -12,7 +12,7 @@ namespace Sci.Production.Subcon
         public string Code { get; set; }
         public string Color_Shade { get; set; }
         public string Description { get; set; }
-        public string Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public string Unit { get; set; }
         public string Unit_Price { get; set; }
         public string Amount { get; set; }

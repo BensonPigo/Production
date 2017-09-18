@@ -213,14 +213,12 @@ BEGIN
 				   @Type = '1',
 				   @MarkerDownLoadId = MarkerDownloadID,
 				   @Order_EachConsUkey = Order_EachConsUkey,
-				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey,
-				   @LongArticle = Article
+				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey
 
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
 
-			--將@LongArticle(例:AI3342  ,AJ4925  ,AY3686  ,AY3687  ,AY3688  ,)依逗號切，放至TEMP TABLE。
-			select * into #LongArticle from dbo.SplitString(@LongArticle , ',');
+			select distinct Article into #LongArticle from Order_EachCons_Article where Order_EachConsUkey=@Order_EachConsUkey
 			select @LongArticleCount = count(*) from #LongArticle;
 
 			SET @SCIRefno = ''
@@ -237,24 +235,29 @@ BEGIN
 			Select @Seq2 = isnull(seq2,'') --先找相同SEQ1,SCIRefno
 			From PO_Supp_Detail b 
 			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
+			and Junk = 0
 
 			--ALGER TEST
 			IF @Seq2 IS NULL
 			Begin
 				SET @Seq2 = ''
 			End
-
+			
 			if @Seq2 = ''
 			Begin
 				--若SEQ2 為空就找70大項
 				Select *
 				into #SEQ2tmp
 				From PO_Supp_Detail b 
-				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
 				SET @Rowno = @@Rowcount
+				set @seq1 = ''
+				Select top 1 @seq1 = isnull(seq1,'')
+				From #SEQ2tmp 
+				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
-					Select @Seq2 = isnull(OutputSeq2,'')
+					Select top 1 @seq1 = seq1 ,@Seq2 = isnull(OutputSeq2,'')
 					From #SEQ2tmp 
 					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				End
