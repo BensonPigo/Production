@@ -140,25 +140,22 @@ namespace Sci.Production.PPIC
             string updsql = "";
             updsql = string.Format(@"
 insert into cutting(ID,worktype,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate)
-Select id = ord.cuttingsp,worktype = (select top 1 Type from WorkOrder where ID = ord.cuttingsp),sewInline = min(ord.sewinline),sewoffline = max(ord.sewoffline),mDivisionid = '{2}',FactoryID = '{3}',AddName = '{4}' ,AddDate = GetDate()
-from orders ord WITH (NOLOCK) ,
+Select id = ord.cuttingsp,worktype = a.Type,sewInline = min(ord.sewinline),sewoffline = max(ord.sewoffline),mDivisionid = '{2}',FactoryID = '{3}',AddName = '{4}' ,AddDate = GetDate()
+from orders ord WITH (NOLOCK) inner join 
 (
-	Select * 
+	Select cuttingsp
 	from (
 		Select distinct c.cuttingsp 
-		from orders c WITH (NOLOCK), 
-		(
-			SELECT orderid
-			FROM Sewingschedule b WITH (NOLOCK) 
-			WHERE Inline <= '{0}' And offline is not null and offline !='' AND b.FactoryID = '{1}' 
-			group by b.orderid
-		) d 
-		where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 
+		from orders c WITH (NOLOCK)
+		inner join Sewingschedule b WITH (NOLOCK) on b.orderid = c.id
+		where c.IsForecast = 0 and c.LocalOrder = 0 
+		and Inline <= '{0}' And offline is not null and offline !='' AND b.FactoryID = '{1}' 
 	) e 
 	Where e.cuttingsp is not null and e.cuttingsp !='' and e.cuttingsp not in (Select id from cutting WITH (NOLOCK) )
-) cut
-where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
-group by ord.CuttingSp 
+) cut on ord.cuttingsp = cut.CuttingSP 
+outer apply(select top 1 Type from WorkOrder where ID = ord.cuttingsp)a
+where ord.FtyGroup = '{1}'
+group by ord.CuttingSp ,a.Type
 ", sewdate, Sci.Env.User.Factory, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
             //dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             //string sewin, sewof;
