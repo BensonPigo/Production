@@ -25,6 +25,23 @@ BEGIN
   DROP TABLE SewingOutput_Detail_Detail
 END
 
+declare @DateStart date= (SELECT DATEADD(DAY,1,SewLock) FROM Production.dbo.System);
+declare @DateEnd date=CONVERT(date, GETDATE());
+declare @DateInfoName varchar(30) ='SewingOutput';
+
+If Exists (Select 1 From Pms_To_Trade.dbo.DateInfo Where Name = @DateInfoName )
+Begin
+	update Pms_To_Trade.dbo.dateInfo
+	set DateStart=@DateStart,
+	DateEnd=@DateEnd
+	Where Name = @DateInfoName 
+end;
+else
+Begin 
+	insert into Pms_To_Trade.dbo.dateInfo(Name,DateStart,DateEnd)
+	values (@DateInfoName,@DateStart,@DateEnd);
+end;
+
 
 --SewingOutput
 SELECT *
