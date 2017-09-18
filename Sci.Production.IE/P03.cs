@@ -454,7 +454,7 @@ order by ld.No, ld.GroupKey", masterID);
             CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]), 0); ;
 
             //Vision為空的話就要填值
-            if (MyUtility.Check.Empty(CurrentMaintain["Version"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["Version"]) || CurrentMaintain["Version"].ToString()=="0")
             {
                 string newVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {0}", CurrentMaintain["StyleUkey"].ToString()));
                 if (MyUtility.Check.Empty(newVersion))

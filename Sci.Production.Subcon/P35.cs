@@ -52,12 +52,20 @@ namespace Sci.Production.Subcon
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"
-
-select lapd.Localpoid	,lapd.orderid	,lapd.Refno	,lapd.ThreadColorID	,lapd.Qty	,lapd.Unitid	,lapd.price	,inqty	,apqty
-	,amount = lapd.price*lapd.Qty
-	,balance = inqty - apqty,inqty,apqty
-	,lapd.LocalPo_DetailUkey
-    ,dbo.getItemDesc(localap.Category,lapd.Refno) as description 
+select lapd.Localpoid	
+	   , lapd.orderid	
+	   , lapd.Refno	
+	   , lapd.ThreadColorID	
+	   , lapd.Qty	
+	   , lapd.Unitid	
+	   , lapd.price	
+	   , inqty	
+	   , apqty
+	   , amount = lapd.price*lapd.Qty
+	   , balance = inqty - apqty,inqty,apqty
+	   , lapd.LocalPo_DetailUkey
+	   , dbo.getItemDesc(localap.Category,lapd.Refno) as description 
+	   , lapd.Ukey
 from localap_detail lapd WITH (NOLOCK) 
 left join localap WITH (NOLOCK) on localap.ID = lapd.ID
 left join localpo_detail lpod on lpod.Ukey = localpo_detailukey
@@ -388,9 +396,14 @@ where lapd.id = '{0}'"
             sqlupd3 = string.Format("update Localap set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
+            DataTable dtUpdateLocalPoData = new DataTable();
+            dtUpdateLocalPoData.Columns.Add("ApQty");
+            dtUpdateLocalPoData.Columns.Add("Ukey");
 
             foreach (DataRow drchk in DetailDatas)
             {
+                DataRow drNewPoData = dtUpdateLocalPoData.NewRow();
+
                 sqlcmd = string.Format(@"select b.Localpo_detailukey, sum(b.qty) qty
                                 from Localap a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
                                 where a.id = b.id  and a.status = 'Approved' and b.Localpo_detailukey ='{0}'
@@ -404,14 +417,19 @@ where lapd.id = '{0}'"
 
                 if (datacheck.Rows.Count > 0)
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0}  where ukey = '{1}';"
-                        + Environment.NewLine,(decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
+                    drNewPoData["ApQty"] = (decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"];
+                    drNewPoData["Ukey"] = drchk["Localpo_detailukey"];
+                    //sqlupd2 += string.Format("update Localpo_detail set apqty = {0}  where ukey = '{1}';"
+                    //    + Environment.NewLine,(decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set APQty  = {0} where ukey = '{1}';"
-                        + Environment.NewLine, (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
+                    drNewPoData["ApQty"] = (decimal)drchk["qty"];
+                    drNewPoData["Ukey"] = drchk["Localpo_detailukey"];
+                    //sqlupd2 += string.Format("update Localpo_detail set APQty  = {0} where ukey = '{1}';"
+                    //    + Environment.NewLine, (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
+                dtUpdateLocalPoData.Rows.Add(drNewPoData);
             }
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -426,7 +444,13 @@ where lapd.id = '{0}'"
                         return;
                     }
 
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                    DataTable dtResult;
+                    string strUpdate = @"
+update a
+	set a.ApQty = b.ApQty
+from Localpo_detail a 
+inner join #tmp b on a.ukey = b.ukey";
+                    if (!(result2 = MyUtility.Tool.ProcessWithDatatable(dtUpdateLocalPoData, null, strUpdate, out dtResult)))//DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(sqlupd2, result2);

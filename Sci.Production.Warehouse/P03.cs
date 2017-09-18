@@ -310,7 +310,7 @@ namespace Sci.Production.Warehouse
             gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["seq1"].Width = 40;
-            this.gridMaterialStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
         }
 
         private void ChangeDetailColor()
