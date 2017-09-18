@@ -519,6 +519,18 @@ where sd.ID = '{0}'", masterID);
             return Result.True;
         }
 
+        private string chk_null(string str)
+        {
+            if (str == "")
+            {
+                return " ";
+            }
+            else
+            {
+                return str;
+            }
+        }
+
         protected override bool ClickPrint()
         {
             DualResult result;
@@ -539,9 +551,9 @@ where sd.ID = '{0}'", masterID);
                     MyUtility.Msg.WarningBox("Prepare data fail!!\r\n"+result.ToString());
                     return false;
                 }
-                sqlCmd = string.Format(@"select ls.Name,ls.Address,ls.Tel,isnull(lsb.AccountNo,'') as AccountNo, 
-isnull(lsb.AccountName,'') as AccountName, isnull(lsb.BankName,'') as BankName,
-isnull(lsb.CountryID,'') as CountryID, isnull(lsb.City,'') as City, isnull(lsb.SWIFTCode,'') as SWIFTCode
+                sqlCmd = string.Format(@"select ls.Name,ls.Address,ls.Tel,isnull(lsb.AccountNo,' ') as AccountNo, 
+isnull(lsb.AccountName,' ') as AccountName, isnull(lsb.BankName,' ') as BankName,
+isnull(lsb.CountryID,' ') as CountryID, isnull(lsb.City,' ') as City, isnull(lsb.SWIFTCode,' ') as SWIFTCode
 from LocalSupp ls WITH (NOLOCK) 
 left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID and lsb.IsDefault = 1
 where ls.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]));
@@ -552,39 +564,49 @@ where ls.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]
                     return false;
                 }
 
-                sqlCmd = string.Format(@"select sd.ShipExpenseID,isnull(se.Description,'') as Description,sd.CurrencyID,sd.Price,sd.Qty,sd.Rate,sd.Amount,se.UnitID 
+                sqlCmd = string.Format(@"select sd.ShipExpenseID,isnull(se.Description,' ') as Description,sd.CurrencyID,sd.Price,sd.Qty,sd.Rate,sd.Amount,se.UnitID 
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on sd.ShipExpenseID = se.ID
 where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out Report_ShippingAPDetail);
 
                 rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string,object>("Report_ShippingAPDetail",Report_ShippingAPDetail));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("company", MyUtility.Convert.GetString(FactoryData.Rows[0]["NameEN"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compAddress", MyUtility.Convert.GetString(FactoryData.Rows[0]["AddressEN"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compTel", MyUtility.Convert.GetString(FactoryData.Rows[0]["Tel"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("apId", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("barcodeAPId", "*" + MyUtility.Convert.GetString(CurrentMaintain["ID"]) + "*"));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("apDate", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "null" : Convert.ToDateTime(CurrentMaintain["CDate"]).ToString()));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("supplier", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]) + " " + MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Name"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Address"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tel", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Tel"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("blNo", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("payTerm", MyUtility.GetValue.Lookup(string.Format("select Name from PayTerm WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermID"])))));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("invNo", MyUtility.Convert.GetString(CurrentMaintain["InvNo"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", MyUtility.Convert.GetString(CurrentMaintain["Remark"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("acNo", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["AccountNo"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("acName", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["AccountName"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("bankName", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["BankName"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("country", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["CountryID"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("city", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["City"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("swiftCode", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["SWIFTCode"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", MyUtility.Convert.GetString(CurrentMaintain["CurrencyID"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", MyUtility.Convert.GetString(CurrentMaintain["Amount"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatRate", MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["VATRate"])/100)));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", MyUtility.Convert.GetString(CurrentMaintain["VAT"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["Amount"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["VAT"]))));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])))));
+                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_ShippingAPDetail", Report_ShippingAPDetail));
+                if (FactoryData.Rows.Count == 0)
+                {
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("company", " "));
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compAddress", " "));
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compTel", " "));
+                }
+                else
+                {
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("company", MyUtility.Convert.GetString(FactoryData.Rows[0]["NameEN"])));
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compAddress", MyUtility.Convert.GetString(FactoryData.Rows[0]["AddressEN"])));
+                    rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("compTel", MyUtility.Convert.GetString(FactoryData.Rows[0]["Tel"])));
+                }
+
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("apId", chk_null(MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("barcodeAPId",chk_null( "*" + MyUtility.Convert.GetString(CurrentMaintain["ID"]) + "*")));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("apDate",chk_null( MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "null" : Convert.ToDateTime(CurrentMaintain["CDate"]).ToString())));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("supplier",chk_null( MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]) + " " + MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Name"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Address"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tel",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Tel"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("blNo",chk_null( MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("payTerm",chk_null( MyUtility.GetValue.Lookup(string.Format("select Name from PayTerm WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermID"]))))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("invNo",chk_null( MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark",chk_null( MyUtility.Convert.GetString(CurrentMaintain["Remark"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("acNo",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["AccountNo"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("acName",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["AccountName"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("bankName", chk_null(MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["BankName"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("country",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["CountryID"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("city",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["City"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("swiftCode",chk_null( MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["SWIFTCode"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency",chk_null( MyUtility.Convert.GetString(CurrentMaintain["CurrencyID"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount",chk_null( MyUtility.Convert.GetString(CurrentMaintain["Amount"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatRate",chk_null( MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["VATRate"])/100))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat",chk_null( MyUtility.Convert.GetString(CurrentMaintain["VAT"]))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total",chk_null( MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["Amount"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["VAT"])))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle",chk_null( MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"]))))));
 
                 using (var frm = new Sci.Win.Subs.ReportView(rd))
                 {

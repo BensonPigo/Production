@@ -170,28 +170,28 @@ namespace Sci.Production.Subcon
         {
             if (CurrentMaintain == null) return;
             if (CurrentMaintain["Category"].ToString().IndexOf("THREAD") >= 0) return;
-            if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) 
-                || string.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString())
-                || string.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()))
-            {
-                return;
-            }
-            if (comboCartonDimension == null)
+            //if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnLength"].ToString()) 
+            //    || string.IsNullOrWhiteSpace(CurrentMaintain["CtnWidth"].ToString())
+            //    || string.IsNullOrWhiteSpace(CurrentMaintain["CtnHeight"].ToString()))
+            //{
+            //    return;
+            //}
+            if (!string.IsNullOrWhiteSpace(comboCartonDimension.SelectedValue.ToString()))
             {
                 if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
                 {
-                    double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
-                        double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
-                        double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1728;
-                    CurrentMaintain["cbm"] = i;
+                    double i = double.Parse(numL.Text.ToString()) *
+                        double.Parse(numW.Text.ToString()) *
+                        double.Parse(numH.Text.ToString()) / 1728;
+                    numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                     //this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
                 else
                 {
-                    double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
-                        double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
-                        double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                    this.numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                    double i = double.Parse(numL.Text.ToString()) *
+                        double.Parse(numW.Text.ToString()) *
+                        double.Parse(numH.Text.ToString()) / 1000000000;
+                    numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["ThreadTex"] = DBNull.Value;
                     CurrentMaintain["Weight"] = DBNull.Value;
                     CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    if (string.IsNullOrWhiteSpace(comboCartonDimension.SelectedText.ToString()))
+                    if (string.IsNullOrWhiteSpace(comboCartonDimension.SelectedValue.ToString()))
                     {
                         comboCartonDimension.SelectedIndex = 0;
                     }
@@ -330,5 +330,9 @@ namespace Sci.Production.Subcon
                 }
             }
         }
+
+   
+
+        
     }
 }

@@ -776,7 +776,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     #region Cell
                     if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
                     {
-                        string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2) + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
+                        string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Split('/')[0] + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
 
                         CurrentMaintain["SewingCell"] = cellid;
                     }
