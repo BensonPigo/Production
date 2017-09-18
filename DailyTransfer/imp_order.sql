@@ -808,14 +808,17 @@ BEGIN
 				t.AddName		= s.AddName,
 				t.AddDate		= s.AddDate,
 				t.EditName		= s.EditName,
-				t.EditDate		= s.EditDate
+				t.EditDate		= s.EditDate,
+				t.FabricType 	= s.FabricType
 		when not matched by target then 
 			insert (
 				Id					, Article	, ColorID	, FabricCode	, FabricPanelCode
 				, PatternPanel		, AddName	, AddDate	, EditName		, EditDate
+				, FabricType
 			) values (
 				s.Id				, s.Article	, s.ColorID	, s.FabricCode	, s.FabricPanelCode
 				, s.PatternPanel	, s.AddName	, s.AddDate	, s.EditName	, s.EditDate
+				, s.FabricType
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;

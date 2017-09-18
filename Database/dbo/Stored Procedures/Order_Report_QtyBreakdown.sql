@@ -5,19 +5,19 @@ CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
-declare @tbl table (id varchar(13), Article varchar(8))
+declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @tbl table (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid AND OrderComboID = @OrderID)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid AND OrderComboID = @OrderID)
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid )
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid )
 
 
 --主要資料
-SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT a.seq, b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID 
 where b.ID is not null
 
 
@@ -33,15 +33,17 @@ if exists(select 1 from #tmp_col)
 		select @str3=STUFF((SELECT ',sum(['+SizeCode+'])' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
 		select @str4=STUFF((SELECT '+isnull(sum(['+SizeCode+']),0)' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
 
-		declare @sql nvarchar(max) = 'select '' ''=Article,'+ @str1 +',Total='+ @str2 +'
-		from (SELECT Article,SizeCode,Qty FROM #tmp) a
-		pivot ( sum(Qty) for SizeCode in ('+@str1+') ) b
-		union
-		select ''TTL.'','+ @str3 +',Total='+ @str4 +'
-		from (SELECT Article,SizeCode,Qty FROM #tmp) a
-		pivot ( sum(Qty) for SizeCode in ('+ @str1 +') ) b'
+		declare @sql nvarchar(max) = 'select '' '' = Article,'+@str1+',Total from (
+			select Seq, Article,'+ @str1 +',Total='+ @str2 +'
+			from (SELECT Seq,Article,SizeCode,Qty FROM #tmp) a
+			pivot ( sum(Qty) for SizeCode in ('+@str1+') ) b
+			union
+			select Seq=999, ''TTL.'','+ @str3 +',Total='+ @str4 +'
+			from (SELECT Article,SizeCode,Qty FROM #tmp) a
+			pivot ( sum(Qty) for SizeCode in ('+ @str1 +') ) b 
+		) c order by Seq'
 
-		--print @sql
+		print @sql
 		exec (@sql)
 	end
 else
@@ -51,6 +53,5 @@ else
 
 drop table #tmp
 drop table #tmp_col
-
 
 END
