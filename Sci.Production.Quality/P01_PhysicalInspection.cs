@@ -178,7 +178,7 @@ namespace Sci.Production.Quality
                    // if (dr.RowState != DataRowState.Deleted)
                     //{
                     def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                        if (def_loc >= double_ActualYds)
+                        if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString()==CurrentData["DetailUkey"].ToString())
                         {
                            // dr.Delete();
                             Fir_physical_Defect.Rows.RemoveAt(i);
