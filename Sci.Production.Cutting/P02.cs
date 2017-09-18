@@ -412,6 +412,7 @@ where w.ID = '{0}'", masterID);
                 Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
+            this.detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8);
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
