@@ -103,274 +103,363 @@ namespace Sci.Production.PPIC
             gridDelivery.Columns[2].Frozen = true;
 
             #region 撈Grid1資料
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-            from Order_Qty oq WITH (NOLOCK) 
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where oq.ID = '{0}'
-            ),
-            SubTotal
-            as (
-            select 'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as Seq
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(Qty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(Qty) from UnionData where Article = p.Article) as TotalQty
-            from pivotData p
-            order by Seq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oq.Article  
+             , RowNo = ROW_NUMBER() over (order by oq.Article) 
+      from Order_Qty oq WITH (NOLOCK) 
+      where oq.ID = '{0}'
+      group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , sb.RowNo
+      from Order_Qty oq WITH (NOLOCK) 
+      inner join SortBy sb on oq.Article = sb.Article
+      where oq.ID = '{0}'
+),
+SubTotal as (
+      select 'TTL' as Article
+             , SizeCode
+             , SUM(Qty) as Qty
+             , '9999' as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(Qty) from UnionData where Article = p.Article) as TotalQty
+from pivotData p
+order by RowNo", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid1Data);
 
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
-            from Order_Qty oq WITH (NOLOCK) 
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where oq.ID = '{0}'
-            ),
-            SubTotal
-            as (
-            select 'TTL' as Article,SizeCode,SUM(OriQty) as Qty, '9999' as Seq
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(OriQty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
-            from pivotData p
-            order by Seq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oq.Article
+             , RowNo = ROW_NUMBER() over (order by oq.Article)
+      from Order_Qty oq WITH (NOLOCK) 
+      where oq.ID = '{0}'
+      group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.OriQty
+             , sb.RowNo
+      from Order_Qty oq WITH (NOLOCK) 
+      inner join SortBy sb on oq.Article = sb.Article
+      where oq.ID = '{0}'
+),
+SubTotal as (
+      select 'TTL' as Article
+             , SizeCode
+             , SUM(OriQty) as Qty
+             , '9999' as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(OriQty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
+from pivotData p
+order by RowNo", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid1Data_OriQty);
             #endregion  
 
             #region 撈Grid2資料
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select o.ID,oq.Article,oq.SizeCode,oq.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-            from Orders o WITH (NOLOCK) 
-            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select '' as ID,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as Seq,99999 as rnk
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(Qty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
-            from pivotData p
-            order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with tmpData as (
+      select o.ID
+             , oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '{0}'
+), 
+SubTotal as (
+      select '' as ID
+             , 'TTL' as Article
+             , SizeCode
+             , SUM(Qty) as Qty
+             , 99999 as rnk
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
+from pivotData p
+order by rnk", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
 
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select o.ID,oq.Article,oq.SizeCode,oq.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-            from Orders o WITH (NOLOCK) 
-            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select '' as ID,'TTL' as Article,SizeCode,SUM(OriQty) as Qty, '9999' as Seq,99999 as rnk
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(OriQty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
-            from pivotData p
-            order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with tmpData as (
+      select o.ID
+             , oq.Article
+             , oq.SizeCode
+             , oq.OriQty
+             , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '{0}'
+),
+SubTotal as (
+      select '' as ID
+             , 'TTL' as Article
+             , SizeCode
+             , SUM(OriQty) as Qty
+             , 99999 as rnk
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(OriQty) for SizeCode in ({1})
+      ) a
+)
+select *
+      , (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
+from pivotData p
+order by rnk", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid2Data_OriQty);
             #endregion
 
             #region 撈Grid3資料
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-            from Orders o WITH (NOLOCK) 
-            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select 'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as Seq
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(Qty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(Qty) from UnionData where Article = p.Article) as TotalQty
-            from pivotData p
-            order by Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oq.Article
+             , RowNo = ROW_NUMBER() over (order by oq.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '{0}'
+      group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join SortBy sb on oq.Article = sb.Article
+      where o.POID = '{0}'
+),
+SubTotal as (
+      select 'TTL' as Article,SizeCode,SUM(Qty) as Qty
+             , '9999' as RowNo
+      from tmpData
+      group by SizeCode
+), 
+UnionData as (
+      select * from tmpData
+      
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(Qty) from UnionData where Article = p.Article) as TotalQty
+from pivotData p
+order by RowNo", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid3Data);
 
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
-            from Orders o WITH (NOLOCK) 
-            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select 'TTL' as Article,SizeCode,SUM(OriQty) as Qty, '9999' as Seq
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(OriQty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
-            from pivotData p
-            order by Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oq.Article
+             , RowNo = ROW_NUMBER() over (order by oq.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '{0}'
+      group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.OriQty
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID      
+      inner join SortBy sb on oq.Article = sb.Article
+      where o.POID = '{0}'
+),
+SubTotal as (
+      select 'TTL' as Article
+             , SizeCode
+             , SUM(OriQty) as Qty
+             , '9999' as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(OriQty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
+from pivotData p
+order by RowNo", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid3Data_OriQty);
             #endregion
 
             #region 撈Grid4資料
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
-            from Orders o WITH (NOLOCK) 
-            inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
-            inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select null as BuyerDelivery,'TTL' as Article,SizeCode,SUM(Qty) as Qty, '9999' as Seq,99999 as rnk
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(Qty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(isnull(Qty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
-            from pivotData p
-            order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oqd.Article
+             , RowNo = Row_Number() over (order by oqd.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+      where o.POID = '{0}'
+      group by oqd.Article
+),
+tmpData as (
+      select oq.BuyerDelivery
+             , oqd.Article
+             , oqd.SizeCode
+             , oqd.Qty
+             , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+      inner join SortBy sb on oqd.Article = sb.Article
+      where o.POID = '{0}'
+),
+SubTotal as (
+      select null as BuyerDelivery
+             , 'TTL' as Article
+             , SizeCode
+             , SUM(Qty) as Qty
+             , 99999 as rnk
+             , 99999 as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(isnull(Qty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
+from pivotData p
+order by rnk, RowNo", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid4Data);
 
-            sqlCmd = string.Format(@"with tmpData
-            as (
-            select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
-            from Orders o WITH (NOLOCK) 
-            inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
-            inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
-            where o.POID = '{0}'
-            ),
-            SubTotal
-            as (
-            select null as BuyerDelivery,'TTL' as Article,SizeCode,SUM(OriQty) as Qty, '9999' as Seq,99999 as rnk
-            from tmpData
-            group by SizeCode
-            ),
-            UnionData
-            as (
-            select * from tmpData
-            union all
-            select * from SubTotal
-            ),
-            pivotData
-            as (
-            select *
-            from UnionData
-            pivot( sum(OriQty)
-            for SizeCode in ({1})
-            ) a
-            )
-            select *,(select sum(isnull(OriQty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
-            from pivotData p
-            order by rnk,Seq", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            sqlCmd = string.Format(@"
+with SortBy as (
+      select oqd.Article
+             , RowNo = Row_Number() over (order by oqd.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+      where o.POID = '{0}'
+      group by oqd.Article
+), 
+tmpData as (
+      select oq.BuyerDelivery
+             , oqd.Article
+             , oqd.SizeCode
+             , oqd.OriQty
+             , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+      inner join SortBy sb on oqd.Article = sb.Article
+      where o.POID = '{0}'
+),
+SubTotal as (
+      select null as BuyerDelivery
+             , 'TTL' as Article
+             , SizeCode
+             , SUM(OriQty) as Qty
+             , 99999 as rnk
+             , 99999 as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(OriQty) for SizeCode in ({1})
+      ) a
+)
+select *
+       , (select sum(isnull(OriQty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
+from pivotData p
+order by rnk, RowNo", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
             result = DBProxy.Current.Select(null, sqlCmd, out grid4Data_OriQty);
             #endregion
 
@@ -437,41 +526,57 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	FROM Order_Qty oq WITH (NOLOCK) 
-	where oq.ID = @ID
+      select distinct oq.SizeCode
+      FROM Order_Qty oq WITH (NOLOCK) 
+      where oq.ID = @ID
 )a
 print @cols
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-	from Order_Qty oq WITH (NOLOCK) 
-	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where oq.ID = '''+@ID+'''
-),SubTotal as (
-select ''TTL'' as Article,SizeCode,SUM(Qty) as Qty, ''9999'' as Seq
-from tmpData
-group by SizeCode
-),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData	as (
-	select *
-	from UnionData
-	pivot( sum(Qty)
-	for SizeCode in ('+@cols+')
-	) a
+;with SortBy as (
+      select oq.Article
+             , RowNo = Row_Number() over (order by oq.Article)
+      from Order_Qty oq WITH (NOLOCK) 
+      where oq.ID = '''+@ID+'''
+      group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , sb.RowNo
+      from Order_Qty oq WITH (NOLOCK) 
+      inner join SortBy sb on oq.Article = sb.Article
+      where oq.ID = '''+@ID+'''
+),
+SubTotal as (
+      select ''TTL'' as Article
+             , SizeCode
+             , SUM(Qty) as Qty
+             , 9999 as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty) for SizeCode in ('+@cols+')
+      ) a
 )
-select (select sum(Qty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+select (select sum(Qty) from UnionData where Article = p.Article) as TotalQty
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by Seq'
+order by RowNO'
 
-EXEC sp_executesql @sql
-"
-                    , orderID);
+EXEC sp_executesql @sql", orderID);
                 DBProxy.Current.Select(null, sqlcmd1, out ptb1);
 
                 string sqlcmd2 = string.Format(@"
@@ -479,40 +584,62 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	where o.POID = @ID
+      select distinct oq.SizeCode
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select o.ID,oq.Article,oq.SizeCode,oq.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-	select '''' as ID,''TTL'' as Article,SizeCode,SUM(Qty) as Qty, ''9999'' as Seq,99999 as rnk
-	from tmpData
-	group by SizeCode
-),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(Qty)	for SizeCode in ('+@cols+')) a
+;with SortBy as (
+      select oq.Article
+             , RowNo = Row_Number() over (order by oq.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '''+@ID+'''
+      group by oq.Article
+),
+tmpData as (
+      select o.ID
+             , oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join SortBy sb on oq.Article = sb.Article
+      where o.POID = '''+@ID+'''
+),
+SubTotal as (
+      select '''' as ID
+             , ''TTL'' as Article
+             , SizeCode
+             , SUM(Qty) as Qty             
+             , 99999 as rnk
+             , 99999 as RowNo
+      from tmpData
+      group by SizeCode
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+            sum(Qty)   for SizeCode in ('+@cols+')
+      ) a
 )
-select (select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty,[Sp#] = ID,[Colorway] = p.Article,'+@cols+'
+select (select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty,[Sp#] = ID,[Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by rnk,Seq'
+order by rnk, RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd2, out ptb2);
 
                 string sqlcmd3 = string.Format(@"
@@ -520,40 +647,59 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	where o.POID = @ID
+      select distinct oq.SizeCode
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-    select ''TTL'' as Article,SizeCode,SUM(Qty) as Qty, ''9999'' as Seq
+;with SortBy as (
+      select oq.Article
+             , RowNo = Row_Number() over (order by oq.Article)
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      where o.POID = '''+@ID+'''      
+	  group by oq.Article
+),
+tmpData as (
+      select oq.Article
+             , oq.SizeCode
+             , oq.Qty
+             , sb.RowNo
+      from Orders o WITH (NOLOCK) 
+      inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      inner join SortBy sb on oq.Article = sb.Article
+      where o.POID = '''+@ID+'''
+),
+SubTotal as (
+    select ''TTL'' as Article
+           , SizeCode
+           , SUM(Qty) as Qty
+           , 9999 as RowNo
     from tmpData
     group by SizeCode
-),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(Qty)	for SizeCode in ('+@cols+')) a
+),
+UnionData as (
+      select * from tmpData
+      union all
+      select * from SubTotal
+),
+pivotData as (
+      select *
+      from UnionData
+      pivot( 
+        sum(Qty)   for SizeCode in ('+@cols+')
+      ) a
 )
-select (select sum(Qty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+select (select sum(Qty) from UnionData where Article = p.Article) as TotalQty
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by Seq'
+order by RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd3, out ptb3);
 
                 string sqlcmd4 = string.Format(@"
@@ -561,43 +707,69 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oqd.SizeCode
-	 from Orders o WITH (NOLOCK) 
+  select distinct oqd.SizeCode
+   from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-	where o.POID = @ID
+  where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+;with SortBy as (
+    select oqd.Article
+           , RowNo = Row_Number() over (order by oqd.Article)
     from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
-    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-    left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-    select null as BuyerDelivery,''TTL'' as Article,SizeCode,SUM(Qty) as Qty, ''9999'' as Seq,99999 as rnk
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
+                                                         and oq.Seq = oqd.Seq
+    where o.POID = '''+@ID+'''
+    group by oqd.Article
+),
+tmpData as (
+    select oq.BuyerDelivery
+           , oqd.Article
+           , oqd.SizeCode
+           , oqd.Qty
+           , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+           , sb.RowNo
+    from Orders o WITH (NOLOCK) 
+    inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
+                                                         and oq.Seq = oqd.Seq
+    inner join SortBy sb on oqd.Article = sb.Article
+    where o.POID = '''+@ID+'''
+),
+SubTotal as (
+    select null as BuyerDelivery
+           , ''TTL'' as Article
+           , SizeCode
+           , SUM(Qty) as Qty
+           , 99999 as rnk
+           , 99999 as RowNo
     from tmpData
     group by SizeCode
-),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(Qty)	for SizeCode in ('+@cols+')) a
+),
+UnionData as (
+    select * from tmpData
+    union all
+    select * from SubTotal
+),
+pivotData as (
+    select *
+    from UnionData
+    pivot( 
+      sum(Qty) for SizeCode in ('+@cols+')
+    ) a
 )
 select (select sum(isnull(Qty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
-,[Buyer Delivery] =P.BuyerDelivery,[Colorway] = p.Article,'+@cols+'
+       , [Buyer Delivery] = P.BuyerDelivery
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by rnk,Seq'
+order by rnk, RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd4, out ptb4);
                 #endregion
             }
@@ -609,41 +781,55 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	FROM Order_Qty oq WITH (NOLOCK) 
-	where oq.ID = @ID
+  select distinct oq.SizeCode
+  FROM Order_Qty oq WITH (NOLOCK) 
+  where oq.ID = @ID
 )a
 print @cols
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-    select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
+;with SortBy as (
+    select oq.Article
+           , RowNo = Row_Number() over (order by oq.Article)
     from Order_Qty oq WITH (NOLOCK) 
-    left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where oq.ID = '''+@ID+'''
-),SubTotal as (
-    select ''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq
+    where oq.ID = '''+@ID+'''
+    group by oq.Article
+), 
+tmpData as (
+    select oq.Article
+           , oq.SizeCode
+           , oq.OriQty
+           , sb.RowNo
+    from Order_Qty oq WITH (NOLOCK) 
+    inner join SortBy sb on oq.Article = sb.Article
+    where oq.ID = '''+@ID+'''
+),
+SubTotal as (
+    select ''TTL'' as Article
+           , SizeCode
+           , SUM(OriQty) as Qty
+           , 9999 as RowNo
     from tmpData
     group by SizeCode
 ),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData	as (
-	select *
-    from UnionData
-    pivot( sum(OriQty)
-    for SizeCode in ('+@cols+')
-	) a
+    select * from tmpData
+    union all
+    select * from SubTotal
+),pivotData as (
+    select *
+      from UnionData
+      pivot( 
+        sum(OriQty) for SizeCode in ('+@cols+')
+    ) a
 )
-select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by Seq'
+order by RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , orderID);
+EXEC sp_executesql @sql", orderID);
                 DBProxy.Current.Select(null, sqlcmd1, out ptb1);
 
                 string sqlcmd2 = string.Format(@"
@@ -651,40 +837,62 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	where o.POID = @ID
+  select distinct oq.SizeCode
+  from Orders o WITH (NOLOCK) 
+  inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+  where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select o.ID,oq.Article,oq.SizeCode,oq.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-	select '''' as ID,''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq,99999 as rnk
-	from tmpData
-	group by SizeCode
+;with SortBy as (
+    select oq.Article
+           , RowNo = Row_Number() over (order by oq.Article)
+    from Orders o WITH (NOLOCK) 
+    inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+    where o.POID = '''+@ID+'''
+    group by oq.Article
+),
+tmpData as (
+    select o.ID
+           , oq.Article
+           , oq.SizeCode
+           , oq.OriQty
+           , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+           , sb.RowNo
+    from Orders o WITH (NOLOCK) 
+    inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join SortBy sb on oq.Article = sb.Article
+    where o.POID = '''+@ID+'''
+),
+SubTotal as (
+    select '''' as ID
+           , ''TTL'' as Article
+           , SizeCode
+           , SUM(OriQty) as Qty
+           , 99999 as rnk
+           , 99999 as RowNo
+    from tmpData
+    group by SizeCode
 ),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
+    select * from tmpData
+    union all
+    select * from SubTotal
 ),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+    select *
+    from UnionData
+    pivot( 
+      sum(OriQty)  for SizeCode in ('+@cols+')
+    ) a
 )
-select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty,[Sp#] = ID,[Colorway] = p.Article,'+@cols+'
+select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
+       , [Sp#] = ID
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by rnk,Seq'
+order by rnk, RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd2, out ptb2);
 
                 string sqlcmd3 = string.Format(@"
@@ -692,40 +900,57 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oq.SizeCode
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	where o.POID = @ID
+  select distinct oq.SizeCode
+  from Orders o WITH (NOLOCK) 
+  inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+  where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
-	from Orders o WITH (NOLOCK) 
-	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-    select ''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq
+;with SortBy as (
+    select oq.Article
+           , RowNo = Row_Number() over (order by oq.Article)
+    from Orders o WITH (NOLOCK) 
+    inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+    where o.POID = '''+@ID+'''
+    group by oq.Article
+),
+tmpData as (
+    select oq.Article
+           , oq.SizeCode
+           , oq.OriQty
+           , sb.RowNo
+    from Orders o WITH (NOLOCK) 
+    inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join SortBy sb on oq.Article = sb.Article
+    where o.POID = '''+@ID+'''
+),
+SubTotal as (
+    select ''TTL'' as Article
+           , SizeCode
+           , SUM(OriQty) as Qty
+           , 9999 as RowNo
     from tmpData
     group by SizeCode
 ),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
+    select * from tmpData
+    union all
+    select * from SubTotal
 ),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+    select *
+    from UnionData
+    pivot( 
+      sum(OriQty)  for SizeCode in ('+@cols+')
+    ) a
 )
-select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by Seq'
+order by RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd3, out ptb3);
 
                 string sqlcmd4 = string.Format(@"
@@ -733,43 +958,69 @@ DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
 FROM (
-	select distinct oqd.SizeCode
-	 from Orders o WITH (NOLOCK) 
+  select distinct oqd.SizeCode
+   from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-	where o.POID = @ID
+  where o.POID = @ID
 )s
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
-;with tmpData as (
-	select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+;with SortBy as (
+    select oqd.Article
+           , RowNo = Row_Number() over (order by oqd.Article)
     from Orders o WITH (NOLOCK) 
     inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
-    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-    left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
-	where o.POID = '''+@ID+'''
-),SubTotal as (
-    select null as BuyerDelivery,''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq,99999 as rnk
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
+                                                        and oq.Seq = oqd.Seq
+    where o.POID = '''+@ID+'''
+    group by oqd.Article
+),
+tmpData as (
+    select oq.BuyerDelivery
+           , oqd.Article
+           , oqd.SizeCode
+           , oqd.OriQty
+           , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+           , sb.RowNo
+    from Orders o WITH (NOLOCK) 
+    inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
+                                                         and oq.Seq = oqd.Seq
+    inner join SortBy sb on oqd.Article = sb.Article
+    where o.POID = '''+@ID+'''
+),
+SubTotal as (
+    select null as BuyerDelivery
+           , ''TTL'' as Article
+           , SizeCode
+           , SUM(OriQty) as Qty
+           , 99999 as rnk           
+           , 99999 as RowNo
     from tmpData
     group by SizeCode
-),UnionData as (
-	select * from tmpData
-	union all
-	select * from SubTotal
-),pivotData as (
-	select *
-	from UnionData
-	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+),
+UnionData as (
+    select * from tmpData
+    union all
+    select * from SubTotal
+),
+pivotData as (
+    select *
+    from UnionData
+    pivot( 
+      sum(OriQty)  for SizeCode in ('+@cols+')
+    ) a
 )
 select (select sum(isnull(OriQty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
-,[Buyer Delivery] =P.BuyerDelivery,[Colorway] = p.Article,'+@cols+'
+       , [Buyer Delivery] = P.BuyerDelivery
+       , [Colorway] = p.Article
+       , '+@cols+'
 from pivotData p
-order by rnk,Seq'
+order by rnk, RowNo'
 
-EXEC sp_executesql @sql
-"
-                    , poID);
+EXEC sp_executesql @sql", poID);
                 DBProxy.Current.Select(null, sqlcmd4, out ptb4);
                 #endregion
             }
