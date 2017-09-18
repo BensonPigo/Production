@@ -50,7 +50,6 @@ namespace Sci.Production.Warehouse
 FROM LocationTrans a WITH (NOLOCK) inner join  LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
 WHERE a.status = 'Confirmed' and a.stocktype='{3}'
 AND B.Poid='{0}' and b.Seq1='{1}' and b.Seq2='{2}'
---and a.mdivisionid='{4}'
 group by 
 a.ID, a.issuedate, a.Remark, b.FromLocation, b.ToLocation, a.EditName, a.EditDate
 )
@@ -65,8 +64,7 @@ order by EditName,ID"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
-                , stocktype
-                , dr["mdivisionid"]);
+                , stocktype);
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
