@@ -412,7 +412,7 @@ where w.ID = '{0}'", masterID);
                 Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
-            this.detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8);
+            
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
@@ -456,6 +456,8 @@ where w.ID = '{0}'", masterID);
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
                 .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
+
+            this.detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8F);
             #endregion
 
             changeeditable();
