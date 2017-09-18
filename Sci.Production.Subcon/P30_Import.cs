@@ -83,35 +83,60 @@ namespace Sci.Production.Subcon
                 if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     strSQLCmd = string.Format(@"
-select distinct 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SciDelivery,c.SeasonID ,b.RefNo 
-,dbo.getitemdesc('{2}',b.refno) as description 
-,'' as threadcolorid
-,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount
-,[std_price]=round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3) 
-,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
-,c.FactoryID ,c.SewInLine
-,delivery = a.EstCTNArrive
+select distinct 1 as Selected
+       , c.POID 
+       , b.OrderID 
+       , c.StyleID
+       , c.SciDelivery
+       , c.SeasonID 
+       , b.RefNo 
+       , dbo.getitemdesc('{2}',b.refno) as description 
+       , '' as threadcolorid
+       , sum(b.CTNQty) qty
+       , d.UnitID
+       , d.Price
+       , sum(b.CTNQty) * d.Price as amount
+       , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3) 
+       , '' as remark 
+       , a.EstCTNArrive etd 
+       , a.ID as requestid
+       , '' as id
+       , c.FactoryID 
+       , c.SewInLine
+       , delivery = a.EstCTNArrive
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
-inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID 	
+inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
-outer apply(select o1.POID
-	               ,isnull(sum(o1.qty),0) order_qty
-	               ,sum(o1.qty*ot.Price) order_amt 
-	         from orders o1 WITH (NOLOCK) 
-	         inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-	         where o1.poid= c.poid and ot.ArtworkTypeID='{2}'
-	         group by o1.poid) y
+outer apply(
+    select o1.POID
+           , isnull(sum(o1.qty),0) order_qty
+           , sum(o1.qty*ot.Price) order_amt 
+    from orders o1 WITH (NOLOCK) 
+    inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
+    where o1.poid = c.poid 
+          and ot.ArtworkTypeID = '{2}'
+    group by o1.poid
+) y
 where a.ApvToPurchase = 1 
-    and a.LocalPOID =''
-    and d.localsuppid= '{3}'
-    --and a.factoryid = '{0}'    
-    and a.mdivisionid='{1}'
-	and c.Category !='M'
-    and c.Junk=0
-"
-                                                                , Env.User.Factory, Env.User.Keyword, dr_localPO["category"],dr_localPO["localsuppid"]);
+      and a.LocalPOID = ''
+      and d.localsuppid = '{3}'
+      --and a.factoryid = '{0}'    
+      and a.mdivisionid ='{1}'
+      and c.Category != 'M'
+      and c.Junk = 0
+      and not exists (select orderID 
+                      from LocalPo_Detail 
+                      where RequestID = a.ID 
+                      		and Poid = c.POID 
+                      		and OrderID = b.OrderID 
+                      		and Refno = b.RefNo
+                            and ID !='{4}')", Env.User.Factory
+                     , Env.User.Keyword
+                     , dr_localPO["category"]
+                     ,dr_localPO["localsuppid"]
+                     , dr_localPO["ID"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -151,39 +176,61 @@ where a.ApvToPurchase = 1
                 else
                 {
                     strSQLCmd = string.Format(@"
-select distinct 1 as Selected,c.POID ,a.OrderID ,a.StyleID,c.SciDelivery,a.SeasonID ,b.RefNo 
-,dbo.getitemdesc('{2}',b.refno) as description 
-,b.threadcolorid
-,b.PurchaseQty as qty
-,d.UnitID,d.Price
-,b.PurchaseQty * d.Price as amount 
-,[std_price]=round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
-,'' as remark ,a.EstArriveDate etd 
-,a.OrderID as requestid
-, '' as id
-,c.FactoryID ,c.SewInLine
-,delivery = a.EstArriveDate
+select distinct 1 as Selected
+       , c.POID 
+       , a.OrderID 
+       , a.StyleID
+       , c.SciDelivery
+       , a.SeasonID 
+       , b.RefNo 
+       , dbo.getitemdesc('{2}',b.refno) as description 
+       , b.threadcolorid
+       , b.PurchaseQty as qty
+       , d.UnitID,d.Price
+       , b.PurchaseQty * d.Price as amount 
+       , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
+       , '' as remark 
+       , a.EstArriveDate etd 
+       , a.OrderID as requestid
+       , '' as id
+       , c.FactoryID 
+       , c.SewInLine
+       , delivery = a.EstArriveDate
 from dbo.ThreadRequisition a WITH (NOLOCK) 
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
-outer apply(select o1.POID
-	              ,isnull(sum(o1.qty),0) order_qty
-	              ,sum(o1.qty*ot.Price) order_amt 
-	        from orders o1 WITH (NOLOCK) 
-	        inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-	        where o1.poid= c.poid and ot.ArtworkTypeID='{2}'
-	        group by o1.poid) y
+outer apply(
+    select o1.POID
+           ,isnull(sum(o1.qty),0) order_qty
+           ,sum(o1.qty*ot.Price) order_amt 
+    from orders o1 WITH (NOLOCK) 
+    inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
+    where o1.poid= c.poid 
+          and ot.ArtworkTypeID = '{2}'
+    group by o1.poid
+) y
 where a.status = 'Approved' 
-    --and a.factoryid = '{0}'
-    and d.localsuppid= '{3}'
-    and a.Mdivisionid = '{1}'
-	and c.Category !='M'
-    and exists (select id from orders where poid=b.OrderID and junk=0)
-and b.PurchaseQty > 0 and b.PoId =''
-                                                                "
-                        , Env.User.Factory, Env.User.Keyword, dr_localPO["category"], dr_localPO["localsuppid"]);
+      --and a.factoryid = '{0}'
+      and d.localsuppid= '{3}'
+      and a.Mdivisionid = '{1}'
+      and c.Category !='M'
+      and exists (select id from orders where poid=b.OrderID and junk=0)
+      and b.PurchaseQty > 0 
+      and b.PoId = ''
+      and not exists (select orderID 
+      				  from LocalPo_Detail 
+      				  where RequestID = a.OrderID
+      				  		and Poid = c.POID 
+      				  		and OrderID = a.OrderID 
+      				  		and Refno = b.RefNo 
+      				  		and ThreadColorID = b.threadcolorid
+                            and ID !='{4}')", Env.User.Factory
+                     , Env.User.Keyword
+                     , dr_localPO["category"]
+                     , dr_localPO["localsuppid"]
+                     , dr_localPO["ID"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -325,14 +372,10 @@ and b.PurchaseQty > 0 and b.PoId =''
                 foreach (DataRow tmp in dr2)
                 {
                     DataRow[] findrow =
-                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' 
-                                                                                    and refno = '{1}'
-                                                                                    and threadcolorid = '{2}'"
+                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}'"
                                                                                 , tmp["orderid"].ToString()
                                                                                 , tmp["refno"].ToString()
-                                                                                , tmp["threadcolorid"].ToString())
-                                                                                
-                                                           );
+                                                                                , tmp["threadcolorid"].ToString()));
                     if (findrow.Length > 0)
                     {
                         findrow[0]["Price"] = tmp["Price"];
