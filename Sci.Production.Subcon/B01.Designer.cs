@@ -395,6 +395,7 @@
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
             this.comboCartonDimension.TabIndex = 3;
             this.comboCartonDimension.SelectedValueChanged += new System.EventHandler(this.comboCartonDimension_Validated);
+            this.comboCartonDimension.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // txtThreadType
             // 
