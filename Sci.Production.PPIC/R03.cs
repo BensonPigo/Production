@@ -973,7 +973,7 @@ from (
             , FakeID = '9999ZZ'
             , ColumnN = 'SubCon'
             , ColumnSeq = '999'"),
-                                                                                                                                                            "112"));
+                                                                                                                                                            "115"));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out subprocessColumnName);
                     if (!result)
@@ -1203,7 +1203,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 114] = MyUtility.Convert.GetDecimal(dr["CPU"])*stdTMS;
                 #endregion
                 //先清空Subprocess值
-                for (int i = 113; i < lastCol; i++)
+                for (int i = 115; i < lastCol; i++)
                 {
                     objArray[0, i] = 0;
                     if (subtrue == 1)
