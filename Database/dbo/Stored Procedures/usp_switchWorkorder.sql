@@ -364,7 +364,7 @@ BEGIN
 						Select @SizeRatioQty = sum(Qty)
 						From Order_EachCons_SizeQty
 						Where Order_EachConsUkey = @ukey
-						SET @Cons = @maxLayer * @SizeRatioQty * @ConsPC
+						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 						if(@oldWorkerordernum != @newWorkerordernum)
 						Begin--byworkorder的Group與前一筆不一樣,則新增一筆
 							Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
@@ -535,7 +535,7 @@ BEGIN
 					Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 					into #distOrder 
 					From #disQty
-					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
+					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Article from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 					order by inline
 
 					Set @distOrderRowid = 1
@@ -591,7 +591,7 @@ BEGIN
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_again 
 								From #disQty
-								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
+								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Article from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 								Order by inline
 
 								Set @distOrderRowid_again = 1
@@ -736,7 +736,7 @@ BEGIN
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_againmod 
 								From #disQty
-								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
+								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Article from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 
 								Set @distOrderRowid_again = 1
 								Select @distOrderRowid_again = Min(Rowid),@distOrderRowCount_again = Max(Rowid)
