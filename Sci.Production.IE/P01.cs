@@ -864,17 +864,17 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 sp4.ParameterName = "@location";
                 sp4.Value = comboStyle.Text;
             }
-            else
-            {
-                sp4.ParameterName = "@location";
-                sp4.Value = " ";
-            }
+            //else
+            //{
+            //    sp4.ParameterName = "@location";
+            //    sp4.Value = " ";
+            //}
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
-            cmds.Add(sp4);
+            if (isComboType) cmds.Add(sp4);
             #endregion
 
             DataTable ietmsData;
@@ -890,7 +890,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                             --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
                             where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
             //if (isComboType) sqlCmd += " and id.Location = @location ";
-            sqlCmd += " and id.Location = @location ";
+            if (isComboType) sqlCmd += " and id.Location = @location ";
             sqlCmd += " order by id.SEQ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);

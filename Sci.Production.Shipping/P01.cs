@@ -633,38 +633,7 @@ where o.Id = '{0}'", orderID);
                     CurrentMaintain["MRHandle"] = orderData["MRHandle"];
                     CurrentMaintain["SMR"] = orderData["SMR"];
                     CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", MyUtility.Convert.GetString(orderData["FtyGroup"]),"Factory","ID");
-                    DataTable dtCheckShipmode;
-                    string strCheckShipmode = string.Format(@"
-select ShipmodeID
-from Order_QtyShip
-where id = '{0}'", orderID);
-                    DBProxy.Current.Select(null, strCheckShipmode, out dtCheckShipmode);
-                    if (dtCheckShipmode != null 
-                        && dtCheckShipmode.Rows.Count == 1
-                        && dtCheckShipmode.AsEnumerable().Any(row => row["ShipmodeID"].EqualString("SEA")))
-                    {
-                        MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<SEA>, it can't be created!", orderID));
-                        displayStyleNo.Text = "";
-                        dateCreatedate.Value = null;
-                        displayBrand.Text = "";
-                        displayDescription.Text = "";
-                        displayFactory.Text = "";
-                        txtCountryDestination.TextBox1.Text = "";
-                        txtCountryDestination.DisplayBox1.Text = "";
 
-                        txttpeuserPOHandle.DisplayBox1.Text = "";
-                        txttpeuserPOHandle.DisplayBox2.Text = "";
-                        txttpeuserPOSMR.DisplayBox1.Text = "";
-                        txttpeuserPOSMR.DisplayBox2.Text = "";
-                        txttpeuserMR.DisplayBox1.Text = "";
-                        txttpeuserMR.DisplayBox2.Text = "";
-                        txttpeuserSMR.DisplayBox1.Text = "";
-                        txttpeuserSMR.DisplayBox2.Text = "";
-                        txttpeuserTask.DisplayBox1.Text = "";
-                        txttpeuserTask.DisplayBox2.Text = "";
-                        txtSpNo.Text = "";
-                        return;
-                    }
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format(@"
 select oq.Seq
