@@ -394,6 +394,7 @@
             this.comboCartonDimension.Name = "comboCartonDimension";
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
             this.comboCartonDimension.TabIndex = 3;
+            this.comboCartonDimension.SelectedValueChanged += new System.EventHandler(this.comboCartonDimension_Validated);
             this.comboCartonDimension.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // txtThreadType
@@ -425,7 +426,7 @@
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(326, 23);
             this.label25.TabIndex = 42;
-            this.label25.Text = "(Inch: L*M*H / 1728 ,  MM: L*M*H / 1000000000 )";
+            this.label25.Text = "(Inch: L*W*H / 1728 ,  MM: L*W*H / 1000000000 )";
             this.label25.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // label26
