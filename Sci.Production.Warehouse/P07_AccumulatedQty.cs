@@ -26,32 +26,32 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"select poid,seq1,seq2,sum(shipqty) shipqty,sum(accu_rcv) received
-, sum(rcv) receiving ,description 
+            selectCommand1.Append(string.Format(@"select poid,seq1,seq2,dbo.GetUnitQty(PoUnit,dbo.GetStockUnitBySPSeq(poid,seq1,seq2),sum(shipqty)) shipqty,sum(accu_rcv) received
+, sum(rcv) receiving ,description
 from (
 select a.PoId,a.Seq1,a.Seq2,0 as shipqty,0 as accu_rcv,sum(a.StockQty) as rcv
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]  
-from dbo.Receiving_Detail a WITH (NOLOCK) where id='{0}' group by a.PoId,a.Seq1,a.Seq2
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] ,a.POUnit 
+from dbo.Receiving_Detail a WITH (NOLOCK) where id='{0}' group by a.PoId,a.Seq1,a.Seq2,a.POUnit
 union all" + Environment.NewLine,dr["id"].ToString(),dr["exportid"].ToString()));
             if (MyUtility.Check.Empty(dr["exportid"].ToString()))
             {
                 selectCommand1.Append(string.Format(@"select a.id poid,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description]
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description],a.POUnit
 from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c 
  where a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2) tmp
-group by poid,seq1,seq2,description", dr["id"].ToString()));
+group by poid,seq1,seq2,description,POUnit", dr["id"].ToString()));
             }
             else
             {
                 selectCommand1.Append(string.Format(@"
 select a.PoId,a.Seq1,a.Seq2,0 as shipqty,sum(a.StockQty) as accu_rcv ,0 as rcv
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description],a.POUnit
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 ,dbo.Receiving b WITH (NOLOCK) 
 ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c 
 where b.id!='{0}' and b.Status='Confirmed' and a.id=b.id and b.ExportId = '{1}'
 and a.PoId=c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2 
-group by a.PoId,a.Seq1,a.Seq2
+group by a.PoId,a.Seq1,a.Seq2,a.POUnit
 union all" + Environment.NewLine, dr["id"].ToString(), dr["exportid"].ToString()));
 
                 selectCommand1.Append(string.Format(@"
@@ -73,19 +73,19 @@ union all" + Environment.NewLine, dr["id"].ToString(), dr["exportid"].ToString()
 			    )is3RD where is3RD.poid = final.poid and is3RD.SEQ1 = final.SEQ1 and is3RD.SEQ2 = final.SEQ2)) as shipqty, 
 	    0 as accu_rcv,
 	    0 as rcv
-	    ,dbo.getmtldesc(final.poid, final.SEQ1, final.SEQ2,2,0) as [description] 
+	    ,dbo.getmtldesc(final.poid, final.SEQ1, final.SEQ2,2,0) as [description] ,final.PoUnit
     from( 	
-	    select distinct zz.poid , zz.seq1, zz.seq2 
+	    select distinct zz.poid , zz.seq1, zz.seq2 ,zz.PoUnit
 	    from (
-		    select e.PoID poid, e.seq1, e.seq2 from (select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c, (select distinct Poid, seq1, seq2 from dbo.Export_Detail d WITH (NOLOCK) where d.id = '{1}') e
+		    select e.PoID poid, e.seq1, e.seq2,c.PoUnit from (select distinct PoId,Seq1,Seq2,PoUnit from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c, (select distinct Poid, seq1, seq2 from dbo.Export_Detail d WITH (NOLOCK) where d.id = '{1}') e
 			    where  (c.PoId = e.poid and c.seq1 = e.seq1 and c.seq2 = e.seq2)
 		    union all
-		    select a.id poid, a.seq1, a.seq2 from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c
+		    select a.id poid, a.seq1, a.seq2,a.POUnit from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c
 			    where (a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2)
 	    ) zz
     )final
 ) tmp
-group by poid,seq1,seq2,description", dr["id"].ToString(), dr["exportid"].ToString()));
+group by poid,seq1,seq2,description,PoUnit", dr["id"].ToString(), dr["exportid"].ToString()));
 //                selectCommand1.Append(string.Format(@"select a.PoID,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
 //,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 //from dbo.Export_Detail a where id='{0}') tmp
@@ -99,7 +99,7 @@ group by poid,seq1,seq2,description", dr["id"].ToString(), dr["exportid"].ToStri
             if (selectResult1 == false) { ShowErr(selectCommand1.ToString(), selectResult1); }
             DBProxy.Current.DefaultTimeout = 0;
             P07.HideWaitMessage();
-            selectDataTable1.ColumnsDecimalAdd("variance", 0m, "received+receiving-shipqty");
+            selectDataTable1.ColumnsDecimalAdd("variance", 0m, "shipqty-received-receiving");
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
