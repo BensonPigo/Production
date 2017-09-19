@@ -1124,7 +1124,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                             }
 
                         }
-                        else
+                        else if (detailTb2 != null && detailTb2.Rows.Count > 0)
                         {
                             MyUtility.Tool.ProcessWithDatatable(detailTb2, @"BundleGroup,SizeCode,qty", @"select distinct BundleGroup,SizeCode,qty from #tmp", out dtAllPart);
                             DataRow drAll = detailTb.NewRow();
