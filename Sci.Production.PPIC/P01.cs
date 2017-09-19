@@ -1227,9 +1227,8 @@ where POID = @poid group by POID,b.spno";
             if (myClass != null)
             {                
                 var callMethod = myClass.GetMethod("Call");
-                callMethod.Invoke(null, new object[] { CurrentMaintain["ID"].ToString()});                
+                callMethod.Invoke(null, new object[] { CurrentMaintain["ID"].ToString(), this.MdiParent});                
             }
-              
         }
 
         private void btnMeterialStatus_Local_Click(object sender, EventArgs e)

@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
         }
 
         //PPIC_P01 Called        
-        public static void Call(string PPIC_SPNo)
+        public static void Call(string PPIC_SPNo, Form MdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -110,10 +110,11 @@ namespace Sci.Production.Warehouse
                         }
                     }
                 }
-            }            
-            P03 call = new P03(PPIC_SPNo, P03MenuItem);            
-            call.Show();                            
-            call.Query();   
+            }
+            P03 call = new P03(PPIC_SPNo, P03MenuItem);
+            call.MdiParent = MdiParent;
+            call.Show();
+            call.Query();
         }
 
         //隨著 P01上下筆SP#切換資料
