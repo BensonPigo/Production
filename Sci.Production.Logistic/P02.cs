@@ -11,6 +11,7 @@ using Sci.Data;
 using System.IO;
 using System.Transactions;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Logistic
 {
@@ -436,7 +437,15 @@ where a.Selected = 1", out selectData);
                     return;
                 }
             }
-            find();
+
+            if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+            {
+                listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+            }
+            else
+            {
+                listControlBindingSource1.DataSource = null;
+            }
         }
 
         //Cancel
