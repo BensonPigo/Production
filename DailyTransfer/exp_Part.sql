@@ -89,6 +89,12 @@ BEGIN
   DROP TABLE MachineIn_Detail
 END
 
+IF OBJECT_ID(N'Pms_To_Trade.dbo.MmsStock') IS NOT NULL
+BEGIN
+  DROP TABLE Pms_To_Trade.dbo.MmsStock
+END
+
+
 SELECT * 
 INTO  PartPO
 FROM Machine.dbo.PartPO 
@@ -219,7 +225,19 @@ WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID
 
 drop table #TPI_MachIn1
 drop table #TPI_PartPO1
+---------------------------------------------------------------------------------------------------
 
+SELECT ID = ID
+       , FactoryID = FactoryID 
+       , Location = PartLocationID
+       , StockQty = StockQty
+       , AddName = AddName
+       , AddDate = AddDate 
+       , EditName = EditName 
+       , EditDate = EditDate 
+into Pms_To_Trade.dbo.MmsStock
+FROM machine.dbo.PartStock AS MmsStock
+WHERE StockQty>0
 
 END
 
