@@ -232,6 +232,7 @@ BEGIN
 			Where Order_EachConsUkey = @ukey
 			-------------------------------------
 			------------SEQ1,SEQ2----------------
+			Set @Seq2 =''
 			Select @Seq2 = isnull(seq2,'') --先找相同SEQ1,SCIRefno
 			From PO_Supp_Detail b 
 			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
