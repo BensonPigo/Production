@@ -919,20 +919,21 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                   
 
                      seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
-                     if (chk_item.Seq.Equals("")) {
+                     if ( MyUtility.Check.Empty(chk_item.Seq))
+                     {
                          chk_seq_null.Append("<SP> " + chk_item.SP + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "]  \r\n");
                      }
 
-                     if (shipmode_Valid)
+                     if (shipmode_Valid && chk_seq_null.Length == 0)
                      {
-                         if (!MyUtility.Check.Seek(seekSql, out localItem) && chk_seq_null.Length == 0)
+                         if (!MyUtility.Check.Seek(seekSql, out localItem) )
                          {
 
                              chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [] \r\n");
                          }
                          else
                          {
-                             if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString() && chk_seq_null.Length == 0)
+                             if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString())
                              {
 
                                  chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
