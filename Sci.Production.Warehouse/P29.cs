@@ -331,6 +331,9 @@ WHERE   StockType='{0}'
                 and i.PoID = pd.ID 
                 and i.InventorySeq2 = pd.StockSeq2 
                 and (i.type=2 or i.type=6)
+                and Seq70Poid = rtrim(o.id)
+                and Seq70Seq1 = rtrim(pd.seq1)
+                and Seq70Seq2 = pd.seq2
     ) x -- 需要轉的數量
     cross apply (
 	    select sum(s2.Qty) as InQty 
