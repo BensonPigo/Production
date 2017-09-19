@@ -175,18 +175,18 @@ namespace Sci.Production.Subcon
                 case 2: // All
                     if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
                     {
-                        sqlCmd.Append(string.Format(@" where (a.issuedate between '{0}' and '{1}')"
+                        sqlCmd.Append(string.Format(@" and (a.issuedate between '{0}' and '{1}')"
                             , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
                         }
                     }
                     break;
