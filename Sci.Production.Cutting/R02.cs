@@ -105,7 +105,7 @@ namespace Sci.Production.Cutting
                 scell = string.Format(@"
 select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
-left join orders on orders.POID = Cutplan.POID
+inner join Cutting on CutPlan.CuttingID = Cutting.ID
 where   Cutplan.EstCutdate >= '{0}' 
         and Cutplan.EstCutdate <= '{1}'
         and Cutplan.MDivisionID ='{2}' 
@@ -118,12 +118,12 @@ order by CutCellID"
 , MD
 , CutCell1
 , CutCell2
-, (Factory.Empty() ? "" : string.Format("and orders.FactoryID = '{0}'", Factory)));
+, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
             }else{
                 scell = string.Format(@"
 select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
-left join orders on Cutplan.POID = orders.POID
+inner join Cutting on CutPlan.CuttingID = Cutting.ID
 where   Cutplan.EstCutdate = '{0}'
         and Cutplan.MDivisionID ='{1}' 
         and Cutplan.CutCellID >= '{2}' 
@@ -134,7 +134,7 @@ order by CutCellID"
 , MD
 , CutCell1
 , CutCell2
-, (Factory.Empty() ? "" : string.Format("and orders.FactoryID = '{0}'", Factory)));
+, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
             }
 
             DBProxy.Current.Select(null, scell, out Cutcelltb);
@@ -178,6 +178,7 @@ into #tmpall");
                     sqlCmd.Append(string.Format("{0}", i));
                     sqlCmd.Append(@"
 from Cutplan WITH (NOLOCK) 
+inner join Cutting cut on Cutplan.CuttingID = cut.ID
 inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
 inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
 inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
@@ -243,7 +244,7 @@ where 1 = 1
                     }
                     if (!MyUtility.Check.Empty(Factory))
                     {
-                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
@@ -333,6 +334,7 @@ into #tmpall");
                     sqlCmd.Append(string.Format("{0}", i));
                     sqlCmd.Append(@"
 from Cutplan WITH (NOLOCK) 
+inner join Cutting cut on Cutplan.CuttingID = cut.ID
 inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
 inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
 inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
@@ -408,7 +410,7 @@ where 1 = 1 --??? AND fe.ETA IS NOT NULL
                     }
                     if (!MyUtility.Check.Empty(Factory))
                     {
-                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
@@ -487,7 +489,8 @@ select distinct
 	[Colorway] = woda.ac,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
 	[Remark] = Remark.Remark
-from Cutplan c WITH (NOLOCK) 
+from Cutplan c WITH (NOLOCK)
+inner join Cutting cut on Cutplan.CuttingID = cut.ID 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
 inner join WorkOrder w WITH (NOLOCK) on cd.WorkOrderUkey = w.Ukey
 inner join Orders o WITH (NOLOCK) on o.ID = cd.OrderID
@@ -584,7 +587,7 @@ where 1 = 1
                     }
                     if (!MyUtility.Check.Empty(Factory))
                     {
-                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
+                        sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
