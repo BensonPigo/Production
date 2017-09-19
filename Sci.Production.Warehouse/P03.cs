@@ -432,7 +432,7 @@ from(
             , Complete
             , FinalETA
             , InQty = iif (InQty = 0, '', Convert (varchar, InQty))
-            , StockUnit
+            , StockUnit = iif (InQty = 0, '', StockUnit)
             , OutQty = iif (OutQty = 0, '', Convert (varchar, OutQty))
             , AdjustQty = iif (AdjustQty = 0, '', Convert (varchar, AdjustQty))
             , balanceqty = iif (balanceqty = 0, '', Convert (varchar, balanceqty))
