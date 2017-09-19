@@ -112,6 +112,7 @@ namespace Sci.Production.Warehouse
                 }
             }
             P03 call = new P03(PPIC_SPNo, P03MenuItem);
+
             call.MdiParent = MdiParent;            
             call.Show();
             call.Activate();
