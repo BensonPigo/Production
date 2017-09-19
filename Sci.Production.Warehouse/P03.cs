@@ -734,5 +734,35 @@ where ROW_NUMBER_D =1
         {
             this.txtSPNo.Text = spNo;
         }
+
+        private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            MessageBox.Show("Error happened" + e.Context.ToString());
+            if (e.Context == DataGridViewDataErrorContexts.Commit)
+            {
+                MessageBox.Show("Commit error");
+            }
+            if (e.Context == DataGridViewDataErrorContexts.CurrentCellChange)
+            {
+                MessageBox.Show("Cell change");
+            }
+            if (e.Context == DataGridViewDataErrorContexts.Parsing)
+            {
+                MessageBox.Show("parsing error");
+            }
+            if (e.Context == DataGridViewDataErrorContexts.LeaveControl)
+            {
+                MessageBox.Show("leave control error");
+            }
+
+            if ((e.Exception) is ConstraintException)
+            {
+                DataGridView view = (DataGridView)sender;
+                view.Rows[e.RowIndex].ErrorText = "an error";
+                view.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "an error";
+
+                e.ThrowException = false;
+            }
+        }
     }
 }
