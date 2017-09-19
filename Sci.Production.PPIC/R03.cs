@@ -93,13 +93,13 @@ from Factory f WITH (NOLOCK) where Zone <> ''", out zone);
             return base.ValidateInput();
         }
 
-        // 非同步取資料
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+
+        private StringBuilder select_cmd(string p_type)
         {
             StringBuilder sqlCmd = new StringBuilder();
             string seperCmd = "";
             #region 組SQL
-            if (seperate)
+            if (seperate && p_type.Equals("ALL"))
             {
                 seperCmd = " ,oq.Seq";
             }
@@ -179,7 +179,7 @@ with tmpOrders as (
             , o.ClogLastReceiveDate
             , o.IsMixMarker
             , o.GFR "
-            + seperCmd +     
+            + seperCmd +
     @" from Orders o WITH (NOLOCK) 
     left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
     OUTER APPLY(
@@ -190,82 +190,82 @@ with tmpOrders as (
     where 1=1");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'",Convert.ToDateTime(buyerDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(buyerDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'",Convert.ToDateTime(buyerDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDlv2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(sciDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDlv1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(sciDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDlv2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(cutoff1))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}'",Convert.ToDateTime(cutoff1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(cutoff2))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'",Convert.ToDateTime(cutoff2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(custRQS1))
             {
-                sqlCmd.Append(string.Format(" and o.CRDDate >= '{0}'",Convert.ToDateTime(custRQS1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(custRQS1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(custRQS2))
             {
-                sqlCmd.Append(string.Format(" and o.CRDDate <= '{0}'",Convert.ToDateTime(custRQS2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(custRQS2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(planDate1))
             {
-                sqlCmd.Append(string.Format(" and o.PlanDate >= '{0}'",Convert.ToDateTime(planDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(planDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(planDate2))
             {
-                sqlCmd.Append(string.Format(" and o.PlanDate <= '{0}'",Convert.ToDateTime(planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(planDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(orderCfm1))
             {
-                sqlCmd.Append(string.Format(" and o.CFMDate >= '{0}'",Convert.ToDateTime(orderCfm1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(orderCfm1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(orderCfm2))
             {
-                sqlCmd.Append(string.Format(" and o.CFMDate <= '{0}'",Convert.ToDateTime(orderCfm2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(orderCfm2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(style))
             {
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'",style));
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", style));
             }
             if (!MyUtility.Check.Empty(season))
             {
-                sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'",season));
+                sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'", season));
             }
             if (!MyUtility.Check.Empty(brand))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",brand));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
             }
             if (!MyUtility.Check.Empty(custcd))
             {
-                sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'",custcd));
+                sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", custcd));
             }
             if (!MyUtility.Check.Empty(mDivision))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'",mDivision));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
             }
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'",factory));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
             }
             if (!hisOrder)
             {
                 sqlCmd.Append(" and o.Finished = 0");
             }
-            if (bulk || sample || material || forecast)
+            if ((bulk || sample || material) && p_type.Equals("ALL")  )
             {
                 sqlCmd.Append(" and (1=0");
                 if (bulk)
@@ -280,12 +280,20 @@ with tmpOrders as (
                 {
                     sqlCmd.Append(" or o.Category = 'M'");
                 }
-                if (forecast)
+                //如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
+                if (forecast && !seperate)
                 {
                     sqlCmd.Append(" or o.Category = ''");
                 }
                 sqlCmd.Append(")");
             }
+
+            //forcast 另外出在excel的最下方，因為會與Separate條件衝突，所以另外處理
+            if (forecast && p_type.Equals("forecast"))
+            {
+                sqlCmd.Append(" and o.Category = ''");
+            }
+
             sqlCmd.Append(@"
 ),
 tmpFilterZone as (
@@ -310,7 +318,7 @@ tmpFilterZone as (
             }
             if (poCombo)
             {
-                if (seperate)
+                if (seperate && p_type.Equals("ALL"))
                 {
                     seperCmd = " , '' seq ";
                 }
@@ -394,7 +402,7 @@ tmpFilterZone as (
             , o.ClogLastReceiveDate
             , o.IsMixMarker
             , o.GFR "
-            + seperCmd +                    
+            + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
     OUTER APPLY (
         SELECT Name 
@@ -412,7 +420,7 @@ tmpFilterZone as (
     from tmpFilterSubProcess
 )");
             }
-            if (seperate)
+            if (seperate && p_type.Equals("ALL"))
             {
                 sqlCmd.Append(@"
 , tmpFilterSeperate as (
@@ -847,6 +855,17 @@ left join PO p WITH (NOLOCK) on p.ID = t.POID
 order by t.ID");
             }
             #endregion
+
+            return sqlCmd;
+
+     }
+
+        // 非同步取資料
+        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        {
+            StringBuilder sqlCmd;
+            //抓取一般條件資料
+            sqlCmd = select_cmd("ALL");
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
 
@@ -855,6 +874,21 @@ order by t.ID");
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
+            //抓取forecast資料再merge回主datatable，只有forecast和seperate有勾的時候才做
+            if (forecast && seperate)
+            {
+                DataTable printData_forecast;
+                StringBuilder sqlCmd_forecast = select_cmd("forecast");
+                result = DBProxy.Current.Select(null, sqlCmd_forecast.ToString(), out printData_forecast);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+                printData.Merge(printData_forecast);
+            }
+
 
             if (printData.Rows.Count > 0)
             {
