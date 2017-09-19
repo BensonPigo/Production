@@ -154,13 +154,21 @@ namespace Sci.Production.Packing
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocalItemData);
                         if (result)
                         {
-                            dr["Description"] = LocalItemData.Rows[0]["Description"].ToString();
-                            dr["GW"] = MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(LocalItemData.Rows[0]["CtnWeight"]);
+                            if (LocalItemData.Rows.Count > 0)
+                            {
+                                dr["Description"] = LocalItemData.Rows[0]["Description"].ToString();
+                                dr["GW"] = MyUtility.Convert.GetDouble(dr["NW"]) + MyUtility.Convert.GetDouble(LocalItemData.Rows[0]["CtnWeight"]);
+                            }
+                            else
+                            {
+                                dr["Description"] = "";
+                                dr["GW"] = dr["NW"];
+                            }
                         }
                         else
                         {
-                            dr["Description"] = "";
-                            dr["GW"] = dr["NW"];
+                            MyUtility.Msg.WarningBox("Sql fail!!\r\n" + result.ToString());
+                            return;
                         }
                     }
                     dr.EndEdit();
@@ -358,6 +366,11 @@ where o.ID = @orderid";
                             ttlCTN = ttlCTN + MyUtility.Convert.GetInt(dr["ctn"].ToString()) + remainder;
                             ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder);
                         }
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Sql fail!!\r\n" + result.ToString());
+                        return false;
                     }
                 }
                 else
@@ -957,7 +970,11 @@ order by oa.Seq,os.Seq", orderID, seq);
                         dr.SetAdded();
                         ((DataTable)detailgridbs.DataSource).ImportRow(dr);
                     }
-
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                    return;
                 }
             }
         }
@@ -1610,7 +1627,8 @@ ELSE
             }
             else
             {
-                MyUtility.Msg.WarningBox("Switch fail!");
+                MyUtility.Msg.WarningBox("Switch fail!\r\n"+ result.ToString());
+                return;
             }
         }
 
