@@ -112,8 +112,9 @@ namespace Sci.Production.Warehouse
                 }
             }
             P03 call = new P03(PPIC_SPNo, P03MenuItem);
-            call.MdiParent = MdiParent;
+            call.MdiParent = MdiParent;            
             call.Show();
+            call.Activate();
             call.Query();
         }
 
@@ -688,7 +689,9 @@ where ROW_NUMBER_D =1
             if (null == dr) return;
 
             P03_Print p = new P03_Print(dr);
-            p.ShowDialog();
+            p.MdiParent = MdiParent;
+            p.TopMost = true;            
+            p.Show();
 
             return;
            
