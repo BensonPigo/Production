@@ -177,22 +177,14 @@ group by sizeCode"
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
-                                DataRow ndr2 = patternTb.NewRow();
-                                ndr2["PatternCode"] = dr["PatternCode"];
-                                ndr2["PatternDesc"] = dr["PatternDesc"];
-                                ndr2["Parts"] = count;
-                                ndr2["art"] = art;
-                                patternTb.Rows.Add(ndr2);
-                                //int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
-                                //for (int i = 0; i < count; i++)
-                                //{
-                                //    DataRow ndr2 = patternTb.NewRow();
-                                //    ndr2["PatternCode"] = dr["PatternCode"];
-                                //    ndr2["PatternDesc"] = dr["PatternDesc"];
-                                //    ndr2["Parts"] = 1;
-                                //    ndr2["art"] = art;
-                                //    patternTb.Rows.Add(ndr2);
-                                //}
+                                for (int i = 0; i < count; i++) { 
+                                    DataRow ndr2 = patternTb.NewRow();
+                                    ndr2["PatternCode"] = dr["PatternCode"];
+                                    ndr2["PatternDesc"] = dr["PatternDesc"];
+                                    ndr2["Parts"] = 1;
+                                    ndr2["art"] = art;
+                                    patternTb.Rows.Add(ndr2);
+                                }
                             }
                             else
                             {
