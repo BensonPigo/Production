@@ -119,12 +119,13 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                 string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
                 string FAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
-                decimal totalQty = MyUtility.Convert.GetDecimal( MyUtility.GetValue.Lookup(
-                    string.Format(@"
-                    select sum(poqty) as TotalQty from(
-                    select distinct id,poqty from Artworkpo_Detail
-                    where OrderID like '{0}'
-                    ) a", orderID.Substring(0, 10) + "%")));
+                decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(poqty)", "1=1"));
+                //decimal totalQty = MyUtility.Convert.GetDecimal( MyUtility.GetValue.Lookup(
+                //    string.Format(@"
+                //    select sum(poqty) as TotalQty from(
+                //    select distinct id,poqty from Artworkpo_Detail
+                //    where OrderID like '{0}'
+                //    ) a", orderID.Substring(0, 10) + "%")));
                 decimal TotalAmount = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
                 @"select convert(numeric(12,2),sum(Amount)) totalAmount  
                 from Artworkpo_Detail
