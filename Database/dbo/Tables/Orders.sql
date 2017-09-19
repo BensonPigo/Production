@@ -152,10 +152,15 @@
 
 
 
+
+
 GO
 
 CREATE NONCLUSTERED INDEX [Index_CuttingSP]
-    ON [dbo].[Orders]([CuttingSP] ASC);
+    ON [dbo].[Orders]([CuttingSP] ASC)
+    INCLUDE([IsForecast], [LocalOrder]);
+
+
 GO
 
 CREATE NONCLUSTERED INDEX [Index_ForShipmentSchedule]
