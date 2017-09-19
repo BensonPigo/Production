@@ -1477,7 +1477,7 @@
         </Style>
       </Line>
     </ReportItems>
-    <Height>2.125in</Height>
+    <Height>2.02083in</Height>
     <Style />
   </Body>
   <Width>7.44554in</Width>
@@ -1507,7 +1507,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.50994cm</Top>
           <Height>0.79692cm</Height>
           <Width>18.91168cm</Width>
           <Style>
@@ -1540,7 +1539,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
           <Top>1.48325cm</Top>
-          <Left>7.72826cm</Left>
+          <Left>6.92908cm</Left>
           <Height>0.635cm</Height>
           <Width>5.05353cm</Width>
           <ZIndex>1</ZIndex>
@@ -2126,8 +2125,8 @@
     <PageWidth>21cm</PageWidth>
     <LeftMargin>1cm</LeftMargin>
     <RightMargin>1cm</RightMargin>
-    <TopMargin>0cm</TopMargin>
-    <BottomMargin>0cm</BottomMargin>
+    <TopMargin>1cm</TopMargin>
+    <BottomMargin>1cm</BottomMargin>
     <ColumnSpacing>0.13cm</ColumnSpacing>
     <Style />
   </Page>
