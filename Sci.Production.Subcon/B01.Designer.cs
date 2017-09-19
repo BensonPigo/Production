@@ -424,9 +424,9 @@
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Location = new System.Drawing.Point(233, 52);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(326, 23);
+            this.label25.Size = new System.Drawing.Size(344, 23);
             this.label25.TabIndex = 42;
-            this.label25.Text = "(Inch: L*W*H / 1728 ,  MM: L*W*H / 1000000000 )";
+            this.label25.Text = "(Inch: L*W*H*0.00001639,  MM: L*W*H / 1000000000 )";
             this.label25.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // label26
@@ -468,7 +468,7 @@
             this.numCTNWeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CtnWeight", true));
             this.numCTNWeight.DecimalPlaces = 6;
             this.numCTNWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCTNWeight.Location = new System.Drawing.Point(664, 51);
+            this.numCTNWeight.Location = new System.Drawing.Point(694, 51);
             this.numCTNWeight.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -496,7 +496,7 @@
             // 
             // labelKG
             // 
-            this.labelKG.Location = new System.Drawing.Point(767, 51);
+            this.labelKG.Location = new System.Drawing.Point(797, 51);
             this.labelKG.Name = "labelKG";
             this.labelKG.Size = new System.Drawing.Size(27, 23);
             this.labelKG.TabIndex = 43;
@@ -504,7 +504,7 @@
             // 
             // labelCTNWeight
             // 
-            this.labelCTNWeight.Location = new System.Drawing.Point(551, 51);
+            this.labelCTNWeight.Location = new System.Drawing.Point(581, 51);
             this.labelCTNWeight.Name = "labelCTNWeight";
             this.labelCTNWeight.Size = new System.Drawing.Size(110, 23);
             this.labelCTNWeight.TabIndex = 44;

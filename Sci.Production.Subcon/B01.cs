@@ -182,7 +182,7 @@ namespace Sci.Production.Subcon
                 {
                     double i = double.Parse(numL.Text.ToString()) *
                         double.Parse(numW.Text.ToString()) *
-                        double.Parse(numH.Text.ToString()) / 1728;
+                        double.Parse(numH.Text.ToString()) * 0.00001639;
                     numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                     //this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
@@ -270,7 +270,7 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["ThreadTex"] = DBNull.Value;
                     CurrentMaintain["Weight"] = DBNull.Value;
                     CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    if (string.IsNullOrWhiteSpace(comboCartonDimension.SelectedValue.ToString()))
+                    if (comboCartonDimension.SelectedIndex == -1)
                     {
                         comboCartonDimension.SelectedIndex = 0;
                     }
