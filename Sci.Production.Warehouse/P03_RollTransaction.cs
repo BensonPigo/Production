@@ -442,6 +442,11 @@ from dbo.FtyInventory c WITH (NOLOCK)
 where   c.poid = @ID 
         and c.seq1 = @seq1 
         and c.seq2 = @seq2", pars, out dtt);
+            if (dtt.Rows.Count==0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
