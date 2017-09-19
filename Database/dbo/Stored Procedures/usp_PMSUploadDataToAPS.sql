@@ -241,14 +241,14 @@ and RCID collate Chinese_Taiwan_Stroke_CI_AS in (
 	C is not null and
 	(DELF !=''N''
 	or DELF is null
-	or QTYN != sQTYN 
-	or COTD collate Chinese_Taiwan_Stroke_CI_AS != sCOTD 
-	or OTDD collate Chinese_Taiwan_Stroke_CI_AS != sOTDD 
-	or AOTT collate Chinese_Taiwan_Stroke_CI_AS != sAOTT 
-	or MASTERMATERIALRECEIVEDDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALRECEIVEDDATE 
+	or isnull(QTYN,0) != isnull(sQTYN,0) 
+	or COTD collate Chinese_Taiwan_Stroke_CI_AS != sCOTD
+	or OTDD collate Chinese_Taiwan_Stroke_CI_AS != sOTDD
+	or AOTT collate Chinese_Taiwan_Stroke_CI_AS != sAOTT
+	or MASTERMATERIALRECEIVEDDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALRECEIVEDDATE
 	or MASTERMATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALDATE
-	or MATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMATERIALDATE	
-	or GTMH != sGTMH 
+	or MATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMATERIALDATE
+	or isnull(GTMH,0) != isnull(sGTMH,0)
 	or PPRO collate Chinese_Taiwan_Stroke_CI_AS != sPPRO 
 	or ODST collate Chinese_Taiwan_Stroke_CI_AS != sODST 
 	or CUSY collate Chinese_Taiwan_Stroke_CI_AS != sCUSY 
