@@ -181,6 +181,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
         }
 
+        
+        
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -334,6 +336,35 @@ where   oq.ID = '{0}'
                 }
             };
 
+            seq.CellValidating += (s, e) =>
+            {
+                if (EditMode) {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow chk_dr;
+                    string sqlCmd = string.Format(@"
+select  oq.Seq
+        , oq.BuyerDelivery
+        , oq.ShipmodeID
+        , oq.Qty 
+from Order_QtyShip oq WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on oq.id = o.id  
+where   oq.ID = '{0}' 
+        and oq.ShipmodeID = '{1}' 
+        and o.MDivisionID = '{2}'
+        and oq.Seq = '{3}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword, e.FormattedValue);
+                    if (!MyUtility.Check.Seek(sqlCmd, out chk_dr))
+                    {
+                        dr["Seq"] = "";
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("< Seq:" + e.FormattedValue + " > not found!!!");
+                        return;
+                    }
+                }
+               
+
+            };
+
+
             article.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && article.IsEditingReadOnly == false)
@@ -456,7 +487,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_orderid)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq).Get(out col_seq)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: seq).Get(out col_seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6)).Get(out col_ctnno)
@@ -598,16 +629,16 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #endregion
             };
 
-            this.detailgrid.CellFormatting += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Red;
-                }else
-                {
-                    this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Black;
-                }
-            };
+            //this.detailgrid.CellFormatting += (s, e) =>
+            //{
+            //    if (this.EditMode)
+            //    {
+            //        this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Red;
+            //    }else
+            //    {
+            //        this.detailgrid.Rows[e.RowIndex].Cells["OrderShipmodeSeq"].Style.ForeColor = Color.Black;
+            //    }
+            //};
         }
 
         protected override void ClickNewAfter()
@@ -663,6 +694,20 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 dateCartonEstBooking.ReadOnly = true;
                 dateCartonEstArrived.ReadOnly = true;
             }
+        }
+
+        private StringBuilder ctn_no_combine(string SP,string Seq) {
+            StringBuilder ctn_no = new StringBuilder();
+            var cnt_list = from r2 in DetailDatas.AsEnumerable()
+                           where r2.Field<string>("OrderID") == SP &&
+                                  r2.Field<string>("OrderShipmodeSeq") == Seq
+                           select new { cnt_no = r2.Field<string>("CTNStartNo") };
+            foreach (var cnt in cnt_list)
+            {
+                ctn_no.Append("," + cnt.cnt_no);
+            }
+            ctn_no.Remove(0, 1);
+            return ctn_no;
         }
 
         protected override bool ClickSaveBefore()
@@ -848,12 +893,13 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
              #region ship mode 有變更時 check Order_QtyShip
 
-             if (shipmode_Valid)
-             {
+             //if (shipmode_Valid)
+             //{
                  string seekSql = "";
                  StringBuilder chk_ship_err = new StringBuilder();
-                 StringBuilder ctn_no = new StringBuilder();
+                 StringBuilder chk_seq_null = new StringBuilder();
                  DataRow localItem;
+                 
 
 
                  var check_chip_list = from r1 in DetailDatas.AsEnumerable()
@@ -870,24 +916,40 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                                        };
                  foreach (var chk_item in check_chip_list)
                  {
-                     seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
-                     MyUtility.Check.Seek(seekSql, out localItem);
-                     if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString())
-                     {
+                  
 
-                         ctn_no.Clear();
-                         var cnt_list = from r2 in DetailDatas.AsEnumerable()
-                                        where r2.Field<string>("OrderID") == chk_item.SP &&
-                                               r2.Field<string>("OrderShipmodeSeq") == chk_item.Seq
-                                        select new { cnt_no = r2.Field<string>("CTNStartNo") };
-                         foreach (var cnt in cnt_list)
-                         {
-                             ctn_no.Append("," + cnt.cnt_no);
-                         }
-                         ctn_no.Remove(0, 1);
-                         chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
+                     seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
+                     if (chk_item.Seq.Equals("")) {
+                         chk_seq_null.Append("<SP> " + chk_item.SP + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "]  \r\n");
                      }
 
+                     if (shipmode_Valid)
+                     {
+                         if (!MyUtility.Check.Seek(seekSql, out localItem) && chk_seq_null.Length == 0)
+                         {
+
+                             chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [] \r\n");
+                         }
+                         else
+                         {
+                             if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString() && chk_seq_null.Length == 0)
+                             {
+
+                                 chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
+                             }
+
+                         }
+                     }
+                     
+
+                 }
+
+                 if (chk_seq_null.Length > 0)
+                 {
+                     chk_seq_null.Insert(0, " Seq can not empty , please check again:  \r\n");
+
+                     MyUtility.Msg.WarningBox(chk_seq_null.ToString());
+                     return false;
                  }
 
                 if (chk_ship_err.Length > 0)
@@ -897,7 +959,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                     MyUtility.Msg.WarningBox(chk_ship_err.ToString());
                     return false;
                 }
-             }
+             //}
              #endregion
 
 
