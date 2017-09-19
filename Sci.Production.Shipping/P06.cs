@@ -736,8 +736,7 @@ with ShipPlanData as (
           and s.Status = 'Confirmed'
           and p.MDivisionID = '{0}'
           and p.PulloutDate = '{1}'
-          and ( (p.PulloutID != '{2}' or p.PulloutID = '') 
-          or p.PulloutID='{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
+          and (  p.PulloutID = '' or p.PulloutID = '{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
 ),
@@ -770,7 +769,7 @@ FLPacking as (
             and p.Status = 'Confirmed'
             and p.MDivisionID = '{0}'
             and p.PulloutDate = '{1}'
-            and ((p.PulloutID != '{2}' or p.PulloutID = '') or p.PulloutID='{2}')  -- 20170918 aaron 避免如果原本有資料,之後修改資料會清空shipQty問題
+            and (p.PulloutID = '' or p.PulloutID='{2}')  -- 20170918 aaron 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
              , o.Qty, oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest 
 ),
