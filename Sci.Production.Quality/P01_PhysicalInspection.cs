@@ -231,8 +231,7 @@ where	WEAVETYPEID = '{0}'
                 P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
                 frm.ShowDialog(this);
-                get_total_point();
-               
+                if(EditMode) get_total_point();
             };
             #endregion
             #region Roll
