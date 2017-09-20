@@ -420,7 +420,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
                 }
                 #endregion
 
-                objSheets.Cells[3, 11 + i] = strArtworkType;
+                objSheets.Cells[3, 12 + i] = strArtworkType;
             }
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
