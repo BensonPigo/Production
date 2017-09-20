@@ -286,32 +286,32 @@ namespace Sci.Production.Quality
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonContinuity"])) //只要沒勾選就要判斷，有勾選就可直接Encode
                 {
-                    if (MyUtility.GetValue.Lookup("WeaveTypeID", maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
-                    {
-                        //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
-                        DataTable dyeDt;
-                        string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
-                        a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
-                        and not exists 
-                        (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
-                           , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
+                    //if (MyUtility.GetValue.Lookup("WeaveTypeID", maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
+                    //{
+                    //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
+                    DataTable dyeDt;
+                    string cmd = string.Format(
+                    @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
+                    a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
+                    and not exists 
+                    (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
+                        , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
 
-                        DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
-                        if (dResult)
+                    DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
+                    if (dResult)
+                    {
+                        if (dyeDt.Rows.Count > 0)
                         {
-                            if (dyeDt.Rows.Count > 0)
+                            string dye = "";
+                            foreach (DataRow dr in dyeDt.Rows)
                             {
-                                string dye = "";
-                                foreach (DataRow dr in dyeDt.Rows)
-                                {
-                                    dye = dye + dr["Dyelot"].ToString() + ",";
-                                }
-                                MyUtility.Msg.WarningBox("<Dyelot>:" + dye + " Each Dyelot must be test!");
-                                return;
+                                dye = dye + dr["Dyelot"].ToString() + ",";
                             }
+                            MyUtility.Msg.WarningBox("<Dyelot>:" + dye + " Each Dyelot must be test!");
+                            return;
                         }
                     }
+                   // }
                 }
                 DataTable gridTb = (DataTable)gridbs.DataSource;
                 DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
