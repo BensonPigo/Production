@@ -78,7 +78,7 @@ namespace Sci.Production.PPIC
 
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
-
+                
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
