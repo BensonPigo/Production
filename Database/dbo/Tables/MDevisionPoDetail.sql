@@ -7,12 +7,14 @@
     [AdjustQty] NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_AdjustQty] DEFAULT ((0)) NULL,
     [LInvQty]   NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LInvQty] DEFAULT ((0)) NULL,
     [LObQty]    NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LObQty] DEFAULT ((0)) NULL,
-    [ALocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
-    [BLocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
+    [ALocation] VARCHAR (5000)  CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
+    [BLocation] VARCHAR (5000)  CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
-    [CLocation] VARCHAR(5000) NULL DEFAULT (''), 
+    [CLocation] VARCHAR (5000)  DEFAULT ('') NULL,
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -93,7 +95,9 @@ GO
 
 GO
 CREATE NONCLUSTERED INDEX [POID]
-    ON [dbo].[MDivisionPoDetail]([POID] ASC);
+    ON [dbo].[MDivisionPoDetail]([POID] ASC, [Seq1] ASC, [Seq2] ASC);
+
+
 
 
 GO
