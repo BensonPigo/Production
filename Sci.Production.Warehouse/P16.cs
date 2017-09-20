@@ -327,9 +327,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 , IssueLackId = '{1}' where id = '{2}';", nowtime, CurrentMaintain["id"], CurrentMaintain["requestid"]));
             sqlupd4.Append(Environment.NewLine);
 
-            sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = t.qty
-from (select seq1,seq2,sum(qty) qty from dbo.IssueLack_Detail where id='{0}' group by seq1,seq2) t
-where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_Detail.seq2 = t.Seq2", CurrentMaintain["id"], CurrentMaintain["requestid"]));
+            sqlupd4.Append(string.Format(@"
+update dbo.Lack_Detail  
+set IssueQty = t.qty
+from (
+    select seq1
+           , seq2
+           , sum(qty) qty 
+    from dbo.IssueLack_Detail WITH (NOLOCK) 
+    where id = '{0}' 
+    group by seq1, seq2
+) t
+where dbo.Lack_Detail.id = '{1}' 
+      and dbo.Lack_Detail.seq1 = t.Seq1 
+      and dbo.Lack_Detail.seq2 = t.Seq2", CurrentMaintain["id"], CurrentMaintain["requestid"]));
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
