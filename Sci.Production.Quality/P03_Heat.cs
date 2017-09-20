@@ -736,7 +736,7 @@ Each Dyelot must be tested!", d));
             {                       
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0 where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = null where id ='{0}'", maindr["ID"]);
 
                // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Heat set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
