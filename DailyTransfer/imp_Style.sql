@@ -97,8 +97,8 @@ a.Ukey	= b.Ukey
 ,a.StdCost	= b.StdCost
 ,a.Processes	= b.Processes
 ,a.ArtworkCost	= b.ArtworkCost
-,a.Picture1	= b.Picture1
-,a.Picture2	= b.Picture2
+--,a.Picture1	= b.Picture1
+--,a.Picture2	= b.Picture2
 ,a.Label	= b.Label
 ,a.Packing	= b.Packing
 ,a.IETMSID	= b.IETMSID
@@ -168,8 +168,8 @@ ID
 ,StdCost
 ,Processes
 ,ArtworkCost
-,Picture1
-,Picture2
+--,Picture1
+--,Picture2
 ,Label
 ,Packing
 ,IETMSID
@@ -225,8 +225,8 @@ ID
 ,StdCost
 ,Processes
 ,ArtworkCost
-,Picture1
-,Picture2
+--,Picture1
+--,Picture2
 ,Label
 ,Packing
 ,IETMSID
