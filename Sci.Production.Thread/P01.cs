@@ -40,6 +40,7 @@ namespace Sci.Production.Thread
 select  Operationid
         , DescEN
         , SeamLength  
+        ,Frequency
 from ThreadColorComb_Operation a WITH (NOLOCK)
      , Operation b WITH (NOLOCK)
 where b.Id = a.OperationId and a.id='{0}'", CurrentDetailData["id"]);

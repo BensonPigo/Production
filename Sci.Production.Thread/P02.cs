@@ -635,6 +635,7 @@ Select  a.ThreadColorId
         , isnull(g.MeterToCone,0.00) as MeterToCone
         , g.Description as Threadcombdesc
         , h.Description as colordesc
+        ,b.Frequency as Frequency
 from ThreadColorComb_Detail a WITH (NOLOCK) 
 cross join ThreadColorComb_Operation b WITH (NOLOCK) 
 left join ThreadColorcomb c WITH (NOLOCK) on a.id=c.id 
@@ -683,13 +684,13 @@ select  Orderid = '{0}'
         , Threadcombdesc
         , colordesc
         , #tmp.MeterToCone
-        , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
-        , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+        , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * Frequency * UseRatioNumeric + Allowance)) / 100)
+        , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * Frequency * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
                                               , 0)
-        , AllowanceQty = IIF(#tmp.MeterToCone > 0, CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
+        , AllowanceQty = IIF(#tmp.MeterToCone > 0, CEILING(CEILING(Sum(OrderQty * (Seamlength * Frequency * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
                                                  , 0.00) 
-        , PurchaseQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
-                                                  + CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
+        , PurchaseQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * Frequency * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+                                                  + CEILING(CEILING(Sum(OrderQty * (Seamlength * Frequency * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
                                                 , 0.00) 
         , AutoCreate = 'true' 
         , UseStockQty = 0
