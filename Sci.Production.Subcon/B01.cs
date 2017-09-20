@@ -41,6 +41,7 @@ namespace Sci.Production.Subcon
         {
             
             base.ClickNewAfter();
+            groupbox_status_control();
         }
         
         //copy前清空id
@@ -176,13 +177,13 @@ namespace Sci.Production.Subcon
             //{
             //    return;
             //}
-            if (!string.IsNullOrWhiteSpace(comboCartonDimension.SelectedValue.ToString()))
+            if (comboCartonDimension.SelectedIndex != -1)
             {
                 if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
                 {
                     double i = double.Parse(numL.Text.ToString()) *
                         double.Parse(numW.Text.ToString()) *
-                        double.Parse(numH.Text.ToString()) / 1728;
+                        double.Parse(numH.Text.ToString()) * 0.00001639;
                     numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                     //this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
@@ -211,6 +212,12 @@ namespace Sci.Production.Subcon
             {
                 return;
             }
+            getCBM();
+        }
+
+        private void W_H_L_Validated(object sender, EventArgs e)
+        {
+            
             getCBM();
         }
 
@@ -257,8 +264,7 @@ namespace Sci.Production.Subcon
             this.RenewData();
         }
 
-        private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
-        {
+        private void groupbox_status_control() {
             CurrentMaintain["category"] = txtartworktype_ftyCategory.Text;
             switch (this.txtartworktype_ftyCategory.Text.Trim())
             {
@@ -270,9 +276,15 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["ThreadTex"] = DBNull.Value;
                     CurrentMaintain["Weight"] = DBNull.Value;
                     CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    if (string.IsNullOrWhiteSpace(comboCartonDimension.SelectedValue.ToString()))
+
+                    CurrentMaintain["CtnLength"] = CurrentMaintain["CtnLength"] == DBNull.Value ? 0 : CurrentMaintain["CtnLength"];
+                    CurrentMaintain["CtnWidth"] = CurrentMaintain["CtnWidth"] == DBNull.Value ? 0 : CurrentMaintain["CtnWidth"];
+                    CurrentMaintain["CtnHeight"] = CurrentMaintain["CtnHeight"] == DBNull.Value ? 0 : CurrentMaintain["CtnHeight"];
+
+                    if (comboCartonDimension.SelectedIndex == -1)
                     {
                         comboCartonDimension.SelectedIndex = 0;
+                        CurrentMaintain["CtnUnit"] = comboCartonDimension.SelectedValue;
                     }
                     break;
                 case "EMB_THREAD":
@@ -302,6 +314,11 @@ namespace Sci.Production.Subcon
                     break;
 
             }
+        }
+
+        private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
+        {
+            groupbox_status_control();
         }
 
         //[Thread Type]右鍵開窗

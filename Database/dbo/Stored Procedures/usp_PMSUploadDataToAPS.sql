@@ -64,23 +64,20 @@ and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60
 	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
 and DELF <> ''Y''
 and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
-
-Update t
+Update '+@SerDbDboTb+N'
 set DELF=''Y'',
 UPDT= format(GETDATE(),''yyyy-MM-dd'')
-from '+@SerDbDboTb+N' t,
-(
-	select distinct SONO,NCTR from #tmp
+where 
+SONO in(
+	select SONO from #tmp
 	where id is not null
 	and ((Junk = 1 and FtyGroup = NCTR collate Chinese_Taiwan_Stroke_CI_AS)
 		or (Junk = 0 and FtyGroup != NCTR collate Chinese_Taiwan_Stroke_CI_AS))
-)a
-where 
-t.SONO = a.SONO and t.NCTR = a.NCTR
-and (CONVERT(date, OTDD ) >= DATEADD(DAY, -60, GETDATE()) 
-	or CONVERT(date, COTD ) >= DATEADD(DAY, -60, GETDATE()))
-and t.DELF <> ''Y''
-and t.NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
+)
+and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
+	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
+and DELF <> ''Y''
+and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp'
 -------------------------------------------------第二部分-------------------------------------------------
 set @cmd2 =N'
@@ -244,14 +241,14 @@ and RCID collate Chinese_Taiwan_Stroke_CI_AS in (
 	C is not null and
 	(DELF !=''N''
 	or DELF is null
-	or QTYN != sQTYN 
-	or COTD collate Chinese_Taiwan_Stroke_CI_AS != sCOTD 
-	or OTDD collate Chinese_Taiwan_Stroke_CI_AS != sOTDD 
-	or AOTT collate Chinese_Taiwan_Stroke_CI_AS != sAOTT 
-	or MASTERMATERIALRECEIVEDDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALRECEIVEDDATE 
+	or isnull(QTYN,0) != isnull(sQTYN,0) 
+	or COTD collate Chinese_Taiwan_Stroke_CI_AS != sCOTD
+	or OTDD collate Chinese_Taiwan_Stroke_CI_AS != sOTDD
+	or AOTT collate Chinese_Taiwan_Stroke_CI_AS != sAOTT
+	or MASTERMATERIALRECEIVEDDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALRECEIVEDDATE
 	or MASTERMATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALDATE
-	or MATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMATERIALDATE	
-	or GTMH != sGTMH 
+	or MATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMATERIALDATE
+	or isnull(GTMH,0) != isnull(sGTMH,0)
 	or PPRO collate Chinese_Taiwan_Stroke_CI_AS != sPPRO 
 	or ODST collate Chinese_Taiwan_Stroke_CI_AS != sODST 
 	or CUSY collate Chinese_Taiwan_Stroke_CI_AS != sCUSY 
@@ -354,8 +351,7 @@ from
 	where sdd.OrderID in (Select distinct sd.OrderID 
 						  from SewingOutput s, SewingOutput_Detail sd
 						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
-						  and s.ID = sd.ID
-						  and s.MDivisionID ='''+@M+N''')
+						  and s.ID = sd.ID)
 )l
 group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
 '

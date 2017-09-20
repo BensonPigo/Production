@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
         }
 
         //PPIC_P01 Called        
-        public static void Call(string PPIC_SPNo)
+        public static void Call(string PPIC_SPNo, Form MdiParent)
         {
             foreach (Form form in Application.OpenForms)
             {
@@ -110,10 +110,13 @@ namespace Sci.Production.Warehouse
                         }
                     }
                 }
-            }            
-            P03 call = new P03(PPIC_SPNo, P03MenuItem);            
-            call.Show();                            
-            call.Query();   
+            }
+            P03 call = new P03(PPIC_SPNo, P03MenuItem);
+
+            call.MdiParent = MdiParent;            
+            call.Show();
+            call.Activate();
+            call.Query();
         }
 
         //隨著 P01上下筆SP#切換資料
@@ -432,7 +435,7 @@ from(
             , Complete
             , FinalETA
             , InQty = iif (InQty = 0, '', Convert (varchar, InQty))
-            , StockUnit
+            , StockUnit = iif (InQty = 0, '', StockUnit)
             , OutQty = iif (OutQty = 0, '', Convert (varchar, OutQty))
             , AdjustQty = iif (AdjustQty = 0, '', Convert (varchar, AdjustQty))
             , balanceqty = iif (balanceqty = 0, '', Convert (varchar, balanceqty))
@@ -687,7 +690,9 @@ where ROW_NUMBER_D =1
             if (null == dr) return;
 
             P03_Print p = new P03_Print(dr);
-            p.ShowDialog();
+            p.MdiParent = MdiParent;
+            p.TopMost = true;            
+            p.Show();
 
             return;
            
