@@ -166,7 +166,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t
 set t.inqty = isnull(t.inqty,0.00) + s.qty
-from mdivisionpodetail t
+from mdivisionpodetail t WITH (NOLOCK) 
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     }
@@ -182,7 +182,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     
                     update t
                     set t.OutQty = isnull(t.OutQty,0.00) + s.qty
-                    from mdivisionpodetail t
+                    from mdivisionpodetail t WITH (NOLOCK) 
                     inner join #TmpSource s
                     on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
@@ -243,7 +243,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
-from mdivisionpodetail t
+from mdivisionpodetail t WITH (NOLOCK) 
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
@@ -308,7 +308,7 @@ when matched then
     set inqty = isnull(inqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-    values ((select ukey from dbo.MDivisionPoDetail 
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
 			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 ";
@@ -357,7 +357,7 @@ when matched then
     set outqty = isnull(outqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-    values ((select ukey from dbo.MDivisionPoDetail 
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
 			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
@@ -387,7 +387,7 @@ when matched then
     set outqty = isnull(outqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-    values ((select ukey from dbo.MDivisionPoDetail 
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
              where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
              ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
                     if (encoded)
@@ -435,7 +435,7 @@ when matched then
     set adjustqty = isnull(adjustqty,0.00) + s.qty
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
-    values ((select ukey from dbo.MDivisionPoDetail 
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
              where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
              ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
