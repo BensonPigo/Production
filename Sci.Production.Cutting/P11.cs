@@ -468,13 +468,13 @@ inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and 
 inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
 outer apply (
 	select  a.ArticleGroup
-	from pattern p
-	inner join Pattern_GL_Article a on  a.PatternUkey = p.ukey
+	from pattern p WITH (NOLOCK)
+	inner join Pattern_GL_Article a WITH (NOLOCK) on  a.PatternUkey = p.ukey
 	where   p.STYLEUKEY = ord.Styleukey
 	        and a.article = b.article
 	        and Status = 'Completed' 
 	        AND p.EDITdATE = (  SELECT MAX(EditDate) 
-                                from pattern 
+                                from pattern WITH (NOLOCK)
                                 where   styleukey = ord.Styleukey 
                                         and Status = 'Completed')	
 )ag
@@ -572,7 +572,7 @@ Select  b.Cutref
         , a.Qty
 From Workorder_SizeRatio a WITH (NOLOCK)
 inner join workorder c WITH (NOLOCK) on c.ukey = a.workorderukey 
-inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
+inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             query_dResult = DBProxy.Current.Select(null, SizeRatio.ToString(), out SizeRatioTb);
             if (!query_dResult)
             {
@@ -1342,12 +1342,12 @@ AND p.EDITdATE = (
                 @"Insert Into Bundle
                 (ID,POID,mDivisionid,SizeCode,Colorid,Article,PatternPanel,Cutno,
                 cDate,OrderID,SewingLineid,Item,SewingCell,
-                Ratio,Startno,Qty,AllPart,CutRef,AddName,AddDate) values
+                Ratio,Startno,Qty,AllPart,CutRef,AddName,AddDate,FabricPanelCode) values
                 ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
                 GetDate(),'{8}','{9}','{10}','{11}','{12}',
-                '{13}',{14},{15},'{16}','{17}',GetDate())",
+                '{13}',{14},{15},'{16}','{17}',GetDate(),'{18}')",
                                                           id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["PatternPanel"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
-                 artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID);
+                 artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID,artar["FabricPanelCode"]);
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion
 

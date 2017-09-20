@@ -40,7 +40,7 @@ select '' FTYGroup
 
 union 
 select distinct FTYGroup 
-from Factory 
+from Factory WITH (NOLOCK)
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
@@ -53,7 +53,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         this.DefaultWhere = "";
                         break;
                     default:
-                        this.DefaultWhere = string.Format("(select O.FtyGroup from Orders O Where O.ID = Bundle.Orderid)  = '{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{0}'", queryfors.SelectedValue);
                         break;
                 }
                 this.ReloadDatas();
@@ -328,7 +328,7 @@ order by bundlegroup"
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
             //string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
             //直接撈Bundle_Detail_Allpart就行,不然在算新舊資料筆數來判斷新刪修時,會因為表頭表身join造成count過多
-            string allPart_cmd = string.Format(@"select * from Bundle_Detail_Allpart where id='{0}'  ", masterID);
+            string allPart_cmd = string.Format(@"select * from Bundle_Detail_Allpart WITH (NOLOCK) where id='{0}'  ", masterID);
             string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
             string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
@@ -948,8 +948,8 @@ where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
                     {
                         selectCommand = string.Format(@"
 SELECT OA.Article , color.ColorID
-FROM Order_Article OA
-CROSS APPLY (SELECT TOP 1 ColorID FROM Order_ColorCombo OCC WHERE OCC.Id=OA.id and OCC.Article=OA.Article) color
+FROM Order_Article OA WITH (NOLOCK)
+CROSS APPLY (SELECT TOP 1 ColorID FROM Order_ColorCombo OCC WITH (NOLOCK) WHERE OCC.Id=OA.id and OCC.Article=OA.Article) color
 where OA.id = '{0}'
 ORDER BY Seq"
                        , CurrentMaintain["Orderid"].ToString());
