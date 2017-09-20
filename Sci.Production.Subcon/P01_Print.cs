@@ -89,20 +89,32 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@OrderID", orderID.Substring(0,10)+"%"));
                 DataTable dtDetail;
-                string sqlcmd = @"select             
-            ART.id,F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
-            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00')Amount
-            ,a.PatternDesc
-            from DBO.artworkpo ART WITH (NOLOCK) 
-			LEFT JOIN dbo.factory F WITH (NOLOCK) 
-			ON  F.ID = ART.factoryid
-			LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
-			ON  L.ID = ART.LocalSuppID
-			LEFT JOIN dbo.Artworkpo_Detail A WITH (NOLOCK) 
-			ON  A.ID = ART.ID
-			LEFT JOIN dbo.Orders O WITH (NOLOCK) 
-			ON  O.id = A.OrderID where a.OrderID like  @OrderID
-            order by ID";
+                string sqlcmd = string.Format(@"
+select ART.id
+       , F.nameEn
+       , F.AddressEN
+       , F.Tel
+       , ART.LocalSuppID+'-'+L.name AS TITLETO
+       , L.Tel
+       , L.Address
+       , L.fax
+       , A.Orderid
+       , O.styleID
+       , A.poQty
+       , A.artworkid
+       , A.Stitch
+       , A.Unitprice
+       , A.Qtygarment
+       , format(A.Amount,'#,###,###,##0.00')Amount
+       , a.PatternDesc
+from DBO.artworkpo ART WITH (NOLOCK) 
+LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
+LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = ART.LocalSuppID
+LEFT JOIN dbo.Artworkpo_Detail A WITH (NOLOCK) ON  A.ID = ART.ID
+LEFT JOIN dbo.Orders O WITH (NOLOCK) ON  O.id = A.OrderID 
+where a.OrderID like @OrderID
+      and ART.LocalSuppID = '{0}'
+order by ID", masterData["LocalSuppID"]);
                 result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
                 if (!result) { this.ShowErr(sqlcmd, result); }
                 if (MyUtility.Check.Empty(dtDetail)||dtDetail.Rows.Count<1)
