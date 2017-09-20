@@ -569,7 +569,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = null where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = '' where id ='{0}'", maindr["ID"]);
 
                 #endregion
             }
