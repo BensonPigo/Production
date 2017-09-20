@@ -28,7 +28,7 @@ update System set SewLock=@Lockdate
 --PullOut
 update PullOut
 set LockDate=CONVERT(date, GETDATE())
-where PulloutDate <= @PullOutLock and LockDate is null and Status='Locked'                                          
+where PulloutDate <= @PullOutLock and LockDate is null and Status='Confirmed'                                          
 
 update System set PullLock=@PullOutLock
 
