@@ -265,7 +265,7 @@ with tmpOrders as (
             {
                 sqlCmd.Append(" and o.Finished = 0");
             }
-            if ((bulk || sample || material) && p_type.Equals("ALL")  )
+            if ((bulk || sample || material || forecast) && p_type.Equals("ALL"))
             {
                 sqlCmd.Append(" and (1=0");
                 if (bulk)
