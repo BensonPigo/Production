@@ -422,23 +422,23 @@ where 1 = 1 --??? AND fe.ETA IS NOT NULL
                     sqlCmd.Append(@"
 select 
 [Request#1] = case when ((Row_number() over (partition by [Line#],[Request#]
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) then '' else [Request#] end,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1 
+    and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) then '' else [Request#] end,
 [Fab ETA1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1  
-	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else Convert(varchar,[Fab ETA]) end,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1  
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else Convert(varchar,[Fab ETA]) end,
 [Line#1] = case when ((Row_number() over (partition by [Line#],[Request#]
-	order by [Line#] ,[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1)
-     and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])then '' else [Line#] end,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1)
+     and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)then '' else [Line#] end,
 [SP#1] = case when  ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [SP#] end ,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [SP#] end ,
 [Seq#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Seq#] end,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Seq#] end,
 [Style#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Style#] end,
+	order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc)) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Style#] end,
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
@@ -446,10 +446,10 @@ select
 [Size Ratio] = [Size Ratio],
 [Colorway1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#] ,[Seq#],[Style#],[Colorway] 
 	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Colorway] end,
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Colorway] end,
 [Color1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#],[Colorway],[Color]
 	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
-    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Color] end,
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [Fab Cons.] = [Fab Cons.],
 [Fab Refno] = [Fab Refno],
@@ -459,7 +459,7 @@ select
 from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]
+order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc
 drop table #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                 }
@@ -490,7 +490,7 @@ select distinct
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
 	[Remark] = Remark.Remark
 from Cutplan c WITH (NOLOCK)
-inner join Cutting cut on Cutplan.CuttingID = cut.ID 
+inner join Cutting cut on c.CuttingID = cut.ID 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
 inner join WorkOrder w WITH (NOLOCK) on cd.WorkOrderUkey = w.Ukey
 inner join Orders o WITH (NOLOCK) on o.ID = cd.OrderID
