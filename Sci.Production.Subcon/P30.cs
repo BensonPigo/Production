@@ -229,7 +229,7 @@ namespace Sci.Production.Subcon
                 {
                     if (dr["requestid"].ToString()!="")
                     {
-                        string chk = string.Format("select distinct requestid,LocalPOID from packinglist where id = '{0}' and isnull(LocalPOID,'') != ''", dr["requestid"].ToString());
+                        string chk = string.Format("select distinct LocalPOID from packinglist where id = '{0}' and isnull(LocalPOID,'') != ''", dr["requestid"].ToString());
                         if (MyUtility.Check.Seek(chk))
                         {
                             ids += string.Format("Request ID: {0} is already in LocalPO : {1}" + Environment.NewLine, dr["requestid"], dr["POID"]);
@@ -277,7 +277,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 {
                     if (dr.RowState == DataRowState.Deleted)
                     {
-                        if (dr["requestid"].ToString() != "")
+                        if (dr["requestid", DataRowVersion.Original].ToString() != "")
                         {
                             sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
                         }
