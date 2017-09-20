@@ -31,6 +31,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠庫存', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory';
 
@@ -99,8 +101,10 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 
 GO
 CREATE NONCLUSTERED INDEX [MdID_POSeq]
-    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [StockType] ASC)
+    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [StockType] ASC, [Roll] ASC)
     INCLUDE([Ukey]);
+
+
 
 
 

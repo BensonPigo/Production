@@ -546,10 +546,10 @@ where   a.Finished = 0
             DualResult result;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
-            DataRow[] find;
-            find = dt.Select("Selected = 1 and err < 2");
-            
-            if (find.Length == 0)
+
+            DataRow[] FindError;
+            FindError = dt.Select("Selected = 1 and err > 0");
+            if (FindError.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Please select rows first without error message!", "Warnning");
                 return;
@@ -558,6 +558,8 @@ where   a.Finished = 0
             if (dResult.ToString().ToUpper() == "NO") return;
 
             string sqlcmd = "";
+            DataRow[] find;
+            find = dt.Select("Selected = 1 and err = 0");
 
             foreach (DataRow item in find)
             {
