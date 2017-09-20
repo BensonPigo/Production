@@ -36,8 +36,8 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
                  .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Date("MinSciDelivery", header: "Earliest Sci Dlv", iseditingreadonly: true)
-                 .Date("MinSewinLine", header: "Earliest SewInline", iseditingreadonly: true)
+                 .Date("SciDelivery", header: "Sci Dlv", iseditingreadonly: true)
+                 .Date("SewinLine", header: "SewInline", iseditingreadonly: true)
                  .Text("Carton", header: "Carton", width: Widths.AnsiChars(5), iseditingreadonly: true)
                  .Text("SPThread", header: "SP Thread", width: Widths.AnsiChars(5), iseditingreadonly: true)
                  .Text("EmbThread", header: "Emb Thread", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -124,11 +124,11 @@ namespace Sci.Production.Subcon
             #region --組WHERE--
             if (!this.txtSPStart.Text.Empty())
             {
-                sqlWheres.Add(" and LD.POID >= '"+ SP1 + "'");
+                sqlWheres.Add(" and O.ID >= '"+ SP1 + "'");
             }
             if (!this.txtSPEnd.Text.Empty())
             {
-                sqlWheres.Add(" and LD.POID <= '" + SP2 + "'");
+                sqlWheres.Add(" and O.ID <= '" + SP2 + "'");
             }
             if (!this.dateSCIDelivery.Value1.Empty() )
             {
@@ -154,26 +154,26 @@ namespace Sci.Production.Subcon
             #region -- sql command --
              this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
-                    select  DISTINCT
-									LD.OrderId,
-				                    O.StyleID,
-			                        GetSCI.MinSciDelivery,
-				                    GetSCI.MinSewinLine,
-									(select distinct L.Category+',' 
-									from LocalPO L WITH (NOLOCK)
-									where L.Id=L1.ID and  L.MdivisionID= '{0}'
-                    FOR XML PATH(''))as c
-				into #tmp1  	
-				from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
-                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 " + sqlWhere + @" and  L1.MdivisionID= '{0}' order by LD.OrderId
+                     select  DISTINCT
+	                    	O.ID as OrderId,
+	                        O.StyleID,
+                           SciDelivery,
+	                        SewinLine,
+	                    	(select distinct L.Category+',' 
+	                    	from LocalPO L WITH (NOLOCK)
+	                    	where L.Id=L1.ID and  L.MdivisionID= '{0}'
+                            FOR XML PATH(''))as c
+	                    into #tmp1  	
+	                    from Orders  O WITH (NOLOCK)
+	                    	left join LocalPO_Detail LD WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
+                            left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id and  L1.MdivisionID= '{0}'
+                            --cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
+                            where 1=1 " + sqlWhere + @"  order by O.ID
                     
                     SELECT DISTINCT #tmp1.OrderId,
 					   #tmp1.StyleID,
-					   #tmp1.MinSciDelivery,
-					   #tmp1.MinSewinLine,
+					   #tmp1.SciDelivery,
+					   #tmp1.SewinLine,
 					    (SELECT   TMP2.c+''
 					     FROM #tmp1 AS TMP2
 					     WHERE TMP2.OrderId=#tmp1.OrderId 
@@ -183,8 +183,8 @@ namespace Sci.Production.Subcon
                     
                     select  #tmp.OrderId,
 							#tmp.StyleID,
-							#tmp.MinSciDelivery,
-							#tmp.MinSewinLine,
+							#tmp.SciDelivery,
+							#tmp.SewinLine,
 							 	 case
 							  when #tmp.Category='CARTON,' then 'Y'
 							  when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
@@ -312,6 +312,7 @@ namespace Sci.Production.Subcon
             }
             orderid = parent["orderid"].ToString();
             listControlBindingSource2.Filter = " orderid = '"+ orderid+"'";
+            this.grid2.AutoResizeColumns();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
