@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
 			                                left join dbo.Fabric_HsCode f WITH (NOLOCK) on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
-			                                where a.id=@ID", pars, out dt);			       
+			                                where a.id=@ID and a.junk=0 ", pars, out dt);			       
           }
           else  
           {
@@ -164,7 +164,7 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
-                                       where a.id=@ID", pars, out dt);                          
+                                       where a.id=@ID and a.junk=0 ", pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);
           //xl.dicDatas.Add("##sp", dt);

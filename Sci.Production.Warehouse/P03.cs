@@ -348,8 +348,8 @@ namespace Sci.Production.Warehouse
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
                     {
-                        gridMaterialStatus.Rows[i].Cells["id"].Style.BackColor = Color.Yellow;
-                        gridMaterialStatus.Rows[i].Cells["seq1"].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells["Seq1"].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.Yellow;
                     }
 
                     if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty())
