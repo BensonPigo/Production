@@ -535,7 +535,7 @@ select 	isnull(tc.HSCode,'') as HSCode
 		, a.NLCode
 		, isnull(vcd.DescEN,'') as Description
 		, isnull(tc.UnitID,'') as UnitID
-		, 0 - (isnull(tc.Qty,0)-isnull(td.Qty,0)) as LiqQty --將負數調整為正數
+		, isnull(tc.Qty,0) + isnull(td.Qty,0) as LiqQty --調整與勾選Liquidation data only相同
 		, isnull(tw.Qty,0) as WHQty
 		, isnull(ti.Qty,0) as WIPQty
 		, isnull(tp.Qty,0) as ProdQty
