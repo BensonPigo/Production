@@ -93,6 +93,8 @@ Select
 ,[sPPRO] = IIF(o.EachConsApv is null, IIF(o.KPIEachConsApprove is null, '''', format(o.KPIEachConsApprove, ''yyyy-MM-dd'')), format(o.EachConsApv, ''yyyy-MM-dd''))
 ,[sPRGM] = PRGM.PRGM
 ,o.Junk
+,o.PulloutComplete
+,o.Finished
 into #tmp
 From [Production].dbo.Orders o
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
@@ -157,8 +159,6 @@ outer apply(
 Where 
 (o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
-and o.PulloutComplete = 0
-and o.Finished = 0
 
 IF OBJECT_ID(''tempdb.dbo.#tmp2'', ''U'') IS NOT NULL DROP TABLE #tmp2
 
@@ -207,7 +207,7 @@ update t set
 	,[PRGM] = s.[sPRGM]
 	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
 from #tmp2 s,'+@SerDbDboTb+N't
-where C is not null
+where C is not null and PulloutComplete = 0 and Finished = 0
 and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
 and (
 	isnull(t.[SONO],'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(s.sSONO,'''')
