@@ -7,7 +7,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
@@ -57,10 +59,10 @@ namespace Sci.Production.PPIC
             this.ShowWaitMessage("Data processing, please wait ...");
             if (radioMNotice.Checked == true)
             {
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ordercomboid = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
-                DataRow drvar = GetTitleDataByCustCD(poid, _id);
-
+                DataRow drvar = GetTitleDataByCustCD(ordercomboid, _id);
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 if (drvar == null)
                 {
                     this.HideWaitMessage();
@@ -69,15 +71,20 @@ namespace Sci.Production.PPIC
                 }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-
-                sxr.DicDatas.Add(sxr.VPrefix + "NOW", DateTime.Now);
+                sxr.AddPrintRange = true;
+                sxr.FontName = "Times New Roman";
+                sxr.FontSize = 14;
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
-                sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
+                sxr.DicDatas.Add(sxr.VPrefix + "POID", ordercomboid);
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD", drvar["CustCD"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
 
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", ordercomboid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
                 
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
@@ -93,7 +100,7 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from MNOrder WITH (NOLOCK) where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
@@ -110,11 +117,16 @@ namespace Sci.Production.PPIC
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", checkAdditionally.Checked) }, out dts);
 
-                    sxr.DicDatas.Add(sxr.VPrefix + "Now" + idxStr, DateTime.Now);
+                    sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, ID);
                     sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
+
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, dt.Rows[i]["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, dt.Rows[i]["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, dt.Rows[i]["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, dt.Rows[i]["Customize1"].ToString());
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
@@ -135,7 +147,14 @@ namespace Sci.Production.PPIC
                         sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     if (dts[8].Rows.Count > 0)
                         sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
-
+                    if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
+                    }
+                    else
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
+                    }
                 }
 
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice"));
@@ -144,16 +163,19 @@ namespace Sci.Production.PPIC
              //M/Notict (Combo by ComboID)
             else
             {
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ordercomboid = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
-                System.Data.DataTable dtOrderCombo = GetDtByComboID(poid);
+                System.Data.DataTable dtOrderCombo = GetDtByComboID(ordercomboid);
 
                 if (dtOrderCombo == null) { MyUtility.Msg.WarningBox("data not found!!"); this.HideWaitMessage(); return true; }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath);
+                sxr.AddPrintRange = true;
+                sxr.FontName = "Times New Roman";
+                sxr.FontSize = 14;
                 sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);
                 sxr.VarToSheetName = sxr.VPrefix + "sname";
-
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 int ii = 0;
                 foreach (DataRow row in dtOrderCombo.Rows)
                 {
@@ -162,7 +184,7 @@ namespace Sci.Production.PPIC
 
                     string OrderComboID = row["OrderComboID"].ToString();
 
-                    DataRow drvar = GetTitleDataByCustCD(poid, OrderComboID);
+                    DataRow drvar = GetTitleDataByCustCD(ordercomboid, OrderComboID);
 
                     System.Data.DataTable[] dts;
                     DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", OrderComboID), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
@@ -174,15 +196,18 @@ namespace Sci.Production.PPIC
                         return true;
                     }
 
-                    sxr.DicDatas.Add(sxr.VPrefix + "Now" + idxStr, DateTime.Now);
-                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
-                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
-                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
-                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY" + idxStr, drvar["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "POID" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, OrderComboID + "-1");
                     sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, OrderComboID + "-2");
                     sxr.DicDatas.Add(sxr.VPrefix + "sname3" + idxStr, OrderComboID + "-3");
-
+                    
                     //For SizeSpec
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
@@ -205,6 +230,16 @@ namespace Sci.Production.PPIC
                     SetColumn1toText(tbl2);
                     SetColumn1toText(tbl3);
 
+                    sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
+
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); //COLOR list                
@@ -213,12 +248,19 @@ namespace Sci.Production.PPIC
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
-
+                    if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
+                    }
+                    else
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
+                    }
                     //新增Range Repeat數
-                    sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[9].Rows.Count);
+                    sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[10].Rows.Count);
 
                     int idx = 0;
-                    foreach (DataRow dr in dts[9].Rows)
+                    foreach (DataRow dr in dts[10].Rows)
                     {
                         string sIdx = idx.ToString();
                         idx += 1;
@@ -226,7 +268,7 @@ namespace Sci.Production.PPIC
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sIdx, dr["ID"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sIdx, dr["sty"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sIdx, dr["QTY"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sIdx, dr["OrderComboID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sIdx, dr["CustCDID"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sIdx, dr["CustPONO"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sIdx, dr["Customize1"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sIdx, dr["BuyerDelivery"]);
@@ -267,7 +309,7 @@ namespace Sci.Production.PPIC
             DualResult res = DBProxy.Current.Select("", @"
 SELECT distinct OrderComboID from MNOrder
 outer apply (select 1 as cnt from MNOrder tmp where tmp.OrderComboID = MNOrder.ID) cnt
-WHERE MNOrder.POID = @POID
+WHERE MNOrder.ordercomboid = @POID
 ", new List<SqlParameter> { new SqlParameter("@POID", POID) }, out dt);
 
             if (res && dt.Rows.Count > 0)
@@ -309,18 +351,35 @@ WHERE MNOrder.POID = @POID
             if (ByCustCD)
             {
                 cmd = @"
-SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a WITH (NOLOCK) 
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE POID = @poid AND OrderComboID = @ID
+SELECT MAKER=max(FactoryID)
+,sty=max(StyleID)+'-'+max(SeasonID)
+,QTY=sum(QTY)
+,'SPNO'=RTRIM(POID)+b.spno 
+,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
+,(select CustPONo from MnOrder o where o.ID = @ID) as pono
+,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
+,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1
+FROM MNOrder a WITH (NOLOCK) 
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where POID = @poid and OrderComboID = @ID group by POID,b.spno";
+where OrderComboID = @ID group by POID,b.spno";
             }
             else
             {
                 cmd = @"
-SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a WITH (NOLOCK) 
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE POID = @poid
+SELECT 
+MAKER=max(FactoryID)
+,sty=max(StyleID)+'-'+max(SeasonID)
+,QTY=sum(QTY)
+,'SPNO'=RTRIM(POID)+b.spno
+,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
+,(select CustPONo from MnOrder o where o.ID = @ID) as pono
+,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
+,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1 
+FROM MNOrder a WITH (NOLOCK) 
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where POID = @poid group by POID,b.spno";
+where OrderComboID = @poid group by POID,b.spno";
             }
 
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);

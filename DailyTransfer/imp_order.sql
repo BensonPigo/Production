@@ -1662,14 +1662,15 @@ BEGIN
 			update set 
 				t.ColorID		= s.ColorID,
 				t.FabricCode	= s.FabricCode,
-				t.PatternPanel	= s.PatternPanel
+				t.PatternPanel	= s.PatternPanel,
+				t.FabricType	= s.FabricType
 		when not matched by target then
 			insert (
 				ID					, Article		, ColorID		, FabricCode	, PatternPanel
-				, FabricPanelCode
+				, FabricPanelCode   , FabricType
 			) values (
 				s.ID				, s.Article		, s.ColorID		, s.FabricCode	, s.PatternPanel
-				, s.FabricPanelCode
+				, s.FabricPanelCode , s.FabricType
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;

@@ -44,7 +44,7 @@ namespace PMSUploadDataToAPS.Daily
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MDivisionID.ReadOnly = false;
+            //MDivisionID.ReadOnly = false;
             OnRequery();
 
             transferPMS.fromSystem = "Production";
@@ -171,66 +171,21 @@ namespace PMSUploadDataToAPS.Daily
         #region Export/Update (非同步)
         private DualResult AsyncUpdateExport(SqlConnection conn)
         {
-            if (MDivisionID.Text == "")
+            try
             {
-                string cmdid = "select id from MDivision  where SQLServerName !='' or APSDatabaseName != '' or APSLoginId != '' or APSLoginPwd !=''";
-                DataTable tbid;
-                DBProxy.Current.Select(null, cmdid, out tbid);
-
-                try
-                {
-                    SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandTimeout = 7200;  //12分鐘
-
-                    foreach (DataRow drid in tbid.Rows)
-                    {
-                        cmd.Parameters.AddWithValue("@M", drid[0].ToString());
-                        cmd.ExecuteNonQuery();
-                        cmd.Parameters.Clear();
-                    }
-                }
-                catch (SqlException se)
-                {
-                    //return Result.F("執行資料庫預存程序時發生錯誤。", se);
-                    issucess = false;
-                    mymailTo();
-                    return Ict.Result.F(se);
-                }
-                return Ict.Result.True;
+                SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 7200;  //12分鐘
+                cmd.ExecuteNonQuery();
             }
-            else
+            catch (SqlException se)
             {
-                //確認輸入ID是否有在MDivision內
-                string cmdid = string.Format("select id from MDivision  where id='{0}'", MDivisionID.Text);
-                DataTable tbid;
-                DBProxy.Current.Select(null, cmdid, out tbid);
-                if (tbid.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("Please enter correct MDivision!");
-                }
-                try
-                {
-                    SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandTimeout = 3600;  //10分鐘
-
-                    foreach (DataRow drid in tbid.Rows)
-                    {
-                        cmd.Parameters.AddWithValue("@M", drid[0].ToString());
-                        cmd.ExecuteNonQuery();
-                        cmd.Parameters.Clear();
-                    }
-                }
-                catch (SqlException se)
-                {
-                    //return Result.F("執行資料庫預存程序時發生錯誤。", se);
-                    issucess = false;
-                    mymailTo();
-                    return Ict.Result.F(se);
-                }
-                return Ict.Result.True;
+                //return Result.F("執行資料庫預存程序時發生錯誤。", se);
+                issucess = false;
+                mymailTo();
+                return Ict.Result.F(se);
             }
+            return Ict.Result.True;
         }
         #endregion
     }
