@@ -868,6 +868,7 @@ where 1 = 1
             if (radioBySummary.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); //預先開啟excel app
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", objApp);
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
                 objApp.Cells[1, 1] = NameEN;
                 //先準備複製幾頁
@@ -890,14 +891,18 @@ where 1 = 1
                         dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
                     }
 
-                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表      
-                    MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+                    Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表  
+                    ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Sheets[i + 1]).Select();
+                    //MyUtility.Excel.CopyToXls(printData[i], null, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+                    
+                    com.WriteTable(printData[i],6);
+
 
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
-                    objSheets.Columns.AutoFit();
+                    //objSheets.Columns.AutoFit();
                     objSheets.Columns[7].ColumnWidth = 47;
                     objSheets.Columns[11].ColumnWidth = 8;
                     objSheets.Columns[12].ColumnWidth = 13;
