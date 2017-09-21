@@ -60,7 +60,6 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[Mold]
       ,td.[SMV]
       ,td.[OldKey]
-      ,o.[SeamLength]
       ,td.[Ukey] 
       ,o.DescEN as OperationDescEN
       ,td.MtlFactorID
@@ -248,6 +247,7 @@ order by td.Seq", masterID);
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
+                                    dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                 }
                             }
                             else
