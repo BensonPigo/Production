@@ -86,10 +86,10 @@
             this.radioByComb.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioByComb.Location = new System.Drawing.Point(121, 2);
             this.radioByComb.Name = "radioByComb";
-            this.radioByComb.Size = new System.Drawing.Size(119, 21);
+            this.radioByComb.Size = new System.Drawing.Size(124, 21);
             this.radioByComb.TabIndex = 0;
             this.radioByComb.TabStop = true;
-            this.radioByComb.Text = "By Combinition";
+            this.radioByComb.Text = "By Combination";
             this.radioByComb.UseVisualStyleBackColor = true;
             // 
             // P01_Print
