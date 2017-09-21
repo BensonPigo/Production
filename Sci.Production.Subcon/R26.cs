@@ -287,9 +287,10 @@ drop table #tmp;
             }
             else //if (this.comboBox1.Text == "PO Form")
             {
+               
                 #region PO Form
                 result = DBProxy.Current.Select("", @"
-select distinct e.NameEN [Title1] 
+select  e.NameEN [Title1] 
         ,e.AddressEN [Title2]
         ,e.Tel [Title3]
         ,a.LocalSuppID+'-'+d.Abb [To#]
