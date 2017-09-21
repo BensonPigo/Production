@@ -355,6 +355,68 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             return base.ClickSave();
         }
+
+        protected override DualResult ClickDelete()
+        {
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            String sqlupd2 = "";
+            DualResult result2;
+            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        if (dr["requestid", DataRowVersion.Original].ToString() != "")
+                        {
+                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
+                        }
+                    }
+                }
+            }
+            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            {
+                //針對表身資料將ThreadRequisition_Detail.poid塞值
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
+                                    "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
+                                    , dr["orderid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
+                    }
+                }
+            }
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!MyUtility.Check.Empty(sqlupd2))
+                    {
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                        {
+                            _transactionscope.Dispose();
+                            return result2;
+                        }
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    DualResult er = Result.F("Commit transaction error.", ex);
+                    return er;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+
+            return base.ClickDelete();
+        }
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
