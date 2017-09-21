@@ -245,7 +245,7 @@ set DELF=''Y'',
 	UPDT= format(GETDATE(),''yyyy-MM-dd'')
 FROM '+@SerDbDboTb+N' t
 where 
-not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID and t.NCTR collate Chinese_Taiwan_Stroke_CI_AS = s.sNCTR)
+not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID)
 and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -15, GETDATE())
 and DELF <> ''Y''
 
