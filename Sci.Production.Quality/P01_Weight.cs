@@ -348,22 +348,6 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
-                #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
-                DataTable dt_Leader;
-                string cmd_leader = string.Format(@"select email from pass1	
-	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
-                DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader) && dt_Leader.Rows.Count>0)
-                {
-                    string mailto = dt_Leader.Rows[0]["email"].ToString();
-
-                    string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                    string content = "Please Approve and Check Fabric Inspection";
-                    ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, "", subject, excelFile, content, true, true);
-                    email.ShowDialog(this);
-                }
-                #endregion
 
                 maindr["Result"] = returnstr[0];
                 maindr["Status"] = returnstr[1];
