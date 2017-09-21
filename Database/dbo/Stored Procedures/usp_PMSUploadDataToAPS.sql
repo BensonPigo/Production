@@ -4,7 +4,7 @@
 -- Description:	<PMSUploadDataToAPS>
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
---外部傳入M
+
 AS
 BEGIN
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
