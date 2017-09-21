@@ -685,23 +685,34 @@ AND p.EDITdATE = (
 
             this.HideWaitMessage();
         }
-        public void createPattern(string poid, string article, string FabricPanelCode, string cutref, int iden, string ArticleGroup)
+
+        public void createPattern(string poid, string article, string patternpanel, string cutref, int iden, string ArticleGroup)
         {
             if (ArticleGroup == "") f_code = "F_Code";
             else f_code = ArticleGroup;
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-
-
-
+            DataTable f_codeTb;
+            string sqlcmd = String.Format(@"
+SELECT pga.ArticleGroup
+FROM Pattern_GL_Article pga WITH (NOLOCK)
+inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
+inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
+WHERE o.ID = '{0}' and p.Status = 'Completed'
+AND p.EDITdATE = (
+	SELECT MAX(p2.EditDate) 
+	from pattern p2 WITH (NOLOCK) 
+	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
+)"
+                , poid);
+            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
             StringBuilder w = new StringBuilder();
-            w.Append("1 = 0");
+            w.Append(string.Format("orderid = '{0}' and (1=0", poid));
             foreach (DataRow dr in f_codeTb.Rows)
             {
-                w.Append(string.Format(" or {0} = '{1}' ", dr[0], FabricPanelCode));
+                w.Append(string.Format(" or {0} = '{1}' ", dr[0], patternpanel));
             }
-
-            //DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}' and orderid = '{2}'", f_code, FabricPanelCode, poid));
+            w.Append(")");
             DataRow[] garmentar = GarmentTb.Select(w.ToString());
             foreach (DataRow dr in garmentar)
             {
@@ -710,12 +721,12 @@ AND p.EDITdATE = (
                     DataRow ndr = allpartTb.NewRow();
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
-                    ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                    ndr["parts"] = MyUtility.Convert.GetInt(dr["alone"]) + MyUtility.Convert.GetInt(dr["DV"]) * 2 + MyUtility.Convert.GetInt(dr["Pair"]) * 2;
                     ndr["Cutref"] = cutref;
                     ndr["POID"] = poid;
                     ndr["iden"] = iden;
                     allpartTb.Rows.Add(ndr);
-                    npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                    npart = npart + MyUtility.Convert.GetInt(dr["alone"]) + MyUtility.Convert.GetInt(dr["DV"]) * 2 + MyUtility.Convert.GetInt(dr["Pair"]) * 2;
                 }
                 else
                 {
@@ -735,7 +746,7 @@ AND p.EDITdATE = (
                         {
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
-                                int count = Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                                int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                                 for (int i = 0; i < count; i++)
                                 {
                                     DataRow ndr2 = patternTb.NewRow();
@@ -756,7 +767,6 @@ AND p.EDITdATE = (
                                 ndr2["PatternDesc"] = dr["PatternDesc"];
                                 ndr2["art"] = art;
                                 ndr2["Parts"] = dr["alone"];
-                                ndr2["art"] = art;
                                 ndr2["POID"] = poid;
                                 ndr2["Cutref"] = cutref;
                                 ndr2["iden"] = iden;
@@ -772,8 +782,8 @@ AND p.EDITdATE = (
                             ndr["POID"] = poid;
                             ndr["Cutref"] = cutref;
                             ndr["iden"] = iden;
-                            ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
-                            npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                            ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                            npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                             allpartTb.Rows.Add(ndr);
                         }
 
@@ -787,8 +797,8 @@ AND p.EDITdATE = (
                         ndr["POID"] = poid;
                         ndr["Cutref"] = cutref;
                         ndr["iden"] = iden;
-                        ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
-                        npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                        ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                        npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                         allpartTb.Rows.Add(ndr);
                     }
                     #endregion
