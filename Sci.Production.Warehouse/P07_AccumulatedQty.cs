@@ -99,7 +99,7 @@ group by poid,seq1,seq2,description,PoUnit", dr["id"].ToString(), dr["exportid"]
             if (selectResult1 == false) { ShowErr(selectCommand1.ToString(), selectResult1); }
             DBProxy.Current.DefaultTimeout = 0;
             P07.HideWaitMessage();
-            selectDataTable1.ColumnsDecimalAdd("variance", 0m, "shipqty-received-receiving");
+            selectDataTable1.ColumnsDecimalAdd("variance", 0m, "received+receiving-shipqty");
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
