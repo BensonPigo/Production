@@ -1,0 +1,10 @@
+﻿CurrentDomain.UnhandledException: System.IndexOutOfRangeException: 索引在陣列的界限之外。
+   於 Production.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\Production.Daily\Program.cs: 行 26
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()

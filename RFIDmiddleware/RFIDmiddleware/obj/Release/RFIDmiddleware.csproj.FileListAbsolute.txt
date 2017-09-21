@@ -1,1 +1,0 @@
-D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\Release\RFIDmiddleware.exe.config

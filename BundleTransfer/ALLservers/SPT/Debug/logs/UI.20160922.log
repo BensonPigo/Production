@@ -1,0 +1,1001 @@
+﻿[2016/09/22 11:21:50.873] [9] ***** ***** ***** [2016/09/22 08:51:24.264] ***** ***** *****
+[2016/09/22 11:21:50.873] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 11:21:52.948] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 11:21:55.620] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 11:21:55.756] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 11:21:55.760] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 11:28:09.655] [3] dropDB_Tables
+ok
+[2016/09/22 11:28:12.724] [13] dropDB_Tables
+ok
+[2016/09/22 11:28:12.734] [13] Create DateInfo
+ok
+[2016/09/22 11:28:13.511] [21] exp_Machine                                                                                         
+ok
+[2016/09/22 11:28:13.639] [18] exp_Airpp                                                                                           
+ok
+[2016/09/22 11:28:14.609] [19] exp_Debit                                                                                           
+ok
+[2016/09/22 11:28:14.718] [18] exp_Pass1                                                                                           
+ok
+[2016/09/22 11:28:18.556] [21] exp_Part                                                                                            
+ok
+[2016/09/22 11:28:18.682] [17] exp_Express                                                                                         
+ok
+[2016/09/22 11:28:18.712] [18] exp_Replacement                                                                                     
+ok
+[2016/09/22 11:28:19.662] [18] exp_WkHours                                                                                         
+ok
+[2016/09/22 11:28:19.850] [16] exp_Export                                                                                          
+ok
+[2016/09/22 11:28:20.054] [21] exp_Sewing                                                                                          
+ok
+[2016/09/22 11:28:20.161] [17] exp_Style_ProductionKits                                                                            
+ok
+[2016/09/22 11:28:21.755] [12] exp_Order                                                                                           
+ok
+[2016/09/22 11:28:27.547] [12] exp_OrderSchedule                                                                                   
+ok
+[2016/09/22 11:28:32.248] [20] exp_Cutting                                                                                         
+ok
+[2016/09/22 11:28:32.724] [19] exp_Pullout                                                                                         
+ok
+[2016/09/22 11:31:36.944] [15] exp_3rd                                                                                             
+ok
+[2016/09/22 11:41:10.056] [13] RAR DataBase
+ok
+[2016/09/22 11:41:13.552] [13] Upload RAR To Ftp 
+ok
+[2016/09/22 11:41:29.961] [13] Attach_DataBase
+ok
+[2016/09/22 14:22:50.009] [9] ***** ***** ***** [2016/09/22 11:42:04.363] ***** ***** *****
+[2016/09/22 14:22:50.009] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 14:22:50.938] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 14:22:53.697] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 14:22:53.804] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 14:22:53.807] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 14:32:22.246] [3] dropDB_Tables
+ok
+[2016/09/22 14:32:25.305] [17] dropDB_Tables
+ok
+[2016/09/22 14:32:25.323] [17] Create DateInfo
+ok
+[2016/09/22 14:32:25.519] [6] exp_Debit                                                                                           
+ok
+[2016/09/22 14:32:25.533] [13] exp_Airpp                                                                                           
+ok
+[2016/09/22 14:32:25.827] [6] exp_Machine                                                                                         
+ok
+[2016/09/22 14:32:25.945] [6] exp_Pass1                                                                                           
+ok
+[2016/09/22 14:32:29.793] [20] exp_Order                                                                                           
+ok
+[2016/09/22 14:32:29.814] [18] exp_Export                                                                                          
+ok
+[2016/09/22 14:32:29.837] [13] exp_Part                                                                                            
+ok
+[2016/09/22 14:32:29.837] [21] exp_Replacement                                                                                     
+ok
+[2016/09/22 14:32:30.224] [19] exp_Express                                                                                         
+ok
+[2016/09/22 14:32:30.794] [13] exp_WkHours                                                                                         
+ok
+[2016/09/22 14:32:30.976] [18] exp_Sewing                                                                                          
+ok
+[2016/09/22 14:32:30.985] [21] exp_Style_ProductionKits                                                                            
+ok
+[2016/09/22 14:32:31.591] [20] exp_OrderSchedule                                                                                   
+ok
+[2016/09/22 14:32:39.759] [12] exp_Cutting                                                                                         
+ok
+[2016/09/22 14:32:43.558] [6] exp_Pullout                                                                                         
+ok
+[2016/09/22 14:35:50.932] [16] exp_3rd                                                                                             
+ok
+[2016/09/22 14:49:17.332] [17] RAR DataBase
+ok
+[2016/09/22 14:49:20.038] [17] Upload RAR To Ftp 
+ok
+[2016/09/22 14:49:22.819] [17] Attach_DataBase
+ok
+[2016/09/22 14:51:48.688] [3] Attach_DataBase
+ok
+[2016/09/22 16:30:48.945] [21] imp_Airboat
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Airboat
+Error Line:18
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.FactoryExpress'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:df9e2241-5881-4855-a26e-29e82d6817a6
+[2016/09/22 16:30:48.962] [20] imp_export
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Export
+Error Line:22
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Export'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:55488054-28bc-4ace-ab97-2e657fe2e306
+[2016/09/22 16:30:48.980] [18] imp_Airpp
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Airpp
+Error Line:17
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.AirPP'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:ce31787f-714f-4aea-904c-682b9e1f5713
+[2016/09/22 16:30:49.006] [25] imp_debit
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Debit
+Error Line:19
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Debit'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:6705a724-80b1-42b4-b80d-a654b29fd685
+[2016/09/22 16:30:49.151] [21] imp_Invadj
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Invadj
+Error Line:21
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.InvAdjust'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:c1ee4f86-57f6-43a0-91e9-9903cce160f5
+[2016/09/22 16:30:49.186] [15] imp_adicomp
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Adicomp
+Error Line:15
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.ADIDASComplain'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:3fe6a8f9-32e1-41d3-b3de-53ad016f1815
+[2016/09/22 16:30:49.257] [14] imp_Ietms
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Ietms
+Error Line:19
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.IETMS'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:0728fdb1-3aa3-4f78-b78a-67024612d2a6
+[2016/09/22 16:30:49.271] [20] imp_Inv
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Inv
+Error Line:18
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Inventory'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:bc3b9bb2-e980-44da-984d-5c6e5bfaabed
+[2016/09/22 16:30:49.298] [15] imp_Po
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Po
+Error Line:17
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.PO'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:02a347f8-7c96-45a3-99b7-55bcdfb9c273
+[2016/09/22 16:30:49.330] [19] imp_base
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Base
+Error Line:17
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Brand'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:dbecb4fc-bf6d-4c09-bbae-8985e5c6031f
+[2016/09/22 16:30:49.373] [14] imp_Prokit
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Prokit
+Error Line:22
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Style_ProductionKits'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:66a97cb3-dc30-4d45-a8ed-342302b0d48f
+[2016/09/22 16:30:49.526] [14] imp_Style
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Style
+Error Line:25
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Style'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:ce31787f-714f-4aea-904c-682b9e1f5713
+[2016/09/22 16:30:49.530] [25] imp_Pattern
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Pattern
+Error Line:19
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Pattern'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:ea40aa58-3c1e-4cdd-bdc4-2710d5b57dc8
+[2016/09/22 16:30:50.049] [18] imp_part
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_part
+Error Line:13
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Part'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:e3b3525f-df70-4c56-a381-cd616c6425d6
+[2016/09/22 16:30:54.060] [23] imp_order
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 690
+   於 Sci.DB.Transfer.<>c__DisplayClass2e.<Transfer_Task_BySeq>b__2c(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 655
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 653
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__26(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 634
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 631
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1e(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 613
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Order
+Error Line:24
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Orders'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:65a16f2c-f8e7-4ccd-b9e3-83906196e51a
+[2016/09/22 16:30:54.592] [19] imp_replacement
+ok
+[2016/09/22 16:31:36.185] [3] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):7722377
+[2016/09/22 16:31:36.186] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/09/22 16:31:36.186] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/09/22 16:31:36.186] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/09/22 16:31:36.191] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+Update failed!
+[2016/09/22 16:31:36.236] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:31:36.238] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:31:55.555] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/09/22 16:31:55.625] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/09/22 16:31:55.625] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/09/22 16:31:55.625] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/09/22 16:31:55.626] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/09/22 16:31:55.626] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/09/22 16:31:55.637] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/09/22 16:36:12.096] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 16:36:12.161] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:36:12.162] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:43:15.603] [10] ***** ***** ***** [2016/09/22 16:43:12.539] ***** ***** *****
+[2016/09/22 16:43:15.603] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:43:16.478] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:43:17.433] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 16:43:18.598] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:43:18.602] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:53:44.313] [9] ***** ***** ***** [2016/09/22 16:51:31.655] ***** ***** *****
+[2016/09/22 16:53:44.314] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:53:44.423] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:53:46.712] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 16:53:49.476] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 16:53:49.483] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 16:56:00.251] [3] Attach_DataBase
+ok
+[2016/09/22 17:00:49.825] [3] dropDB_Tables
+ok
+[2016/09/22 17:00:52.907] [12] dropDB_Tables
+ok
+[2016/09/22 17:00:52.917] [12] Create DateInfo
+ok
+[2016/09/22 17:00:53.183] [22] exp_Machine                                                                                         
+ok
+[2016/09/22 17:00:53.183] [15] exp_Airpp                                                                                           
+ok
+[2016/09/22 17:00:53.184] [19] exp_Debit                                                                                           
+ok
+[2016/09/22 17:00:53.432] [19] exp_Pass1                                                                                           
+ok
+[2016/09/22 17:00:54.536] [22] exp_Part                                                                                            
+ok
+[2016/09/22 17:00:55.042] [20] exp_Export                                                                                          
+ok
+[2016/09/22 17:00:55.118] [19] exp_Replacement                                                                                     
+ok
+[2016/09/22 17:00:55.325] [22] exp_Sewing                                                                                          
+ok
+[2016/09/22 17:00:55.851] [19] exp_WkHours                                                                                         
+ok
+[2016/09/22 17:00:56.047] [17] exp_Express                                                                                         
+ok
+[2016/09/22 17:00:56.478] [20] exp_Style_ProductionKits                                                                            
+ok
+[2016/09/22 17:01:01.913] [21] exp_Order                                                                                           
+ok
+[2016/09/22 17:01:03.223] [21] exp_OrderSchedule                                                                                   
+ok
+[2016/09/22 17:01:07.439] [16] exp_Cutting                                                                                         
+ok
+[2016/09/22 17:01:09.986] [15] exp_Pullout                                                                                         
+ok
+[2016/09/22 17:04:37.258] [18] exp_3rd                                                                                             
+ok
+[2016/09/22 17:07:09.200] [12] RAR DataBase
+ok
+[2016/09/22 17:07:11.732] [12] Upload RAR To Ftp 
+ok
+[2016/09/22 17:21:32.433] [8] ***** ***** ***** [2016/09/22 17:07:16.171] ***** ***** *****
+[2016/09/22 17:21:32.434] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:21:32.853] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:21:34.458] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 17:21:42.049] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:21:42.054] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:30:57.017] [10] ***** ***** ***** [2016/09/22 17:23:01.891] ***** ***** *****
+[2016/09/22 17:30:57.017] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:30:57.130] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:30:59.751] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2016/09/22 17:30:59.752] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/09/22 17:30:59.754] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2016/09/22 17:31:21.239] [10] ***** ***** ***** [2016/09/22 17:31:01.730] ***** ***** *****
+[2016/09/22 17:31:21.240] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:31:21.358] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:31:28.024] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 17:31:29.450] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:31:29.455] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:31:30.740] [6] DeleteDatabase
+ok
+[2016/09/22 17:33:23.860] [6] Attach_DataBase
+ok
+[2016/09/22 17:37:05.143] [6] dropDB_Tables
+ok
+[2016/09/22 17:37:07.245] [14] dropDB_Tables
+ok
+[2016/09/22 17:37:07.277] [14] Create DateInfo
+ok
+[2016/09/22 17:37:07.911] [19] exp_Debit                                                                                           
+ok
+[2016/09/22 17:37:07.969] [16] exp_Airpp                                                                                           
+ok
+[2016/09/22 17:37:07.993] [19] exp_Machine                                                                                         
+ok
+[2016/09/22 17:37:08.292] [20] exp_Pass1                                                                                           
+ok
+[2016/09/22 17:37:09.063] [13] exp_Export                                                                                          
+ok
+[2016/09/22 17:37:09.589] [16] exp_Part                                                                                            
+ok
+[2016/09/22 17:37:09.904] [18] exp_Order                                                                                           
+ok
+[2016/09/22 17:37:10.037] [20] exp_Replacement                                                                                     
+ok
+[2016/09/22 17:37:10.092] [13] exp_Sewing                                                                                          
+ok
+[2016/09/22 17:37:10.525] [20] exp_WkHours                                                                                         
+ok
+[2016/09/22 17:37:10.609] [3] exp_Express                                                                                         
+ok
+[2016/09/22 17:37:10.760] [16] exp_Style_ProductionKits                                                                            
+ok
+[2016/09/22 17:37:14.099] [18] exp_OrderSchedule                                                                                   
+ok
+[2016/09/22 17:37:19.337] [15] exp_Cutting                                                                                         
+ok
+[2016/09/22 17:37:29.844] [19] exp_Pullout                                                                                         
+ok
+[2016/09/22 17:40:22.593] [17] exp_3rd                                                                                             
+ok
+[2016/09/22 17:45:49.821] [14] RAR DataBase
+ok
+[2016/09/22 17:45:49.833] [14] Upload RAR To Ftp 
+上傳檔案不存在。
+[2016/09/22 17:51:20.239] [14] Attach_DataBase
+ok
+[2016/09/22 17:52:58.087] [8] ***** ***** ***** [2016/09/22 17:52:21.601] ***** ***** *****
+[2016/09/22 17:52:58.088] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:52:58.202] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:53:13.473] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/09/22 17:53:15.807] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/09/22 17:53:15.812] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/09/22 17:53:21.118] [12] DeleteDatabase
+ok
+[2016/09/22 17:59:01.267] [12] dropDB_Tables
+ok
+[2016/09/22 17:59:03.189] [3] dropDB_Tables
+ok
+[2016/09/22 17:59:03.231] [3] Create DateInfo
+ok
+[2016/09/22 17:59:04.189] [11] exp_Airpp                                                                                           
+ok
+[2016/09/22 17:59:04.190] [19] exp_Machine                                                                                         
+ok
+[2016/09/22 17:59:04.232] [19] exp_Pass1                                                                                           
+ok
+[2016/09/22 17:59:04.725] [16] exp_Debit                                                                                           
+ok
+[2016/09/22 17:59:04.850] [11] exp_Part                                                                                            
+ok
+[2016/09/22 17:59:05.751] [17] exp_Export                                                                                          
+ok
+[2016/09/22 17:59:06.176] [16] exp_Replacement                                                                                     
+ok
+[2016/09/22 17:59:07.749] [11] exp_Sewing                                                                                          
+ok
+[2016/09/22 17:59:08.468] [16] exp_WkHours                                                                                         
+ok
+[2016/09/22 17:59:08.793] [17] exp_Style_ProductionKits                                                                            
+ok
+[2016/09/22 17:59:08.932] [14] exp_Express                                                                                         
+ok
+[2016/09/22 17:59:11.123] [18] exp_Order                                                                                           
+ok
+[2016/09/22 17:59:14.405] [18] exp_OrderSchedule                                                                                   
+ok
+[2016/09/22 17:59:19.769] [15] exp_Cutting                                                                                         
+ok
+[2016/09/22 17:59:19.813] [19] exp_Pullout                                                                                         
+ok
+[2016/09/22 18:02:27.634] [10] exp_3rd                                                                                             
+ok
+[2016/09/22 18:13:48.174] [3] RAR DataBase
+ok
+[2016/09/22 18:13:50.962] [3] Upload RAR To Ftp 
+ok
+[2016/09/22 18:13:55.658] [3] Attach_DataBase
+ok
