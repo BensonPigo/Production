@@ -1443,59 +1443,73 @@ where w.ID = '{0}'", masterID);
             #region Total Dist
             totalDisQty();
             #endregion
-
+            
             int sumlayer = 0;
+            int sumlayer2 = 0;
+
             if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
             {
                 DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
-
+                DataRow[] B = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
                 foreach (DataRow l in AA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+                foreach (DataRow l in B)
+                {
+                    sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
             else
             {
                 DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-
+                DataRow[] B = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
                 foreach (DataRow l in AA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+                foreach (DataRow l in B)
+                {
+                    sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
 
             int order_EachConsTemp;
             if (CurrentDetailData["Order_EachConsUkey"] == DBNull.Value)
             {//old rule
-                order_EachConsTemp = 0;
-                string selectcondition = string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]);
-                DataRow[] laydr = layersTb.Select(selectcondition);
-                if (laydr.Length == 0)
-                {
-                    numTotalLayer.Value = 0;
-                    numBalanceLayer.Value = 0;
-                }
-                else
-                {
-                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
-                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
-                }
+                //order_EachConsTemp = 0;
+                //string selectcondition = string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]);
+                //DataRow[] laydr = layersTb.Select(selectcondition);
+                //if (laydr.Length == 0)
+                //{
+                //    numTotalLayer.Value = 0;
+                //    numBalanceLayer.Value = 0;
+                //}
+                //else
+                //{
+                //    numTotalLayer.Value = sumlayer2;
+                //    numBalanceLayer.Value = sumlayer - sumlayer2;
+                //}
+                numTotalLayer.Value = sumlayer2;
+                numBalanceLayer.Value = sumlayer - sumlayer2;
             }
             else
             { //New rule
-                order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
-                string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
-                DataRow[] laydr = layersTb.Select(selectcondition);
-                if (laydr.Length == 0)
-                {
-                    numTotalLayer.Value = 0;
-                    numBalanceLayer.Value = 0;
-                }
-                else
-                {
-                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
-                }
+                //order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
+                //string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
+                //DataRow[] laydr = layersTb.Select(selectcondition);
+                //if (laydr.Length == 0)
+                //{
+                //    numTotalLayer.Value = 0;
+                //    numBalanceLayer.Value = 0;
+                //}
+                //else
+                //{
+                //    numTotalLayer.Value = sumlayer2;
+                //    numBalanceLayer.Value = sumlayer - sumlayer2;
+                //}
+                numTotalLayer.Value = sumlayer2;
+                numBalanceLayer.Value = sumlayer - sumlayer2;
             }
             
             #region 判斷download id
