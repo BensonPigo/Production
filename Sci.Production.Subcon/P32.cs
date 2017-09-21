@@ -230,7 +230,7 @@ namespace Sci.Production.Subcon
 							  ELSE 'N'
 							END
 							AS EmbThread
-					from #tmp
+					from #tmp order by #tmp.OrderId
 				DROP TABLE  #tmp1
 				drop table  #tmp", M));
 
@@ -320,8 +320,8 @@ namespace Sci.Production.Subcon
             if (dataSet == null) return;
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtGrid1);
-            DataView dataView = dtGrid2.DefaultView;
-            DataTable NewdataTable = dataView.ToTable(false);
+            //DataView dataView = dtGrid2.DefaultView;
+            DataTable NewdataTable = dtGrid2;
             if (NewdataTable.Columns.Contains("Ukey")) NewdataTable.Columns.Remove("Ukey");
             Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(NewdataTable);
             x1.DicDatas.Add("##dt1", dt1);
