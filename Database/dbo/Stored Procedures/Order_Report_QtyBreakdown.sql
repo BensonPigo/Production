@@ -1,23 +1,23 @@
 ﻿
-CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
+Create PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 	@OrderID varchar(13)
 	,@ByType int = 0 --0單張 , 1 By OrderCombo , 2 By PO
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @OrderComboID varchar(13) = (select OrderComboID from MNOrder where ID = @OrderID)
 declare @tbl table (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
 	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid AND OrderComboID = @OrderID)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID)
 else if(@ByType = 2)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.Orders where POID = @poid )
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID )
 
 
 --主要資料
-SELECT a.seq, b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT a.seq, b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
 where b.ID is not null
 
 

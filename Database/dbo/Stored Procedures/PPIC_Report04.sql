@@ -5,7 +5,7 @@
 AS
 BEGIN
 
-declare @POID varchar(13) = (select POID from MNOrder WITH (NOLOCK) where ID = @ID)
+declare @OrderComboID varchar(13) = (select OrderComboID from MNOrder WITH (NOLOCK) where ID = @ID)
 
 --Page1--------------------------------------------------------------------------------------------------------------
 --##MAKER ##STYLENO ##QTY ##SP
@@ -28,16 +28,18 @@ exec PPIC_Report_Color_MaterialCode @ID
 SELECT Packing FROM MNOrder WITH (NOLOCK) WHERE ID in ( select OrderComboID from MNOrder where ID = @ID)
 --##S2LH
 SELECT Label FROM MNOrder WITH (NOLOCK) WHERE ID in ( select OrderComboID from MNOrder where ID = @ID)
+--##S2VS
+SELECT Orders.VasShas,iif(Orders.VasShas = 1, iif(isnull(MnorderApv2,'') <> '',Orders.Packing2, '**Please wait for 2nd approve！'),'') as Packing2 FROM DBO.Orders WHERE ID = @ID
 
 --Page3--------------------------------------------------------------------------------------------------------------
 --##S3_SP ##S3_Style ##S3_QTY ##S3_CUSTCD ##S3_PoNo ##S3_Oeder ##S3_DELIVERY
 declare @newLine varchar(10) = CHAR(13)+CHAR(10)
-SELECT MAKER=FactoryID,ID,sty=StyleID+'-'+SeasonID,QTY,OrderComboID,CustPONo,Customize1,BuyerDelivery,
+SELECT MAKER=FactoryID,ID,sty=StyleID+'-'+SeasonID,QTY,OrderComboID,CustCDID,CustPONo,Customize1,BuyerDelivery,
 Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
 +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
 +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
 +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
-FROM MNOrder a WITH (NOLOCK) where POID = @poid AND OrderComboID = @ID
+FROM MNOrder a WITH (NOLOCK) where OrderComboID = @OrderComboID --AND OrderComboID = @ID
 
 
 END
