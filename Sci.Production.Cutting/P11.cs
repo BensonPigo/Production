@@ -416,7 +416,7 @@ Select  distinct 0 as sel
         , a.cutref
         , ord.poid
         , a.estcutdate
-        , b.patternPanel
+        , patternPanel = a.Fabriccombo
         , a.cutno
         , item = ( Select Reason.Name 
                    from   Reason WITH (NOLOCK) 
@@ -442,7 +442,7 @@ Select  distinct 0 as sel
         , b.article
         , a.colorid
         , b.sizecode
-        , c.PatternPanel
+        , PatternPanel= a.Fabriccombo
 		, c.FabricPanelCode
         , '' as Ratio
         , a.cutno
