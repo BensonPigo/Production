@@ -496,7 +496,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
-            if (MyUtility.Check.Empty(CurrentData))
+            if (MyUtility.Check.Empty(CurrentData) && !MyUtility.Convert.GetBool(maindr["nonCrocking"]))
             {
                 MyUtility.Msg.WarningBox("Please test one Roll least");
                 return;
@@ -533,34 +533,43 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
-                if (MyUtility.Check.Empty(dt)) return;
-                if (dt.Rows.Count == 0) return;
-                DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
-                for (int i = 0; i < dt.Rows.Count; i++)
+                if (dt.Rows.Count != 0)
                 {
-                    DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
-                    //代表newDate 比  lastDate還晚 就取代lastDate
-                    if (DateTime.Compare(newDate, lastDate) > 0)
+                    DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        lastDate = newDate;
+                        DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
+                        //代表newDate 比  lastDate還晚 就取代lastDate
+                        if (DateTime.Compare(newDate, lastDate) > 0)
+                        {
+                            lastDate = newDate;
+                        }
                     }
+                #endregion
+
+                    #region  寫入實體Table
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set CrockingEncode=1,Crocking='{0}',CrockingDate ='{2}' where id ='{1}'",
+                    result, maindr["ID"], lastDate.ToShortDateString());
+
+                    updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", maindr["ID"], Today);
                 }
-                #endregion
+                else
+                {
 
-                #region  寫入實體Table
-                updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingEncode=1,Crocking='{0}',CrockingDate ='{2}' where id ='{1}'",
-                result, maindr["ID"], lastDate.ToShortDateString());
+                    updatesql = string.Format(
+                    @"Update Fir_Laboratory set CrockingEncode = 1,Crocking='{0}' where id ='{1}'", result, maindr["ID"]);
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", maindr["ID"], Today);
-                #endregion
+                }
+
+                    #endregion
 
             }
             else //Amend
             {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0 where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = '' where id ='{0}'", maindr["ID"]);
 
                 #endregion
             }

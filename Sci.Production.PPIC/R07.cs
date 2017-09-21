@@ -61,82 +61,97 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
-            sqlCmd.Append(string.Format(@"DECLARE @sewinginline DATE,
-		@sewingoffline DATE
-SET @sewinginline = '{0}'
-SET @sewingoffline = '{1}'
-
+            sqlCmd.Append(string.Format(@"
+DECLARE @sewinginline DATETIME ='{0}'
+DECLARE @sewingoffline DATETIME ='{1}'
+DECLARE @MDivisionID Nvarchar(8)= '{2}'
+DECLARE @FactoryID Nvarchar(8)= '{3}'
+--整個月 table
+;WITH cte AS (
+    SELECT [date] = @sewinginline
+    UNION ALL
+    SELECT [date] + 1 FROM cte WHERE ([date] < DATEADD(DAY,-1,@sewingoffline))
+)
+SELECT [date] = cast([date] as date) 
+into #daterange 
+FROM cte
+--WorkHour table
+select FactoryID,SewingLineID,Date,Hours,Holiday
+into #workhourtmp
+from WorkHour w
+where FactoryID = @FactoryID or @FactoryID =''
+and Date between @sewinginline and DATEADD(DAY,1,@sewingoffline)
+--order by Date
+--準備一整個月workhour的資料判斷Holiday
+select distinct d.date,w.FactoryID,w.SewingLineID
+into #tmpd
+from #daterange d,#workhourtmp w
+--
+select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Hours = 0 ,1,0)
+into #Holiday
+from #tmpd d
+left join #workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
+order by FactoryID,SewingLineID,date
 --先將符合條件的Sewing schedule撈出來
-DECLARE cursor_sewingschedule CURSOR FOR
-select s.FactoryID,s.SewingLineID,s.Inline,s.Offline,isnull(o.StyleID,'') as StyleID,
-isnull(o.OrderTypeID,'') as OrderTypeID,o.SciDelivery,o.BuyerDelivery,
-isnull(o.Category,'') as Category,isnull(st.CdCodeID,'') as CdCodeID
+select
+	 s.FactoryID
+	,s.SewingLineID
+	,o.StyleID
+	,Inline = cast(s.Inline as date)
+	,Offline = cast(s.Offline as date)
+	,OrderTypeID = isnull(o.OrderTypeID,'')
+	,o.SciDelivery
+	,o.BuyerDelivery
+	,Category = isnull(o.Category,'')
+	,o.CdCodeID
+into #Sewtmp
 from SewingSchedule s WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 where (s.Inline between @sewinginline and @sewingoffline or s.Offline between @sewinginline and @sewingoffline)
-", _startDate.ToString("d"), _startDate.AddMonths(1).ToString("d")));
-            if (!MyUtility.Check.Empty(_mDivision))
-            {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'",_mDivision));
-            }
-            if (!MyUtility.Check.Empty(_factory))
-            {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'",_factory));
-            }
-                sqlCmd.Append(@"
-order by s.FactoryID,s.SewingLineID,s.Inline,o.StyleID
+ and s.MDivisionID = @MDivisionID and s.FactoryID = @FactoryID --and SewingLineID = '18'
 
---建立tmpe table存放展開成每一天的資料
-DECLARE @tempEveryData TABLE (
-   FactoryID VARCHAR(8),
-   SewingLineID VARCHAR(2),
-   StyleID VARCHAR(15),
-   SewingDate DATE,
-   OrderTypeID VARCHAR(20),
-   SCIDelivery DATE,
-   BuyerDellivery DATE,
-   Category VARCHAR(1),
-   CDCodeID VARCHAR(6)
-)
---宣告變數: 記錄程式中的資料
-DECLARE @factory VARCHAR(8),
-		@sewingline VARCHAR(2),
-        @inline DATETIME,
-		@offline DATETIME,
-		@style VARCHAR(15),
-		@ordertype VARCHAR(20),
-		@scidlv DATE,
-		@buyerdlv DATE,
-		@category VARCHAR(1),
-		@cdcode VARCHAR(6),
-		@_i INT, --計算迴圈用
-		@sewingdate DATE, --Sewing Date
-		@workhour INT, --Work Hour
-		@Holiday bit
-
---將資料展開成每一天
-OPEN cursor_sewingschedule
-FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@inline,@offline,@style,@ordertype,@scidlv,@buyerdlv,@category,@cdcode
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	SET @_i = 0
-	SET @sewingdate = IIF(@inline < @sewinginline,@sewinginline,@inline)
-	WHILE (@_i <= DATEDIFF(DAY,IIF(@inline < @sewinginline,@sewinginline,@inline),IIF(@offline > @sewingoffline,DATEADD(DAY,-1,@sewingoffline),@offline)))
-	BEGIN
-		select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-		IF @workhour is not null
-			BEGIN
-				INSERT INTO @tempEveryData (FactoryID,SewingLineID,StyleID,SewingDate,OrderTypeID,SCIDelivery,BuyerDellivery,Category,CDCodeID)
-				VALUES (@factory,@sewingline,@style,@sewingdate,@ordertype,@scidlv,@buyerdlv,@category,@cdcode)
-			END
-		SET @_i = @_i + 1
-		SET @sewingdate = DATEADD(DAY,1,@sewingdate)
-	END
-	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@inline,@offline,@style,@ordertype,@scidlv,@buyerdlv,@category,@cdcode
-END
-CLOSE cursor_sewingschedule
-DEALLOCATE cursor_sewingschedule
+select distinct
+	d.FactoryID
+	,d.SewingLineID
+	,d.date
+	,s.StyleID
+	,IsLastMonth = iif(s.SciDelivery < @sewinginline,1,0)--紫 優先度1
+	,IsNextMonth = iif(s.SciDelivery > DateAdd(DAY,-1,@sewingoffline),1,0)--綠 優先度2
+	,IsBulk = iif(s.Category = 'B',1,0)--藍 優先度3
+	,IsSMS = iif(s.OrderTypeID = 'SMS',1,0)--紅 優先度4
+	,s.BuyerDelivery
+	,s.CdCodeID
+into #Stmp
+from #Sewtmp s 
+left join #tmpd d on d.FactoryID = s.FactoryID and d.SewingLineID = s.SewingLineID and d.date between s.Inline and s.Offline
+--order by h.FactoryID,h.SewingLineID,h.date,s.StyleID
+select distinct FactoryID,SewingLineID,date,StyleID = a.s
+into #ConcatStyle
+from #Stmp s
+outer apply(
+	select s =(
+		select distinct concat(StyleID,'(',CdCodeID,')',';')
+		from #Stmp s2
+		where s2.FactoryID = s.FactoryID and s2.SewingLineID = s.SewingLineID and s2.date = s.date
+		for xml path('')
+	)
+)a
+--
+select h.FactoryID,h.SewingLineID,h.date,h.Holiday,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+into #c
+from #Holiday h
+left join #Stmp s on s.FactoryID = h.FactoryID and s.SewingLineID = h.SewingLineID and s.date = h.date
+inner join(select distinct FactoryID,SewingLineID from #Stmp) x on x.FactoryID = h.FactoryID and x.SewingLineID = h.SewingLineID--排掉沒有在SewingSchedule內的資料by FactoryID,SewingLineID
+order by h.FactoryID,h.SewingLineID,h.date
+------------------------------------------------------------------------------------------------
+DECLARE cursor_sewingschedule CURSOR FOR
+select distinct c.FactoryID,c.SewingLineID,c.date
+	,StyleID = iif(c.Holiday = 1,'Holiday', cs.StyleID)
+	,IsLastMonth,IsNextMonth,IsBulk,IsSMS,BuyerDelivery
+from #c c left join #ConcatStyle cs on c.FactoryID = cs.FactoryID and c.SewingLineID = cs.SewingLineID and c.date = cs.date
+where iif(c.Holiday = 1,'Holiday', cs.StyleID) is not null
+order by c.FactoryID,c.SewingLineID,c.date
 
 --建立tmpe table存放最後要列印的資料
 DECLARE @tempPintData TABLE (
@@ -151,238 +166,66 @@ DECLARE @tempPintData TABLE (
    IsNextMonth BIT,
    MinBuyerDelivery DATE
 )
+--
+DECLARE @factory VARCHAR(8),
+		@sewingline VARCHAR(2),
+		@StyleID VARCHAR(200),
+		@IsLastMonth int,
+		@IsNextMonth int,
+		@IsBulk int,
+		@IsSMS int,
+		@BuyerDelivery DATE,
+		@date DATE,
+		@beforefactory VARCHAR(8) = '',
+		@beforesewingline VARCHAR(2) = '',
+		@beforeStyleID VARCHAR(200) = '',
+		@beforeIsLastMonth int,
+		@beforeIsNextMonth int,
+		@beforeIsBulk int,
+		@beforeIsSMS int,
+		@beforeBuyerDelivery DATE,
+		@beforedate DATE
 
-DECLARE @currentstyle VARCHAR(MAX), --暫存Style組合，用來比對(換線給初始值為空)
-		@currentDlv DATE, --暫存同格的最小Buyer Delivery
-		@currentlastmonth BIT, ----暫存同格中Style中的任一Orders.SCIDelivery是否有在本月之前
-		@currentnextmonth BIT, ----暫存同格中Style中的任一Orders.SCIDelivery是否有在本月之後
-		@currentissms BIT, ----暫存同格中Style中的任一Orders.OrderTypeID為SMS
-		@currentisbulk BIT, ----暫存同格中Style中的任一Orders.Category為Bulk
-		@tmpstyle VARCHAR(MAX),
-		@tmpmindlv DATE,
-		@tmplastmonth BIT,
-		@tmpnextmonth BIT,
-		@tmpissms BIT,
-		@tmpisbulk BIT,
-		@tmpinsertfactory VARCHAR(8),
-		@tmpinsertline VARCHAR(2),
-		@tmpinsertsewdate DATE,
-		@tmpprintstyle VARCHAR(15),
-		@tmpisholiday BIT
-		
-
-DECLARE cursor_factoryline CURSOR FOR
-select distinct FactoryID,SewingLineID from @tempEveryData order by FactoryID,SewingLineID
-
-OPEN cursor_factoryline
-FETCH NEXT FROM cursor_factoryline INTO @factory,@sewingline
+OPEN cursor_sewingschedule
+FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SET @_i = 0
-	SET @sewingdate = @sewinginline
-	SET @currentstyle = ''
-	SET @currentDlv = null
-	SET @currentlastmonth = 0
-	SET @currentnextmonth = 0
-	SET @currentissms = 0
-	SET @currentisbulk = 0
-
-	WHILE (@_i <= DATEDIFF(DAY,@sewinginline,@sewingoffline)-1)
-	BEGIN
-		SET @tmpstyle = ''
-		SET @tmpmindlv = null
-		SET @tmplastmonth = 0
-		SET @tmpnextmonth = 0
-		SET @tmpissms = 0
-		SET @tmpisbulk = 0
-		
-		DECLARE cursor_datedata CURSOR FOR
-		select StyleID,OrderTypeID,SCIDelivery,BuyerDellivery,Category,CDCodeID from @tempEveryData where FactoryID = @factory and SewingLineID = @sewingline and SewingDate = @sewingdate order by StyleID
-		OPEN cursor_datedata
-		FETCH NEXT FROM cursor_datedata INTO @style,@ordertype,@scidlv,@buyerdlv,@category,@cdcode
-		WHILE @@FETCH_STATUS = 0
-		BEGIN
-			IF @category = 'B'
-				SET @tmpisbulk = 1
-			IF @ordertype = 'SMS'
-				SET @tmpissms = 1
-			IF @scidlv < @sewinginline
-				SET @tmplastmonth = 1
-			IF @scidlv > DATEADD(DAY,-1,@sewingoffline)
-				SET @tmpnextmonth = 1
-			IF @tmpmindlv is null and @category <> 'S'
-				SET @tmpmindlv = @buyerdlv
-			IF @category <> 'S'
-				SET @tmpmindlv = IIF(@tmpmindlv > @buyerdlv,@buyerdlv,@tmpmindlv)
-			IF CHARINDEX(@style,@tmpstyle) <= 0
-				SET @tmpstyle = @tmpstyle + @style + '(' + @cdcode + ');'
-
-			FETCH NEXT FROM cursor_datedata INTO @style,@ordertype,@scidlv,@buyerdlv,@category,@cdcode
-		END
-		CLOSE cursor_datedata
-		DEALLOCATE cursor_datedata
-
-		IF @currentstyle = '' AND @tmpstyle <> ''
-			BEGIN			
-				SET @workhour = null
-				set @Holiday = 0
-				select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-				IF @workhour is null or @Holiday = 1
-					Begin
-						INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
-						SET @tmpinsertfactory = @factory
-						SET @tmpinsertline = @sewingline
-						SET @tmpinsertsewdate = @sewingdate
-					End
-					Else
-					Begin
-						INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine)
-						VALUES (@factory,@sewingline,@tmpstyle,@sewingdate)
-						SET @tmpinsertfactory = @factory
-						SET @tmpinsertline = @sewingline
-						SET @tmpinsertsewdate = @sewingdate
-						SET @tmpisholiday = 0
-						SET @currentstyle = @tmpstyle
-						SET @currentDlv = @tmpmindlv
-					End
-			END
-		ELSE
-			BEGIN
-				IF @currentstyle <> @tmpstyle --換Style群組時
-					BEGIN
-						IF @currentstyle <> '' or @tmpstyle <> '' --若當天皆無排單，則不需要改變下線日期
-							BEGIN
-								--補下線日期
-								UPDATE @tempPintData 
-								SET OffLine = DATEADD(DAY,-1,@sewingdate), IsBulk = @tmpisbulk, IsSMS = @tmpissms, IsLastMonth = @tmplastmonth, IsNextMonth = @tmpnextmonth, MinBuyerDelivery = @tmpmindlv 
-								where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate;
-
-								SET @currentDlv = @tmpmindlv
-								SET @currentlastmonth = @tmplastmonth
-								SET @currentnextmonth = @tmpnextmonth
-								SET @currentissms = @tmpissms
-								SET @currentisbulk = @tmpisbulk
-							END
-						SET @workhour = null
-						set @Holiday = 0
-						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-						IF @workhour is null or @Holiday = 1
-							BEGIN
-								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
-								SET @tmpisholiday = 1
-								IF @tmpisholiday = 1 AND @tmpinsertline = @sewingline
-								    BEGIN
-								    ----補下線日期
-								        UPDATE @tempPintData 
-								        SET OffLine = DATEADD(DAY,-1,@sewingdate), IsBulk = @tmpisbulk, IsSMS = @tmpissms, IsLastMonth = @tmplastmonth, IsNextMonth = @tmpnextmonth, MinBuyerDelivery = @tmpmindlv 
-								        where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate and StyleID <> 'Holiday' ;
-								    END
-
-								SET @tmpinsertfactory = @factory
-								SET @tmpinsertline = @sewingline
-								SET @tmpinsertsewdate = @sewingdate
-								
-							END
-						ELSE
-						BEGIN
-							IF @tmpstyle <> '' --換線後須新增新的資料
-							BEGIN
-								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine) VALUES (@factory,@sewingline,@tmpstyle,@sewingdate);
-								SET @tmpinsertfactory = @factory
-								SET @tmpinsertline = @sewingline
-								SET @tmpinsertsewdate = @sewingdate
-								SET @tmpisholiday = 0
-							END
-						ELSE
-							BEGIN
-								--若為工廠假日則補上資料
-								SET @workhour = null
-								set @Holiday = 0
-								select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-								IF @workhour is null or @Holiday = 1
-									BEGIN
-										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
-										SET @tmpinsertfactory = @factory
-										SET @tmpinsertline = @sewingline
-										SET @tmpinsertsewdate = @sewingdate
-										SET @tmpisholiday = 1
-									END
-							END
-						END
-						SET @currentstyle = @tmpstyle
-					END
-				ELSE
-					BEGIN
-						--若為工廠假日則補上資料
-						SET @workhour = null
-						set @Holiday = 0
-						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
-						IF @workhour is null or @Holiday = 1
-							BEGIN
-								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
-								SET @tmpisholiday = 1
-								IF @tmpisholiday = 1 AND @tmpinsertline = @sewingline
-								    BEGIN
-								    ----補下線日期
-								        UPDATE @tempPintData 
-								        SET OffLine = DATEADD(DAY,-1,@sewingdate), IsBulk = @tmpisbulk, IsSMS = @tmpissms, IsLastMonth = @tmplastmonth, IsNextMonth = @tmpnextmonth, MinBuyerDelivery = @tmpmindlv 
-								        where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate and StyleID <> 'Holiday' ;
-								    END
-
-								SET @tmpinsertfactory = @factory
-								SET @tmpinsertline = @sewingline
-								SET @tmpinsertsewdate = @sewingdate
-								
-							END
-						ELSE
-							BEGIN
-								SET @workhour = null--若為工廠已從假日轉不是假日
-								set @Holiday = 0
-						select @workhour = Hours,@Holiday = Holiday from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = DATEADD(DAY,-1,@sewingdate) and FactoryID = @factory and Hours > 0
-								IF @workhour is null or @Holiday = 1
-									BEGIN
-										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine) VALUES (@factory,@sewingline,@tmpstyle,@sewingdate);
-										SET @tmpinsertfactory = @factory
-										SET @tmpinsertline = @sewingline
-										SET @tmpinsertsewdate = @sewingdate
-										SET @tmpisholiday = 0
-									END
-							END
-					END
-			END
-		--更新同格不同天中最小的Buyer Delivery
-		IF @currentDlv is not null and @tmpmindlv is not null
-			BEGIN
-				SET @currentDlv = IIF(@currentDlv > @tmpmindlv,@tmpmindlv,@currentDlv)
-			END
-
-		--當@currentXXX為False，才根據當天的狀態判別是否更新為True
-		SET @currentisbulk = IIF(@currentisbulk = 0, @tmpisbulk, 1)
-		SET @currentissms = IIF(@currentissms = 0, @tmpissms, 1)
-		SET @currentlastmonth = IIF(@currentlastmonth = 0, @tmplastmonth, 1)
-		SET @currentnextmonth = IIF(@currentnextmonth = 0, @tmpnextmonth, 1)
-
-		SET @_i = @_i + 1
-		SET @sewingdate = DATEADD(DAY,1,@sewingdate) --天數
+	
+	IF @factory <> @beforefactory or @sewingline <> @beforesewingline or @StyleID <> @beforeStyleID
+	Begin
+		INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine,IsLastMonth ,IsNextMonth ,IsBulk ,IsSMS ,MinBuyerDelivery) 
+		VALUES					 (@factory, @sewingline, @StyleID,@date,@date  ,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery);
 	END
-
-	--在每一條Line的最後一個排程補寫入MinDlv,Bulk,SMS,LMonth,NMonth，若格子只有一種Style時，則統一以此線同Style中的MinDlv,Bulk,SMS,LMonth,NMonth為主
-	IF @currentstyle <> ''
-		BEGIN
-			select @tmpprintstyle = StyleID from @tempPintData where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate
-			IF @tmpprintstyle <> 'Holiday'
-				UPDATE @tempPintData 
-				SET IsBulk = @currentisbulk, IsSMS = @currentissms, IsLastMonth = @currentlastmonth, IsNextMonth = @currentnextmonth, MinBuyerDelivery = @currentDlv 
-				where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate;
-		END
-
-	FETCH NEXT FROM cursor_factoryline INTO @factory,@sewingline
+	ELSE
+	Begin
+		update @tempPintData set
+			 OffLine = @date
+			,IsLastMonth = iif(IsLastMonth = 1, IsLastMonth, @IsLastMonth)
+			,IsNextMonth = iif(IsNextMonth = 1, IsNextMonth, @IsNextMonth)
+			,IsBulk = iif(IsBulk = 1, IsBulk, @IsBulk)
+			,IsSMS = iif(IsSMS = 1, IsSMS, @IsSMS)
+			,MinBuyerDelivery = iif(MinBuyerDelivery < @BuyerDelivery,MinBuyerDelivery,@BuyerDelivery)
+		where FactoryID = @factory and SewingLineID = @sewingline and StyleID = @StyleID and OffLine = @beforedate
+	END
+	
+	set @beforefactory = @factory
+	set @beforesewingline = @sewingline
+	set @beforeStyleID = @StyleID
+	set @beforeIsLastMonth = @IsLastMonth
+	set @beforeIsNextMonth = @IsNextMonth
+	set @beforeIsBulk = @IsBulk
+	set @beforeIsSMS = @IsSMS
+	set @beforeBuyerDelivery = @BuyerDelivery
+	set @beforedate = @date
+	FETCH NEXT FROM cursor_sewingschedule INTO @factory,@sewingline,@date,@StyleID,@IsLastMonth,@IsNextMonth,@IsBulk,@IsSMS,@BuyerDelivery
 END
-CLOSE cursor_factoryline
-DEALLOCATE cursor_factoryline
+CLOSE cursor_sewingschedule
+DEALLOCATE cursor_sewingschedule
 
-select * from @tempPintData WHERE StyleID !='' 
-order by FactoryID,SewingLineID,InLine");
+select * from @tempPintData
+
+drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
+                , _startDate.ToString("d"), _startDate.AddMonths(1).ToString("d"), _mDivision, _factory));
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
