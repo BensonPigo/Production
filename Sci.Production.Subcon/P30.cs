@@ -309,7 +309,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     {
                         if (dr["requestid"].ToString() != "")
                         {
-                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '{0}' where id = '{1}'", dr["id"], dr["requestid"]);
+                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '{0}' where id = '{1}'", CurrentMaintain["id"], dr["requestid"]);
                         }
                     }
                 }
@@ -325,7 +325,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                         {
                             sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
                                     "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
-                                    , dr["id"].ToString(), dr["requestid"].ToString(), dr["refno"].ToString(), dr["threadcolorid"].ToString());
+                                    , CurrentMaintain["id"].ToString(), dr["requestid"].ToString(), dr["refno"].ToString(), dr["threadcolorid"].ToString());
                         }
                     }
                 }
