@@ -262,16 +262,21 @@
             this.numWIPRange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WIPRange", true));
             this.numWIPRange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numWIPRange.Location = new System.Drawing.Point(101, 217);
+            this.numWIPRange.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numWIPRange.Name = "numWIPRange";
             this.numWIPRange.NullValue = new decimal(new int[] {
-            0,
+            1,
             0,
             0,
             0});
             this.numWIPRange.Size = new System.Drawing.Size(68, 23);
             this.numWIPRange.TabIndex = 25;
             this.numWIPRange.Value = new decimal(new int[] {
-            0,
+            1,
             0,
             0,
             0});

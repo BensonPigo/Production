@@ -33,6 +33,11 @@ namespace RFID_Monitor_Board_Setup
                 MyUtility.Msg.ErrorBox("<Night Shift Start> can't later than <Night Shift End>");
                 return false;
             }
+            if (MyUtility.Check.Empty(txtSubProcess.Text))
+            {
+                MyUtility.Msg.ErrorBox("SubProcess can't empty");
+                return false;
+            }
             return base.ClickSaveBefore();
         }
         //Factory右鍵與驗證
