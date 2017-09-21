@@ -60,11 +60,11 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.[Mold]
       ,td.[SMV]
       ,td.[OldKey]
-      ,td.[SeamLength]
       ,td.[Ukey] 
       ,o.DescEN as OperationDescEN
       ,td.MtlFactorID
       , m.DescEN
+      ,(isnull(td.Frequency,0) * isnull(td.SeamLength,0)) as ttlSeamLength
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -166,6 +166,7 @@ order by td.Seq", masterID);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
                                     dr["Frequency"] = 1;
+                                    dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                     dr.EndEdit();
                                 }
                             }
@@ -181,6 +182,7 @@ order by td.Seq", masterID);
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
                                 dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
                                 dr["Frequency"] = 1;
+                                dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                 dr.EndEdit();
                             }
                             else
@@ -245,6 +247,7 @@ order by td.Seq", masterID);
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
+                                    dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                                 }
                             }
                             else
@@ -291,6 +294,7 @@ order by td.Seq", masterID);
                             }
                         }
 
+                        dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
                         dr.EndEdit();
                     }
                 }
@@ -431,6 +435,7 @@ order by td.Seq", masterID);
                 }
             };
             #endregion
+           
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -448,7 +453,8 @@ order by td.Seq", masterID);
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
-                .Numeric("SeamLength", header: "Seam length", integer_places: 7, decimal_places: 2, iseditingreadonly: true);
+                .Numeric("SeamLength", header: "Seam length", integer_places: 7, decimal_places: 2, iseditingreadonly: true)
+                .Numeric("ttlSeamLength", header: "ttlSeamLength", integer_places: 10, decimal_places: 2, iseditingreadonly: true);
         }
 
         private void ChangeToEmptyData(DataRow dr)
@@ -882,7 +888,8 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                             iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
                             id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,
-                            round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
+                            round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, o.SeamLength,s.IETMSID,s.IETMSVersion,
+                            (isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength
                             from Style s WITH (NOLOCK) 
                             inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
                             inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
