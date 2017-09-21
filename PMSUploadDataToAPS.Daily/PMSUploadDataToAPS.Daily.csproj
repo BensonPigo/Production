@@ -64,9 +64,6 @@
     <Reference Include="Ict.Win.App">
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
     </Reference>
-    <Reference Include="Ict.Win.Report2010">
-      <HintPath>..\_Dll\Ict.Win.Report2010.dll</HintPath>
-    </Reference>
     <Reference Include="Ict.Win.UI">
       <HintPath>..\_Dll\Ict.Win.UI.dll</HintPath>
     </Reference>

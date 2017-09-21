@@ -4,24 +4,22 @@
 -- Description:	<PMSUploadDataToAPS>
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
---外部傳入M
-@M varchar(10)=''
+
 AS
 BEGIN
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
 	--select出目標table所在位置
 	BEGIN
-		select 
+		select TOP 1
 			@ServerName = [SQLServerName],
 			@DatabaseName = [APSDatabaseName],
 			@loginId = [APSLoginId],
 			@LoginPwd = [APSLoginPwd]
-		from [Production].[dbo].[MDivision]
-		where [ID] = @M
+		from [Production].[dbo].system
 	END
 
 	--若其中一欄位空白則不執行此程式
-	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' or @M =''
+	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' 
 	BEGIN
 		PRINT 'Connection information has not set' 
 		RETURN  
@@ -45,40 +43,16 @@ Set @SerDbDboTb = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[OPDWF510
 Declare @cmd varchar(max)
 Declare @cmd2 varchar(max)
 --Update
-set @cmd =N'
-IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
-select t.SONO,s.id,s.Junk,s.FtyGroup,t.NCTR 
-into #tmp
-FROM '+@SerDbDboTb+N' t
-left join (select * from [Production].dbo.[Orders] where MDivisionID = '''+ @M +N''') s
-on t.SONO collate Chinese_Taiwan_Stroke_CI_AS  = s.ID
-	
-Update '+@SerDbDboTb+N'
+set @cmd =N'	
+Update t
 set DELF=''Y'',
 	UPDT= format(GETDATE(),''yyyy-MM-dd'')
+FROM '+@SerDbDboTb+N' t
 where 
-SONO in (
-		select SONO FROM #tmp where id is null
-)
-and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
-	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
-and DELF <> ''Y''
-and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
-Update '+@SerDbDboTb+N'
-set DELF=''Y'',
-UPDT= format(GETDATE(),''yyyy-MM-dd'')
-where 
-SONO in(
-	select SONO from #tmp
-	where id is not null
-	and ((Junk = 1 and FtyGroup = NCTR collate Chinese_Taiwan_Stroke_CI_AS)
-		or (Junk = 0 and FtyGroup != NCTR collate Chinese_Taiwan_Stroke_CI_AS))
-)
-and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
-	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
-and DELF <> ''Y''
-and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
-IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp'
+not exists(select 1 from [Production].dbo.Orders o where t.SONO collate Chinese_Taiwan_Stroke_CI_AS =o.ID and t.NCTR collate Chinese_Taiwan_Stroke_CI_AS = o.FtyGroup)
+and(CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
+or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
+and DELF <> ''Y'''
 -------------------------------------------------第二部分-------------------------------------------------
 set @cmd2 =N'
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
@@ -118,6 +92,9 @@ Select
 ,[sMATERIALRECEIVEDDATE] = IIF(o.MTLETA is null, null, format(o.MTLETA, ''yyyy-MM-dd''))
 ,[sPPRO] = IIF(o.EachConsApv is null, IIF(o.KPIEachConsApprove is null, '''', format(o.KPIEachConsApprove, ''yyyy-MM-dd'')), format(o.EachConsApv, ''yyyy-MM-dd''))
 ,[sPRGM] = PRGM.PRGM
+,o.Junk
+,o.PulloutComplete
+,o.Finished
 into #tmp
 From [Production].dbo.Orders o
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
@@ -180,13 +157,11 @@ outer apply(
 	)
 ) PRGM
 Where 
-( o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+(o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
-and o.MDivisionID = '''+@M+N'''
-and o.PulloutComplete = 0
-and o.Finished = 0
-and o.Junk = 0
+
 IF OBJECT_ID(''tempdb.dbo.#tmp2'', ''U'') IS NOT NULL DROP TABLE #tmp2
+
 select DISTINCT s.*, t.RCID as C
 into #tmp2
 from #tmp s
@@ -194,9 +169,8 @@ left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.s
 
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
 
-Update '+@SerDbDboTb+N'
-set
-	[DELF] = ''N''
+update t set
+	[DELF] = iif(s.Junk = 0,''N'',''Y'')
 	,[SONO] = s.[sSONO]
 	,[LOT] = s.[sLOT]
 	,[CRNM] = s.[sCRNM]
@@ -232,30 +206,26 @@ set
 	,[PPRO] = s.[sPPRO]
 	,[PRGM] = s.[sPRGM]
 	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
-from #tmp2 s
-where 
-RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
-and RCID collate Chinese_Taiwan_Stroke_CI_AS in (
-	select sRCID from #tmp2
-	where 
-	C is not null and
-	(DELF !=''N''
-	or DELF is null
-	or isnull(QTYN,0) != isnull(sQTYN,0) 
-	or COTD collate Chinese_Taiwan_Stroke_CI_AS != sCOTD
-	or OTDD collate Chinese_Taiwan_Stroke_CI_AS != sOTDD
-	or AOTT collate Chinese_Taiwan_Stroke_CI_AS != sAOTT
-	or MASTERMATERIALRECEIVEDDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALRECEIVEDDATE
-	or MASTERMATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMASTERMATERIALDATE
-	or MATERIALDATE collate Chinese_Taiwan_Stroke_CI_AS != sMATERIALDATE
+from #tmp2 s,'+@SerDbDboTb+N't
+where C is not null and PulloutComplete = 0 and Finished = 0
+and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
+and (
+	isnull(t.[SONO],'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(s.sSONO,'''')
+	or isnull(QTYN,0) != isnull(sQTYN,0)
+	or isnull(COTD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCOTD,'''')
+	or isnull(OTDD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sOTDD,'''')
+	or isnull(AOTT,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sAOTT,'''')
+	or isnull(MASTERMATERIALRECEIVEDDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALRECEIVEDDATE,'''')
+	or isnull(MASTERMATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALDATE,'''')
+	or isnull(MATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMATERIALDATE,'''')
 	or isnull(GTMH,0) != isnull(sGTMH,0)
-	or PPRO collate Chinese_Taiwan_Stroke_CI_AS != sPPRO 
-	or ODST collate Chinese_Taiwan_Stroke_CI_AS != sODST 
-	or CUSY collate Chinese_Taiwan_Stroke_CI_AS != sCUSY 
-	or SMOD collate Chinese_Taiwan_Stroke_CI_AS != sSMOD 
-	or SHIP collate Chinese_Taiwan_Stroke_CI_AS != sSHIP 
-	or PRGM collate Chinese_Taiwan_Stroke_CI_AS != sPRGM 
-	or REMK collate Chinese_Taiwan_Stroke_CI_AS != sREMK)
+	or isnull(PPRO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPPRO,'''')
+	or isnull(ODST,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sODST,'''')
+	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
+	or isnull(SMOD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSMOD,'''')
+	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
+	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
+	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')
 )
 
 insert into '+@SerDbDboTb+N'
@@ -263,13 +233,21 @@ insert into '+@SerDbDboTb+N'
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
 ,[PPRO],[PRGM],UPDT)
-
 select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCUSY],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
 ,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
 from #tmp2
-where C is null
+where C is null--目標沒有
+
+Update t
+set DELF=''Y'',
+	UPDT= format(GETDATE(),''yyyy-MM-dd'')
+FROM '+@SerDbDboTb+N' t
+where 
+not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID)
+and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -15, GETDATE())
+and DELF <> ''Y''
 
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2
 '
