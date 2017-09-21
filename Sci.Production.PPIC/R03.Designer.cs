@@ -313,6 +313,7 @@
             // checkIncludeHistoryOrder
             // 
             this.checkIncludeHistoryOrder.AutoSize = true;
+            this.checkIncludeHistoryOrder.Checked = true;
             this.checkIncludeHistoryOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkIncludeHistoryOrder.Location = new System.Drawing.Point(13, 430);
             this.checkIncludeHistoryOrder.Name = "checkIncludeHistoryOrder";
@@ -346,6 +347,7 @@
             // checkQtyBDownByShipmode
             // 
             this.checkQtyBDownByShipmode.AutoSize = true;
+            this.checkQtyBDownByShipmode.Checked = true;
             this.checkQtyBDownByShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 514);
             this.checkQtyBDownByShipmode.Name = "checkQtyBDownByShipmode";
