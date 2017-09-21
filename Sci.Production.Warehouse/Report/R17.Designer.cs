@@ -28,19 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelSeqNo = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelLocation = new Sci.Win.UI.Label();
-            this.txtLocation = new Sci.Win.UI.TextBox();
             this.labelStockType = new Sci.Win.UI.Label();
             this.checkBalanceQty = new Sci.Win.UI.CheckBox();
             this.comboStockType = new Sci.Win.UI.ComboBox();
-            this.txtSeq = new Sci.Production.Class.txtSeq();
             this.labelFactory = new Sci.Win.UI.Label();
+            this.txtLocationEnd = new Sci.Production.Class.txtMtlLocation(this.components);
             this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtMtlLocationStart = new Sci.Production.Class.txtMtlLocation(this.components);
+            this.label2 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -81,7 +84,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(8, 12);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -92,7 +94,6 @@
             // 
             // labelSeqNo
             // 
-            this.labelSeqNo.Lines = 0;
             this.labelSeqNo.Location = new System.Drawing.Point(251, 12);
             this.labelSeqNo.Name = "labelSeqNo";
             this.labelSeqNo.Size = new System.Drawing.Size(48, 23);
@@ -102,7 +103,6 @@
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.BackColor = System.Drawing.Color.PaleGreen;
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(8, 44);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -114,7 +114,6 @@
             // labelLocation
             // 
             this.labelLocation.BackColor = System.Drawing.Color.PaleGreen;
-            this.labelLocation.Lines = 0;
             this.labelLocation.Location = new System.Drawing.Point(8, 76);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.RectStyle.Color = System.Drawing.Color.LightSkyBlue;
@@ -123,19 +122,8 @@
             this.labelLocation.Text = "Location";
             this.labelLocation.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtLocation
-            // 
-            this.txtLocation.BackColor = System.Drawing.Color.White;
-            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(100, 76);
-            this.txtLocation.MaxLength = 10;
-            this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(106, 23);
-            this.txtLocation.TabIndex = 3;
-            // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(8, 141);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(89, 23);
@@ -170,6 +158,35 @@
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 5;
             // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(8, 109);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(89, 23);
+            this.labelFactory.TabIndex = 106;
+            this.labelFactory.Text = "Factory";
+            // 
+            // txtLocationEnd
+            // 
+            this.txtLocationEnd.BackColor = System.Drawing.Color.White;
+            this.txtLocationEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocationEnd.Location = new System.Drawing.Point(228, 76);
+            this.txtLocationEnd.Name = "txtLocationEnd";
+            this.txtLocationEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtLocationEnd.StockTypeFilte = "";
+            this.txtLocationEnd.TabIndex = 108;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = true;
+            this.txtfactory.Location = new System.Drawing.Point(100, 109);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 107;
+            // 
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -180,35 +197,42 @@
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
             // 
-            // labelFactory
+            // txtMtlLocationStart
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(8, 109);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(89, 23);
-            this.labelFactory.TabIndex = 106;
-            this.labelFactory.Text = "Factory";
+            this.txtMtlLocationStart.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocationStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocationStart.Location = new System.Drawing.Point(100, 76);
+            this.txtMtlLocationStart.Name = "txtMtlLocationStart";
+            this.txtMtlLocationStart.Size = new System.Drawing.Size(100, 23);
+            this.txtMtlLocationStart.StockTypeFilte = "";
+            this.txtMtlLocationStart.TabIndex = 108;
             // 
-            // txtfactory
+            // label2
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.Location = new System.Drawing.Point(100, 109);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 107;
-            this.txtfactory.IssupportJunk = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(203, 76);
+            this.label2.Name = "label2";
+            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label2.RectStyle.Color = System.Drawing.Color.Transparent;
+            this.label2.RectStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label2.Size = new System.Drawing.Size(22, 23);
+            this.label2.TabIndex = 109;
+            this.label2.Text = "～";
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(559, 237);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtMtlLocationStart);
+            this.Controls.Add(this.txtLocationEnd);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.txtSeq);
             this.Controls.Add(this.comboStockType);
             this.Controls.Add(this.checkBalanceQty);
             this.Controls.Add(this.labelStockType);
-            this.Controls.Add(this.txtLocation);
             this.Controls.Add(this.labelLocation);
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.labelSeqNo);
@@ -226,13 +250,15 @@
             this.Controls.SetChildIndex(this.labelSeqNo, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelLocation, 0);
-            this.Controls.SetChildIndex(this.txtLocation, 0);
             this.Controls.SetChildIndex(this.labelStockType, 0);
             this.Controls.SetChildIndex(this.checkBalanceQty, 0);
             this.Controls.SetChildIndex(this.comboStockType, 0);
             this.Controls.SetChildIndex(this.txtSeq, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.txtLocationEnd, 0);
+            this.Controls.SetChildIndex(this.txtMtlLocationStart, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,12 +272,14 @@
         private Win.UI.Label labelSeqNo;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.Label labelLocation;
-        private Win.UI.TextBox txtLocation;
         private Win.UI.Label labelStockType;
         private Win.UI.CheckBox checkBalanceQty;
         private Win.UI.ComboBox comboStockType;
         private Class.txtSeq txtSeq;
         private Win.UI.Label labelFactory;
         private Class.txtfactory txtfactory;
+        private Class.txtMtlLocation txtLocationEnd;
+        private Class.txtMtlLocation txtMtlLocationStart;
+        private Win.UI.Label label2;
     }
 }
