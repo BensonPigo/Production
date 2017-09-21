@@ -49,6 +49,9 @@ namespace RFID_Monitor_Board
                 .Numeric("icpq", header: "IN-Cut parts Qty", iseditable: true, decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(6))
                 .Numeric("osq", header: "Out-Set Qty", iseditable: true, decimal_places: 0, integer_places: 10, width: Widths.AnsiChars(6))
                ;
+            this.grid1.Columns["QtySM"].DefaultCellStyle.BackColor = Color.Orange;
+            this.grid1.Columns["icpq"].DefaultCellStyle.BackColor = Color.Orange;
+            this.grid1.Columns["osq"].DefaultCellStyle.BackColor = Color.Red;
         }
 
         DataTable DT;//grid datas
