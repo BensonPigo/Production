@@ -539,7 +539,7 @@ Where   a.ukey = b.workorderukey
             }
             #endregion
 
-            query_cmd = query_cmd + " order by ord.poid,a.estcutdate,b.patternPanel,a.cutno";
+            query_cmd = query_cmd + " order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno";
 
             DualResult query_dResult = DBProxy.Current.Select(null, query_cmd, out CutRefTb);
             if (!query_dResult)
@@ -556,7 +556,7 @@ Where   a.ukey = b.workorderukey
 
             //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
-group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,c.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
+group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,c.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
 order by b.sizecode,b.orderid,c.FabricPanelCode";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
