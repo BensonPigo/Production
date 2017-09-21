@@ -5,6 +5,7 @@
     [FabricCode]   VARCHAR (3)  CONSTRAINT [DF_MNOrder_ColorCombo_FabricCode] DEFAULT ('') NULL,
     [PatternPanel] VARCHAR (2)  CONSTRAINT [DF_MNOrder_ColorCombo_PatternPanel] DEFAULT ('') NULL,
     [FabricPanelCode]   VARCHAR (2)  CONSTRAINT [DF_MNOrder_ColorCombo_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [FabricType] VARCHAR NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_MNOrder_ColorCombo] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [FabricPanelCode] ASC)
 );
 
