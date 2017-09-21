@@ -33,7 +33,11 @@
     [RFIDTable]               VARCHAR (20)   NULL,
     [ProphetSingleSizeDeduct] NUMERIC (3)    NULL,
     [PrintingSuppID]          VARCHAR (8)    NULL,
-    [QCMachineDelayTime]      NUMERIC (2, 1) NULL
+    [QCMachineDelayTime]      NUMERIC (2, 1) NULL, 
+    [APSLoginId] VARCHAR(15) NULL DEFAULT (''), 
+    [APSLoginPwd] VARCHAR(15) NULL DEFAULT (''), 
+    [SQLServerName] VARCHAR(130) NULL DEFAULT (''), 
+    [APSDatabaseName] VARCHAR(15) NULL DEFAULT ('')
 );
 
 
