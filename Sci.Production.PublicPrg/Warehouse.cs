@@ -66,7 +66,7 @@ alter table #Tmp alter column seq2 varchar(3)
 alter table #Tmp alter column stocktype varchar(1)
 
 select poid,seq1,seq2,qty,stocktype
-,[location] = stuff(L.locationid,1,1,'' )
+,[location] = isnull(stuff(L.locationid,1,1,'' ), '')
 from #tmp t
 OUTER APPLY(
 	SELECT locationid=(
