@@ -469,6 +469,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             btnBatchUpdateDellivery.Enabled = this.EditMode;
             #endregion
 
+            detailDt.AcceptChanges();
         }
 
         // detail 新增時設定預設值
