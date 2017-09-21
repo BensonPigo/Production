@@ -50,14 +50,13 @@ from orders a WITH (NOLOCK)
      , po_supp_detail b WITH (NOLOCK) 
 inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
      , po_supp c WITH (NOLOCK) 
-where   b.scirefno = '{0}'
+where   b.refno = '{0}'
         and a.id = b.id
         and a.id = c.id
         and b.seq1 = c.seq1
         and a.WhseClose is null
---and md.mdivisionid='{1}'
 order by ColorID, SizeSpec ,SewinLine
-", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
+", dr["refno"].ToString());
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
             else
