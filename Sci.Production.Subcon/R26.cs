@@ -181,6 +181,7 @@ select  Title1
         ,VatRate
         ,[Grand_Total] = sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
                          + SUM(Amount * VatRate / 100)OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
+        ,ID
 from #temp
 order by to#, Title1, Issue_Date, Delivery, PO, Code
 drop table #temp";
@@ -286,9 +287,10 @@ drop table #tmp;
             }
             else //if (this.comboBox1.Text == "PO Form")
             {
+               
                 #region PO Form
                 result = DBProxy.Current.Select("", @"
-select distinct e.NameEN [Title1] 
+select  e.NameEN [Title1] 
         ,e.AddressEN [Title2]
         ,e.Tel [Title3]
         ,a.LocalSuppID+'-'+d.Abb [To#]
@@ -311,7 +313,7 @@ select distinct e.NameEN [Title1]
         ,a.VatRate [VatRate]
         ,a.Amount+a.Vat [Grand_Total]
         ,format(b.Delivery,'yyyy/MM/dd')[Delivery] 
-		,a.id [id]
+		,a.id [ID]
 		,a.FactoryId [ftyid] 
 		,a.LocalSuppID [lospid] 
 		,a.Category[Category]   
@@ -336,6 +338,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     List<R26_PrintData> data = dt.AsEnumerable()
                         .Select(row1 => new R26_PrintData()
                         {
+                            ID = row1["ID"].ToString().Trim(),
                             PO = row1["PO"].ToString().Trim(),
                             Code = row1["Code"].ToString().Trim(),
                             Color_Shade = row1["Color_Shade"].ToString().Trim(),
