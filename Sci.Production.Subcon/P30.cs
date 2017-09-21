@@ -291,9 +291,12 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 {
                     if (dr.RowState == DataRowState.Deleted)
                     {
-                        sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
+                        if (dr["requestid", DataRowVersion.Original].ToString() != "")
+                        {
+                            sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
                                     "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
-                                    , dr["orderid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
+                                    , dr["requestid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
+                        }
                     }
                 }
             }
@@ -318,9 +321,12 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 {
                     if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
                     {
+                        if (dr["requestid"].ToString() != "")
+                        {
                             sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
                                     "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
-                                    , dr["id"].ToString(), dr["orderid"].ToString(), dr["refno"].ToString(), dr["threadcolorid"].ToString());
+                                    , dr["id"].ToString(), dr["requestid"].ToString(), dr["refno"].ToString(), dr["threadcolorid"].ToString());
+                        }
                     }
                 }
             }
