@@ -625,7 +625,7 @@ Select  a.ThreadColorId
         , a.Article
         , a.ThreadCombId
         , b.OperationId
-        , e.SeamLength
+        , SeamLength = e.SeamLength * b.Frequency
         , a.Seq
         , a.ThreadLocationId
         , a.Refno

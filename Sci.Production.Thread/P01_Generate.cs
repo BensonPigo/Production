@@ -41,10 +41,10 @@ with a as (
     where a.id = b.id and a.styleukey = f.ukey and 
     f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'
 ),b as(
-    Select c.ComboType,seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
+    Select c.ComboType,seq,operationid,annotation,e.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid,d.Frequency
     from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK)  
     join operation e on e.id = d.operationid left join MachineType f on d.MachineTypeID=f.id
-    where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 and f.isThread=1
+    where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 and f.isThread=1
 )
 
 select 0 as sel,a.id,b.*,a.threadcombid
@@ -92,6 +92,7 @@ order by seq"
             .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
             .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
+           .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
             .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
             gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -150,13 +151,13 @@ order by seq"
             }
             //更新ThreadColorComb
             //先準備#source,  id一樣update欄位,沒有的新增,多餘的刪去,再撈出更新後的表身
-            DResult = MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength",
+            DResult = MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength,Frequency",
                                     string.Format(@"
 select id = iif(id = LAG(id,1) over(order by id),'',id),threadcombid,Machinetypeid,styleUkey,Length
 into #source
 from
 (
-    Select id = max(id),threadcombid,Machinetypeid,styleUkey = {0} ,Length = isnull(sum(seamlength),0)
+    Select id = max(id),threadcombid,Machinetypeid,styleUkey = {0} ,Length = isnull(sum(seamlength * Frequency),0)
     from #tmp 
     group by threadcombid,machinetypeid
 )a
@@ -184,19 +185,21 @@ select * from ThreadColorComb where StyleUkey = {0}"
             }
 
             //threadcolorcomb_Operation 其他欄位先用grid上的table組好, 但id要從已經存到DB的ThreadColorComb
-            MyUtility.Tool.ProcessWithDatatable(gridTable3, "operationid,ComboType,SEQ,threadcombid,Machinetypeid",
+        
+
+            MyUtility.Tool.ProcessWithDatatable(gridTable3, "operationid,ComboType,SEQ,threadcombid,Machinetypeid,Frequency",
                                     string.Format(@"
-Select distinct operationid,ComboType,SEQ,threadcombid,Machinetypeid
+Select distinct operationid,ComboType,SEQ,threadcombid,Machinetypeid,Frequency
 into #new
 from #tmp
 --
-insert into threadcolorcomb_Operation
-select t.id,n.operationid,n.ComboType,n.SEQ
+insert into threadcolorcomb_Operation(Id,Operationid,ComboType,Seq,Frequency)
+select t.id,n.operationid,n.ComboType,n.SEQ,n.Frequency
 from #new n inner join ThreadColorComb t on t.threadcombid = n.threadcombid and t.Machinetypeid = n.Machinetypeid
 where t.styleukey = {0}
 
 select tco.* from threadcolorcomb_Operation tco inner join ThreadColorComb t on t.id = tco.Id where  styleukey = {0}"
-                ,styleUkey), out operTable);
+                , styleUkey), out operTable);
 
             //更新ThreadColorComb.ConsPC, 要在更新threadcolorcomb_Operation之後做
             string computeConsPC = string.Format(@"
@@ -204,7 +207,7 @@ update Tcc
 	Set ConsPC = ROUND(ConsPC.ConsPC, 2)
 from ThreadColorComb Tcc
 Outer Apply(
-    Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(MtTr.UseRatioNumeric, 0) + isnull(MtTr.Allowance, 0))
+    Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(TccO.Frequency, 0) * isnull(MtTr.UseRatioNumeric, 0) + isnull(MtTr.Allowance, 0))
     From ThreadColorComb_operation TccO
     left join Operation O on TccO.Operationid = O.ID
     left join MachineType_ThreadRatio MtTr on Tcc.Machinetypeid = MtTr.ID
@@ -270,7 +273,7 @@ select tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorCo
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
             join operation e WITH (NOLOCK) on e.id = d.operationid
-            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.txtMachineType.Text, false, ",");
+            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.txtMachineType.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }

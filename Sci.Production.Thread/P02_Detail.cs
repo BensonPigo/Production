@@ -40,7 +40,7 @@ namespace Sci.Production.Thread
            .Text("ThreadCombid", header: "Thread Comb.", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("Threadcombdesc", header: "Thread Comb Desc", width: Widths.AnsiChars(15), iseditingreadonly: true)
            .Text("Operationid", header: "Operationid", width: Widths.AnsiChars(20), iseditingreadonly: true)
-           .Numeric("Seamlength", header: "Seam Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
+           .Numeric("Seamlength", header: "TTL Seam Length", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, iseditingreadonly: true)
            .Text("SEQ", header: "Thread Location SEQ", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("ThreadLocationid", header: "Thread Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("UseRatioNumeric", header: "UseRatio", width: Widths.AnsiChars(15), iseditingreadonly: true)
