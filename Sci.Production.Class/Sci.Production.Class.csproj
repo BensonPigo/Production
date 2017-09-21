@@ -167,6 +167,12 @@
     <Compile Include="txtLocalSupp.Designer.cs">
       <DependentUpon>txtLocalSupp.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtMtlLocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtMtlLocation.Designer.cs">
+      <DependentUpon>txtMtlLocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtmultifactory.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -457,6 +463,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtLocalSupp.resx">
       <DependentUpon>txtLocalSupp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtMtlLocation.resx">
+      <DependentUpon>txtMtlLocation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtMultiSubcon.resx">
       <DependentUpon>txtMultiSubcon.cs</DependentUpon>
