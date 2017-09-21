@@ -105,7 +105,8 @@ select ART.id
        , A.Stitch
        , A.Unitprice
        , A.Qtygarment
-       , format(A.Amount,'#,###,###,##0.00')Amount
+       , Amount = format(A.Amount,'#,###,###,##0.00')
+       , computeAmount = A.Amount
        , a.PatternDesc
 from DBO.artworkpo ART WITH (NOLOCK) 
 LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
@@ -132,16 +133,7 @@ order by ID", masterData["LocalSuppID"]);
                 string FAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(poqty)", "1=1"));
-                //decimal totalQty = MyUtility.Convert.GetDecimal( MyUtility.GetValue.Lookup(
-                //    string.Format(@"
-                //    select sum(poqty) as TotalQty from(
-                //    select distinct id,poqty from Artworkpo_Detail
-                //    where OrderID like '{0}'
-                //    ) a", orderID.Substring(0, 10) + "%")));
-                decimal TotalAmount = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
-                @"select convert(numeric(12,2),sum(Amount)) totalAmount  
-                from Artworkpo_Detail
-                where OrderID like '{0}'", orderID.Substring(0, 10) + "%")));
+                decimal TotalAmount = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(computeAmount)", ""));
                 decimal GrandTotal = TotalAmount + MyUtility.Convert.GetDecimal(masterData["Vat"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
