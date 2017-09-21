@@ -250,7 +250,7 @@ namespace Sci.Production.Cutting
                 if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and PatternPanel = '{1}'", dr["Ukey"], dr["PatternPanel"]));
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", dr["Ukey"], dr["Fabriccombo"]));
 
                 foreach (DataRow row in ArticleAry)
                 {
@@ -318,7 +318,7 @@ namespace Sci.Production.Cutting
            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
            .Date("estCutdate", header: "Est.CutDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Text("PatternPanel", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+           .Text("Fabriccombo", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true);
             gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -416,7 +416,7 @@ Select  distinct 0 as sel
         , a.cutref
         , ord.poid
         , a.estcutdate
-        , patternPanel = a.Fabriccombo
+        , a.Fabriccombo
         , a.cutno
         , item = ( Select Reason.Name 
                    from   Reason WITH (NOLOCK) 
@@ -442,7 +442,7 @@ Select  distinct 0 as sel
         , b.article
         , a.colorid
         , b.sizecode
-        , PatternPanel= a.Fabriccombo
+        , a.Fabriccombo
 		, c.FabricPanelCode
         , '' as Ratio
         , a.cutno
@@ -827,7 +827,7 @@ AND p.EDITdATE = (
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
             ArticleSizeTb.DefaultView.RowFilter 
-                = string.Format("Ukey ='{0}' and PatternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["PatternPanel"]);
+                = string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]);
             if (ArticleSizeTb.Rows.Count == 0) return;
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
@@ -1346,7 +1346,7 @@ AND p.EDITdATE = (
                 ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
                 GetDate(),'{8}','{9}','{10}','{11}','{12}',
                 '{13}',{14},{15},'{16}','{17}',GetDate(),'{18}')",
-                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["PatternPanel"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
+                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["Fabriccombo"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
                  artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID,artar["FabricPanelCode"]);
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion
