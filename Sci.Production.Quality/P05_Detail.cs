@@ -78,7 +78,7 @@ namespace Sci.Production.Quality
 
         protected override Ict.DualResult OnRequery(out System.Data.DataTable datas)
         {
-      
+
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
@@ -764,7 +764,7 @@ and a.seq1=@seq1";
                         string insCmd = @"
 SET IDENTITY_INSERT oven ON
 insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
-values(@id ,@poid,@testNO,GETDATE(),@Article,'Pass','New',@logid,@remark,@logid,GETDATE())
+values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETDATE())
 SET IDENTITY_INSERT oven off";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
@@ -1079,5 +1079,9 @@ SET IDENTITY_INSERT oven off";
         {
             isModify = true;
         }
+
+
+        
+
     }
 }
