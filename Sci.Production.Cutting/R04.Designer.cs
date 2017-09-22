@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.radioByDetail = new Sci.Win.UI.RadioButton();
+            this.radioByFactory = new Sci.Win.UI.RadioButton();
             this.radioByCutCell = new Sci.Win.UI.RadioButton();
             this.radioByM = new Sci.Win.UI.RadioButton();
             this.comboM = new Sci.Win.UI.ComboBox();
@@ -40,6 +43,7 @@
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.labelReportType = new Sci.Win.UI.Label();
             this.labelCutCell = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
@@ -48,23 +52,25 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(441, 12);
+            this.print.Location = new System.Drawing.Point(460, 12);
             this.print.TabIndex = 1;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(441, 48);
+            this.toexcel.Location = new System.Drawing.Point(460, 48);
             this.toexcel.TabIndex = 2;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(441, 84);
+            this.close.Location = new System.Drawing.Point(460, 84);
             this.close.TabIndex = 3;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.labelEstCutDate);
             this.panel1.Controls.Add(this.radioByDetail);
+            this.panel1.Controls.Add(this.radioByFactory);
             this.panel1.Controls.Add(this.radioByCutCell);
             this.panel1.Controls.Add(this.radioByM);
             this.panel1.Controls.Add(this.comboM);
@@ -74,15 +80,29 @@
             this.panel1.Controls.Add(this.dateEstCutDate);
             this.panel1.Controls.Add(this.labelReportType);
             this.panel1.Controls.Add(this.labelCutCell);
+            this.panel1.Controls.Add(this.labelFactory);
             this.panel1.Controls.Add(this.labelM);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(412, 191);
+            this.panel1.Size = new System.Drawing.Size(418, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(331, 12);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 116;
+            this.comboFactory.Visible = false;
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(11, 43);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(95, 23);
@@ -93,7 +113,7 @@
             // 
             this.radioByDetail.AutoSize = true;
             this.radioByDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioByDetail.Location = new System.Drawing.Point(109, 157);
+            this.radioByDetail.Location = new System.Drawing.Point(109, 184);
             this.radioByDetail.Name = "radioByDetail";
             this.radioByDetail.Size = new System.Drawing.Size(82, 21);
             this.radioByDetail.TabIndex = 6;
@@ -101,11 +121,23 @@
             this.radioByDetail.UseVisualStyleBackColor = true;
             this.radioByDetail.CheckedChanged += new System.EventHandler(this.radioByDetail_CheckedChanged);
             // 
+            // radioByFactory
+            // 
+            this.radioByFactory.AutoSize = true;
+            this.radioByFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByFactory.Location = new System.Drawing.Point(109, 130);
+            this.radioByFactory.Name = "radioByFactory";
+            this.radioByFactory.Size = new System.Drawing.Size(93, 21);
+            this.radioByFactory.TabIndex = 5;
+            this.radioByFactory.Text = "By Factory";
+            this.radioByFactory.UseVisualStyleBackColor = true;
+            this.radioByFactory.CheckedChanged += new System.EventHandler(this.radioByFactory_CheckedChanged);
+            // 
             // radioByCutCell
             // 
             this.radioByCutCell.AutoSize = true;
             this.radioByCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioByCutCell.Location = new System.Drawing.Point(109, 130);
+            this.radioByCutCell.Location = new System.Drawing.Point(109, 157);
             this.radioByCutCell.Name = "radioByCutCell";
             this.radioByCutCell.Size = new System.Drawing.Size(94, 21);
             this.radioByCutCell.TabIndex = 5;
@@ -137,6 +169,7 @@
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 0;
+            this.comboM.TextChanged += new System.EventHandler(this.comboM_TextChanged);
             // 
             // txtCutCellEnd
             // 
@@ -152,7 +185,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(171, 73);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
@@ -184,7 +216,6 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
             this.labelReportType.Location = new System.Drawing.Point(11, 103);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(95, 23);
@@ -193,16 +224,23 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(11, 73);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(95, 23);
             this.labelCutCell.TabIndex = 98;
             this.labelCutCell.Text = "Cut Cell";
             // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(233, 13);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(95, 23);
+            this.labelFactory.TabIndex = 96;
+            this.labelFactory.Text = "Factory";
+            this.labelFactory.Visible = false;
+            // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(11, 13);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(95, 23);
@@ -211,8 +249,7 @@
             // 
             // label4
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(429, 181);
+            this.label4.Location = new System.Drawing.Point(448, 117);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(92, 22);
             this.label4.TabIndex = 96;
@@ -220,7 +257,7 @@
             // 
             // R04
             // 
-            this.ClientSize = new System.Drawing.Size(533, 242);
+            this.ClientSize = new System.Drawing.Size(547, 258);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "comboM";
@@ -255,6 +292,8 @@
         private Win.UI.Label labelM;
         private Win.UI.Label labelEstCutDate;
         private Win.UI.Label label4;
-
+        private Win.UI.RadioButton radioByFactory;
+        private Win.UI.Label labelFactory;
+        private Class.comboFactory comboFactory;
     }
 }
