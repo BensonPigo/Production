@@ -274,17 +274,16 @@ namespace Sci.Production.Quality
             }
             else
             {
-                DualResult dResult;
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@id", CurrentDetailData["ID"].ToString()));
-                if (dResult = DBProxy.Current.Execute(null, @"delete from Oven_Detail where id=@id  delete from Oven where id=@id", spam))
-	            {
-                    MyUtility.Msg.InfoBox("Data has been Delete! ");
-	            }
-                else
-                {
-                    MyUtility.Msg.WarningBox("fail");
+                if (MyUtility.Msg.WarningBox("Do you want to delete the data? \n(No of Test = " + dr["Testno"].ToString() + ")", buttons: MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK) {
+                    DualResult dResult;
+                    List<SqlParameter> spam = new List<SqlParameter>();
+                    spam.Add(new SqlParameter("@id", CurrentDetailData["ID"].ToString()));
+                    if (! DBProxy.Current.Execute(null, @"delete from Oven_Detail where id=@id  delete from Oven where id=@id", spam))
+                    {
+                        MyUtility.Msg.WarningBox("Delete data fail");
+                    }                
                 }
+               
             }
             contextMenuStrip();          
             this.RenewData();
@@ -355,7 +354,7 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
+                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + ((DateTime)dt.Rows[i]["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss");
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
