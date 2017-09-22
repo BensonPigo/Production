@@ -443,7 +443,7 @@ Select  distinct 0 as sel
         , a.colorid
         , b.sizecode
         , a.Fabriccombo
-		, c.FabricPanelCode
+		, a.FabricPanelCode
         , '' as Ratio
         , a.cutno
         , Sewingline = ord.SewLine
@@ -556,8 +556,8 @@ Where   a.ukey = b.workorderukey
 
             //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
-group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,c.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
-order by b.sizecode,b.orderid,c.FabricPanelCode";
+group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,a.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
+order by b.sizecode,b.orderid,a.FabricPanelCode";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
