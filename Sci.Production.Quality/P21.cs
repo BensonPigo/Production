@@ -27,7 +27,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-           this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+           //this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
         protected override void OnFormLoaded()
@@ -63,13 +63,12 @@ namespace Sci.Production.Quality
                 comboResult.DisplayMember = "Value";
                 #endregion
                 DataTable queryDT;
-                string querySql = string.Format(@"
+                string querySql = @"
 select '' FTYGroup
 
 union 
 select distinct FTYGroup 
-from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+from Factory ";
                 DBProxy.Current.Select(null, querySql, out queryDT);
                 MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
                 queryfors.SelectedIndex = 0;
@@ -660,7 +659,7 @@ where a.ID='{0}'",
             }
             DataTable dt;   
             DualResult result;
-            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
+            string sqlcmd = string.Format(@"select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
 where a.ID='{0}'", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
@@ -682,7 +681,8 @@ where a.ID='{0}'", txtSP.Text);
                 {
                     this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
                     this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
-                    this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
+                    //this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
+                    CurrentMaintain["FactoryID"] = dt.Rows[0]["FtyGroup"].ToString();
                     this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
                     this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                 }
