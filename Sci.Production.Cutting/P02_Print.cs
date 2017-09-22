@@ -22,12 +22,13 @@ namespace Sci.Production.Cutting
         int SheetCount = 1;
         DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
         DataRow detDr, OrderDr;
-        public P02_Print(DataRow workorderDr,string poid)
+        int _worktype;
+        public P02_Print(DataRow workorderDr,string poid,int worktype)
         {
             InitializeComponent();
             detDr = workorderDr;
             Poid = poid;
-
+            _worktype = worktype;
             radioByCutRefNo.Checked = true;
             txtCutRefNoStart.Text = detDr["CutRef"].ToString();
             txtCutRefNoEnd.Text = detDr["CutRef"].ToString();
@@ -699,8 +700,11 @@ Cutplanid, str_PIVOT);
 
                 #endregion
 
+
                 string str_PIVOT = "";
                 nSizeColumn = 4;
+                string Pivot_cmd = "";
+                DualResult drwst;
                 foreach (DataRow dr in SizeArry)
                 {
                     str_PIVOT = str_PIVOT + string.Format("[{0}],", dr["SizeCode"].ToString());
@@ -709,15 +713,33 @@ Cutplanid, str_PIVOT);
                     nSizeColumn++;
                 }
                 str_PIVOT = str_PIVOT.Substring(0, str_PIVOT.Length - 1);
-                string Pivot_cmd = string.Format(@"
+
+                if (_worktype == 2)
+                {
+                    Pivot_cmd = string.Format(@"
 Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
 #tmp
-Where Cutref = '{0}'",cutref); 
+Where Cutref = '{0}'", cutref);
+                }
+                else
+                {                    
+                    Pivot_cmd = string.Format(
+@"Select * From
+(
+    Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
+    #tmp
+    Where Cutref = '{0}'
+) as mTb
+Pivot(Sum(TotalQty)
+for SizeCode in ({1})) as pIvT 
+order by Cutno,Colorid", cutref, str_PIVOT);
+                }
+
                 if (CutQtyTb != null)
                 {
                     CutQtyTb.Clear();
                 }
-                DualResult drwst = MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "Cutno,Colorid,SizeCode,Qty,Layer,Cutref,Cons", Pivot_cmd, out CutQtyTb);
+                drwst = MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "Cutno,Colorid,SizeCode,Qty,Layer,Cutref,Cons", Pivot_cmd, out CutQtyTb);
                 if (!drwst)
                 {
                     MyUtility.Msg.ErrorBox("SQL command Pivot_cmd error!");
@@ -740,7 +762,7 @@ Where Cutref = '{0}'",cutref);
                     worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
                     for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
                     {
-                        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr["TotalQty"].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
+                        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[4 + nSizeDetail].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
                     }
                     nrow++;
                     copyrow++;
