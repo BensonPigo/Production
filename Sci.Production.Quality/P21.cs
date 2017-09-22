@@ -27,7 +27,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-           this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+           //this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
         protected override void OnFormLoaded()
@@ -63,13 +63,12 @@ namespace Sci.Production.Quality
                 comboResult.DisplayMember = "Value";
                 #endregion
                 DataTable queryDT;
-                string querySql = string.Format(@"
+                string querySql = @"
 select '' FTYGroup
 
 union 
 select distinct FTYGroup 
-from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+from Factory ";
                 DBProxy.Current.Select(null, querySql, out queryDT);
                 MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
                 queryfors.SelectedIndex = 0;
