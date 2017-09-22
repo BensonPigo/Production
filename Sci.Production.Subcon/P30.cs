@@ -794,6 +794,12 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             string FactoryID = dt.Rows[0]["FactoryID"].ToString().Trim();
             string Tel = dt.Rows[0]["Tel"].ToString().Trim();
             string Address = dt.Rows[0]["Address"].ToString().Trim();
+            decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
+            decimal vat = MyUtility.Convert.GetDecimal(CurrentMaintain["vat"]);
+            string CurrencyID = CurrentMaintain["CurrencyID"].ToString();
+            string vatrate = CurrentMaintain["vatrate"].ToString() + "%";
+            string Remark = CurrentMaintain["remark"].ToString();
+            decimal Total = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
@@ -802,6 +808,12 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
 
             #endregion
             #region  抓表身資料
