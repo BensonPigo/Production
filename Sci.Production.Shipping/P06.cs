@@ -612,22 +612,22 @@ and (Type = 'F' or Type = 'L')", Convert.ToDateTime(CurrentMaintain["PulloutDate
             }
             if (PacklistData != null && PacklistData.Rows.Count > 0)
             {
-                msgString.Append("Packing List ID: ");
-                for (int i = 0; i < PacklistData.Rows.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
-                    }
-                    else
-                    {
-                        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
-                    }
-                }
+                msgString.Append("Packing List ID: "+ string.Join(",", PacklistData.AsEnumerable().Select(row => row["ID"].ToString())));
+                //for (int i = 0; i < PacklistData.Rows.Count; i++)
+                //{
+                //    if (i == 0)
+                //    {
+                //        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
+                //    }
+                //    else
+                //    {
+                //        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
+                //    }
+                //}                
             }
 
-            sqlCmd = string.Format(@"s
-elect distinct p.ShipPlanID
+            sqlCmd = string.Format(@"
+select distinct p.ShipPlanID
 from PackingList p WITH (NOLOCK) 
 left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
 where p.PulloutDate = '{0}' 
@@ -647,18 +647,18 @@ and (s.Status != 'Confirmed' or p.Status = 'New')", Convert.ToDateTime(CurrentMa
                 {
                     msgString.Append("\r\n");
                 }
-                msgString.Append("Ship Plan ID: ");
-                for (int i = 0; i < ShipPlanData.Rows.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
-                    }
-                    else
-                    {
-                        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
-                    }
-                }
+                msgString.Append("Ship Plan ID:" + string.Join(", ", ShipPlanData.AsEnumerable().Select(row => row["ShipPlanID"].ToString())));
+                //for (int i = 0; i < ShipPlanData.Rows.Count; i++)
+                //{
+                //    if (i == 0)
+                //    {
+                //        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
+                //    }
+                //    else
+                //    {
+                //        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
+                //    }
+                //}
             }
 
             if (msgString.Length > 0)
@@ -769,7 +769,7 @@ SummaryData as (
 select  'D' as DataType
         , *
         , 0 as AllShipQty 
-from ShipPlanData
+from AllPackData
 
 union all
 select  'S' as DataType
@@ -813,7 +813,8 @@ from SummaryData
                     {
                         ddr.Delete();
                     }
-
+                    //
+                    updatePackinglist += string.Format(@"Update PackingList set pulloutID = '' where id='{0}'; ", dr["PackingListID"]);
                     #region 判斷 Status
                     #region 合併計算 ShipQty
                     int sumShipQty = 0;
@@ -977,8 +978,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                         ((DataTable)detailgridbs.DataSource).Rows.Add(DetailNewRow);
 
                         #region update PulloutID 到PackingList
-                        updatePackinglist = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
-                        // DBProxy.Current.Execute(null, updatePackinglist);
+                        updatePackinglist += string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", CurrentMaintain["ID"], dr["PackingListID"]);
                         #endregion
 
                         #region 新增資料到Pullout_Detail_Detail
