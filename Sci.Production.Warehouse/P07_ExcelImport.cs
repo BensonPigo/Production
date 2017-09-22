@@ -264,8 +264,8 @@ namespace Sci.Production.Warehouse
                                 newRow["seq2"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
                                 newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
                                 newRow["roll"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C")) ? "" :
-                                    MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Trim().Replace("'", ""), "C");
-                                newRow["dyelot"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C")) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Trim().Replace("'", ""), "C");
+                                    MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Replace("'", "").Trim(), "C");
+                                newRow["dyelot"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C")) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Replace("'", "").Trim(), "C");
                                 newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]], "N");
                                 newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]], "N");
                                 newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
