@@ -370,14 +370,11 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
             {
                 foreach (DataRow dr in dt.Rows)
-                {
-                    if (dr.RowState == DataRowState.Deleted)
+                {                    
+                    if (dr["requestid", DataRowVersion.Original].ToString() != "")
                     {
-                        if (dr["requestid", DataRowVersion.Original].ToString() != "")
-                        {
-                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
-                        }
-                    }
+                        sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
+                    }                    
                 }
             }
             else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
@@ -385,11 +382,11 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 //針對表身資料將ThreadRequisition_Detail.poid塞值
                 foreach (DataRow dr in dt.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
+                    if (dr["requestid", DataRowVersion.Original].ToString() != "")
                     {
                         sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
-                                    "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
-                                    , dr["orderid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
+                                "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
+                                , dr["requestid", DataRowVersion.Original].ToString(), dr["refno", DataRowVersion.Original].ToString(), dr["threadcolorid", DataRowVersion.Original].ToString());
                     }
                 }
             }
