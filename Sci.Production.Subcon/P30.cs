@@ -225,7 +225,7 @@ namespace Sci.Production.Subcon
             DataTable dt = (DataTable)detailgridbs.DataSource;
             foreach (DataRow dr in dt.Rows)
             {
-                if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                if (dr.RowState == DataRowState.Added)
                 {
                     if (dr["requestid"].ToString()!="")
                     {
@@ -246,7 +246,7 @@ namespace Sci.Production.Subcon
             #region 檢查明細requestid是否已有回寫poid
             foreach (DataRow dr in dt.Rows)
             {
-                if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
+                if (dr.RowState == DataRowState.Added)
                 {
 
                     if (dr["requestid"].ToString() != "")
@@ -664,10 +664,10 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)  //3
             .Date("SciDelivery", header: "Sci Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //5
-            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20), settings: ts)    //6
-            .Text("threadColorid", header: "Color Shade", settings: ts2)    //7
+            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20), settings: ts).Get(out col_Ref)    //6
+            .Text("threadColorid", header: "Color Shade", settings: ts2).Get(out col_color)    //7
             .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)   //8
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns)    //9
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns).Get(out col_Qty)    //9
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //10
             .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //11
             .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //12
@@ -688,8 +688,83 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
+            this.detailgrid.RowEnter += detailgrid_RowEnter;
+            change_record();
         }
 
+        Ict.Win.UI.DataGridViewTextBoxColumn col_Ref;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_color;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || EditMode == false) { return; }
+            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null) { return; }
+
+            if (!MyUtility.Check.Empty(data["Requestid"]))
+            {
+                col_Ref.IsEditingReadOnly = true;
+                col_color.IsEditingReadOnly = true;
+                col_Qty.IsEditingReadOnly = true;
+            }
+            else
+            {
+                col_Ref.IsEditingReadOnly = false;
+                col_color.IsEditingReadOnly = false;
+                col_Qty.IsEditingReadOnly = false;
+            }
+
+        }
+
+        private void change_record()
+        {
+            col_Ref.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Requestid"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_color.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Requestid"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_Qty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Requestid"]))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+
+        }
         // import thread or carton request
         private void btnImportThread_Click(object sender, EventArgs e)
         {
