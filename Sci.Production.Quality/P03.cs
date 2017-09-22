@@ -39,7 +39,10 @@ namespace Sci.Production.Quality
             //detailgridmenus =  contextMenuStrip1;
 
             //contextMenuStrip1.VisibleChanged += contextMenuStrip1_VisibleChanged;
+            InsertDetailGridOnDoubleClick =false;
+  
 
+                
         }
 
         override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()

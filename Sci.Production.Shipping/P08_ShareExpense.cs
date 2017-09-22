@@ -622,6 +622,9 @@ on	t.ShippingAPID = s.ShippingAPID
 	and t.InvNo = s.InvNo
 when matched then
 	update set t.Junk = 0
+    ,ShipModeID = '{8}'
+    , GW = {5}
+    , CBM = {6} 
 when not matched then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
 	values ('{0}', '{1}', '{2}', '{3}', '{4}', {5}, {6}, '{7}', '{8}', {9}, '{10}', 0);", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]),
@@ -802,10 +805,10 @@ set s.Junk = 1
 from ShareExpense s
 where s.ShippingAPID = '{0}' and s.InvNo != '' 
 and (
-	s.InvNo not in (select ID from GMTBooking where ID = ShareExpense.InvNo and ID is not null) 
-	and s.InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) 
-	and s.InvNo not in (select ID from FtyExport  where ID = ShareExpense.InvNo and ID is not null)
-	and s.invno not in (select id from Export where id=ShareExpense.InvNo and id is not null)
+	s.InvNo not in (select ID from GMTBooking where ID = s.InvNo and ID is not null) 
+	and s.InvNo not in (select INVNo from PackingList where INVNo = s.InvNo and INVNo is not null) 
+	and s.InvNo not in (select ID from FtyExport  where ID = s.InvNo and ID is not null)
+	and s.invno not in (select id from Export where id=s.InvNo and id is not null)
 )", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)

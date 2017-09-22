@@ -30,8 +30,11 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && 
-                MyUtility.Check.Empty(txtSPNo.Text) && MyUtility.Check.Empty(txtLocation.Text))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) 
+                && MyUtility.Check.Empty(dateSCIDelivery.Value2) 
+                && MyUtility.Check.Empty(txtSPNo.Text) 
+                && MyUtility.Check.Empty(txtMtlLocationStart.Text) 
+                && MyUtility.Check.Empty(txtLocationEnd.Text))
             {
                 MyUtility.Msg.WarningBox("SP#, SCI Delivery, Location can't be empty!!");
                 return false;
@@ -81,17 +84,30 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            String spno = txtSPNo.Text.TrimEnd();
-            String location1 = txtLocation.Text.TrimEnd();
+            string spno = txtSPNo.Text.TrimEnd();
+            string locationStart = txtMtlLocationStart.Text;
+            string locationEnd = txtLocationEnd.Text;          
             string factory = txtfactory.Text;
             bool chkbalance = checkBalanceQty.Checked;
+            string locationFilte = "";
 
-            DualResult result = Result.True;
+            if (locationStart.Empty() == false && locationEnd.Empty() == false)
+            {
+                locationFilte = string.Format("b.mtllocationid between '{0}' and '{1}'", locationStart, locationEnd);
+            } else if (locationStart.Empty() == true && locationEnd.Empty() == false)
+            {
+                locationFilte = locationFilte = string.Format("b.mtllocationid < '{0}'", locationEnd);
+            } else if (locationStart.Empty() == false && locationEnd.Empty() == true)
+            {
+                locationFilte = locationFilte = string.Format("'{0}' < b.mtllocationid", locationStart);
+            }
+
+                DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
             if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))    // SCI Delivery empty
             {
-                if (MyUtility.Check.Empty(location1)) // Location empty
+                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd)) // Location empty
                 {
                     sqlcmd.Append(@"
 select distinct 
@@ -164,6 +180,7 @@ where   1=1");
                 }
                 else
                 {
+
                     sqlcmd.Append(string.Format(@"
 select distinct 
         Factory		= orders.Factoryid,
@@ -194,7 +211,7 @@ inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where   1=1 
-        And b.mtllocationid = '{0}' ", location1));
+        And {0} ", locationFilte));
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@" 
         And a.Poid like '{0}%'", spno));
@@ -237,7 +254,7 @@ where   1=1
             }
             else
             {// 有下sci delivery 條件
-                if (MyUtility.Check.Empty(location1))
+                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd))
                 {
                     sqlcmd.Append(string.Format(@"
 select distinct 
@@ -346,7 +363,7 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 where   1=1
-        And b.mtllocationid = '{0}' ", location1));
+        And {0} ", locationFilte));
 
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
                         sqlcmd.Append(string.Format(@" 
