@@ -2025,7 +2025,9 @@ where w.ID = '{0}'", masterID);
                         MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ1"]) == "" ||
                         MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ2"]) == "")
                     {
-                        Dg.Rows[i - 1].Delete();
+                        //Dg.Rows[i - 1].Delete();
+                        MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
+                        return false;
                     }
                 }
             }
@@ -2040,7 +2042,10 @@ where w.ID = '{0}'", masterID);
                     if (Convert.ToInt32(dr["Qty"]) == 0 || MyUtility.Check.Empty(dr["SizeCode"]))
                     {
                         deledr = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}'", dr["WorkOrderUkey"], dr["NewKey"], dr["SizeCode"]));
-                        if (deledr.Length > 0) deledr[0].Delete();
+                        if (deledr.Length > 0)
+                        {
+                            deledr[0].Delete();
+                        }
                     }
                 }
             }
