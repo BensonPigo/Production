@@ -58,33 +58,56 @@ namespace Sci.Production.Warehouse
             if (radioFabric.Checked)
             {
                 #region FABRIC
-                sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.FabricPanelCode
-                                from Order_FabricCode A WITH (NOLOCK) 
-                                left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
-                                left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
-                                where A.ID='{0}'
-                                order by FabricCode", orderID);
+                sql = string.Format(@"
+
+select  A.PatternPanel 
+		, A.FabricCode 
+		, B.Refno 
+		, C.Description 
+		, A.FabricPanelCode
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
+left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
+left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
+where o.ID = '{0}'
+order by FabricCode", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
 
-                sql = string.Format(@"select distinct Article 
-                                from Order_ColorCombo WITH (NOLOCK) 
-                                where Id='{0}' 
-                                and FabricPanelCode in (select FabricPanelCode from Order_FabricCode WITH (NOLOCK) where ID='{0}')", orderID);
+                sql = string.Format(@"
+select distinct Article 
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join Order_ColorCombo occ WITH (NOLOCK) on allOrder.id = occ.ID
+where o.Id='{0}' 
+	  and FabricPanelCode in (select a.FabricPanelCode 
+	  						  from Orders o WITH (NOLOCK) 
+                              inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+                              inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
+	  						  where o.ID = '{0}')", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
-                sql = string.Format(@"select ColorID , B.Name , FabricPanelCode , Article
-                                from Order_ColorCombo A WITH (NOLOCK) 
-                                left join Color B WITH (NOLOCK) on B.BrandId='{0}' and B.ID=A.ColorID
-                                where A.Id='{1}'
-                                and FabricPanelCode in (
-	                                select A.FabricPanelCode 
-	                                from Order_FabricCode A WITH (NOLOCK) 
-	                                left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
-	                                left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
-	                                where A.ID='{1}'
-                                )"
+                sql = string.Format(@"
+select a.ColorID 
+	   , B.Name 
+	   , a.FabricPanelCode 
+	   , a.Article
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join Order_ColorCombo A WITH (NOLOCK) on allOrder.ID = A.ID
+left join Color B WITH (NOLOCK) on B.BrandId = '{0}' 
+								   and B.ID = A.ColorID
+where o.Id='{1}'
+	  and FabricPanelCode in (select A.FabricPanelCode 
+							  from Orders o WITH (NOLOCK) 
+                              inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+                              inner join Order_FabricCode A WITH (NOLOCK) on allOrder.ID = a.ID
+							  left join Order_BOF B WITH (NOLOCK) on B.Id = A.Id 
+							  										 and B.FabricCode=A.FabricCode
+							  left join Fabric C WITH (NOLOCK) on C.SCIRefno = B.SCIRefno
+							  where o.ID = '{1}')"
                                 , BrandID, orderID);
                 result = DBProxy.Current.Select(null, sql, out dtColor);
                 if (!result) return result;
@@ -97,11 +120,13 @@ namespace Sci.Production.Warehouse
                 sql = string.Format(@"
 select A.Refno, B.Description 
 from Order_BOA A WITH (NOLOCK) 
-inner join Order_Article oa With (NoLock) on a.id = oa.id
+inner join Orders o WITH (NOLOCK) on a.id = o.poid 
+inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
+inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
-where a.Id = '{0}' 
+where o.id = '{0}' 
 	  and oa.Article <> '' 
 	  and occ.ColorId<>''
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=0)
@@ -112,11 +137,13 @@ group by A.Refno, B.Description ", orderID);
                 sql = string.Format(@"
 select distinct oa.article 
 from Order_BOA A WITH (NOLOCK) 
-inner join Order_Article oa With (NoLock) on a.id = oa.id
+inner join Orders o WITH (NOLOCK) on a.id = o.poid 
+inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
+inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
-where a.Id = '{0}' 
+where o.id = '{0}' 
 	  and oa.Article <> '' 
 	  and occ.ColorId<>''
 order by oa.Article", orderID);
@@ -129,13 +156,15 @@ select distinct A.Refno
 	   , ColorId
 	   ,c.Name
 from Order_BOA A WITH (NOLOCK) 
-inner join Order_Article oa With (NoLock) on a.id = oa.id
+inner join Orders o WITH (NOLOCK) on a.id = o.poid 
+inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
+inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 left join Color C WITH (NOLOCK) on C.BrandId = '{1}' 
 							       and C.ID = occ.ColorID
-where A.Id = '{0}' 
+where o.id = '{0}' 
 	  and oa.Article <> '' 
 	  and ColorId <> ''"
                                     , orderID, BrandID);
@@ -154,9 +183,11 @@ where A.Id = '{0}'
                 sql = string.Format(@"
 select distinct ob.Refno
 	   , B.DescDetail
-from Order_BOA ob WITH (NOLOCK)
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join Order_BOA ob WITH (NOLOCK) on allOrder.ID = ob.ID
 left join Fabric B WITH (NOLOCK) on B.SCIRefno = ob.SCIRefno
-where ob.Id='{0}'
+where o.Id='{0}'
 	  and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=1)
 	  and not ob.SuppID = 'fty' 
 	  and not ob.SuppID = 'fty-c'", orderID);
@@ -173,18 +204,27 @@ where ob.Id='{0}'
             else if (radioThread.Checked)
             {
                 #region Thread
-                sql = string.Format(@"select distinct B.Article
-                                    from ThreadRequisition_Detail A WITH (NOLOCK) 
-                                    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}' and article<>''", POID);
+                sql = string.Format(@"
+select distinct B.Article
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
+where o.iD = '{0}' 
+	  and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
-                sql = string.Format(@"select B.Article, A.ThreadColorID
-                                    from ThreadRequisition_Detail A WITH (NOLOCK) 
-                                    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}' and article<>''
-                                    group by article, threadcolorid", POID);
+                sql = string.Format(@"
+select B.Article
+	   , A.ThreadColorID
+from Orders o WITH (NOLOCK) 
+inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
+inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
+where o.ID = '{0}' 
+	  and article<>''
+group by article, threadcolorid", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
                 #endregion
