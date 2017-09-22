@@ -51,9 +51,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -85,9 +82,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -119,9 +113,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -155,9 +146,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -191,9 +179,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -227,9 +212,6 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -464,7 +446,7 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="SP">
+                    <Textbox Name="SP1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -480,7 +462,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>SP</rd:DefaultName>
+                      <rd:DefaultName>SP1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -495,7 +477,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Refno">
+                    <Textbox Name="Refno2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -511,7 +493,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Refno</rd:DefaultName>
+                      <rd:DefaultName>Refno2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -623,7 +605,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Amount2">
+                    <Textbox Name="Amount1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -641,7 +623,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Amount2</rd:DefaultName>
+                      <rd:DefaultName>Amount1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -661,7 +643,7 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Delivery1">
+                    <Textbox Name="Delivery">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -677,7 +659,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Delivery1</rd:DefaultName>
+                      <rd:DefaultName>Delivery</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -692,7 +674,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Description1">
+                    <Textbox Name="Description">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -708,7 +690,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Description1</rd:DefaultName>
+                      <rd:DefaultName>Description</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -719,42 +701,14 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
+                <TablixCell />
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox63">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontSize>8pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox63</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Unit1">
+                    <Textbox Name="Unit">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -772,7 +726,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Unit1</rd:DefaultName>
+                      <rd:DefaultName>Unit</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -787,7 +741,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox67">
+                    <Textbox Name="UPrice">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -803,7 +757,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox67</rd:DefaultName>
+                      <rd:DefaultName>UPrice</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -818,7 +772,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox68">
+                    <Textbox Name="Amount">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -836,7 +790,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox68</rd:DefaultName>
+                      <rd:DefaultName>Amount</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
