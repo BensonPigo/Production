@@ -1477,41 +1477,37 @@ where w.ID = '{0}'", masterID);
             int order_EachConsTemp;
             if (CurrentDetailData["Order_EachConsUkey"] == DBNull.Value)
             {//old rule
-                //order_EachConsTemp = 0;
-                //string selectcondition = string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]);
-                //DataRow[] laydr = layersTb.Select(selectcondition);
-                //if (laydr.Length == 0)
-                //{
-                //    numTotalLayer.Value = 0;
-                //    numBalanceLayer.Value = 0;
-                //}
-                //else
-                //{
-                //    numTotalLayer.Value = sumlayer2;
-                //    numBalanceLayer.Value = sumlayer - sumlayer2;
-                //}
-                numTotalLayer.Value = sumlayer2;
-                numBalanceLayer.Value = sumlayer - sumlayer2;
+                order_EachConsTemp = 0;
+                string selectcondition = string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]);
+                DataRow[] laydr = layersTb.Select(selectcondition);
+                if (laydr.Length == 0)
+                {
+                    numTotalLayer.Value = 0;
+                    numBalanceLayer.Value = 0;
+                }
+                else
+                {
+                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
+                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
+                }
             }
             else
             { //New rule
-                //order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
-                //string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
-                //DataRow[] laydr = layersTb.Select(selectcondition);
-                //if (laydr.Length == 0)
-                //{
-                //    numTotalLayer.Value = 0;
-                //    numBalanceLayer.Value = 0;
-                //}
-                //else
-                //{
-                //    numTotalLayer.Value = sumlayer2;
-                //    numBalanceLayer.Value = sumlayer - sumlayer2;
-                //}
-                numTotalLayer.Value = sumlayer2;
-                numBalanceLayer.Value = sumlayer - sumlayer2;
+                order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
+                string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
+                DataRow[] laydr = layersTb.Select(selectcondition);
+                if (laydr.Length == 0)
+                {
+                    numTotalLayer.Value = 0;
+                    numBalanceLayer.Value = 0;
+                }
+                else
+                {
+                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
+                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
+                }
             }
-            
+
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
             displayEachConsDownloadID.Text = downloadid;
