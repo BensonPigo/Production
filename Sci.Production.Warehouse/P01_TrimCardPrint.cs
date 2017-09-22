@@ -99,7 +99,7 @@ select A.Refno, B.Description
 from Order_BOA A WITH (NOLOCK) 
 inner join Order_Article oa With (NoLock) on a.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
-												and a.PatternPanel = occ.PatternPanel
+												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where a.Id = '{0}' 
 	  and oa.Article <> '' 
@@ -114,7 +114,7 @@ select distinct oa.article
 from Order_BOA A WITH (NOLOCK) 
 inner join Order_Article oa With (NoLock) on a.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
-												and a.PatternPanel = occ.PatternPanel
+												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where a.Id = '{0}' 
 	  and oa.Article <> '' 
@@ -131,7 +131,7 @@ select distinct A.Refno
 from Order_BOA A WITH (NOLOCK) 
 inner join Order_Article oa With (NoLock) on a.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
-												and a.PatternPanel = occ.PatternPanel
+												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 left join Color C WITH (NOLOCK) on C.BrandId = '{1}' 
 							       and C.ID = occ.ColorID
