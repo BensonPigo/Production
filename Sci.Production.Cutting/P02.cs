@@ -2242,12 +2242,12 @@ where w.ID = '{0}'", masterID);
             Sci.Production.Cutting.P02_Print callNextForm;
             if (drTEMP != null)
             {
-                callNextForm = new P02_Print(drTEMP, CurrentMaintain["ID"].ToString());
+                callNextForm = new P02_Print(drTEMP, CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(CurrentMaintain["WorkType"]));
                 callNextForm.ShowDialog(this);
             }
             else if (drTEMP == null && CurrentDetailData != null)
             {
-                callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+                callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(CurrentMaintain["WorkType"]));
                 callNextForm.ShowDialog(this);
             }
             else

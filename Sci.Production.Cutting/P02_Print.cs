@@ -22,12 +22,13 @@ namespace Sci.Production.Cutting
         int SheetCount = 1;
         DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
         DataRow detDr, OrderDr;
-        public P02_Print(DataRow workorderDr,string poid)
+        int _worktype;
+        public P02_Print(DataRow workorderDr,string poid,int worktype)
         {
             InitializeComponent();
             detDr = workorderDr;
             Poid = poid;
-
+            _worktype = worktype;
             radioByCutRefNo.Checked = true;
             txtCutRefNoStart.Text = detDr["CutRef"].ToString();
             txtCutRefNoEnd.Text = detDr["CutRef"].ToString();
@@ -699,8 +700,17 @@ Cutplanid, str_PIVOT);
 
                 #endregion
 
+
                 string str_PIVOT = "";
                 nSizeColumn = 4;
+                if (_worktype == 1)
+                {
+
+                }
+                else
+                {
+
+                }
                 foreach (DataRow dr in SizeArry)
                 {
                     str_PIVOT = str_PIVOT + string.Format("[{0}],", dr["SizeCode"].ToString());
