@@ -1443,24 +1443,34 @@ where w.ID = '{0}'", masterID);
             #region Total Dist
             totalDisQty();
             #endregion
-
+            
             int sumlayer = 0;
+            int sumlayer2 = 0;
+
             if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
             {
                 DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
-
+                DataRow[] B = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
                 foreach (DataRow l in AA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+                foreach (DataRow l in B)
+                {
+                    sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
             else
             {
                 DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-
+                DataRow[] B = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
                 foreach (DataRow l in AA)
                 {
                     sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+                foreach (DataRow l in B)
+                {
+                    sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
                 }
             }
 
@@ -1497,7 +1507,7 @@ where w.ID = '{0}'", masterID);
                     numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
-            
+
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
             displayEachConsDownloadID.Text = downloadid;
