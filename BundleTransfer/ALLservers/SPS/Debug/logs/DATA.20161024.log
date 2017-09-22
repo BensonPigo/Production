@@ -1,0 +1,542 @@
+﻿[2016/10/24 12:13:35.383][3] ***** ***** ***** [2016/10/24 11:08:23.499] ***** ***** *****
+[2016/10/24 12:13:35.412][3] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+
+USE master
+if db_id('Trade_To_Pms') is not null
+BEGIN
+    ALTER DATABASE Trade_To_Pms SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    execute sp_detach_db 'Trade_To_Pms' ;  -- 卸載SQL實體檔案
+END
+
+exec sp_attach_db N'Trade_To_Pms', N'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms.mdf'
+
+System.Data.SqlClient.SqlException (0x80131904): Unable to open the physical file "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)".
+Changed database context to 'master'.
+File activation failure. The physical file name "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf" may be incorrect.
+New log file 'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms_log.ldf' was created.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteNonQueryTds(String methodName, Boolean async, Int32 timeout)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:85ac29cc-9958-4a0b-8f70-881941acc90c
+[2016/10/24 12:13:36.649][3] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+-- =============================================
+-- Author:		<Willy S01910>
+-- Create date: <2016/08/19>
+-- Description:	<import debit>
+-- =============================================
+CREATE PROCEDURE [dbo].[imp_Debit]
+
+AS
+BEGIN
+
+declare @Sayfty table(id varchar(10)) --�u�t�N�X
+insert @Sayfty select id from Production.dbo.Factory
+
+	declare @Tdebit table(id varchar(13),isinsert bit)
+
+	--Merge update Production.Debit
+	Merge Production.dbo.Debit as t
+	Using (select * from Trade_To_Pms.dbo.Debit where BrandID in (select id from @Sayfty ) )as s
+	on t.id = s.id
+	when matched and (s.sysdate <> t.sysdate or t.EditDate <> s.EditDate) then
+		update set 
+		t.TransidSettle = s.TransidSettle ,
+		t.EditName = s.EditName,
+		t.EditDate = s.EditDate,
+		t.SysDate = s.SysDate
+	when not matched by target then 	
+		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,  Subject,  Handle,  SMR,  VoucherID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,  Lock,  Lockdate,  OldAmount,  Type,  ShareFob,  TransidFactory,  TransidSettle,  IsSubcon,  LCLName,  LCLCurrency,  LCLAmount,  LCLRate,  AddName,  AddDate,  EditName,  EditDate,  SysDate)
+		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.TransidFactory,s.TransidSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SysDate)
+		output inserted.id,iif(deleted.id='',1,0) into @Tdebit ;
+
+
+
+	Merge Production.dbo.Debit_Detail as t
+	Using (select * from  Trade_To_Pms.dbo.debit_detail where id in (select id from @Tdebit where isinsert=1))as s
+	on t.ukey =s.ukey
+	when not matched by target then
+		insert(ID,ORDERID,REASONID,Description,PRICE,Amount,UnitID,SOURCEID,QTY)
+		values(s.ID,s.ORDERID,s.REASONID,s.Description,s.PRICE,s.Amount,s.UnitID,s.SOURCEID,s.QTY );
+
+declare @tLocalDebit table (id varchar(13),isinsert bit)
+
+	Merge Production.dbo.LocalDebit as t
+	using (Select * from Trade_To_Pms.dbo.debit where id in (select id from @Tdebit where isinsert=1)) as s
+	on t.id = s.id
+	when not matched by target and s.IsSubcon = 1 then
+		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status])
+		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New' )
+		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
+
+
+	Merge Production.dbo.LocalDebit_Detail as t
+	using( select a.*,b.adddate as add1 from Trade_To_Pms.dbo.debit_detail a
+	inner join Trade_To_Pms.dbo.debit b on a.id=b.id
+	 where a.id in (select id from @tLocalDebit where isinsert=1)) as s
+	on t.ukey=s.ukey
+	when not matched by target then
+		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName)
+		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS');
+
+
+END
+
+
+
+
+
+System.Data.SqlClient.SqlException (0x80131904): Invalid column name 'TransidFactory'.
+Invalid column name 'TransidSettle'.
+Invalid column name 'TransidSettle'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteNonQueryTds(String methodName, Boolean async, Int32 timeout)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:85ac29cc-9958-4a0b-8f70-881941acc90c
+[2016/10/24 12:13:36.952][3] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+
+-- =============================================
+-- Author:		LEO
+-- Create date: 20160903
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[imp_Invadj]
+	-- Add the parameters for the stored procedure here
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+--  Invadj1    invadjust
+--PMS�h,[OrderShipmodeSeq]
+--      ,[MDivisionID]
+
+-------------------------- INSERT INTO ��
+INSERT INTO Production.dbo.InvAdjust(
+        ID
+      ,IssueDate
+      ,REASON
+      ,GarmentInvoiceID
+      ,OrderID
+      ,PullDate
+      ,Ukey_Pullout
+      ,BrandID
+      ,FactoryID
+      ,ARVoucherID
+      ,VoucherID
+      ,Status
+      ,OrigPulloutQty
+      ,OrigPrice
+      ,OrigPulloutAmt
+      ,OrigSurcharge
+      ,OrigAddCharge
+      ,OrigCommission
+      ,OrigDocFee
+      ,AdjustPulloutQty
+      ,AdjustPulloutAmt
+      ,AdjustSurcharge
+      ,AdjustAddCharge
+      ,AdjustCommission
+      ,AdjustDocFee
+      ,AddName
+      ,AddDate
+      ,Eeit_Name
+      ,EditDate
+      ,PriceCheckID
+
+)
+select 
+        ID
+      ,IssueDate
+      ,REASON
+      ,GarmentInvoiceID
+      ,OrderID
+      ,PullDate
+      ,PulloutUkey
+      ,BrandID
+      ,FactoryID
+      ,ARVoucherID
+      ,VoucherID
+      ,Status
+      ,OrigPulloutQty
+      ,OrigPrice
+      ,OrigPulloutAmt
+      ,OrigSurcharge
+      ,OrigAddCharge
+      ,OrigCommission
+      ,OrigDocFee
+      ,AdjustPulloutQty
+      ,AdjustPulloutAmt
+      ,AdjustSurcharge
+      ,AdjustAddCharge
+      ,AdjustCommission
+      ,AdjustDocFee
+      ,AddName
+      ,AddDate
+      ,Eeit_Name
+      ,EditDate
+      ,PriceCheckID
+
+from Trade_To_Pms.dbo.InvAdjust as b
+where not exists(select id from Production.dbo.InvAdjust as a where a.id = b.id)
+
+--InvAdjust_Qty
+--PMS�h
+--,[Pullout3Qty]
+-------------------------- INSERT INTO ��
+INSERT INTO Production.dbo.InvAdjust_Qty(
+      ID
+      ,Article
+      ,SizeCode
+      ,OrderQty
+      ,OrigQty
+      ,AdjustQty
+      ,Price
+      ,NewItem
+      ,DiffQty
+)
+select 
+     b.ID
+      ,b.Article
+      ,b.SizeCode
+      ,b.OrderQty
+      ,b.OrigQty
+      ,b.AdjustQty
+      ,b.Price
+      ,b.NewItem
+      ,b.DiffQty
+from Trade_To_Pms.dbo.InvAdjust_Qty as b inner join Trade_To_Pms.dbo.InvAdjust as c on b.ID=c.ID 
+where not exists(select id from Production.dbo.InvAdjust_Qty as a where a.id = b.id and a.Article=b.Article and a.SizeCode = b.SizeCode)
+
+--pullout2
+--select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID
+
+
+--SELECT sum(DiffQty) FROM  Production.dbo.InvAdjust_Qty A inner join Production.dbo.InvAdjust B ON  A.ID = B.ID
+
+SELECT MAX(PulloutDate) as PulloutDate --,a.ID
+INTO #TMPPullout2Cdate
+FROM  Production.dbo.Pullout_Detail A
+inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID AND ShipQty <> 0
+
+
+UPDATE a
+SET  
+Status = 'C'
+from  Production.dbo.Pullout_Detail as a 
+inner join #TMPPullout2Cdate as b ON a.PulloutDate=b.PulloutDate
+inner join Trade_To_Pms.dbo.InvAdjust c ON  A.OrderID = c.OrderID
+where b.PulloutDate is not null
+
+
+UPDATE a
+
+SET  
+ a.ActPulloutDate = (select IIF(PulloutDate is null,(select PullDate from Trade_To_Pms.dbo.InvAdjust b where a.ID=b.ID),PulloutDate) from #TMPPullout2Cdate)
+,a.PulloutComplete = 1
+,a.MDClose = getdate()
+
+from Production.dbo.Orders as a 
+--inner join Trade_To_Pms.dbo.TTTTTTTTTTTTTTTTTTTTT as b ON a.id=b.id
+where a.Qty = (select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID)
++(SELECT sum(DiffQty) FROM  Production.dbo.InvAdjust_Qty A inner join Production.dbo.InvAdjust B ON  A.ID = B.ID)
+and a.PulloutComplete = 0
+
+
+
+drop table #TMPPullout2Cdate
+
+
+
+
+
+
+
+
+END
+
+
+
+
+
+System.Data.SqlClient.SqlException (0x80131904): Invalid column name 'PulloutUkey'.
+Invalid column name 'Eeit_Name'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteNonQueryTds(String methodName, Boolean async, Int32 timeout)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:85ac29cc-9958-4a0b-8f70-881941acc90c
+[2016/10/24 12:13:38.183][12] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_Invadj
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 2812
+Error Severity:16
+Error State:62
+Error Proc:
+Error Line:4
+Error Msg:Could not find stored procedure 'imp_Invadj'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:86cd9f8c-9ddf-45b4-8fab-efcd66e29e3b
+[2016/10/24 12:13:38.251][20] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_debit
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 2812
+Error Severity:16
+Error State:62
+Error Proc:
+Error Line:4
+Error Msg:Could not find stored procedure 'imp_debit'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:65754dc9-70a1-4040-8f20-7203e5ef8174
+[2016/10/24 12:13:38.259][19] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_Inv
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 208
+Error Severity:16
+Error State:1
+Error Proc:imp_Inv
+Error Line:18
+Error Msg:Invalid object name 'Trade_To_Pms.dbo.Inventory'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:f4d1b825-48d1-4dea-8a48-387cfae7e01e
+[2016/10/24 12:13:59.470][20] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_part
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 8672
+Error Severity:16
+Error State:1
+Error Proc:imp_part
+Error Line:11
+Error Msg:The MERGE statement attempted to UPDATE or DELETE the same row more than once. This happens when a target row matches more than one source row. A MERGE statement cannot UPDATE/DELETE the same row of the target table multiple times. Refine the ON clause to ensure a target row matches at most one source row, or use the GROUP BY clause to group the source rows.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:91e8d1b4-ac8f-4683-a29b-36741fe4f9e7
+[2016/10/24 12:14:39.026][17] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_export
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 512
+Error Severity:16
+Error State:1
+Error Proc:imp_Export
+Error Line:31
+Error Msg:Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:bebba8c1-e78a-43c1-a146-0f77ea6e7662
+[2016/10/24 12:15:26.212][15] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_Style
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 2627
+Error Severity:14
+Error State:1
+Error Proc:imp_Style
+Error Line:25
+Error Msg:Violation of PRIMARY KEY constraint 'PK_Style'. Cannot insert duplicate key in object 'dbo.Style'. The duplicate key value is (11750262, EB, 17SS).
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:b61e10b5-304b-498f-bb36-656989867299
+[2016/10/24 12:33:34.426][20] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_Order
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 2627
+Error Severity:14
+Error State:1
+Error Proc:imp_Order
+Error Line:490
+Error Msg:Violation of PRIMARY KEY constraint 'PK_Order_SizeSpec'. Cannot insert duplicate key in object 'dbo.Order_SizeSpec'. The duplicate key value is (14021875GM, Z01, ).
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1152
+ClientConnectionId:cc5c6fb1-d57b-4fd9-adf2-3e83eedbed3b

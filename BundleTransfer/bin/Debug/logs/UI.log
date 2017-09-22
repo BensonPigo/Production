@@ -1,0 +1,48 @@
+﻿[2017/09/08 17:17:52.221] [8] ***** ***** ***** [2017/09/08 17:17:10.875] ***** ***** *****
+[2017/09/08 17:17:52.221] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:17:52.842] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  (bin) Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:24:02.468] [9] ***** ***** ***** [2017/09/08 17:17:56.665] ***** ***** *****
+[2017/09/08 17:24:02.468] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  BundleTransfer[Main] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:24:02.576] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  (bin) BundleTransfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:24:03.514] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/09/08 17:24:05.766] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  非同步 - []。
+[2017/09/08 17:24:05.799] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01..ctor  aysnc template:'Ict.Win.Asyncs.Simple01T',delay:1000。
+[2017/09/08 17:24:05.800] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  開始開啟非同步視窗 - topmost:False。
+[2017/09/08 17:24:05.810] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:24:05.826] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:26:05.508] [9] ***** ***** ***** [2017/09/08 17:24:18.426] ***** ***** *****
+[2017/09/08 17:26:05.508] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  BundleTransfer[Main] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:26:05.611] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  (bin) BundleTransfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:26:06.519] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/09/08 17:26:12.829] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  非同步 - []。
+[2017/09/08 17:26:12.843] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01..ctor  aysnc template:'Ict.Win.Asyncs.Simple01T',delay:1000。
+[2017/09/08 17:26:12.843] [9] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  開始開啟非同步視窗 - topmost:False。
+[2017/09/08 17:26:12.847] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:26:12.850] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:30:11.838] [10] ***** ***** ***** [2017/09/08 17:29:57.785] ***** ***** *****
+[2017/09/08 17:30:11.838] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  BundleTransfer[Main] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:30:11.951] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  (bin) BundleTransfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:30:13.163] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/09/08 17:30:16.294] [10] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  非同步 - []。
+[2017/09/08 17:30:16.319] [10] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01..ctor  aysnc template:'Ict.Win.Asyncs.Simple01T',delay:1000。
+[2017/09/08 17:30:16.320] [10] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Open  開始開啟非同步視窗 - topmost:False。
+[2017/09/08 17:30:16.325] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:30:16.328] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Process[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:30:17.172] [12] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):840
+[2017/09/08 17:30:17.176] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Process[Simple01] - CloseReason:'UserClosing'。
+[2017/09/08 17:30:17.177] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Process[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/09/08 17:30:17.180] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Process[Simple01] - CloseReason:'UserClosing'、
+[2017/09/08 17:30:17.187] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [Error]
+exec [imp_BundleTransfer] error!
+[2017/09/08 17:30:17.236] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Error[Msg] - 開始叫用 OnFormLoaded。
+[2017/09/08 17:30:17.239] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Error[Msg] - 叫用 OnFormLoaded 完成。
+[2017/09/08 17:30:19.303] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]OK
+[2017/09/08 17:30:19.304] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[OK]。
+[2017/09/08 17:30:19.304] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Error[Msg] - CloseReason:'UserClosing'。
+[2017/09/08 17:30:19.305] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Error[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/09/08 17:30:19.305] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]OK
+[2017/09/08 17:30:19.305] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Error[Msg] - CloseReason:'UserClosing'、
+[2017/09/08 17:30:19.317] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]EXECUTE
+[2017/09/08 17:30:20.581] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  (bin) BundleTransfer[Main] - CloseReason:'UserClosing'。
+[2017/09/08 17:30:20.581] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  (bin) BundleTransfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/09/08 17:30:20.583] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  (bin) BundleTransfer[Main] - CloseReason:'UserClosing'、

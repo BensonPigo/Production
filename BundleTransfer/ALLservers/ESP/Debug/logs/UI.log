@@ -1,0 +1,567 @@
+﻿[2017/01/10 10:26:46.273] [9] ***** ***** ***** [2017/01/10 10:26:44.071] ***** ***** *****
+[2017/01/10 10:26:46.273] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:26:46.602] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.GetTableSchema(String connname, String tablename, ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3202
+   於 Sci.Win.Tems.Base.GetWorkTableSchema(ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Win\Tems\Base.cs: 行 656
+   於 Sci.Win.Tems.Input7.Bind() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 179
+   於 Sci.Win.Tems.Input7.ToView() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 219
+   於 Sci.Win.Tems.Input7.OnFormLoaded() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 88
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 46
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   於 System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions)
+   於 System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:370aeaca-2566-4e86-9017-7b8e80ba6521
+[2017/01/10 10:26:46.643] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:26:46.645] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:26:50.079] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/10 10:26:50.162] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/10 10:26:50.163] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/10 10:26:50.163] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:26:50.163] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/10 10:26:50.163] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/10 10:26:50.169] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/10 10:26:50.169] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:26:50.170] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2017/01/10 10:26:50.197] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1353
+   於 Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1299
+   於 PMSUploadDataToAPS.Daily.Main.OnRequery() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 65
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 48
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:370aeaca-2566-4e86-9017-7b8e80ba6521
+[2017/01/10 10:28:06.864] [10] ***** ***** ***** [2017/01/10 10:28:05.231] ***** ***** *****
+[2017/01/10 10:28:06.864] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:28:07.090] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.GetTableSchema(String connname, String tablename, ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3202
+   於 Sci.Win.Tems.Base.GetWorkTableSchema(ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Win\Tems\Base.cs: 行 656
+   於 Sci.Win.Tems.Input7.Bind() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 179
+   於 Sci.Win.Tems.Input7.ToView() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 219
+   於 Sci.Win.Tems.Input7.OnFormLoaded() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 88
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 46
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   於 System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions)
+   於 System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:6e7adda3-4907-4517-83d7-644473ccd3da
+[2017/01/10 10:28:07.127] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:28:07.128] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:28:14.823] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/10 10:28:14.887] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/10 10:28:14.887] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/10 10:28:14.887] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:28:14.888] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/10 10:28:14.888] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/10 10:28:14.922] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/10 10:28:14.922] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:28:14.923] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2017/01/10 10:28:15.003] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1353
+   於 Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1299
+   於 PMSUploadDataToAPS.Daily.Main.OnRequery() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 65
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 48
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   於 System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions)
+   於 System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:846a300a-393b-459a-bcc6-51309e64382c
+[2017/01/10 10:28:56.569] [10] ***** ***** ***** [2017/01/10 10:28:54.934] ***** ***** *****
+[2017/01/10 10:28:56.569] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:28:56.801] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.GetTableSchema(String connname, String tablename, ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3202
+   於 Sci.Win.Tems.Base.GetWorkTableSchema(ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Win\Tems\Base.cs: 行 656
+   於 Sci.Win.Tems.Input7.Bind() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 179
+   於 Sci.Win.Tems.Input7.ToView() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 219
+   於 Sci.Win.Tems.Input7.OnFormLoaded() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 88
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 46
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   於 System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions)
+   於 System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:50024319-4c19-458a-a902-5c25064f3bf1
+[2017/01/10 10:28:56.840] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:28:56.842] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:29:02.359] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/10 10:29:02.424] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/10 10:29:02.424] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/10 10:29:02.424] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:29:02.424] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/10 10:29:02.425] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/10 10:29:02.458] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/10 10:29:02.458] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:29:02.458] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2017/01/10 10:29:02.526] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+開啟 SqlConnection 時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3553
+   於 Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1353
+   於 Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1299
+   於 PMSUploadDataToAPS.Daily.Main.OnRequery() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 65
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 48
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Login failed for user 'sa'.
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.CompleteLogin(Boolean enlistOK)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   於 System.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   於 System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions)
+   於 System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnectionOptions userOptions)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   於 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   於 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   於 System.Data.SqlClient.SqlConnection.Open()
+   於 Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3546
+ClientConnectionId:6a6c0a09-d6e8-4cf6-8a98-c3acb3174f7d
+[2017/01/10 10:29:22.181] [10] ***** ***** ***** [2017/01/10 10:29:20.585] ***** ***** *****
+[2017/01/10 10:29:22.181] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:29:22.372] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+取得資料庫資料時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.SelectByConn[TABLE](SqlConnection conn, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1582
+   於 Sci.Data.DBProxy.SelectByConn(SqlConnection conn, String cmdtext, DataTable& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1511
+   於 Sci.Data.DBProxy.GetTableSchemaByConn(SqlConnection conn, String tablename, ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3239
+   於 Sci.Data.DBProxy.GetTableSchema(String connname, String tablename, ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 3204
+   於 Sci.Win.Tems.Base.GetWorkTableSchema(ITableSchema& tableschema) 於 D:\System2014\publicclass\Sci\Win\Tems\Base.cs: 行 656
+   於 Sci.Win.Tems.Input7.Bind() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 179
+   於 Sci.Win.Tems.Input7.ToView() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 219
+   於 Sci.Win.Tems.Input7.OnFormLoaded() 於 D:\System2014\publicclass\Sci\Win\Tems\Input7.cs: 行 88
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 46
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'System'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   於 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   於 System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader(CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   於 Sci.Data.DBProxy.SelectByConn[TABLE](SqlConnection conn, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1565
+ClientConnectionId:18c5c25e-ae89-4ebf-9e8b-3ae7b28a04c6
+[2017/01/10 10:29:22.410] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:29:22.411] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:29:29.943] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/10 10:29:30.011] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/10 10:29:30.011] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/10 10:29:30.011] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:29:30.012] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/10 10:29:30.012] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2017/01/10 10:29:30.035] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2017/01/10 10:29:30.035] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:29:30.035] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2017/01/10 10:29:30.075] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+取得資料庫資料時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 763
+   於 Sci.Data.DBProxy.SelectByConn[TABLE](SqlConnection conn, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1582
+   於 Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1355
+   於 Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1299
+   於 PMSUploadDataToAPS.Daily.Main.OnRequery() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 65
+   於 PMSUploadDataToAPS.Daily.Main.OnFormLoaded() 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 48
+   於 Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   於 System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   於 System.Windows.Forms.Control.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Control.WndProc(Message& m)
+   於 System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   於 System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   於 System.Windows.Forms.Form.WmShowWindow(Message& m)
+   於 System.Windows.Forms.Form.WndProc(Message& m)
+   於 Ict.Win.Frms.Base.WndProc(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   於 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   於 System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   於 System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   於 System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   於 System.Windows.Forms.Control.set_Visible(Boolean value)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   於 System.Windows.Forms.Application.Run(Form mainForm)
+   於 PMSUploadDataToAPS.Daily.Program.Main(String[] args) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Program.cs: 行 27
+   於 System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   於 System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   於 Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   於 System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   於 System.Threading.ThreadHelper.ThreadStart()
+
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'dbo.MailTo'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   於 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   於 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   於 System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader(CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   於 System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   於 Sci.Data.DBProxy.SelectByConn[TABLE](SqlConnection conn, String cmdtext, IList`1 parameters, TABLE& datas) 於 D:\System2014\publicclass\Sci\Data\DBProxy.cs: 行 1565
+ClientConnectionId:18c5c25e-ae89-4ebf-9e8b-3ae7b28a04c6
+[2017/01/10 10:38:16.205] [10] ***** ***** ***** [2017/01/10 10:38:14.058] ***** ***** *****
+[2017/01/10 10:38:16.205] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:38:16.493] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:39:10.190] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]EXECUTE
+[2017/01/10 10:39:13.019] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:39:13.023] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:39:43.078] [12] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):30054
+[2017/01/10 10:39:43.081] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2017/01/10 10:39:43.081] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:39:43.082] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2017/01/10 10:39:43.118] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:39:43.155] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2017/01/10 10:39:43.155] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:39:43.155] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:39:43.177] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2017/01/10 10:39:43.183] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+System.Data.SqlClient.SqlException (0x80131904): 已超過連接 Timeout 的設定。在作業完成之前超過逾時等待的時間，或者是伺服器未回應。 ---> System.ComponentModel.Win32Exception (0x80004005): 等候操作已逾時。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 PMSUploadDataToAPS.Daily.Main.AsyncUpdateExport(SqlConnection conn) 於 d:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\Main.cs: 行 178
+ClientConnectionId:3b8ecff0-1375-4ce5-ace0-f0371923facf
+[2017/01/10 10:39:43.216] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2017/01/10 10:39:43.217] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2017/01/10 10:40:24.199] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2017/01/10 10:40:24.262] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2017/01/10 10:40:24.262] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2017/01/10 10:40:24.262] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/01/10 10:40:24.263] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2017/01/10 10:40:24.263] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、

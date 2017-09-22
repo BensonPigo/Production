@@ -626,10 +626,15 @@ Cutplanid, str_PIVOT);
                     size = "";
                     Ratio = "";
                     #region Size,Ratio
-                    foreach (DataRow sizeDr in WorkorderSizeArry)
+                    DataRow[] wtmp = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "SizeCode" }).Select(string.Format("Cutref='{0}'", cutref));
+                    DataRow[] wtmp2 = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "Qty" }).Select(string.Format("Cutref='{0}'", cutref));
+                    foreach (DataRow sDr in wtmp)
                     {
-                        size = size + sizeDr["SizeCode"].ToString() + ",";
-                        Ratio = Ratio + MyUtility.Convert.GetDouble(sizeDr["Qty"]).ToString() + ",";
+                        size = size + sDr["SizeCode"].ToString() + ",";
+                    }
+                    foreach (DataRow sDr in wtmp2)
+                    {
+                        Ratio = Ratio + MyUtility.Convert.GetDouble(sDr["Qty"]).ToString() + ",";
                     }
                     #endregion
                     double unit = Convert.ToDouble(WorkorderArry[0]["yds"]) * 0.9144;
@@ -704,17 +709,10 @@ Cutplanid, str_PIVOT);
                     nSizeColumn++;
                 }
                 str_PIVOT = str_PIVOT.Substring(0, str_PIVOT.Length - 1);
-                string Pivot_cmd = string.Format(
-                @"Select * From
-                (
-                    Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
-                    #tmp
-                    Where Cutref = '{0}'
-                ) as mTb
-                Pivot(Sum(TotalQty)
-                for SizeCode in ({1})) as pIvT 
-                order by Cutno,Colorid",
-cutref, str_PIVOT); 
+                string Pivot_cmd = string.Format(@"
+Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
+#tmp
+Where Cutref = '{0}'",cutref); 
                 if (CutQtyTb != null)
                 {
                     CutQtyTb.Clear();
@@ -742,7 +740,7 @@ cutref, str_PIVOT);
                     worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
                     for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
                     {
-                        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[4 + nSizeDetail].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
+                        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr["TotalQty"].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
                     }
                     nrow++;
                     copyrow++;
