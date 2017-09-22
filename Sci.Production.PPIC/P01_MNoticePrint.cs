@@ -59,7 +59,7 @@ namespace Sci.Production.PPIC
             this.ShowWaitMessage("Data processing, please wait ...");
             if (radioMNotice.Checked == true)
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ordercomboid = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 DataRow drvar = GetTitleDataByCustCD(ordercomboid, _id);
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -163,7 +163,7 @@ namespace Sci.Production.PPIC
              //M/Notict (Combo by ComboID)
             else
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ordercomboid = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 System.Data.DataTable dtOrderCombo = GetDtByComboID(ordercomboid);
 
