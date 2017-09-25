@@ -80,7 +80,7 @@ namespace Sci.Production.Warehouse
 			                                             when 'A'then 'Accessory'
 			                                             else a.FabricType
 			                                             end Material_Type
-			                                       ,a.ColorID [Color]
+			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
 			                                       ,a.SizeSpec [Size]
 			                                       ,h.Currencyid [Currency]
 			                                       ,a.UsedQty [Qty]
