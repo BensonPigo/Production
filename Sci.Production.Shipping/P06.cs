@@ -340,13 +340,16 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                 DualResult failResult = new DualResult(false, "Update orders fail!!\r\n" + result.ToString());
                 return failResult;
             }
-
-            result = DBProxy.Current.Execute(null, updatePackinglist);
-            if (!result)
+            if (updatePackinglist.Trim() !="")
             {
-                DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
-                return failResult;
+                result = DBProxy.Current.Execute(null, updatePackinglist);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
             }
+            
 
 
             return base.ClickSavePost();
