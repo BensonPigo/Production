@@ -64,7 +64,16 @@ namespace Sci.Production.Warehouse
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 //xlt = @"Warehouse_P03_Print-1.xltx";
-                DBProxy.Current.Select("", @"select a.id [sp]
+                //PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
+                DBProxy.Current.Select("", @"with PO_Supp_tmp as (
+                                                 select aa.*,bb.AbbCH from 
+                                                 (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
+                                                 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+                                                 left join dbo.PO_Supp b WITH (NOLOCK) on b.id=a.id and b.SEQ1=a.SEQ1
+                                                 where a.id=@ID ) aa
+                                                 left join dbo.Fabric_Supp bb on bb.SCIRefno = aa.SCIRefno and bb.SuppID = aa.SuppID 
+                                                )
+                                                select a.id [sp]
 			                                       ,b.StyleID [style#]
 			                                       ,a.SEQ1+a.SEQ2 [SEQ]
 			                                       ,c.SuppID [Supp]
@@ -73,7 +82,7 @@ namespace Sci.Production.Warehouse
 			                                       ,substring(convert(varchar,a.RevisedETA, 101),1,5) [RevisedETD]
 		                                           ,a.Refno [Ref#]
                                                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) [Description]
-			                                       ,e.AbbCH [Chinese Abb]
+			                                       ,iif(e.AbbCH is null, j.AbbCH, e.AbbCH) [Chinese Abb]
 			                                       ,f.HsCode [HS Code]
 			                                       ,case a.FabricType 
 			                                             when 'F' then 'Fabric'
@@ -123,6 +132,7 @@ namespace Sci.Production.Warehouse
 			                                left join dbo.Fabric_HsCode f WITH (NOLOCK) on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
+                                            left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
 			                                where a.id=@ID and a.junk=0 ", pars, out dt);			       
           }
           else  
@@ -174,14 +184,15 @@ namespace Sci.Production.Warehouse
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
+          
 
             if (dt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
