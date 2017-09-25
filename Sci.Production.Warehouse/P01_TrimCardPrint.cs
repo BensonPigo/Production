@@ -161,6 +161,7 @@ inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid
 inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
+                                                and oa.Article = occ.Article
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 left join Color C WITH (NOLOCK) on C.BrandId = '{1}' 
 							       and C.ID = occ.ColorID
