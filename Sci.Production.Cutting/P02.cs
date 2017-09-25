@@ -1566,9 +1566,6 @@ where w.ID = '{0}'", masterID);
             DataView dv = ((DataTable)detailgridbs.DataSource).DefaultView;
             switch (sort)
             {
-                case "FabricCombo":
-                    dv.Sort = "SORT_NUM,FabricCombo,multisize,Article,SizeCode,Ukey";
-                    break;
                 case "SP":
                     dv.Sort = "SORT_NUM,Orderid,FabricCombo,Ukey";
                     break;
@@ -1585,7 +1582,7 @@ where w.ID = '{0}'", masterID);
                     dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate,Ukey";
                     break;
                 default:
-                    dv.Sort = "SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+                    dv.Sort = "SORT_NUM,PatternPanel,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
                     break;
             }
         }
