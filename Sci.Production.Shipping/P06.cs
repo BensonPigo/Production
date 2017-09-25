@@ -340,7 +340,7 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                 DualResult failResult = new DualResult(false, "Update orders fail!!\r\n" + result.ToString());
                 return failResult;
             }
-            if (updatePackinglist.Trim() !="")
+            if (updatePackinglist.Trim() != "")
             {
                 result = DBProxy.Current.Execute(null, updatePackinglist);
                 if (!result)
@@ -349,7 +349,7 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                     return failResult;
                 }
             }
-            
+
 
 
             return base.ClickSavePost();
@@ -593,7 +593,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             callNextForm.ShowDialog(this);
         }
 
-        string updatePackinglist ="";
+        string updatePackinglist = "";
         //Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
         {
@@ -910,34 +910,34 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     DataRow[] NewPackData = AllPackData.Select(string.Format("DataType = 'D' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                     if (NewPackData.Length > 0)
                     {
-
                         GetSubDetailDatas(dr, out SubDetailData);
-                        foreach (DataRow drd in SubDetailData.Rows)
-                        {
-                            drd.Delete();
-                        }
-                        //SubDetailData.Clear();
 
                         foreach (DataRow ddr in NewPackData)
                         {
                             //DataRow[] CurrentPulloutData = SubDetailData.Select(string.Format("ID = '{0}' and Pullout_DetailUkey = '{1}' and OrderID = '{2}' and Article ='{3}'", MyUtility.Convert.GetString(ddr["PackingListID"]), MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["OrderShipmodeSeq"])));
-                            
-                            if (dr.RowState == DataRowState.Unchanged)
-                            {
-                                dr["StatusExp"] = GetStatusName(newStatus);
-                            }
 
-                            #region 新增一筆資料到Pullout_Detail_Detail
-                            DataRow ndr = SubDetailData.NewRow();
-                            ndr["ID"] = CurrentMaintain["ID"];
-                            ndr["Pullout_DetailUKey"] = dr["UKey"];
-                            ndr["OrderID"] = dr["OrderID"];
-                            ndr["Article"] = ddr["Article"];
-                            ndr["SizeCode"] = ddr["SizeCode"];
-                            ndr["ShipQty"] = ddr["ShipQty"];
-                            ndr["Qty"] = ddr["SeqQty"];
-                            ndr["Variance"] = MyUtility.Convert.GetInt(ddr["SeqQty"]) - MyUtility.Convert.GetInt(ddr["ShipQty"]);
-                            SubDetailData.Rows.Add(ndr);
+                            DataRow[] P_Detail_detail = SubDetailData.Select(string.Format("ID = '{0}' and OrderID = '{1}' and Article = '{2}' and SizeCode = '{3}' "
+                                , CurrentMaintain["ID"], MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["Article"]), MyUtility.Convert.GetString(ddr["SizeCode"])));
+
+                            if (P_Detail_detail.Length == 0 || MyUtility.Convert.GetInt(P_Detail_detail[0]["ShipQty"] )!= MyUtility.Convert.GetInt(ddr["ShipQty"]))
+                            {
+                                if (dr.RowState == DataRowState.Unchanged)
+                                {
+                                    dr["StatusExp"] = GetStatusName(newStatus);
+                                }
+
+                                #region 新增一筆資料到Pullout_Detail_Detail
+                                DataRow ndr = SubDetailData.NewRow();
+                                ndr["ID"] = CurrentMaintain["ID"];
+                                ndr["Pullout_DetailUKey"] = dr["UKey"];
+                                ndr["OrderID"] = dr["OrderID"];
+                                ndr["Article"] = ddr["Article"];
+                                ndr["SizeCode"] = ddr["SizeCode"];
+                                ndr["ShipQty"] = ddr["ShipQty"];
+                                ndr["Qty"] = ddr["SeqQty"];
+                                ndr["Variance"] = MyUtility.Convert.GetInt(ddr["SeqQty"]) - MyUtility.Convert.GetInt(ddr["ShipQty"]);
+                                SubDetailData.Rows.Add(ndr);
+                            }
                             #endregion
                         }
 
