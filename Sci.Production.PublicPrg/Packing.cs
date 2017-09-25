@@ -1568,7 +1568,7 @@ where   p.ID = '{0}'
             //調整寫法, 只需要多加兩行空白即可
             dataRow = 2 + ctmpc;
             excelRow++;
-
+           
             if (dataRow > 2)
             {
                 for (int i = 3; i < dataRow; i++)
@@ -1579,8 +1579,9 @@ where   p.ID = '{0}'
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
-            worksheet.Cells[excelRow, 3] = SpecialInstruction;
-            
+            //因為SpecialInstruction中有參雜=等特殊字元，在開頭加單引號強迫轉為字串避免<Exception from HRESULT: 0x800A03EC>問題發生
+            worksheet.Cells[excelRow, 3] = "'" + SpecialInstruction;
+
             //Carton Dimension:
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
             
