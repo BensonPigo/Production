@@ -147,7 +147,7 @@ order by os.Seq", masterID);
                         }
                     }
                 };
-         
+
 
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -173,7 +173,7 @@ order by os.Seq", masterID);
             DataTable dr = (DataTable)detailgridbs.DataSource;
             int i = 0;
             foreach (DataRow dr1 in dr.Rows)
-            {             
+            {
 
                 switch (dr1["Status"].ToString().ToUpper())
                 {
@@ -194,7 +194,7 @@ order by os.Seq", masterID);
                         break;
                 }
                 i++;
-                
+
             }
         }
 
@@ -222,7 +222,7 @@ order by os.Seq", masterID);
                 {
                     string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PO", "Pullout", callNextForm.pulloutDate, 2, "Id", null);
                     string insertCmd = string.Format(@"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
-values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword,Sci.Env.User.Factory, Sci.Env.User.UserID);
+values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
@@ -326,7 +326,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                     }
                 }
             }
-            
+
             //將Pullout箱數回寫回Orders.PulloutCTNQty
             string updateCmd = string.Format(@"update Orders set PulloutCTNQty = (select isnull(sum(pd.CTNQty),0)
 								   from PackingList_Detail pd, PackingList p
@@ -334,10 +334,10 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
 								   and pd.ID = p.ID
 								   and p.PulloutID <> '')
 where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
-            result = DBProxy.Current.Execute(null,updateCmd);
+            result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
-                DualResult failResult = new DualResult(false, "Update orders fail!!\r\n"+result.ToString());
+                DualResult failResult = new DualResult(false, "Update orders fail!!\r\n" + result.ToString());
                 return failResult;
             }
 
@@ -416,7 +416,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 objArray[0, 10] = dr["Remark"];
                 objArray[0, 11] = dr["ShipmodeID"];
                 objArray[0, 12] = dr["INVNo"];
-                
+
                 worksheet.Range[String.Format("A{0}:M{0}", rownum)].Value2 = objArray;
             }
             worksheet.Range[String.Format("A5:M{0}", rownum)].Borders.Weight = 2; //1: 虛線, 2:實線, 3:粗體線
@@ -463,9 +463,9 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Details can't empty!!");
                 return;
             }
-            
+
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';",Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             if (!MyUtility.Check.Empty(CurrentMaintain["SendToTPE"]))
             {
                 updateCmds.Add(string.Format(@"insert into Pullout_History(ID, HisType, NewValue, AddName, AddDate) values ('{0}','Status','Confirmed','{1}',GETDATE());",
@@ -477,7 +477,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out PullOrder);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query data fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
                 return;
             }
             foreach (DataRow dr in PullOrder.Rows)
@@ -503,10 +503,10 @@ WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Confirmed fail!!\r\n" + result.ToString());
                 return;
             }
-           
+
         }
 
         //Unconfirm
@@ -571,7 +571,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 return;
             }
 
-          
+
         }
 
         //History
@@ -612,7 +612,7 @@ and (Type = 'F' or Type = 'L')", Convert.ToDateTime(CurrentMaintain["PulloutDate
             }
             if (PacklistData != null && PacklistData.Rows.Count > 0)
             {
-                msgString.Append("Packing List ID: "+ string.Join(",", PacklistData.AsEnumerable().Select(row => row["ID"].ToString())));
+                msgString.Append("Packing List ID: " + string.Join(",", PacklistData.AsEnumerable().Select(row => row["ID"].ToString())));
                 //for (int i = 0; i < PacklistData.Rows.Count; i++)
                 //{
                 //    if (i == 0)
@@ -850,7 +850,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     #region 合併計算 ShipQty
                     int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
                     #endregion
-                    int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);                    
+                    int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);
                     string newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
 
                     //shipQty,OrderQty,InvNo 修改過才會更換資料
@@ -907,36 +907,33 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     DataRow[] NewPackData = AllPackData.Select(string.Format("DataType = 'D' and PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                     if (NewPackData.Length > 0)
                     {
+
+                        GetSubDetailDatas(dr, out SubDetailData);
+                        SubDetailData.Clear();
                         foreach (DataRow ddr in NewPackData)
                         {
                             DataRow[] CurrentPulloutData = ((DataTable)detailgridbs.DataSource).Select(string.Format("PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(ddr["PackingListID"]), MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["OrderShipmodeSeq"])));
-                            //if (CurrentPulloutData.Length <= 0)
-                            //{
-
-                            GetSubDetailDatas(dr, out SubDetailData);
-                            if (SubDetailData.Rows.Count == 0)
+                            
+                            if (dr.RowState == DataRowState.Unchanged)
                             {
-
-                                if (dr.RowState == DataRowState.Unchanged)
-                                {
-                                    dr["StatusExp"] = GetStatusName(newStatus);
-                                }
-
-                                #region 新增一筆資料到Pullout_Detail_Detail
-                                DataRow ndr = SubDetailData.NewRow();
-                                ndr["ID"] = CurrentMaintain["ID"];
-                                ndr["Pullout_DetailUKey"] = dr["UKey"];
-                                ndr["OrderID"] = dr["OrderID"];
-                                ndr["Article"] = ddr["Article"];
-                                ndr["SizeCode"] = ddr["SizeCode"];
-                                ndr["ShipQty"] = ddr["ShipQty"];
-                                ndr["Qty"] = ddr["SeqQty"];
-                                ndr["Variance"] = MyUtility.Convert.GetInt(ddr["SeqQty"]) - MyUtility.Convert.GetInt(ddr["ShipQty"]);
-                                SubDetailData.Rows.Add(ndr);
-                                #endregion
+                                dr["StatusExp"] = GetStatusName(newStatus);
                             }
-                            //}
+
+                            #region 新增一筆資料到Pullout_Detail_Detail
+                            DataRow ndr = SubDetailData.NewRow();
+                            ndr["ID"] = CurrentMaintain["ID"];
+                            ndr["Pullout_DetailUKey"] = dr["UKey"];
+                            ndr["OrderID"] = dr["OrderID"];
+                            ndr["Article"] = ddr["Article"];
+                            ndr["SizeCode"] = ddr["SizeCode"];
+                            ndr["ShipQty"] = ddr["ShipQty"];
+                            ndr["Qty"] = ddr["SeqQty"];
+                            ndr["Variance"] = MyUtility.Convert.GetInt(ddr["SeqQty"]) - MyUtility.Convert.GetInt(ddr["ShipQty"]);
+                            SubDetailData.Rows.Add(ndr);
+                            #endregion
                         }
+
+
                     }
                     #endregion
                 }
@@ -957,7 +954,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     if (PullDetail == null || PullDetail.Length <= 0)
                     {
                         #region 合併計算 ShipQty
-                        int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));                        
+                        int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
                         #endregion
                         int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(dr["AllShipQty"]);
                         string newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
@@ -1014,7 +1011,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             detailgridbs.ResumeBinding();
             this.detailgrid.ValidateControl();
             this.status_Change();
-            
+
 
             return true;
         }
@@ -1032,7 +1029,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             {
                 MyUtility.Msg.InfoBox("Revise completed!");
 
-               // this.grid.ValidateControl();
+                // this.grid.ValidateControl();
                 this.detailgrid.ValidateControl();
 
             }
@@ -1068,7 +1065,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             ReviseRow["OrderID"] = dr["OrderID"];
             ReviseRow["OldShipQty"] = type == "Missing" ? 0 : dr["ShipQty", DataRowVersion.Original];
             ReviseRow["NewShipQty"] = type == "Delete" ? 0 : dr["ShipQty"];
-            ReviseRow["OldStatus"] = type == "Missing" ? "" : dr["Status",DataRowVersion.Original];
+            ReviseRow["OldStatus"] = type == "Missing" ? "" : dr["Status", DataRowVersion.Original];
             ReviseRow["NewStatus"] = dr["Status"];
             ReviseRow["PackingListID"] = dr["PackingListID"];
             ReviseRow["Remark"] = dr["Remark"];
@@ -1078,7 +1075,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             ReviseRow["AddName"] = Sci.Env.User.UserID;
             ReviseRow["AddDate"] = DateTime.Now;
 
-            return DBProxy.Current.Insert(null, revisedTS, ReviseRow);;
+            return DBProxy.Current.Insert(null, revisedTS, ReviseRow); ;
         }
 
         private DualResult WritePulloutReviseDetail(DataRow dr, string identityValue)
