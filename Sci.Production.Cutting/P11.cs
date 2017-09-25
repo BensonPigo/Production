@@ -385,6 +385,11 @@ namespace Sci.Production.Cutting
             gridAllPart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             gridAllPart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             gridAllPart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
+
+            for(int i = 0; i < this.gridAllPart.ColumnCount; i++)
+            {
+                this.gridAllPart.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
             #endregion
         }
 
@@ -465,7 +470,6 @@ Select  distinct 0 as sel
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
-inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
 outer apply (
 	select  a.ArticleGroup
 	from pattern p WITH (NOLOCK)
@@ -681,7 +685,6 @@ AND p.EDITdATE = (
             this.gridCutRef.AutoResizeColumns();
             this.gridArticleSize.AutoResizeColumns();
             this.gridCutpart.AutoResizeColumns();
-            this.gridAllPart.AutoResizeColumns();
 
             this.HideWaitMessage();
         }
