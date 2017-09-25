@@ -320,6 +320,7 @@
             this.SubDetailKeyField2 = "Issue_SummaryUkey";
             this.SubGridAlias = "Issue_Detail";
             this.Text = "P10. Issue Fabric to Cutting Section";
+            this.GridUniqueKey = "poid,scirefno,colorid";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "Issue";
             this.Controls.SetChildIndex(this.tabs, 0);
