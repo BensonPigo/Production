@@ -245,7 +245,7 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(artworktype))
             {
-                sqlCmd.Append(" and artworktype.id = @artworktype");
+                sqlCmd.Append(" and c.id = @artworktype");
             }
 
             sqlCmd.Append(string.Format(@")
