@@ -209,7 +209,7 @@ select distinct B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey=A.Ukey
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
 where o.iD = '{0}' 
 	  and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
@@ -221,7 +221,7 @@ select B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey=A.Ukey
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
 where o.ID = '{0}' 
 	  and article<>''
 group by article, threadcolorid", POID);
