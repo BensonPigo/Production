@@ -910,15 +910,19 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                         foreach (DataRow ddr in NewPackData)
                         {
                             DataRow[] CurrentPulloutData = ((DataTable)detailgridbs.DataSource).Select(string.Format("PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(ddr["PackingListID"]), MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["OrderShipmodeSeq"])));
-                            if (CurrentPulloutData.Length <= 0)
+                            //if (CurrentPulloutData.Length <= 0)
+                            //{
+
+                            GetSubDetailDatas(dr, out SubDetailData);
+                            if (SubDetailData.Rows.Count == 0)
                             {
+
                                 if (dr.RowState == DataRowState.Unchanged)
                                 {
                                     dr["StatusExp"] = GetStatusName(newStatus);
                                 }
 
                                 #region 新增一筆資料到Pullout_Detail_Detail
-                                GetSubDetailDatas(dr, out SubDetailData);
                                 DataRow ndr = SubDetailData.NewRow();
                                 ndr["ID"] = CurrentMaintain["ID"];
                                 ndr["Pullout_DetailUKey"] = dr["UKey"];
@@ -931,6 +935,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                                 SubDetailData.Rows.Add(ndr);
                                 #endregion
                             }
+                            //}
                         }
                     }
                     #endregion
