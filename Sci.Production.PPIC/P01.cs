@@ -433,14 +433,17 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                     }
                 }
 
-                //Buyer Delivery：要先檢查Order_QtyShip是否有資料，若有，就要填入最小的Buyer Deliver
-                DataRow OrderShip;
-                if (MyUtility.Check.Seek(string.Format("select MIN(BuyerDelivery) as BuyerDelivery from Order_QtyShip WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out OrderShip))
+                string strUpd_QtyShip_BuyerDelivery = string.Format(@"
+Update oq
+set oq.BuyerDelivery = '{0}'
+from Order_QtyShip oq WITH (NOLOCK) 
+where oq.Id = '{1}'", Convert.ToDateTime(CurrentMaintain["BuyerDelivery"]).ToString("yyyy/MM/dd")
+                    , MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                DualResult resultUpd = DBProxy.Current.Execute(null, strUpd_QtyShip_BuyerDelivery);
+                if (resultUpd == false)
                 {
-                    if (!MyUtility.Check.Empty(OrderShip["BuyerDelivery"]))
-                    {
-                        CurrentMaintain["BuyerDelivery"] = OrderShip["BuyerDelivery"];
-                    } 
+                    MyUtility.Msg.WarningBox(resultUpd.Description);
+                    return false;
                 }
             }
 
