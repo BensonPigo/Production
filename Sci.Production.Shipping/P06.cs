@@ -593,7 +593,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             callNextForm.ShowDialog(this);
         }
 
-        string updatePackinglist;
+        string updatePackinglist ="";
         //Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
         {
@@ -912,10 +912,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     {
 
                         GetSubDetailDatas(dr, out SubDetailData);
-                        SubDetailData.Clear();
+                        foreach (DataRow drd in SubDetailData.Rows)
+                        {
+                            drd.Delete();
+                        }
+                        //SubDetailData.Clear();
+
                         foreach (DataRow ddr in NewPackData)
                         {
-                            DataRow[] CurrentPulloutData = ((DataTable)detailgridbs.DataSource).Select(string.Format("PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(ddr["PackingListID"]), MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["OrderShipmodeSeq"])));
+                            //DataRow[] CurrentPulloutData = SubDetailData.Select(string.Format("ID = '{0}' and Pullout_DetailUkey = '{1}' and OrderID = '{2}' and Article ='{3}'", MyUtility.Convert.GetString(ddr["PackingListID"]), MyUtility.Convert.GetString(ddr["OrderID"]), MyUtility.Convert.GetString(ddr["OrderShipmodeSeq"])));
                             
                             if (dr.RowState == DataRowState.Unchanged)
                             {
