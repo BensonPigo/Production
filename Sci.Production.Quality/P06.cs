@@ -367,7 +367,12 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
+                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(
+                    MyUtility.Check.Empty(dt.Rows[i]["EditName"].ToString()) ?
+                    dt.Rows[i]["addName"].ToString() : dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + (
+                    MyUtility.Check.Empty(dt.Rows[i]["EditDate"].ToString()) ?
+                    ((DateTime)dt.Rows[i]["addDate"]).ToString("yyyy/MM/dd HH:mm:ss") :
+                    ((DateTime)dt.Rows[i]["EditDate"]).ToString("yyyy/MM/dd HH:mm:ss"));
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
