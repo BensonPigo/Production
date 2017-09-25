@@ -646,34 +646,80 @@ where a.ID='{0}'",
 
         private void txtSP_Validating(object sender, CancelEventArgs e)
         {
+//            if (MyUtility.Check.Empty(this.txtSP.Text))
+//            {
+//                this.txtSP.Text = "";
+//                this.txtStyle.Text = "";
+//                this.txtDestination.Text = "";                
+//                this.txtPO.Text = "";
+//                this.numOrderQty.Text = "0";
+//                this.numSQR.Text = "0";
+//                this.txtSP.Focus();
+//                return;
+//            }
+//            DataTable dt;   
+//            DualResult result;
+//            string sqlcmd = string.Format(@"select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
+//where a.ID='{0}'", txtSP.Text);
+//            result = DBProxy.Current.Select(null, sqlcmd, out dt);
+//            if (result)
+//            {
+//                if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
+//                {
+//                    this.txtSP.Text = "";
+//                    this.txtStyle.Text = "";
+//                    this.txtDestination.Text = "";                    
+//                    this.txtPO.Text = ""; 
+//                    this.numOrderQty.Text = "0";
+//                    this.numSQR.Text = "0";
+//                    this.txtSP.Focus();
+//                    e.Cancel = true;
+//                    MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ", this.txtSP.Text));
+//                    return;
+//                }
+//                else
+//                {
+//                    this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
+//                    this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
+//                    this.txtFactory.Text = dt.Rows[0]["FtyGroup"].ToString();
+//                    this.txtFactory.Text = "test";
+//                    //CurrentMaintain["FactoryID"] = dt.Rows[0]["FtyGroup"].ToString();
+//                    this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
+//                    this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
+//                }
+//            }          
+        }
+
+        private void txtSP_Validated(object sender, EventArgs e)
+        {
             if (MyUtility.Check.Empty(this.txtSP.Text))
             {
                 this.txtSP.Text = "";
                 this.txtStyle.Text = "";
-                this.txtDestination.Text = "";                
+                this.txtDestination.Text = "";
                 this.txtPO.Text = "";
                 this.numOrderQty.Text = "0";
                 this.numSQR.Text = "0";
                 this.txtSP.Focus();
                 return;
             }
-            DataTable dt;   
+            DataTable dt;
             DualResult result;
             string sqlcmd = string.Format(@"select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
 where a.ID='{0}'", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
-                if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
+                if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
                 {
                     this.txtSP.Text = "";
                     this.txtStyle.Text = "";
-                    this.txtDestination.Text = "";                    
-                    this.txtPO.Text = ""; 
+                    this.txtDestination.Text = "";
+                    this.txtPO.Text = "";
                     this.numOrderQty.Text = "0";
                     this.numSQR.Text = "0";
                     this.txtSP.Focus();
-                    e.Cancel = true;
+                    
                     MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ", this.txtSP.Text));
                     return;
                 }
@@ -681,12 +727,11 @@ where a.ID='{0}'", txtSP.Text);
                 {
                     this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
                     this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
-                    //this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
-                    CurrentMaintain["FactoryID"] = dt.Rows[0]["FtyGroup"].ToString();
+                    this.txtFactory.Text = dt.Rows[0]["FtyGroup"].ToString();
                     this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
                     this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                 }
-            }          
+            }
         }
     }
 }
