@@ -378,7 +378,7 @@ namespace Sci.Production.Warehouse
         {
             DataTable dtData;
 
-            string spno = txtSPNo.Text.TrimEnd() + "%";
+            string spno = txtSPNo.Text.TrimEnd();
             #region -- SQL Command --
             string sqlcmd
                 = string.Format(@"
@@ -402,7 +402,7 @@ namespace Sci.Production.Warehouse
             , a.result as [Result] 
 	from dbo.AIR a WITH (NOLOCK) 
     left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
-    where   a.POID LIKE @sp1 
+    where   a.POID = @sp1 
             and a.Result !=''
 ) 
 select *
@@ -534,7 +534,7 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            where orders.id like @sp1 and a.junk <> 'true'
+            where orders.id = @sp1 and a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
             union
@@ -607,7 +607,7 @@ from(
                                             ,1,1,'')
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join Orders o on o.poid = m.poid
-        left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
+        left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid = @sp1  
         left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
@@ -615,7 +615,7 @@ from(
         where   1=1 
                 AND a.id IS NOT NULL 
                 and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
-                and o.id like @sp1
+                and o.id = @sp1
         ) as xxx
     ) as xxx2
 ) as xxx3
