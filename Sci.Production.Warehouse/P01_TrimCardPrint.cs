@@ -209,7 +209,7 @@ select distinct B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.ID = a.orderid
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
 where o.iD = '{0}' 
 	  and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
@@ -221,7 +221,7 @@ select B.Article
 from Orders o WITH (NOLOCK) 
 inner join Orders allOrder With (NoLock) on o.Poid = allOrder.Poid
 inner join ThreadRequisition_Detail A WITH (NOLOCK) on allOrder.id = a.OrderID
-left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
+left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.ThreadRequisition_DetailUkey = A.Ukey
 where o.ID = '{0}' 
 	  and article<>''
 group by article, threadcolorid", POID);
@@ -263,6 +263,7 @@ group by article, threadcolorid", POID);
 
             try
             {
+                int intThreadMaxLength = 0;
                 document.Activate();
                 Word.Tables table = document.Tables;
 
@@ -323,6 +324,30 @@ group by article, threadcolorid", POID);
                     CC = (dtPrint.Rows.Count - 1) / 6 + 1;
                     rC = (dtPrint2.Rows.Count - 1) / 7 + 1;
                     pagecount = CC * rC;
+                }
+                else if (radioThread.Checked)
+                {
+                    DataTable dtMaxLength;
+                    string strDtPrintMaxLengthSQL = @"
+select Max(ColorCount)
+from (
+    select ColorCount = count(1)
+    from #tmp
+    group by Article
+) tmp";
+                    DualResult resultMaxLength = MyUtility.Tool.ProcessWithDatatable(dtPrint, null, strDtPrintMaxLengthSQL, out dtMaxLength);
+                    if (resultMaxLength == false)
+                    {
+                        MyUtility.Msg.WarningBox(resultMaxLength.Description);
+                        return false;
+                    }
+                    else
+                    {
+                        intThreadMaxLength = Convert.ToInt32(dtMaxLength.Rows[0][0]);
+                        CC = (intThreadMaxLength - 1) / 6 + 1;
+                        rC = (dtPrint2.Rows.Count - 1) / 4 + 1;
+                        pagecount = CC * rC;
+                    }
                 }
                 else
                 {
@@ -501,7 +526,7 @@ group by article, threadcolorid", POID);
                 }               
                 else if (radioThread.Checked)
                 {
-                    for (int i = 0; i < dtPrint.Rows.Count; i++)
+                    for (int i = 0; i < intThreadMaxLength; i++)
                     {
                         for (int j = 0; j < rC; j++)
                         {
@@ -546,8 +571,9 @@ group by article, threadcolorid", POID);
             catch (Exception ex)
             {
                 if (null != winword)
-                    winword.Quit();                
-                return new DualResult(false, "Export word error.", ex);
+                    winword.Quit();
+                MyUtility.Msg.WarningBox(ex.ToString(), "Export word error.");
+                return false;
             }
             finally
             {
