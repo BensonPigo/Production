@@ -105,7 +105,7 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.displayBoxMarkerNo = new Sci.Win.UI.DisplayBox();
+            this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.lbshc = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -1046,7 +1046,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.displayBoxMarkerNo);
+            this.splitContainer1.Panel1.Controls.Add(this.txtBoxMarkerNo);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
@@ -1097,14 +1097,15 @@
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 61;
             // 
-            // displayBoxMarkerNo
+            // txtBoxMarkerNo
             // 
-            this.displayBoxMarkerNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
-            this.displayBoxMarkerNo.Name = "displayBoxMarkerNo";
-            this.displayBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
-            this.displayBoxMarkerNo.TabIndex = 62;
+            this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
+            this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
+            this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
+            this.txtBoxMarkerNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
+            this.txtBoxMarkerNo.TabIndex = 63;
             // 
             // label1
             // 
@@ -1250,6 +1251,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label lbshc;
         private Win.UI.Label label1;
-        private Win.UI.DisplayBox displayBoxMarkerNo;
+        private Win.UI.TextBox txtBoxMarkerNo;
     }
 }
