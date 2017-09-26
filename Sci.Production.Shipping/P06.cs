@@ -518,7 +518,7 @@ FROM   pullout_detail pd,
 WHERE  pd.orderid = orders.id 
     AND pd.id = p.id 
     AND p.status = 'Confirmed'), 
-pulloutcomplete = Iif((SELECT Count(p.id) 
+pulloutcomplete = Iif((SELECT iif(pd.status = 'S',1, Count(p.id))
 FROM   pullout_detail pd, 
         pullout p 
 WHERE  pd.orderid = orders.id 
@@ -862,8 +862,17 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                                                               , dr["OrderID"]);
                     int allShipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(strAllShipQty));
                     int totalShipQty = sumShipQty + allShipQty;
-                    #endregion                
-                    string newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
+                    #endregion
+
+                    string newStatus = "";
+                    if (dr["Status"].ToString().ToUpper() == "SHORTAGE" || dr["Status"].ToString().ToUpper() == "S")
+                    {
+                        newStatus = "S";
+                    }
+                    else
+                    {
+                        newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
+                    }
                     #endregion
 
                     dr["ShipQty"] = 0;
@@ -879,8 +888,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
                     #endregion
                     int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);
-                    string newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
-
+                    string newStatus = "";
+                    if (dr["Status"].ToString().ToUpper() == "SHORTAGE"|| dr["Status"].ToString().ToUpper() == "S")
+                    {
+                        newStatus = "S";
+                    }
+                    else
+                    {
+                        newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
+                    }
                     //shipQty,OrderQty,InvNo 修改過才會更換資料
                     if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
                     {
