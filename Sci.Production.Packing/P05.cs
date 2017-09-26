@@ -234,7 +234,7 @@ where   ID = @orderid
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
       from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
@@ -271,7 +271,7 @@ where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString())
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
       from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString());
@@ -328,7 +328,7 @@ where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShi
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
       from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 left join Orders o WITH (NOLOCK) on o.ID = '{0}'
@@ -371,7 +371,7 @@ from (
             , isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
     from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
 	where oqd.Id = '{0}'
 	and oqd.Seq = '{1}'
 ) a
@@ -740,7 +740,7 @@ where InvA.OrderID = '{0}'
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
       from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
