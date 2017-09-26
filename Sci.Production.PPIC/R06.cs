@@ -38,9 +38,9 @@ namespace Sci.Production.PPIC
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(textSPStart.Text.Trim()) && MyUtility.Check.Empty(textSPEnd.Text.Trim()))
             {
-                MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
+                MyUtility.Msg.WarningBox("[SP#] and [SCI Delivery] can't all empty!!");
                 return false;
             }
             if (!MyUtility.Check.Empty(textSPStart.Text.Trim()) && MyUtility.Check.Empty(textSPEnd.Text.Trim()))
