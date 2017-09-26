@@ -153,8 +153,21 @@ order by oa.Article", orderID);
                 sql = string.Format(@"
 select distinct A.Refno
 	   , oa.article 
-	   , ColorId
-	   ,c.Name
+	   , ColorId = dbo.GetColorMultipleID('{1}', occ.ColorID)
+	   , Name = stuff((select '/' + x.Name
+					   from (
+					        select mc.Name, m.Seqno
+					        from dbo.Color as c
+					        inner join dbo.Color_multiple as m on m.ID = c.ID 
+				  				  						     and m.BrandID = c.BrandId
+					        inner join dbo.Color mc on m.ColorID = mc.ID 
+                                                       and m.BrandID = mc.BrandId
+					        where c.BrandId = '{1}'
+						          and c.ID = occ.ColorID 
+					   ) x			   
+					   order by Seqno
+					   for xml path('')) 
+			          , 1, 1, '')
 from Order_BOA A WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on a.id = o.poid 
 inner join Orders allOrder WITH (NOLOCK) on o.poid = allOrder.poid 
@@ -162,8 +175,6 @@ inner join Order_Article oa With (NoLock) on allOrder.id = oa.id
 inner join Order_ColorCombo occ With(NoLock) on a.id = occ.Id
 												and a.FabricPanelCode = occ.FabricPanelCode
 left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
-left join Color C WITH (NOLOCK) on C.BrandId = '{1}' 
-							       and C.ID = occ.ColorID
 where o.id = '{0}' 
 	  and oa.Article <> '' 
 	  and ColorId <> ''"

@@ -83,7 +83,8 @@ AND p.EDITdATE = (
             {
                 string size_cmd = string.Format(@"
 Select b.sizecode,isnull(sum(b.Qty),0)  as Qty 
-from Workorder a WITH (NOLOCK) inner join Workorder_distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
+from Workorder a WITH (NOLOCK) 
+inner join Workorder_distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
 where a.cutref='{0}' and b.orderid='{1}'
 group by sizeCode"
                     , maindr["cutref"], maindr["Orderid"]);

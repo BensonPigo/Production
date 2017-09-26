@@ -172,12 +172,10 @@ namespace Sci.Production.Warehouse
 	select  a.Id
 	        , a.Poid
             , a.SCIRefno
-	        , t.Refno
+	        , f.Refno
 	        , a.Qty
 	        , a.Colorid
-	        , a.SizeSpec
---,[arqty] = isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid = a.poid),0.00)
-	        , [description] = dbo.getmtldesc(a.poid, a.seq1, a.seq2, 2, 0)
+	        , [description] = f.DescDetail
 	        , [requestqty] = isnull((select sum(cons) 
 		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
 		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
@@ -186,50 +184,52 @@ namespace Sci.Production.Warehouse
                                     from Issue c WITH (NOLOCK) 
                                     inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
                                     where   a.poid = b.poid 
+                                            and a.SCIRefno = b.SCIRefno 
+                                            and a.Colorid = b.Colorid 
                                             and c.CutplanID = '{1}' 
-                                            and t.SCIRefno = b.SCIRefno 
-                                            and t.Colorid = b.Colorid 
                                             and c.status='Confirmed'
                                             and c.id != '{0}')
                                     , 0.00)
 	        , a.Ukey
-            , a.seq1
-            , a.seq2
-            , t.POUnit as unit
+            , unit = (select top 1 StockUnit 
+                      from Po_Supp_Detail psd 
+                      where psd.Id = a.Poid
+                            and psd.SciRefno = a.SciRefno)
+            , NetQty = isnull(NetQty.value, 0)
 	from dbo.Issue_Summary a WITH (NOLOCK) 
-    Left join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
+    left join Fabric f on a.SciRefno = f.SciRefno
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from  PO_Supp_Detail psd WITH (NOLOCK) 
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid = ''
+              and a.Poid = psd.ID
+              and a.SciRefno = psd.SciRefno
+              and a.ColorID = psd.ColorID
+              and psd.FabricType = 'F'
+    ) Normal
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from  PO_Supp_Detail psd WITH (NOLOCK) 
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid != ''
+              and a.Poid = psd.ID
+              and a.SciRefno = psd.SciRefno
+              and a.ColorID = psd.ColorID
+              and psd.FabricType = 'F'
+    ) NonNormal
+    outer apply (
+        select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
+    ) NetQty
 	Where a.id = '{0}'
-), 
-NetQty as (
-    select  a.NETQty
-            , a.ID
-            , a.SEQ1
-            , a.SEQ2
-            , a.SCIRefno
-            , a.ColorID
-	        , [Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
-    --,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
-	from PO_Supp_Detail a WITH (NOLOCK) 
-	left join Issue_Summary b WITH (NOLOCK) on  a.ID=b.Poid and a.seq1 = b.seq1 and a.seq2 = b.seq2
-	left join PO_Supp c WITH (NOLOCK) on c.id = a.ID and c.SEQ1 = a.SEQ1
-	where   1=1 
-	        and a.seq1 = (select min(seq1) 
-                          from dbo.PO_Supp_Detail WITH (NOLOCK) 
-                          where  id = b.Poid 
-                                 and seq1 = b.seq1 
-                                 and seq2 = b.seq2)
-	        and b.Id='{0}'
-            and a.STOCKPOID =''
-    group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
 )
 select  a.*
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-        , [NETQty] = isnull(b.NETQty,0)
         , tmpQty.arqty 
         , tmpQty.aiqqty
         , tmpQty.arqty -tmpQty.aiqqty as [avqty] 
-from main a              
-left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
+from main a
 outer apply(
     select arqty = a.requestqty 
                     + isnull ((select sum(c.Cons) 
@@ -475,9 +475,7 @@ with main as(
     select poid
            , t.SCIRefno
            , t.ColorID
-           , t.SizeSpec
            , t.Refno
-           , unit = t.POUnit
            , requestqty = sum(cons)
            , qty = 0.00
            , accu_issue = isnull ((select sum(qty) 
@@ -490,46 +488,55 @@ with main as(
                                          and a.status = 'Confirmed'
                                          and a.id != '{1}'), 0.00)
            , id = '{1}'
+           , NetQty = isnull(NetQty.value, 0)
            , [description] = (select DescDetail 
                               from fabric WITH (NOLOCK) 
                               where scirefno = t.scirefno)
-           , t.SEQ1
-           , t.SEQ2
     from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id = c.Poid 
                                                      and t.seq1 = c.seq1 
                                                      and t.seq2 = c.Seq2
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
+        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
+                                                       and psd.seq1 = cdc.seq1 
+                                                       and psd.seq2 = cdc.Seq2
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid = ''
+			  and cdc.ID = c.ID
+			  and t.SCIRefno = psd.SCIRefno
+			  and t.ColorID = psd.ColorID
+    ) Normal
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
+        inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
+                                                       and psd.seq1 = cdc.seq1 
+                                                       and psd.seq2 = cdc.Seq2
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid != ''
+			  and cdc.ID = c.ID
+			  and t.SCIRefno = psd.SCIRefno
+			  and t.ColorID = psd.ColorID
+    ) NonNormal
+	outer apply (
+		select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
+	) NetQty
     where c.ID = '{0}'
-    group by poid, t.SCIRefno, t.ColorID, t.SizeSpec, t.SEQ1, t.SEQ2, t.POUnit, t.Refno
-),
-NetQty as(
-    select DISTINCT a.NETQty
-           , a.ID
-           , a.SEQ1
-           , a.SEQ2
-           , a.SCIRefno
-           , a.ColorID 
-    from PO_Supp_Detail a WITH (NOLOCK) 
-    left join Issue_Summary b WITH (NOLOCK) on a.seq1 = b.seq1 
-                                               and a.seq2 = b.seq2 
-                                               and a.ID = b.Poid 
-    where a.STOCKPOID =''
-          and a.SEQ1 = (select min(seq1) 
-                        from dbo.PO_Supp_Detail WITH (NOLOCK) 
-                        where id = a.id 
-                              and seq1 = a.SEQ1 
-                              and seq2 = a.seq2)
+    group by poid, t.SCIRefno, t.ColorID, t.Refno, NetQty.value
 )
 select a.*
-       , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
-       , NETQty = isnull(b.NETQty,0)
+       , unit = (select top 1 StockUnit 
+                 from Po_Supp_Detail psd 
+                 where psd.Id = a.Poid
+                       and psd.SciRefno = a.SciRefno)
        , tmpQty.arqty 
        , tmpQty.aiqqty
        , [avqty] = tmpQty.arqty - tmpQty.aiqqty
 from main a 
-left join NetQty b on a.Poid = b.ID 
-                      and a.seq1 = b.seq1 
-                      and a.seq2 = b.seq2
 outer apply(
     select arqty = a.requestqty 
                    + isnull ((select sum(c.Cons) 
@@ -563,8 +570,7 @@ outer apply(
                                       and s.SCIRefno = a.SCIRefno 
                                       and s.Colorid = a.ColorID 
                                       and i.status = 'Confirmed'), 0.00)
-) as tmpQty
-", txtRequest.Text, CurrentMaintain["id"]);
+) as tmpQty", txtRequest.Text, CurrentMaintain["id"]);
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
@@ -727,7 +733,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
-
 
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion

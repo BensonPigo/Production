@@ -380,6 +380,9 @@
     <None Include="XLT\Cutting_R04_Cutting BCS Report ByDetail.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Cutting_R04_Cutting BCSReportByFactory.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_R04_Cutting BCSReportByM.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

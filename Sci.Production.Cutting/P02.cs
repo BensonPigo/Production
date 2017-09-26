@@ -81,7 +81,7 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
             this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "shc", true));
-            this.displayBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerNo", true));
+            this.txtBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerNo", true));
 
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
@@ -1528,6 +1528,8 @@ where w.ID = '{0}'", masterID);
                 txtFabricPanelCode.ReadOnly = false;
                 sizeratioMenuStrip.Enabled = true;
                 distributeMenuStrip.Enabled = true;
+                txtBoxMarkerNo.IsSupportEditMode = true;
+                txtBoxMarkerNo.ReadOnly = false;
             }
             else
             {
@@ -1539,6 +1541,8 @@ where w.ID = '{0}'", masterID);
                 txtFabricPanelCode.ReadOnly = true;
                 sizeratioMenuStrip.Enabled = false;
                 distributeMenuStrip.Enabled = false;
+                txtBoxMarkerNo.IsSupportEditMode = false;
+                txtBoxMarkerNo.ReadOnly = true;
             }
             #endregion
             totalDisQty();
@@ -1566,9 +1570,6 @@ where w.ID = '{0}'", masterID);
             DataView dv = ((DataTable)detailgridbs.DataSource).DefaultView;
             switch (sort)
             {
-                case "FabricCombo":
-                    dv.Sort = "SORT_NUM,FabricCombo,multisize,Article,SizeCode,Ukey";
-                    break;
                 case "SP":
                     dv.Sort = "SORT_NUM,Orderid,FabricCombo,Ukey";
                     break;
@@ -1585,7 +1586,7 @@ where w.ID = '{0}'", masterID);
                     dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate,Ukey";
                     break;
                 default:
-                    dv.Sort = "SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+                    dv.Sort = "SORT_NUM,PatternPanel,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
                     break;
             }
         }
@@ -2209,6 +2210,18 @@ where w.ID = '{0}'", masterID);
             }
             #endregion
 
+            #region 回寫orders CutInLine,CutOffLine
+            string _CutInLine, _CutOffLine;
+            DateTime aa;
+           
+            //aa = Convert.ToDateTime(((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null));
+            _CutInLine = ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null) == DBNull.Value ? "" : Convert.ToDateTime(((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+            _CutOffLine = ((DataTable)detailgridbs.DataSource).Compute("Max(estcutdate)", null) == DBNull.Value ? "" : Convert.ToDateTime(((DataTable)detailgridbs.DataSource).Compute("Max(estcutdate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+            updatesql = updatesql + string.Format("Update orders set CutInLine = iif('{0}' = '',null,'{0}'),CutOffLine =  iif('{1}' = '',null,'{1}') where POID = '{2}';", _CutInLine, _CutOffLine, CurrentMaintain["ID"]);
+    
+            #endregion
+
+
             DualResult upResult;
             if (!MyUtility.Check.Empty(delsql))
             {
@@ -2233,6 +2246,8 @@ where w.ID = '{0}'", masterID);
             }
             return base.ClickSavePost();
         }
+
+
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();

@@ -14,7 +14,7 @@ namespace Sci.Production.Cutting
     public partial class R04 : Sci.Win.Tems.PrintForm
     {
         DataTable printData;
-        string WorkOrder,CutCell1,CutCell2;
+        string MDivision, Factory, CutCell1, CutCell2;
         DateTime? Est_CutDate1, Est_CutDate2;
         StringBuilder condition_Est_CutDate = new StringBuilder();
 
@@ -26,6 +26,7 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.setDataSource();
         }
 
         private void radioByM_CheckedChanged(object sender, EventArgs e)
@@ -49,6 +50,24 @@ namespace Sci.Production.Cutting
             }
         }
 
+        private void radioByFactory_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioByFactory.Checked)
+            {
+                this.labelFactory.Visible = true;
+                this.comboFactory.Visible = true;
+            }else
+            {
+                this.labelFactory.Visible = false;
+                this.comboFactory.Visible = false;
+            }
+        }
+
+        private void comboM_TextChanged(object sender, EventArgs e)
+        {
+            comboFactory.setDataSource(this.comboM.Text);
+        }
+
         private void radioByDetail_CheckedChanged(object sender, EventArgs e)
         {
             if (radioByDetail.Checked)
@@ -63,7 +82,8 @@ namespace Sci.Production.Cutting
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            WorkOrder = comboM.Text;
+            MDivision = comboM.Text;
+            Factory = comboFactory.Text;
             Est_CutDate1 = dateEstCutDate.Value1;
             Est_CutDate2 = dateEstCutDate.Value2;
             //CutCell1 = txt_CutCell1.Text;
@@ -134,9 +154,9 @@ outer apply(
 ) as d5
 where 1 = 1 AND wo.EstCutDate is not null
 ");
-                if (!MyUtility.Check.Empty(WorkOrder))
+                if (!MyUtility.Check.Empty(MDivision))
                 {
-                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", WorkOrder));
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
                 }
 
                 sqlCmd.Append(@"
@@ -196,6 +216,127 @@ drop table #tmpWO
             }
             #endregion
 
+            #region radioByFactory
+            if (radioByFactory.Checked)
+            {
+                sqlCmd.Append(string.Format(@"
+create table #dateranges ([EstCutDate] [date])
+declare @startDate date = '{0}' 
+declare @EndDate date = '{1}'
+while @startDate <= @EndDate
+begin
+	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
+end"
+                    , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
+
+                sqlCmd.Append(@"
+select wo.id
+	   , co.Status
+	   , wo.EstCutDate
+	   , wo.mdivisionid
+	   , wo.FactoryID
+	   , co.CDate
+	   , c.Finished
+	   , [ATofCES] = d5.ct
+into #tmpWO
+from WorkOrder WO
+left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
+INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+
+outer apply(	
+	select Count(co5.ID) as ct 
+	from CuttingOutput co5 WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
+	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
+	where 1=1
+		and co5.Status != 'New' 
+		and co5.CDate = wo.EstCutDate
+		and co5.CDate < w5.EstCutDate
+		and w5.EstCutDate > wo.EstCutDate
+		and co5.MDivisionId = WO.mdivisionid
+        and co5.FactoryId = WO.FactoryId
+) as d5
+where 1 = 1 AND wo.EstCutDate is not null
+");
+                if (!MyUtility.Check.Empty(MDivision))
+                {
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
+                }
+
+                if (!MyUtility.Check.Empty(Factory))
+                {
+                    sqlCmd.Append(string.Format(" and wo.FactoryID = '{0}' ", Factory));
+                }
+
+                sqlCmd.Append(@"
+select 
+	[Date] = dr.EstCutDate,
+	[M] = m.MDivisionId,
+    [Factory] = m.FactoryID,
+	[Estimate Total# of Cuttings on schedule] = d1.ct,
+	[Estimate Total# of Backlog] = d2.ct, 
+	[Estimate Total# of Cuttings (C+D)] = d1.ct + d2.ct,
+	[Actual Total# of Cuttings on schedule] = d3.ct,
+	[Actual Total# of Backlog] = d4.ct,
+	[Actual Total# of Cutting early schedule] = isnull(d5.ct,0),
+	[Actual Total# of Cuttings (F+G+H)]= d3.ct+d4.ct+isnull(d5.ct,0),
+	[BCS Rating % (F+G) / E] = iif(d1.ct+d2.ct = 0, 0, (Round( 100*CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3)))
+from #DateRanges as dr 
+outer apply(
+	select distinct wo.MDivisionId 
+		   , wo.FactoryID
+	from #tmpWO as WO
+) as M
+outer apply(
+	select count(*) as ct 
+	from #tmpWO
+	Where EstCutDate = dr.EstCutDate 
+	      and MDivisionId = M.MDivisionId
+          and FactoryId = M.FactoryId
+) as d1
+outer apply(
+	select count(*) as ct
+	from #tmpWO 
+	where MDivisionId = M.MDivisionId	
+          and FactoryId = M.FactoryId
+	and (EstCutDate < dr.EstCutDate  
+		 and ((EstCutDate < CDate and CDate >= dr.EstCutDate) 
+			   or (CDate is null and Finished = 0 )		  
+			 )
+		)
+) as d2
+outer apply(
+	select count(*) as ct 
+	from #tmpWO 
+	Where EstCutDate = dr.EstCutDate 
+		  and CDate <= dr.EstCutDate
+		  and MDivisionId = M.MDivisionId
+          and FactoryId = M.FactoryId
+) as d3
+outer apply(
+	select count(*) as ct 
+	from #tmpWO
+	Where EstCutDate < dr.EstCutDate 
+		  and CDate = dr.EstCutDate
+		  and MDivisionId = M.MDivisionId
+          and FactoryId = M.FactoryId
+) as d4
+outer apply(	
+		select distinct [ATofCES] as ct 
+		from #tmpWO 
+		where EstCutDate = dr.EstCutDate
+		      and MDivisionId = M.MDivisionId
+              and FactoryId = M.FactoryId
+) as d5
+order by dr.EstCutDate, m.MDivisionId, m.FactoryID
+
+drop table #DateRanges
+drop table #tmpWO
+");
+            }
+            #endregion
+
             #region radioBtnByCutCell
             if (radioByCutCell.Checked)
             {
@@ -233,9 +374,9 @@ outer apply(
 ) as d5
 where 1 = 1  AND wo.EstCutDate is not null
 ");
-                if (!MyUtility.Check.Empty(WorkOrder))
+                if (!MyUtility.Check.Empty(MDivision))
                 {
-                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", WorkOrder));
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
                 }
 
                 if (!MyUtility.Check.Empty(CutCell1))
@@ -362,9 +503,9 @@ where 1=1
 	
 ");
                 #region Append條件字串
-                if (!MyUtility.Check.Empty(WorkOrder))
+                if (!MyUtility.Check.Empty(MDivision))
                 {
-                    sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", WorkOrder));
+                    sqlCmd.Append(string.Format(" and wo.MDivisionID = '{0}'", MDivision));
                 }
                 if (!MyUtility.Check.Empty(Est_CutDate1))
                 {
@@ -426,6 +567,29 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByM");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objSheets);    //釋放sheet
+                Marshal.ReleaseComObject(objApp);          //釋放objApp
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion 
+            }
+            #endregion
+
+            #region ByFactory
+            if (radioByFactory.Checked)
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCSReportByFactory.xltx", 3, false, null, objApp);      // 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                objSheets.Cells[1, 3] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R04_Cutting BCSReportByFactory");
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();

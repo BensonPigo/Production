@@ -41,13 +41,17 @@ namespace Sci.Production.Class
             this.Size = new System.Drawing.Size(80, 23);            
         }
 
-        public void setDataSource()
+        /// <summary>
+        /// Set ComboBox Data
+        /// </summary>
+        /// <param name="strMDivisionID">如果沒輸入，MDivision 預設 Sci.Env.User.Keywordd</param>
+        public void setDataSource(string strMDivisionID = null)
         {
             DataTable dtFactoryData;
             DualResult result;
             #region SQL Parameter
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            listSqlPar.Add(new SqlParameter("@MDivision", strMDivisionID.Empty() ? Sci.Env.User.Keyword : strMDivisionID));
             #endregion
             #region SQL Filte
             List<string> listFilte = new List<string>();
