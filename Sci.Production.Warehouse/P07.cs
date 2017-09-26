@@ -195,7 +195,8 @@ where x.value > 1
                 if (dtCheckDuplicateData != null && dtCheckDuplicateData.Rows.Count != 0)
                 {
                     List<string> listDuplicateData = new List<string>();
-                    foreach (DataRow dr in dtCheckDuplicateData.Rows) {
+                    foreach (DataRow dr in dtCheckDuplicateData.Rows)
+                    {
                         listDuplicateData.Add(string.Format("<SP#> : {0}, <Seq1> : {1}, <Seq2> : {2}, <Roll#> : {3}", dr["Poid"]
                                                                                                                     , dr["Seq1"]
                                                                                                                     , dr["Seq2"]
@@ -291,7 +292,28 @@ where x.value > 1
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
             }
+            //收物料時, 要判斷除了自己之外, 是否已存在同SP+Seq+ROLL+Dyelot(Fabric=F, StockType相同),P07 [Receiving_Detail]
+            warningmsg.Clear();
+            foreach (DataRow row in DetailDatas)
+            {
+                if (row.RowState == DataRowState.Added || row.RowState == DataRowState.Modified)
+                {
+                    if (row["fabrictype"].ToString().ToUpper() == "F")
+                    {
+                        if (MyUtility.Check.Seek(string.Format(@"select * from Receiving_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                            , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
+                        {
+                            warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                        }
+                    }
+                }
+            }
 
+            if (!MyUtility.Check.Empty(warningmsg.ToString()))
+            {
+                MyUtility.Msg.WarningBox(warningmsg.ToString());
+                return false;
+            }
             //Check Roll 是否已經存在
             if (!checkRoll())
                 return false;
@@ -372,7 +394,7 @@ where   #tmp.poid = dbo.po_supp.id
         DataGridViewColumn Col_ActualQty, Col_Location;
         protected override void OnDetailGridSetup()
         {
-            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor; 
+            Color backDefaultColor = detailgrid.DefaultCellStyle.BackColor;
             #region SP# Vaild 判斷此sp#存在po中。
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.CellValidating += (s, e) =>
@@ -486,7 +508,7 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
 
                         ship_qty_valid((decimal)CurrentDetailData["shipqty"]);
 
-                    } 
+                    }
 
                     CurrentDetailData.EndEdit();
                 }
@@ -553,8 +575,8 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
                             {
 
                                 ship_qty_valid((decimal)CurrentDetailData["shipqty"]);
-                                
-                            } 
+
+                            }
                         }
                     }
                 }
@@ -707,7 +729,8 @@ WHERE   StockType='{0}'
             };
         }
 
-        private void ship_qty_valid(decimal ship_qty) {
+        private void ship_qty_valid(decimal ship_qty)
+        {
             if (CurrentDetailData == null) return;
             if (this.EditMode && ship_qty != null)
             {
@@ -1684,7 +1707,11 @@ where RD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
             if (MyUtility.Check.Empty(lastRow)) return;
             DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
             newrow["poid"] = lastRow["poid"];
+            newrow["seq1"] = lastRow["seq1"];
+            newrow["seq2"] = lastRow["seq2"];
             newrow["seq"] = lastRow["seq"];
+            newrow["poidseq"] = lastRow["poidseq"];
+            newrow["poidseq1"] = lastRow["poidseq1"];
             newrow["fabrictype"] = lastRow["fabrictype"];
             newrow["shipqty"] = lastRow["shipqty"];
             newrow["weight"] = lastRow["weight"];
