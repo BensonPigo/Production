@@ -114,13 +114,13 @@ order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
             {
                 sqlCmd.Clear();
                 sqlCmd.Append(string.Format(@"
-select distinct ld.PPICReasonID,Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+select distinct Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
 left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
 {0}
-order by PPICReasonID,Description", sqlCondition.ToString()));
+order by Description", sqlCondition.ToString()));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out reasonData);
                 if (!result)
                 {
@@ -335,7 +335,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 worksheet.Cells[row, 6 + reasonData.Rows.Count] = string.Format("=SUM({0}!K7:K1048576)", MyUtility.Convert.GetString(dr["FactoryID"]));
                 if (reportType == 0)
                 {
-                worksheet.Cells[row, 7 + reasonData.Rows.Count] = string.Format("={0}!P3", MyUtility.Convert.GetString(dr["FactoryID"]));
+                worksheet.Cells[row, 7 + reasonData.Rows.Count] = string.Format("={0}!O3", MyUtility.Convert.GetString(dr["FactoryID"]));
                 worksheet.Cells[row, 8 + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
                 }
                 else
