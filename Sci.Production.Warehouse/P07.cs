@@ -400,6 +400,9 @@ where   #tmp.poid = dbo.po_supp.id
             ts4.CellValidating += (s, e) =>
             {
                 if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue== newvalue) return;
                 if (MyUtility.Check.Empty(CurrentMaintain["invno"]) && !txtInvoiceNo.Focused)
                 {
                     //e.Cancel = true;
@@ -517,6 +520,9 @@ Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["e
             {
                 if (!this.EditMode) return;
                 if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["seq"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
                 if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["seq"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
@@ -603,6 +609,9 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')"
             ts2.CellValidating += (s, e) =>
             {
                 if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["Location"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
@@ -649,6 +658,9 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["shipqty"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
                 ship_qty_valid((decimal)e.FormattedValue);
             };
 
@@ -660,6 +672,9 @@ WHERE   StockType='{0}'
             ns2.CellValidating += (s, e) =>
             {
                 if (CurrentDetailData == null) return;
+                string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["ActualQty"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
@@ -1493,6 +1508,8 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         protected override void ClickEditAfter()
         {
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.NotSortable; }
+
+            ((DataTable)detailgridbs.DataSource).AcceptChanges();
             base.ClickEditAfter();
         }
 
