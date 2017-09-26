@@ -169,8 +169,8 @@ Select
 	,c.DescDetail
     ,c.Description
 	,newkey = 0
-	,MarkerLengthY = substring(a.MarkerLength,1,2)
-	,MarkerLengthE = substring(a.MarkerLength,4,13) 
+	,MarkerLengthY = RIGHT(REPLICATE('0', 2) + CAST(substring(a.MarkerLength,1,CHARINDEX('Y',a.MarkerLength)-1) as VARCHAR), 2)  
+	,MarkerLengthE = substring(a.MarkerLength,CHARINDEX('Y',a.MarkerLength)+1,15) 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
 from Workorder a WITH (NOLOCK) left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc
@@ -1949,7 +1949,7 @@ where w.ID = '{0}'", masterID);
 
             decimal MarkerLengthNum, Conspc;
             string MarkerLengthstr, lenY, lenE;
-            if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenY = "0";
+            if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthY"])) lenY = "0";
             else lenY = CurrentDetailData["MarkerLengthY"].ToString();
             if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenE = "0-0/0+0\"";
             else lenE = CurrentDetailData["MarkerLengthE"].ToString();
