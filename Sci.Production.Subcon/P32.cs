@@ -34,14 +34,14 @@ namespace Sci.Production.Subcon
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
-                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Date("SciDelivery", header: "Sci Dlv", iseditingreadonly: true)
-                 .Date("SewinLine", header: "SewInline", iseditingreadonly: true)
-                 .Text("Carton", header: "Carton", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                 .Text("SPThread", header: "SP Thread", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                 .Text("EmbThread", header: "Emb Thread", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                 ;
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderId", header: "Mother SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("SciDelivery", header: "Earliest SciDlv", iseditingreadonly: true)
+                .Date("SewinLine", header: "Earliest SewInline", iseditingreadonly: true)
+                .Text("Carton", header: "Carton", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("SPThread", header: "SP Thread", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("EmbThread", header: "Emb Thread", width: Widths.AnsiChars(5), iseditingreadonly: true);
             #endregion
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -154,115 +154,120 @@ namespace Sci.Production.Subcon
             #region -- sql command --
              this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
-                     select  DISTINCT
-	                    	O.ID as OrderId,
-	                        O.StyleID,
-                           SciDelivery,
-	                        SewinLine,
-	                    	(select distinct L.Category+',' 
-	                    	from LocalPO L WITH (NOLOCK)
-	                    	where L.Id=L1.ID and  L.MdivisionID= '{0}'
-                            FOR XML PATH(''))as c
-	                    into #tmp1  	
-	                    from Orders  O WITH (NOLOCK)
-	                    	left join LocalPO_Detail LD WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
-                            left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id and  L1.MdivisionID= '{0}'
-                            --cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                            where 1=1 " + sqlWhere + @"  order by O.ID
+select  DISTINCT o.FactoryID
+	    , OrderId = O.id
+	    , O.StyleID
+        , SciDelivery = GetSCI.MinSciDelivery
+        , SewinLine = GetSCI.MinSewinLine
+	    , c = (select distinct L.Category+',' 
+	           from LocalPO L WITH (NOLOCK)
+	           where L.Id=L1.ID and  L.MdivisionID= '{0}'
+               FOR XML PATH(''))
+into #tmp1  	
+from Orders  O WITH (NOLOCK)
+left join LocalPO_Detail LD WITH (NOLOCK) on LD.OrderId = O.ID 
+                                                and LD.POID = o.POID
+left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id and  L1.MdivisionID= '{0}'
+cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
+where o.id = o.poid
+      " + sqlWhere + @"  
+order by O.ID
                     
-                    SELECT DISTINCT #tmp1.OrderId,
-					   #tmp1.StyleID,
-					   #tmp1.SciDelivery,
-					   #tmp1.SewinLine,
-					    (SELECT   TMP2.c+''
-					     FROM #tmp1 AS TMP2
-					     WHERE TMP2.OrderId=#tmp1.OrderId 
-					     FOR XML PATH(''))AS Category
-				    INTO #tmp
-				    FROM #tmp1
+SELECT DISTINCT #tmp1.FactoryID
+       , #tmp1.OrderId
+	   , #tmp1.StyleID
+	   , #tmp1.SciDelivery
+       , #tmp1.SewinLine
+       , Category = (SELECT TMP2.c+''
+		             FROM #tmp1 AS TMP2
+		             WHERE TMP2.OrderId = #tmp1.OrderId 
+		             FOR XML PATH(''))
+INTO #tmp
+FROM #tmp1
                     
-                    select  #tmp.OrderId,
-							#tmp.StyleID,
-							#tmp.SciDelivery,
-							#tmp.SewinLine,
-							 	 case
-							  when #tmp.Category='CARTON,' then 'Y'
-							  when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
-							  ELSE 'N'
-							END
-							AS Carton,
-								 case
-							  when #tmp.Category='SP_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
-							  ELSE 'N'
-							END
-							AS SPThread,
-									 case
-							  when #tmp.Category='EMB_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
-							  ELSE 'N'
-							END
-							AS EmbThread
-					from #tmp order by #tmp.OrderId
-				DROP TABLE  #tmp1
-				drop table  #tmp", M));
+select  #tmp.FactoryID
+        , #tmp.OrderId
+		, #tmp.StyleID
+		, #tmp.SciDelivery
+		, #tmp.SewinLine
+		, Carton = case
+			            when #tmp.Category='CARTON,' then 'Y'
+			            when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+			            ELSE 'N'
+		          END
+		, SPThread = case
+			            when #tmp.Category='SP_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+			            ELSE 'N'
+		            END
+        , EmbThread = case
+			            when #tmp.Category='EMB_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+			            when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+			            when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+			            when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+			            ELSE 'N'
+		              END
+from #tmp order by #tmp.OrderId
+DROP TABLE  #tmp1
+drop table  #tmp", M));
 
             sqlcmd.Append(Environment.NewLine); // 換行
             //Grid2
             sqlcmd.Append(string.Format(@"
-                    select distinct LD.OrderId,
-	                       L.Category,
-	                       L.LocalSuppID,
-	                       S.Abb,
-	                       LD.Refno,
-	                       LD.ThreadColorID,
-	                       I.Description,
-	                       LD.Qty,
-	                       LD.UnitId,
-	                       LD.Price,
-	                       Amount=LD.Qty*LD.Price,
-	                       LD.Delivery,
-                           LD.ID,
-	                       LD.RequestID,
-	                       LD.InQty,
-	                       LD.APQty,
-	                       LD.Remark,
-                           LD.Ukey                          
-                    from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
-                    left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID=S.ID
-                    left join localitem I WITH (NOLOCK) on I.refno = LD.refno 
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
-                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 
-                    " + sqlWhere + @"and  L.MdivisionID= '{0}' order by LD.OrderId, L.Category, L.LocalSuppID", M));
+select distinct LD.OrderId
+	   , L.Category
+	   , L.LocalSuppID
+	   , S.Abb
+	   , LD.Refno
+	   , LD.ThreadColorID
+	   , I.Description
+	   , LD.Qty
+	   , LD.UnitId
+	   , LD.Price
+	   , Amount = LD.Qty * LD.Price
+	   , LD.Delivery
+       , LD.ID
+	   , LD.RequestID
+	   , LD.InQty
+	   , LD.APQty
+	   , LD.Remark
+       , LD.Ukey                          
+from LocalPO_Detail LD WITH (NOLOCK)
+left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
+left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID = S.ID
+left join localitem I WITH (NOLOCK) on I.refno = LD.refno 
+left join orders O WITH (NOLOCK) on LD.OrderId=O.ID 
+                                    and LD.POID = o.POID
+cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
+where 1=1 
+      " + sqlWhere + @"
+      and  L.MdivisionID= '{0}' 
+order by LD.OrderId, L.Category, L.LocalSuppID", M));
             #endregion
            
             DBProxy.Current.DefaultTimeout = 1200;
