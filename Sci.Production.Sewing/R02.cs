@@ -254,28 +254,28 @@ from #tmp2ndFilter");
                         ,
 @";with tmpQty 
 as (
-select OutputDate,StdTMS,Sum(QAQty) as QAQty, Sum(WorkHour*ActManPower) as ManHour
+select OutputDate,StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour
 from #tmp
 where LastShift <> 'O'
 group by OutputDate,StdTMS
 ),
 tmpTtlCPU
 as (
-select OutputDate,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift <> 'O'
 group by OutputDate
 ),
 tmpSubconInCPU
 as (
-select OutputDate,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift = 'I'
 group by OutputDate
 ),
 tmpSubconOutCPU
 as (
-select OutputDate,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift = 'O'
 group by OutputDate
@@ -301,9 +301,9 @@ as (
 	) d
 	group by OutputDate
 )
-select q.OutputDate,q.QAQty,TotalCPU = round(tc.TotalCPU,2)
+select q.OutputDate,q.QAQty,TotalCPU = tc.TotalCPU
 ,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
-IIF(q.ManHour = 0,0,Round(isnull(tc.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
+IIF(q.ManHour = 0,0,isnull(tc.TotalCPU,0)/q.ManHour) as CPUSewer,
 IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
 IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
 from tmpQty q
@@ -329,28 +329,28 @@ order by q.OutputDate"
                     #region 組SQL
                     string sqlcommand = string.Format(@";with tmpQty 
 as (
-select SewingLineID,StdTMS,Sum(QAQty) as QAQty, Sum(WorkHour*ActManPower) as ManHour
+select SewingLineID,StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour
 from #tmp
 where LastShift <> 'O'
 group by SewingLineID,StdTMS
 ),
 tmpTtlCPU
 as (
-select SewingLineID,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift <> 'O'
 group by SewingLineID
 ),
 tmpSubconInCPU
 as (
-select SewingLineID,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift = 'I'
 group by SewingLineID
 ),
 tmpSubconOutCPU
 as (
-select SewingLineID,Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift = 'O'
 group by SewingLineID
@@ -368,9 +368,9 @@ from (
 group by SewingLineID
 )
 select q.SewingLineID,q.QAQty
-,TotalCPU = round(tc.TotalCPU,2)
+,TotalCPU = tc.TotalCPU
 ,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
-IIF(q.ManHour = 0,0,Round(isnull(tc.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
+IIF(q.ManHour = 0,0,isnull(tc.TotalCPU,0)/q.ManHour) as CPUSewer,
 IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
 IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
 from tmpQty q
@@ -398,8 +398,8 @@ order by {0}", orderby == 0 ? "q.SewingLineID" : "CPUSewer");
                 MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
                     @";with tmpQty 
 as (
-select StdTMS,Sum(QAQty) as QAQty, Sum(WorkHour*ActManPower) as ManHour,
-Sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TotalCPU
+select StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour,
+Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
 from #tmp
 where LastShift <> 'O' and LastShift <> 'I'
 group by StdTMS
@@ -507,7 +507,7 @@ order by t1.ID",
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
                         @";with tmpSubconIn
 as (
-Select 'I' as Type,Program as Company,sum(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) as TtlCPU, '' as SewingLineID
+Select 'I' as Type,Program as Company,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TtlCPU, '' as SewingLineID
 from #tmp
 where LastShift = 'I'
 group by Program
@@ -602,7 +602,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 objArray[0, 6] = dr[6];
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
-                objArray[0, 9] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,2)", insertRow);
+                objArray[0, 9] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
                 objArray[0, 10] = "";
                 worksheet.Range[String.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
                 insertRow++;
@@ -623,7 +623,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 7] = string.Format("=ROUND(I{0}/H{0},2)", MyUtility.Convert.GetString(insertRow));
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,2)",insertRow);
+            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)",insertRow);
             insertRow++;
             worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["QAQty"]);
             worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["TotalCPU"]);
@@ -631,7 +631,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["AvgWorkHour"]);
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManPower"]);
             worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,2)", insertRow);
+            worksheet.Cells[insertRow, 10] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
             
             //CPU Factor
             insertRow = insertRow + 2;
