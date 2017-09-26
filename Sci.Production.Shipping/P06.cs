@@ -267,7 +267,11 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
 
             return base.ClickEditBefore();
         }
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
 
+        }
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
@@ -277,9 +281,14 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
             }
             return base.ClickDeleteBefore();
         }
-
-        protected override DualResult ClickSavePost()
+        
+        protected override bool ClickSaveBefore()
         {
+            return base.ClickSaveBefore();
+        }
+        protected override DualResult ClickSave()
+        {
+
             DualResult result;
             if (!MyUtility.Check.Empty(CurrentMaintain["SendToTPE"]))
             {
@@ -349,9 +358,10 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                     return failResult;
                 }
             }
-
-
-
+            return base.ClickSave();
+        }
+        protected override DualResult ClickSavePost()
+        {
             return base.ClickSavePost();
         }
 
@@ -870,7 +880,10 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                         dr["Variance"] = MyUtility.Convert.GetInt(packData[0]["OrderQty"]) - totalShipQty;
                     }
                     //不管資料有無修改,都會重新更新status資料
-                    dr["Status"] = newStatus;
+                    if (MyUtility.Convert.GetString(dr["Status"])== newStatus)
+                    {
+                        dr["Status"] = newStatus;
+                    }
 
 
                     //取出第3層資料，比對是否有異動
