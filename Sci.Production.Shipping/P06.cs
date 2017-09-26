@@ -298,38 +298,53 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                     {
                         if (dr.RowState == DataRowState.Added)
                         {
-                            result = WriteRevise("Missing", dr);
-                            if (!result)
+                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
+                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
+                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
                             {
-                                return result;
+                                result = WriteRevise("Missing", dr);
+                                if (!result)
+                                {
+                                    return result;
+                                }
                             }
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
-                            result = WriteRevise("Revise", dr);
-
-                            #region update PulloutID 到PackingList
-                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
-                            DBProxy.Current.Execute(null, updatePklst);
-                            #endregion
-
-                            if (!result)
+                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
+                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
+                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
                             {
-                                return result;
+                                result = WriteRevise("Revise", dr);
+
+                                #region update PulloutID 到PackingList
+                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                                DBProxy.Current.Execute(null, updatePklst);
+                                #endregion
+
+                                if (!result)
+                                {
+                                    return result;
+                                }
                             }
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
-                            result = WriteRevise("Delete", dr);
-
-                            #region update PulloutID 到PackingList
-                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
-                            DBProxy.Current.Execute(null, updatePklst);
-                            #endregion
-
-                            if (!result)
+                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
+                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
+                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
                             {
-                                return result;
+                                result = WriteRevise("Delete", dr);
+
+                                #region update PulloutID 到PackingList
+                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                                DBProxy.Current.Execute(null, updatePklst);
+                                #endregion
+
+                                if (!result)
+                                {
+                                    return result;
+                                }
                             }
                         }
                     }
