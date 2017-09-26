@@ -1722,33 +1722,13 @@ where RD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
             base.OnDetailGridAppendClick();
             DataRow lastRow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex() - 1);
             if (MyUtility.Check.Empty(lastRow)) return;
-            DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+            DataRow newrow = detailgrid.GetDataRow(detailgrid.CurrentRow.Cells[1].RowIndex);
             newrow["poid"] = lastRow["poid"];
             newrow["seq1"] = lastRow["seq1"];
             newrow["seq2"] = lastRow["seq2"];
             newrow["seq"] = lastRow["seq"];
             newrow["poidseq"] = lastRow["poidseq"];
             newrow["poidseq1"] = lastRow["poidseq1"];
-            newrow["fabrictype"] = lastRow["fabrictype"];
-            newrow["shipqty"] = lastRow["shipqty"];
-            newrow["weight"] = lastRow["weight"];
-            newrow["Dyelot"] = lastRow["Dyelot"];
-            newrow["pounit"] = lastRow["pounit"];
-            newrow["stockunit"] = lastRow["stockunit"];
-            newrow["Stocktype"] = lastRow["Stocktype"];
-            newrow["Location"] = lastRow["Location"];
-        }
-        /// <summary>
-        /// 表身插入資料,會將上一筆資料複製並填入插入的資料列裡
-        /// </summary>
-        protected override void OnDetailGridInsertClick()
-        {
-            base.OnDetailGridInsertClick();
-            DataRow lastRow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex() - 1);
-            if (MyUtility.Check.Empty(lastRow)) return;
-            DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
-            newrow["poid"] = lastRow["poid"];
-            newrow["seq"] = lastRow["seq"];
             newrow["fabrictype"] = lastRow["fabrictype"];
             newrow["shipqty"] = lastRow["shipqty"];
             newrow["weight"] = lastRow["weight"];
