@@ -572,8 +572,7 @@ where a.ID='{0}'",
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";            
-            CurrentMaintain["cDate"] = DateTime.Now;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["cDate"] = DateTime.Now;            
             CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
         }
 
@@ -727,9 +726,10 @@ where a.ID='{0}'", txtSP.Text);
                 {
                     this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
                     this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
-                    this.txtFactory.Text = dt.Rows[0]["FtyGroup"].ToString();
+                    //this.txtFactory.Text = dt.Rows[0]["FtyGroup"].ToString();
                     this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
                     this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
+                    CurrentMaintain["FactoryID"]= dt.Rows[0]["FtyGroup"].ToString();
                 }
             }
         }
