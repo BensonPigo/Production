@@ -169,8 +169,8 @@ Select
 	,c.DescDetail
     ,c.Description
 	,newkey = 0
-	,MarkerLengthY = substring(a.MarkerLength,1,2)
-	,MarkerLengthE = substring(a.MarkerLength,4,13) 
+	,MarkerLengthY = substring(a.MarkerLength,1,CHARINDEX('Y',a.MarkerLength)-1)
+	,MarkerLengthE = substring(a.MarkerLength,CHARINDEX('Y',a.MarkerLength)+1,15) 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
 from Workorder a WITH (NOLOCK) left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc
