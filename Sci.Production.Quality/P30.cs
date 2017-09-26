@@ -76,8 +76,21 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                string sqlcmd = string.Format(@" select colorid from po_supp_detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A' and colorid is not null and b.id='{0}' group by colorid"
-                    , txtSP.Text.ToString());
+                string sqlcmd = string.Format(@" 
+select ColorID
+from (
+	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
+		   , RowNum = ROW_NUMBER() over (order by ColorID, a.BrandID)
+	from po_supp_detail a WITH (NOLOCK) 
+		 , Orders b WITH (NOLOCK)  
+	where a.id = b.POID 
+		  and a.fabrictype = 'A' 
+		  and colorid is not null 
+		  and b.id='{0}' 
+		  and a.ColorID != ''
+	Group by ColorID, a.BrandID
+)x
+order by RowNum", txtSP.Text.ToString());
                 SelectItem item = new SelectItem(sqlcmd, "30", dr["ColorID"].ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
@@ -195,11 +208,19 @@ namespace Sci.Production.Quality
                 DataRow dr1;
 
                 string sqlcmd = string.Format(@" 
-select  colorid 
-from  po_supp_detail a WITH (NOLOCK) 
-      , Orders b  WITH (NOLOCK) 
-where a.id=b.POID and a.fabrictype='A' 
-    and colorid is not null  and b.id='{0}' and a.colorid='{1}'", txtSP.Text.ToString(), e.FormattedValue);
+select ColorID
+from (
+	select distinct ColorID = dbo.GetColorMultipleID(a.BrandId, ColorID)
+	from po_supp_detail a WITH (NOLOCK) 
+		 , Orders b WITH (NOLOCK)  
+	where a.id = b.POID 
+		  and a.fabrictype = 'A' 
+		  and colorid is not null 
+		  and b.id = '{0}' 
+		  and a.ColorID != ''
+	Group by ColorID, a.BrandID
+)x
+where ColorID = '{1}'", txtSP.Text.ToString(), e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd,out dr1))
                 {
                     dr["Colorid"] = e.FormattedValue;
@@ -228,11 +249,21 @@ where a.id=b.POID and a.fabrictype='A'
             Helper.Controls.Grid.Generator(this.detailgrid)               
             .Text("Type", header: "Main Item NO", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true, iseditable: true, settings: typeSetting)
             .Text("Item", header: "SEQ Ref", width: Ict.Win.Widths.AnsiChars(15),settings: itemSelect)
-            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(10),settings: colorSelect)
+            .Text("Colorid", header: "Color", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true, settings: colorSelect)
             .Date("inspdate", header: "Inspdate", width: Ict.Win.Widths.AnsiChars(10))
             .Text("Result", header: "Result", width: Ict.Win.Widths.AnsiChars(20));
             detailgrid.ValidateControl();
-      
+
+            this.detailgrid.RowPostPaint += (s, e) =>
+            {
+                if(this.EditMode == true)
+                {
+                    this.detailgrid.Rows[e.RowIndex].Cells["Colorid"].Style.ForeColor = Color.Red;
+                }else
+                {
+                    this.detailgrid.Rows[e.RowIndex].Cells["Colorid"].Style.ForeColor = Color.Black;
+                }
+            };
         }
         
         // When click Edit button and Grid is empty then New 5 column in GridView
