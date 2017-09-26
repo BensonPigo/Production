@@ -354,13 +354,15 @@ WHERE MNOrder.ordercomboid = @POID
 SELECT MAKER=max(FactoryID)
 ,sty=max(StyleID)+'-'+max(SeasonID)
 ,QTY=sum(QTY)
-,'SPNO'=RTRIM(POID)+b.spno 
+--,'SPNO'=RTRIM(POID)+b.spno 
+,'SPNO'=b.spno
 ,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
 ,(select CustPONo from MnOrder o where o.ID = @ID) as pono
 ,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
 ,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1
 FROM MNOrder a WITH (NOLOCK) 
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
+OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
 where OrderComboID = @ID group by POID,b.spno";
             }
@@ -371,13 +373,15 @@ SELECT
 MAKER=max(FactoryID)
 ,sty=max(StyleID)+'-'+max(SeasonID)
 ,QTY=sum(QTY)
-,'SPNO'=RTRIM(POID)+b.spno
+--,'SPNO'=RTRIM(POID)+b.spno
+,'SPNO'=b.spno
 ,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
 ,(select CustPONo from MnOrder o where o.ID = @ID) as pono
 ,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
 ,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1 
 FROM MNOrder a WITH (NOLOCK) 
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
+OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
 where OrderComboID = @poid group by POID,b.spno";
             }
