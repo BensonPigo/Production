@@ -42,7 +42,6 @@ BEGIN
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
 				IF @tmpcell <> @sewingcell or @tmpdesc <> @description or @tmpsewer <> @sewer
-					--update SewingLine set @tmpcell = isnull(@sewingcell,''), @tmpdesc = isnull(@description,''), @tmpsewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
 					update SewingLine set SewingCell = isnull(@sewingcell,''), Description = isnull(@description,''), Sewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
 			END
 		ELSE
@@ -76,19 +75,6 @@ BEGIN
 	CLOSE cursor_sewingline
 	DEALLOCATE cursor_sewingline
 	drop table #tmpSewingLine;
-
-	--alger test 用DELDTE語法有問題，先不用
-	--SET @cmd = 'DELETE FROM SewingLine
-	--			WHERE FactoryID = '''+ @factoryid + '''
-	--			AND ID NOT IN ( SELECT SUBSTRING(Facility.Name,1,2) as ID
-	--							FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility
-	--							WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id )'					
-	--Begin Try
-	--	execute (@cmd)						
-	--End Try
-	--Begin Catch
-	--	EXECUTE usp_GetErrorInfo;
-	--End Catch
 
 	END
 
@@ -277,14 +263,19 @@ BEGIN
 	drop table #tmpFtyTemplate;
 
 	--撈生產線日曆
-	CREATE TABLE #tmpProdTemplate(NAME varchar(50),TEMPLATEID int,ENABLEDATE datetime)
-	SET @cmd = 'insert into #tmpProdTemplate select fa.NAME,w.TEMPLATEID,w.ENABLEDATE
-	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WorkCalendarApply w, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
-	where f.ID = w.TargetID
-	and w.TargetType = 1
-	and fa.FactoryID = f.ID
-	and f.Code = '''+ @factoryid + '''
-	order by fa.NAME,w.ENABLEDATE'
+	CREATE TABLE #tmpProdTemplate(Code varchar(50),NAME varchar(50),TEMPLATEID int,ENABLEDATE datetime,DAYOFWEEKINDEX int,WorkHour numeric(4,2))
+	SET @cmd = 'insert into #tmpProdTemplate 
+SELECT
+E.Code, D.Name, A.TEMPLATEID, A.ENABLEDATE, C.DAYOFWEEKINDEX, WorkHour =Sum(C.ENDHOUR - C.STARTHOUR) 
+FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WORKCALENDARAPPLY A
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.CALENDARTEMPLATE B
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.CALENDARTEMPLATEDETAIL C
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility D
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory E 
+WHERE A.TEMPLATEID = B.ID AND B.ID = C.TEMPLATEID AND D.ID = A.TARGETID 
+AND E.CODE ='''+ @factoryid + '''and D.FactoryId = E.Id AND A.TARGETTYPE = 1 
+group by E.Code, D.Name, A.TEMPLATEID, A.ENABLEDATE, C.DAYOFWEEKINDEX
+order by E.Code, D.Name,A.ENABLEDATE desc'
 	execute (@cmd)
 
 	DECLARE cursor_sewingline CURSOR FOR select distinct NAME from #tmpProdTemplate
@@ -299,33 +290,29 @@ BEGIN
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)
 			SET @apsworkhour = null
-			SET @templateid = null
 			--找工廠日曆的工時
-			SET @templateid = (select TOP(1) TEMPLATEID from #tmpProdTemplate where Name = @sewinglineid and EnableDate <= @workdate order by EnableDate desc)
-			IF @templateid is not null
-				BEGIN
-					select @apsworkhour = WorkHour from #tmpFtyCalendar where TemplateID = @templateid and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1)
-					IF @apsworkhour is not null
-						BEGIN
-							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-							IF @foundworkhour is null
-								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
-							ELSE
-								BEGIN
-									IF @foundworkhour <> @apsworkhour
-										update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-								END
-						END
-					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
-						BEGIN
-							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
-							IF @foundworkhour is not null
-								update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-						END
-				END
+			select TOP(1) @apsworkhour = WorkHour from #tmpProdTemplate 
+			where Name = @sewinglineid and EnableDate <= @workdate and DayOfWeekindex = (DATEPART(WEEKDAY, @workdate)-1) order by EnableDate desc
+				IF @apsworkhour is not null
+					BEGIN
+						SET @foundworkhour = null
+						select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+						IF @foundworkhour is null
+							insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
+							values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+						ELSE
+							BEGIN
+								IF @foundworkhour <> @apsworkhour
+									update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+							END
+					END
+				ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
+					BEGIN
+						SET @foundworkhour = null
+						select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
+						IF @foundworkhour is not null
+							update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+					END
 			set @_i = @_i+1
 		END
 
