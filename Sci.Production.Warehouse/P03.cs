@@ -381,7 +381,14 @@ namespace Sci.Production.Warehouse
             string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --
             string sqlcmd
-                = string.Format(@"
+                = @"
+declare @id varchar(20) = @sp1		
+
+select distinct StyleID,BrandID,POID,FtyGroup 
+into #tmpOrder
+from orders where id like @id
+			
+
 ;WITH QA AS (
 	Select  c.InvNo InvNo
             ,a.POID POID
@@ -393,7 +400,7 @@ namespace Sci.Production.Warehouse
 	          END as [Result] 
     from dbo.FIR a WITH (NOLOCK) 
     left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
-    where   a.POID LIKE @sp1
+    where   a.POID LIKE @id
     UNION
 	Select   c.InvNo InvNo
             ,a.POID POID
@@ -402,7 +409,7 @@ namespace Sci.Production.Warehouse
             , a.result as [Result] 
 	from dbo.AIR a WITH (NOLOCK) 
     left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
-    where   a.POID LIKE @sp1 
+    where   a.POID like @id 
             and a.Result !=''
 ) 
 select *
@@ -527,14 +534,14 @@ from(
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
-            from Orders WITH (NOLOCK) 
+            from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
             left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            where orders.id like @sp1 and a.junk <> 'true'
+            where a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
             union
@@ -606,8 +613,8 @@ from(
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
-        inner join Orders o on o.poid = m.poid
-        left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
+        inner join #tmpOrder as o on o.poid = m.poid
+        left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
         left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
@@ -615,13 +622,11 @@ from(
         where   1=1 
                 AND a.id IS NOT NULL 
                 and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
-                and o.id like @sp1
         ) as xxx
     ) as xxx2
 ) as xxx3
 where ROW_NUMBER_D =1       
-            "
-            , Sci.Env.User.Keyword);
+            ";
             #endregion
             #region -- 準備sql參數資料 --
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -633,19 +638,11 @@ where ROW_NUMBER_D =1
             #endregion
             this.ShowWaitMessage("Data Loading....");
 
-            //MyUtility.Msg.WaitWindows("Data Loading....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
                 if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
-
-                //foreach (DataRow rw in dtData.Rows) {
-                //    if (rw["FIR"].ToString().Contains("null")) { rw["FIR"] = ""; }
-                //    else if (rw["FIR"].ToString().Contains("Fail")) { rw["FIR"] = "Fail"; }
-                   
-                //}
-
                 listControlBindingSource1.DataSource = dtData;
                 grid1_sorting();
                 ChangeDetailColor();

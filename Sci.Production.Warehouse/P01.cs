@@ -575,7 +575,6 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callP03 = new P03(CurrentMaintain["ID"].ToString(), P03MenuItem);            
             callP03.MdiParent = MdiParent;                      
             callP03.Show();
-            callP03.Query();
             #region BackUP
             //callP03.FormClosed += (s, e) =>
             //{
