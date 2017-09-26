@@ -19,7 +19,7 @@ namespace Sci.Production.Subcon
     public partial class P32 : Sci.Win.Tems.QueryForm
     {
         protected DataTable dtGrid1, dtGrid2; DataSet dataSet;
-        string SP1, SP2,M; string orderid; string sqlWhere = "";
+        string SP1, SP2,M; string POID; string sqlWhere = "";
         DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
         List<string> sqlWheres = new List<string>();
         StringBuilder sqlcmd = new StringBuilder();
@@ -154,7 +154,8 @@ namespace Sci.Production.Subcon
             #region -- sql command --
              this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
-select  DISTINCT o.FactoryID
+select  DISTINCT o.Poid
+        , o.FactoryID
 	    , OrderId = O.id
 	    , O.StyleID
         , SciDelivery = GetSCI.MinSciDelivery
@@ -173,7 +174,8 @@ where o.id = o.poid
       " + sqlWhere + @"  
 order by O.ID
                     
-SELECT DISTINCT #tmp1.FactoryID
+SELECT DISTINCT #tmp1.Poid
+       , #tmp1.FactoryID
        , #tmp1.OrderId
 	   , #tmp1.StyleID
 	   , #tmp1.SciDelivery
@@ -185,7 +187,8 @@ SELECT DISTINCT #tmp1.FactoryID
 INTO #tmp
 FROM #tmp1
                     
-select  #tmp.FactoryID
+select  #tmp.Poid
+        , #tmp.FactoryID
         , #tmp.OrderId
 		, #tmp.StyleID
 		, #tmp.SciDelivery
@@ -239,7 +242,8 @@ drop table  #tmp", M));
             sqlcmd.Append(Environment.NewLine); // 換行
             //Grid2
             sqlcmd.Append(string.Format(@"
-select distinct LD.OrderId
+select distinct o.Poid
+       , LD.OrderId
 	   , L.Category
 	   , L.LocalSuppID
 	   , S.Abb
@@ -315,20 +319,24 @@ order by LD.OrderId, L.Category, L.LocalSuppID", M));
             {
                 return;
             }
-            orderid = parent["orderid"].ToString();
-            listControlBindingSource2.Filter = " orderid = '"+ orderid+"'";
+            POID = parent["Poid"].ToString();
+            listControlBindingSource2.Filter = " Poid = '"+ POID+"'";
             this.grid2.AutoResizeColumns();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             if (dataSet == null) return;
+            DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
+            DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
+            dtMaster.Columns.Remove("Poid");
+            dtChild.Columns.Remove("Poid");
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtGrid1);
             //DataView dataView = dtGrid2.DefaultView;
-            DataTable NewdataTable = dtGrid2;
-            if (NewdataTable.Columns.Contains("Ukey")) NewdataTable.Columns.Remove("Ukey");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(NewdataTable);
+
+            if (dtChild.Columns.Contains("Ukey")) dtChild.Columns.Remove("Ukey");
+            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
             x1.DicDatas.Add("##dt1", dt1);
             x1.DicDatas.Add("##dt2", dt2);
             dt1.ShowHeader = false;
