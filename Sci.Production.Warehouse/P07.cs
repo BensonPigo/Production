@@ -296,14 +296,33 @@ where x.value > 1
             warningmsg.Clear();
             foreach (DataRow row in DetailDatas)
             {
-                if (row.RowState == DataRowState.Added || row.RowState == DataRowState.Modified)
+
+                if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
-                    if (row["fabrictype"].ToString().ToUpper() == "F")
+                    if (row.RowState == DataRowState.Added)
                     {
                         if (MyUtility.Check.Seek(string.Format(@"select * from Receiving_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
                             , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
                         {
                             warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                            warningmsg.Append(Environment.NewLine);
+                        }
+                    }
+                    if (row.RowState == DataRowState.Modified)
+                    {
+                        if (MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) || 
+                            MyUtility.Convert.GetString(row["seq1"]) != MyUtility.Convert.GetString(row["seq1", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) || 
+                            MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]))
+                        {
+                            if (MyUtility.Check.Seek(string.Format(@"select * from Receiving_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                                , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
+                            {
+                                warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                                warningmsg.Append(Environment.NewLine);
+                            }
                         }
                     }
                 }
@@ -402,7 +421,7 @@ where   #tmp.poid = dbo.po_supp.id
                 if (CurrentDetailData == null) return;
                 string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["poid"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue== newvalue) return;
+                if (oldvalue == newvalue) return;
                 if (MyUtility.Check.Empty(CurrentMaintain["invno"]) && !txtInvoiceNo.Focused)
                 {
                     //e.Cancel = true;
@@ -659,7 +678,7 @@ WHERE   StockType='{0}'
             ns.CellValidating += (s, e) =>
             {
                 string oldvalue = MyUtility.Convert.GetString(CurrentDetailData["shipqty"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
                 ship_qty_valid((decimal)e.FormattedValue);
             };
