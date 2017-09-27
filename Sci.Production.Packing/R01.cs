@@ -23,6 +23,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
+
         }
 
         // 驗證輸入條件
@@ -43,7 +44,7 @@ namespace Sci.Production.Packing
                 _scandate1 = Convert.ToDateTime(dateSacnDate.Value1).ToString("d");
             else _scandate1 = null;
             if (!MyUtility.Check.Empty(dateSacnDate.Value2))
-                _scandate2 = Convert.ToDateTime(dateSacnDate.Value2).ToString("d");
+                _scandate2 = Convert.ToDateTime(dateSacnDate.Value2).ToString("d") + " 23:59:59";
             else _scandate2 = null;
             _po1 = txtPONoStart.Text;
             _po2 = txtPONoEnd.Text;
