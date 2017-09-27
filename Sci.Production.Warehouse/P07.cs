@@ -770,7 +770,6 @@ WHERE   StockType='{0}'
             {
                 if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
                 {
-                    CurrentDetailData["shipqty"] = ship_qty;
                     CurrentDetailData["Actualqty"] = ship_qty;
                     string rate = MyUtility.GetValue.Lookup(string.Format(@"
 select RateValue 
@@ -778,6 +777,8 @@ from dbo.View_Unitrate v
 where   v.FROM_U ='{0}' 
         and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
                     CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(ship_qty.ToString()) * decimal.Parse(rate), 2);
+                    CurrentDetailData["shipqty"] = ship_qty;
+                    CurrentDetailData.EndEdit();
                 }
             }
         }
