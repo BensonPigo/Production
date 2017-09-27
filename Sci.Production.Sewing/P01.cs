@@ -92,7 +92,7 @@ where sd.ID = '{0}'"
 ;with AllQty as
 (
 	select 
-        '' as ID ,--sd.ID, 
+        sd.ID, 
         sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
 	isnull((select QAQty from SewingOutput_Detail_Detail WITH (NOLOCK) where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
 	isnull(
@@ -360,6 +360,7 @@ where   o.FtyGroup = @factoryid
                             dr.EndEdit();
                             if (changed)
                             {
+                                DeleteSubDetailData(dr);
                                 CreateSubDetailDatas(dr);
                             }
                         }
@@ -581,6 +582,9 @@ and Team = @team";
             {
                 ddr["QAQty"] = 0;
             }
+            dr["QAQty"] = 0;
+            dr["InlineQty"] = 0;
+            dr["DefectQty"] = 0;
         }
 
         //產生SubDetail資料
@@ -604,7 +608,7 @@ and Team = @team";
 
             string sqlCmd = string.Format(@"
 with AllQty as (
-    select '' as ID
+    select '{0}' as ID
            , @ukey as SewingOutput_DetailUkey
            , oq.ID as OrderId
            , @combotype  as ComboType
@@ -694,6 +698,7 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
                 numManpower.ReadOnly = true;
                 numWHours.ReadOnly = true;
             }
+
         }
 
         protected override bool ClickDeleteBefore()
@@ -1014,10 +1019,35 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
             CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
         }
-        
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            string checkNonData = string.Format(@"
+delete sodd
+from SewingOutput_Detail_Detail sodd
+where not exists (select 1 
+				  from SewingOutput_Detail sod 
+				  where sodd.ID = sod.ID
+						and sodd.SewingOutput_DetailUKey = sod.UKey
+						and sodd.OrderId = sod.OrderId
+						and sodd.ComboType = sod.ComboType
+						and sodd.Article = sod.Article)
+      and sodd.id = '{0}'", CurrentMaintain["ID"]);
+            DualResult result = DBProxy.Current.Execute(null, checkNonData);
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+        }
+
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
-            DualResult result = base.ClickSaveSubDetial(e);           
+            DualResult result = base.ClickSaveSubDetial(e);
+            if (result == false)
+            {
+                return result;
+            }
 
             #region 重新 修改、刪除第三層資料
             List<DataRow> Inserted = new List<DataRow>();
@@ -1050,7 +1080,7 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
 
 
             List<DataRow> NewUpdated = new List<DataRow>();
-            if (Updated.Count > 0)
+            if (Updated.Count > 0 && false)
             {
                 var newT = Updated[0].Table.Clone();
                 for (int i = 0; i < Updated.Count; i++)
@@ -1058,14 +1088,6 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
 
                     var newOne = newT.NewRow();
                     newOne.ItemArray = Updated[i].ItemArray;
-                    try
-                    {
-                        newOne["QaQty"] = Updated[i]["qaqty", DataRowVersion.Original];
-                    }
-                    catch (Exception ec)
-                    {
-                        ShowErr("error: ", ec);
-                    }
                     NewUpdated.Add(newOne);
                     newT.Rows.Add(newOne);
                     //newOne["QaQty"] = Updated[i]["qaqty"];
@@ -1120,11 +1142,13 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
 
             ok = DBProxy.Current.Deletes(null, sub_Schema, NewDelete);
             if (!ok) { return ok; };
+             //ok = DBProxy.Current.Batch(null, sub_Schema, Updated);
             ok = DBProxy.Current.Batch(null, sub_Schema, NewUpdated);
             if (!ok) { return ok; };
-            //ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
+           // ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
+           // if(!ok) { return ok; };
             #endregion
-            return result;
+            return ok;
         }
 
         //Date
