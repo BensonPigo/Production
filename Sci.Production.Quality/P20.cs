@@ -428,6 +428,8 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
+        
+
         //改在txtSewingScheduleLine自訂控制項中作
         //        private void txtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         //        {

@@ -22,10 +22,9 @@ namespace Sci.Production.Class
         public  Sci.Win.UI.TextBox SPtxt { set; get; }
 
         [Browsable(true)]
-        public Sci.Win.UI.DisplayBox displayCellbox { set; get; }
-
-        [Browsable(true)]
         public Sci.Win.UI.TextBox Factorytxt { set; get; }
+
+   
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
@@ -53,17 +52,19 @@ where SS.OrderID='{0}' and SL.FactoryID='{1}'", SPtxt.Text, FactoryId), "5,20,10
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
 
-            if (displayCellbox != null) {
-                if (MyUtility.Check.Seek(string.Format(
-@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", FactoryId, item.GetSelectedString()), out dr))
-                {
-                    displayCellbox.Text = dr["sewingcell"].ToString();
-                }
-                else
-                {
-                    displayCellbox.Text = "";
-                }
-            }
+            
+
+//            if (displayCellbox != null) {
+//                if (MyUtility.Check.Seek(string.Format(
+//@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", FactoryId, item.GetSelectedString()), out dr))
+//                {
+//                    displayCellbox.Text = dr["sewingcell"].ToString();
+//                }
+//                else
+//                {
+//                    displayCellbox.Text = "";
+//                }
+//            }
            
         }
     }

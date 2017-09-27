@@ -504,14 +504,13 @@
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
             this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewinglineID", true));
-            this.txtLine.displayCellbox = this.displayCell;
             this.txtLine.Factorytxt = null;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLine.Location = new System.Drawing.Point(66, 87);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(118, 23);
             this.txtLine.SPtxt = this.txtSP;
-            this.txtLine.TabIndex = 141;
+            this.txtLine.TabIndex = 4;
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
             // comboShift
@@ -569,6 +568,7 @@
         #endregion
 
         private Win.UI.TextBox txtSP;
+        private Class.txtSewingScheduleLine txtLine;
         private Win.UI.Label labelDate;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelSP;
@@ -598,6 +598,6 @@
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
         private Win.UI.TextBox txtCPU;
-        private Class.txtSewingScheduleLine txtLine;
+        
     }
 }

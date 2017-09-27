@@ -675,14 +675,13 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
-            this.txtsewingline.displayCellbox = null;
             this.txtsewingline.Factorytxt = this.txtFactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(362, 126);
             this.txtsewingline.Name = "txtsewingline";
             this.txtsewingline.Size = new System.Drawing.Size(118, 23);
             this.txtsewingline.SPtxt = this.txtSP;
-            this.txtsewingline.TabIndex = 39;
+            this.txtsewingline.TabIndex = 4;
             // 
             // P21
             // 
