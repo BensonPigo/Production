@@ -178,8 +178,13 @@ namespace Sci.Production.Warehouse
 	        , [description] = f.DescDetail
 	        , [requestqty] = isnull((select sum(cons) 
 		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
-		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
-		                             where  c.id='{1}' and p.seq1 = a.seq1 and p.seq2 = a.seq2 and c.poid = a.poid), 0.00)
+		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid 
+                                                                                      and p.SEQ1 = c.Seq1 
+                                                                                      and p.SEQ2 = c.Seq2
+		                             where  c.id = '{1}' 
+                                            and c.poid = a.poid
+                                            and a.SciRefno = p.SciRefno
+                                            and a.ColorID = p.ColorID), 0.00)
 	        , [accu_issue] =isnull ((select  sum(qty) 
                                     from Issue c WITH (NOLOCK) 
                                     inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
