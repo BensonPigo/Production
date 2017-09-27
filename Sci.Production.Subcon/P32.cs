@@ -332,7 +332,7 @@ order by LD.OrderId, L.Category, L.LocalSuppID", M));
             dtMaster.Columns.Remove("Poid");
             dtChild.Columns.Remove("Poid");
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtGrid1);
+            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
             //DataView dataView = dtGrid2.DefaultView;
 
             if (dtChild.Columns.Contains("Ukey")) dtChild.Columns.Remove("Ukey");
