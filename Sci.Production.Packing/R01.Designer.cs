@@ -175,7 +175,7 @@
             this.labelSacnDate.Name = "labelSacnDate";
             this.labelSacnDate.Size = new System.Drawing.Size(97, 23);
             this.labelSacnDate.TabIndex = 119;
-            this.labelSacnDate.Text = "Sacn Date";
+            this.labelSacnDate.Text = "Scan Date";
             // 
             // label6
             // 
