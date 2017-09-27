@@ -298,22 +298,25 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                     {
                         if (dr.RowState == DataRowState.Added)
                         {
-                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
-                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
-                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
-                            {
                                 result = WriteRevise("Missing", dr);
                                 if (!result)
                                 {
                                     return result;
                                 }
-                            }
                         }
                         else if (dr.RowState == DataRowState.Modified)
                         {
-                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
-                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
-                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
+                            bool t = false;
+                            DataTable SubDetailData;
+                            GetSubDetailDatas(dr, out SubDetailData);
+                            foreach (DataRow tdr in SubDetailData.Rows)
+                            {
+                                if (tdr.RowState != DataRowState.Unchanged)
+                                {
+                                    t = true;
+                                }
+                            }
+                            if (t)
                             {
                                 result = WriteRevise("Revise", dr);
 
@@ -330,10 +333,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                         }
                         else if (dr.RowState == DataRowState.Deleted)
                         {
-                            if (dr["PackingListID"] != dr["PackingListID", DataRowVersion.Original] &&
-                                dr["orderid"] != dr["orderid", DataRowVersion.Original] &&
-                                dr["ordershipmodeseq"] != dr["ordershipmodeseq", DataRowVersion.Original])
-                            {
                                 result = WriteRevise("Delete", dr);
 
                                 #region update PulloutID 到PackingList
@@ -345,7 +344,6 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                                 {
                                     return result;
                                 }
-                            }
                         }
                     }
                 }
