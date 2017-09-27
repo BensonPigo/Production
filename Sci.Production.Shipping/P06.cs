@@ -518,13 +518,23 @@ FROM   pullout_detail pd,
 WHERE  pd.orderid = orders.id 
     AND pd.id = p.id 
     AND p.status = 'Confirmed'), 
-pulloutcomplete = Iif((SELECT iif(pd.status = 'S',1, Count(p.id))
-FROM   pullout_detail pd, 
-        pullout p 
-WHERE  pd.orderid = orders.id 
-        AND pd.id = p.id 
-        AND p.status = 'Confirmed' 
-        AND pd.status = 'C') > 0, 1, 0) 
+pulloutcomplete = Iif((
+	SELECT Count(p.id)
+	FROM   pullout_detail pd, 
+			pullout p 
+	WHERE  pd.orderid = orders.id 
+			AND pd.id = p.id 
+			AND p.status = 'Confirmed' 
+			AND pd.status = 'C'
+) > 0, 1,iif((
+SELECT Count(p.id)
+	FROM   pullout_detail pd, 
+			pullout p 
+	WHERE  pd.orderid = orders.id 
+			AND pd.id = p.id 
+			AND p.status = 'Confirmed' 
+			AND pd.status = 'S')>0,1,0)
+)
 WHERE  id = '{0}' ", MyUtility.Convert.GetString(dr["OrderID"])));
             }
 
