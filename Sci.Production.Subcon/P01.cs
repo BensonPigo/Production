@@ -215,7 +215,7 @@ select  *
         , scidelivery = o.scidelivery
 from dbo.ArtworkPO_Detail a
 left join dbo.Orders o on a.OrderID = o.id
-where a.id = '{0}'", masterID);
+where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
