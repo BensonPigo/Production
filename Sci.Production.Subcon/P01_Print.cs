@@ -182,6 +182,7 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportResource = reportresource;
                 var frm1 = new Sci.Win.Subs.ReportView(report);
                 frm1.MdiParent = MdiParent;
+                frm1.TopMost = true;
                 frm1.Show();
                 this.HideWaitMessage();
             }
@@ -258,6 +259,7 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportResource = reportresource;
                 var frm1 = new Sci.Win.Subs.ReportView(report);
                 frm1.MdiParent = MdiParent;
+                frm1.TopMost = true;
                 frm1.Show();
                 this.HideWaitMessage();
             }
