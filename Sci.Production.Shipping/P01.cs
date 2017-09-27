@@ -1032,7 +1032,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
                 }
             }
 
-            
+            RenewData();
             SendMail(false);
         }
 
