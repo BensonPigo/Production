@@ -230,14 +230,9 @@ where   ID = @orderid
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format(@"select distinct a.Article
-from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
-	  where oqd.Id = '{0}'
-	  and oqd.Seq = '{1}') a
-where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                            sqlCmd = string.Format(@"select distinct a.Article " + FOCQueryCmd() +
+                                @"where a.Price = 0 ", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -266,15 +261,10 @@ where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString())
                         return;
                     }
                     if (e.FormattedValue.ToString() != dr["Article"].ToString())
-                    {
-                        sqlCmd = string.Format(@"select a.Article
-from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
-	  where oqd.Id = '{0}'
-	  and oqd.Seq = '{1}') a
-where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString());
+                    {                        
+                        sqlCmd = string.Format(@"select a.Article " + FOCQueryCmd() +
+                            @" where a.Price = 0 and a.Article = '{2}'",
+                            dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString());
                         if (!MyUtility.Check.Empty(dr["SizeCode"]))
                         {
                             sqlCmd = sqlCmd + string.Format(" and a.SizeCode = '{0}'", dr["SizeCode"].ToString());
@@ -323,14 +313,8 @@ where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShi
                     {
                         if (e.RowIndex != -1)
                         {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format(@"select distinct a.SizeCode as Size,os.Seq
-from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
-	  where oqd.Id = '{0}'
-	  and oqd.Seq = '{1}') a
+                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);                           
+                            sqlCmd = string.Format(@"select distinct a.SizeCode as Size,os.Seq " + FOCQueryCmd() + @"
 left join Orders o WITH (NOLOCK) on o.ID = '{0}'
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
 where a.Price = 0 and a.Article = '{2}'
@@ -362,20 +346,9 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         return;
                     }
                     if (e.FormattedValue.ToString() != dr["SizeCode"].ToString())
-                    {
-                        sqlCmd = string.Format(@"
-select a.SizeCode
-from (
-    select  oqd.Article
-            , oqd.SizeCode
-            , isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
-	where oqd.Id = '{0}'
-	and oqd.Seq = '{1}'
-) a
-where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString());
+                    {                        
+                        sqlCmd = string.Format(@"select a.SizeCode " + FOCQueryCmd() +
+                            @" where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(sqlCmd))
                         {
                             dr["SizeCode"] = "";
@@ -735,15 +708,10 @@ where InvA.OrderID = '{0}'
                 }
                 #endregion
 
-                #region 確認每筆資料都是FOC
-                sqlCmd = string.Format(@"select a.SizeCode
-from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
-	  where oqd.Id = '{0}'
-	  and oqd.Seq = '{1}') a
-where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                #region 確認每筆資料都是FOC               
+
+                sqlCmd = string.Format(@"select a.SizeCode " + FOCQueryCmd() +
+                    @"where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
                 if (!MyUtility.Check.Seek(sqlCmd))
                 {
                     MyUtility.Msg.WarningBox("SP No:" + dr["OrderID"].ToString() + ", Color Code:" + dr["Article"].ToString() + ", Size:" + dr["SizeCode"].ToString()+" is not F.O.C data!!");
@@ -970,6 +938,26 @@ and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
             }
 
           
+        }
+
+        /// <summary>
+        /// Check是否為FOC訂單的共用邏輯層
+        /// </summary>
+        /// <returns></returns>
+        private string FOCQueryCmd()
+        {
+            string sqlCmd = @"
+from (
+    select oqd.Article
+        ,oqd.SizeCode
+        ,isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
+    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+    left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+    left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice >= 0
+    where oqd.Id = '{0}'
+    and oqd.Seq = '{1}'
+) a ";
+            return sqlCmd;
         }
     }
 }
