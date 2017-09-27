@@ -97,8 +97,10 @@ inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
-							    and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+--left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
+--							    and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+outer apply(select top 1 RejectQty, InspectQty from Rft r WITH (NOLOCK)  where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
+							    and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team) as r
 where s.OutputDate = '{0}'
 and s.FactoryID = '{1}'"
                 , Convert.ToDateTime(_date).ToString("d"), _factory));
