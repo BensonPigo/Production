@@ -1359,7 +1359,7 @@ AND p.EDITdATE = (
                 ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
                 GetDate(),'{8}','{9}','{10}','{11}','{12}',
                 '{13}',{14},{15},'{16}','{17}',GetDate(),'{18}')",
-                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["Fabriccombo"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
+                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["Fabriccombo"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Length > 2 ? artar["SewingLine"].ToString().Substring(0, 2) : artar["SewingLine"].ToString()), artar["item"], artar["SewingCell"],
                  artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID,artar["FabricPanelCode"]);
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion

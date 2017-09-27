@@ -116,7 +116,7 @@ namespace Sci.Production.Warehouse
             call.MdiParent = MdiParent;            
             call.Show();
             call.Activate();
-            call.Query();
+            call.ChangeDetailColor();
         }
 
         //隨著 P01上下筆SP#切換資料
@@ -316,7 +316,7 @@ namespace Sci.Production.Warehouse
             this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
         }
 
-        private void ChangeDetailColor()
+        public void ChangeDetailColor()
         {
             for (int index = 0; index < gridMaterialStatus.Rows.Count; index++)
             {
