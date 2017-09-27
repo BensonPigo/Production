@@ -51,11 +51,9 @@ namespace Sci.Production.PPIC
                     {
 
                         MyUtility.Msg.WarningBox("Picture1 process error. Please check it !!");
-                    }
-                    finally
-                    {
                         pictureBox1.ImageLocation = "";
                     }
+                   
                 }
 
 
@@ -79,9 +77,6 @@ namespace Sci.Production.PPIC
                     {
                       
                         MyUtility.Msg.WarningBox("Picture2 process error. Please check it !!");
-                    }
-                    finally
-                    {
                         pictureBox2.ImageLocation = "";
                     }
                 }
