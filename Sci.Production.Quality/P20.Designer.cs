@@ -34,7 +34,6 @@
             this.labelSP = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
             this.labelLine = new Sci.Win.UI.Label();
-            this.txtLine = new Sci.Win.UI.TextBox();
             this.displayCell = new Sci.Win.UI.DisplayBox();
             this.labelCell = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
@@ -57,8 +56,9 @@
             this.comboTeam = new Sci.Win.UI.ComboBox();
             this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
-            this.comboShift = new Sci.Production.Class.txtdropdownlist();
             this.txtCPU = new Sci.Win.UI.TextBox();
+            this.txtLine = new Sci.Production.Class.txtSewingScheduleLine();
+            this.comboShift = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +75,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.txtRFT);
@@ -98,7 +99,6 @@
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.displayCell);
             this.masterpanel.Controls.Add(this.labelCell);
-            this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.displayStyle);
             this.masterpanel.Controls.Add(this.labelStyle);
@@ -114,7 +114,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
@@ -139,6 +138,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
             // 
             // detailpanel
             // 
@@ -253,18 +253,6 @@
             this.labelLine.Size = new System.Drawing.Size(50, 23);
             this.labelLine.TabIndex = 113;
             this.labelLine.Text = "Line#";
-            // 
-            // txtLine
-            // 
-            this.txtLine.BackColor = System.Drawing.Color.White;
-            this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewinglineID", true));
-            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(66, 87);
-            this.txtLine.Name = "txtLine";
-            this.txtLine.Size = new System.Drawing.Size(118, 23);
-            this.txtLine.TabIndex = 4;
-            this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
-            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
             // displayCell
             // 
@@ -501,6 +489,30 @@
             this.labConfirm.Size = new System.Drawing.Size(0, 29);
             this.labConfirm.TabIndex = 138;
             // 
+            // txtCPU
+            // 
+            this.txtCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCPU.IsSupportEditMode = false;
+            this.txtCPU.Location = new System.Drawing.Point(576, 33);
+            this.txtCPU.Name = "txtCPU";
+            this.txtCPU.ReadOnly = true;
+            this.txtCPU.Size = new System.Drawing.Size(121, 23);
+            this.txtCPU.TabIndex = 140;
+            // 
+            // txtLine
+            // 
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewinglineID", true));
+            this.txtLine.Factorytxt = null;
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(66, 87);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(118, 23);
+            this.txtLine.SPtxt = this.txtSP;
+            this.txtLine.TabIndex = 4;
+            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
+            // 
             // comboShift
             // 
             this.comboShift.BackColor = System.Drawing.Color.White;
@@ -513,17 +525,6 @@
             this.comboShift.Size = new System.Drawing.Size(150, 24);
             this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
-            // 
-            // txtCPU
-            // 
-            this.txtCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtCPU.IsSupportEditMode = false;
-            this.txtCPU.Location = new System.Drawing.Point(576, 33);
-            this.txtCPU.Name = "txtCPU";
-            this.txtCPU.ReadOnly = true;
-            this.txtCPU.Size = new System.Drawing.Size(121, 23);
-            this.txtCPU.TabIndex = 140;
             // 
             // P20
             // 
@@ -567,12 +568,12 @@
         #endregion
 
         private Win.UI.TextBox txtSP;
+        private Class.txtSewingScheduleLine txtLine;
         private Win.UI.Label labelDate;
         private Win.UI.DateBox dateDate;
         private Win.UI.Label labelSP;
         private Win.UI.Label labelStyle;
         private Win.UI.Label labelLine;
-        private Win.UI.TextBox txtLine;
         private Win.UI.TextBox txtRemark;
         private Win.UI.Label labelRemark;
         private Win.UI.DisplayBox displayCell;
@@ -597,5 +598,6 @@
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
         private Win.UI.TextBox txtCPU;
+        
     }
 }

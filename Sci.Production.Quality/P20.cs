@@ -428,30 +428,33 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
-        private void txtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            DataRow dr;
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
-SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
-FROM SewingSchedule SS WITH (NOLOCK)
-LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
-where SS.OrderID='{0}' and SL.FactoryID='{1}'", this.txtSP.Text,Sci.Env.User.Factory), "5,20,10", this.txtLine.Text);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            this.txtLine.Text = item.GetSelectedString();
+        
 
-            if (MyUtility.Check.Seek(string.Format(
-@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", Sci.Env.User.Factory, item.GetSelectedString()), out dr))
-            {
-                this.displayCell.Text = dr["sewingcell"].ToString();
-            }
-            else
-            {
-                this.displayCell.Text = "";
-            }                 
-        }
+        //改在txtSewingScheduleLine自訂控制項中作
+        //        private void txtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        //        {
+        //            DataRow dr;
+        //            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+        //            if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
+        //            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+        //SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
+        //FROM SewingSchedule SS WITH (NOLOCK)
+        //LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
+        //where SS.OrderID='{0}' and SL.FactoryID='{1}'", this.txtSP.Text,Sci.Env.User.Factory), "5,20,10", this.txtLine.Text);
+        //            DialogResult returnResult = item.ShowDialog();
+        //            if (returnResult == DialogResult.Cancel) { return; }
+        //            this.txtLine.Text = item.GetSelectedString();
+
+        //            if (MyUtility.Check.Seek(string.Format(
+        //@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", Sci.Env.User.Factory, item.GetSelectedString()), out dr))
+        //            {
+        //                this.displayCell.Text = dr["sewingcell"].ToString();
+        //            }
+        //            else
+        //            {
+        //                this.displayCell.Text = "";
+        //            }                 
+        //        }
 
         private void txtLine_Validating(object sender, CancelEventArgs e)
         {
