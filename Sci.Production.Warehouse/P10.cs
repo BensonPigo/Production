@@ -178,8 +178,13 @@ namespace Sci.Production.Warehouse
 	        , [description] = f.DescDetail
 	        , [requestqty] = isnull((select sum(cons) 
 		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
-		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
-		                             where  c.id='{1}' and p.seq1 = a.seq1 and p.seq2 = a.seq2 and c.poid = a.poid), 0.00)
+		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid 
+                                                                                      and p.SEQ1 = c.Seq1 
+                                                                                      and p.SEQ2 = c.Seq2
+		                             where  c.id = '{1}' 
+                                            and c.poid = a.poid
+                                            and a.SciRefno = p.SciRefno
+                                            and a.ColorID = p.ColorID), 0.00)
 	        , [accu_issue] =isnull ((select  sum(qty) 
                                     from Issue c WITH (NOLOCK) 
                                     inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
@@ -497,27 +502,33 @@ with main as(
                                                      and t.seq1 = c.seq1 
                                                      and t.seq2 = c.Seq2
     outer apply (
-        select top 1 NetQty = isnull (psd.NetQty, 0)
+        select top 1 NetQty = isnull (psdAll.NetQty, 0)
         from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
         inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
                                                        and psd.seq1 = cdc.seq1 
                                                        and psd.seq2 = cdc.Seq2
-        where psd.NetQty != 0
-              and psd.NetQty is not null
-              and psd.StockPoid = ''
+        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID
+                                                         and psd.SciRefno = psdAll.SciRefno
+                                                         and psd.ColorID = psdAll.ColorID
+        where psdAll.NetQty != 0
+              and psdAll.NetQty is not null
+              and psdAll.StockPoid = ''
 			  and cdc.ID = c.ID
 			  and t.SCIRefno = psd.SCIRefno
 			  and t.ColorID = psd.ColorID
     ) Normal
     outer apply (
-        select top 1 NetQty = isnull (psd.NetQty, 0)
+        select top 1 NetQty = isnull (psdAll.NetQty, 0)
         from Cutplan_Detail_Cons cdc WITH (NOLOCK) 
         inner join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = cdc.Poid 
                                                        and psd.seq1 = cdc.seq1 
                                                        and psd.seq2 = cdc.Seq2
-        where psd.NetQty != 0
-              and psd.NetQty is not null
-              and psd.StockPoid != ''
+        inner join Po_Supp_Detail psdAll WITH (NOLOCK) on psd.ID = psdAll.ID
+                                                         and psd.SciRefno = psdAll.SciRefno
+                                                         and psd.ColorID = psdAll.ColorID
+        where psdAll.NetQty != 0
+              and psdAll.NetQty is not null
+              and psdAll.StockPoid != ''
 			  and cdc.ID = c.ID
 			  and t.SCIRefno = psd.SCIRefno
 			  and t.ColorID = psd.ColorID
