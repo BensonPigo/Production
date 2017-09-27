@@ -39,18 +39,55 @@ namespace Sci.Production.PPIC
             displayStyleApprove.Value = MyUtility.Convert.GetString(CurrentMaintain["ApvName"]) + " " + MyUtility.GetValue.Lookup(string.Format("select (Name + ' #' + ExtNo) as NameExtNo from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
             numCPUAdjusted.Value = MyUtility.Check.Empty(CurrentMaintain["CPUAdjusted"]) ? 0 : MyUtility.Convert.GetDecimal(CurrentMaintain["CPUAdjusted"]) * 100m;
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
-            if (MyUtility.Check.Empty(CurrentMaintain["Picture1"])) pictureBox1.ImageLocation = "";
-            else
+            if (MyUtility.Check.Empty(CurrentMaintain["Picture1"])) { pictureBox1.ImageLocation = ""; } 
+            else{
                 if (File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"])))
-                    pictureBox1.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+                {
+                    try
+                    {
+                        pictureBox1.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture1"]);
+                    }
+                    catch (Exception e)
+                    {
+
+                        MyUtility.Msg.WarningBox("Picture1 process error. Please check it !!");
+                        pictureBox1.ImageLocation = "";
+                    }
+                   
+                }
+
+
                 else
+                {
                     pictureBox1.ImageLocation = "";
-            if (MyUtility.Check.Empty(CurrentMaintain["Picture2"])) pictureBox2.ImageLocation = "";
+                }
+
+            }
+
+            if (MyUtility.Check.Empty(CurrentMaintain["Picture2"])) { pictureBox2.ImageLocation = ""; }
             else
+            {
                 if (File.Exists(destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"])))
-                    pictureBox2.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+                {
+                    try
+                    {
+                        pictureBox2.ImageLocation = destination_path + MyUtility.Convert.GetString(CurrentMaintain["Picture2"]);
+                    }
+                    catch (Exception e)
+                    {
+                      
+                        MyUtility.Msg.WarningBox("Picture2 process error. Please check it !!");
+                        pictureBox2.ImageLocation = "";
+                    }
+                }
+
+
                 else
+                {
                     pictureBox2.ImageLocation = "";
+                }
+
+            }
 
             btnTMSCost.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_TMSCost WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["UKey"]))) ? Color.Blue : Color.Black;
             btnStdGSD.ForeColor = MyUtility.Check.Seek(string.Format("select ID from IETMS WITH (NOLOCK) where ID = '{0}' and Version = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["IETMSID"]), MyUtility.Convert.GetString(CurrentMaintain["IETMSVersion"]))) ? Color.Blue : Color.Black;
