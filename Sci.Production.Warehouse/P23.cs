@@ -892,7 +892,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
                                    seq1 = g.Key.seq1,
                                    seq2 = g.Key.seq2,
                                    stocktype = g.Key.stocktype,
-                                   qty = g.Sum(m => m.Field<decimal>("qty")),
+                                   qty = - g.Sum(m => m.Field<decimal>("qty")),
                                    location = g.Key.location,
                                    roll = g.Key.roll,
                                    dyelot = g.Key.dyelot,
