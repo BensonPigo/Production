@@ -194,49 +194,20 @@ from(
 )aa
 group by FactoryID,[SP#],Qty,styleid,[Article],SizeCode,[Comb]
 -----
-select FactoryID,[SP#]
-	,[IN CUT PARTS QTY] = sum(Bundle_Detail_Qty)
-	,[Article],SizeCode
-	,[Comb]
+select 
+	o.FactoryID,
+	[SP#] = b.Orderid,
+	[IN CUT PARTS QTY]=sum(bd.qty)
 into #tmp2
-from(
-	Select DISTINCT
-		o.FactoryID,
-		[SP#] = b.Orderid,
-		[Article] = b.Article,
-		bd.SizeCode,
-		[Comb] = b.PatternPanel,
-		[Artwork] = sub.sub,
-		[Pattern] = bd.PatternCode,
-		Bundle_Detail_Qty=bd.qty
-	from Bundle b WITH (NOLOCK) 
-	inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-	left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-	inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-	inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-	inner join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-	outer apply(
-			select sub= stuff((
-				Select distinct concat('+', bda.SubprocessId)
-				from Bundle_Detail_Art bda WITH (NOLOCK) 
-				where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-				for xml path('')
-			),1,1,'')
-	) as sub
+from Bundle b WITH (NOLOCK) 
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno
 	where 1=1
-    and (s.Id = '{0}' or '{0}' = '')
-    and (o.FactoryID = '{1}' or '{1}' = '')
-    and bio.InComing between '{2}'and '{3}'
-	and b.PatternPanel in(
-		Select distinct oe.PatternPanel
-		From dbo.Order_EachCons a WITH (NOLOCK) 
-		Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
-		left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
-		left join Order_EachCons_PatternPanel oe WITH (NOLOCK) on oe.Order_EachConsUkey = a.Ukey
-		Where a.ID = o.POID and bof.kind !=0
-	)
-)aa
-group by FactoryID,[SP#],[Article],SizeCode,[Comb]
+and (bio.SubProcessId = '{0}' or '{0}' = '')
+and (o.FactoryID = '{1}' or '{1}' = '')
+and bio.InComing between '{2}'and '{3}'
+group by o.FactoryID,b.Orderid
 ------------------------------------------------------------------
 select FactoryID,[SP#],[Article],SizeCode,[Comb],[OUT SET QTY] = min([QtySum])
 into #tmp3
@@ -291,7 +262,7 @@ select sp=a.SP#
 	,icpq = sum(b.[IN CUT PARTS QTY])
 	,osq = sum(c.[OUT SET QTY])
 from #tmp1 a 
-inner join #tmp2 b on a.FactoryID =b.FactoryID and a.SP# = b. SP# and a.Article = b.Article and a.SizeCode = b.SizeCode and a.Comb = b. Comb
+inner join #tmp2 b on a.FactoryID =b.FactoryID and a.SP# = b. SP#
 inner join #tmp3 c on a.FactoryID =c.FactoryID and a.SP# = c. SP# and a.Article = c.Article and a.SizeCode = c.SizeCode and a.Comb = c. Comb
 group by a.SP#	,a.StyleID	,a.Qty	,a.[Cut part Qty/Set]
 order by a.SP#
