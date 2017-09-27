@@ -221,6 +221,12 @@
     <Compile Include="txtsewingline.Designer.cs">
       <DependentUpon>txtsewingline.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtSewingScheduleLine.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtSewingScheduleLine.Designer.cs">
+      <DependentUpon>txtSewingScheduleLine.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtshipmode.cs">
       <SubType>Component</SubType>
     </Compile>
