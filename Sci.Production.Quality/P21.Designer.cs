@@ -65,8 +65,8 @@
             this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
-            this.txtsewingline = new Sci.Production.Class.txtsewingline();
             this.txtuserCFA = new Sci.Production.Class.txtuser();
+            this.txtsewingline = new Sci.Production.Class.txtSewingScheduleLine();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +83,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtsewingline);
             this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.numOrderQty);
             this.masterpanel.Controls.Add(this.numSQR);
@@ -93,7 +94,6 @@
             this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.txtdropdownlistShift);
             this.masterpanel.Controls.Add(this.label19);
-            this.masterpanel.Controls.Add(this.txtsewingline);
             this.masterpanel.Controls.Add(this.txtuserCFA);
             this.masterpanel.Controls.Add(this.comboResult);
             this.masterpanel.Controls.Add(this.comboInspectionStage);
@@ -151,7 +151,6 @@
             this.masterpanel.Controls.SetChildIndex(this.comboInspectionStage, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboResult, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserCFA, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.label19, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtdropdownlistShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
@@ -163,6 +162,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             // 
             // detailpanel
             // 
@@ -661,17 +661,6 @@
             this.txtdropdownlistShift.TabIndex = 9;
             this.txtdropdownlistShift.Type = "SewingOutput_Shift";
             // 
-            // txtsewingline
-            // 
-            this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
-            this.txtsewingline.factoryobjectName = this.txtFactory;
-            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline.Location = new System.Drawing.Point(362, 126);
-            this.txtsewingline.Name = "txtsewingline";
-            this.txtsewingline.Size = new System.Drawing.Size(77, 23);
-            this.txtsewingline.TabIndex = 4;
-            // 
             // txtuserCFA
             // 
             this.txtuserCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "cfa", true));
@@ -681,6 +670,19 @@
             this.txtuserCFA.Size = new System.Drawing.Size(265, 23);
             this.txtuserCFA.TabIndex = 8;
             this.txtuserCFA.TextBox1Binding = "";
+            // 
+            // txtsewingline
+            // 
+            this.txtsewingline.BackColor = System.Drawing.Color.White;
+            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
+            this.txtsewingline.displayCellbox = null;
+            this.txtsewingline.Factorytxt = this.txtFactory;
+            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline.Location = new System.Drawing.Point(362, 126);
+            this.txtsewingline.Name = "txtsewingline";
+            this.txtsewingline.Size = new System.Drawing.Size(118, 23);
+            this.txtsewingline.SPtxt = this.txtSP;
+            this.txtsewingline.TabIndex = 39;
             // 
             // P21
             // 
@@ -747,7 +749,6 @@
         private Win.UI.Label labelDestination;
         private Win.UI.DateBox dateAuditDate;
         private Class.txtuser txtuserCFA;
-        private Class.txtsewingline txtsewingline;
         private Win.UI.Label label19;
         private Class.txtdropdownlist txtdropdownlistShift;
         private Win.UI.ComboBox comboTeam;
@@ -758,5 +759,6 @@
         private Win.UI.NumericBox numDefectsQty;
         private Win.UI.NumericBox numOrderQty;
         private System.Windows.Forms.Label labConfirm;
+        private Class.txtSewingScheduleLine txtsewingline;
     }
 }
