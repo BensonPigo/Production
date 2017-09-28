@@ -41,7 +41,7 @@ BEGIN
 		IF @tmpcell is not null
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
-				IF @tmpcell <> @sewingcell or @tmpdesc <> @description or @tmpsewer <> @sewer
+				IF isnull(@tmpcell,'') <> isnull(@sewingcell,'') or isnull(@tmpdesc,'') <> isnull(@description,'') or isnull(@tmpsewer,'') <> isnull(@sewer,'')
 					update SewingLine set SewingCell = isnull(@sewingcell,''), Description = isnull(@description,''), Sewer = isnull(@sewer,0), EditName = @login, EditDate = GETDATE() where ID = @sewinglineid and FactoryID = @factoryid;
 			END
 		ELSE
@@ -742,14 +742,14 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	BEGIN
 		Begin Try
 			Begin Transaction
-			IF @orderinline <> @sewinginline or @orderoffline <> @sewingoffline or @ordersewline <> @sewline
+			IF isnull(@orderinline,'') <> isnull(@sewinginline,'') or isnull(@orderoffline,'') <> isnull(@sewingoffline,'') or isnull(@ordersewline,'') <> isnull(@sewline,'')
 				update Orders set SewInLine = @sewinginline, SewOffLine = @sewingoffline, SewLine = isnull(@sewline,'') where ID = @orderid
 
-			IF @orderinline <> @sewinginline
+			IF isnull(@orderinline,'') <> isnull(@sewinginline,'')
 				insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 				values (@orderid,'SewInOffLine',IIF(@orderinline is null,'',CONVERT(char(8), @orderinline, 112)),IIF(@sewinginline is null,'',CONVERT(char(8), @sewinginline, 112)),'Sewing Inline Update',@login,GETDATE())
 			
-			IF @orderoffline <> @sewingoffline
+			IF isnull(@orderoffline,'') <> isnull(@sewingoffline,'')
 				insert into Order_History (ID,HisType,OldValue,NewValue,Remark,AddName,AddDate)
 				values (@orderid,'SewInOffLine',IIF(@orderoffline is null,'',CONVERT(char(8), @orderoffline, 112)),IIF(@sewingoffline is null,'',CONVERT(char(8), @sewingoffline, 112)),'Sewing Offline Update',@login,GETDATE())
 
