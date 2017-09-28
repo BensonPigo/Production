@@ -251,6 +251,7 @@ select	distinct p.id as [poid]
                  end
         , p.StockUnit
         , f.BomTypeCalculate
+        , ColorMultipleID = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
@@ -304,6 +305,7 @@ from (
             , b.StockUnit
             , Qty = 0.00
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
+            , b.ColorMultipleID
     from #tmpPO_supp_detail b
     left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
                                    and b.poid = tb.ID 
@@ -401,7 +403,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
                     foreach (DataRow dr in BOA_PO.Rows)
                     {
-
+                        dr["ColorID"] = dr["ColorMultipleID"];
                         DataTable tmp = new DataTable();
                         tmp.ColumnsStringAdd("Poid");
                         tmp.ColumnsStringAdd("seq1");
@@ -448,6 +450,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                             dictionaryDatas.Add(dr, new DataTable());
                         }
                     }
+                    BOA_PO.Columns.Remove("ColorMultipleID");
                     var tmp2 = dictionaryDatas.Count;
                 }
 

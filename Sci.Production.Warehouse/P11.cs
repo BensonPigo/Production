@@ -176,7 +176,7 @@ select  a.*
         , f.MtlTypeID
         , m.IssueType
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-        , b.Colorid
+        , Colorid = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
         , b.UsedQty
         , b.SizeUnit
@@ -283,7 +283,7 @@ select  a.*
         , f.MtlTypeID
         , m.IssueType
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-        , b.Colorid
+        , Colorid = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
         , b.UsedQty
         , b.SizeUnit
@@ -383,7 +383,7 @@ select  a.Id
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
         , a.StockType
         , a.Qty
-        , p.Colorid
+        , Colorid = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
         , p.SizeSpec
         , p.UsedQty
         , p.SizeUnit
@@ -1731,7 +1731,7 @@ select  poid = b.ID
         , b.Seq2
         , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) seq
         , a.StockType
-        , b.ColorID
+        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
         , b.UsedQty
         , b.SizeUnit
