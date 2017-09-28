@@ -577,7 +577,21 @@ join (select LocalPoId,LocalPo_detailukey
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
-select  a.*
+select  a.Id
+       ,a.OrderId
+       ,Rtrim(a.Refno) Refno
+       ,a.ThreadColorID
+       ,a.OnRoad
+       ,a.Qty
+       ,a.LocalPoId
+       ,a.Remark
+       ,a.LocalPo_detailukey
+       ,a.Location
+       ,a.Category
+       ,a.Mdivisionid
+       ,a.OldSeq1
+       ,a.OldSeq2
+       ,a.Ukey
         , b.qty - b.inqty [onRoad]
         , b.Qty poqty,b.Price
         , dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
