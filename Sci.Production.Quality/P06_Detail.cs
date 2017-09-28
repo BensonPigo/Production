@@ -301,6 +301,8 @@ namespace Sci.Production.Quality
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
+                if (dr["SEQ"].ToString().Replace("-","") == e.FormattedValue.ToString().Replace("-", ""))
+                    return;
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["seq1"] = "";
@@ -318,14 +320,16 @@ namespace Sci.Production.Quality
 
                 string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, seq1, seq2);
 
-              
+
 
                 DBProxy.Current.Select(null, sql_cmd, out dt);
                 if (dt.Rows.Count <= 0)
                 {
                     //e.Cancel = true;//將value卡住,沒輸入正確or清空不給離開
                     var ctl = (Ict.Win.UI.DataGridViewMaskedTextBoxEditingControl)this.grid.EditingControl;
-                    ctl.Text = "";
+                    if (ctl != null) {
+                        ctl.Text = "";
+                    }
                     dr["seq1"] = "";
                     dr["seq2"] = "";
                     dr["SEQ"] = "";

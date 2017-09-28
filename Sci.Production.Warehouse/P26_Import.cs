@@ -80,7 +80,7 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 inner join dbo.Factory f on f.ID=p1.factoryID 
 where   A.StockType='{0}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         AND f.MDivisionID='{1}' ", dr_master["stocktype"].ToString(),Sci.Env.User.Keyword)); // 
                         if (!MyUtility.Check.Empty(sp))
@@ -147,7 +147,7 @@ from dbo.Receiving r1 WITH (NOLOCK)
 inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 where   A.StockType='{1}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
@@ -173,7 +173,7 @@ from dbo.SubTransfer r1 WITH (NOLOCK)
 inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
 where   A.StockType='{1}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         and r1.Status = 'Confirmed'
         and r1.mdivisionid='{2}'
@@ -199,7 +199,7 @@ from dbo.Issue r1 WITH (NOLOCK)
 inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 where   A.StockType='{1}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
@@ -225,7 +225,7 @@ from dbo.ReturnReceipt r1 WITH (NOLOCK)
 inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 where   A.StockType='{1}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
@@ -251,7 +251,7 @@ from dbo.TransferIn r1 WITH (NOLOCK)
 inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 where   A.StockType='{1}' 
-        AND  A.Lock = 0 
+        --AND  A.Lock = 0 
         and a.InQty - a.OutQty + a.AdjustQty > 0 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
