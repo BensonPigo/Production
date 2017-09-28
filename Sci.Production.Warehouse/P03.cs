@@ -739,31 +739,13 @@ where ROW_NUMBER_D =1
 
         private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            MessageBox.Show("Error happened" + e.Context.ToString());
-            if (e.Context == DataGridViewDataErrorContexts.Commit)
+            this.ShowErr(e.Exception);
+            e.ThrowException = false;
+            if (listControlBindingSource1.DataSource != null && listControlBindingSource1.DataSource is DataTable)
             {
-                MessageBox.Show("Commit error");
-            }
-            if (e.Context == DataGridViewDataErrorContexts.CurrentCellChange)
-            {
-                MessageBox.Show("Cell change");
-            }
-            if (e.Context == DataGridViewDataErrorContexts.Parsing)
-            {
-                MessageBox.Show("parsing error");
-            }
-            if (e.Context == DataGridViewDataErrorContexts.LeaveControl)
-            {
-                MessageBox.Show("leave control error");
-            }
-
-            if ((e.Exception) is ConstraintException)
-            {
-                DataGridView view = (DataGridView)sender;
-                view.Rows[e.RowIndex].ErrorText = "an error";
-                view.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "an error";
-
-                e.ThrowException = false;
+                DataTable data = (DataTable)listControlBindingSource1.DataSource;
+                data.Clear();
+                return;
             }
         }
     }
