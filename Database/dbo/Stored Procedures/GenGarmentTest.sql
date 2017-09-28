@@ -40,7 +40,7 @@ BEGIN
 
 	--將資料新增至GarmentTest
 	Insert into GarmentTest (MDivisionid,BrandID,StyleID,SeasonID,Article,OrderID,DeadLine,SewingInline,SewingOffline)
-	select TOP 1 t.MDivisionID,t.BrandID,t.StyleID,t.SeasonID,t.Article, 
+	select t.MDivisionID,t.BrandID,t.StyleID,t.SeasonID,t.Article, 
 	isnull((select top(1) a.OrderID from (
 	select sd.OrderID,s.OutputDate from SewingOutput_Detail sd WITH (NOLOCK)
 	left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
