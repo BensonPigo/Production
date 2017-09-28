@@ -602,6 +602,7 @@ with tmpGroup as (
             , NWPerPcs
             , min(Seq) as MinSeq
             , max(Seq) as MaxSeq 
+            , count(*) as Ctns
     from PackingList_Detail WITH (NOLOCK) 
     where ID = '{0}'
     group by OrderID, OrderShipmodeSeq, Article, Color, SizeCode, QtyPerCTN
@@ -1007,7 +1008,9 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             string ctnStartNo = "XXXXXX";
             foreach (DataRow dr in PrintData.Rows)
             {
-                int ctns = MyUtility.Convert.GetInt(dr["CTNEndNo"]) - MyUtility.Convert.GetInt(dr["CTNStartNo"]) + 1;
+                //因為有箱號不連續的問題，所以直接時用來源資料組好的數量，不用箱號箱減
+                //int ctns = MyUtility.Convert.GetInt(dr["CTNEndNo"]) - MyUtility.Convert.GetInt(dr["CTNStartNo"]) + 1;
+                int ctns = (int)dr["Ctns"];
                 if (ctnStartNo != MyUtility.Convert.GetString(dr["CTNStartNo"]))
                 {                                  
                     worksheet.Cells[bodyRowIndex, bodyCtn1Column] = MyUtility.Convert.GetString(dr["CTNStartNo"]);
