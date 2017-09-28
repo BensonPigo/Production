@@ -682,9 +682,18 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
 
                 string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK) where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
-                CurrentMaintain["ITEM"] = item;
+                CurrentMaintain["ITEM"] = item; 
                 CurrentMaintain["Cutref"] = newvalue;
-                WorkOrder_Ukey = cutdr["Ukey"].ToString(); ;
+                /*
+                 *如果相同Refno 卻有不同的workorder.ukey 
+                 *就需要包含所有ukey
+                 *避免一張馬克兩個Article 在Validating 時會判斷出錯
+                 */                
+                WorkOrder_Ukey = "";
+                foreach (DataRow dr in cutdr.Table.Rows)
+                {
+                    WorkOrder_Ukey = WorkOrder_Ukey + dr["Ukey"].ToString() + ",";
+                }
                 CurrentMaintain.EndEdit();
             }
             ((DataTable)this.detailgridbs.DataSource).Clear();
@@ -977,8 +986,8 @@ ORDER BY Seq"
                 sql = string.Format(@"
 select Article 
 from Workorder_Distribute WITH (NOLOCK) 
-where Article!='' and WorkorderUkey={0} and Article='{1}'"
-                    , WorkOrder_Ukey, newvalue);
+where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
+                    ,MyUtility.Check.Empty(WorkOrder_Ukey)?"": WorkOrder_Ukey.Trim().Substring(0, WorkOrder_Ukey.Length-1), newvalue);
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
                     if (dtTEMP.Rows.Count == 0)
