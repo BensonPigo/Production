@@ -76,26 +76,23 @@ namespace Sci.Production.Sewing
                 if (this.EditMode)
                 {
                     DataRow dr = grid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Convert.GetInt(e.FormattedValue) != MyUtility.Convert.GetInt(dr["QAQty"]))
+                    if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
                     {
-                        if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
-                        {
-                            MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
-                            dr["QAQty"] = 0;
-                            e.Cancel = true;
-                        }
-                        else
-                        {
-                            if (MyUtility.Convert.GetInt(dr["QAQty"]) == 0 && (dr.RowState != DataRowState.Added && dr.RowState == DataRowState.Unchanged))
-                            {
-                                dr.SetAdded();
-                            }
-                            dr["QAQty"] = e.FormattedValue;
-                        }
-                        dr["BalQty"] = MyUtility.Convert.GetInt(dr["Variance"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-                        dr.EndEdit();
-                        CalculateTotal();
+                        MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
+                        dr["QAQty"] = 0;
+                        e.Cancel = true;
                     }
+                    else
+                    {
+                        if (MyUtility.Convert.GetInt(dr["QAQty"]) == 0 && (dr.RowState != DataRowState.Added && dr.RowState == DataRowState.Unchanged))
+                        {
+                            dr.SetAdded();
+                        }
+                        dr["QAQty"] = e.FormattedValue;
+                    }
+                    dr["BalQty"] = MyUtility.Convert.GetInt(dr["Variance"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
+                    dr.EndEdit();
+                    CalculateTotal();
                 }
                 
             };
