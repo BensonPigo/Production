@@ -280,6 +280,47 @@ where a.id = @ID", pars, out dtDetail);
                     row["Dyelot"] = "";
                 }
             }
+
+            //收物料時, 要判斷除了自己之外, 是否已存在同SP+Seq+ROLL+Dyelot(Fabric=F, StockType相同),P18 [TransferIn_Detail]
+            warningmsg.Clear();
+            foreach (DataRow row in DetailDatas)
+            {
+                if (row["fabrictype"].ToString().ToUpper() == "F")
+                {
+                    if (row.RowState == DataRowState.Added)
+                    {
+                        if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                            , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
+                        {
+                            warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                            warningmsg.Append(Environment.NewLine);
+                        }
+                    }
+                    if (row.RowState == DataRowState.Modified)
+                    {
+                        if (MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["seq1"]) != MyUtility.Convert.GetString(row["seq1", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
+                            MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]))
+                        {
+                            if (MyUtility.Check.Seek(string.Format(@"select * from TransferIn_Detail where poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}' and stocktype = '{5}'"
+                                , row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"], row["stocktype"])))
+                            {
+                                warningmsg.Append(string.Format(@"<SP>: {0} <Seq>: {1}-{2}  <ROLL> {3}<DYELOT>{4} exists, cannot be saved!", row["poid"], row["seq1"], row["seq2"], row["Roll"], row["Dyelot"]));
+                                warningmsg.Append(Environment.NewLine);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!MyUtility.Check.Empty(warningmsg.ToString()))
+            {
+                MyUtility.Msg.WarningBox(warningmsg.ToString());
+                return false;
+            }
             // Check Roll 是否有重複
             if (!checkRoll())
                 return false;
