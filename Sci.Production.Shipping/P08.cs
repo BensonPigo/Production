@@ -26,9 +26,11 @@ namespace Sci.Production.Shipping
         Ict.Win.DataGridViewGeneratorTextColumnSettings code = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings rate = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings price = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         Ict.Win.UI.DataGridViewTextBoxColumn col_code;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_rate;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_price;
         Ict.Win.UI.DataGridViewTextBoxColumn col_remark;
         private bool haveEditShareFee;
         public P08(ToolStripMenuItem menuitem)
@@ -266,14 +268,26 @@ where sd.ID = '{0}'", masterID);
                     }
                 }
             };
-            #endregion 
+            price.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (e.FormattedValue != null)
+                    {
+                        dr["price"] = e.FormattedValue;
+                        CalculateGridAmount(dr);
+                    }
+                }
+            };
+            #endregion
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("ShipExpenseID", header: "Code", width: Widths.AnsiChars(10), settings: code).Get(out col_code)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6), decimal_places: 4, settings: qty).Get(out col_qty)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), decimal_places: 4,minimum:-9999999999, settings: price).Get(out col_price)
                 .Numeric("Rate", header: "Rate", width: Widths.AnsiChars(9), decimal_places: 6, settings: rate).Get(out col_rate)
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
                 .Text("Remark", header: "WK#/Reamrk", width: Widths.AnsiChars(10)).Get(out col_remark)
@@ -633,6 +647,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 col_code.IsEditingReadOnly = false;
                 col_qty.IsEditingReadOnly = false;
                 col_rate.IsEditingReadOnly = false;
+                col_price.IsEditingReadOnly = false;
                 col_remark.IsEditingReadOnly = false;
                
                 for (int i = 0; i < detailgrid.ColumnCount; i++)
@@ -648,6 +663,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 col_code.IsEditingReadOnly = true;
                 col_qty.IsEditingReadOnly = true;
                 col_rate.IsEditingReadOnly = true;
+                col_price.IsEditingReadOnly = true;
                 col_remark.IsEditingReadOnly = true;
                 for (int i = 0; i < detailgrid.ColumnCount; i++)
                 {
