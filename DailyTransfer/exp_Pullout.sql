@@ -91,7 +91,7 @@ into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
 	from Production.dbo.Pullout_Detail 
-	where (PackingListType = 'F' or PackingListType = 'I') 
+	where (PackingListType = 'F' or PackingListType = 'I'or PackingListType = 'L') 
 		  and PackingListID <> ''
 	
 	except
