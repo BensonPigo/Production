@@ -563,7 +563,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                         cmds.Add(sp2);
 
                         DataTable orderData;
-                        string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
+                        string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid and factoryid in (select id from factory where junk = 0 and IsProduceFty = 1)";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                         if (!result || orderData.Rows.Count <= 0)
                         {
