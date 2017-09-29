@@ -325,7 +325,32 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[3, 5] = label30.Text;
+            string Status = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", CurrentMaintain["id"].ToString()));
+            switch (Status)
+            {
+                case "New":
+                    Status = "New";
+                    break;
+                case "Junked":
+                    Status = "Junk";
+                    break;
+                case "Checked":
+                    Status = "PPIC Apv";
+                    break;
+                case "Approved":
+                    Status = "Fty Apv";
+                    break;
+                case "Confirmed":
+                    Status = "SMR Apv";
+                    break;
+                case "Locked":
+                    Status = "Task Team Lock";
+                    break;
+                default:
+                    Status = "";
+                    break;
+            }
+            worksheet.Cells[3, 5] = Status;
             worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
             worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBuyerDelivery.Value)?"": Convert.ToDateTime(dateBuyerDelivery.Value).ToString("d");
@@ -1044,10 +1069,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
                     return;
                 }
             }
-
-            RenewData();
-            OnDetailEntered();
-
+            
             SendMail(false);
         }
 
