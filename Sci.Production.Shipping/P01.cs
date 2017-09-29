@@ -915,6 +915,8 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.C
             }
             #endregion
 
+            checkqty();
+
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','New','Checked','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
             string updateCmd = string.Format(@"update AirPP set Status = 'Checked', PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
@@ -1002,6 +1004,8 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.
                 return;
             }
 
+            checkqty();
+
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
             string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
@@ -1034,6 +1038,19 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
 
             RenewData();
             SendMail(false);
+        }
+
+        private void checkqty()
+        {
+            string sp = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            string seq = MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"]);
+            string ShipQty = MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]);
+            string qty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip where id = '{0}' and Seq = '{1}'", sp, seq));
+            if (ShipQty != qty)
+            {
+                MyUtility.Msg.ErrorBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, ShipQty));
+                return;
+            }
         }
 
         //Status update history
