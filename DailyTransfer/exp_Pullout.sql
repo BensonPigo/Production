@@ -87,6 +87,8 @@ select ID = a.PackingListID
 					 from Production.dbo.Pullout_Detail 
 					 where PackingListID = a.PackingListID) 
 	   , HCID = p1. ExpressID
+	   , p1.AddDate
+	   , p1.EditDate
 into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
@@ -179,9 +181,9 @@ from (
 		   , ShipPlanID = ''
 		   , CYCFS = ''
 		   , AddName = ''
-		   , AddDate = null
+		   , AddDate-- = null
 		   , EditName = ''
-		   , EditDate = null
+		   , EditDate-- = null
 		   , DataFrom
 		   , HCID
 	from #tmpFtyBooking2
