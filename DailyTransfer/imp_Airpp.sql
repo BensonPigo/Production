@@ -83,6 +83,7 @@ SET
       ,a.TPEEditName	      = b.EditName
       ,a.TPEEditDate	      = b.EditDate
 from Production.dbo.AirPP as a inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
+where isnull(a.TPEEditDate,'') != isnull(b.EditDate,'')
 -------------------------- 
 
 END

@@ -174,7 +174,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
 
         protected override bool ClickSaveBefore()
         {
-            //檢查必輸欄位
+            #region//檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 txtSpNo.Focus();
@@ -265,7 +265,8 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                 MyUtility.Msg.WarningBox("Air Q'ty not equal to Order Q'ty!!");
                 return false;
             }
-
+            #endregion
+            
             //GetID
             if (IsDetailInserting)
             {
@@ -276,6 +277,13 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
+            }
+
+            string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", CurrentMaintain["ID"].ToString()));
+            if (checkStatus.ToUpper() == "APPROVED")
+            {
+                MyUtility.Msg.ErrorBox(string.Format("SP:{0} already be Approved", CurrentMaintain["ID"].ToString()));
+                return false;
             }
             return base.ClickSaveBefore();
         }
@@ -1008,6 +1016,7 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.
 
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
+
             string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
