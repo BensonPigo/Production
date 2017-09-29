@@ -39,7 +39,7 @@ BEGIN
 	select StyleID,SeasonID,BrandID,Article,MDivisionID from #tmpLackData) T
 
 	--將資料新增至GarmentTest
-	Insert into GarmentTest (MDivisionid,BrandID,StyleID,SeasonID,Article,OrderID,DeadLine,SewingInline,SewingOffline)
+	Insert into GarmentTest (MDivisionid,BrandID,StyleID,SeasonID,Article,FirstOrderID,DeadLine,SewingInline,SewingOffline)
 	select t.MDivisionID,t.BrandID,t.StyleID,t.SeasonID,t.Article, 
 	isnull((select top(1) a.OrderID from (
 	select sd.OrderID,s.OutputDate from SewingOutput_Detail sd WITH (NOLOCK)
@@ -133,7 +133,7 @@ BEGIN
 			and o.Category = 'B' 
 　　
 			--更新GarmentTest資料
-			update GarmentTest Set OrderID = @OrderID , DeadLine = @DeadLine , SewingInline = @SewingInline , SewingOffline = @SewingOffline
+			update GarmentTest Set FirstOrderID = @OrderID , DeadLine = @DeadLine , SewingInline = @SewingInline , SewingOffline = @SewingOffline
 			where StyleID = @StyleID
 			and SeasonID = @SeasonID
 			and BrandID = @BrandID
