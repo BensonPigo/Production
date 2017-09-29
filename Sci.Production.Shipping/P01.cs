@@ -923,7 +923,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.C
             }
             #endregion
 
-            checkqty();
+            if (!checkqty()) return;
 
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','New','Checked','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
@@ -1012,7 +1012,7 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.
                 return;
             }
 
-            checkqty();
+            if (!checkqty()) return;
 
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
@@ -1046,10 +1046,12 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
             }
 
             RenewData();
+            OnDetailEntered();
+
             SendMail(false);
         }
 
-        private void checkqty()
+        private  bool checkqty()
         {
             string sp = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
             string seq = MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"]);
@@ -1058,8 +1060,9 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
             if (ShipQty != qty)
             {
                 MyUtility.Msg.ErrorBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, ShipQty));
-                return;
+                return false;
             }
+            return true;
         }
 
         //Status update history
