@@ -87,11 +87,13 @@ select ID = a.PackingListID
 					 from Production.dbo.Pullout_Detail 
 					 where PackingListID = a.PackingListID) 
 	   , HCID = p1. ExpressID
+	   , p1.AddDate
+	   , p1.EditDate
 into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
 	from Production.dbo.Pullout_Detail 
-	where (PackingListType = 'F' or PackingListType = 'I') 
+	where (PackingListType = 'F' or PackingListType = 'I'or PackingListType = 'L') 
 		  and PackingListID <> ''
 	
 	except
@@ -179,9 +181,9 @@ from (
 		   , ShipPlanID = ''
 		   , CYCFS = ''
 		   , AddName = ''
-		   , AddDate = null
+		   , AddDate-- = null
 		   , EditName = ''
-		   , EditDate = null
+		   , EditDate-- = null
 		   , DataFrom
 		   , HCID
 	from #tmpFtyBooking2
