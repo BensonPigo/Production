@@ -272,24 +272,24 @@ namespace Sci.Production.Warehouse
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.gridMaterialStatus)
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //1
-            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(3))  //2
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))  //3
+            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2))  //2
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2))  //3
             //.Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
-            .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //4
-            .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //5
+            .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //4
+            .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
-            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(12))  //8
-            .Text("fabrictype2", header: "Fabric Type", iseditingreadonly: true)  //7            
+            .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
+            .Text("fabrictype2", header: "Fabric\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7            
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
-            .Text("SizeSpec", header: "Size", iseditingreadonly: true)  //10
-            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(6))  //11
-            .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //12
-            .Numeric("Qty", header: "Order Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
-            .Numeric("NETQty", header: "Net Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
-            .Numeric("useqty", header: "Use Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
-            .Numeric("ShipQty", header: "Ship Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
-            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
+            .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
+            .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
+            .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
+            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //13
+            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //14
+            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //15
+            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true, settings: ts3)    //16
+            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
             .Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true,width:Widths.AnsiChars(3))  //21
