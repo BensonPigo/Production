@@ -1136,6 +1136,7 @@ left join dbo.FtyInventory FI on t.fromPoid = fi.poid
                                  and t.fromRoll = fi.roll 
                                  and t.fromStocktype = stocktype
 where t.id= @ID
+order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
 ";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
