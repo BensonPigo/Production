@@ -174,7 +174,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
 
         protected override bool ClickSaveBefore()
         {
-            //檢查必輸欄位
+            #region//檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 txtSpNo.Focus();
@@ -265,7 +265,8 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                 MyUtility.Msg.WarningBox("Air Q'ty not equal to Order Q'ty!!");
                 return false;
             }
-
+            #endregion
+            
             //GetID
             if (IsDetailInserting)
             {
@@ -276,6 +277,13 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
+            }
+
+            string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", CurrentMaintain["ID"].ToString()));
+            if (checkStatus.ToUpper() == "APPROVED")
+            {
+                MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", CurrentMaintain["ID"].ToString()));
+                return false;
             }
             return base.ClickSaveBefore();
         }
@@ -317,7 +325,32 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[3, 5] = label30.Text;
+            string Status = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", CurrentMaintain["id"].ToString()));
+            switch (Status)
+            {
+                case "New":
+                    Status = "New";
+                    break;
+                case "Junked":
+                    Status = "Junk";
+                    break;
+                case "Checked":
+                    Status = "PPIC Apv";
+                    break;
+                case "Approved":
+                    Status = "Fty Apv";
+                    break;
+                case "Confirmed":
+                    Status = "SMR Apv";
+                    break;
+                case "Locked":
+                    Status = "Task Team Lock";
+                    break;
+                default:
+                    Status = "";
+                    break;
+            }
+            worksheet.Cells[3, 5] = Status;
             worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
             worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBuyerDelivery.Value)?"": Convert.ToDateTime(dateBuyerDelivery.Value).ToString("d");
@@ -555,7 +588,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                         cmds.Add(sp2);
 
                         DataTable orderData;
-                        string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
+                        string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid and factoryid in (select id from factory where junk = 0 and IsProduceFty = 1)";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                         if (!result || orderData.Rows.Count <= 0)
                         {
@@ -915,6 +948,8 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.C
             }
             #endregion
 
+            if (!checkqty()) return;
+
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','New','Checked','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
             string updateCmd = string.Format(@"update AirPP set Status = 'Checked', PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
@@ -1002,8 +1037,11 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.
                 return;
             }
 
+            if (!checkqty()) return;
+
             string insertCmd = string.Format(@"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID);
+
             string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
@@ -1031,9 +1069,22 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
                     return;
                 }
             }
-
-            RenewData();
+            
             SendMail(false);
+        }
+
+        private  bool checkqty()
+        {
+            string sp = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            string seq = MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"]);
+            string ShipQty = MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]);
+            string qty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip where id = '{0}' and Seq = '{1}'", sp, seq));
+            if (ShipQty != qty)
+            {
+                MyUtility.Msg.WarningBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, ShipQty));
+                return false;
+            }
+            return true;
         }
 
         //Status update history
