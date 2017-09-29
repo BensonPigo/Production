@@ -282,7 +282,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", CurrentMaintain["ID"].ToString()));
             if (checkStatus.ToUpper() == "APPROVED")
             {
-                MyUtility.Msg.ErrorBox(string.Format("SP:{0} already be Approved", CurrentMaintain["ID"].ToString()));
+                MyUtility.Msg.WarningBox(string.Format("{0} already approved, cannot edit again.", CurrentMaintain["ID"].ToString()));
                 return false;
             }
             return base.ClickSaveBefore();
@@ -1059,7 +1059,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
             string qty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip where id = '{0}' and Seq = '{1}'", sp, seq));
             if (ShipQty != qty)
             {
-                MyUtility.Msg.ErrorBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, ShipQty));
+                MyUtility.Msg.WarningBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, ShipQty));
                 return false;
             }
             return true;
