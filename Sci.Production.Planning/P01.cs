@@ -62,8 +62,7 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
                                                     INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
                                                     LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
                                                     INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
-                                                        AND OT.ARTWORKTYPEID = '{1}' 
+                                                    WHERE OT.ARTWORKTYPEID = '{1}' 
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
                                                 , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
 
@@ -184,7 +183,7 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
                                                     INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
                                                     LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
                                                     INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
+                                                    WHERE OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,12", null, null);
                         DialogResult result = item.ShowDialog();
@@ -224,7 +223,7 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
                                                     INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
                                                     LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
                                                     INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
-                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
+                                                    WHERE OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' AND qu.Localsuppid = '{2}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"], e.FormattedValue), null, out exist);

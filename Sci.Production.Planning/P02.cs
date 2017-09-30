@@ -170,9 +170,7 @@ FROM   order_tmscost OT WITH (nolock)
               ON QU.ukey = SA.ukey 
        INNER JOIN localsupp WITH (nolock) 
                ON localsupp.id = QU.localsuppid 
-WHERE  priceapv = 'Y' 
-       AND mockup IS NOT NULL 
-       AND OT.ID = '{0}'
+WHERE  OT.ID = '{0}'
        AND OT.artworktypeid = 'PRINTING' 
 GROUP  BY QU.localsuppid, 
           localsupp.abb, 
@@ -214,9 +212,7 @@ FROM   order_tmscost OT WITH (nolock)
               ON QU.ukey = SA.ukey 
        INNER JOIN localsupp WITH (nolock) 
                ON localsupp.id = QU.localsuppid 
-WHERE  priceapv = 'Y' 
-       AND mockup IS NOT NULL 
-       AND OT.ID = '{0}'
+WHERE  OT.ID = '{0}'
        AND OT.artworktypeid = 'PRINTING' 
 GROUP  BY QU.localsuppid, 
           localsupp.abb, 
@@ -704,23 +700,7 @@ where	a.Finished = 0
                                                         from style_artwork  a WITH (NOLOCK) 
                                                         inner join style_artwork_quot b WITH (NOLOCK) 
                                                          on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'"
-                    , item["styleukey"], item["localsuppid"]), out dr, null))
-                {
-                    if (dr["priceapv"].ToString() != "Y")
-                    {
-                        item["msg"] = "Price was not approved";
-                        item["err"] = 2;
-                    }
-                    else
-                    {
-                        if (MyUtility.Check.Empty(dr["Oven"]) || MyUtility.Check.Empty(dr["Wash"]) || MyUtility.Check.Empty(dr["Mockup"]))
-                        {
-                            item["msg"] = "Without oven/wash/mockup test apv.";
-                            item["err"] = 1;
-                        }
-                    }
-                }
-                else
+                    , item["styleukey"], item["localsuppid"]), out dr, null) == false)                
                 {
                     item["msg"] = "Quotation data was not found!!";
                     item["err"] = 2;
