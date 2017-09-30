@@ -129,6 +129,7 @@ FROM ORDERS
 left join Factory on  Factory.ID = Orders.FactoryID 
 left join CDCode on Orders.CDCodeID = CDCode.ID 
 WHERE   1=1 
+        and Orders.Category != 'G'
         and Orders.LocalOrder = 0
         and Factory.IsProduceFty = '1'");
                 string strSQL_Loading_b = strSQL_Loading;
@@ -169,10 +170,12 @@ Select  ID = IIF (LoadingList.ID is null, SewingOutput.ID, LoadingList.ID)
         , SewingOutput_Detail_Detail.ComboType 
         , OutputMonth = Month(SewingOutput.OutputDate) 
 From SewingOutput_Detail_Detail 
+inner join Orders on SewingOutput_Detail_Detail.OrderID = orders.ID
 left join SewingOutput on SewingOutput.ID = SewingOutput_Detail_Detail.ID
 left join Factory on Factory.ID = SewingOutput.FactoryID 
 left join ( {0} )  LoadingList on LoadingList.ID = SewingOutput_Detail_Detail.OrderId
 WHERE   1=1
+        and orders.Category != 'G'
         and Sewingoutput.Shift <> 'I'
         and Factory.IsProduceFty = '1'
         and Factory.KPICode <> ''
@@ -755,7 +758,7 @@ Select  Orders.ID
 from Orders WITH (NOLOCK) 
 Left Join Factory WITH (NOLOCK) on Orders.FactoryID = Factory.ID 
 WHERE DATEPART(YEAR, DATEADD(DAY, -7, Orders.SCIDelivery)) = '{0}'
-                                                                        ", gdclYear);
+      and Orders.Category != 'G' ", gdclYear);
                 if (txtFactory1.Text != "")
                 {
                     strSQL += string.Format(" AND Orders.FactoryID = '{0}'  ", txtFactory1.Text);
@@ -816,8 +819,10 @@ Select  OrderID
                        + CONVERT (VARCHAR, DATEPART (MONTH, DATEADD (DAY, -7, Sewingoutput.OutputDate)))
         --, (CPU * QAQty * CPURate ) as SewCapacity
         , 0.00 as SewCapacity
-from Sewingoutput WITH (NOLOCK), Sewingoutput_Detail WITH (NOLOCK) 
-where   Sewingoutput.ID = Sewingoutput_Detail.ID 
+from Sewingoutput WITH (NOLOCK)
+inner join Sewingoutput_Detail WITH (NOLOCK) on Sewingoutput.ID = Sewingoutput_Detail.ID 
+inner join Orders With(NoLock) on SewingOutput_Detail.OrderID = orders.ID
+where   orders.Category != 'G'
         and DATEPART (YEAR, DATEADD (DAY, -7, Sewingoutput.OutputDate)) = '{0}'  
         --Sewingoutput_Detail.OrderID = '{0}'
                                                             ", gdclYear);
