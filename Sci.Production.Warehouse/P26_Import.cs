@@ -143,6 +143,7 @@ select  0 as selected
         , '' id
         , a.ukey as ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
 from dbo.Receiving r1 WITH (NOLOCK) 
 inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
@@ -169,6 +170,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2) refno
+        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
 from dbo.SubTransfer r1 WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
@@ -195,6 +197,7 @@ select  0 as selected
         ,  '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
 from dbo.Issue r1 WITH (NOLOCK) 
 inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
@@ -221,6 +224,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
 from dbo.ReturnReceipt r1 WITH (NOLOCK) 
 inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
@@ -247,6 +251,7 @@ select  0 as selected
         , '' id
         , a.ukey ftyinventoryukey 
         , (select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
+        , (select ColorID from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) ColorID
 from dbo.TransferIn r1 WITH (NOLOCK) 
 inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
@@ -356,9 +361,10 @@ WHERE   StockType='{0}'
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //3
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)    //4
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
-                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
-                .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //7
-                .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false)    //8
+                .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
+                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
+                .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //8
+                .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false)    //9
             ;
             this.gridImport.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
 
