@@ -571,8 +571,7 @@ where   o.FtyGroup = @factoryid
             };
         }
         #endregion
-
-
+        
         //設定表身RFT的預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
