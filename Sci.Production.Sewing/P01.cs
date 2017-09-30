@@ -923,8 +923,10 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             {
                 if (MyUtility.Check.Empty(dr["OrderID"])||MyUtility.Check.Empty(dr["Article"]))
                 {
-                    dr.Delete();
-                   // if (dr.RowState == DataRowState.Deleted) { continue; } 
+                    if (dr["isAutoCreate"].ToString()!="Y")
+                    {
+                        dr.Delete();
+                    }
                     continue;                   
                 }
                
@@ -1240,6 +1242,15 @@ where not exists (select 1
            // if(!ok) { return ok; };
             #endregion
             return ok;
+        }
+
+        protected override void OnDetailGridDelete()
+        {
+            if (CurrentDetailData["IsAutoCreate"].ToString()=="Y")
+            {
+                return;
+            }
+            base.OnDetailGridDelete();
         }
 
         //Date
