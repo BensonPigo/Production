@@ -94,12 +94,24 @@ namespace Sci.Production.Centralized
                     if (txtBrand.Text != "") where += string.Format(" and O.BrandID = '{0}' ", txtBrand.Text);
                     if (txtCountry.TextBox1.Text != "") where += string.Format(" and F.CountryID = '{0}'  ", txtCountry.TextBox1.Text);
                     if (txtSeason.Text != "") where += string.Format(" and SeasonID =  '{0}' ", txtSeason.Text);
-                    SqlData1 = string.Format(@"Select O.ID , O.CPU , O.Cpu * ts.StdTMS / 60 as SMV , O.CPU * ts.StdTMS as TMS , O.FactoryID , O.BrandAreaCode , 
-                                                O.Qty , O.StyleID , F.CountryID
-                                        From Orders O WITH (NOLOCK)
-                                        Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
-                                        inner join Production.dbo.System ts on 1 = 1
-                                        Where 1=1 and o.LocalOrder=0 and f.IsProduceFty=1 {0}", where);
+                    SqlData1 = string.Format(@"
+Select O.ID 
+	   , O.CPU 
+	   , SMV = O.Cpu * ts.StdTMS / 60 
+	   , TMS = O.CPU * ts.StdTMS
+	   , O.FactoryID 
+	   , O.BrandAreaCode 
+	   , O.Qty 
+	   , O.StyleID 
+	   , F.CountryID
+From Orders O WITH (NOLOCK)
+Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
+inner join Production.dbo.System ts on 1 = 1
+Where 1 = 1 
+	  and o.LocalOrder = 0 
+	  and f.IsProduceFty = 1 
+      and o.Category != 'G'
+	  {0}", where);
 
                     BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
                     result = DBProxy.Current.SelectByConn(con, SqlData1, out tmpData1);
@@ -111,12 +123,21 @@ namespace Sci.Production.Centralized
                     MyUtility.Tool.ProcessWithDatatable(tmpData1, "", " ", out dt, "#tmpData1", con);
                     #endregion
                     #region tmpData2
-                    SqlData2 = @"select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
-                                tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
-                                isnull(SewingOutput_Detail.QAQty,0) as ProdQty,isnull(Round(3600 / nullif(tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1) ,0) ,0) ,0)  as StardQty 
-                            from #tmpData1 tmpData1
-                            Left Join SewingOutput_Detail WITH (NOLOCK) on SewingOutput_Detail.OrderId = tmpData1.ID
-                            Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
+                    SqlData2 = @"
+select OrderID = tmpData1.ID
+	   , CPU = tmpData1.CPU
+	   , SMV = tmpData1.SMV 
+	   , TMS = tmpData1.TMS
+	   , Factory = tmpData1.FactoryID
+	   , AGCCode = tmpData1.BrandAreaCode
+	   , [Order Qty] = tmpData1.Qty
+	   , Style = tmpData1.StyleID 
+	   , FactoryCountry = tmpData1.CountryID
+	   , ProdQty = isnull(SewingOutput_Detail.QAQty, 0)
+	   , StardQty = isnull(Round(3600 / nullif(tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1) ,0) ,0) ,0) 
+from #tmpData1 tmpData1
+Left Join SewingOutput_Detail WITH (NOLOCK) on SewingOutput_Detail.OrderId = tmpData1.ID
+Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
 
 
                     BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory 整理明細 (Step 2/5)"); });
