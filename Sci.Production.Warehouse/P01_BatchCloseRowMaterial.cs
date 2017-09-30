@@ -75,7 +75,7 @@ with cte_order as(
 
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
-                strSQLCmd.Append(string.Format(@" and pulloutdate between '{0}' and '{1}'"
+                strSQLCmd.Append(string.Format(@" and orders.ActPulloutDate between '{0}' and '{1}'"
                 , Convert.ToDateTime(pulloutdate1).ToString("d"), Convert.ToDateTime(pulloutdate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(buyerDelivery1))
