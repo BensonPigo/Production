@@ -161,7 +161,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(18, 15);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(82, 23);
@@ -170,7 +169,6 @@
             // 
             // labelCutplan
             // 
-            this.labelCutplan.Lines = 0;
             this.labelCutplan.Location = new System.Drawing.Point(18, 45);
             this.labelCutplan.Name = "labelCutplan";
             this.labelCutplan.Size = new System.Drawing.Size(82, 23);
@@ -179,7 +177,6 @@
             // 
             // labelCuttingDate
             // 
-            this.labelCuttingDate.Lines = 0;
             this.labelCuttingDate.Location = new System.Drawing.Point(18, 75);
             this.labelCuttingDate.Name = "labelCuttingDate";
             this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
@@ -188,7 +185,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(252, 45);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(87, 23);
@@ -197,7 +193,6 @@
             // 
             // labelRequestedBy
             // 
-            this.labelRequestedBy.Lines = 0;
             this.labelRequestedBy.Location = new System.Drawing.Point(428, 15);
             this.labelRequestedBy.Name = "labelRequestedBy";
             this.labelRequestedBy.Size = new System.Drawing.Size(95, 23);
@@ -206,7 +201,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(252, 15);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(87, 23);
@@ -286,7 +280,6 @@
             // 
             // labelLastSendDate
             // 
-            this.labelLastSendDate.Lines = 0;
             this.labelLastSendDate.Location = new System.Drawing.Point(428, 45);
             this.labelLastSendDate.Name = "labelLastSendDate";
             this.labelLastSendDate.Size = new System.Drawing.Size(95, 23);
@@ -307,7 +300,6 @@
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(761, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 23);
@@ -320,6 +312,7 @@
             this.ClientSize = new System.Drawing.Size(924, 518);
             this.DefaultControl = "txtCutplan";
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;
             this.IsGridIconVisible = false;
@@ -349,7 +342,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.ExpressQuery = true;
+
         }
 
         #endregion

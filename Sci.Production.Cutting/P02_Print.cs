@@ -629,7 +629,9 @@ Cutplanid, str_PIVOT);
                     Ratio = "";
                     #region Size,Ratio
                     DataRow[] wtmp = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "SizeCode" }).Select(string.Format("Cutref='{0}'", cutref));
-                    DataRow[] wtmp2 = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "Qty" }).Select(string.Format("Cutref='{0}'", cutref));
+                    //qty排序讓Ratio依照小排到大顯示
+                    WorkorderSizeTb.DefaultView.Sort = "qty";
+                    DataRow[] wtmp2 = WorkorderSizeTb.DefaultView.ToTable(false, new string[] { "Cutref", "Qty" }).Select(string.Format("Cutref='{0}'", cutref));
                     foreach (DataRow sDr in wtmp)
                     {
                         size = size + sDr["SizeCode"].ToString() + ",";
