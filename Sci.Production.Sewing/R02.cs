@@ -155,38 +155,39 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈全部Sewing output data SQL
             sqlCmd.Append(string.Format(@"
-select 
-	s.OutputDate
-	,s.Category
-	,s.Shift
-	,s.SewingLineID
-	,[ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
-	,s.Team
-	,sd.OrderId
-	,sd.ComboType
-	,sd.WorkHour
-	,sd.QAQty
-	,sd.InlineQty
-	,[OrderCategory] = isnull(o.Category,'')
-	,o.LocalOrder
-	,s.FactoryID
-	,[OrderProgram] = isnull(o.ProgramID,'') 
-	,[MockupProgram] = isnull(mo.ProgramID,'')
-	,[OrderCPU] = isnull(o.CPU,0)
-	,[OrderCPUFactor] = isnull(o.CPUFactor,0)
-	,[MockupCPU] = isnull(mo.Cpu,0)
-	,[MockupCPUFactor] = isnull(mo.CPUFactor,0)
-	,[OrderStyle] = isnull(o.StyleID,'')
-	,[MockupStyle] = isnull(mo.StyleID,'')
-	,[Rate] = isnull(sl.Rate,100)/100
-	,System.StdTMS
+select  s.OutputDate
+		, s.Category
+		, s.Shift
+		, s.SewingLineID
+		, [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty)
+		, s.Team
+		, sd.OrderId
+		, sd.ComboType
+		, sd.WorkHour
+		, sd.QAQty
+		, sd.InlineQty
+		, [OrderCategory] = isnull(o.Category,'')
+		, o.LocalOrder
+		, s.FactoryID
+		, [OrderProgram] = isnull(o.ProgramID,'') 
+		, [MockupProgram] = isnull(mo.ProgramID,'')
+		, [OrderCPU] = isnull(o.CPU,0)
+		, [OrderCPUFactor] = isnull(o.CPUFactor,0)
+		, [MockupCPU] = isnull(mo.Cpu,0)
+		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
+		, [OrderStyle] = isnull(o.StyleID,'')
+		, [MockupStyle] = isnull(mo.StyleID,'')
+		, [Rate] = isnull(sl.Rate,100)/100
+		, System.StdTMS
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-where s.OutputDate between '{0}' and '{1}'"
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+											 and sl.Location = sd.ComboType
+where s.OutputDate between '{0}' and '{1}'
+      and o.Category != 'G'"
                 , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
             {
@@ -202,20 +203,45 @@ where s.OutputDate between '{0}' and '{1}'"
             }
 
             sqlCmd.Append(@"
-select OutputDate,Category,Shift,SewingLineID,Sum(ActManPower) as ActManPower1,Team,OrderId,ComboType,
-sum(WorkHour) as WorkHour,sum(QAQty) as QAQty,sum(InlineQty) as InlineQty,OrderCategory,
-LocalOrder,FactoryID,OrderProgram,MockupProgram,OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,
-MockupStyle,Rate,StdTMS,IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
+select OutputDate,Category
+	   , Shift
+	   , SewingLineID
+	   , ActManPower1 = Sum(ActManPower)
+	   , Team
+	   , OrderId
+	   , ComboType
+	   , WorkHour = sum(WorkHour)
+	   , QAQty = sum(QAQty)
+	   , InlineQty = sum(InlineQty)
+	   , OrderCategory
+	   , LocalOrder
+	   , FactoryID
+	   , OrderProgram
+	   , MockupProgram
+	   , OrderCPU
+	   , OrderCPUFactor
+	   , MockupCPU
+	   , MockupCPUFactor
+	   , OrderStyle
+	   , MockupStyle
+	   , Rate
+	   , StdTMS
+	   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
 INTO #tmpSewingGroup
 from #tmpSewingDetail
-group by OutputDate,Category,Shift,SewingLineID,Team,OrderId,ComboType,OrderCategory,LocalOrder,
-FactoryID,OrderProgram,MockupProgram,
-OrderCPU,OrderCPUFactor,MockupCPU,MockupCPUFactor,OrderStyle,MockupStyle,Rate,StdTMS
+group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
+		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
+		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
+		 , MockupStyle, Rate, StdTMS
 
-select t.*,isnull(w.Holiday,0) as Holiday,IIF(isnull(QAQty,0)=0,ActManPower1,(ActManPower1/QAQty)) as ActManPower
+select t.*
+	   , isnull(w.Holiday, 0) as Holiday
+	   , IIF(isnull(QAQty, 0) = 0, ActManPower1, (ActManPower1 / QAQty)) as ActManPower
 INTO #tmp1stFilter
 from #tmpSewingGroup t
-left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
+left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
+									  and w.Date = t.OutputDate 
+									  and w.SewingLineID = t.SewingLineID
 where 1 = 1");
             if (excludeSubconin == 1)
             {
@@ -231,10 +257,29 @@ where 1 = 1");
                 sqlCmd.Append(" and Holiday = 0");
             }
             sqlCmd.Append(@"
-select OutputDate,IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In'))) as Shift,
-Team,SewingLineID,OrderId,IIF(Category='M',MockupStyle,OrderStyle) as Style,QAQty,ActManPower,
-IIF(Category='M',MockupProgram,OrderProgram) as Program,
-WorkHour,StdTMS,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,Category,LastShift,ComboType,FactoryID
+select OutputDate
+	   , Shift = IIF(LastShift = 'D', 'Day'
+									, IIF(LastShift = 'N', 'Night'
+														 , IIF(LastShift = 'O', 'Subcon-Out'
+														 					  , 'Subcon-In')))
+	   , Team
+	   , SewingLineID
+	   , OrderId
+	   , Style = IIF(Category = 'M', MockupStyle, OrderStyle)
+	   , QAQty
+	   , ActManPower
+	   , Program = IIF(Category = 'M',MockupProgram,OrderProgram)
+	   , WorkHour
+	   , StdTMS
+	   , MockupCPU
+	   , MockupCPUFactor
+	   , OrderCPU
+	   , OrderCPUFactor
+	   , Rate
+	   , Category
+	   , LastShift
+	   , ComboType
+	   , FactoryID
 from #tmp2ndFilter");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out SewOutPutData);
@@ -251,69 +296,87 @@ from #tmp2ndFilter");
                 {
                     #region 組SQL
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category"
-                        ,
-@";with tmpQty 
-as (
-select OutputDate,StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour
-from #tmp
-where LastShift <> 'O'
-group by OutputDate,StdTMS
+                        , @"
+;with tmpQty as (
+	select OutputDate
+		   , StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+	from #tmp
+	where LastShift <> 'O'
+	group by OutputDate, StdTMS
 ),
-tmpTtlCPU
-as (
-select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift <> 'O'
-group by OutputDate
+tmpTtlCPU as (
+	select OutputDate
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2)) 
+	from #tmp
+	where LastShift <> 'O'
+	group by OutputDate
 ),
-tmpSubconInCPU
-as (
-select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift = 'I'
-group by OutputDate
+tmpSubconInCPU as (
+	select OutputDate
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift = 'I'
+	group by OutputDate
 ),
-tmpSubconOutCPU
-as (
-select OutputDate,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift = 'O'
-group by OutputDate
+tmpSubconOutCPU as (
+	select OutputDate
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2)) 
+	from #tmp
+	where LastShift = 'O'
+	group by OutputDate
 ),
-tmpTtlManPower
-as (
-	select OutputDate,Sum(a.Manpower) - sum(iif(LastShift='I',0,isnull(d.ManPower,0))) as ManPower 
+tmpTtlManPower as (
+	select OutputDate
+		   , ManPower = Sum(a.Manpower) - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
 	from (
-		select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
+		select OutputDate
+			   , FactoryID
+			   , SewingLineID
+			   , LastShift
+			   , Team
+			   , ManPower = Max(ActManPower)
 		from #tmp
 		where LastShift <> 'O'
-		group by OutputDate,FactoryID,SewingLineID,LastShift,Team
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
 	) a
 	outer apply(
 		select ManPower
 		from (
-			select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
+			select OutputDate
+				   , FactoryID
+				   , SewingLineID
+				   , LastShift
+				   , Team
+				   , ManPower = Max(ActManPower)
 			from #tmp
 			where LastShift <> 'O'
-			group by OutputDate,FactoryID,SewingLineID,LastShift,Team
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team
 		) m2
-		where m2.LastShift = 'I' and m2.Team = a.Team and m2.SewingLineID = a.SewingLineID	and a.OutputDate = m2.OutputDate
+		where m2.LastShift = 'I' 
+			  and m2.Team = a.Team 
+			  and m2.SewingLineID = a.SewingLineID	
+			  and a.OutputDate = m2.OutputDate
 	) d
 	group by OutputDate
 )
-select q.OutputDate,q.QAQty,TotalCPU = tc.TotalCPU
-,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
-IIF(q.ManHour = 0,0,isnull(tc.TotalCPU,0)/q.ManHour) as CPUSewer,
-IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
-IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
+select q.OutputDate
+	   , q.QAQty
+	   , TotalCPU = tc.TotalCPU
+	   , SInCPU = isnull(ic.TotalCPU, 0)
+	   , SoutCPU = isnull(oc.TotalCPU, 0)
+	   , CPUSewer = IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU, 0) / q.ManHour)
+	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
+	   , mp.ManPower
+	   , q.ManHour
+	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
 left join tmpTtlCPU tc on tc.OutputDate = q.OutputDate
 left join tmpSubconInCPU ic on ic.OutputDate = q.OutputDate
 left join tmpSubconOutCPU oc on oc.OutputDate = q.OutputDate
 left join tmpTtlManPower mp on mp.OutputDate = q.OutputDate
-order by q.OutputDate"
-,
-                        out printData);
+order by q.OutputDate", out printData);
                     #endregion
                 }
                 catch (Exception ex)
@@ -327,52 +390,63 @@ order by q.OutputDate"
                 try
                 {
                     #region 組SQL
-                    string sqlcommand = string.Format(@";with tmpQty 
-as (
-select SewingLineID,StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour
-from #tmp
-where LastShift <> 'O'
-group by SewingLineID,StdTMS
+                    string sqlcommand = string.Format(@"
+;with tmpQty as (
+	select SewingLineID
+		   , StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+	from #tmp
+	where LastShift <> 'O'
+	group by SewingLineID, StdTMS
 ),
-tmpTtlCPU
-as (
-select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift <> 'O'
-group by SewingLineID
+tmpTtlCPU as (
+	select SewingLineID
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift <> 'O'
+	group by SewingLineID
 ),
-tmpSubconInCPU
-as (
-select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift = 'I'
-group by SewingLineID
+tmpSubconInCPU as (
+	select SewingLineID
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift = 'I'
+	group by SewingLineID
 ),
-tmpSubconOutCPU
-as (
-select SewingLineID,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift = 'O'
-group by SewingLineID
+tmpSubconOutCPU as (
+	select SewingLineID
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift = 'O'
+	group by SewingLineID
 ),
-
-tmpTtlManPower
-as (
-select SewingLineID,Sum(Manpower) as ManPower
-from (
-    select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
-    from #tmp
-    where LastShift <> 'O'
-    group by OutputDate,FactoryID,SewingLineID,LastShift,Team
-) a
-group by SewingLineID
+tmpTtlManPower as (
+	select SewingLineID
+		   , ManPower = Sum(Manpower) 
+	from (
+	    select OutputDate
+	    	   , FactoryID
+	    	   , SewingLineID
+	    	   , LastShift
+	    	   , Team
+	    	   , ManPower = Max(ActManPower)
+	    from #tmp
+	    where LastShift <> 'O'
+	    group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+	) a
+	group by SewingLineID
 )
-select q.SewingLineID,q.QAQty
-,TotalCPU = tc.TotalCPU
-,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
-IIF(q.ManHour = 0,0,isnull(tc.TotalCPU,0)/q.ManHour) as CPUSewer,
-IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
-IIF(q.ManHour*q.StdTMS = 0,0,Round(tc.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
+select q.SewingLineID
+	   , q.QAQty
+ 	   , TotalCPU = tc.TotalCPU
+ 	   , SInCPU = isnull(ic.TotalCPU,0)
+ 	   , SoutCPU = isnull(oc.TotalCPU,0)
+ 	   , CPUSewer = IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU,0) / q.ManHour) 
+ 	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
+ 	   , mp.ManPower
+ 	   , q.ManHour
+ 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
 left join tmpTtlCPU tc on tc.SewingLineID = q.SewingLineID
 left join tmpSubconInCPU ic on ic.SewingLineID = q.SewingLineID
@@ -396,29 +470,41 @@ order by {0}", orderby == 0 ? "q.SewingLineID" : "CPUSewer");
             {
                 #region 組SQL
                 MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
-                    @";with tmpQty 
-as (
-select StdTMS,Sum(QAQty) as QAQty, Sum(ROUND(WorkHour*ActManPower,2)) as ManHour,
-Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TotalCPU
-from #tmp
-where LastShift <> 'O' and LastShift <> 'I'
-group by StdTMS
+                    @"
+;with tmpQty as (
+	select StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift <> 'O' 
+		  and LastShift <> 'I'
+	group by StdTMS
 ),
-tmpTtlManPower
-as (
-select Sum(Manpower) as ManPower from (
-select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
-from #tmp
-where LastShift <> 'O' and LastShift <> 'I'
-group by OutputDate,FactoryID,SewingLineID,LastShift,Team) a
+tmpTtlManPower as (
+	select ManPower = Sum(Manpower)
+	from (
+		select OutputDate
+			   , FactoryID
+			   , SewingLineID
+			   , LastShift
+			   , Team
+			   , ManPower = Max(ActManPower) 
+		from #tmp
+		where LastShift <> 'O' 
+			  and LastShift <> 'I'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+	) a
 )
-select q.QAQty,q.TotalCPU,
-IIF(q.ManHour = 0,0,Round(isnull(q.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
-IIF(isnull(mp.ManPower,0) = 0,0,Round(q.ManHour/mp.ManPower,2)) as AvgWorkHour,mp.ManPower,q.ManHour,
-IIF(q.ManHour*q.StdTMS = 0,0,Round(q.TotalCPU/(q.ManHour*3600/q.StdTMS)*100,2)) as Eff
+select q.QAQty
+	   , q.TotalCPU
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
+	   , mp.ManPower
+	   , q.ManHour
+	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
-left join tmpTtlManPower mp on 1 = 1",
-                    out excludeInOutTotal);
+left join tmpTtlManPower mp on 1 = 1", out excludeInOutTotal);
                 #endregion
             }
             catch (Exception ex)
@@ -433,24 +519,35 @@ left join tmpTtlManPower mp on 1 = 1",
             {
                 #region 組SQL
                 MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
-                    @";with tmpData
-as (
-select IIF(Category = 'M',MockupCPUFactor,OrderCPUFactor) as CPUFactor, QAQty,QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) as CPU,Style
-from #tmp
+                    @"
+;with tmpData as (
+	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
+		   , QAQty
+		   , CPU = QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
+		   , Style
+	from #tmp
 ),
-tmpSumQAQty
-as (
-select CPUFactor,sum(QAQty) as QAQty from tmpData group by CPUFactor
+tmpSumQAQty as (
+	select CPUFactor
+		   , QAQty = sum(QAQty)
+   	from tmpData 
+   	group by CPUFactor
 ),
-tmpSumCPU
-as (
-select CPUFactor,sum(CPU) as CPU from tmpData group by CPUFactor
+tmpSumCPU as (
+	select CPUFactor
+		   , CPU = sum(CPU)
+   	from tmpData 
+   	group by CPUFactor
 ),
-tmpCountStyle
-as (
-select CPUFactor,COUNT(distinct Style) as Style from tmpData group by CPUFactor
+tmpCountStyle as (
+	select CPUFactor
+		   , Style = COUNT(distinct Style)
+   	from tmpData 
+   	group by CPUFactor
 )
-select q.* ,c.CPU,s.Style
+select q.* 
+	   , c.CPU
+	   , s.Style
 from tmpSumQAQty q
 left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
 left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
@@ -471,23 +568,35 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
                 {
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
 @";with tmpArtwork as(
-	Select ID,rs = iif(ProductionUnit = 'TMS','CPU',iif(ProductionUnit = 'QTY','AMT',''))
+	Select ID
+		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, ''))
 	from ArtworkType WITH (NOLOCK)
-	where Classify in ('I','A','P') and IsTtlTMS = 0
-),tmpAllSubprocess as(
-	select ot.ArtworkTypeID,a.OrderId,a.ComboType,Price = Round(sum(a.QAQty)*ot.Price*(isnull(sl.Rate,100)/100),2) 
+	where Classify in ('I','A','P') 
+		  and IsTtlTMS = 0
+),
+tmpAllSubprocess as(
+	select ot.ArtworkTypeID
+		   , a.OrderId
+		   , a.ComboType
+		   , Price = Round(sum(a.QAQty) * ot.Price * (isnull(sl.Rate, 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
-	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = a.ComboType
+	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-	and ot.Price > 0
-	group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
+			and ot.Price > 0
+		    and o.Category != 'G'
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, sl.Rate
 )
-select ArtworkTypeID = t1.ID,Price = isnull(sum(Price),0),rs
+select ArtworkTypeID = t1.ID
+	   , Price = isnull(sum(Price), 0)
+	   , rs
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
-group by t1.ID,rs
+group by t1.ID, rs
 order by t1.ID",
                         out subprocessData);
                 }
@@ -505,20 +614,26 @@ order by t1.ID",
                 try
                 {
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
-                        @";with tmpSubconIn
-as (
-Select 'I' as Type,Program as Company,Sum(ROUND(QAQty*IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate),2)) as TtlCPU, '' as SewingLineID
-from #tmp
-where LastShift = 'I'
-group by Program
+                        @"
+;with tmpSubconIn as (
+	Select 'I' as Type
+		   , Company = Program 
+		   , TtlCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , SewingLineID = ''
+	from #tmp
+	where LastShift = 'I'
+	group by Program
 ),
-tmpSubconOut
-as (
-Select 'O' as Type,s.Description as Company,sum(ROUND(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate),2)) as TtlCPU, t.SewingLineID
-from #tmp t
-left join SewingLine s WITH (NOLOCK) on s.ID = t.SewingLineID and s.FactoryID = t.FactoryID
-where LastShift = 'O'
-group by s.Description,t.SewingLineID
+tmpSubconOut as (
+    Select Type = 'O'
+		   , Company = s.Description
+		   , TtlCPU = sum(ROUND(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate),2))
+		   , t.SewingLineID
+	from #tmp t
+	left join SewingLine s WITH (NOLOCK) on s.ID = t.SewingLineID 
+											and s.FactoryID = t.FactoryID
+	where LastShift = 'O'
+	group by s.Description, t.SewingLineID
 )
 select * from tmpSubconIn
 union all
@@ -536,9 +651,13 @@ select * from tmpSubconOut",
 
             sqlCmd.Clear();
             sqlCmd.Append(string.Format(@"
-select f.id,m.ActiveManpower,SumA = SUM(m.ActiveManpower) over() 
+select f.id
+	   , m.ActiveManpower
+	   , SumA = SUM(m.ActiveManpower) over() 
 from Factory f
-left join Manpower m on m.FactoryID = f.ID and m.Year = {0} and m.Month = {1}
+left join Manpower m on m.FactoryID = f.ID 
+		  				and m.Year = {0} 
+		  				and m.Month = {1}
 where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             if (factory != "")
             {
