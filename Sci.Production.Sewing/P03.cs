@@ -97,13 +97,11 @@ namespace Sci.Production.Sewing
             //每一筆單獨計算
             foreach (DataRow dr in dtSelectData.Rows)
             {
-                DualResult boolResult = setSewingOutput(dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"], dr["ToSPBalance"], dr["FromSPPackingQty"]);
+                bool boolResult = setSewingOutput(dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"], dr["ToSPBalance"], dr["FromSPPackingQty"]);
 
-                if (!boolResult)
+                if (boolResult == false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("ID {0}, FromSP {1},  ComboType {2}, Article {3}, SizeCode {4}", dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"])
-                                             + Environment.NewLine
-                                             + boolResult.Description);
+                    return;
                 }
             }
 
@@ -122,10 +120,11 @@ namespace Sci.Production.Sewing
 select *
 from (
 	select OrderIDFrom
+           , StyleLocation
 		   , Article
 		   , SizeCode		   
-		   , FromSPAvailableQty = Convert (int, sum (isnull (FromSPAvailableQty, 0)))
-		   , FromSPPackingQty = Convert (int, sum (isnull (FromSPPackingQty, 0)))
+		   , FromSPAvailableQty = isnull (FromSPAvailableQty, 0)
+		   , FromSPPackingQty = isnull (FromSPPackingQty, 0)
 		   , ToSPBalance = Convert (int, sum (isnull (ToSPBalance, 0)))
 	from (
         select	ID = OQG.ID
@@ -191,7 +190,7 @@ from (
         ) FromSPAvailableQty
         where	ToSPOrders.FtyGroup = @Factory
     ) newTmp
-	group by OrderIDFrom, Article, SizeCode, FromSPAvailableQty, FromSPPackingQty
+	group by OrderIDFrom, StyleLocation, Article, SizeCode, FromSPAvailableQty, FromSPPackingQty
 ) groupTmp
 where ToSPBalance > FromSPAvailableQty";
             #endregion
@@ -212,12 +211,12 @@ where ToSPBalance > FromSPAvailableQty";
                 foreach (DataRow dr in resultDt.Rows)
                 {
                     errMsg.Add(string.Format(@"
-From SP# : {0} color : {1} Size : {2}, SewingOutput {3} qty less than
-from SP packing : {4} qty + split qty : {5}", dr["OrderIDFrom"]
+From SP# : {0} ComboType : {1} Color : {2} Size : {3}
+Available qty {4} less than split qty : {5}", dr["OrderIDFrom"]
+                                            , dr["StyleLocation"]
                                             , dr["Article"]
                                             , dr["SizeCode"]
                                             , dr["FromSPAvailableQty"]
-                                            , dr["FromSPPackingQty"]
                                             , dr["ToSPBalance"]));
                 }
                 MyUtility.Msg.InfoBox("From SP Sewing Output Qty is not enough!!" + errMsg.JoinToString(Environment.NewLine));
@@ -234,7 +233,7 @@ from SP packing : {4} qty + split qty : {5}", dr["OrderIDFrom"]
         /// <param name="Article">Color Way</param>
         /// <param name="SizeCode">Size</param>
         /// <param name="NeedQty">ToSPQty</param>
-        private DualResult setSewingOutput(object ToOrderID, object FromOrderID, object ComboType, object Article, object SizeCode, object NeedQty, object FromPackingQty)
+        private bool setSewingOutput(object ToOrderID, object FromOrderID, object ComboType, object Article, object SizeCode, object NeedQty, object FromPackingQty)
         {
             DualResult boolResult;
 
@@ -459,7 +458,10 @@ drop table #tmp";
                 if (!boolResult)
                 {
                     transactionscope.Dispose();
-                    return boolResult;
+                    MyUtility.Msg.WarningBox(string.Format("ID {0}, FromSP {1},  ComboType {2}, Article {3}, SizeCode {4}", ToOrderID, FromOrderID, ComboType, Article, SizeCode)
+                                             + Environment.NewLine
+                                             + boolResult.Description);
+                    return false;
                 }
 
                 #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
@@ -493,7 +495,7 @@ select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
                 {
                     transactionscope.Dispose();
                     MyUtility.Msg.WarningBox(string.Format("From SP {0} Sewing Output Qty can't less then PackingList Qty.", FromOrderID));
-                    return new DualResult(true);
+                    return false;
                 }
 
                 #region Check 拆單後的數量，總數不得超過子單 Order_Qty
@@ -518,14 +520,14 @@ where	oq.id = @ToOrderID
                 if (MyUtility.Check.Seek(strSqlCmd, listSqlPara))
                 {
                     transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox(string.Format("SP {0} Sewing Output Qty can't more then Order_Qty.", ToOrderID));
-                    return new DualResult(true);
+                    MyUtility.Msg.WarningBox(string.Format("SP {0}, ComboType {1}, Article {2}, SizeCode {3} Sewing Output Qty can't more then Order_Qty.", ToOrderID, ComboType, Article, SizeCode));
+                    return false;
                 }
 
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
-            return boolResult;
+            return true;
         }
 
         private void findNow()
@@ -561,7 +563,7 @@ where	oq.id = @ToOrderID
             #endregion 
             #region SQL Command
             string strSqlCmd = string.Format(@"
-select	sel = 1
+select	sel = 0
 		, ID = OQG.ID
 		, StyleLocation = SL.Location
 		, OrderIDFrom = OQG.OrderIDFrom
