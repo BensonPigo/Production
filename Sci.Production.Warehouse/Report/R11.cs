@@ -139,7 +139,7 @@ with cte as (
                            from dbo.Supp WITH (NOLOCK) 
                            inner join dbo.po_supp on po_supp.suppid = supp.id 
                            where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) 
-            ,p.Qty
+            ,p.Qty + p.FOC as Qty
             ,p.NETQty
             ,p.LossQty
             ,scrapqty = Round(dbo.GetUnitQty(p.StockUnit, p.POUnit, sum(sd.Qty)), 2)
@@ -248,7 +248,7 @@ where s.Status = 'Confirmed' and s.type = '{0}'
             #endregion
 
             sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID
-  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate,fi.ukey)");
+  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
@@ -347,7 +347,7 @@ from cte t"));
             }
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + ExcelXltx); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", ExcelXltx, 3, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", ExcelXltx, 2, showExcel: false, showSaveMsg: false, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
