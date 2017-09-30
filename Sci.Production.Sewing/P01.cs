@@ -827,6 +827,15 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
             }
+
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (dr["isAutoCreate"].ToString() == "Y")
+                {
+                    MyUtility.Msg.WarningBox("Detaildata have AutoCreate Item , Can't delete.");
+                    return false;
+                }
+            }
             #region 判斷不可以有出貨紀錄
             DataTable dtCheckQty;
             DualResult result;
