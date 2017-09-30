@@ -33,17 +33,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(314, 12);
+            this.print.Location = new System.Drawing.Point(341, 12);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(314, 12);
+            this.toexcel.Location = new System.Drawing.Point(341, 12);
             this.toexcel.TabIndex = 4;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(314, 48);
+            this.close.Location = new System.Drawing.Point(341, 48);
             this.close.TabIndex = 5;
             // 
             // label1
@@ -52,9 +52,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 26F, System.Drawing.FontStyle.Bold);
             this.label1.Location = new System.Drawing.Point(9, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(265, 66);
+            this.label1.Size = new System.Drawing.Size(323, 66);
             this.label1.TabIndex = 94;
-            this.label1.Text = "Generate Data";
+            this.label1.Text = "Generate PO Data";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -64,7 +64,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(406, 113);
+            this.ClientSize = new System.Drawing.Size(433, 113);
             this.Controls.Add(this.label1);
             this.Name = "R51";
             this.Text = "R51. Transfer Subcon PO Data To Printing System";
