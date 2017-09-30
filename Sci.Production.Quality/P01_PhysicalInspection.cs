@@ -253,7 +253,7 @@ where	WEAVETYPEID = '{0}'
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                     dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
 
-                    roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], dr["Roll"]);
+                    roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], dr["Roll"].ToString().Replace("'","''"));
                     DataRow roll_dr;
                     if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                     {
@@ -323,7 +323,7 @@ where	WEAVETYPEID = '{0}'
                     return;
                 }
                 if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue.ToString().Replace("'", "''"));
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -544,7 +544,7 @@ where	WEAVETYPEID = '{0}'
                     @"Insert into Fir_Physical
 (ID,Roll,Dyelot,TicketYds,ActualYds,FullWidth,ActualWidth,TotalPoint,PointRate,Grade,Result,Remark,InspDate,Inspector,Moisture,AddName,AddDate) 
 Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate()) ;",
-                            dr["ID"], dr["roll"], dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID);
+                            dr["ID"], dr["roll"].ToString().Replace("'","''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID);
                     add_cmd = add_cmd + "select @@IDENTITY as ii";
                     #region 先存入Table 撈取Idenitiy
                     upResult = DBProxy.Current.Select(null, add_cmd, out idenDt);
@@ -573,7 +573,7 @@ Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}'
                     update_cmd = update_cmd + string.Format(
                         @"Update Fir_Physical set Roll = '{0}' ,Dyelot='{1}',TicketYds = {2},ActualYds = {3},FullWidth ={4},ActualWidth={5},TotalPoint ={6},PointRate={7},Grade='{8}',Result='{9}',Remark='{10}',InspDate='{11}',Inspector='{12}',Moisture={13},EditName = '{14}',EditDate = GetDate() 
 Where DetailUkey = {15};",
-                           dr["roll"], dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID,dr["DetailUkey"]);
+                           dr["roll"].ToString().Replace("'", "''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"], inspdate, dr["Inspector"], bolMoisture, loginID,dr["DetailUkey"]);
                 }
             }
             if (update_cmd != "")
