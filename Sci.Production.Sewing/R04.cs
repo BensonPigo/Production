@@ -21,7 +21,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Mockup,Bulk+Sample");
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
@@ -65,7 +65,8 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
 left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-where 1=1 "));
+where 1=1 
+      and o.Category != 'G'"));
 
             if (!MyUtility.Check.Empty(date1))
             {
@@ -107,6 +108,7 @@ inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
+      and o.Category != 'G'
 --
 select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #wtmp
@@ -146,9 +148,17 @@ where 1=1");
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'S'");
                 }
+                else if (category == "Garment")
+                {
+                    sqlCmd.Append(" and t.OrderCategory in ('G')");
+                }
                 else if (category == "Bulk+Sample")
                 {
                     sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
+                }
+                else if (category == "Bulk+Sample+Garment")
+                {
+                    sqlCmd.Append(" and t.OrderCategory in ('B', 'S', 'G')");
                 }
                 else
                 {

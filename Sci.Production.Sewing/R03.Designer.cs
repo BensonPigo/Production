@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSewingOutputDate = new Sci.Win.UI.Label();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
@@ -44,7 +45,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.comboLocal = new Sci.Win.UI.ComboBox();
             this.label1 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -53,17 +54,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(408, 12);
+            this.print.Location = new System.Drawing.Point(391, 12);
             this.print.TabIndex = 9;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(408, 48);
+            this.toexcel.Location = new System.Drawing.Point(391, 48);
             this.toexcel.TabIndex = 10;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(408, 84);
+            this.close.Location = new System.Drawing.Point(391, 84);
             this.close.TabIndex = 11;
             // 
             // labelSewingOutputDate
@@ -209,17 +210,17 @@
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 6;
             // 
-            // txtdropdownlistCategory
+            // comboDropDownListCategory
             // 
-            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistCategory.FormattingEnabled = true;
-            this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(145, 295);
-            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
-            this.txtdropdownlistCategory.Size = new System.Drawing.Size(143, 24);
-            this.txtdropdownlistCategory.TabIndex = 7;
-            this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(145, 295);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 7;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
             // 
             // comboLocal
             // 
@@ -260,11 +261,11 @@
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(517, 391);
+            this.ClientSize = new System.Drawing.Size(551, 412);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.comboLocal);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtdropdownlistCategory);
+            this.Controls.Add(this.comboDropDownListCategory);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.txtbrand);
@@ -307,7 +308,7 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
+            this.Controls.SetChildIndex(this.comboDropDownListCategory, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.comboLocal, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
@@ -334,7 +335,7 @@
         private Class.txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Class.comboDropDownList comboDropDownListCategory;
         private Win.UI.ComboBox comboLocal;
         private Win.UI.Label label1;
         private Win.UI.Label labelStyle;

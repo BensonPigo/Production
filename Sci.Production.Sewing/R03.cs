@@ -15,8 +15,7 @@ namespace Sci.Production.Sewing
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
         DateTime? output1, output2, buyerDel1, buyerDel2, sciDel1, sciDel2;
-        string season, brand, mDivision, factory, chx, style;
-        int category;
+        string season, brand, mDivision, factory, chx, style, category;
         DataTable Factory, Brand, BrandFactory, Style, CD, FactoryLine, BrandFactoryCD, POCombo, Program, FactoryLineCD;
 
         public R03(ToolStripMenuItem menuitem)
@@ -30,7 +29,7 @@ namespace Sci.Production.Sewing
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboM.Text = Sci.Env.User.Keyword;
             comboFactory.Text = Sci.Env.User.Factory;
-            txtdropdownlistCategory.SelectedIndex = 0;
+            comboDropDownListCategory.SelectedIndex = 0;
 
             MyUtility.Tool.SetupCombox(comboLocal, 1, 1, "Exclude,Include");
             comboLocal.SelectedIndex = 0;
@@ -39,7 +38,7 @@ namespace Sci.Production.Sewing
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (txtdropdownlistCategory.SelectedIndex == -1)
+            if (comboDropDownListCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
@@ -54,9 +53,9 @@ namespace Sci.Production.Sewing
             brand = txtbrand.Text;
             mDivision = comboM.Text;
             factory = comboFactory.Text;
-            category = txtdropdownlistCategory.SelectedIndex;
             chx = comboLocal.Text;
             style = txtstyle.Text;
+            category = comboDropDownListCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -65,7 +64,7 @@ namespace Sci.Production.Sewing
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈基礎資料的SQL
-            sqlCmd.Append(@"
+            sqlCmd.Append(string.Format(@"
 with tmp1stData as (
     select  o.ID
             , o.ProgramID
@@ -96,7 +95,7 @@ with tmp1stData as (
                                                   and sl.Location = sod.ComboType
     where   1=1
             and so.Shift <> 'O'
-");
+            and o.Category in ({0})", category));
             if (chx == "Exclude")
                 sqlCmd.Append(" and o.LocalOrder = 0 ");
 
@@ -129,13 +128,6 @@ with tmp1stData as (
 
             if (!MyUtility.Check.Empty(factory))
                 sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
-
-            if (category == 0)
-                sqlCmd.Append(" and o.Category = 'B'");
-            else if (category == 1)
-                sqlCmd.Append(" and o.Category = 'S'");
-            else
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
 
             if (!MyUtility.Check.Empty(style))
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", style));

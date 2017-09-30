@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioFOB = new System.Windows.Forms.RadioButton();
             this.label7 = new Sci.Win.UI.Label();
             this.radioCPU = new System.Windows.Forms.RadioButton();
@@ -40,7 +41,7 @@
             this.dateQueryDateStart = new Sci.Win.UI.DateBox();
             this.dateQueryDateEnd = new Sci.Win.UI.DateBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.txtdropdownlist = new Sci.Production.Class.txtdropdownlist();
+            this.comboDropdownlist = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtCentralizedFactory = new Sci.Production.Class.txtCentralizedFactory();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtcountry = new Sci.Production.Class.txtcountry();
@@ -165,17 +166,17 @@
             this.label5.TabIndex = 199;
             this.label5.Text = "~";
             // 
-            // txtdropdownlist
+            // comboDropdownlist
             // 
-            this.txtdropdownlist.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist.FormattingEnabled = true;
-            this.txtdropdownlist.IsSupportUnselect = true;
-            this.txtdropdownlist.Location = new System.Drawing.Point(125, 84);
-            this.txtdropdownlist.Name = "txtdropdownlist";
-            this.txtdropdownlist.Size = new System.Drawing.Size(137, 24);
-            this.txtdropdownlist.TabIndex = 200;
-            this.txtdropdownlist.Type = "ReportCategory";
+            this.comboDropdownlist.BackColor = System.Drawing.Color.White;
+            this.comboDropdownlist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropdownlist.FormattingEnabled = true;
+            this.comboDropdownlist.IsSupportUnselect = true;
+            this.comboDropdownlist.Location = new System.Drawing.Point(125, 84);
+            this.comboDropdownlist.Name = "comboDropdownlist";
+            this.comboDropdownlist.Size = new System.Drawing.Size(183, 24);
+            this.comboDropdownlist.TabIndex = 200;
+            this.comboDropdownlist.Type = "Pms_ReportCategory";
             // 
             // txtCentralizedFactory
             // 
@@ -212,7 +213,7 @@
             this.Controls.Add(this.txtcountry);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtCentralizedFactory);
-            this.Controls.Add(this.txtdropdownlist);
+            this.Controls.Add(this.comboDropdownlist);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.dateQueryDateEnd);
             this.Controls.Add(this.dateQueryDateStart);
@@ -242,7 +243,7 @@
             this.Controls.SetChildIndex(this.dateQueryDateStart, 0);
             this.Controls.SetChildIndex(this.dateQueryDateEnd, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlist, 0);
+            this.Controls.SetChildIndex(this.comboDropdownlist, 0);
             this.Controls.SetChildIndex(this.txtCentralizedFactory, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtcountry, 0);
@@ -265,7 +266,7 @@
         private Win.UI.DateBox dateQueryDateStart;
         private Win.UI.DateBox dateQueryDateEnd;
         private Win.UI.Label label5;
-        private Class.txtdropdownlist txtdropdownlist;
+        private Class.comboDropDownList comboDropdownlist;
         private Class.txtCentralizedFactory txtCentralizedFactory;
         private Class.txtbrand txtbrand;
         private Class.txtcountry txtcountry;
