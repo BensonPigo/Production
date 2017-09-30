@@ -68,6 +68,7 @@ namespace Sci.Production.Centralized
             #endregion
 
             #region 設定Where 條件
+            sqlWheres.Add("pod.Category != 'G'");
             if (!this.dateOutputDateStart.Value.Empty() && !this.dateOutputDateEnd.Value.Empty())
             {
                 sqlWheres.Add(string.Format("so.OutputDate between '{0}' and '{1}'"
