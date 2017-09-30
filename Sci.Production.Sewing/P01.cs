@@ -137,26 +137,28 @@ order by a.OrderId,os.Seq"
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            #region 開啟第三層
             qaoutput.CellMouseDoubleClick += (s, e) =>
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    //如果isAutoCreate第三層就不可編輯
+                    if (CurrentDetailData["isAutoCreate"].ToString() == "Y")
                     {
-                        //如果isAutoCreate第三層就不可編輯
-                        if (CurrentDetailData["isAutoCreate"].ToString()=="Y")
-                        {
-                            DoSubForm.IsSupportDelete = false;
-                            DoSubForm.IsSupportNew = false;
-                            DoSubForm.IsSupportUpdate = false;
-                        }
-                        else
-                        {
-                            DoSubForm.IsSupportDelete = true;
-                            DoSubForm.IsSupportNew = true;
-                            DoSubForm.IsSupportUpdate = true;
-                        }                        
-                        OpenSubDetailPage();
+                        DoSubForm.IsSupportDelete = false;
+                        DoSubForm.IsSupportNew = false;
+                        DoSubForm.IsSupportUpdate = false;
                     }
-                };
+                    else
+                    {
+                        DoSubForm.IsSupportDelete = true;
+                        DoSubForm.IsSupportNew = true;
+                        DoSubForm.IsSupportUpdate = true;
+                    }
+                    OpenSubDetailPage();
+                }
+            };
+            #endregion
             #region SP#的Right click & Validating
             orderid.EditingMouseDown += (s, e) =>
             {
@@ -167,6 +169,7 @@ order by a.OrderId,os.Seq"
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            if (dr["isAutoCreate"].ToString() == "Y") return;
                             string sqlCmd = string.Format(@"
 select distinct ss.OrderID 
 from SewingSchedule ss WITH (NOLOCK) 
@@ -326,6 +329,7 @@ where   o.FtyGroup = @factoryid
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            if (dr["isAutoCreate"].ToString() == "Y") return;
                             string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable LocationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
@@ -362,6 +366,7 @@ where   o.FtyGroup = @factoryid
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            if (dr["isAutoCreate"].ToString() == "Y") return;
                             string sqlCmd = string.Format("select Article,ColorID from View_OrderFAColor where Id = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]));
 
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd,"8,8",MyUtility.Convert.GetString(dr["Article"]),headercaptions: "Article,Color");
@@ -478,8 +483,12 @@ where   o.FtyGroup = @factoryid
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += detailgrid_RowEnter;
+            //變色
+            change_record();
         }
 
+        #region 設定是否可編輯與變色
+        //設定表身是否可以編輯
         private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || EditMode == false) { return; }
@@ -501,6 +510,69 @@ where   o.FtyGroup = @factoryid
                 col_wokhr.IsEditingReadOnly = false;
             }
         }
+        //設定表身變色
+        private void change_record()
+        {
+            col_order.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["IsAutoCreate"].ToString() == "Y" )
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_Article.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["IsAutoCreate"].ToString() == "Y" )
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_inQty.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["IsAutoCreate"].ToString() == "Y")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            col_wokhr.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["IsAutoCreate"].ToString() == "Y")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+        }
+        #endregion
+
+
         //設定表身RFT的預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
@@ -923,10 +995,15 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             {
                 if (MyUtility.Check.Empty(dr["OrderID"])||MyUtility.Check.Empty(dr["Article"]))
                 {
-                    if (dr["isAutoCreate"].ToString()!="Y")
+                    if (dr["isAutoCreate"].ToString()=="Y")
+                    {
+                        MyUtility.Msg.WarningBox(" Can't delete AutoCreate Item.");
+                        return false;
+                    }
+                    else
                     {
                         dr.Delete();
-                    }
+                    }                    
                     continue;                   
                 }
                
@@ -1057,30 +1134,38 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
                 //判斷是否為有AutoCreate資料
                 if (AutoData.Length > 0)
                 {
+                    DataTable dtAutoSubAll = new DataTable();
                     for (int i = 0; i < AutoData.Length; i++)
                     {
                         //判斷autoCreate母單是否為當下母單資料 && Color && comboTye 是否一致
                         if (dr["Orderid"].ToString() == MyUtility.GetValue.Lookup(string.Format(@"select poid from orders WITH (NOLOCK) where id='{0}'", AutoData[i]["orderid"].ToString())) && (dr["Color"].ToString() == AutoData[i]["color"].ToString())
                         && (dr["ComboType"].ToString() == AutoData[i]["ComboType"].ToString()))
                         {
-                            //取出母單的第三層資料
-                            DataTable SubDetailData;
-                            GetSubDetailDatas(dr, out SubDetailData);
-                            //取出AutoCreate子單的第三層資料
+                            //取出子單的第三層資料,並且merge起來
                             DataTable SubDetailDataAuto;
                             GetSubDetailDatas(AutoData[i], out SubDetailDataAuto);
-                            foreach (DataRow ddr in SubDetailData.Rows)
+                            dtAutoSubAll.Merge(SubDetailDataAuto);
+                        }
+                    }
+                    if (!MyUtility.Check.Empty(dtAutoSubAll) && dtAutoSubAll.Rows.Count > 0)
+                    {
+                        DataTable dtcombine;
+                        MyUtility.Tool.ProcessWithDatatable(dtAutoSubAll, "SizeCode,QaQty", @"
+select SizeCode, sum(QaQty) as QaQty from #tmp group by SizeCode", out dtcombine);
+
+                        DataTable SubDetailData;
+                        GetSubDetailDatas(dr, out SubDetailData);
+                        foreach (DataRow ddr in SubDetailData.Rows)
+                        {
+                            //第三層子母單相同SizeCode
+                            DataRow[] drCheck = dtcombine.Select(string.Format(@"SizeCode='{0}'", ddr["SizeCode"].ToString()));
+                            if (drCheck.Length > 0)
                             {
-                                //第三層子母單相同SizeCode
-                                DataRow[] drCheck = SubDetailDataAuto.Select(string.Format(@"SizeCode='{0}'", ddr["SizeCode"].ToString()));
-                                if (drCheck.Length > 0)
+                                //如果母單QAQty小於子單數量,就不給存檔
+                                if (MyUtility.Convert.GetInt(ddr["QaQty"]) < MyUtility.Convert.GetInt(drCheck[0]["QaQty"]))
                                 {
-                                    //如果母單QAQty小於子單數量,就不給存檔
-                                    if (MyUtility.Convert.GetInt(ddr["QaQty"]) < MyUtility.Convert.GetInt(drCheck[0]["QaQty"]))
-                                    {
-                                        MyUtility.Msg.WarningBox(string.Format(@"<SP#: {0}> QA Q'ty cannot less than" + Environment.NewLine + "<SP#: {1}> QA Q'ty." + Environment.NewLine + "Save Failed!", dr["orderid"].ToString(), AutoData[i]["orderid"].ToString()));
-                                        return false;
-                                    }
+                                    MyUtility.Msg.WarningBox(string.Format(@"<SP#: {0}> QA Q'ty cannot less than" + Environment.NewLine + "AutoCreate QA Q'ty." + Environment.NewLine + "Save Failed!", dr["orderid"].ToString()));
+                                    return false;
                                 }
                             }
                         }
@@ -1248,6 +1333,7 @@ where not exists (select 1
         {
             if (CurrentDetailData["IsAutoCreate"].ToString()=="Y")
             {
+                MyUtility.Msg.WarningBox("Can't delete AutoCreate Item.");
                 return;
             }
             base.OnDetailGridDelete();
@@ -1324,7 +1410,7 @@ where not exists (select 1
             decimal ttlQaqty = MyUtility.Convert.GetDecimal(SumQaQty.Rows[0]["sumQaqty"]);
 
             decimal subSum = 0;
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select("isAutoCreate<>'Y'"))
             {
                 recCnt = recCnt - 1;
                 if (dr.RowState != DataRowState.Deleted)
