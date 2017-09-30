@@ -171,18 +171,22 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
-            string marker2sql = string.Format(
-            @"Select distinct b.Orderid,b.MarkerName,layer = sum(b.Layer) over (partition by b.Orderid,b.MarkerName,b.MarkerNo,b.fabricCombo,c.Width) ,
-b.MarkerNo,b.fabricCombo,
-(
+            string marker2sql = string.Format(@"
+Select distinct o.POID as OrderID
+,b.MarkerName
+,layer = sum(b.Layer) over (partition by o.poid,b.MarkerName,b.MarkerNo,b.fabricCombo,c.Width) 
+,b.MarkerNo
+,b.fabricCombo
+,(
     Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
     From WorkOrder_SizeRatio c WITH (NOLOCK) 
     Where a.WorkOrderUkey =c.WorkOrderUkey            
     For XML path('')
 ) as SizeRatio
 ,c.Width
-From WorkOrder b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK)
-Where a.workorderukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey", CurrentMaintain["ID"]);
+From WorkOrder b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK), orders o with(nolock) 
+Where a.workorderukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey
+and o.ID=b.OrderID ", CurrentMaintain["ID"]);
             #endregion
             DataTable markerTb;
 
