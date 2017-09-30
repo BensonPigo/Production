@@ -1310,6 +1310,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            pars.Add(new SqlParameter("@OrderID", OrderID));
             #region Title
             DataTable dt;
             DBProxy.Current.Select("", @"
@@ -1336,9 +1337,9 @@ where id = @MDivision", pars, out dt);
             #region SizeCode
             DualResult result;
             DataTable dtSizecode;
-            string sqlcmd1 = string.Format(@"select distinct sizecode
-	                    from dbo.Issue_Size WITH (NOLOCK) 
-	                    where id = @ID order by sizecode");
+            string sqlcmd1 = string.Format(@"select  sizecode
+	                    from dbo.Order_SizeCode WITH (NOLOCK) 
+	                    where id in (select  poid from orders where id =   @OrderID )order by seq");
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
 
