@@ -166,6 +166,7 @@ select  Title1
         ,Unit
         ,Unit_Price
         ,Amount
+        ,vat
         ,[AccuAmount] = sum(Amount) Over (PARTITION BY to#, Title1, Issue_Date 
                                            Order by to#, Title1, Issue_Date, Delivery, PO, Code
                                            rows between unbounded preceding and Current Row)
@@ -312,6 +313,7 @@ select  e.NameEN [Title1]
         ,a.CurrencyId [currencyid]
         ,a.VatRate [VatRate]
         ,a.Amount+a.Vat [Grand_Total]
+        ,a.Vat
         ,format(b.Delivery,'yyyy/MM/dd')[Delivery] 
 		,a.id [ID]
 		,a.FactoryId [ftyid] 
@@ -333,9 +335,25 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
                  
                 ReportDefinition report = e.Report;
+                if (dt.Rows.Count > 0)
+                {
+                    decimal AccuAmount = MyUtility.Convert.GetDecimal(dt.Rows[0]["AccuAmount"]);//
+                    decimal vat = MyUtility.Convert.GetDecimal(dt.Rows[0]["vat"]);
+                    decimal Total = MyUtility.Convert.GetDecimal(dt.Rows[0]["Grand_Total"]);
 
-                    // 傳 list 資料            
-                    List<R26_PrintData> data = dt.AsEnumerable()
+                    string CurrencyID = dt.Rows[0]["CurrencyID"].ToString().Trim();//
+                    string vatrate = dt.Rows[0]["vatrate"].ToString().Trim() + "%";//
+                    string Remark = dt.Rows[0]["Remark"].ToString().Trim();//
+
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AccuAmount", AccuAmount.ToString("#,0.00")));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+                }
+                // 傳 list 資料            
+                List<R26_PrintData> data = dt.AsEnumerable()
                         .Select(row1 => new R26_PrintData()
                         {
                             ID = row1["ID"].ToString().Trim(),

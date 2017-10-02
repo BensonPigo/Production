@@ -937,17 +937,24 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
 	                ,c.Tel [Tel]
 	                ,c.Address [Address]
                     ,a.FactoryID
+                    ,b.AddressEN
+                    ,[fTel] =b.Tel
+                    ,c.Fax
             from dbo.localpo a WITH (NOLOCK) 
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
             where b.id = a.factoryid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
             string RptTitle = dt.Rows[0]["RptTitle"].ToString().Trim();
             string Supplier = dt.Rows[0]["Supplier"].ToString().Trim();
             string FactoryID = dt.Rows[0]["FactoryID"].ToString().Trim();
             string Tel = dt.Rows[0]["Tel"].ToString().Trim();
             string Address = dt.Rows[0]["Address"].ToString().Trim();
+            string AddressEN = dt.Rows[0]["AddressEN"].ToString().Trim();
+            string fTel = dt.Rows[0]["fTel"].ToString().Trim();
+            string Fax = dt.Rows[0]["Fax"].ToString().Trim();
             decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
             decimal vat = MyUtility.Convert.GetDecimal(CurrentMaintain["vat"]);
             string CurrencyID = CurrentMaintain["CurrencyID"].ToString();
@@ -961,6 +968,9 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
@@ -975,7 +985,7 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.OrderId [SP]
+            @"select top 1 a.OrderId [SP]
                     ,a.Delivery [Delivery]
                     ,a.Refno [Refno]
                     ,a.ThreadColorID [Color_Shade]
