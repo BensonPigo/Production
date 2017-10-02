@@ -477,6 +477,24 @@ where   pl.INVNo = '{0}'
                 MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 return false;
             }
+
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+where fw.ID = fwd.ID
+and fw.BrandID = '{0}'
+and fw.Forwarder = '{1}'
+and fw.ShipModeID = '{2}'
+and  fwd.WhseNo = '{3}'
+order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]), MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]),txtTerminalWhse.Text);
+            if (!MyUtility.Check.Empty(txtTerminalWhse.Text)) {
+                if (!MyUtility.Check.Seek(sqlCmd, ""))
+                {
+                    txtTerminalWhse.Focus();
+                    MyUtility.Msg.WarningBox("Whse# is not found!!");
+                    return false;
+                };
+            }
+         
+
             #endregion            
             //新增單狀態下，取ID且檢查此ID是否存在
             if (IsDetailInserting)
@@ -508,7 +526,7 @@ where   pl.INVNo = '{0}'
             #region 檢查訂單的Currency是否一致與Payterm與表頭是否一致
             if (allPackID.Length > 0)
             {
-                string sqlCmd = string.Format(@"with OrderData
+                 sqlCmd = string.Format(@"with OrderData
 as
 (select distinct pd.ID,pd.OrderID,o.CurrencyID,o.PayTermARID
  from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
@@ -591,7 +609,7 @@ where   o.BrandID is null
             string season = "", category = "";
             if (allPackID.Length > 0)
             {
-                string sqlCmd = string.Format(@"with OrderData
+                 sqlCmd = string.Format(@"with OrderData
 as
 (select distinct o.Category,o.SeasonID
  from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
