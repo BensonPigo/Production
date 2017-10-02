@@ -30,7 +30,7 @@ BEGIN
 	end
 
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
-		, iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,dbo.GetFtyAreaName(Factory.ID) as MDivisionID
 	, Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
@@ -65,7 +65,7 @@ BEGIN
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,dbo.GetFtyAreaName(Factory.ID) as MDivisionID
 	, Factory.CountryID	
 	,Orders.CPU, cTms, cCPU
 	,Order_TmsCost.ArtworktypeID
@@ -110,7 +110,7 @@ BEGIN
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,dbo.GetFtyAreaName(Factory.ID) as MDivisionID
 	, Factory.CountryID
 	,Style.CPU, cTms, cCPU
 	,Style_TmsCost.ArtworkTypeID 
@@ -152,7 +152,7 @@ BEGIN
 
 	--Forecast
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
-		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
+		,dbo.GetFtyAreaName(Factory.ID) as MDivisionID
 	, Factory.CountryID
 	,cTms as ArtworkTypeTMS
 	,Style.CPU, cTms, cCPU
@@ -225,9 +225,15 @@ BEGIN
 	if(@ReportType = 1)
 	Begin
 	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
-		select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
-		order by FactorySort
+		--select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
+		--order by FactorySort
 
+		
+		select CountryID, Country.Alias as CountryName, dbo.GetFtyAreaName(Factory.ID) as MDivisionID, Factory.ID as FactoryID, Factory.FactorySort from Factory 
+		inner join Country on Factory.CountryID = Country.ID
+		where Type in ('B','S') and isnull(FactorySort,'') <> ''
+		and ( Type = 'B' and Factory.ID in (select ft.FactoryID from #tmpFactory ft))
+		order by FactorySort
 
 		--(A)+(B)By MDivisionID
 		select CountryID, CountryName, MDivisionID, #tmpFactory.OrderYYMM as Month, sum(Capacity) as Capacity from #tmpFactory 
@@ -274,9 +280,10 @@ BEGIN
 		--where Type in ('B','S') and isnull(FactorySort,'') <> ''
 		----and ( Type = 'B' and Factory.ID in (select ft.FactoryID from #tmpFactory ft))
 		--order by FactorySort
-
-		
-		select CountryID,MDivisionID,FactoryID,FactorySort from #tmpFinal group by CountryID,MDivisionID,FactoryID,FactorySort
+		select CountryID, dbo.GetFtyAreaName(Factory.ID) as MDivisionID, Factory.ID as FactoryID, Factory.FactorySort from Factory 
+		inner join Country on Factory.CountryID = Country.ID
+		where Type in ('B','S') and isnull(FactorySort,'') <> ''
+		and ( Type = 'B' and Factory.ID in (select ft.FactoryID from #tmpFactory ft))
 		order by FactorySort
 
 		--(K) By Factory 最細的上下半月Capacity

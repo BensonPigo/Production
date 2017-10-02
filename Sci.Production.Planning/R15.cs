@@ -642,14 +642,22 @@ from (
                 ,t.LETA,t.MTLETA,t.SewETA,t.PackETA,t.CPU
                 ,t.Qty_byShip,#cte2.first_cut_date
 				,#cte2.cut_qty
-                ,[RFID Cut Qty]= iif(CutQty.[RFID Cut Qty]>t.qty,t.qty,CutQty.[RFID Cut Qty])
-			    ,[RFID Loading Qty]= isnull(loading.AccuLoad,0)
-				,[RFID Emb Qty] = iif(EmbQty.[RFID Emb Qty]>t.qty,t.qty,EmbQty.[RFID Emb Qty])
-				,[RFID Bond Qty] = iif(BondQty.[RFID Bond Qty]>t.qty,t.qty,BondQty.[RFID Bond Qty])
-				,[RFID Print Qty] = iif(PrintQty.[RFID Print Qty]>t.qty,t.qty,PrintQty.[RFID Print Qty]) 
-                --,[RFID HT Qty] = iif(PrintQty2.[RFID HT Qty]>t.qty,t.qty,PrintQty2.[RFID HT Qty]) 
-				,[RFID HT Farm In Qty] =iif(htin.[RFID HT Farm In Qty]>t.qty,t.qty,htin.[RFID HT Farm In Qty]) 
-				, [RFID HT Farm Out Qty] = iif(htout.[RFID HT Farm Out Qty]>t.qty,t.qty,htout.[RFID HT Farm Out Qty]) 
+                ,[RFID Cut Qty]= CutQty.[RFID Cut Qty]
+			    ,[RFID Loading Qty]= isnull(loading.AccuLoad,0)				
+				,[RFID Emb Farm In Qty] =Embin.[RFID Emb Farm In Qty]
+				,[RFID Emb Farm Out Qty] = Embout.[RFID Emb Farm Out Qty]
+				,[RFID Bond Farm In Qty] =Bondin.[RFID Bond Farm In Qty]
+				,[RFID Bond Farm Out Qty] = Bondout.[RFID Bond Farm Out Qty]
+				,[RFID Print Farm In Qty] =Printin.[RFID Print Farm In Qty]
+				,[RFID Print Farm Out Qty] = Printout.[RFID Print Farm Out Qty]
+				,[RFID AT Farm In Qty] =ATin.[RFID AT Farm In Qty]
+				,[RFID AT Farm Out Qty] = ATout.[RFID AT Farm Out Qty]
+				,[RFID Pad Print Farm In Qty] =PadPrintin.[RFID Pad Print Farm In Qty]
+				,[RFID Pad Print Farm Out Qty] = PadPrintout.[RFID Pad Print Farm Out Qty]
+				,[RFID Emboss Farm In Qty] =Embossin.[RFID Emboss Farm In Qty]
+				,[RFID Emboss Farm Out Qty] = Embossout.[RFID Emboss Farm Out Qty]
+				,[RFID HT Farm In Qty] =htin.[RFID HT Farm In Qty]
+				,[RFID HT Farm Out Qty] = htout.[RFID HT Farm Out Qty]
                 ,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
                 ,#cte2.PRINTING_qty,#cte2.sewing_output,t.qty+t.FOCQty - #cte2.sewing_output [Balance]
                 ,#cte2.firstSewingDate				
@@ -691,37 +699,13 @@ where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason
 and t.KPIChangeReason !='' and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-  select 
-  [RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
-from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid=t.OrderID and BIO.SubProcessId='SORTING'
+	select 
+	[RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='SORTING'
 ) CutQty
-outer apply (
-select 
-[RFID Emb Qty]=isnull(sum(BD.Qty), 0) 
-from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid=t.OrderID and BIO.SubProcessId='EMB'
-) EmbQty
-outer apply(
-select 
-[RFID Bond Qty]=isnull(sum(BD.Qty), 0)  
-from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid=t.OrderID and BIO.SubProcessId='BO'
-) BondQty
-outer apply(
-select 
-[RFID Print Qty]=isnull(sum(BD.Qty), 0)
-from Bundle B
-left join Bundle_Detail BD on BD.Id=B.ID
-left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-where Orderid=t.OrderID and BIO.SubProcessId='PRT'
-) PrintQty
 outer apply 
 (
 	select [AccuLoad] = AccuLoad from 
@@ -731,23 +715,100 @@ outer apply
 	and line=t.SewLine
     and SewingDate= CONVERT(date, GETDATE())
 )loading
+
 outer apply(
-select 
-    [RFID HT Qty]=isnull(sum(BD.Qty), 0)
-    from Bundle B
-    left join Bundle_Detail BD on BD.Id=B.ID
-    left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-    where Orderid=t.OrderID and BIO.SubProcessId='HT'
-) PrintQty2
+	select [RFID Emb Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='Emb' and BIO.InComing is not null
+)Embin
 outer apply(
-	select [RFID HT Farm In Qty] =isnull(sum(BD.Qty), 0) --RFID HT Farm In Qty
+	select [RFID Emb Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='Emb' and BIO.OutGoing is not null
+)Embout
+outer apply(
+	select [RFID Bond Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='BO' and BIO.InComing is not null
+)Bondin
+outer apply(
+	select [RFID Bond Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='BO' and BIO.OutGoing is not null
+)Bondout
+outer apply(
+	select [RFID Print Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='PRT' and BIO.InComing is not null
+)Printin
+outer apply(
+	select [RFID Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='PRT' and BIO.OutGoing is not null
+)Printout
+outer apply(
+	select [RFID AT Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='AT' and BIO.InComing is not null
+)ATin
+outer apply(
+	select [RFID AT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='AT' and BIO.OutGoing is not null
+)ATout
+outer apply(
+	select [RFID Pad Print Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='PAD-PRT' and BIO.InComing is not null
+)PadPrintin
+outer apply(
+	select [RFID Pad Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='PAD-PRT' and BIO.OutGoing is not null
+)PadPrintout
+outer apply(
+	select [RFID Emboss Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='SUBCONEMB' and BIO.InComing is not null
+)Embossin
+outer apply(
+	select [RFID Emboss Farm Out Qty] = isnull(sum(BD.Qty), 0) 
+	from Bundle B
+	left join Bundle_Detail BD on BD.Id=B.ID
+	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
+	where Orderid=t.OrderID and BIO.SubProcessId='SUBCONEMB' and BIO.OutGoing is not null
+)Embossout
+outer apply(
+	select [RFID HT Farm In Qty] =isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
 	where Orderid=t.OrderID and BIO.SubProcessId='HT' and BIO.InComing is not null
 )htin
 outer apply(
-	select [RFID HT Farm Out Qty] = isnull(sum(BD.Qty), 0) --RFID HT Farm Out Qty
+	select [RFID HT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
