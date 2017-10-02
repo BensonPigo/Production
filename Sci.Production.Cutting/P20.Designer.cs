@@ -48,6 +48,8 @@
             this.btnImportfromRealtimeBundleTracking = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numTTCPU = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,6 +66,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTTCPU);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.txtfactoryByM1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImportfromRealtimeBundleTracking);
@@ -106,6 +110,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportfromRealtimeBundleTracking, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactoryByM1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTTCPU, 0);
             // 
             // detailpanel
             // 
@@ -378,12 +384,54 @@
             // 
             this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
             this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
             this.txtfactoryByM1.FilteMDivision = true;
+            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.IssupportJunk = false;
+            this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
             this.txtfactoryByM1.Name = "txtfactoryByM1";
             this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM1.TabIndex = 43;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(672, 42);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 23);
+            this.label2.TabIndex = 44;
+            this.label2.Text = "Act. TT CPU";
+            // 
+            // numTTCPU
+            // 
+            this.numTTCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ActTTCPU", true));
+            this.numTTCPU.DecimalPlaces = 3;
+            this.numTTCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTCPU.IsSupportEditMode = false;
+            this.numTTCPU.Location = new System.Drawing.Point(763, 42);
+            this.numTTCPU.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numTTCPU.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTCPU.Name = "numTTCPU";
+            this.numTTCPU.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTCPU.ReadOnly = true;
+            this.numTTCPU.Size = new System.Drawing.Size(74, 23);
+            this.numTTCPU.TabIndex = 45;
+            this.numTTCPU.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P20
             // 
@@ -453,5 +501,7 @@
         private Win.UI.Button btnImportfromWorkOrder;
         private Class.txtfactory txtfactoryByM1;
         private Win.UI.Label label1;
+        private Win.UI.NumericBox numTTCPU;
+        private Win.UI.Label label2;
     }
 }
