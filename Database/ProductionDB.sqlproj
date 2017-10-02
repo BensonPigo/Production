@@ -2225,6 +2225,7 @@
     <Build Include="dbo\Functions\GetColorMultipleID.sql" />
     <Build Include="dbo\Tables\Order_Qty_Garment.sql" />
     <Build Include="dbo\Tables\MonitorBoardParameter.sql" />
+    <Build Include="dbo\Functions\GetFtyAreaName.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
