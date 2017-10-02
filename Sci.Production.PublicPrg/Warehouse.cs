@@ -501,7 +501,9 @@ inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
-where p.id ='{0}'";
+where p.id ='{0}'
+and p.Junk=0
+";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
