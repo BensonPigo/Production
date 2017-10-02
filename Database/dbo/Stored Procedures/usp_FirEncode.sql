@@ -53,7 +53,7 @@ BEGIN
 		END
 		BEGIN TRANSACTION
 
-		Update Fir set PhysicalDate = GetDate()
+		Update Fir set PhysicalDate = (select top 1 max(InspDate) from Fir_Physical where id=@FirID)
 						,PhysicalEncode=1
 						,EditName=@Login
 						,EditDate = GetDate()

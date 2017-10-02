@@ -577,7 +577,7 @@ where   o.FtyGroup = @factoryid
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["Rft"] = "0.00%";
-            
+            CurrentDetailData["isAutoCreate"] = "";   
         }
        
         //重組表身Grid的QA Qty資料
@@ -972,7 +972,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             decimal gridWHours = 0;//加總表身W/Hours
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "WorkHour,QAQty,InlineQty,DefectQty,OrderID,ComboType,Article,isAutoCreate", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty,isnull(sum(InlineQty),0) as sumInlineQty,isnull(sum(DefectQty),0) as sumDefectQty from #tmp where (OrderID <> '' or OrderID is not null) and (ComboType <> '' or ComboType is not null) and (Article <> '' or Article is not null) and isAutoCreate<>'Y'", out SumQty, "#tmp");
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "WorkHour,QAQty,InlineQty,DefectQty,OrderID,ComboType,Article,isAutoCreate", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty,isnull(sum(InlineQty),0) as sumInlineQty,isnull(sum(DefectQty),0) as sumDefectQty from #tmp where (OrderID <> '' or OrderID is not null) and (ComboType <> '' or ComboType is not null) and (Article <> '' or Article is not null)", out SumQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -1401,7 +1401,7 @@ where not exists (select 1
             DataTable SumQaQty;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID,isAutoCreate", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp where isAutoCreate<>'Y'", out SumQaQty, "#tmp");
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID,isAutoCreate", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp ", out SumQaQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -1418,7 +1418,7 @@ where not exists (select 1
             decimal ttlQaqty = MyUtility.Convert.GetDecimal(SumQaQty.Rows[0]["sumQaqty"]);
 
             decimal subSum = 0;
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select("isAutoCreate<>'Y'"))
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 recCnt = recCnt - 1;
                 if (dr.RowState != DataRowState.Deleted)
