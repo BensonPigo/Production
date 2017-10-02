@@ -223,24 +223,21 @@ namespace Sci.Production.Subcon
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        //組表身資料
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                (e.Details).Columns.Add("poqty", typeof(decimal));
-                (e.Details).Columns.Add("balance", typeof(decimal));
-                decimal poqty;
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    poqty = 0m;
-                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail WITH (NOLOCK) where ukey = {0}", (long)dr["artworkpo_detailukey"])), out poqty);
-                    dr["poqty"] = poqty;
-                    dr["balance"] = (decimal)dr["farmin"] - (decimal)dr["accumulatedqty"];                    
-                }
-            }
- 	         return base.OnRenewDataDetailPost(e);
-        }
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string cmdsql = string.Format(@"
+select a.* 
+, b.PoQty
+, [balance]=a.Farmin-a.AccumulatedQty
+from ArtworkAP_detail a
+inner join artworkpo_detail b on a.ArtworkPo_DetailUkey=b.Ukey
+where a.id='{0}'
+", masterID);
+            this.DetailSelectCommand = cmdsql;
+            return base.OnDetailSelectCommandPrepare(e);
+        }             
 
         void addBalance()
         {
