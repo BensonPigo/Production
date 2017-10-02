@@ -1339,7 +1339,9 @@ where id = @MDivision", pars, out dt);
             DataTable dtSizecode;
             string sqlcmd1 = string.Format(@"select  sizecode
 	                    from dbo.Order_SizeCode WITH (NOLOCK) 
-	                    where id in (select  poid from orders where id =   @OrderID )order by seq");
+	                    where id in (select  poid from orders where id =   @OrderID ) and 
+                        sizecode in ( select distinct  sizecode from dbo.Issue_Size WITH (NOLOCK)  where id = @ID) order by seq");
+
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
 
