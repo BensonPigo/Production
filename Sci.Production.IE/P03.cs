@@ -434,8 +434,10 @@ order by ld.No, ld.GroupKey", masterID);
             //object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
 
             int countopts = 0;
+            var temptable  = DetailDatas.CopyToDataTable();
+            temptable.DefaultView.Sort = "No";                  
             string no = "";
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Rows)
             {
                 if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
                 {
