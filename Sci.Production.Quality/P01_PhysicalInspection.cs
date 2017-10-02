@@ -185,21 +185,24 @@ namespace Sci.Production.Quality
                     //{
                     def_locF = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                     def_locT = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_locT >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
+                    if (def_locF >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
                     {
                         // dr.Delete();
                         //Fir_physical_Defect.Rows.RemoveAt(i);
+
                         Fir_physical_Defect.Rows[i].Delete();
                     }
                     // }
 
                     //DefectLocation的範圍如果與目前ActualYds界限值不符的話就update DefectLocation
-                    if (def_locF == ActualYdsF && def_locT < ActualYdsT)
+                    if (def_locF == ActualYdsF && def_locT != ActualYdsT)
                     {
                         Fir_physical_Defect.Rows[i]["DefectLocation"] = ActualYdsF.ToString().PadLeft(3, '0') + "-" + ActualYdsT.ToString().PadLeft(3, '0');
                     }
                 }
             }
+
+          
 
             Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
@@ -396,7 +399,7 @@ where	WEAVETYPEID = '{0}'
                 {
                     if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
                     {
-                        def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
+                        def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                         if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
                         {
                             hintmsg.Append("Yds : " + Fir_physical_Defect.Rows[i]["DefectLocation"].ToString() + " , Defects : " + Fir_physical_Defect.Rows[i]["DefectRecord"].ToString() +
