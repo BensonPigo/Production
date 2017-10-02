@@ -60,6 +60,7 @@ namespace Sci.Production.Warehouse
 	        , x.earliest
             , x.lastest
             , Round(dbo.GetUnitQty(POUnit, StockUnit.value, x.taipei_qty), 2) taipei_qty
+            , pd.Refno
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
     outer apply (
         select value = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
@@ -215,6 +216,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Numeric("poqty", header: "PO Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
                 .Numeric("inputqty", header: "Input" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
+                .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(16)) //4
                 .Date("lastest", header: "Taipei" + Environment.NewLine + "Last Output", iseditingreadonly: true, width: Widths.AnsiChars(8))      //6
                 .Numeric("Taipei_qty", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //6
