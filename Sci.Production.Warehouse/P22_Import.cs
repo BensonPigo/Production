@@ -47,8 +47,21 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 with cte as 
-(select rtrim(pd.id) as poid, rtrim(pd.seq1) seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty,o.FactoryID ToFactoryID
-	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit 
+(
+    select rtrim(pd.id) as poid
+    , rtrim(pd.seq1) seq1
+    ,pd.seq2
+    ,pd.Qty
+    ,pd.ShipQty
+    ,pd.StockQty
+    ,pd.InputQty
+    ,pd.OutputQty
+    ,o.FactoryID ToFactoryID
+    ,x.taipei_issue_date
+    ,x.taipei_qty
+    ,pd.POUnit
+    ,pd.StockUnit  
+    ,pd.Refno
 	from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 	inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
@@ -66,6 +79,7 @@ select  m.ToFactoryID
         , m.StockUnit
         , dbo.GetUnitQty(POUnit, StockUnit, m.Qty) as poqty
         , dbo.GetUnitQty(POUnit, StockUnit, m.InputQty) as inputQty
+        , m.Refno
         , dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
         , m.taipei_issue_date
         , dbo.GetUnitQty(POUnit, StockUnit, m.taipei_qty) as taipei_qty 
@@ -161,6 +175,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Numeric("poqty", header: "PO Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
                 .Numeric("inputqty", header: "Input" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
+                .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(15)) 
                 .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(16)) //4
                 .Date("taipei_issue_date", header: "Taipei" + Environment.NewLine + "Input Date", iseditingreadonly: true, width: Widths.AnsiChars(8))      //6
                 .Numeric("Taipei_qty", header: "Taipei" + Environment.NewLine + "Input", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //6

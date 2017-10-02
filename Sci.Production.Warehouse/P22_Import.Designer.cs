@@ -58,7 +58,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Location = new System.Drawing.Point(1034, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 3;
@@ -70,7 +70,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(816, 15);
+            this.btnImport.Location = new System.Drawing.Point(938, 15);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 2;
@@ -82,7 +82,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(235, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(357, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 1;
@@ -102,7 +102,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -120,7 +119,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1008, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1130, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -128,7 +127,7 @@
             // 
             this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAllLocation.Location = new System.Drawing.Point(625, 15);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(747, 15);
             this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
             this.btnUpdateAllLocation.Size = new System.Drawing.Size(142, 30);
             this.btnUpdateAllLocation.TabIndex = 7;
@@ -142,7 +141,7 @@
             this.txtLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtLocation.IsSupportEditMode = false;
-            this.txtLocation.Location = new System.Drawing.Point(397, 19);
+            this.txtLocation.Location = new System.Drawing.Point(519, 19);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.ReadOnly = true;
             this.txtLocation.Size = new System.Drawing.Size(222, 23);
@@ -152,8 +151,7 @@
             // labelLocation
             // 
             this.labelLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelLocation.Lines = 0;
-            this.labelLocation.Location = new System.Drawing.Point(324, 19);
+            this.labelLocation.Location = new System.Drawing.Point(446, 19);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(69, 23);
             this.labelLocation.TabIndex = 8;
@@ -182,7 +180,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1008, 287);
+            this.groupBox1.Size = new System.Drawing.Size(1130, 287);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
@@ -205,7 +203,7 @@
             this.grid_TaipeiInput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_TaipeiInput.RowTemplate.Height = 24;
             this.grid_TaipeiInput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid_TaipeiInput.Size = new System.Drawing.Size(1008, 217);
+            this.grid_TaipeiInput.Size = new System.Drawing.Size(1122, 217);
             this.grid_TaipeiInput.TabIndex = 4;
             this.grid_TaipeiInput.TabStop = false;
             // 
@@ -215,7 +213,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 287);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 261);
+            this.panel1.Size = new System.Drawing.Size(1130, 261);
             this.panel1.TabIndex = 20;
             // 
             // grid_ftyDetail
@@ -238,13 +236,13 @@
             this.grid_ftyDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_ftyDetail.RowTemplate.Height = 24;
             this.grid_ftyDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid_ftyDetail.Size = new System.Drawing.Size(1008, 261);
+            this.grid_ftyDetail.Size = new System.Drawing.Size(1130, 261);
             this.grid_ftyDetail.TabIndex = 0;
             this.grid_ftyDetail.TabStop = false;
             // 
             // P22_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 601);
+            this.ClientSize = new System.Drawing.Size(1130, 601);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
