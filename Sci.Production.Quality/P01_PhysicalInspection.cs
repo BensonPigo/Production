@@ -708,7 +708,8 @@ Where DetailUkey = {15};",
                 if (ResultAry.Length > 0) result = "Fail";
                 #region  寫入虛擬欄位
                 maindr["Physical"] = result;
-                maindr["PhysicalDate"] = DateTime.Now.ToShortDateString();
+                //maindr["PhysicalDate"] = DateTime.Now.ToShortDateString();
+                maindr["PhysicalDate"] = gridTb.Compute("Max(InspDate)", "");
                 maindr["PhysicalEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
@@ -722,7 +723,7 @@ Where DetailUkey = {15};",
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = GetDate(),PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1]);
+                @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
