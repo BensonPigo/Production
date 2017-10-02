@@ -35,6 +35,14 @@ namespace Sci.Production.Quality
             DataView dv = DefectTb.DefaultView;
             dv.RowFilter = string.Format("NewKey = {0}", data["NewKey"]);
             DefectFilterTb = dv.ToTable();
+            DefectFilterTb.ColumnsIntAdd("DefectLocationF");
+            DefectFilterTb.ColumnsIntAdd("DefectLocationT");
+
+            for (int i = 0; i < DefectFilterTb.Rows.Count; i++) {
+                DefectFilterTb.Rows[i]["DefectLocationF"] = DefectFilterTb.Rows[i]["DefectLocation"].ToString().Split('-')[0]  ;
+                DefectFilterTb.Rows[i]["DefectLocationT"] = DefectFilterTb.Rows[i]["DefectLocation"].ToString().Split('-')[1];
+            }
+
             string cmd = string.Format("Select '' AS yds1, '' AS def1, 0 as point1,'' AS yds2,'' AS def2, 0 as point2,'' AS yds3,'' AS def3, 0 as point3");
             DBProxy.Current.Select(null, cmd, out gridTb);
             gridTb.Clear();
@@ -52,7 +60,12 @@ namespace Sci.Production.Quality
                 {
                     cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(i + 4, 3);
                 }
-                DataRow[] Ary = DefectFilterTb.Select(string.Format("DefectLocation ='{0}'", cStr));
+
+
+                
+               
+                DataRow[] Ary = DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}",Convert.ToInt32( cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
+               
                 //將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
                 if (j % 3 == 1) //新增一筆從頭開始

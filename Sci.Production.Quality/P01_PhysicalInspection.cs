@@ -169,24 +169,40 @@ namespace Sci.Production.Quality
 
 
         protected void get_total_point() {
-             double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
-            double def_loc = 0d;
+            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
+            double ActualYdsT = (MyUtility.Convert.GetDouble(CurrentData["ActualYds"]) - 1);
+            double ActualYdsF = ActualYdsT - (ActualYdsT % 5);
+            double def_locT = 0d;
+            double def_locF = 0d;
             //Act.Yds Inspected更動時剔除Fir_physical_Defect不在範圍的資料
 
             //foreach (DataRow dr in Fir_physical_Defect)
-                for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++ )
+            for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++)
+            {
+                if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
                 {
-                   // if (dr.RowState != DataRowState.Deleted)
+                    // if (dr.RowState != DataRowState.Deleted)
                     //{
-                    def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                        if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString()==CurrentData["DetailUkey"].ToString())
-                        {
-                           // dr.Delete();
-                            Fir_physical_Defect.Rows.RemoveAt(i);
-                        }
-                   // }
+                    def_locF = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
+                    def_locT = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
+                    if (def_locF >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
+                    {
+                        // dr.Delete();
+                        //Fir_physical_Defect.Rows.RemoveAt(i);
 
+                        Fir_physical_Defect.Rows[i].Delete();
+                    }
+                    // }
+
+                    //DefectLocation的範圍如果與目前ActualYds界限值不符的話就update DefectLocation
+                    if (def_locF == ActualYdsF && def_locT != ActualYdsT)
+                    {
+                        Fir_physical_Defect.Rows[i]["DefectLocation"] = ActualYdsF.ToString().PadLeft(3, '0') + "-" + ActualYdsT.ToString().PadLeft(3, '0');
+                    }
                 }
+            }
+
+          
 
             Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
@@ -375,9 +391,43 @@ where	WEAVETYPEID = '{0}'
                 string oldvalue = dr["Actualyds"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
+                //判斷Actualyds調整範圍後Fir_physical_Defect會被清掉的話需要提示
+                double double_ActualYds = Convert.ToDouble( newvalue);
+                double def_loc = 0d;
+                StringBuilder hintmsg = new StringBuilder();
+                for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++)
+                {
+                    if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
+                    {
+                        def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
+                        if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
+                        {
+                            hintmsg.Append("Yds : " + Fir_physical_Defect.Rows[i]["DefectLocation"].ToString() + " , Defects : " + Fir_physical_Defect.Rows[i]["DefectRecord"].ToString() +
+                                                " , Point : " + Fir_physical_Defect.Rows[i]["Point"].ToString() + "\n");
+                        }
+
+                    }
+                }
+
+                if (hintmsg.Length > 0) {
+                    hintmsg.Insert(0, String.Format("Position greater than {0} is defective\nChanging yds will remove the following defects\nDo you wish to change ?\n", newvalue));
+                    if (MyUtility.Msg.WarningBox(hintmsg.ToString(), buttons: MessageBoxButtons.YesNo) == DialogResult.No) {
+                        e.FormattedValue = oldvalue;
+                        dr["Actualyds"] = oldvalue;
+                        dr.EndEdit();
+                        return;
+                    }
+
+                }
+              
+             
                 dr["Actualyds"] = e.FormattedValue;
+
+              
+
+
                 //dr["totalpoint"] = 0.00;
-               
+
 
                 //redefect();
                 //string oldvalue = dr["actualyds"].ToString();
