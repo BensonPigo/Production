@@ -165,51 +165,45 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     DataTable bulkItems;
-                    string sqlcmd = string.Format(@"
-select  a.*
-        , FabricType = CASE b.FabricType 
-                            WHEN 'A' THEN 'Accessory' 
-                            WHEN 'F' THEN 'Fabric'  
-                            WHEN 'O' THEN 'Other' 
-                       END
-        , b.SCIRefno
-        , f.MtlTypeID
-        , m.IssueType
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-        , Colorid = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
+                    string sqlcmd = string.Format(@"select  poid = b.ID
+        , a.Ukey
+        , b.Seq1
+        , b.Seq2
+        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
+        , a.StockType
+        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
         , b.UsedQty
         , b.SizeUnit
-        , dbo.Getlocation(a.ukey) [location]
-        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
         , b.StockUnit
-        , [accu_issue] = isnull(( select sum(Issue_Detail.qty) 
-                                  from dbo.issue WITH (NOLOCK) 
-                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
-                                  where Issue.type = 'B' 
-                                        and Issue.Status = 'Confirmed' 
-                                        and issue.id != a.POId 
-                                        and Issue_Detail.poid = a.poid 
-                                        and Issue_Detail.seq1 = a.seq1 
-                                        and Issue_Detail.seq2 = a.seq2
-                                        and Issue_Detail.roll = a.roll 
-                                        and Issue_Detail.stocktype = a.stocktype),0.00) 
-        , balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
-                                 from dbo.ftyinventory FI WITH (NOLOCK) 
-                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
-                             ,0.00)
-from dbo.ftyinventory a WITH (NOLOCK) 
-inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
-inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
-inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-where   lock=0 
-        and inqty-outqty+adjustqty > 0 
-        and poid='{1}' 
-        and stocktype='B'
-        and b.FabricType='A'
-        and m.IssueType='Sewing' 
-order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
+        , dbo.Getlocation(a.ukey)[location]
+        , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
+        , isnull((a.InQty - a.OutQty + a.AdjustQty), 0.00) as balanceqty
+        ,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
+         , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
+                                 from dbo.issue WITH (NOLOCK) 
+                                 inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                                 where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
+                                        and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
+                                        and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
+        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty 
+                                from dbo.ftyinventory FI WITH (NOLOCK) 
+                                where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                        and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                              ,0.00)
+from[Production].[dbo].po_supp_detail b WITH(NOLOCK)
+inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = b.SCIRefno
+inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
+left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on b.id = a.POID
+                                                             and b.seq1 = a.seq1
+                                                             and b.seq2 = a.Seq2
+                                                             and stocktype = 'B'
+                                                          --   and a.Roll = ''
+where   b.ID = '{0}'
+        and b.FabricType = 'A'
+        and m.IssueType = 'Sewing'
+        and b.Junk != 1
+order by b.ID, b.seq1, b.seq2", CurrentDetailData["poid"]);
                     IList<DataRow> x;
                     DualResult result2;
                     if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out bulkItems)))
@@ -272,25 +266,23 @@ order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
                             return;
                         }
 
-                        if (!MyUtility.Check.Seek(string.Format(@"
-select  a.*
-        , FabricType = CASE b.FabricType 
-                            WHEN 'A' THEN 'Accessory' 
-                            WHEN 'F' THEN 'Fabric'  
-                            WHEN 'O' THEN 'Other' 
-                       END
-        , b.SCIRefno
-        , f.MtlTypeID
-        , m.IssueType
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-        , Colorid = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
+                        if (!MyUtility.Check.Seek(string.Format(
+@"select  poid = b.ID
+        , a.Ukey
+        , b.Seq1
+        , b.Seq2
+        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) seq
+        , a.StockType
+        , ColorID = isnull(dbo.GetColorMultipleID(b.BrandId, b.ColorID), '')
         , b.SizeSpec
         , b.UsedQty
         , b.SizeUnit
-        , dbo.Getlocation(a.ukey) [location]
-        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
         , b.StockUnit
-        , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
+        , dbo.Getlocation(a.ukey)[location]
+        , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
+        , isnull((a.InQty - a.OutQty + a.AdjustQty), 0.00) as balanceqty
+        ,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
+         , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
                                  from dbo.issue WITH (NOLOCK) 
                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
                                  where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
@@ -301,20 +293,21 @@ select  a.*
                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
                               ,0.00)
-from dbo.ftyinventory a WITH (NOLOCK) 
-inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id = a.POID 
-                                                 and b.seq1 = a.seq1 
-                                                 and b.seq2 = a.Seq2
-inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
-inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-where   poid = '{0}' 
-        and a.seq1 = '{1}' 
-        and a.seq2 = '{2}' 
-        and lock = 0 
-        and inqty - outqty + adjustqty > 0  
-        and stocktype = 'B' 
-        and b.FabricType='A'
-        and m.IssueType='Sewing' "
+from[Production].[dbo].po_supp_detail b WITH(NOLOCK)
+inner join[Production].[dbo].Fabric f WITH(NOLOCK) on f.SCIRefno = b.SCIRefno
+inner join[Production].[dbo].MtlType m WITH(NOLOCK) on m.ID = f.MtlTypeID
+left join[Production].[dbo].ftyinventory a WITH(NOLOCK) on b.id = a.POID
+                                                             and b.seq1 = a.seq1
+                                                             and b.seq2 = a.Seq2
+                                                             and stocktype = 'B'
+                                                          --   and a.Roll = ''
+where   b.ID = '{0}'
+        and b.FabricType = 'A'
+        and b.seq1 = '{1}' 
+        and b.seq2 = '{2}' 
+        and m.IssueType = 'Sewing'
+        and b.Junk != 1
+order by b.ID, b.seq1, b.seq2"
                             , CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                            e.Cancel = true;
