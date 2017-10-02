@@ -395,7 +395,7 @@
             // 
             // btnBatchImport
             // 
-            this.btnBatchImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBatchImport.Enabled = false;
             this.btnBatchImport.Location = new System.Drawing.Point(734, 34);
             this.btnBatchImport.Name = "btnBatchImport";
             this.btnBatchImport.Size = new System.Drawing.Size(108, 30);
