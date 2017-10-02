@@ -75,6 +75,15 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     displaySettleDate.Text = Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
                 }
             }
+            if (MyUtility.Check.Empty(CurrentMaintain)) return;
+            if (CurrentMaintain["TaipeiDBC"].ToString() == "True")
+            {
+                InsertDetailGridOnDoubleClick = false;
+            }
+            else
+            {
+                InsertDetailGridOnDoubleClick = true;
+            }
         }
 
         // Detail Grid 設定
@@ -264,12 +273,22 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select ID,Ukey,TaipeiUkey,orderid,reasonid
+            this.DetailSelectCommand = string.Format(@"
+select a.ID,Ukey
+,TaipeiUkey
+,orderid
+,reasonid
 ,reasonid+isnull((select name from dbo.reason WITH (NOLOCK) where ReasonTypeID='DebitNote_Factory' and id = reasonid),'') reason_desc
 ,0.00 as total 
-,QTY,UNITID,AMOUNT,ADDITION,TAIPEIREASON,DESCRIPTION 
-from localdebit_detail WITH (NOLOCK) 
-                                                        Where localdebit_detail.id = '{0}' order by orderid ", masterID);
+,QTY,UNITID
+,a.AMOUNT
+,ADDITION
+,TAIPEIREASON
+,a.DESCRIPTION 
+,b.TaipeiDBC
+from localdebit_detail a WITH (NOLOCK) 
+inner join LocalDebit b with(nolock) on a.ID=b.ID
+Where a.id = '{0}' order by orderid ", masterID);
             
             return base.OnDetailSelectCommandPrepare(e);
         }

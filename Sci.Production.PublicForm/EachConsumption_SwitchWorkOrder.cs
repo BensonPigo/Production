@@ -58,7 +58,12 @@ namespace Sci.Production.PublicForm
             }
             if (bofnullTb.Rows.Count != 0)
             {
-                MyUtility.Msg.WarningBox("Can't find BOF data !!", "Warning");
+                string errMsg = "Can't find BOF data, please inform MR team !!";
+                foreach (DataRow dr in bofnullTb.Rows)
+                {
+                    errMsg = errMsg + Environment.NewLine + string.Format(@"Seq: {0} MarkName: {1} FabricCombo：{2} can't mapping BOF data!", dr["seq"].ToString(),dr["MarkerName"].ToString(),dr["FabricCombo"].ToString());
+                }
+                MyUtility.Msg.WarningBox(errMsg, "Warning");
                 return;
             }
             #endregion

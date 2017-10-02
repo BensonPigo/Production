@@ -628,8 +628,8 @@ Cutplanid, str_PIVOT);
                     size = "";
                     Ratio = "";
                     #region Size,Ratio
-                    DataRow[] wtmp = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "SizeCode" }).Select(string.Format("Cutref='{0}'", cutref));
-                    DataRow[] wtmp2 = WorkorderSizeTb.DefaultView.ToTable(true, new string[] { "Cutref", "Qty" }).Select(string.Format("Cutref='{0}'", cutref));
+                    DataRow[] wtmp = WorkorderSizeTb.DefaultView.ToTable(false, new string[] { "Cutref", "SizeCode" }).Select(string.Format("Cutref='{0}'", cutref));                   
+                    DataRow[] wtmp2 = WorkorderSizeTb.DefaultView.ToTable(false, new string[] { "Cutref", "Qty" }).Select(string.Format("Cutref='{0}'", cutref));
                     foreach (DataRow sDr in wtmp)
                     {
                         size = size + sDr["SizeCode"].ToString() + ",";

@@ -95,7 +95,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
             //去除表身[sizeRatio]最後一個/ 字元
             foreach (DataRow dr in DetailDatas) dr["sizeRatio"] = dr["sizeRatio"].ToString().Trim().TrimEnd('/');
-
         }
         protected override void OnDetailGridSetup()
         {
@@ -406,10 +405,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
-            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
+            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0))
             from #tmp1 a 
             left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            group by a.poid,a.id,a.article,a.sizecode"
+            left join orders o WITH (NOLOCK) on o.id = a.id
+            group by a.poid,a.id,a.article,a.sizecode ,o.cpu"
             , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             string sql2 = string.Format(@"
@@ -430,10 +430,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
-            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
+            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0))
             from #tmp1 a 
             left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            group by a.poid,a.id,a.article,a.sizecode"
+            left join orders o WITH (NOLOCK) on o.id = a.id
+            group by a.poid,a.id,a.article,a.sizecode,o.cpu"
             , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             DataTable t1, t2;
@@ -445,7 +446,16 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             if (t2.Rows.Count == 0) t2gmt = 0;
             else t2gmt = Convert.ToInt32(t2.Compute("sum(cutqty)", ""));
             int gmt = t2gmt - t1gmt; //相減為當天的GMT數
+            
+            int t1cpu, t2CPU;
+            if (t1.Rows.Count == 0) t1cpu = 0;
+            else t1cpu = Convert.ToInt32(t1.Compute("sum(cpu)", ""));
+            if (t2.Rows.Count == 0) t2CPU = 0;
+            else t2CPU = Convert.ToInt32(t2.Compute("sum(cpu)", ""));
+            int ttlcpu = t2CPU - t1cpu; //相減為當天的ttlcpu
+            string updatettlcpu = string.Format("update CuttingOutput set ActTTCPU={0} where id = '{1}'", ttlcpu, CurrentMaintain["id"].ToString());
             #endregion
+
             string update = "";
             DataRow wipRow;
             decimal ncpu=0,var;
@@ -497,7 +507,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         _transactionscope.Dispose();
                         return;
                     }
-
+                    if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
@@ -607,6 +621,7 @@ where c.ID =a.CuttingID", dissp.ToString());
             update = update + string.Format("update Cuttingoutput set status='New',editDate=getdate(),editname ='{0}',actgarment =0,pph=0  where id='{1}'", loginID, CurrentMaintain["ID"]);
 
 
+            string updatettlcpu = string.Format("update CuttingOutput set ActTTCPU=0 where id = '{0}'", CurrentMaintain["id"].ToString());
             #region transaction
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -615,6 +630,11 @@ where c.ID =a.CuttingID", dissp.ToString());
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
+                    if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
                         _transactionscope.Dispose();
                         return;

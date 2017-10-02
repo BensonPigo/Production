@@ -39,8 +39,9 @@ namespace Sci.Production.PublicPrg
                         if (MyUtility.Check.Seek(ann2[j], "subprocess", "Id"))
                         {
                             lallpart = false;
-                            if (art.IndexOf(ann2[j]) == -1)
-                            {
+                            //Artwork 相同的也要顯示, ex: HT+HT
+                            //if (art.IndexOf(ann2[j]) == -1)
+                            //{
                                 DataRow[] existdr = artTb.Select(string.Format("PatternCode ='{0}' and Subprocessid ='{1}'", patterncode, ann2[j]));
                                 if (existdr.Length == 0)
                                 {
@@ -51,7 +52,7 @@ namespace Sci.Production.PublicPrg
                                 }
                                 if (art == "") art = ann2[j];
                                 else art = art.Trim() + "+" + ann2[j];
-                            }
+                            //}
                         }
                     }
                     #endregion
