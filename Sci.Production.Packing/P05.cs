@@ -21,6 +21,10 @@ namespace Sci.Production.Packing
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings balance = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        Ict.Win.UI.DataGridViewTextBoxColumn col_SP;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_Art;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_Size;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         private DualResult result;
         private DataRow dr;
         private string sqlCmd = "", filter = "";
@@ -34,6 +38,14 @@ namespace Sci.Production.Packing
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'F'";
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;            
+        }
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (MyUtility.Check.Empty(btnBatchImport)) return;
+            if (MyUtility.Check.Empty(CurrentMaintain)) return;
+            this.btnBatchImport.Enabled = EditMode;
+            canEdit();
         }
 
         protected override void OnFormLoaded()
@@ -188,7 +200,7 @@ where   ID = @orderid
             //Seq
             seq.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && MyUtility.Check.Empty(CurrentMaintain["ExpressID"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
@@ -223,7 +235,7 @@ where   ID = @orderid
             //Article
             article.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && MyUtility.Check.Empty(CurrentMaintain["ExpressID"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
@@ -307,7 +319,7 @@ where   ID = @orderid
             //SizeCode
             size.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && MyUtility.Check.Empty(CurrentMaintain["ExpressID"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
@@ -411,16 +423,16 @@ where InvA.OrderID = '{0}'
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid)
+                .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_SP)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: article)
+                .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: article).Get(out col_Art)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size).Get(out col_Size)
                 .Numeric("Qty", header: "Order Qty", iseditingreadonly: true)
-                .Numeric("ShipQty", header: "Qty", settings: balance)
+                .Numeric("ShipQty", header: "Qty", settings: balance).Get(out col_qty)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
 
             //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
@@ -606,12 +618,7 @@ where InvA.OrderID = '{0}'
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
                 return false;
             }
-
-            if (!MyUtility.Check.Empty(CurrentMaintain["ExpressID"]))
-            {
-                MyUtility.Msg.WarningBox("This record had HC No. Can't be modified!");
-                return false;
-            }
+            canEdit();           
 
             return base.ClickEditBefore();
         }
@@ -958,6 +965,112 @@ from (
     and oqd.Seq = '{1}'
 ) a ";
             return sqlCmd;
+        }
+
+        private void canEdit()
+        {            
+            #region 若已經有HC NO.,則不能edit只能Edit "Pullout Date"欄位
+            if (EditMode && !MyUtility.Check.Empty(CurrentMaintain["ExpressID"]))
+            {
+                txtbrand.ReadOnly = true;
+                txtbrand.IsSupportEditMode = false;
+
+                txtshipmode.ReadOnly = true;
+                txtshipmode.Enabled = false;
+
+                numTtlCBM.ReadOnly = true;
+                numTtlCBM.IsSupportEditMode = false;
+
+                numTtlGW.ReadOnly = true;
+                numTtlGW.IsSupportEditMode = false;
+
+                editRemark.ReadOnly = true;
+                editRemark.IsSupportEditMode = false;
+
+                DetailGridEditing(false);
+                btnBatchImport.Enabled = false;
+                gridicon.Append.Enabled = false;
+                gridicon.Insert.Enabled = false;
+                gridicon.Remove.Enabled = false;
+            }
+            else if(EditMode)
+            {
+                txtbrand.ReadOnly = false;
+                txtbrand.IsSupportEditMode = true;
+
+                txtshipmode.ReadOnly = false;
+                txtshipmode.Enabled = true;
+
+                numTtlCBM.ReadOnly = false;
+                numTtlCBM.IsSupportEditMode = true;
+
+                numTtlGW.ReadOnly = false;
+                numTtlGW.IsSupportEditMode = true;
+
+                editRemark.ReadOnly = false;
+                editRemark.IsSupportEditMode = true;
+
+                DetailGridEditing(true);
+                btnBatchImport.Enabled = EditMode;
+                gridicon.Append.Enabled = true;
+                gridicon.Insert.Enabled = true;
+                gridicon.Remove.Enabled = true;
+            }
+            else
+            {
+                txtbrand.ReadOnly = true;
+                txtbrand.IsSupportEditMode = true;
+
+                txtshipmode.ReadOnly = true;
+                txtshipmode.Enabled = true;
+
+                numTtlCBM.ReadOnly = true;
+                numTtlCBM.IsSupportEditMode = true;
+
+                numTtlGW.ReadOnly = true;
+                numTtlGW.IsSupportEditMode = true;
+
+                editRemark.ReadOnly = true;
+                editRemark.IsSupportEditMode = true;
+
+                DetailGridEditing(false);
+                btnBatchImport.Enabled = EditMode;
+                gridicon.Append.Enabled = true;
+                gridicon.Insert.Enabled = true;
+                gridicon.Remove.Enabled = true;
+            }
+            #endregion
+        }
+
+        //控制表身Grid欄位是否可被編輯
+        private void DetailGridEditing(bool isEditing)
+        {
+            if (isEditing)
+            {
+                col_SP.IsEditingReadOnly = false;
+                col_qty.IsEditingReadOnly = false;
+                col_Art.IsEditingReadOnly = false;
+                col_Size.IsEditingReadOnly = false;                
+
+                for (int i = 0; i < detailgrid.ColumnCount; i++)
+                {
+                    if (i == 0 || i == 2 || i == 5 || i == 7)
+                    {
+                        detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
+                    }
+                }
+            }
+            else
+            {
+                col_SP.IsEditingReadOnly = true;
+                col_qty.IsEditingReadOnly = true;
+                col_Art.IsEditingReadOnly = true;
+                col_Size.IsEditingReadOnly = true;
+                for (int i = 0; i < detailgrid.ColumnCount; i++)
+                {
+                    detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
+                }
+            }
         }
     }
 }
