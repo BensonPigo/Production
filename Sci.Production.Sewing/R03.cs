@@ -128,7 +128,7 @@ with tmp1stData as (
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
 
             if (!MyUtility.Check.Empty(factory))
-                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
 
             if (category == 0)
                 sqlCmd.Append(" and o.Category = 'B'");
