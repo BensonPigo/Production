@@ -555,8 +555,9 @@ BEGIN
 	Merge Production.dbo.Order_Qty_Garment as t
 	Using (
 		select a.*
+			   , OrdersJunk = b.Junk
 		from Trade_To_Pms.dbo.Order_Qty_Garment a With (NoLock) 
-		inner join #Torder b on a.id = b.id
+		inner join Trade_To_Pms.dbo.Orders b on a.id = b.id
 	) as s on t.ID = s.ID
 			  and t.OrderIDFrom = s.OrderIDFrom
 			  and t.Article = s.Article
@@ -568,17 +569,181 @@ BEGIN
 			, t.AddDate		= s.AddDate 
 			, t.EditName	= s.EditName 
 			, t.EditDate	= s.EditDate
+			, t.Junk 		= s.OrdersJunk
 	when not matched by target then
 		insert (
 			ID 			, OrderIDFrom	, Article 		, SizeCode 		, Qty
-			, AddName 	, AddDate		, EditName 		, EditDate
+			, AddName 	, AddDate		, EditName 		, EditDate		, Junk
 		) values (
 			s.ID 		, s.OrderIDFrom	, s.Article 	, s.SizeCode 	, s.Qty
-			, s.AddName , s.AddDate		, s.EditName 	, s.EditDate
+			, s.AddName , s.AddDate		, s.EditName 	, s.EditDate	, 0
 		)
-	when not matched by source and t.ID in (select ID from #Torder) then 
-		delete;
+	when not matched by source and t.ID not in (select ID from Trade_To_Pms.dbo.Orders) then 
+		update set
+			t.Junk = 1;
+    
+    ----------Order_Qty_Garment 異動 須同步更新 SewingOutput--------------			
+		---- Output 數量超過 Garment ---------------------------------------------------------------------------------------
+		select OrderID = OQG.ID
+			   , POID = OQG.OrderIDFrom
+			   , ComboType = SL.Location
+			   , OQG.Article
+			   , OQG.SizeCode
+			   , ToSPQty = case OQG.Junk
+								when 1 then 0
+								else OQG.Qty
+						   end
+			   , OverQty = OverQty.value
+			   , BalanceQty = AccuSoddQty.value - OverQty.value
+		into #OverGarment
+		from Order_Qty_Garment OQG 
+		inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
+		inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
+		outer apply (
+			select value = isnull (sum (isnull (sodd.QAQty, 0)), 0)
+			from SewingOutput_Detail_Detail sodd 
+			where oqg.ID = sodd.OrderId
+				  and SL.Location = sodd.ComboType
+				  and OQG.Article = sodd.Article
+				  and OQG.SizeCode = sodd.SizeCode
+		) AccuSoddQty
+		outer apply (
+			select value = case OQG.Junk
+								when 1 then AccuSoddQty.value
+								else AccuSoddQty.value - OQG.Qty
+						   end
+		) OverQty
+		where AccuSoddQty.value > OQG.Qty
 
+		/*
+		select * from #OverGarment
+		drop table #OverGarment
+		*/
+		---- Packing 數量超過準備移除的數量 ---------------------------------------------------------------------------------------
+		select #OverGarment.*
+			   , PackingLockQty = PackingQty.value - #OverGarment.BalanceQty
+		into #PackingNotEnough
+		from #OverGarment
+		outer apply (
+			select value = isnull (sum (isnull (pld.ShipQty, 0)), 0)
+			from PackingList pl
+			inner join PackingList_Detail pld on pl.ID = pld.ID
+			where pld.OrderID = #OverGarment.OrderID
+				  and pl.Status = 'Confirmed'	
+		) PackingQty
+		where PackingQty.value > #OverGarment.BalanceQty
+
+		/*
+		select * from #PackingNotEnough
+		drop table #PackingNotEnough
+		*/
+		---- tmp 移除 : Packing 數量足夠的 Output ---------------------------------------------------------------------------------------
+		select	ID
+				, SewingOutput_DetailUKey
+				, OrderId
+				, ComboType
+				, Article
+				, SizeCode
+				, QAQty
+				, DeleteRunningTotal
+				, tmpStatus = tmpStatus.value
+				, newQaQty = case tmpStatus.value
+								when 'D' then 0
+								when 'U' then DeleteRunningTotal - OverQty
+							 end
+		into #tmpDeleteData
+		from (
+			select so.ID
+				   , sodd.SewingOutput_DetailUKey
+				   , sodd.OrderId
+				   , sodd.ComboType
+				   , sodd.Article
+				   , sodd.SizeCode
+				   , sodd.QAQty
+				   , DeleteRunningTotal = sum (sodd.QAQty) over (partition by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode
+																 order by so.OutputDate desc)
+				   , DeleteTmp.OverQty
+			from SewingOutput so
+			inner join SewingOutput_Detail_Detail sodd on so.ID = sodd.ID
+			inner join Order_Qty_Garment OQG on sodd.OrderId = OQG.ID
+												and sodd.Article = OQG.Article
+												and sodd.SizeCode = OQG.SizeCode
+			inner join (
+				select *
+				from #OverGarment
+				where not exists (select 1 
+								  from #PackingNotEnough
+								  where #OverGarment.OrderID = #PackingNotEnough.OrderID)
+			) DeleteTmp on sodd.OrderId = DeleteTmp.OrderID
+						   and OQG.OrderIDFrom = DeleteTmp.POID
+						   and sodd.ComboType = DeleteTmp.ComboType
+						   and sodd.Article = DeleteTmp.Article
+						   and sodd.SizeCode = DeleteTmp.SizeCode
+		) DeleteData
+		outer apply (
+			select value = case 
+							  when DeleteRunningTotal > OverQty and DeleteRunningTotal - QAQty >= OverQty then 'N'
+							  when DeleteRunningTotal > OverQty then 'U'
+							  when DeleteRunningTotal <= OverQty then 'D'
+						   end
+		) tmpStatus
+
+		/*
+		select * from #tmpDeleteData
+		drop table #tmpDeleteData
+		*/
+		---- Update & Delete : SewingOutput_Detail_Detail ---------------------------------------------------------------------------------------
+		update sodd
+		set sodd.QAQty = tmpD.newQaQty
+		from SewingOutput_Detail_Detail sodd
+		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+										  and sodd.OrderId = tmpD.OrderId
+										  and sodd.ComboType = tmpD.ComboType
+										  and sodd.Article = tmpD.Article
+										  and sodd.SizeCode = tmpd.SizeCode
+		where tmpD.tmpStatus in ('U')
+
+		delete sodd
+		from SewingOutput_Detail_Detail sodd
+		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+										  and sodd.OrderId = tmpD.OrderId
+										  and sodd.ComboType = tmpD.ComboType
+										  and sodd.Article = tmpD.Article
+										  and sodd.SizeCode = tmpd.SizeCode
+		where tmpD.tmpStatus in ('D')
+
+		---- Update & Delete : SewingOutput_Detail ---------------------------------------------------------------------------------------
+		update sod
+		set sod.QAQty = NewQaQty.value
+			, sod.InlineQty = NewQaQty.value
+		from SewingOutput_Detail sod
+		inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+										  and sod.OrderId = tmpD.OrderId
+										  and sod.ComboType = tmpD.ComboType
+										  and sod.Article = tmpD.Article
+		outer apply (
+			select value = isnull (sum (sodd.QaQty), 0)
+			from SewingOutput_Detail_Detail sodd
+			where sodd.SewingOutput_DetailUKey = sod.UKey
+		) NewQaQty
+		where tmpD.tmpStatus in ('D', 'U')
+			  and NewQaQty.value != 0
+
+		delete sod
+		from SewingOutput_Detail sod
+		inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+										  and sod.OrderId = tmpD.OrderId
+										  and sod.ComboType = tmpD.ComboType
+										  and sod.Article = tmpD.Article
+		outer apply (
+			select value = isnull (sum (sodd.QaQty), 0)
+			from SewingOutput_Detail_Detail sodd
+			where sodd.SewingOutput_DetailUKey = sod.UKey
+		) NewQaQty
+		where tmpD.tmpStatus in ('D', 'U')
+			  and NewQaQty.value = 0
+
+		drop table #OverGarment, #PackingNotEnough, #tmpDeleteData;
 	----------Order_QtyShip--------------
 	Merge Production.dbo.Order_QtyShip as t
 	using (select a.* from Trade_To_Pms.dbo.Order_QtyShip a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
@@ -1914,11 +2079,6 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_Qty
 Delete b
 from Production.dbo.Order_Qty b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------Order_Qty_Garment
-Delete b
-from Production.dbo.Order_Qty_Garment b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_QtyCTN

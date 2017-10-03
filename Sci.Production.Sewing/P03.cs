@@ -45,7 +45,6 @@ namespace Sci.Production.Sewing
                 .Numeric("ToSPBalance", header: "To SP" + Environment.NewLine + "Balance", iseditingreadonly: true)
                 .Date("ToSPBuyerDeliver", header: "To SP" + Environment.NewLine + "Buyer Delivery", iseditingreadonly: true)
                 .Numeric("FromSPSewingOutputQty", header: "From SP " + Environment.NewLine + "Sewing output Qty", iseditingreadonly: true)
-                .Numeric("FromSPPackingQty", header: "From SP" + Environment.NewLine + "Packing Qty", iseditingreadonly: true)
                 .Numeric("FromSPAccrQty", header: "From SP" + Environment.NewLine + "Accu. Split Qty", iseditingreadonly: true)
                 .Numeric("FromSPAvailableQty", header: "From SP" + Environment.NewLine + "Available Qty", iseditingreadonly: true);
 
@@ -86,358 +85,471 @@ namespace Sci.Production.Sewing
             }
             #endregion
 
-            #region CheckPoidAvailableQty
-            bool result = this.checkPoidAvailableQty(dtSelectData);
-            if (result == false)
+            DataTable[] dtOrdersReceive = setSewingOutput(dtSelectData);
+
+            if (dtOrdersReceive != null)
             {
-                return;
-            }
-            #endregion 
-
-            //每一筆單獨計算
-            foreach (DataRow dr in dtSelectData.Rows)
-            {
-                bool boolResult = setSewingOutput(dr["ID"], dr["OrderIDFrom"], dr["StyleLocation"], dr["Article"], dr["SizeCode"], dr["ToSPBalance"], dr["FromSPPackingQty"]);
-
-                if (boolResult == false)
-                {
-                    return;
-                }
-            }
-
-            MyUtility.Msg.InfoBox("Complete");
-            this.findNow();
-        }
-
-        private bool checkPoidAvailableQty(DataTable dtSelectData)
-        {
-            #region SQL Parameter
-            List<SqlParameter> listSqlParameter = new List<SqlParameter>();;
-            listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
-            #endregion 
-            #region SQL Command                       
-            string strSqlCmd = @"
-select *
-from (
-	select OrderIDFrom
-           , StyleLocation
-		   , Article
-		   , SizeCode		   
-		   , FromSPAvailableQty = isnull (FromSPAvailableQty, 0)
-		   , FromSPPackingQty = isnull (FromSPPackingQty, 0)
-		   , ToSPBalance = Convert (int, sum (isnull (ToSPBalance, 0)))
-	from (
-        select	ID = OQG.ID
-		        , StyleLocation = SL.Location
-		        , OrderIDFrom = OQG.OrderIDFrom
-		        , Article = OQG.Article
-		        , SizeCode = OQG.SizeCode
-		        , ToSPBalance = ToSPBalance.value
-		        , FromSPPackingQty = FromSPPackingQty.value        
-		        , FromSPAvailableQty = FromSPAvailableQty.value
-        from Order_Qty_Garment OQG
-        inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
-        inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
-        inner join #tmp on OQG.ID = #tmp.ID
-				           and SL.Location = #tmp.StyleLocation
-				           and OQG.OrderIDFrom = #tmp.OrderIDFrom
-				           and OQG.Article = #tmp.Article
-				           and OQG.SizeCode = #tmp.SizeCode
-        outer apply (
-	        select value = isnull (OQG.Qty, 0)
-        ) ToSPQty
-        outer apply (
-	        select value = isnull (sum (SODD.QAQty), 0)
-	        from SewingOutput_Detail_Detail SODD
-	        where	SODD.OrderId = OQG.ID
-			        and SODD.ComboType = SL.Location
-			        and SODD.Article = OQG.Article
-			        and SODD.SizeCode = OQG.SizeCode
-        ) ToSPAllocatedQty
-        outer apply (
-	        select value = ToSPQty.value - ToSPAllocatedQty.value
-        ) ToSPBalance
-        outer apply (
-	        select value = isnull (sum (SODD.QAQty), 0)
-	        from SewingOutput_Detail_Detail SODD
-	        where	SODD.OrderId = OQG.OrderIDFrom
-			        and SODD.ComboType = SL.Location
-			        and SODD.Article = OQG.Article
-			        and SODD.SizeCode = OQG.SizeCode
-        ) FromSPSewingOutputQty
-        outer apply (
-	        select value = isnull (sum (PLD.ShipQty), 0)
-	        from PackingList_Detail PLD
-	        inner join PackingList PL on PLD.ID = PL.ID
-	        where	PL.Status = 'Confirmed'
-			        and PLD.OrderID = OQG.OrderIDFrom
-			        and PLD.Article = OQG.Article
-			        and PLD.SizeCode = OQG.SizeCode
-        ) FromSPPackingQty
-        outer apply (
-            select value = isnull (sum(passSodd.QAQty), 0)
-	        from SewingOutput_Detail passSod
-	        inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
-	        inner join Orders o on passSod.OrderId = o.ID
-	        where o.POID = OQG.OrderIDFrom
-		          and o.ID != o.POID
-		          and SL.Location = passSodd.ComboType
-		          and OQG.Article = passSodd.Article
-		          and OQG.SizeCode = passSodd.SizeCode
-        ) FromSPAccrQty
-        outer apply (
-	        select value = FromSPSewingOutputQty.value - FromSPPackingQty.value - FromSPAccrQty.value
-        ) FromSPAvailableQty
-        where	ToSPOrders.FtyGroup = @Factory
-    ) newTmp
-	group by OrderIDFrom, StyleLocation, Article, SizeCode, FromSPAvailableQty, FromSPPackingQty
-) groupTmp
-where ToSPBalance > FromSPAvailableQty";
-            #endregion
-            DataTable resultDt;
-            DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(dtSelectData, null, strSqlCmd, out resultDt, paramters: listSqlParameter);
-
-            if (dualResult == false)
-            {
-                MyUtility.Msg.WarningBox(dualResult.Description);
-                return false;
-            }else if (resultDt == null || resultDt.Rows.Count == 0)
-            {
-                return true;
-            }else
-            {
-                List<string> errMsg = new List<string>();
-
-                foreach (DataRow dr in resultDt.Rows)
-                {
-                    errMsg.Add(string.Format(@"
-From SP# : {0} ComboType : {1} Color : {2} Size : {3}
-Available qty {4} less than split qty : {5}", dr["OrderIDFrom"]
-                                            , dr["StyleLocation"]
-                                            , dr["Article"]
-                                            , dr["SizeCode"]
-                                            , dr["FromSPAvailableQty"]
-                                            , dr["ToSPBalance"]));
-                }
-                MyUtility.Msg.InfoBox("From SP Sewing Output Qty is not enough!!" + errMsg.JoinToString(Environment.NewLine));
-                return false;
+                var form = new P03_SaveComplete(dtOrdersReceive[1], dtOrdersReceive[0]);
+                form.ShowDialog();
+                this.findNow();
             }
         }
 
         /// <summary>
         /// Get SewingOutput Data
         /// </summary>
-        /// <param name="ToOrderID">ID</param>
-        /// <param name="FromOrderID">From Poid</param>
-        /// <param name="ComboType">StyleLocation</param>
-        /// <param name="Article">Color Way</param>
-        /// <param name="SizeCode">Size</param>
-        /// <param name="NeedQty">ToSPQty</param>
-        private bool setSewingOutput(object ToOrderID, object FromOrderID, object ComboType, object Article, object SizeCode, object NeedQty, object FromPackingQty)
+        /// <param name="dtSelectData">ID</param>
+        private DataTable[] setSewingOutput(DataTable dtSelectData)
         {
             DualResult boolResult;
+            DataTable[] dtOrdersReceive;
 
-            List<SqlParameter> listSqlPara = new List<SqlParameter>();
-            listSqlPara.Add(new SqlParameter("@ToOrderID", ToOrderID));
-            listSqlPara.Add(new SqlParameter("@FromOrderID", FromOrderID));
-            listSqlPara.Add(new SqlParameter("@ComboType", ComboType));
-            listSqlPara.Add(new SqlParameter("@Article", Article));
-            listSqlPara.Add(new SqlParameter("@SizeCode", SizeCode));
-            listSqlPara.Add(new SqlParameter("@NeedQty", NeedQty));
-            listSqlPara.Add(new SqlParameter("@FromPackingQty", FromPackingQty));
+            StringBuilder strSqlCmd = new StringBuilder();
+            #region 確認 Packing 數量 
+            strSqlCmd.Append(@"
+---- Output 數量超過 Garment ---------------------------------------------------------------------------------------
+select OrderID = OQG.ID
+	   , POID = OQG.OrderIDFrom
+	   , ComboType = SL.Location
+	   , OQG.Article
+	   , OQG.SizeCode
+	   , ToSPQty = case OQG.Junk
+					when 1 then 0
+					else OQG.Qty
+				   end
+	   , OverQty = OverQty.value
+	   , BalanceQty = AccuSoddQty.value - OverQty.value
+into #OverGarment
+from Order_Qty_Garment OQG 
+inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
+inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
+outer apply (
+	select value = isnull (sum (isnull (sodd.QAQty, 0)), 0)
+	from SewingOutput_Detail_Detail sodd 
+	where oqg.ID = sodd.OrderId
+		  and SL.Location = sodd.ComboType
+		  and OQG.Article = sodd.Article
+		  and OQG.SizeCode = sodd.SizeCode
+) AccuSoddQty
+outer apply (
+	select value = case OQG.Junk
+						when 1 then AccuSoddQty.value
+						else AccuSoddQty.value - OQG.Qty
+				   end
+) OverQty
+where AccuSoddQty.value > OQG.Qty
+	  and exists (select 1
+				  from #tmp 
+				  where OQG.ID = #tmp.ID)
 
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
-            {
-                #region Sewing P03 拆單
-                string strSqlCmd = @"
-select	OutputData.*
-		, SodStatus = SodStatus.value
-		, SodNewQaQty = SodNewQaQty.value
-		, SoddStatus = SoddStatus.value
-		, SoddNewQaQty = SoddNewQaQty.value
-		, TakeQty = TakeQty.value
-into #tmp
+/*
+select * from #OverGarment
+drop table #OverGarment
+*/
+---- Packing 數量超過準備移除的數量 ---------------------------------------------------------------------------------------
+select #OverGarment.*
+	   , PackingLockQty = PackingQty.value - #OverGarment.BalanceQty
+into #PackingNotEnough
+from #OverGarment
+outer apply (
+	select value = isnull (sum (isnull (pld.ShipQty, 0)), 0)
+	from PackingList pl
+	inner join PackingList_Detail pld on pl.ID = pld.ID
+	where pld.OrderID = #OverGarment.OrderID
+		  and pl.Status = 'Confirmed'	
+) PackingQty
+where PackingQty.value > #OverGarment.BalanceQty
+
+/*
+select * from #PackingNotEnough
+drop table #PackingNotEnough
+*/
+---- tmp 移除 : Packing 數量足夠的 Output ---------------------------------------------------------------------------------------
+select	ID
+		, SewingOutput_DetailUKey
+		, OrderId
+		, ComboType
+		, Article
+		, SizeCode
+		, QAQty
+		, DeleteRunningTotal
+		, tmpStatus = tmpStatus.value
+		, newQaQty = case tmpStatus.value
+						when 'D' then 0
+						when 'U' then DeleteRunningTotal - OverQty
+					 end
+into #tmpDeleteData
 from (
-	select Reserve.*
-		   , ReserveStatus = ReserveStatus.value
-		   , ReserveQty = ReserveQty.value
-		   , ReserveBeforeQty = ReserveBeforeQty.value
-		   , soddQaQtyRunningTotal = sum(ReserveBeforeQty.value) over (order by rowNum)
+	select so.ID
+		   , sodd.SewingOutput_DetailUKey
+		   , sodd.OrderId
+		   , sodd.ComboType
+		   , sodd.Article
+		   , sodd.SizeCode
+		   , sodd.QAQty
+		   , DeleteRunningTotal = sum (sodd.QAQty) over (partition by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode
+														 order by so.OutputDate desc)
+		   , DeleteTmp.OverQty
+	from SewingOutput so
+	inner join SewingOutput_Detail_Detail sodd on so.ID = sodd.ID
+	inner join Order_Qty_Garment OQG on sodd.OrderId = OQG.ID
+										and sodd.Article = OQG.Article
+										and sodd.SizeCode = OQG.SizeCode
+	inner join (
+		select *
+		from #OverGarment
+		where not exists (select 1 
+						  from #PackingNotEnough
+						  where #OverGarment.OrderID = #PackingNotEnough.OrderID)
+	) DeleteTmp on sodd.OrderId = DeleteTmp.OrderID
+				   and OQG.OrderIDFrom = DeleteTmp.POID
+				   and sodd.ComboType = DeleteTmp.ComboType
+				   and sodd.Article = DeleteTmp.Article
+				   and sodd.SizeCode = DeleteTmp.SizeCode
+) DeleteData
+outer apply (
+	select value = case 
+					  when DeleteRunningTotal > OverQty and DeleteRunningTotal - QAQty >= OverQty then 'N'
+					  when DeleteRunningTotal > OverQty then 'U'
+					  when DeleteRunningTotal <= OverQty then 'D'
+				   end
+) tmpStatus
+
+/*
+select * from #tmpDeleteData
+drop table #tmpDeleteData
+*/
+---- Update & Delete : SewingOutput_Detail_Detail ---------------------------------------------------------------------------------------
+update sodd
+set sodd.QAQty = tmpD.newQaQty
+from SewingOutput_Detail_Detail sodd
+inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+								  and sodd.OrderId = tmpD.OrderId
+								  and sodd.ComboType = tmpD.ComboType
+								  and sodd.Article = tmpD.Article
+								  and sodd.SizeCode = tmpd.SizeCode
+where tmpD.tmpStatus in ('U')
+
+delete sodd
+from SewingOutput_Detail_Detail sodd
+inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+								  and sodd.OrderId = tmpD.OrderId
+								  and sodd.ComboType = tmpD.ComboType
+								  and sodd.Article = tmpD.Article
+								  and sodd.SizeCode = tmpd.SizeCode
+where tmpD.tmpStatus in ('D')
+
+---- Update & Delete : SewingOutput_Detail ---------------------------------------------------------------------------------------
+update sod
+set sod.QAQty = NewQaQty.value
+	, sod.InlineQty = NewQaQty.value
+from SewingOutput_Detail sod
+inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+								  and sod.OrderId = tmpD.OrderId
+								  and sod.ComboType = tmpD.ComboType
+								  and sod.Article = tmpD.Article
+outer apply (
+	select value = isnull (sum (sodd.QaQty), 0)
+	from SewingOutput_Detail_Detail sodd
+	where sodd.SewingOutput_DetailUKey = sod.UKey
+) NewQaQty
+where tmpD.tmpStatus in ('D', 'U')
+	  and NewQaQty.value != 0
+
+delete sod
+from SewingOutput_Detail sod
+inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+								  and sod.OrderId = tmpD.OrderId
+								  and sod.ComboType = tmpD.ComboType
+								  and sod.Article = tmpD.Article
+outer apply (
+	select value = isnull (sum (sodd.QaQty), 0)
+	from SewingOutput_Detail_Detail sodd
+	where sodd.SewingOutput_DetailUKey = sod.UKey
+) NewQaQty
+where tmpD.tmpStatus in ('D', 'U')
+	  and NewQaQty.value = 0
+
+---- out Packing 數量超過準備移除的數量 ---------------------------------------------------------------------------------------
+select *
+from #PackingNotEnough
+drop table #OverGarment, #PackingNotEnough, #tmpDeleteData;");
+            #endregion 
+            #region Sewing P03 拆單
+            strSqlCmd.Append(@"
+---- 需求 ---------------------------------------------------------------------------------------
+select	ID = OQG.ID
+		, StyleLocation = SL.Location
+		, OrderIDFrom = OQG.OrderIDFrom
+		, Article = OQG.Article
+		, SizeCode = OQG.SizeCode
+		, AllocateQty = case 
+							when ToSPBalance.value < FromSPAvailableQty.value then ToSPBalance.value
+							else FromSPAvailableQty.value
+						end
+		, ToSPQty = ToSPQty.value
+		, ToSPAllocatedQty = ToSPAllocatedQty.value
+		, ToSPBalance = ToSPBalance.value
+		, ToSPBuyerDeliver = ToSPOrders.BuyerDelivery
+		, FromSPSewingOutputQty = FromSPSewingOutputQty.value
+        , FromSPAccrQty = FromSPAccrQty.value
+		, FromSPAvailableQty = FromSPAvailableQty.value
+into #SelectData
+from Order_Qty_Garment OQG
+inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
+inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
+inner join #tmp on OQG.ID = #tmp.ID
+                   and OQG.OrderIDFrom = #tmp.OrderIDFrom
+                   and SL.Location = #tmp.StyleLocation
+                   and OQG.Article = #tmp.Article
+                   and OQG.SizeCode = #tmp.SizeCode
+outer apply (
+	select value = isnull (OQG.Qty, 0)
+) ToSPQty
+outer apply (
+	select value = isnull (sum (SODD.QAQty), 0)
+	from SewingOutput_Detail_Detail SODD
+	where	SODD.OrderId = OQG.ID
+			and SODD.ComboType = SL.Location
+			and SODD.Article = OQG.Article
+			and SODD.SizeCode = OQG.SizeCode
+) ToSPAllocatedQty
+outer apply (
+	select value = ToSPQty.value - ToSPAllocatedQty.value
+) ToSPBalance
+outer apply (
+	select value = isnull (sum (SODD.QAQty), 0)
+	from SewingOutput_Detail_Detail SODD
+	where	SODD.OrderId = OQG.OrderIDFrom
+			and SODD.ComboType = SL.Location
+			and SODD.Article = OQG.Article
+			and SODD.SizeCode = OQG.SizeCode
+) FromSPSewingOutputQty
+outer apply (
+    select value = isnull (sum(passSodd.QAQty), 0)
+	from SewingOutput_Detail passSod
+	inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
+	inner join Orders o on passSod.OrderId = o.ID
+	where o.POID = OQG.OrderIDFrom
+		  and o.ID != o.POID
+		  and SL.Location = passSodd.ComboType
+		  and OQG.Article = passSodd.Article
+		  and OQG.SizeCode = passSodd.SizeCode
+) FromSPAccrQty
+outer apply (
+	select value = FromSPSewingOutputQty.value - FromSPAccrQty.value
+) FromSPAvailableQty
+
+/*
+select * from #SelectData
+drop table #SelectData
+*/
+---- 累計可分配數 -------------------------------------------------------------------------------
+select *
+	   , FrontAvailableQtyRunningTotal = AvailableQtyRunningTotal - AvailableQty
+into #PoidAvailableReserveQty
+from (
+	select PoidSodd.ID
+		   , PoidSo.OutputDate
+		   , PoidSo.SewingLineID
+		   , GroupByPoid.POID
+		   , PoidSodd.ComboType
+		   , PoidSodd.Article
+		   , PoidSod.Color
+		   , PoidSodd.SizeCode
+		   , AvailableQty = AvailableQty.value
+		   , AvailableQtyRunningTotal = sum (AvailableQty.value) over (partition by PoidSodd.OrderID, PoidSodd.ComboType, PoidSodd.Article, PoidSodd.SizeCode
+	   																   order by PoidSo.OutputDate, PoidSo.ID)
 	from (
-		select	rowNum = ROW_NUMBER()over (order by OutPutDate, so.ID)
-				, soID = so.ID
-				, soSewingLineID = so.SewingLineID
-				, sodInlineQty = sod.InlineQty
-				, sodDefectQty = sod.DefectQty
-				, sodArticle = sod.Article
-				, sodColor = sod.Color
-				, FromOrderID = sodd.OrderId
-				, ToOrderID = @ToOrderID
-				, Article = sodd.Article
-				, ComboType = sodd.ComboType
-				, SizeCode = sodd.SizeCode
-				, sodQAQty = sod.QAQty
-				, soddQaQty = sodd.QaQty - isnull(passAccuQty.value, 0)
-				, ReserveRunningTotal = sum (sodd.QaQty - isnull(passAccuQty.value, 0)) over (order by OutPutDate, so.ID)
-				, sodUkey = sod.UKey
-		from SewingOutput so
-		inner join SewingOutput_Detail sod on so.id = sod.id
-		inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
-		-- passAccuQty --
-		-- SewingOutput_Detail 計算同母單中，已分配多少數量給子單 --
-		outer apply (
-			select value = isnull (sum(passSodd.QAQty), 0)
-			from SewingOutput_Detail passSod
-			inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
-			inner join Orders o on passSod.OrderId = o.ID
-			where sod.ID = passSod.ID
-				  and o.POID = @FromOrderID
-				  and o.ID != o.POID
-				  and sodd.ComboType = passSodd.ComboType
-				  and sodd.Article = passSodd.Article
-				  and sodd.SizeCode = passSodd.SizeCode
-		) passAccuQty
-		where	sodd.OrderId = @FromOrderID
-				and sodd.ComboType = @ComboType
-				and sodd.Article = @Article
-				and sodd.SizeCode = @SizeCode
-	) Reserve
-	-- ReserveStatus --
-	-- 預留母單的結果 => ReserveD = 不能使用
-	--					 ReserveU = 部分可以使用
-	--					 ReserveN = 全部可以使用
+		select distinct POID = #SelectData.OrderIDFrom
+			   , ComboType = #SelectData.StyleLocation
+			   , #SelectData.Article
+			   , #SelectData.SizeCode
+		from #SelectData
+	) GroupByPoid
+	inner join SewingOutput_Detail_Detail PoidSodd on GroupByPoid.POID = PoidSodd.OrderId
+												  and GroupByPoid.ComboType = PoidSodd.ComboType
+												  and GroupByPoid.Article = PoidSodd.Article
+												  and GroupByPoid.SizeCode = PoidSodd.SizeCode
+	inner join SewingOutput_Detail PoidSod on PoidSodd.SewingOutput_DetailUKey = PoidSod.UKey
+	inner join SewingOutput PoidSo on PoidSodd.ID = PoidSo.ID
+	outer apply (
+		select value = PoidSodd.QaQty - isnull (sum (isnull (ReserveSodd.QAQty, 0)), 0)
+		from Order_Qty_Garment ReserveOrders 
+		inner join SewingOutput_Detail_Detail ReserveSodd on ReserveOrders.ID = ReserveSodd.OrderId
+															 and ReserveOrders.Article = ReserveSodd.Article
+															 and ReserveOrders.SizeCode = ReserveSodd.SizeCode
+		where ReserveOrders.OrderIDFrom = PoidSodd.OrderId
+			  and ReserveOrders.ID != ReserveOrders.OrderIDFrom			  
+			  and PoidSodd.ID = ReserveSodd.ID
+			  and PoidSodd.ComboType = ReserveSodd.ComboType
+			  and PoidSodd.Article = ReserveSodd.Article
+			  and PoidSodd.SizeCode = ReserveSodd.SizeCode
+	) AvailableQty
+	where AvailableQty.value > 0
+) PoidAvailableReserveQty
+
+/*
+select * from #PoidAvailableReserveQty
+drop table #PoidAvailableReserveQty
+*/
+---- 累計需求數 ---------------------------------------------------------------------------------
+select OrdersAccuNeedQty.ID
+	   , OrdersAccuNeedQty.POID
+	   , OrdersAccuNeedQty.ComboType
+	   , OrdersAccuNeedQty.Article
+	   , OrdersAccuNeedQty.SizeCode
+	   , OrdersAccuNeedQty.NeedQty
+	   , OrdersAccuNeedQty.NeedQtyRunningTotal
+	   , FrontNeedQtyRunningTotal = NeedQtyRunningTotal - NeedQty
+	   , AccuNeedStatus = AccuNeedStatus.value
+	   , CanReceiveQty = case AccuNeedStatus.value
+							when 'O' then NeedQty
+							when 'S' then PoidQty - (NeedQtyRunningTotal - NeedQty)
+							when 'N' then 0
+						 end
+into #OrdersAccuNeedQty
+from (
+	select #SelectData.ID
+		   , POID = #SelectData.OrderIDFrom
+		   , ComboType = #SelectData.StyleLocation
+		   , #SelectData.Article
+		   , #SelectData.SizeCode
+		   , NeedQty = #SelectData.ToSPBalance
+		   , NeedQtyRunningTotal = sum (#SelectData.ToSPBalance) over (partition by #SelectData.OrderIDFrom, #SelectData.StyleLocation, #SelectData.Article, #SelectData.SizeCode
+																       order by #SelectData.OrderIDFrom, #SelectData.ToSPBuyerDeliver, #SelectData.ID)
+		   , PoidQty = PoidQty.value	
+	from #SelectData
+	outer apply (
+		select value = sum (isnull (PoidAvailable.AvailableQty, 0))
+		from #PoidAvailableReserveQty PoidAvailable
+		where #SelectData.OrderIDFrom = PoidAvailable.POID
+			  and #SelectData.StyleLocation = PoidAvailable.ComboType
+			  and #SelectData.Article = PoidAvailable.Article
+			  and #SelectData.SizeCode = PoidAvailable.SizeCode
+	) PoidQty
+) OrdersAccuNeedQty
+-- AccuNeedStatus --
+---- 母單有【足夠】數量可分配 O : PoidQty >= NeedQtyRunningTotal
+---- 母單有【些許】數量可分配 S : PoidQty < NeedQtyRunningTotal && PoidQty > (NeedQtyRunningTotal - NeedQty)
+---- 母單無數量可以分配		  N : PoidQty < NeedQtyRunningTotal && PoidQty <= (NeedQtyRunningTotal - NeedQty)
+outer apply (
+	select value = case 
+						when PoidQty >= NeedQtyRunningTotal then 'O'
+						when PoidQty < NeedQtyRunningTotal and PoidQty > (NeedQtyRunningTotal - NeedQty) then 'S'
+						when PoidQty < NeedQtyRunningTotal and PoidQty <= (NeedQtyRunningTotal - NeedQty) then 'N'
+					end
+) AccuNeedStatus
+
+/*
+select * from #OrdersAccuNeedQty
+drop table #OrdersAccuNeedQty
+*/
+---- 累計分配 -----------------------------------------------------------------------------------
+select TakeQty.SewingOutputID
+	   , TakeQty.SewingLineID
+	   , AccuNeed.ID
+	   , AccuNeed.POID
+	   , AccuNeed.ComboType
+	   , AccuNeed.Article
+	   , TakeQty.Color
+	   , AccuNeed.SizeCode
+	   , TakeQty = TakeQty.value
+into #OrdersReceiveTmp
+from #OrdersAccuNeedQty AccuNeed
+-- TakeQty --
+outer apply (
+	select SewingOutputID = AvailableReserve.ID
+		   , AvailableReserve.SewingLineID
+		   , AvailableReserve.Color
+		   , TakeStatus = TakeStatus.value
+		   , value = case TakeStatus.value
+						when 'AG' then AvailableReserve.AvailableQty
+						when 'SSG' then AvailableReserve.AvailableQty - (AvailableReserve.AvailableQtyRunningTotal - AccuNeed.NeedQtyRunningTotal)
+						when 'AMSG' then AvailableReserve.AvailableQtyRunningTotal - AccuNeed.FrontNeedQtyRunningTotal
+						when 'SMSG' then AccuNeed.NeedQty
+					 end
+	from #PoidAvailableReserveQty AvailableReserve
+	--  'N' 不取數量 
+	----  1. 母單數量已分配完畢			 : AccuNeed.FrontNeedQtyRunningTotal >= AvailableReserve.AvailableQtyRunningTotal
+	----  2. 上一個母單已分配足夠的數量  : AccuNeed.NeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal
+	--  'AG' 取全部數量
+	----  1.a. 前面的母單數量可以滿足上一個子單     : AccuNeed.FrontNeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal
+	----  1.b. 目前母單所有數量可被目前子單分配完畢 : AccuNeed.NeedQtyRunningTotal >= AvailableReserve.AvailableQtyRunningTotal
+	--  【SSG, AMSG, SMSG】取部分數量
+	---- 'SSG'  【沒有】其他子單【先】取走該母單部分數量，只取【部分】數量			   : AccuNeed.FrontNeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal && AccuNeed.NeedQtyRunningTotal < AvailableReserve.AvailableQtyRunningTotal
+	---- 'AMSG' 【有】其他子單【先】取走該母單部分數量，且剩餘數量可以直接【完全】分配 : AccuNeed.NeedQty >= AvailableReserve.AvailableQtyRunningTotal - AccuNeed.FrontNeedQtyRunningTotal
+	---- 'SMSG' 【有】其他子單【先】取走該母單部分數量，但只取【部分】數量
 	outer apply (
 		select value = case 
-						 when ReserveRunningTotal <= @FromPackingQty then 'ReserveD'
-						 when (Reserve.ReserveRunningTotal > @FromPackingQty and Reserve.ReserveRunningTotal - Reserve.soddQaQty < @FromPackingQty) then 'ReserveU'
-						 else 'ReserveN'
+							when AccuNeed.FrontNeedQtyRunningTotal >= AvailableReserve.AvailableQtyRunningTotal then 'N'
+							when AccuNeed.NeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal then 'N'
+							when AccuNeed.FrontNeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal
+								 and AccuNeed.NeedQtyRunningTotal >= AvailableReserve.AvailableQtyRunningTotal then 'AG'
+						    when AccuNeed.FrontNeedQtyRunningTotal <= AvailableReserve.FrontAvailableQtyRunningTotal
+								 and AccuNeed.NeedQtyRunningTotal < AvailableReserve.AvailableQtyRunningTotal then 'SSG'
+							when AccuNeed.NeedQty >= AvailableReserve.AvailableQtyRunningTotal - AccuNeed.FrontNeedQtyRunningTotal then 'AMSG'
+							else 'SMSG'
 					   end
-	) ReserveStatus
-	-- ReserveQty --
-	-- 預留母單的數量 --
-	outer apply (
-		select value = case ReserveStatus.value
-						 when 'ReserveN' then 0 
-						 when 'ReserveU' then soddQaQty - (ReserveRunningTotal - @FromPackingQty)
-					   end
-	) ReserveQty 
-	-- ReserveBeforeQty --
-	-- 預留母單後的數量 --
-	outer apply (
-		select value = case ReserveStatus.value
-						 when 'ReserveN' then soddQaQty 
-						 when 'ReserveU' then ReserveRunningTotal - @FromPackingQty
-					   end
-	) ReserveBeforeQty 
-	where ReserveStatus.value != 'ReserveD'
-) OutputData
--- SoddStatus -- 
--- 判斷 SewingOutput_Detail_Detail => D = 刪除
---                                    U = 修改
---                                    N = 不會使用到
---									  ReserveU_U = 只能使用部分
-outer apply (
-	select	value = case 	
-						when (OutputData.soddQaQtyRunningTotal <= @NeedQty and OutputData.ReserveStatus = 'ReserveN') then 'D'
-						when (OutputData.soddQaQtyRunningTotal <= @NeedQty and OutputData.ReserveStatus = 'ReserveU') then 'ReserveU_U'
-						when (OutputData.soddQaQtyRunningTotal > @NeedQty and OutputData.soddQaQtyRunningTotal - OutputData.soddQaQty < @NeedQty) then 'U'
-						else 'N'
-					end
-) SoddStatus
--- SoddNewQaQty --
--- 計算 SewingOutput_Detail_Detail 拆單後剩餘數量 --
-outer apply (
-	select value = case SoddStatus.value
-						when 'U' then soddQaQtyRunningTotal - @NeedQty + OutputData.ReserveQty
-						when 'ReserveU_U' then OutputData.ReserveQty
-						when 'D' then 0
-				   end
-) SoddNewQaQty
--- SodStatus -- 
--- 判斷 SewingOutput_Detail => D = 刪除
---                             U = 修改
---                             N = 不會使用到
-outer apply (
-	select	value = case 	
-						when (SoddStatus.value = 'D' and OutputData.sodQAQty = OutputData.soddQAQty) then 'D'
-						when (SoddStatus.value = 'D' and OutputData.sodQAQty != OutputData.soddQAQty) then 'U'
-						when (SoddStatus.value = 'U' or SoddStatus.value = 'ReserveU_U') then 'U'
-						else 'N'
-					end
-) SodStatus
--- SodNewQaQty --
--- 計算 SewingOutput_Detail 拆單後剩餘數量 --
-outer apply (
-	select value = case SodStatus.value
-						when 'U' then OutputData.sodQAQty - (OutputData.soddQaQty - SoddNewQaQty.value)
-						when 'ReserveU_U' then OutputData.ReserveQty
-				   end
-) SodNewQaQty
--- TakeQty --
--- 計算這一張單拿多少 Qty --
-outer apply (
-	select value = case SodStatus.value
-						when 'U' then OutputData.soddQaQty - SoddNewQaQty.value
-						when 'ReserveU_U' then OutputData.soddQaQty - SoddNewQaQty.value - OutputData.ReserveQty
-						else OutputData.soddQaQty
-				   end
+	) TakeStatus
+	where AccuNeed.POID = AvailableReserve.POID
+		  and AccuNeed.ComboType = AvailableReserve.ComboType
+		  and AccuNeed.Article = AvailableReserve.Article
+		  and AccuNeed.SizeCode = AvailableReserve.SizeCode
+		  and TakeStatus.value != 'N'
 ) TakeQty
-where SoddStatus.value != 'N'
+where AccuNeed.AccuNeedStatus != 'N'
 
--- 子單 Merge SewingOutput_Detail --
+---- 子單 Merge SewingOutput_Detail -------------------------------------------------------------
 Merge SewingOutput_Detail as t
 using (
-	select	#tmp.*
-			, TMS = o.CPU 
-					* o.CPUFactor 
-					* (sl.Rate / 100) 
-					* (select StdTMS 
-					   from System WITH (NOLOCK))
-			, HourlyStandardOutput = ss.StandardOutput
-	from #tmp 
-	left join Orders o on #tmp.ToOrderID = o.ID
+	select	tmp.SewingOutputID
+			, tmp.ID
+			, tmp.ComboType
+			, Article
+			, tmp.Color	
+			, takeQty = sum(takeQty)
+	from #OrdersReceiveTmp tmp
+	left join Orders o on tmp.ID = o.ID
 	left join Style_Location sl on o.StyleUkey = sl.StyleUkey
-								   and #tmp.ComboType = sl.Location
-	left join SewingSchedule ss on #tmp.ToOrderID = ss.OrderID
-								   and #tmp.ComboType = ss.ComboType
-								   and #tmp.soSewingLineID = ss.SewingLineID
-) as s on t.ID = s.soID
-		  and t.OrderID = s.ToOrderID
+								   and tmp.ComboType = sl.Location
+	left join SewingSchedule ss on tmp.ID = ss.OrderID
+								   and tmp.ComboType = ss.ComboType
+								   and tmp.SewingLineID = ss.SewingLineID
+	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, Article, tmp.Color			 
+) as s on t.ID = s.SewingOutputID
+		  and t.OrderID = s.ID
 		  and t.ComboType = s.ComboType
-		  and t.Article = s.sodArticle
-		  and t.Color = s.sodColor
+		  and t.Article = s.Article
+		  and t.Color = s.Color
 when matched then 
 	update set	t.QaQty = t.QaQty + s.TakeQty
 				, t.InlineQty = t.InlineQty + s.TakeQty
-				, t.TMS = 0
-				, t.HourlyStandardOutput = s.HourlyStandardOutput
-				, t.AutoCreate = 1
 when not matched by target then
 	insert (
-		ID			    , OrderID				, ComboType			, Article		, Color
-		, TMS		    , HourlyStandardOutput	, WorkHour			, QaQty			, DefectQty
-		, InlineQty     , AutoCreate
+		ID					, OrderID				, ComboType			, Article		, Color
+		, TMS				, HourlyStandardOutput	, WorkHour			, QaQty			, DefectQty
+		, InlineQty			, AutoCreate
 	) values (
-		s.soID		    , s.ToOrderID			, s.ComboType		, s.sodArticle	, s.sodColor
-		, 0				, s.HourlyStandardOutput, 0					, s.TakeQty		, 0
-		, s.TakeQty		, 1
+		s.SewingOutputID	, s.ID					, s.ComboType		, s.Article		, s.Color
+		, 0					, 0						, 0					, s.TakeQty		, 0
+		, s.TakeQty			, 1
 	);
 
--- 子單 Merge SewingOutput_Detail_Detail --
+---- 子單 Merge SewingOutput_Detail_Detail ------------------------------------------------------
 Merge SewingOutput_Detail_Detail as t
 using (
-	select	#tmp.*
+	select	tmp.*
 			, sod.Ukey
-	from #tmp
-	inner join SewingOutput_Detail sod on sod.ID = #tmp.soID
-										  and sod.OrderID = #tmp.ToOrderID
-										  and sod.ComboType = #tmp.ComboType
-										  and sod.Article = #tmp.sodArticle
-										  and sod.Color = #tmp.sodColor
+	from #OrdersReceiveTmp tmp
+	inner join SewingOutput_Detail sod on sod.ID = tmp.SewingOutputID
+										  and sod.OrderID = tmp.ID
+										  and sod.ComboType = tmp.ComboType
+										  and sod.Article = tmp.Article
+										  and sod.Color = tmp.Color
 ) as s on t.SewingOutput_DetailUkey = s.Ukey
-		  and t.ID = s.soID
-		  and t.OrderID = s.ToOrderID
+		  and t.ID = s.SewingOutputID
+		  and t.OrderID = s.ID
 		  and t.ComboType = s.ComboType
 		  and t.Article = s.Article
 		  and t.SizeCode = s.SizeCode
@@ -445,89 +557,106 @@ when matched then
 	update set	t.QaQty = t.QaQty + s.TakeQty
 when not matched by target then 
 	insert (
-		ID				, SewingOutput_DetailUkey	, OrderID		, ComboType		, Article
-		, SizeCode		, QaQty
+		ID					, SewingOutput_DetailUkey	, OrderID	, ComboType		, Article
+		, SizeCode			, QaQty
 	) values (
-		s.soID			, s.Ukey					, s.ToOrderID	, s.ComboType	, s.Article
-		, s.SizeCode	, s.TakeQty
-	);	
---select * from #tmp
-drop table #tmp";
-                #endregion 
-                boolResult = DBProxy.Current.Execute(null, strSqlCmd, listSqlPara);
+		s.SewingOutputID	, s.Ukey					, s.ID		, s.ComboType	, s.Article
+		, s.SizeCode		, s.TakeQty
+	);
+
+---- 成功分配清單 ------------------------------------------------------
+select OrderID = ID
+	   , POID
+	   , ComboType
+	   , Article
+	   , SizeCode
+	   , NeedQty
+	   , CanReceiveQty
+from #OrdersAccuNeedQty
+where AccuNeedStatus in ('O', 'S')
+
+drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp");
+            #endregion
+
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
+            {
+
+                boolResult = MyUtility.Tool.ProcessWithDatatable(dtSelectData, null, strSqlCmd.ToString(), out dtOrdersReceive);
                 if (!boolResult)
                 {
                     transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox(string.Format("ID {0}, FromSP {1},  ComboType {2}, Article {3}, SizeCode {4}", ToOrderID, FromOrderID, ComboType, Article, SizeCode)
-                                             + Environment.NewLine
-                                             + boolResult.Description);
-                    return false;
+                    MyUtility.Msg.WarningBox(boolResult.ToString());
+                    return null;
                 }
 
-                #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
-                strSqlCmd = @"
--- Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量 --
--- checkValue => Packing > Sewing = 0 數量不足
---				 Packing <= Sewing = 1 數量足夠
-declare @PackingTtlQty int = 0;
-declare @SewingTtlQty int = 0;
+                #region 
+                //                #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
+                //                strSqlCmd = @"
+                //-- Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量 --
+                //-- checkValue => Packing > Sewing = 0 數量不足
+                //--				 Packing <= Sewing = 1 數量足夠
+                //declare @PackingTtlQty int = 0;
+                //declare @SewingTtlQty int = 0;
 
-select	@PackingTtlQty = isnull (sum (pld.ShipQty), 0)
-from PackingList pl
-inner join PackingList_Detail pld on pl.ID = pld.ID							  
-where	pld.OrderID = @FromOrderID
-		and pl.Status = 'Confirmed'		
+                //select	@PackingTtlQty = isnull (sum (pld.ShipQty), 0)
+                //from PackingList pl
+                //inner join PackingList_Detail pld on pl.ID = pld.ID							  
+                //where	pld.OrderID = @FromOrderID
+                //		and pl.Status = 'Confirmed'		
 
-select	@SewingTtlQty = isnull (sum (sodd.QAQty), 0)
-from PackingList pl
-inner join PackingList_Detail pld on pl.ID = pld.ID
-inner join SewingOutput_Detail sod on pl.OrderID = sod.OrderId
-inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
-											  and pld.Article = sodd.Article
-											  and pld.SizeCode = sodd.SizeCode											  
-where	pl.OrderID = @FromOrderID
-		and pl.Status = 'Confirmed'
+                //select	@SewingTtlQty = isnull (sum (sodd.QAQty), 0)
+                //from PackingList pl
+                //inner join PackingList_Detail pld on pl.ID = pld.ID
+                //inner join SewingOutput_Detail sod on pl.OrderID = sod.OrderId
+                //inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
+                //											  and pld.Article = sodd.Article
+                //											  and pld.SizeCode = sodd.SizeCode											  
+                //where	pl.OrderID = @FromOrderID
+                //		and pl.Status = 'Confirmed'
 
-select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
-													    , 0)";
+                //select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
+                //													    , 0)";
+                //                #endregion
+                //                if (MyUtility.GetValue.Lookup(strSqlCmd, listSqlPara).Equals("0"))
+                //                {
+                //                    transactionscope.Dispose();
+                //                    MyUtility.Msg.WarningBox(string.Format("From SP {0} Sewing Output Qty can't less then PackingList Qty.", FromOrderID));
+                //                    return false;
+                //                }
+
+                //                #region Check 拆單後的數量，總數不得超過子單 Order_Qty
+                //                strSqlCmd = @"
+                //-- Check 拆單後的數量，總數不得超過子單 Order_Qty --
+                //select	*
+                //from Order_Qty oq
+                //cross apply (
+                //	select value = MIN(value)
+                //	from (
+                //		select value = sum(sodd.QaQty)
+                //		from SewingOutput_Detail_Detail sodd 
+                //		where oq.Article = sodd.Article
+                //			  and oq.SizeCode = sodd.SizeCode
+                //			  and oq.ID = sodd.OrderId		  
+                //		group by ComboType
+                //	)x
+                //) SewingQty
+                //where	oq.id = @ToOrderID
+                //		and oq.Qty < SewingQty.value";
+                //                #endregion                
+                //                if (MyUtility.Check.Seek(strSqlCmd, listSqlPara))
+                //                {
+                //                    transactionscope.Dispose();
+                //                    MyUtility.Msg.WarningBox(string.Format("SP {0}, ComboType {1}, Article {2}, SizeCode {3} Sewing Output Qty can't more then Order_Qty.", ToOrderID, ComboType, Article, SizeCode));
+                //                    return false;
+                //                }
                 #endregion
-                if (MyUtility.GetValue.Lookup(strSqlCmd, listSqlPara).Equals("0"))
-                {
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox(string.Format("From SP {0} Sewing Output Qty can't less then PackingList Qty.", FromOrderID));
-                    return false;
-                }
-
-                #region Check 拆單後的數量，總數不得超過子單 Order_Qty
-                strSqlCmd = @"
--- Check 拆單後的數量，總數不得超過子單 Order_Qty --
-select	*
-from Order_Qty oq
-cross apply (
-	select value = MIN(value)
-	from (
-		select value = sum(sodd.QaQty)
-		from SewingOutput_Detail_Detail sodd 
-		where oq.Article = sodd.Article
-			  and oq.SizeCode = sodd.SizeCode
-			  and oq.ID = sodd.OrderId		  
-		group by ComboType
-	)x
-) SewingQty
-where	oq.id = @ToOrderID
-		and oq.Qty < SewingQty.value";
-                #endregion                
-                if (MyUtility.Check.Seek(strSqlCmd, listSqlPara))
-                {
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox(string.Format("SP {0}, ComboType {1}, Article {2}, SizeCode {3} Sewing Output Qty can't more then Order_Qty.", ToOrderID, ComboType, Article, SizeCode));
-                    return false;
-                }
 
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
-            return true;
+            
+            return dtOrdersReceive;
         }
 
         private void findNow()
@@ -578,7 +707,6 @@ select	sel = 0
 		, ToSPBalance = ToSPBalance.value
 		, ToSPBuyerDeliver = ToSPOrders.BuyerDelivery
 		, FromSPSewingOutputQty = FromSPSewingOutputQty.value
-		, FromSPPackingQty = FromSPPackingQty.value
         , FromSPAccrQty = FromSPAccrQty.value
 		, FromSPAvailableQty = FromSPAvailableQty.value
 from Order_Qty_Garment OQG
@@ -607,15 +735,6 @@ outer apply (
 			and SODD.SizeCode = OQG.SizeCode
 ) FromSPSewingOutputQty
 outer apply (
-	select value = isnull (sum (PLD.ShipQty), 0)
-	from PackingList_Detail PLD
-	inner join PackingList PL on PLD.ID = PL.ID
-	where	PL.Status = 'Confirmed'
-			and PLD.OrderID = OQG.OrderIDFrom
-			and PLD.Article = OQG.Article
-			and PLD.SizeCode = OQG.SizeCode
-) FromSPPackingQty
-outer apply (
     select value = isnull (sum(passSodd.QAQty), 0)
 	from SewingOutput_Detail passSod
 	inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
@@ -627,9 +746,10 @@ outer apply (
 		  and OQG.SizeCode = passSodd.SizeCode
 ) FromSPAccrQty
 outer apply (
-	select value = FromSPSewingOutputQty.value - FromSPPackingQty.value - FromSPAccrQty.value
+	select value = FromSPSewingOutputQty.value - FromSPAccrQty.value
 ) FromSPAvailableQty
 where	ToSPBalance.value > 0
+        and (OQG.junk = 0 or OQG.junk is null)
         and ToSPOrders.FtyGroup = @Factory
 		-- ToSP
 		{0}
