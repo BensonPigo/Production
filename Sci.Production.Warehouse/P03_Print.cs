@@ -27,10 +27,17 @@ namespace Sci.Production.Warehouse
     {
         DataTable dt;
         DataRow CurrentDataRow;
-        public P03_Print(DataRow row)
+        string order_by = "";
+        public P03_Print(DataRow row,int sort_by)
         {
             InitializeComponent();
-
+            if (sort_by == 0)
+            {
+                order_by = " order by  a.refno ,a.id, iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)), dbo.GetColorMultipleID(b.BrandID,a.ColorID)";
+            }
+            else {
+                order_by = " order by a.id,a.seq1 , a.seq2";
+            }
             this.CurrentDataRow = row;
             print.Visible = false;
             
@@ -135,7 +142,7 @@ namespace Sci.Production.Warehouse
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
-			                                where a.id=@ID  ", pars, out dt);			       
+			                                where a.id=@ID  " + order_by, pars, out dt);			       
           }
           else  
           {
@@ -177,7 +184,7 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
-                                       where a.id=@ID ", pars, out dt);                          
+                                       where a.id=@ID " + order_by, pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);
           //xl.dicDatas.Add("##sp", dt);
@@ -226,10 +233,10 @@ namespace Sci.Production.Warehouse
                 {
                     if (dt.Rows[i]["junk"].ToString().Equals("True"))
                     {
-                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[22][i + 2]].Interior.ColorIndex = 15;
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[21][i + 2]].Interior.ColorIndex = 15;
                     }
                 }
-                worksheet.Columns[23].Delete();
+                worksheet.Columns[22].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
