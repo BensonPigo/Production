@@ -43,6 +43,7 @@ namespace Sci.Production.Packing
         {
             base.OnEditModeChanged();
             if (MyUtility.Check.Empty(btnBatchImport)) return;
+            if (MyUtility.Check.Empty(CurrentMaintain)) return;
             this.btnBatchImport.Enabled = EditMode;
             canEdit();
         }
