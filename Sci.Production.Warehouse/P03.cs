@@ -686,7 +686,7 @@ where ROW_NUMBER_D =1
             var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
             if (null == dr) return;
 
-            P03_Print p = new P03_Print(dr);
+            P03_Print p = new P03_Print(dr, comboSortBy.SelectedIndex);
             p.MdiParent = MdiParent;
             p.TopMost = true;            
             p.Show();
