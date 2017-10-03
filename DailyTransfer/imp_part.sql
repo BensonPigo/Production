@@ -3,15 +3,15 @@
 -- Create date: <2016/08/22>
 -- Description:	<import part>
 -- =============================================
-Create PROCEDURE [dbo].[imp_part]
+CREATE PROCEDURE [dbo].[imp_part]
 AS
 BEGIN
 
 	---------- Parts, type='P'---------------------
-	Merge Machine.dbo.Part as t
-	Using (select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno <>'EM-DBXK5 #8'
-union all
-select top 1 * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno ='EM-DBXK5 #8')as s
+Merge Machine.dbo.Part as t
+	Using (
+	select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno not in ('EM-DBXK5 #8','BK-400-29411','SN-SS-2060210-SP')
+	)as s
 	on t.id=s.Refno 
 	when matched then 
 	update set 
