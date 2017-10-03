@@ -9,25 +9,23 @@ using Ict.Win;
 using Ict;
 using System.Linq;
 using Sci.Data;
-using Ict.Win.UI;
 
 namespace Sci.Production.Sewing
 {
     public partial class P01_QAOutput : Sci.Win.Subs.Input8A
     {
         Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        DataGridViewNumericBoxColumn col_QAQty;
-
         public P01_QAOutput()
         {
             InitializeComponent();
+            
         }
 
         protected override void OnEditModeChanged()
         {
-            base.OnEditModeChanged();                    
+            base.OnEditModeChanged();
         }
-        
+
         protected override bool OnSaveBefore()
         {
             grid.ValidateControl();
@@ -49,7 +47,7 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
             
             prev.Visible = false;
-            next.Visible = false;     
+            next.Visible = false;
         }
 
         protected override void OnAttached()
@@ -68,15 +66,14 @@ namespace Sci.Production.Sewing
             numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", strFilter));
             CalculateTotal();
             //this.grid.AutoResizeColumns();
-            
         }
-       
+
         protected override bool OnGridSetup()
         {
             #region QA Q'ty的Validatng
             qaqty.CellValidating += (s, e) =>
             {
-                if (this.EditMode && CurrentDetailData["isAutoCreate"].ToString() != "Y")
+                if (this.EditMode)
                 {
                     DataRow dr = grid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
@@ -99,38 +96,22 @@ namespace Sci.Production.Sewing
                 }
                 
             };
-            #endregion            
+            #endregion
             Helper.Controls.Grid.Generator(grid)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("OrderQty", header: "Order Q'ty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("AccumQty", header: "Accum. Q'ty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Variance", header: "Variance", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("QAQty", header: "QA Q'ty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly:false, settings: qaqty).Get(out col_QAQty)
-                .Numeric("BalQty", header: "Bal. Q'ty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("AccumQty", header: "Accum. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("QAQty", header: "QA Q'ty", width: Widths.AnsiChars(10), iseditingreadonly:false, settings: qaqty)
+                .Numeric("BalQty", header: "Bal. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             for (int i = 0; i < grid.ColumnCount; i++)
             {
                 grid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            this.grid.RowEnter += grid_RowEnter;
             return true;
         }
-        private void grid_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) { return; }
-            //var data = ((DataRowView)this.grid.Rows[e.RowIndex].DataBoundItem).Row;
-            var data = ((DataRowView)this.grid.Rows[e.RowIndex].DataBoundItem).Row;
-            if (data == null) { return; }
-            //AutoCrate=Y 不可編輯修改
-            if (CurrentDetailData["isAutoCreate"].ToString() == "Y")
-            {
-                col_QAQty.IsEditingReadOnly = true;
-            }
-            else
-            {
-                col_QAQty.IsEditingReadOnly = false;
-            }
-        }
+
         //計算Total QA Q'ty, Total Bal. Q'ty
         private void CalculateTotal()
         {
