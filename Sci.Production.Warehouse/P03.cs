@@ -314,6 +314,11 @@ namespace Sci.Production.Warehouse
             gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["seq1"].Width = 40;
             this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+
+            displayUseStock.BackColor = Color.FromArgb(255, 255, 128);
+            displayFtySupp.BackColor = Color.FromArgb(220, 140, 255);
+            displayCalSize.BackColor = Color.FromArgb(255, 170, 100);
+            displayJunk.BackColor = Color.FromArgb(190, 190, 190);
         }
 
         public void ChangeDetailColor()
@@ -326,18 +331,18 @@ namespace Sci.Production.Warehouse
                 int i = index;
                 if (dr["junk"].ToString() == "True")
                 {
-                    gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
+                    gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                 }
                 else
                 {
                     if (dr["ThirdCountry"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.DeepPink;
+                        gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.FromArgb(220, 140, 255);
                     }
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
                     }
 
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
@@ -348,8 +353,8 @@ namespace Sci.Production.Warehouse
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
                     {
-                        gridMaterialStatus.Rows[i].Cells["Seq1"].Style.BackColor = Color.Yellow;
-                        gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells["Seq1"].Style.BackColor = Color.FromArgb(255, 255, 128);
+                        gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.FromArgb(255, 255, 128);
                     }
 
                     if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty())
@@ -377,9 +382,13 @@ namespace Sci.Production.Warehouse
         public void Query()
         {
             DataTable dtData;
-
+            string junk_where1 = "", junk_where2 = "";
             string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --
+            if (chk_includeJunk.Checked == false) {
+                junk_where1 = "where a.junk <> 'true'";
+                junk_where2 = "and a.junk <> 'true'";
+            }
             string sqlcmd
                 = @"
 declare @id varchar(20) = @sp1		
@@ -541,9 +550,8 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-           -- where a.junk <> 'true'
-
---很重要要看到,修正欄位要上下一起改
+            "+ junk_where1 +
+@"--很重要要看到,修正欄位要上下一起改
             union
 
             select  distinct m.ukey
@@ -621,7 +629,7 @@ from(
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
                 AND a.id IS NOT NULL 
-                --and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+               "+ junk_where2 +@"
         ) as xxx
     ) as xxx2
 ) as xxx3
@@ -686,7 +694,7 @@ where ROW_NUMBER_D =1
             var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
             if (null == dr) return;
 
-            P03_Print p = new P03_Print(dr, comboSortBy.SelectedIndex);
+            P03_Print p = new P03_Print(dr, comboSortBy.SelectedIndex, chk_includeJunk.Checked);
             p.MdiParent = MdiParent;
             p.TopMost = true;            
             p.Show();
