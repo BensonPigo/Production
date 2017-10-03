@@ -484,7 +484,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Refno2.Value</Value>
+                              <Value>=iif(Fields!Sort.Value = "1", Fields!Refno.Value, "")</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -681,7 +681,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Description.Value</Value>
+                              <Value>=iif(Fields!Sort.Value = "1",Fields!Description.Value, "")</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -702,6 +702,7 @@
                       </Style>
                     </Textbox>
                     <ColSpan>2</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -852,7 +853,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Refno2.Value</Value>
+                              <Value>=Fields!Refno.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1270,7 +1271,7 @@
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Refno2.Value</Value>
+                      <Value>=Fields!Sort.Value</Value>
                       <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
