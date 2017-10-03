@@ -233,6 +233,7 @@ from (
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
     left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
+												 and s.ComboType = sl.Location
     left join tmpOrderArtwork ta on ta.ID = s.OrderID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     where 1 = 1 
