@@ -2201,7 +2201,7 @@
                           <Top>0.1cm</Top>
                           <Left>13.02828cm</Left>
                           <Height>1.89374cm</Height>
-                          <Width>5.82768cm</Width>
+                          <Width>5.875cm</Width>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2451,9 +2451,8 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox38</rd:DefaultName>
                           <Top>1.99375cm</Top>
-                          <Left>0.04016cm</Left>
                           <Height>2.46062cm</Height>
-                          <Width>6.17948cm</Width>
+                          <Width>6.21964cm</Width>
                           <ZIndex>9</ZIndex>
                           <Style>
                             <Border>
@@ -2519,7 +2518,7 @@
                           <Top>1.99374cm</Top>
                           <Left>13.02828cm</Left>
                           <Height>2.46063cm</Height>
-                          <Width>5.82769cm</Width>
+                          <Width>5.875cm</Width>
                           <ZIndex>11</ZIndex>
                           <Style>
                             <Border>
@@ -2550,9 +2549,8 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox38</rd:DefaultName>
                           <Top>0.1cm</Top>
-                          <Left>0.04016cm</Left>
                           <Height>1.89374cm</Height>
-                          <Width>12.98812cm</Width>
+                          <Width>13.02828cm</Width>
                           <ZIndex>12</ZIndex>
                           <Style>
                             <Border>
