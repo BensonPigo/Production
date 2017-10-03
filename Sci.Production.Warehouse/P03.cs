@@ -135,7 +135,7 @@ namespace Sci.Production.Warehouse
 
             base.OnFormLoaded();
             
-            comboSortBy.SelectedIndex = 1;
+            comboSortBy.SelectedIndex = 0;
 
             #region Supp 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
@@ -541,7 +541,7 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            where a.junk <> 'true'
+           -- where a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
             union
@@ -621,7 +621,7 @@ from(
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
                 AND a.id IS NOT NULL 
-                and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+                --and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
         ) as xxx
     ) as xxx2
 ) as xxx3
@@ -663,7 +663,7 @@ where ROW_NUMBER_D =1
                 {
                     case 0:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,fabrictypeOrderby, refno , colorid";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = " refno ,id,fabrictypeOrderby, colorid";
                         break;
                     case 1:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
