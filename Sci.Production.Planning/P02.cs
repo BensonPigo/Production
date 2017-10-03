@@ -170,9 +170,7 @@ FROM   order_tmscost OT WITH (nolock)
               ON QU.ukey = SA.ukey 
        INNER JOIN localsupp WITH (nolock) 
                ON localsupp.id = QU.localsuppid 
-WHERE  priceapv = 'Y' 
-       AND mockup IS NOT NULL 
-       AND OT.ID = '{0}'
+WHERE  OT.ID = '{0}'
        AND OT.artworktypeid = 'PRINTING' 
 GROUP  BY QU.localsuppid, 
           localsupp.abb, 
@@ -214,9 +212,7 @@ FROM   order_tmscost OT WITH (nolock)
               ON QU.ukey = SA.ukey 
        INNER JOIN localsupp WITH (nolock) 
                ON localsupp.id = QU.localsuppid 
-WHERE  priceapv = 'Y' 
-       AND mockup IS NOT NULL 
-       AND OT.ID = '{0}'
+WHERE  OT.ID = '{0}'
        AND OT.artworktypeid = 'PRINTING' 
 GROUP  BY QU.localsuppid, 
           localsupp.abb, 
@@ -272,9 +268,9 @@ order by QU.localsuppid ",ddr["ID"].ToString().Trim());
                 .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
                 .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
                 .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_season)
-                .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("POID", header: "Mother SP", width: Widths.AnsiChars(16), settings: ts1, iseditingreadonly: true)
+                .Text("id", header: "SP#", width: Widths.AnsiChars(16), settings: ts1, iseditingreadonly: true)
+                .Text("article", header: "Article", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Numeric("totalqty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
@@ -473,7 +469,6 @@ where	a.Finished = 0
                 ShowErr(sqlcmd, result);
             }
             this.displayCheckedQty.Clear();
-            this.gridPrintingQuickAdjust.AutoResizeColumns();
             this.HideWaitMessage();
         }
         
@@ -704,23 +699,7 @@ where	a.Finished = 0
                                                         from style_artwork  a WITH (NOLOCK) 
                                                         inner join style_artwork_quot b WITH (NOLOCK) 
                                                          on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'"
-                    , item["styleukey"], item["localsuppid"]), out dr, null))
-                {
-                    if (dr["priceapv"].ToString() != "Y")
-                    {
-                        item["msg"] = "Price was not approved";
-                        item["err"] = 2;
-                    }
-                    else
-                    {
-                        if (MyUtility.Check.Empty(dr["Oven"]) || MyUtility.Check.Empty(dr["Wash"]) || MyUtility.Check.Empty(dr["Mockup"]))
-                        {
-                            item["msg"] = "Without oven/wash/mockup test apv.";
-                            item["err"] = 1;
-                        }
-                    }
-                }
-                else
+                    , item["styleukey"], item["localsuppid"]), out dr, null) == false)                
                 {
                     item["msg"] = "Quotation data was not found!!";
                     item["err"] = 2;
