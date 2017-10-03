@@ -197,13 +197,13 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
                     {
                         sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
-                     DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    IList<DataRow> x = item.GetSelecteds();
-                    CurrentDetailData["localsuppid"] = x[0][0];
-                    CurrentDetailData["localsuppname"] = x[0][1];
-                    
+                        DialogResult result = item.ShowDialog();
+                        if (result == DialogResult.Cancel) { return; }
+                        IList<DataRow> x = item.GetSelecteds();
+                        CurrentDetailData["localsuppid"] = x[0][0];
+                        CurrentDetailData["localsuppname"] = x[0][1];                    
                     }
+                    this.CurrentDetailData.EndEdit();
                 }
             };
            

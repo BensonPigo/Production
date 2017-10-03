@@ -268,9 +268,9 @@ order by QU.localsuppid ",ddr["ID"].ToString().Trim());
                 .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
                 .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
                 .Text("seasonid", header: "Season", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out col_season)
-                .Text("POID", header: "Mother SP", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("POID", header: "Mother SP", width: Widths.AnsiChars(16), settings: ts1, iseditingreadonly: true)
+                .Text("id", header: "SP#", width: Widths.AnsiChars(16), settings: ts1, iseditingreadonly: true)
+                .Text("article", header: "Article", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Numeric("totalqty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
@@ -469,7 +469,6 @@ where	a.Finished = 0
                 ShowErr(sqlcmd, result);
             }
             this.displayCheckedQty.Clear();
-            this.gridPrintingQuickAdjust.AutoResizeColumns();
             this.HideWaitMessage();
         }
         
