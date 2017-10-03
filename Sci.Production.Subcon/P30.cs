@@ -985,18 +985,34 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select top 1 a.OrderId [SP]
-                    ,a.Delivery [Delivery]
-                    ,a.Refno [Refno]
-                    ,a.ThreadColorID [Color_Shade]
-                    ,dbo.getItemDesc(b.Category,a.Refno) [Description]
-                    ,a.Price [UPrice]
-                    ,a.Qty [Order_Qty]
-                    ,a.UnitId [Unit]
-                     ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]                    
-            from dbo.LocalPO_Detail a WITH (NOLOCK) 
-            left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
-            where a.id= @ID", pars, out dd);
+            @"
+select 	Sort = ROW_NUMBER() Over (Order By Refno)
+		,a.OrderId [SP]
+        ,a.Delivery [Delivery]
+        ,a.Refno [Refno]
+        ,a.ThreadColorID [Color_Shade]
+        --,dbo.getItemDesc(b.Category,a.Refno) [Description]
+        ,a.Price [UPrice]
+        ,a.Qty [Order_Qty]
+        ,a.UnitId [Unit]
+        ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
+		,SortRefno = ROW_NUMBER() Over (Partition By Refno Order By Refno)
+		,b.Category
+into #tmp
+from dbo.LocalPO_Detail a WITH (NOLOCK) 
+left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
+where a.id=@ID
+
+select Sort,[SP],[Delivery]
+	,[Refno]
+	,[Refno2] = iif(SortRefno = 1,[Refno],'')
+	,[Color_Shade]
+	,[Description] = iif(SortRefno = 1,dbo.getItemDesc(Category,Refno),'')
+	,[UPrice],[Order_Qty],[Unit],[Amount]
+from #tmp
+order by Sort
+
+drop table #tmp", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
 
@@ -1004,9 +1020,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
             List<P30_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P30_PrintData()
                 {
+                    Sort = row1["Sort"].ToString().Trim(),
                     SP = row1["SP"].ToString().Trim(),
                     Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
                     Refno = row1["Refno"].ToString().Trim(),
+                    Refno2 = row1["Refno2"].ToString().Trim(),
                     Color_Shade = row1["Color_Shade"].ToString().Trim(),
                     Description = row1["Description"].ToString().Trim(),
                     UPrice = row1["UPrice"].ToString().Trim(),
