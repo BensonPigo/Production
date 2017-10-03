@@ -19,6 +19,7 @@ using Sci;
 using Sci.Production;
 using Sci.Utility.Excel;
 using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -124,7 +125,8 @@ namespace Sci.Production.Warehouse
                                                    ,[FIR]=dbo.getinspectionresult(a.id,a.seq1,a.seq2)
 			                                       ,(select Remark+',' from 
 			                                          (select r.Remark  from dbo.Receiving_Detail r WITH (NOLOCK) where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
-			                                from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+			                                        ,a.junk
+                                            from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 			                                left join dbo.Orders b WITH (NOLOCK) on a.id=b.id
 			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
 			                                left join dbo.supp d WITH (NOLOCK) on d.id=c.SuppID
@@ -133,7 +135,7 @@ namespace Sci.Production.Warehouse
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
-			                                where a.id=@ID and a.junk=0 ", pars, out dt);			       
+			                                where a.id=@ID  ", pars, out dt);			       
           }
           else  
           {
@@ -168,13 +170,14 @@ namespace Sci.Production.Warehouse
                                                     AND g.SEQ2 = a.seq2
                                                     AND IsFormA = 1)
                                               ,'Y','')
+                                             ,a.junk
                                        from dbo.PO_Supp_Detail a WITH (NOLOCK) 
                                        left join dbo.orders b WITH (NOLOCK) on a.id=b.id
                                        left join dbo.PO_Supp c WITH (NOLOCK) on a.id=c.id and a.SEQ1=c.SEQ1
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
-                                       where a.id=@ID and a.junk=0 ", pars, out dt);                          
+                                       where a.id=@ID ", pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);
           //xl.dicDatas.Add("##sp", dt);
@@ -195,13 +198,48 @@ namespace Sci.Production.Warehouse
             SetCount(dt.Rows.Count);
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
+              
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+                Excel.Worksheet worksheet = objApp.Sheets[1];
+              
+                for (int i = 0; i < dt.Rows.Count; i++) {
+                    if (dt.Rows[i]["junk"].ToString().Equals("True")) {
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[40][i + 2]].Interior.ColorIndex = 15;
+                    }
+                }
+                worksheet.Columns[41].Delete();
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
             }
             else {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-2.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-2.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-2.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+                Excel.Worksheet worksheet = objApp.Sheets[1];
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i]["junk"].ToString().Equals("True"))
+                    {
+                        worksheet.Range[worksheet.Cells[1][i + 2], worksheet.Cells[22][i + 2]].Interior.ColorIndex = 15;
+                    }
+                }
+                worksheet.Columns[23].Delete();
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+
+                strExcelName.OpenFile();
             }
+           
+
             return true;
         }
         }
