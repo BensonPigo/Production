@@ -2137,6 +2137,21 @@
             存檔時, 若要自動編檔名, 可使用的檔名prefix
             </summary>
         </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.WriteTable_BeforeSplitTansferEventArgs.TotalCount">
+            <summary>
+            WriteTable 的資料總量
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Report.ExcelCOM.WriteTable_BeforeSplitTansferEventArgs.PrintedCount">
+            <summary>
+            WriteTable 已印到Excel上的資料總量
+            </summary>
+        </member>
+        <member name="E:Sci.Utility.Report.ExcelCOM.WriteTable_BeforeSplitTansfer">
+            <summary>
+            WriteTable will split data to a small array, before do splite, this event will be called.
+            </summary>
+        </member>
         <member name="M:Sci.Utility.Report.ExcelCOM.#ctor(System.String,Microsoft.Office.Interop.Excel.Application)">
             <summary>
             設定xlt 或沿用既有的 Application
@@ -6921,6 +6936,21 @@
             ReportView class. Report viewer.
             </summary>
         </member>
+        <member name="P:Sci.Win.Subs.ReportView.ViewerError">
+            <summary>
+            代表report viewer是否有錯誤
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Subs.ReportView.ViewerException">
+            <summary>
+            report viewer 錯誤時, event中的 Exception
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Subs.ReportView.ViewerCheckCounts">
+            <summary>
+            ReportView 顯示時, 檢查 report viewer 是否可列印的次數
+            </summary>
+        </member>
         <member name="M:Sci.Win.Subs.ReportView.#ctor">
             <summary>
             Constructor without parameters.
@@ -6969,6 +6999,11 @@
         <member name="P:Sci.Win.Subs.ReportView.Viewer_ZoomPercent">
             <summary>
             當使用 ReportView.ZoomMode = Percent的時候 , 設定顯示的百分比大小
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Subs.ReportView.ShowReportviewer">
+            <summary>
+            把load.gif 隱藏, 顯示ReportViewer內容
             </summary>
         </member>
         <member name="F:Sci.Win.Subs.ReportView.components">
