@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation            
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and a.Type <> 'R'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and a.Type not in  ('R','O')"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
