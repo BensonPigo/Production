@@ -609,6 +609,7 @@ where InvA.OrderID = '{0}'
             CurrentMaintain["Type"] = "F";
             CurrentMaintain["Dest"] = "ZZ";
             CurrentMaintain["Status"] = "New";
+            btnBatchImport.Enabled = true;
         }
 
         protected override bool ClickEditBefore()
