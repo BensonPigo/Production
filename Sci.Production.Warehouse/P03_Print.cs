@@ -27,8 +27,8 @@ namespace Sci.Production.Warehouse
     {
         DataTable dt;
         DataRow CurrentDataRow;
-        string order_by = "";
-        public P03_Print(DataRow row,int sort_by)
+        string order_by = "", junk_where = "";
+        public P03_Print(DataRow row,int sort_by,Boolean chk_includeJunk)
         {
             InitializeComponent();
             if (sort_by == 0)
@@ -37,6 +37,11 @@ namespace Sci.Production.Warehouse
             }
             else {
                 order_by = " order by a.id,a.seq1 , a.seq2";
+            }
+
+            if (chk_includeJunk == false)
+            {
+                junk_where = " and a.junk <> 'true' "; ;
             }
             this.CurrentDataRow = row;
             print.Visible = false;
@@ -142,7 +147,7 @@ namespace Sci.Production.Warehouse
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
-			                                where a.id=@ID  " + order_by, pars, out dt);			       
+			                                where a.id=@ID  " + junk_where + order_by, pars, out dt);			       
           }
           else  
           {
@@ -184,7 +189,7 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
-                                       where a.id=@ID " + order_by, pars, out dt);                          
+                                       where a.id=@ID " + junk_where + order_by, pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);
           //xl.dicDatas.Add("##sp", dt);
@@ -217,10 +222,13 @@ namespace Sci.Production.Warehouse
                 }
                 worksheet.Columns[41].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
+                
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.ActiveWorkbook.Close(true);
                 objApp.Quit();
-                Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(objApp);
+              
 
                 strExcelName.OpenFile();
             }
@@ -239,9 +247,11 @@ namespace Sci.Production.Warehouse
                 worksheet.Columns[22].Delete();
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P03");
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
+                objApp.ActiveWorkbook.Close(true);
                 objApp.Quit();
-                Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(objApp);
+                
 
                 strExcelName.OpenFile();
             }
