@@ -31,11 +31,20 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.chk_includeJunk = new Sci.Win.UI.CheckBox();
             this.btnNewSearch = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labelJunk = new Sci.Win.UI.Label();
+            this.displayJunk = new Sci.Win.UI.DisplayBox();
+            this.labelCalSize = new Sci.Win.UI.Label();
+            this.displayCalSize = new Sci.Win.UI.DisplayBox();
+            this.labelFtySupp = new Sci.Win.UI.Label();
+            this.displayFtySupp = new Sci.Win.UI.DisplayBox();
+            this.labeluseStock = new Sci.Win.UI.Label();
+            this.displayUseStock = new Sci.Win.UI.DisplayBox();
             this.labelSortBy = new Sci.Win.UI.Label();
             this.comboSortBy = new Sci.Win.UI.ComboBox();
             this.btnToExcel = new Sci.Win.UI.Button();
@@ -51,6 +60,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chk_includeJunk);
             this.panel1.Controls.Add(this.btnNewSearch);
             this.panel1.Controls.Add(this.txtSPNo);
             this.panel1.Controls.Add(this.labelSPNo);
@@ -60,6 +70,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 2;
+            // 
+            // chk_includeJunk
+            // 
+            this.chk_includeJunk.AutoSize = true;
+            this.chk_includeJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_includeJunk.Location = new System.Drawing.Point(483, 14);
+            this.chk_includeJunk.Name = "chk_includeJunk";
+            this.chk_includeJunk.Size = new System.Drawing.Size(160, 21);
+            this.chk_includeJunk.TabIndex = 19;
+            this.chk_includeJunk.Text = "Include Junk Material";
+            this.chk_includeJunk.UseVisualStyleBackColor = true;
             // 
             // btnNewSearch
             // 
@@ -100,6 +121,14 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.labelJunk);
+            this.panel3.Controls.Add(this.displayJunk);
+            this.panel3.Controls.Add(this.labelCalSize);
+            this.panel3.Controls.Add(this.displayCalSize);
+            this.panel3.Controls.Add(this.labelFtySupp);
+            this.panel3.Controls.Add(this.displayFtySupp);
+            this.panel3.Controls.Add(this.labeluseStock);
+            this.panel3.Controls.Add(this.displayUseStock);
             this.panel3.Controls.Add(this.labelSortBy);
             this.panel3.Controls.Add(this.comboSortBy);
             this.panel3.Controls.Add(this.btnToExcel);
@@ -109,6 +138,94 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 3;
+            // 
+            // labelJunk
+            // 
+            this.labelJunk.BackColor = System.Drawing.Color.Transparent;
+            this.labelJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labelJunk.Location = new System.Drawing.Point(671, 16);
+            this.labelJunk.Name = "labelJunk";
+            this.labelJunk.Size = new System.Drawing.Size(29, 23);
+            this.labelJunk.TabIndex = 47;
+            this.labelJunk.Text = "Junk";
+            this.labelJunk.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelJunk.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayJunk
+            // 
+            this.displayJunk.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayJunk.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayJunk.Location = new System.Drawing.Point(700, 17);
+            this.displayJunk.Name = "displayJunk";
+            this.displayJunk.Size = new System.Drawing.Size(20, 21);
+            this.displayJunk.TabIndex = 46;
+            // 
+            // labelCalSize
+            // 
+            this.labelCalSize.BackColor = System.Drawing.Color.Transparent;
+            this.labelCalSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labelCalSize.Location = new System.Drawing.Point(526, 16);
+            this.labelCalSize.Name = "labelCalSize";
+            this.labelCalSize.Size = new System.Drawing.Size(111, 23);
+            this.labelCalSize.TabIndex = 45;
+            this.labelCalSize.Text = "Calculate by SizeItem";
+            this.labelCalSize.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelCalSize.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayCalSize
+            // 
+            this.displayCalSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCalSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayCalSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCalSize.Location = new System.Drawing.Point(637, 17);
+            this.displayCalSize.Name = "displayCalSize";
+            this.displayCalSize.Size = new System.Drawing.Size(20, 21);
+            this.displayCalSize.TabIndex = 44;
+            // 
+            // labelFtySupp
+            // 
+            this.labelFtySupp.BackColor = System.Drawing.Color.Transparent;
+            this.labelFtySupp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labelFtySupp.Location = new System.Drawing.Point(415, 16);
+            this.labelFtySupp.Name = "labelFtySupp";
+            this.labelFtySupp.Size = new System.Drawing.Size(77, 23);
+            this.labelFtySupp.TabIndex = 43;
+            this.labelFtySupp.Text = "Factory Supply";
+            this.labelFtySupp.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelFtySupp.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayFtySupp
+            // 
+            this.displayFtySupp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFtySupp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayFtySupp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFtySupp.Location = new System.Drawing.Point(492, 17);
+            this.displayFtySupp.Name = "displayFtySupp";
+            this.displayFtySupp.Size = new System.Drawing.Size(20, 21);
+            this.displayFtySupp.TabIndex = 42;
+            // 
+            // labeluseStock
+            // 
+            this.labeluseStock.BackColor = System.Drawing.Color.Transparent;
+            this.labeluseStock.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labeluseStock.Location = new System.Drawing.Point(325, 16);
+            this.labeluseStock.Name = "labeluseStock";
+            this.labeluseStock.Size = new System.Drawing.Size(56, 23);
+            this.labeluseStock.TabIndex = 41;
+            this.labeluseStock.Text = "Use Stock";
+            this.labeluseStock.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labeluseStock.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
+            // displayUseStock
+            // 
+            this.displayUseStock.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayUseStock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayUseStock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayUseStock.Location = new System.Drawing.Point(384, 17);
+            this.displayUseStock.Name = "displayUseStock";
+            this.displayUseStock.Size = new System.Drawing.Size(20, 21);
+            this.displayUseStock.TabIndex = 40;
             // 
             // labelSortBy
             // 
@@ -209,6 +326,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialStatus)).EndInit();
             this.ResumeLayout(false);
@@ -230,5 +348,14 @@
         private Win.UI.ComboBox comboSortBy;
         private Win.UI.Button btnNewSearch;
         private Win.UI.TextBox txtSPNo;
+        private Win.UI.DisplayBox displayUseStock;
+        private Win.UI.Label labeluseStock;
+        private Win.UI.CheckBox chk_includeJunk;
+        private Win.UI.Label labelJunk;
+        private Win.UI.DisplayBox displayJunk;
+        private Win.UI.Label labelCalSize;
+        private Win.UI.DisplayBox displayCalSize;
+        private Win.UI.Label labelFtySupp;
+        private Win.UI.DisplayBox displayFtySupp;
     }
 }
