@@ -695,20 +695,41 @@ AND p.EDITdATE = (
             else f_code = ArticleGroup;
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-            DataTable f_codeTb;
-            string sqlcmd = String.Format(@"
-SELECT pga.ArticleGroup
-FROM Pattern_GL_Article pga WITH (NOLOCK)
-inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
-inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
-WHERE o.ID = '{0}' and p.Status = 'Completed'
-AND p.EDITdATE = (
-	SELECT MAX(p2.EditDate) 
-	from pattern p2 WITH (NOLOCK) 
-	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
-)"
-                , poid);
-            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
+            string patidsql;
+
+            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
+            if (MyUtility.Check.Empty(cutref))
+            {
+                patidsql = String.Format(
+                            @"SELECT ukey
+                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
+                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
+                              AND EDITdATE = 
+                              (
+                                SELECT MAX(EditDate) 
+                                from pattern WITH (NOLOCK) 
+                                where styleukey = '{0}' and Status = 'Completed'
+                              )
+             ", Styleyukey);
+            }
+            else
+            {
+                patidsql = String.Format(
+                            @"select top 1 Ukey 
+                            from Pattern WITH (NOLOCK)
+                            where PatternNo = (select top 1  substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
+                            and Status = 'Completed'
+                            order by ActFinDate Desc
+                            ", cutref, poid);
+            }
+            string patternukey = MyUtility.GetValue.Lookup(patidsql);
+            string headercodesql = string.Format(@"
+Select distinct ArticleGroup 
+from Pattern_GL_LectraCode WITH (NOLOCK) 
+where PatternUkey = '{0}'
+order by ArticleGroup", patternukey);
+
+            DBProxy.Current.Select(null, headercodesql, out f_codeTb);
             StringBuilder w = new StringBuilder();
             w.Append(string.Format("orderid = '{0}' and (1=0", poid));
             foreach (DataRow dr in f_codeTb.Rows)
