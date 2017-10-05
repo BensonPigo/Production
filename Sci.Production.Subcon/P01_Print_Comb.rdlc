@@ -2305,7 +2305,6 @@
     <ReportParameter Name="VAT">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="GRATOTAL">
