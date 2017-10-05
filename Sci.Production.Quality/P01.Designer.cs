@@ -645,7 +645,7 @@
             // 
             this.modifyShadeBondTestToolStripMenuItem.Name = "modifyShadeBondTestToolStripMenuItem";
             this.modifyShadeBondTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.modifyShadeBondTestToolStripMenuItem.Text = "Modify ShadeBond Test";
+            this.modifyShadeBondTestToolStripMenuItem.Text = "Modify ShadeBand Test";
             this.modifyShadeBondTestToolStripMenuItem.Click += new System.EventHandler(this.modifyShadeBondTestToolStripMenuItem_Click);
             // 
             // modifyContinuityTestToolStripMenuItem

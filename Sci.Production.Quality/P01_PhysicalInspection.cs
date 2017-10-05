@@ -1141,7 +1141,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
                         excel.Cells[17 + (i * 8)+addline, 3] = "Comment";
                         excel.Cells[17 + (i * 8)+addline, 4] = "Inspector";
                         excel.Cells[18 + (i * 8)+addline, 1] = "Contiunity ";
-                        excel.Cells[19 + (i * 8)+addline, 1] = "Shad bond";
+                        excel.Cells[19 + (i * 8)+addline, 1] = "Shad band";
                         excel.Cells[20 + (i * 8)+addline, 1] = "Weight";
                         excel.Cells[21 + (i * 8)+addline, 1] = "Moisture";
 
@@ -1152,7 +1152,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
                         excel.Cells[17 + (i * 8)+addline, 3] = "Comment";
                         excel.Cells[17 + (i * 8)+addline, 4] = "Inspector";
                         excel.Cells[18 + (i * 8)+addline, 1] = "Contiunity ";
-                        excel.Cells[19 + (i * 8)+addline, 1] = "Shad bond";
+                        excel.Cells[19 + (i * 8)+addline, 1] = "Shad band";
                         excel.Cells[20 + (i * 8)+addline, 1] = "Weight";
                         excel.Cells[21 + (i * 8) + addline, 1] = "Moisture";
 
