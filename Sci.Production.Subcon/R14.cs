@@ -89,11 +89,11 @@ namespace Sci.Production.Subcon
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
-            System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate1.ParameterName = "@apdate1";
+            //System.Data.SqlClient.SqlParameter sp_apdate1 = new System.Data.SqlClient.SqlParameter();
+            //sp_apdate1.ParameterName = "@apdate1";
 
-            System.Data.SqlClient.SqlParameter sp_apdate2 = new System.Data.SqlClient.SqlParameter();
-            sp_apdate2.ParameterName = "@apdate2";
+            //System.Data.SqlClient.SqlParameter sp_apdate2 = new System.Data.SqlClient.SqlParameter();
+            //sp_apdate2.ParameterName = "@apdate2";
 
             System.Data.SqlClient.SqlParameter sp_gldate1 = new System.Data.SqlClient.SqlParameter();
             sp_gldate1.ParameterName = "@gldate1";
@@ -195,8 +195,6 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(" and a.VoucherDate >= @GLdate1");
                 sp_gldate1.Value = GLdate1;
                 cmds.Add(sp_gldate1);
-                sp_gldate2.Value = GLdate2;
-                cmds.Add(sp_gldate2);
             }
             if (!MyUtility.Check.Empty(GLdate2))
             {
