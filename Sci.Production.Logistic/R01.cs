@@ -56,10 +56,18 @@ select  o.FactoryID
         , o.MCHandle
         , o.SewLine
         , o.ID
+        , o.BrandId
         , o.CustPONo
         , o.Customize1
         , oq.BuyerDelivery
-        , oq.ShipmodeID
+        , oq.ShipmodeID        
+        , Location = stuff ((select distinct concat(',',ClogLocationId)
+                            from PackingList_Detail WITH (NOLOCK) 
+                            where   OrderID = o.ID 
+                                    and OrderShipmodeSeq = oq.Seq
+and ClogLocationId !='' and ClogLocationId is not null
+                                     for xml path('')
+                                    ) ,1,1,'')
         , oq.Seq
         , o.SciDelivery
         , o.TotalCTN
@@ -192,41 +200,43 @@ where o.Category = 'B'");
 
             //填內容值
             int intRowsStart = 4;
-            object[,] objArray = new object[1, 31];
+            object[,] objArray = new object[1, 33];
             foreach (DataRow dr in printData.Rows)
             {
                 objArray[0, 0] = dr["FactoryID"];
                 objArray[0, 1] = dr["MCHandle"];
                 objArray[0, 2] = dr["SewLine"];
                 objArray[0, 3] = dr["ID"];
-                objArray[0, 4] = dr["CustPONo"];
-                objArray[0, 5] = dr["Customize1"];
-                objArray[0, 6] = dr["SciDelivery"];
-                objArray[0, 7] = dr["BuyerDelivery"];
-                objArray[0, 8] = dr["ShipmodeID"];
-                objArray[0, 9] = dr["TotalCTN"];
-                objArray[0, 10] = dr["ClogCTN"];
-                objArray[0, 11] = dr["RetCtnBySP"];
-                objArray[0, 12] = string.Format("= J{0} - K{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 13] = string.Format("=IF(Q{0}=0,0,Round(1-(S{0}/Q{0}),2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 14] = string.Format("=IF(J{0}=0, 0,ROUND(K{0}/J{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 15] = dr["PulloutCTNQty"];
-                objArray[0, 16] = dr["TtlGMTQty"];
-                objArray[0, 17] = dr["TtlClogGMTQty"];
-                objArray[0, 18] = string.Format("=Q{0}-R{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 19] = string.Format("=IF(Q{0}=0,0,ROUND(R{0}/Q{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 20] = dr["TtlPullGMTQty"];
-                objArray[0, 21] = dr["CTNQty"];
-                objArray[0, 22] = dr["ClogQty"];
-                objArray[0, 23] = string.Format("=V{0}-W{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 24] = string.Format("=IF(V{0}=0,0,ROUND(W{0}/V{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 25] = dr["PullQty"];
-                objArray[0, 26] = dr["GMTQty"];
-                objArray[0, 27] = dr["ClogGMTQty"];
-                objArray[0, 28] = string.Format("=AA{0}-AB{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 29] = string.Format("=IF(AA{0}=0,0,ROUND(AB{0}/AA{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 30] = dr["PullGMTQty"];
-                worksheet.Range[String.Format("A{0}:AE{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 4] = dr["BrandId"]; 
+                objArray[0, 5] = dr["CustPONo"];
+                objArray[0, 6] = dr["Customize1"];
+                objArray[0, 7] = dr["SciDelivery"];
+                objArray[0, 8] = dr["BuyerDelivery"];
+                objArray[0, 9] = dr["ShipmodeID"];
+                objArray[0, 10] = dr["Location"];
+                objArray[0,11] = dr["TotalCTN"];
+                objArray[0, 12] = dr["ClogCTN"];
+                objArray[0, 13] = dr["RetCtnBySP"];
+                objArray[0, 14] = string.Format("= J{0} - K{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 15] = string.Format("=IF(Q{0}=0,0,Round(1-(S{0}/Q{0}),2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 16] = string.Format("=IF(J{0}=0, 0,ROUND(K{0}/J{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 17] = dr["PulloutCTNQty"];
+                objArray[0, 18] = dr["TtlGMTQty"];
+                objArray[0, 19] = dr["TtlClogGMTQty"];
+                objArray[0, 20] = string.Format("=Q{0}-R{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 21] = string.Format("=IF(Q{0}=0,0,ROUND(R{0}/Q{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 22] = dr["TtlPullGMTQty"];
+                objArray[0, 23] = dr["CTNQty"];
+                objArray[0, 24] = dr["ClogQty"];
+                objArray[0, 25] = string.Format("=V{0}-W{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 26] = string.Format("=IF(V{0}=0,0,ROUND(W{0}/V{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 27] = dr["PullQty"];
+                objArray[0, 28] = dr["GMTQty"];
+                objArray[0, 29] = dr["ClogGMTQty"];
+                objArray[0, 30] = string.Format("=AA{0}-AB{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 31] = string.Format("=IF(AA{0}=0,0,ROUND(AB{0}/AA{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 32] = dr["PullGMTQty"];
+                worksheet.Range[String.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
