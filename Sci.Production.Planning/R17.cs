@@ -74,7 +74,7 @@ WHERE 1= 1  ");
                 if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     sqlcmd.Append(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!=''))");
                 else  //factory有值
-                    sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select ID from Factory where KPICode='{0}')", txtFactory.Text));
+                    sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", txtFactory.Text));
                 sqlcmd.Append(@" 
 
 SELECT a, 
@@ -202,7 +202,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                 if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                 else  //factory有值
-                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
+                    strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", txtFactory.Text);
 
                 strSQL += @" 
 GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChangeReason
@@ -340,7 +340,7 @@ WHERE 1 = 1
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", txtFactory.Text);
 
                     strSQL += @" 
 GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
@@ -383,7 +383,7 @@ ORDER BY A1.ID";
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", txtFactory.Text);
                     strSQL += @" 
 ORDER BY A1.ID";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtPullOut);
@@ -423,7 +423,7 @@ WHERE 1= 1 AND A4.PullOutDate > A1.FtyKPI ";
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", txtFactory.Text);
                     strSQL += @" 
 ORDER BY A1.ID";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtFailDetail);
@@ -495,7 +495,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", txtFactory.Text);
 
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID, A1.KPIChangeReason
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 

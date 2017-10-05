@@ -744,6 +744,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                         return;
                     }
                     CurrentMaintain["Qty"] = articleTb.Rows.Count; //一筆distribute 表示一個bundle
+                    CurrentMaintain["article"] = articleTb.Rows[0]["Article"].ToString().TrimEnd();
+                    CurrentMaintain["Colorid"] = articleTb.Rows[0]["Colorid"].ToString().TrimEnd();
                 }
                 CurrentMaintain["OrderID"] = newvalue;
             }

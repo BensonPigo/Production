@@ -854,6 +854,7 @@
             this.ClientSize = new System.Drawing.Size(908, 527);
             this.DefaultControl = "txtRefno";
             this.DefaultControlForEdit = "txtartworktype_ftyCategory";
+            this.DefaultOrder = "refno";
             this.EnableGridJunkColor = true;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
