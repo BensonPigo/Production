@@ -33,7 +33,7 @@ select *
 ,[balance] = sum(inqty-outqty+adjustQty)  over (order by issuedate,id,name)
 from 
 (
-select issuedate
+select a.EditDate ,a.issuedate 
 , a.id
 ,case type  when 'E' then 'P24. Transfer Inventory to Scrap (B2C)' 
 			when 'D' then 'P25. Transfer Bulk to Scrap (A2C)' 
@@ -48,11 +48,11 @@ where  Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'
 and a.id = b.id
 and a.Status='Confirmed'
 and type in ('C','D','E')
-group by a.id, frompoid,a.IssueDate,a.Type 
+group by a.id, frompoid,a.EditDate,a.Type ,a.issuedate 
 
 union all
 
-select 	a.IssueDate
+select 	a.EditDate , a.issuedate
 , a.id
 ,  name = Case type 
 when 'O' then 'P43. Adjust Scrap Qty' 
@@ -64,10 +64,10 @@ from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)
 where  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
 and a.Status='Confirmed'
 and type in ('O','R')
-group by a.id, poid,a.IssueDate,type
+group by a.id, poid,a.EditDate,type,a.issuedate 
 ) a
-group by IssueDate,id,name,inqty,outqty,adjustQty
-order by IssueDate,name"
+group by IssueDate,EditDate,id,name,inqty,outqty,adjustQty
+order by IssueDate,EditDate,name"
 , dr["id"].ToString()
 , dr["seq1"].ToString()
 , dr["seq2"].ToString(), Sci.Env.User.Keyword);
@@ -76,7 +76,7 @@ order by IssueDate,name"
             #region DetailGrid
             string sqlDetail = string.Format(@"
 select *
-,[balance] = sum(inqty-outqty+adjustQty)  over  (order by roll,dyelot,inqty)
+,[balance] = sum(inqty-outqty+adjustQty)  over  (order by issuedate,EditDate, roll,dyelot,inqty)
 from 
 (
 	select Roll=b.FromRoll
@@ -88,6 +88,7 @@ from
 	,outqty=  case type when 'C' then (b.Qty) else 0 end
 	,adjustQty = 0
 	,Location  = MtlLocation.location
+    ,a.EditDate , a.issuedate
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 outer apply(
 select  location = stuff((select ',' + x.location								
@@ -118,6 +119,7 @@ for xml path('')),1,1,'')
 	,outqty = 0
 	,adjustQty = (QtyAfter - QtyBefore) 
 	,MtlLocation.location
+    ,a.EditDate , a.issuedate
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)   
 	outer apply(
 select  location = stuff((select ',' + x.location								
@@ -137,7 +139,7 @@ for xml path('')),1,1,'')
 	where  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
     and a.Status='Confirmed'
     and type in ('O','R')
-) a
+) a order by issuedate,EditDate
 "
 , dr["id"].ToString()
 , dr["seq1"].ToString()
