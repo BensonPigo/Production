@@ -24,7 +24,8 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [ScanQty]          SMALLINT       CONSTRAINT [DF_PackingList_Detail_ScanQty] DEFAULT ((0)) NULL,
     [ScanEditDate]     DATETIME       NULL,
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
-    CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
+    [Ukey] BIGINT NOT NULL IDENTITY, 
+    CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY ([Ukey]) 
 );
 
 
@@ -156,4 +157,8 @@ GO
 CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeq]
     ON [dbo].[PackingList_Detail]([OrderID] ASC, [OrderShipmodeSeq] ASC)
     INCLUDE([RefNo]);
+GO
 
+CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK] 
+    ON PackingList_Detail ( ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode )
+Go
