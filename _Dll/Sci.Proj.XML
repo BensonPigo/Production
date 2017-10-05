@@ -1663,6 +1663,11 @@
             report variable prefix.
             </summary>
         </member>
+        <member name="P:Sci.Utility.Excel.SaveXltReportCls.CRPrefix">
+            <summary>
+            report Copy range variable prefix.
+            </summary>
+        </member>
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.CopySheet">
             <summary>
             copy sheet, key: target index of worksheets , value: copy count
