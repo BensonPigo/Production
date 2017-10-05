@@ -139,7 +139,7 @@ Where   c.lock = 0
         {
             base.OnFormLoaded();
             #region -- Reason Combox --
-            string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
+            string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
             Ict.DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
@@ -180,7 +180,7 @@ Where   c.lock = 0
                     string sqlcmd = "";
                     IList<DataRow> x;
 
-                    sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
+                    sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Remove' AND junk = 0";
                     DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
                     if (!result2)
                     {
@@ -216,7 +216,7 @@ Where   c.lock = 0
                     else
                     {
                         if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
-and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
+and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
