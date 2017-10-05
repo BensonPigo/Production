@@ -230,7 +230,7 @@ where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.
     --and a.ToMDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type 
 
-) tmp
+) tmp where stocktype <> 'O'
 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
 "
                 , dr["id"].ToString()
