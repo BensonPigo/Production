@@ -514,7 +514,7 @@ group by Program
 ),
 tmpSubconOut
 as (
-Select 'O' as Type,s.Description as Company,sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)) as TtlCPU, t.SewingLineID
+Select 'O' as Type,s.Description as Company,sum(ROUND(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate),2)) as TtlCPU, t.SewingLineID
 from #tmp t
 left join SewingLine s WITH (NOLOCK) on s.ID = t.SewingLineID and s.FactoryID = t.FactoryID
 where LastShift = 'O'
