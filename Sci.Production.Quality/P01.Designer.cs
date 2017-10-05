@@ -485,7 +485,7 @@
             this.labelShadeBond.Name = "labelShadeBond";
             this.labelShadeBond.Size = new System.Drawing.Size(66, 23);
             this.labelShadeBond.TabIndex = 44;
-            this.labelShadeBond.Text = "Shade Bond";
+            this.labelShadeBond.Text = "Shade Band";
             this.labelShadeBond.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             // 
             // displayWeightTest
