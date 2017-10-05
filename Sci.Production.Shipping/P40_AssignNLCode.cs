@@ -65,7 +65,7 @@ namespace Sci.Production.Shipping
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["NLCode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                     {
                         DataRow seekData;
-                        if (MyUtility.Check.Seek(string.Format("select NLCode,HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterRow["VNContraceID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
+                        if (MyUtility.Check.Seek(string.Format("select NLCode,HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterRow["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                         {
                             dr["NLCode"] = e.FormattedValue;
                             dr["HSCode"] = seekData["HSCode"];
