@@ -19,9 +19,9 @@ SET
       -- a.ID	 =b.ID
       --a.CDate	      =b.CDate
       --,a.OrderID	      =b.OrderID
-      --,a.OrderShipmodeSeq	      =b.OrderShipmodeSeq
+      a.OrderShipmodeSeq	      =b.OrderShipmodeSeq
       --,a.MDivisionID	      =b.MDivisionID
-      a.ShipQty	      =b.ShipQty
+      ,a.ShipQty	      =b.ShipQty
       ,a.ETA	      =b.ETA
       ,a.ReceiveDoxDate	      =b.ReceiveDoxDate
       ,a.GW	      =b.GW

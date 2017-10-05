@@ -170,7 +170,7 @@ namespace Sci.Production.Quality
 
         protected void get_total_point() {
             double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
-            double ActualYdsT = (MyUtility.Convert.GetDouble(CurrentData["ActualYds"]) - 1);
+            double ActualYdsT = Math.Floor(MyUtility.Convert.GetDouble(CurrentData["ActualYds"])  -0.01);
             double ActualYdsF = ActualYdsT - (ActualYdsT % 5);
             double def_locT = 0d;
             double def_locF = 0d;
@@ -261,8 +261,8 @@ where	WEAVETYPEID = '{0}'
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
-                    sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
+                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' order by dyelot", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",",columndecimals:"0,0,2");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }                    
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
@@ -654,9 +654,9 @@ Where DetailUkey = {15};",
                 if (dr.RowState == DataRowState.Modified)
                 {
                     update_cmd1 = update_cmd1 + string.Format(
-                        @"Update Fir_Physical_Defect set DefectRecord = '{3}',Point = {4}
-                            Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation = '{2}';",
-                            dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation"], dr["DefectRecord"], dr["Point"]);
+                        @"Update Fir_Physical_Defect set DefectRecord = '{3}',Point = {4},DefectLocation = '{2}'
+                            Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation = '{5}';",
+                            dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation",DataRowVersion.Current], dr["DefectRecord"], dr["Point"], dr["DefectLocation",DataRowVersion.Original]);
                 }
             }
             if (update_cmd1 != "")

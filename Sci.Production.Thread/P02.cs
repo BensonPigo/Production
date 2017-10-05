@@ -22,7 +22,6 @@ namespace Sci.Production.Thread
         private string keyWord = Sci.Env.User.Keyword;
         Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         Ict.Win.UI.DataGridViewTextBoxColumn col_color;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_Remark;
         DataGridViewNumericBoxColumn col_cons;
         DataGridViewNumericBoxColumn col_Allowance;
         DataGridViewNumericBoxColumn col_NewCone;
@@ -324,10 +323,12 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Numeric("UsedCone", header: "Use\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
            .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
            .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
-           .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_Remark)
+           .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10))
            .Text("POID", header: "PO ID", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true);
 
             #endregion
+
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
 
             //設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += detailgrid_RowEnter;           
@@ -361,7 +362,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 col_Allowance.IsEditingReadOnly = true;
                 col_NewCone.IsEditingReadOnly = true;
                 col_UsedCone.IsEditingReadOnly = true;
-                col_Remark.IsEditingReadOnly = true;
                 col_refno.IsEditingReadOnly = true;
                 col_color.IsEditingReadOnly = true;
                 col_cons.IsEditingReadOnly = true;
@@ -372,7 +372,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 col_Allowance.IsEditingReadOnly = false;
                 col_NewCone.IsEditingReadOnly = false;
                 col_UsedCone.IsEditingReadOnly = false;
-                col_Remark.IsEditingReadOnly = false;
             }
             
         }
@@ -466,21 +465,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     e.CellStyle.BackColor = Color.Pink;
                 }
             };
-            col_Remark.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-
         }
         #endregion
 
