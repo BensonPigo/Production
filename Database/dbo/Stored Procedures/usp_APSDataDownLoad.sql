@@ -765,4 +765,39 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	CLOSE cursor_orders
 	DEALLOCATE cursor_orders
 	END
+
+	--7708加上
+	select id
+	into #tmpID--要刪除的ID
+	from SewingSchedule s1,(
+		select s.FactoryID,s.OrderID,s.ComboType,s.APSNo--,maxEditDate = max(s.EditDate)
+		from SewingSchedule s
+		group by s.FactoryID,s.OrderID,s.ComboType,s.APSNo having count(s.OrderID)>1
+	)s2
+	where s1.FactoryID = s2.FactoryID and s1.OrderID = s2.OrderID and s1.ComboType = s2.ComboType and s1.APSNo = s2.APSNo
+	except
+	select id--重複中,要留下的id,EditDate有值則要留max,若重複則取一
+	from(
+		select id = max(s1.id)
+		from SewingSchedule s1,(
+			select s.FactoryID,s.OrderID,s.ComboType,s.APSNo,maxEditDate = max(s.EditDate)
+			from SewingSchedule s
+			group by s.FactoryID,s.OrderID,s.ComboType,s.APSNo having count(s.OrderID)>1
+		)s2
+		where s1.FactoryID = s2.FactoryID and s1.OrderID = s2.OrderID and s1.ComboType = s2.ComboType and s1.APSNo = s2.APSNo
+		and s1.EditDate = s2.maxEditDate
+		group by s1.FactoryID,s1.OrderID,s1.ComboType,s1.APSNo
+		union
+		select id = max(s1.id)
+		from SewingSchedule s1,(
+			select s.FactoryID,s.OrderID,s.ComboType,s.APSNo,maxEditDate = max(s.EditDate)
+			from SewingSchedule s
+			group by s.FactoryID,s.OrderID,s.ComboType,s.APSNo having count(s.OrderID)>1 and max(s.EditDate) is null
+		)s2
+		where s1.FactoryID = s2.FactoryID and s1.OrderID = s2.OrderID and s1.ComboType = s2.ComboType and s1.APSNo = s2.APSNo
+		group by s1.FactoryID,s1.OrderID,s1.ComboType,s1.APSNo
+	)a
+
+	delete SewingSchedule where id in(select id from #tmpID)
+	delete SewingSchedule_Detail where id in(select id from #tmpID)
 END

@@ -74,13 +74,14 @@ namespace Sci.Production.Sewing
             qaqty.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
-                {
+                {                    
                     DataRow dr = grid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Convert.GetInt(e.FormattedValue) == MyUtility.Convert.GetInt(dr["QAQty"])) return;                   
                     if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
                     {
                         MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
                         dr["QAQty"] = 0;
-                        e.Cancel = true;
+                        e.Cancel = true;                        
                     }
                     else
                     {
