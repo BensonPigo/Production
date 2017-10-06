@@ -116,7 +116,7 @@ Reason can’t be empty!!"
 from dbo.Adjust_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where d.Id = '{0}'
-and d.StockType = 'O'", CurrentMaintain["id"]);
+and f.StockType = 'O'", CurrentMaintain["id"]);
 
             DataTable dt;            
             DualResult dr;
@@ -188,7 +188,7 @@ update Adjust set Status ='Confirmed' where id = '{1}'
 from dbo.Adjust_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where d.Id = '{0}'
-and d.StockType = 'O'", CurrentMaintain["id"]);
+and f.StockType = 'O'", CurrentMaintain["id"]);
 
             DataTable dt;
             DualResult dr;
