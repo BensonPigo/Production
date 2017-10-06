@@ -137,10 +137,10 @@ outer apply (
 						else AccuSoddQty.value - OQG.Qty
 				   end
 ) OverQty
-where AccuSoddQty.value > OQG.Qty
+where OverQty.value > 0
 	  and exists (select 1
 				  from #tmp 
-				  where OQG.ID = #tmp.ID)
+				  where OQG.OrderIDFrom = #tmp.OrderIDFrom)
 
 /*
 select * from #OverGarment
