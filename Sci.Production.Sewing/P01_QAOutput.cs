@@ -80,7 +80,7 @@ namespace Sci.Production.Sewing
                     if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
                     {
                         MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
-                        //dr["QAQty"] = 0;
+                        dr["QAQty"] = 0;
                         e.Cancel = true;                        
                     }
                     else
