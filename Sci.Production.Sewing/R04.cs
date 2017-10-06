@@ -65,8 +65,7 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
 left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-where 1=1 
-      and o.Category != 'G'"));
+where 1=1 "));
 
             if (!MyUtility.Check.Empty(date1))
             {
@@ -108,7 +107,6 @@ inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
-      and o.Category != 'G'
 --
 select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #wtmp
