@@ -153,6 +153,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            DualResult failResult;
             #region 組撈全部Sewing output data SQL
             sqlCmd.Append(string.Format(@"
 select  s.OutputDate
@@ -285,7 +286,7 @@ from #tmp2ndFilter");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out SewOutPutData);
             if (!result)
             {
-                DualResult failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
+                failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
             }
 
@@ -295,9 +296,13 @@ from #tmp2ndFilter");
                 try
                 {
                     #region 組SQL
-                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category"
+                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category"
                         , @"
-;with tmpQty as (
+;with AllOutputDate as (
+    select distinct OutputDate		   
+	from #tmp
+),
+tmpQty as (
 	select OutputDate
 		   , StdTMS
 		   , QAQty = Sum(QAQty)
@@ -361,27 +366,32 @@ tmpTtlManPower as (
 	) d
 	group by OutputDate
 )
-select q.OutputDate
-	   , q.QAQty
-	   , TotalCPU = tc.TotalCPU
-	   , SInCPU = isnull(ic.TotalCPU, 0)
-	   , SoutCPU = isnull(oc.TotalCPU, 0)
-	   , CPUSewer = IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU, 0) / q.ManHour)
-	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
-	   , mp.ManPower
-	   , q.ManHour
-	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q
-left join tmpTtlCPU tc on tc.OutputDate = q.OutputDate
-left join tmpSubconInCPU ic on ic.OutputDate = q.OutputDate
-left join tmpSubconOutCPU oc on oc.OutputDate = q.OutputDate
-left join tmpTtlManPower mp on mp.OutputDate = q.OutputDate
-order by q.OutputDate", out printData);
+select aDate.OutputDate
+	   , QAQty = isnull (q.QAQty, 0)
+	   , TotalCPU = isnull (tc.TotalCPU, 0)
+	   , SInCPU = isnull (ic.TotalCPU, 0)
+	   , SoutCPU = isnull (oc.TotalCPU, 0)
+	   , CPUSewer = isnull (IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU, 0) / q.ManHour), 0)
+	   , AvgWorkHour = isnull (IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2)), 0)
+	   , ManPower = isnull (mp.ManPower, 0)
+	   , ManHour = isnull (q.ManHour, 0)
+	   , Eff = isnull (IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2)), 0)
+from AllOutputDate aDate
+left join tmpQty q on aDate.OutputDate = q.OutputDate
+left join tmpTtlCPU tc on aDate.OutputDate = tc.OutputDate
+left join tmpSubconInCPU ic on aDate.OutputDate = ic.OutputDate
+left join tmpSubconOutCPU oc on aDate.OutputDate = oc.OutputDate
+left join tmpTtlManPower mp on aDate.OutputDate = mp.OutputDate
+order by aDate.OutputDate", out printData);
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
                     #endregion
                 }
                 catch (Exception ex)
                 {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
+                    failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
                     return failResult;
                 }
             }
@@ -391,7 +401,11 @@ order by q.OutputDate", out printData);
                 {
                     #region 組SQL
                     string sqlcommand = string.Format(@"
-;with tmpQty as (
+;with AllSewingLine as (
+    select distinct SewingLineID		   
+	from #tmp
+),
+tmpQty as (
 	select SewingLineID
 		   , StdTMS
 		   , QAQty = Sum(QAQty)
@@ -437,29 +451,35 @@ tmpTtlManPower as (
 	) a
 	group by SewingLineID
 )
-select q.SewingLineID
-	   , q.QAQty
- 	   , TotalCPU = tc.TotalCPU
+select aLine.SewingLineID
+	   , QAQty = isnull (q.QAQty, 0)
+ 	   , TotalCPU = isnull (tc.TotalCPU, 0)
  	   , SInCPU = isnull(ic.TotalCPU,0)
  	   , SoutCPU = isnull(oc.TotalCPU,0)
- 	   , CPUSewer = IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU,0) / q.ManHour) 
- 	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
- 	   , mp.ManPower
- 	   , q.ManHour
- 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q
-left join tmpTtlCPU tc on tc.SewingLineID = q.SewingLineID
-left join tmpSubconInCPU ic on ic.SewingLineID = q.SewingLineID
-left join tmpSubconOutCPU oc on oc.SewingLineID = q.SewingLineID
-left join tmpTtlManPower mp on mp.SewingLineID = q.SewingLineID
-order by {0}", orderby == 0 ? "q.SewingLineID" : "CPUSewer");
-                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+ 	   , CPUSewer = isnull (IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU,0) / q.ManHour), 0)
+ 	   , AvgWorkHour = isnull (IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2)), 0)
+ 	   , ManPower = isnull (mp.ManPower, 0)
+ 	   , ManHour = isnull (q.ManHour, 0)
+ 	   , Eff = isnull (IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2)), 0)
+from AllSewingLine aLine
+left join tmpQty q on aLine.SewingLineID = q.SewingLineID
+left join tmpTtlCPU tc on aLine.SewingLineID = tc.SewingLineID
+left join tmpSubconInCPU ic on aLine.SewingLineID = ic.SewingLineID
+left join tmpSubconOutCPU oc on aLine.SewingLineID = oc.SewingLineID
+left join tmpTtlManPower mp on aLine.SewingLineID = mp.SewingLineID
+order by {0}", orderby == 0 ? "aLine.SewingLineID" : "CPUSewer");
+                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
                         sqlcommand,  out printData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
                     #endregion
                 }
                 catch (Exception ex)
                 {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
+                    failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
                     return failResult;
                 }
             }
@@ -469,7 +489,7 @@ order by {0}", orderby == 0 ? "q.SewingLineID" : "CPUSewer");
             try
             {
                 #region 組SQL
-                MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
                     @"
 ;with tmpQty as (
 	select StdTMS
@@ -505,11 +525,15 @@ select q.QAQty
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
 left join tmpTtlManPower mp on 1 = 1", out excludeInOutTotal);
+                if (failResult == false)
+                {
+                    return failResult;
+                }
                 #endregion
             }
             catch (Exception ex)
             {
-                DualResult failResult = new DualResult(false, "Query total data fail\r\n" + ex.ToString());
+                failResult = new DualResult(false, "Query total data fail\r\n" + ex.ToString());
                 return failResult;
             }
             #endregion 
@@ -518,7 +542,7 @@ left join tmpTtlManPower mp on 1 = 1", out excludeInOutTotal);
             try
             {
                 #region 組SQL
-                MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
+                failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
                     @"
 ;with tmpData as (
 	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
@@ -552,11 +576,16 @@ from tmpSumQAQty q
 left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
 left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
                     out cpuFactor);
+
+                if (failResult == false)
+                {
+                    return failResult;
+                }
                 #endregion
             }
             catch (Exception ex)
             {
-                DualResult failResult = new DualResult(false, "Query CPU factor data fail\r\n" + ex.ToString());
+                failResult = new DualResult(false, "Query CPU factor data fail\r\n" + ex.ToString());
                 return failResult;
             }
             #endregion
@@ -566,7 +595,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
+                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
 @";with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -599,10 +628,15 @@ left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
 order by t1.ID",
                         out subprocessData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    DualResult failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
+                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
                     return failResult;
                 }
             }
@@ -613,7 +647,7 @@ order by t1.ID",
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
+                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
                         @"
 ;with tmpSubconIn as (
 	Select 'I' as Type
@@ -639,10 +673,15 @@ select * from tmpSubconIn
 union all
 select * from tmpSubconOut",
                         out subconData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    DualResult failResult = new DualResult(false, "Query subcon data fail\r\n" + ex.ToString());
+                    failResult = new DualResult(false, "Query subcon data fail\r\n" + ex.ToString());
                     return failResult;
                 }
             }
@@ -666,14 +705,14 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out vphData);
             if (!result)
             {
-                DualResult failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
+                failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
             }
             foreach (DataRow dr in vphData.Rows)
             {
                 if (dr["ActiveManpower"].Empty())
                 {
-                    DualResult failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
+                    failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
                     return failResult;
                 }
             }
@@ -721,7 +760,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 objArray[0, 6] = dr[6];
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
-                objArray[0, 9] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+                objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
                 objArray[0, 10] = "";
                 worksheet.Range[String.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
                 insertRow++;
@@ -820,13 +859,29 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
 
             //[VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
             c = System.Math.Round(c, 2, MidpointRounding.AwayFromZero);
-            decimal tempA = System.Math.Round(ttlm * c / printData.Rows.Count, 2, MidpointRounding.AwayFromZero);
+            // WorkDay => 
+            int intWorkDay;
+            DataTable dtWorkDay;
+            string strWorkDay = @"
+select Distinct OutputDate
+from #tmp
+where LastShift <> 'O'";
+            DualResult failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, null, strWorkDay, out dtWorkDay);
+            if (failResult == false)
+            {
+                MyUtility.Msg.WarningBox(failResult.ToString());
+                intWorkDay = 0;
+            }else
+            {
+                intWorkDay = dtWorkDay.Rows.Count;
+            }
+            decimal tempA = System.Math.Round(ttlm * c / intWorkDay, 2, MidpointRounding.AwayFromZero);
             worksheet.Cells[insertRow, 3] = System.Math.Round(tempA / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]), 2, MidpointRounding.AwayFromZero);
 
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 9] = "/Total work day:";
-            worksheet.Cells[insertRow, 11] = printData.Rows.Count;
+            worksheet.Cells[insertRow, 11] = intWorkDay;
             //Subcon
             insertRow = insertRow + 2;
             int insertSubconIn = 0, insertSubconOut = 0;

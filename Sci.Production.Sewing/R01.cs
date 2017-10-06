@@ -300,7 +300,7 @@ where 1 =1");
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(_printData, "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
+                    DualResult resultTotal = MyUtility.Tool.ProcessWithDatatable(_printData, "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
                         @"
 ;with SubMaxActManpower as (
 	select Shift
@@ -322,7 +322,10 @@ SubSummaryData as (
 SubTotal as (
 	select s.Shift
 		   , s.Team
-		   , TMS = (s.TMS/s.QAQty)
+		   , TMS = case 
+						when s.QAQty = 0 then 0
+						else (s.TMS/s.QAQty)
+				   end
 		   , s.RFT
 		   , ActManPower = sum(m.ActManPower)
 	from SubSummaryData s 
@@ -345,7 +348,10 @@ GrandIncludeInOutSummaryData as (
 	from #tmp
 ),
 GenTotal1 as (
-	select TMS = (s.TMS/s.QAQty)
+	select TMS = Case 
+                    when s.QaQty = 0 then 0
+                    else (s.TMS/s.QAQty)
+                 end
 		   , s.RFT
 		   , ActManPower = sum(m.ActManPower) - sum(iif(shift = 'Subcon-In', 0, isnull(d.ActManPower,0))) 
 	from GrandIncludeInOutSummaryData s
@@ -376,7 +382,10 @@ GrandExcludeOutSummaryData as (
 	where LastShift <> 'O'
 ),
 GenTotal2 as (
-	select TMS = (s.TMS / s.QAQty)
+	select TMS = case
+                    when s.QaQty = 0 then 0
+                    else (s.TMS / s.QAQty)
+                 end
 		   , s.RFT
 		   , ActManPower = sum(m.ActManPower) - sum(iif(shift = 'Subcon-In', 0, isnull(d.ActManPower,0))) 
 	from GrandExcludeOutSummaryData s
@@ -408,7 +417,10 @@ GrandExcludeInOutSummaryData as (
 	and LastShift <> 'I' 
 ),
 GenTotal3 as (
-	select TMS = (s.TMS/s.QAQty)
+	select TMS = case 
+                    when s.QaQty = 0 then 0
+                    else (s.TMS/s.QAQty)
+                 end
 		   , s.RFT
 		   , ActManPower = sum(m.ActManPower)
 	from GrandExcludeInOutSummaryData s
@@ -450,6 +462,10 @@ select Type = 'Grand'
 	   , ActManPower 
 from GenTotal3",
                         out _ttlData);
+                    if (resultTotal == false)
+                    {
+                        return resultTotal;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -464,7 +480,7 @@ from GenTotal3",
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(_printData, "OrderId,ComboType,QAQty,LastShift",
+                    DualResult resultSubprocess =  MyUtility.Tool.ProcessWithDatatable(_printData, "OrderId,ComboType,QAQty,LastShift",
                         @"
 ;with tmpArtwork as (
 	Select ID 
@@ -497,6 +513,10 @@ group by ArtworkTypeID,att.ProductionUnit
 order by ArtworkTypeID
 ",
                         out _subprocessData);
+                    if (resultSubprocess == false)
+                    {
+                        return resultSubprocess;
+                    }
                 }
                 catch (Exception ex)
                 {
