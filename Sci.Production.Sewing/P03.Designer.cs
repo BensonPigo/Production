@@ -61,13 +61,13 @@
             this.panel1.Controls.Add(this.labelToSpNum);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1026, 64);
+            this.panel1.Size = new System.Drawing.Size(946, 64);
             this.panel1.TabIndex = 1;
             // 
             // buttonFindNow
             // 
             this.buttonFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonFindNow.Location = new System.Drawing.Point(924, 6);
+            this.buttonFindNow.Location = new System.Drawing.Point(844, 6);
             this.buttonFindNow.Name = "buttonFindNow";
             this.buttonFindNow.Size = new System.Drawing.Size(99, 30);
             this.buttonFindNow.TabIndex = 3;
@@ -78,7 +78,7 @@
             // buttonNewSearch
             // 
             this.buttonNewSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonNewSearch.Location = new System.Drawing.Point(797, 6);
+            this.buttonNewSearch.Location = new System.Drawing.Point(717, 6);
             this.buttonNewSearch.Name = "buttonNewSearch";
             this.buttonNewSearch.Size = new System.Drawing.Size(121, 30);
             this.buttonNewSearch.TabIndex = 3;
@@ -139,7 +139,7 @@
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Location = new System.Drawing.Point(930, 516);
+            this.buttonSave.Location = new System.Drawing.Point(850, 516);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(99, 30);
             this.buttonSave.TabIndex = 3;
@@ -177,14 +177,14 @@
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid.Size = new System.Drawing.Size(1026, 440);
+            this.grid.Size = new System.Drawing.Size(946, 440);
             this.grid.TabIndex = 2;
             // 
             // P03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1032, 552);
+            this.ClientSize = new System.Drawing.Size(952, 552);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel1);
