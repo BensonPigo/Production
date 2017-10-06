@@ -141,6 +141,70 @@ select PoId,Seq1,Seq2,SuppID,ActualQty = sum(ActualQty)
 into #GroupBySupp
 from #tmpAllData
 group by PoId,Seq1,Seq2,SuppID
+------------PhyscialEncode=1 group by Supp ---- 
+select distinct t.SuppID,t.PoId,t.Seq1,t.Seq2 
+into #tmpsuppEncode
+from #GroupBySupp t
+inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
+where f.PhysicalEncode = 1
+------------Total Dyelot group by SuppID-------------
+select distinct g.SuppID,fp.Dyelot  
+into #tmpsd
+from FIR f
+inner join #GroupBySupp g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+where f.PhysicalEncode=1
+
+select distinct g.SuppID,s.Dyelot 
+into #tmpDyelot
+from #tmpsuppEncode g
+outer apply(
+	select Dyelot = STUFF((
+		select distinct concat(',',ss.Dyelot)
+		from #tmpsd ss 
+		where g.SuppID=ss.SuppID
+		for xml path ('')
+	),1,1,'')
+) s
+order by g.SuppID
+------------Total Point----------
+select g.SuppID,sum(fp.TotalPoint) TotalPoint
+into #tmpTotalPoint
+from FIR f
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+group by g.Suppid
+-----Total Roll Count----------
+select g.SuppID,count(fp.Roll) TotalRoll
+into #tmpTotalRoll
+from FIR f
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+group by g.Suppid
+---------Grade A Roll Count---------------------
+select g.SuppID,count(fp.Grade) GradeA_Roll
+into #tmpGrade_A
+from FIR f
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+where fp.Grade='A'
+group by g.Suppid
+----------Grade B Roll Count---------------------
+select g.SuppID,count(fp.Grade) GradeB_Roll
+into #tmpGrade_B
+from FIR f
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+where fp.Grade='B'
+group by g.Suppid
+----------Grade C Roll Count---------------------
+select g.SuppID,count(fp.Grade) GradeC_Roll
+into #tmpGrade_C
+from FIR f
+inner join #tmpsuppEncode g on f.POID=g.PoId and f.SEQ1=g.Seq1 and f.SEQ2=g.Seq2
+inner join FIR_Physical fp on f.ID=fp.ID
+where fp.Grade='C'
+group by g.Suppid
 ------------Kinds of Fabric Defects (Defect Name)---- 
 select t.SuppID,fpd.DefectRecord,t.PoId,t.Seq1,t.Seq2 
 into #tmpsuppdefect
@@ -306,6 +370,12 @@ select distinct Tmp.SuppID
     ,Tmp.abben 
     ,Tmp.stockqty 
     ,Tmp.TotalInspYds 
+    ,[Total Dyelot] =TLDyelot.Dyelot
+	,[Total Point] = isnull(TLPoint.TotalPoint,0)
+	,[Total Roll]= isnull(TLRoll.TotalRoll,0)
+	,[GradeA Roll]= isnull(GACount.GradeA_Roll,0)
+	,[GradeB Roll]= isnull(GBCount.GradeB_Roll,0)
+	,[GradeC Roll]= isnull(GCCount.GradeC_Roll,0)
     ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(Tmp.TotalInspYds/Tmp.stockqty*100,2)) 
     ,Tmp.yrds 
     ,Tmp.[Fabric(%)]
@@ -357,6 +427,12 @@ outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and
 left join #Sdtmp SHORTyards on SHORTyards.Suppid = Tmp.SuppID
 outer apply(select SHORTWIDTH = iif(Tmp.stockqty=0, 0, round(SHORTyards.SHORTWIDTH/Tmp.TotalInspYds*100,2)))SHORTWIDTHLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) between range1 and range2)sl6
+outer apply (select dyelot from #tmpDyelot where Suppid=Tmp.SuppID ) TLDyelot
+outer apply (select TotalPoint from #tmpTotalPoint where Suppid=tmp.SuppID) TLPoint
+outer apply (select TotalRoll from #tmpTotalRoll where Suppid=tmp.SuppID) TLRoll
+outer apply (select GradeA_Roll from #tmpGrade_A where Suppid=tmp.SuppID) GACount
+outer apply (select GradeB_Roll from #tmpGrade_B where Suppid=tmp.SuppID) GBCount
+outer apply (select GradeC_Roll from #tmpGrade_C where Suppid=tmp.SuppID) GCCount
 order by Tmp.SuppID
 --準備比重#table不然每筆資料都要重撈7次  
 select DISTINCT
@@ -383,6 +459,7 @@ ORDER BY SUPPID
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
+,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C
 ");
            #endregion
             return base.ValidateInput();
@@ -409,7 +486,34 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                 return false;
             }
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R06.xltx");
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_R06.xltx", 6, true, null, objApp);           
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_R06.xltx", 6, false, null, objApp);
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            #region 調整欄寬
+            objSheets.Columns[6].ColumnWidth = 21;
+            objSheets.Columns[7].ColumnWidth = 14.5;
+            objSheets.Columns[8].ColumnWidth = 15;
+            objSheets.Columns[9].ColumnWidth = 13;
+            objSheets.Columns[10].ColumnWidth = 13;
+            objSheets.Columns[11].ColumnWidth = 13;
+
+            objSheets.Columns[13].ColumnWidth = 8;
+            objSheets.Columns[14].ColumnWidth = 8;
+            objSheets.Columns[15].ColumnWidth = 5;
+
+            objSheets.Columns[26].ColumnWidth = 7;
+            objSheets.Columns[27].ColumnWidth = 7;
+            objSheets.Columns[28].ColumnWidth = 5;
+            #endregion
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R06");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
+
+            strExcelName.OpenFile();
+            #endregion
             return true;           
         }
     }
