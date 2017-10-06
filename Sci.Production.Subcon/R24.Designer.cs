@@ -49,9 +49,9 @@
             this.labelStatus = new Sci.Win.UI.Label();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
-            this.labelGLDate = new Sci.Win.UI.Label();
             this.labelAPDate = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelGLDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -71,7 +71,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 189);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -80,7 +79,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 118);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(98, 23);
@@ -89,7 +87,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 226);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(98, 23);
@@ -98,7 +95,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 260);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
@@ -118,6 +114,20 @@
             // 
             // dateAPDate
             // 
+            // 
+            // 
+            // 
+            this.dateAPDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateAPDate.DateBox1.Name = "";
+            this.dateAPDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateAPDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateAPDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateAPDate.DateBox2.Name = "";
+            this.dateAPDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateAPDate.DateBox2.TabIndex = 1;
             this.dateAPDate.IsRequired = false;
             this.dateAPDate.Location = new System.Drawing.Point(115, 12);
             this.dateAPDate.Name = "dateAPDate";
@@ -126,7 +136,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 154);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -135,6 +144,20 @@
             // 
             // dateGLDate
             // 
+            // 
+            // 
+            // 
+            this.dateGLDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateGLDate.DateBox1.Name = "";
+            this.dateGLDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateGLDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateGLDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateGLDate.DateBox2.Name = "";
+            this.dateGLDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateGLDate.DateBox2.TabIndex = 1;
             this.dateGLDate.IsRequired = false;
             this.dateGLDate.Location = new System.Drawing.Point(115, 48);
             this.dateGLDate.Name = "dateGLDate";
@@ -143,7 +166,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 84);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
@@ -152,7 +174,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(245, 84);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -202,7 +223,6 @@
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
             this.labelOrderType.Location = new System.Drawing.Point(13, 293);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(98, 23);
@@ -222,7 +242,6 @@
             // 
             // labelRateType
             // 
-            this.labelRateType.Lines = 0;
             this.labelRateType.Location = new System.Drawing.Point(13, 328);
             this.labelRateType.Name = "labelRateType";
             this.labelRateType.Size = new System.Drawing.Size(98, 23);
@@ -243,7 +262,6 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Lines = 0;
             this.labelStatus.Location = new System.Drawing.Point(13, 364);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(98, 23);
@@ -268,18 +286,8 @@
             this.txtSPNoEnd.Size = new System.Drawing.Size(128, 23);
             this.txtSPNoEnd.TabIndex = 3;
             // 
-            // labelGLDate
-            // 
-            this.labelGLDate.Lines = 0;
-            this.labelGLDate.Location = new System.Drawing.Point(13, 48);
-            this.labelGLDate.Name = "labelGLDate";
-            this.labelGLDate.Size = new System.Drawing.Size(98, 23);
-            this.labelGLDate.TabIndex = 119;
-            this.labelGLDate.Text = "GL Date";
-            // 
             // labelAPDate
             // 
-            this.labelAPDate.Lines = 0;
             this.labelAPDate.Location = new System.Drawing.Point(14, 12);
             this.labelAPDate.Name = "labelAPDate";
             this.labelAPDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -301,12 +309,26 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 7;
             // 
+            // labelGLDate
+            // 
+            this.labelGLDate.Location = new System.Drawing.Point(13, 48);
+            this.labelGLDate.Name = "labelGLDate";
+            this.labelGLDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelGLDate.RectStyle.BorderWidth = 1F;
+            this.labelGLDate.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelGLDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelGLDate.Size = new System.Drawing.Size(98, 23);
+            this.labelGLDate.TabIndex = 121;
+            this.labelGLDate.Text = "GL Date";
+            this.labelGLDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelGLDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R24
             // 
             this.ClientSize = new System.Drawing.Size(522, 447);
+            this.Controls.Add(this.labelGLDate);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labelAPDate);
-            this.Controls.Add(this.labelGLDate);
             this.Controls.Add(this.txtSPNoEnd);
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.comboStatus);
@@ -357,9 +379,9 @@
             this.Controls.SetChildIndex(this.comboStatus, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
-            this.Controls.SetChildIndex(this.labelGLDate, 0);
             this.Controls.SetChildIndex(this.labelAPDate, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.labelGLDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -388,8 +410,8 @@
         private Win.UI.Label labelStatus;
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.TextBox txtSPNoEnd;
-        private Win.UI.Label labelGLDate;
         private Win.UI.Label labelAPDate;
         private Class.txtbrand txtbrand;
+        private Win.UI.Label labelGLDate;
     }
 }
