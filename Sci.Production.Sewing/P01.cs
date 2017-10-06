@@ -41,27 +41,7 @@ namespace Sci.Production.Sewing
                 {
                     this.OnDetailGridInsert();
                 }
-            };
-            
-            detailgrid.RowsRemoved += (s, e) =>
-            {                
-                if (this.EditMode && this.detailgridbs.DataSource != null)
-                {
-                    //重新計算表頭 QAQty, InlineQty, DefectQty
-                    if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("False"))) { 
-                        CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted 
-                                                                                                                         && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", "");
-                        CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
-                        CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted 
-                                                                                                                             && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(DefectQty)", "");
-                    }else
-                    {
-                        CurrentMaintain["QAQty"] = 0;
-                        CurrentMaintain["InlineQty"] = 0;
-                        CurrentMaintain["DefectQty"] = 0;
-                    }
-                }
-            };            
+            };                    
         }
 
         protected override void OnDetailGridDelete()
@@ -72,6 +52,25 @@ namespace Sci.Production.Sewing
                 return;
             }
             base.OnDetailGridDelete();
+
+            if (this.EditMode && this.detailgridbs.DataSource != null)
+            {
+                //重新計算表頭 QAQty, InlineQty, DefectQty
+                if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("False")))
+                {
+                    CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                     && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", "");
+                    CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
+                    CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                         && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(DefectQty)", "");
+                }
+                else
+                {
+                    CurrentMaintain["QAQty"] = 0;
+                    CurrentMaintain["InlineQty"] = 0;
+                    CurrentMaintain["DefectQty"] = 0;
+                }
+            }
         }
 
         protected override void OnDetailEntered()
@@ -523,6 +522,7 @@ where   o.FtyGroup = @factoryid
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["Rft"] = "0.00%";
+            CurrentDetailData["AutoCreate"] = 0;
             
         }
        
@@ -730,6 +730,7 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
             CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1);
             CurrentMaintain["Shift"] = "D";
             CurrentMaintain["Team"] = "A";
+            CurrentDetailData["AutoCreate"] = 0;
             CurrentDetailData["RFT"] = "0.00%";
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             
