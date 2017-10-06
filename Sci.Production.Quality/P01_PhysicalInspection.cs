@@ -302,9 +302,6 @@ where	WEAVETYPEID = '{0}'
                         dr["Grade"] = "";
                         dr["moisture"] = 0;
                         dr["Remark"] = "";
-                        dr["InspDate"] = DBNull.Value;
-                        dr["Inspector"] = "";
-                        dr["Name"] = "";
                         redefect();
                         dr.EndEdit();
                         return;
@@ -372,9 +369,6 @@ where	WEAVETYPEID = '{0}'
                     dr["Grade"] = "";
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
-                    dr["InspDate"] = DBNull.Value;
-                    dr["Inspector"] = "";
-                    dr["Name"] = "";
                     dr.EndEdit();
                     redefect();
                     e.Cancel = true;
@@ -452,7 +446,7 @@ where	WEAVETYPEID = '{0}'
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
             .Numeric("pointRate", header: "Point Rate \nper 100yds", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6,decimal_places:2)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResulCell, iseditingreadonly: true)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .CheckBox("moisture", header: "Moisture", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
@@ -467,11 +461,10 @@ where	WEAVETYPEID = '{0}'
             grid.Columns["CutWidth"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["fullwidth"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["actualwidth"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid.Columns["Grade"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["moisture"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
-
+            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
 
             return true;
 
