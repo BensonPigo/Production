@@ -335,7 +335,7 @@
             this.checkNonShadeBond.ReadOnly = true;
             this.checkNonShadeBond.Size = new System.Drawing.Size(135, 21);
             this.checkNonShadeBond.TabIndex = 126;
-            this.checkNonShadeBond.Text = "Non Shade Bond";
+            this.checkNonShadeBond.Text = "Non Shade Band";
             this.checkNonShadeBond.UseVisualStyleBackColor = true;
             // 
             // btnApprove
@@ -483,7 +483,7 @@
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
             this.Name = "P01_ShadeBond";
-            this.Text = "Shade Bond ";
+            this.Text = "Shade Band ";
             this.WorkAlias = "Fir_shadebone";
             this.Controls.SetChildIndex(this.labelSP, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
