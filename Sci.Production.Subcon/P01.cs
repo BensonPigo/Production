@@ -228,29 +228,15 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
-                if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
-                {
-                    decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
-                    numTotal.Text = amount.ToString();
-                }
-
-                decimal x = 0; decimal x1 = 0; decimal x2 = 0;
                 decimal totalPoQty = 0;
                 foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
                 {
-                    x += (decimal)drr["amount"];
                     totalPoQty += (decimal)drr["PoQty"];
                 }
-                x2 = x * (decimal)CurrentMaintain["VatRate"]/100;
-                x1 += x + x2;
-                Console.WriteLine("get {0}", x);
-                numAmount.Text = x.ToString();
-                numTotal.Text = x1.ToString();
-                numVat.Text = x2.ToString();
                 numTotalPOQty.Text = totalPoQty.ToString();
             }
-
             #endregion
+            numTotal.Text = (Convert.ToDecimal(numVat.Text) + Convert.ToDecimal(numAmount.Text)).ToString();
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;

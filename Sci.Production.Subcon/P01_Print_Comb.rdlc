@@ -750,11 +750,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!VAT.Value</Value>
+                    <Value>=Round(Parameters!TotalAmount.Value * Parameters!VatRate.Value / 100, 2)</Value>
                     <Style>
                       <FontFamily>Times New Roman</FontFamily>
                       <FontSize>12pt</FontSize>
-                      <Format>#,0;(#,0)</Format>
+                      <Format>#,0.00;(#,0.00)</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1009,7 +1009,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!GrandTotal.Value</Value>
+                    <Value>=Parameters!TotalAmount.Value + Round(Parameters!TotalAmount.Value * Parameters!VatRate.Value / 100, 2)</Value>
                     <Style>
                       <FontFamily>Times New Roman</FontFamily>
                       <FontSize>12pt</FontSize>
@@ -2305,7 +2305,6 @@
     <ReportParameter Name="VAT">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="GRATOTAL">
