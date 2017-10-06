@@ -59,7 +59,6 @@
             // 
             // labelOoutputDate
             // 
-            this.labelOoutputDate.Lines = 0;
             this.labelOoutputDate.Location = new System.Drawing.Point(23, 12);
             this.labelOoutputDate.Name = "labelOoutputDate";
             this.labelOoutputDate.Size = new System.Drawing.Size(88, 23);
@@ -68,7 +67,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(23, 48);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(88, 23);
@@ -77,7 +75,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(23, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(88, 23);
@@ -86,7 +83,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(23, 120);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(88, 23);
@@ -95,7 +91,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(23, 158);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(88, 23);
@@ -104,7 +99,6 @@
             // 
             // labelCDCode
             // 
-            this.labelCDCode.Lines = 0;
             this.labelCDCode.Location = new System.Drawing.Point(23, 194);
             this.labelCDCode.Name = "labelCDCode";
             this.labelCDCode.Size = new System.Drawing.Size(88, 23);
@@ -127,7 +121,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(115, 48);
             this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.Size = new System.Drawing.Size(170, 24);
             this.comboCategory.TabIndex = 1;
             // 
             // comboM
