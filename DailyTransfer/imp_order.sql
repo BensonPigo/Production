@@ -557,7 +557,7 @@ BEGIN
 		select a.*
 			   , OrdersJunk = b.Junk
 		from Trade_To_Pms.dbo.Order_Qty_Garment a With (NoLock) 
-		inner join Trade_To_Pms.dbo.Orders b on a.id = b.id
+		inner join #TOrder b on a.id = b.id
 	) as s on t.ID = s.ID
 			  and t.OrderIDFrom = s.OrderIDFrom
 			  and t.Article = s.Article
@@ -578,7 +578,7 @@ BEGIN
 			s.ID 		, s.OrderIDFrom	, s.Article 	, s.SizeCode 	, s.Qty
 			, s.AddName , s.AddDate		, s.EditName 	, s.EditDate	, 0
 		)
-	when not matched by source and t.ID not in (select ID from Trade_To_Pms.dbo.Orders) then 
+	when not matched by source and t.ID not in (select ID from #TOrder) then 
 		update set
 			t.Junk = 1;
     
@@ -613,7 +613,7 @@ BEGIN
 								else AccuSoddQty.value - OQG.Qty
 						   end
 		) OverQty
-		where AccuSoddQty.value > OQG.Qty
+		where OverQty.value > 0
 
 		/*
 		select * from #OverGarment
