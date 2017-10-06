@@ -670,10 +670,8 @@ select  Orderid = '{0}'
         , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
         , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
                                               , 0)
-        , AllowanceQty = IIF(#tmp.MeterToCone > 0, CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
-                                                 , 0.00) 
+        , AllowanceQty =  0.00
         , PurchaseQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
-                                                  + CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2)
                                                 , 0.00) 
         , AutoCreate = 'true' 
         , UseStockQty = 0
