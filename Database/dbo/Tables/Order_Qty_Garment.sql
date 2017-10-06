@@ -8,6 +8,9 @@
     [AddDate]     DATETIME     NULL,
     [EditName]    VARCHAR (13) NULL,
     [EditDate]    DATETIME     NULL,
+    [Junk]        BIT          NULL,
     CONSTRAINT [PK_Order_Qty_Garment] PRIMARY KEY CLUSTERED ([Article] ASC, [ID] ASC, [OrderIDFrom] ASC, [SizeCode] ASC)
 );
+
+
 
