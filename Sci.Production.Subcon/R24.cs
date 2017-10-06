@@ -48,11 +48,15 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2))
+            if (comboStatus.SelectedIndex != 1)
             {
-                MyUtility.Msg.WarningBox("A/P Date can't empty!!");
-                return false;
+                if (MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2) && MyUtility.Check.Empty(dateGLDate.Value1) && MyUtility.Check.Empty(dateGLDate.Value2))
+                {
+                    MyUtility.Msg.WarningBox("[A/P Date] or [GL Date] must input one !!");
+                    return false;
+                }
             }
+
             APdate1 = dateAPDate.Value1;
             APdate2 = dateAPDate.Value2;
             spno1 = txtSPNoStart.Text;
