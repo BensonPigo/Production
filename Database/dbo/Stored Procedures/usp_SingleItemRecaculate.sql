@@ -96,7 +96,7 @@ BEGIN
 				USING (SELECT g.*,
 						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId )
 						FROM group6key g WITH (NOLOCK)) AS S
-				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='B'
+				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='B'
 				WHEN MATCHED THEN UPDATE set inqty = S.AInqty, outqty = s.AOutqty , adjustQty = AAdjustqty
 				WHEN NOT MATCHED BY TARGET THEN 
 				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
@@ -120,7 +120,7 @@ BEGIN
 				USING (SELECT g.*,
 						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId )
 						FROM group6key g WITH (NOLOCK)) AS S
-				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='I'
+				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='I'
 				WHEN MATCHED THEN UPDATE set inqty = S.BInqty, outqty = s.BOutqty , adjustQty = BAdjustQty
 				WHEN NOT MATCHED BY TARGET THEN 
 				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
@@ -144,7 +144,7 @@ BEGIN
 				USING (SELECT g.*,
 						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId )
 						FROM group6key g WITH (NOLOCK)) AS S
-				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='O'
+				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='O'
 				WHEN MATCHED THEN UPDATE set inqty = S.CInqty, outqty = s.COutqty , adjustQty = CAdjustQty
 				WHEN NOT MATCHED BY TARGET THEN 
 				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
