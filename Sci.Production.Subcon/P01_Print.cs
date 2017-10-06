@@ -44,9 +44,10 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(masterData["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(masterData["Delivery"])).ToShortDateString();
             string Remark = masterData["Remark"].ToString();
-            string TOTAL = masterData["amount"].ToString();
+            decimal TOTAL = MyUtility.Convert.GetDecimal(masterData["amount"].ToString());
             string CurrencyID = masterData["CurrencyID"].ToString();
             string VatRate = masterData["VatRate"].ToString();
+            decimal VAT = MyUtility.Convert.GetDecimal(masterData["VAT"]);
             string handle = masterData["handle"].ToString();
             string name = MyUtility.GetValue.Lookup("Name", masterData["handle"].ToString(), "Pass1", "ID");
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", masterData["artworktypeid"])).ToString().Trim();
@@ -68,10 +69,11 @@ where a.id='{0}' ", masterData["ID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuedate", Issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", TOTAL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", TOTAL.ToString("#,0.00")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GRATOTAL", GarTotal));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT.ToString("#,0.00")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("artworkunit", artworkunit));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", handle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", name));
@@ -132,8 +134,6 @@ order by ID", masterData["LocalSuppID"]);
                 string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(poqty)", "1=1"));
                 decimal TotalAmount = MyUtility.Convert.GetDecimal(dtDetail.Compute("sum(computeAmount)", ""));
-                decimal VAT = Math.Round(TotalAmount * MyUtility.Convert.GetDecimal(masterData["VatRate"]) / 100, 2);
-                decimal GrandTotal = TotalAmount + VAT;
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
@@ -143,8 +143,6 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TotalAmount.ToString()));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT.ToString("#,0.00")));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GrandTotal", GrandTotal.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));
                 
 
@@ -226,7 +224,7 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", TotalPoQty));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TOTAL));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TOTAL.ToString("#,0.00")));
 
 
                 // 傳 list 資料            

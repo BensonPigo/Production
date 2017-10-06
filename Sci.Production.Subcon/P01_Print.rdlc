@@ -968,7 +968,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Parameters!GRATOTAL.Value</Value>
+                <Value>=Parameters!TOTAL.Value + Parameters!VAT.Value</Value>
                 <Style>
                   <FontFamily>Times New Roman</FontFamily>
                   <FontSize>12pt</FontSize>
@@ -1270,7 +1270,7 @@
         </Paragraphs>
         <rd:DefaultName>TotalAmount</rd:DefaultName>
         <Top>1.59166cm</Top>
-        <Left>17.36918cm</Left>
+        <Left>17.36172cm</Left>
         <Height>0.6cm</Height>
         <Width>2.91748cm</Width>
         <ZIndex>13</ZIndex>
@@ -2223,9 +2223,8 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="TOTAL">
-      <DataType>String</DataType>
+      <DataType>Float</DataType>
       <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="VAT">
