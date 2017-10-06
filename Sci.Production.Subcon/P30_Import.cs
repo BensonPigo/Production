@@ -104,6 +104,7 @@ select distinct 1 as Selected
        , c.FactoryID 
        , c.SewInLine
        , delivery = a.EstCTNArrive
+into #tmp
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
@@ -126,17 +127,11 @@ where a.ApvToPurchase = 1
       and a.mdivisionid ='{1}'
       and c.Category != 'M'
       and c.Junk = 0
-      and not exists (select orderID 
-                      from LocalPo_Detail 
-                      where RequestID = a.ID 
-                      		and Poid = c.POID 
-                      		and OrderID = b.OrderID 
-                      		and Refno = b.RefNo
-                            and ID !='{4}')", Env.User.Factory
+", Env.User.Factory
                      , Env.User.Keyword
                      , dr_localPO["category"]
                      ,dr_localPO["localsuppid"]
-                     , dr_localPO["ID"]);
+                     );
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -151,7 +146,16 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
-                    strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID";
+                    strSQLCmd += string.Format(@" group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID
+select * from #tmp a
+where  not exists (select orderID 
+                      from LocalPo_Detail 
+                      where RequestID = a.ID 
+                      		and Poid = a.POID 
+                      		and OrderID = a.OrderID 
+                      		and Refno = a.RefNo
+                            and ID !='{0}')
+", dr_localPO["ID"]);
 
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
