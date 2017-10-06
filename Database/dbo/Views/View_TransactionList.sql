@@ -128,6 +128,14 @@ FROM              dbo.Adjust a INNER JOIN
                             dbo.Adjust_Detail b ON b.id = a.id
 WHERE          a.Type = 'B'
 UNION ALL
+SELECT          'Adjust' tbname, a.Type, a.Status, a.EditDate, b.Id, b.MDivisionID, b.PoId, b.seq1, b.seq2, b.Roll, b.Dyelot, 
+                            0.0 AS inqty, 0.0 AS outqty, 0 AS adjustqty, 0.00 AS AInqty, 0.00 AS AOutqty, 0.00 AS AAdjustQty, 
+                            0.00 AS BInqty, 0.00 AS BOutqty, 0.00 AS BAdjustQty, 0.00 AS CInqty, 0.00 AS COutqty, 
+                            b.qtyafter - b.qtybefore AS CAdjustQty
+FROM              dbo.Adjust a INNER JOIN
+                            dbo.Adjust_Detail b ON b.id = a.id
+WHERE          b.StockType = 'O'
+UNION ALL
 SELECT          'BorrowBack-From' tbname, a.Type, a.Status, a.EditDate, b.Id, b.FromMDivisionID, b.FromPoId, b.Fromseq1, 
                             b.Fromseq2, b.FromRoll, b.FromDyelot, 0.0 AS inqty, b.qty AS outqty, 0.0 AS adjustqty, 0.00 AS AInqty, 
                             iif(b.FromStockType = 'B', b.Qty, 0.00) AS AOutqty, 0.00 AS AAdjustQty, 0.00 AS BInqty, iif(b.FromStockType = 'I', b.Qty,
