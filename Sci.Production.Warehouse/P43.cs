@@ -330,11 +330,12 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", CurrentMaintain["id"]);
                         {
                             #region 更新表頭狀態資料 and 數量
                             //更新FtyInventory
+                            //20171006 mantis 7895 增加roll dyelot條件
                             string sqlupdHeader = string.Format(@"
                             update FtyInventory  
                             set  AdjustQty = AdjustQty + ({0}) 
-                            where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O'
-                            ", MyUtility.Convert.GetDecimal(tmp["AdjustQty"]) ,tmp["Poid"],tmp["seq1"].ToString(),tmp["seq2"] );
+                            where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O' and Roll = '{4}' and Dyelot = '{5}'
+                            ", MyUtility.Convert.GetDecimal(tmp["AdjustQty"]) ,tmp["Poid"],tmp["seq1"].ToString(),tmp["seq2"] ,tmp["Roll"],tmp["Dyelot"]);
                           
                             //更新Adjust
                             sqlupdHeader = sqlupdHeader + string.Format(@"
@@ -408,11 +409,12 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", CurrentMaintain["id"]);
                         {
                             #region 更新表頭狀態資料 and 數量
                             //更新FtyInventory
+                            //20171006 mantis 7895 增加roll dyelot條件
                             string sqlupdHeader = string.Format(@"
                             update FtyInventory  
                             set  AdjustQty = AdjustQty - ({0})
-                            where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O'
-                            ", MyUtility.Convert.GetDecimal(tmp["AdjustQty"]), tmp["Poid"], tmp["seq1"].ToString(), tmp["seq2"]);
+                            where POID = '{1}' AND SEQ1='{2}' AND SEQ2='{3}' and StockType='O'  and Roll = '{4}' and Dyelot = '{5}'
+                            ", MyUtility.Convert.GetDecimal(tmp["AdjustQty"]), tmp["Poid"], tmp["seq1"].ToString(), tmp["seq2"], tmp["Roll"], tmp["Dyelot"]);
                             
                             //更新Adjust
                             sqlupdHeader = sqlupdHeader + string.Format(@"
