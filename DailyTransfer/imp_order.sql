@@ -578,7 +578,7 @@ BEGIN
 			s.ID 		, s.OrderIDFrom	, s.Article 	, s.SizeCode 	, s.Qty
 			, s.AddName , s.AddDate		, s.EditName 	, s.EditDate	, 0
 		)
-	when not matched by source and t.ID not in (select ID from #TOrder) then 
+	when not matched by source and t.ID in (select ID from #TOrder) then 
 		update set
 			t.Junk = 1;
     
