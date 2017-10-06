@@ -28,13 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboDropDownList = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.txtBrand1 = new Sci.Production.Class.txtbrand();
+            this.label12 = new Sci.Win.UI.Label();
             this.txtCentralizedFactory1 = new Sci.Production.Class.txtCentralizedFactory();
             this.label11 = new Sci.Win.UI.Label();
             this.txtCountry1 = new Sci.Production.Class.txtcountry();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.txtSeason1 = new Sci.Production.Class.txtseason();
             this.dateRange3 = new Sci.Win.UI.DateRange();
             this.dateRange2 = new Sci.Win.UI.DateRange();
@@ -49,8 +52,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,12 +69,12 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboDropDownList);
             this.groupBox1.Controls.Add(this.txtstyle1);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.txtCentralizedFactory1);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.txtCountry1);
-            this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.txtBrand1);
             this.groupBox1.Controls.Add(this.txtSeason1);
@@ -95,6 +96,45 @@
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // comboDropDownList
+            // 
+            this.comboDropDownList.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList.FormattingEnabled = true;
+            this.comboDropDownList.IsSupportUnselect = true;
+            this.comboDropDownList.Location = new System.Drawing.Point(132, 229);
+            this.comboDropDownList.Name = "comboDropDownList";
+            this.comboDropDownList.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownList.TabIndex = 222;
+            this.comboDropDownList.Type = "Pms_GMT_Simple";
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = this.txtBrand1;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(132, 133);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 221;
+            // 
+            // txtBrand1
+            // 
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(132, 109);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(121, 23);
+            this.txtBrand1.TabIndex = 13;
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(4, 133);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(127, 23);
+            this.label12.TabIndex = 220;
+            this.label12.Text = "Style";
             // 
             // txtCentralizedFactory1
             // 
@@ -126,22 +166,6 @@
             this.txtCountry1.TabIndex = 17;
             this.txtCountry1.TextBox1Binding = "";
             // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "Bulk",
-            "Sample",
-            "Bulk + Sample"});
-            this.comboBox2.Location = new System.Drawing.Point(132, 229);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 16;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -153,15 +177,6 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 14;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(132, 109);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(121, 23);
-            this.txtBrand1.TabIndex = 13;
             // 
             // txtSeason1
             // 
@@ -278,24 +293,6 @@
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label10.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(4, 133);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(127, 23);
-            this.label12.TabIndex = 220;
-            this.label12.Text = "Style";
-            // 
-            // txtstyle1
-            // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = this.txtBrand1;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(132, 133);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 221;
-            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(520, 306);
@@ -332,7 +329,6 @@
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private Win.UI.Label label7;
-        private Win.UI.ComboBox comboBox2;
         private Win.UI.ComboBox comboBox1;
         private Class.txtbrand txtBrand1;
         private Class.txtseason txtSeason1;
@@ -342,5 +338,6 @@
         private Class.txtCentralizedFactory txtCentralizedFactory1;
         private Class.txtstyle txtstyle1;
         private Win.UI.Label label12;
+        private Class.comboDropDownList comboDropDownList;
     }
 }

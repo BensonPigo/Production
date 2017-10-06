@@ -21,7 +21,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Mockup,Bulk+Sample");
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
@@ -146,9 +146,17 @@ where 1=1");
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'S'");
                 }
+                else if (category == "Garment")
+                {
+                    sqlCmd.Append(" and t.OrderCategory in ('G')");
+                }
                 else if (category == "Bulk+Sample")
                 {
                     sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
+                }
+                else if (category == "Bulk+Sample+Garment")
+                {
+                    sqlCmd.Append(" and t.OrderCategory in ('B', 'S', 'G')");
                 }
                 else
                 {

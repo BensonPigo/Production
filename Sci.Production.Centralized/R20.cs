@@ -32,7 +32,7 @@ namespace Sci.Production.Centralized
         {
             base.OnFormLoaded();
             this.radioCPU.Checked = true;            
-            this.txtdropdownlist.SelectedIndex = 4;
+            this.comboDropdownlist.SelectedIndex = 5;
         }
 
         protected override bool ValidateInput()
@@ -52,7 +52,7 @@ namespace Sci.Production.Centralized
                 }
                 return false;
             }
-            if (this.txtdropdownlist.SelectedValue.Empty())
+            if (this.comboDropdownlist.SelectedValue.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Category] can't be Empty!!");
                 return false;
@@ -68,7 +68,7 @@ namespace Sci.Production.Centralized
 
             string _QueryDateStart = ((DateTime)this.dateQueryDateStart.Value).ToShortDateString();
             string _QueryDateEnd = ((DateTime)this.dateQueryDateEnd.Value).ToShortDateString();
-            string _Category = this.txtdropdownlist.SelectedValue.ToString();
+            string _Category = this.comboDropdownlist.SelectedValue.ToString();
             string _Factory = this.txtCentralizedFactory.Text;
             string _Brand = this.txtbrand.Text;
             string _Regioin = this.txtcountry.TextBox1.Text;
@@ -80,7 +80,7 @@ namespace Sci.Production.Centralized
                 PulloutStrS.Add(string.Format("pd.PulloutDate between '{0}' and '{1}'", _QueryDateStart, _QueryDateEnd));
             }
 
-            if (!this.txtdropdownlist.SelectedValue.Empty())
+            if (!this.comboDropdownlist.SelectedValue.Empty())
             {
                 StockStrS.Add(string.Format("o.Category in ({0})", _Category));
                 SewingStrS.Add(string.Format("o.Category in ({0})", _Category));
@@ -682,7 +682,7 @@ select DISTINCT ID,ETD from #GarmentInvoice", out dtGMTBooking);
             xl.DicDatas.Add("##Title2", Title2ForExcel);
 
             Parameter = "查詢條件-日期區間 : " + ((DateTime)this.dateQueryDateStart.Value).ToShortDateString() + " ~ " + ((DateTime)this.dateQueryDateEnd.Value).ToShortDateString();
-            Parameter += " , Categoty : " + this.txtdropdownlist.Text;
+            Parameter += " , Categoty : " + this.comboDropdownlist.Text;
             if (!this.txtCentralizedFactory.Text.Empty()) Parameter += " , Factory : " + this.txtCentralizedFactory.Text;
             if (!this.txtbrand.Text.Empty()) Parameter += " , Brand : " + this.txtbrand.Text;
             if (!this.txtcountry.TextBox1.Text.Empty()) Parameter += " , Region : " + this.txtcountry.DisplayBox1.Text;

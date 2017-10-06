@@ -49,7 +49,7 @@ namespace Sci.Production.Centralized
             this.Text = PrivUtils.getVersion(this.Text);
             DualResult result;
             base.OnFormLoaded();
-            comboBox2.SelectedIndex = 0;
+            comboDropDownList.SelectedIndex = 0;
 
             #region 取得 MR Team 資料
             System.Data.DataTable dt_ref = null;
@@ -74,6 +74,12 @@ namespace Sci.Production.Centralized
             if (excel == null) return true; 
             gdtData1 = null; gdtData2 = null; gdtData3 = null; gdtData4 = null; 
             gdtData5 = null; gdtData6 = null; gdtData7 = null; gdtData8 = null; gdtData9 = null;
+            return true;
+        }
+
+        protected override bool ValidateInput()
+        {
+            gstrCategory = this.comboDropDownList.SelectedValue.ToString();
             return true;
         }
 
@@ -141,10 +147,7 @@ And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdC
                     strSQL += string.Format(" AND Orders.FactoryID = '{0}' ", txtCentralizedFactory1.Text);
                 if (gstrCategory != "")
                 {
-                    if (gstrCategory == "BS")
-                        strSQL += " AND Orders.Category IN ( 'B', 'S') ";
-                    else
-                        strSQL += string.Format(" AND Orders.Category = '{0}' ", gstrCategory);
+                    strSQL += string.Format(" AND Orders.Category = {0} ", gstrCategory);
                 }
                 if (txtCountry1.TextBox1.Text != "")
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
@@ -481,23 +484,6 @@ And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdC
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             gstrMRTeam = (comboBox1.SelectedIndex == -1 ? "" : comboBox1.SelectedValue2.ToString());
-        }
-
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gstrCategory = "";
-            switch (comboBox2.SelectedIndex)
-            {
-                case 0:
-                    gstrCategory = "B";
-                    break;
-                case 1:
-                    gstrCategory = "S";
-                    break;
-                case 2:
-                    gstrCategory = "BS";
-                    break;
-            }
         }
 
         private void clear()
