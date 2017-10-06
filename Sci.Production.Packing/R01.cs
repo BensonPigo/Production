@@ -112,7 +112,7 @@ namespace Sci.Production.Packing
 
             #region 先準備主要資料table
             sqlcmd = string.Format(@"
-select distinct
+select 
 	[Packing#] = pld.ID
 	,[Factory] = pl.FactoryID
 	,[Shipmode] = pl.ShipModeID
