@@ -329,7 +329,7 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Name from Pass1 where id = '{0}' order by ID", keyword), "10,40", dr[propertyname].ToString().Trim());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Name from Pass1"), "10,40", dr[propertyname].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
