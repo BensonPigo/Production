@@ -336,6 +336,7 @@
             this.Text = "B03. Shipping Expense";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
+            this.EnableGridJunkColor = true;
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
