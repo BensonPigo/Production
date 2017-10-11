@@ -117,7 +117,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             #endregion
 
             #region NLCode
-            DataGridViewGeneratorTextColumnSettings Nlcode = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorMaskedTextColumnSettings Nlcode = new DataGridViewGeneratorMaskedTextColumnSettings();
             Nlcode.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
@@ -128,7 +128,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
 
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
+                .MaskedText("NLCode", header: "Customs Code", width: Widths.AnsiChars(7),mask: "LL000", settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty)
