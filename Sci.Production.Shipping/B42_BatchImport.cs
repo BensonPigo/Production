@@ -179,6 +179,29 @@ where ID = '{0}' and NLCode = '{1}'
                     c++;
                 }
             }
+            DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP,VNContractID" });
+            foreach (DataRow dr in Distinct.Rows)
+            {
+                string d = string.Format(@"select vd.NLCode 
+from VNConsumption v,VNConsumption_Detail vd
+where v.id = vd.id
+and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(), dr["CustomSP"].ToString());
+                DataTable dlt;
+                DBProxy.Current.Select(null, d, out dlt);
+                //DataRow[] drN = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}'", dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
+                foreach (DataRow dn in dlt.Rows)
+                {
+                    DataRow[] dra = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}'"
+                        , dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
+                    DataRow[] drN = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}' and NLCode = '{2}'"
+                        , dr["VNContractID"].ToString(), dr["CustomSP"].ToString(), dn["NLCode"].ToString()));
+                    if (drN.Length == 0)
+                    {
+                        idu.Append(string.Format("delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}'"
+                            ,dra[0]["ID"].ToString(), dn["NLCode"].ToString()));
+                    }
+                }
+            }
 
             drt = DBProxy.Current.Execute(null, idu.ToString());
             if (!drt)
