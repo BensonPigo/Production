@@ -14,7 +14,7 @@ namespace Sci.Production.Sewing
 {
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        string line1, line2, factory, factoryName;
+        string line1, line2, factory, factoryName, mDivision;
         DateTime? date1, date2;
         int excludeHolday, excludeSubconin, reportType, orderby;
         DataTable SewOutPutData, printData, excludeInOutTotal, cpuFactor, subprocessData, subconData,vphData;
@@ -23,11 +23,13 @@ namespace Sci.Production.Sewing
         {
             InitializeComponent();
             label10.Text = "** The value in this report are all excluded \r\nsubcon-out, unless the column with \r\n\"included subcon-out\".";
-            DataTable factory;
+            DataTable factory, mDivision;
             DBProxy.Current.Select(null, @"select '' as FtyGroup 
 union all
 select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
 
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             MyUtility.Tool.SetupCombox(comboHoliday, 1, 1, "Included,Excluded");
             MyUtility.Tool.SetupCombox(comboSubconIn, 1, 1, "Included,Excluded");
             MyUtility.Tool.SetupCombox(comboReportType, 1, 1, "By Date,By Sewing Line");
@@ -38,6 +40,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
             comboReportType.SelectedIndex = 0;
             comboFactory.Text = Sci.Env.User.Factory;
             comboOrderBy.SelectedIndex = 0;
+            comboM.Text = Sci.Env.User.Keyword;
         }
 
         //Date
@@ -142,6 +145,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
             line1 = txtSewingLineStart.Text;
             line2 = txtSewingLineEnd.Text;
             factory = comboFactory.Text;
+            mDivision = comboM.Text;
             excludeHolday = comboHoliday.SelectedIndex;
             excludeSubconin = comboSubconIn.SelectedIndex;
             reportType = comboReportType.SelectedIndex;
@@ -200,6 +204,10 @@ where s.OutputDate between '{0}' and '{1}'"
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'",factory));
+            }
+            if (!MyUtility.Check.Empty(mDivision))
+            {
+                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));
             }
 
             sqlCmd.Append(@"
@@ -700,18 +708,25 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             {
                 sqlCmd.Append(string.Format(" and f.id= '{0}'",factory));
             }
+            if (mDivision!="")
+            {
+                sqlCmd.Append(string.Format(" and f.MDivisionID = '{0}'", mDivision));
+            }
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out vphData);
             if (!result)
             {
                 failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
             }
-            foreach (DataRow dr in vphData.Rows)
+            if (factory != "")
             {
-                if (dr["ActiveManpower"].Empty())
+                foreach (DataRow dr in vphData.Rows)
                 {
-                    failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
-                    return failResult;
+                    if (dr["ActiveManpower"].Empty())
+                    {
+                        failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
+                        return failResult;
+                    }
                 }
             }
             return Result.True;
