@@ -154,7 +154,13 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
-
+                foreach (DataRow dr in TaipeiInput.Rows)
+                {
+                    if (MyUtility.Check.Empty(dr["balanceqty"]))
+                    {
+                        dr.Delete();
+                    }
+                }
                 myFilter();
 
                 this.HideWaitMessage();
