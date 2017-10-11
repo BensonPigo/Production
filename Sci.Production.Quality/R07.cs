@@ -236,7 +236,7 @@ namespace Sci.Production.Quality
             ,w.MinSciDelivery
             ,w.MinBuyerDelivery
             ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,1,0) [description]
-            ,PSD.ColorID
+            ,dbo.GetColorMultipleID(O.BrandId,PSD.ColorID) [ColorID]
             ,PS.SuppID
             ,Weave.WeaveTypeID
             ,t.id [ReceivingID]

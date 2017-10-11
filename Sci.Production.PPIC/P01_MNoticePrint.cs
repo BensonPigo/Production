@@ -265,27 +265,27 @@ namespace Sci.Production.PPIC
                         string sIdx = idx.ToString();
                         idx += 1;
 
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sIdx, dr["ID"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sIdx, dr["sty"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sIdx, dr["QTY"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sIdx, dr["CustCDID"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sIdx, dr["CustPONO"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sIdx, dr["Customize1"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sIdx, dr["BuyerDelivery"]);
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sxr.CRPrefix + sIdx, dr["ID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sxr.CRPrefix + sIdx, dr["sty"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sxr.CRPrefix + sIdx, dr["QTY"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sxr.CRPrefix + sIdx, dr["CustCDID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_DELIVERY" + idxStr + sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
 
                         System.Data.DataTable[] dts2;
                         List<SqlParameter> lis2 = new List<SqlParameter>();
                         lis2.Add(new SqlParameter("@OrderID", dr["ID"]));
                         lis2.Add(new SqlParameter("@ByType", "0"));
 
-                        res = DBProxy.Current.SelectSP("", "Order_Report_QtyBreakdown", lis2, out dts2);
+                        res = DBProxy.Current.SelectSP(string.Empty, "Order_Report_QtyBreakdown", lis2, out dts2);
 
                         if (res)
                         {
                             sxrc.XltRptTable stbl = new sxrc.XltRptTable(dts2[0], 1, 2, true);
-                            SetColumn1toText(stbl);
-                            sxr.DicDatas.Add(sxr.VPrefix + "S3_Tbl" + idxStr + sIdx, stbl);
+                            this.SetColumn1toText(stbl);
+                            sxr.DicDatas.Add(sxr.VPrefix + "S3_Tbl" + idxStr + sxr.CRPrefix + sIdx, stbl);
                         }
                     }
 

@@ -47,6 +47,8 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.labelM = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -106,7 +108,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 192);
+            this.labelFactory.Location = new System.Drawing.Point(13, 231);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
             this.labelFactory.TabIndex = 99;
@@ -114,7 +116,7 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Location = new System.Drawing.Point(13, 228);
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 269);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(80, 23);
             this.labelOrderBy.TabIndex = 100;
@@ -223,7 +225,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(97, 192);
+            this.comboFactory.Location = new System.Drawing.Point(97, 231);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(65, 24);
             this.comboFactory.TabIndex = 7;
@@ -234,7 +236,7 @@
             this.comboOrderBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderBy.FormattingEnabled = true;
             this.comboOrderBy.IsSupportUnselect = true;
-            this.comboOrderBy.Location = new System.Drawing.Point(97, 228);
+            this.comboOrderBy.Location = new System.Drawing.Point(97, 269);
             this.comboOrderBy.Name = "comboOrderBy";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 8;
@@ -242,9 +244,9 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Location = new System.Drawing.Point(13, 266);
+            this.label10.Location = new System.Drawing.Point(13, 296);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(307, 52);
+            this.label10.Size = new System.Drawing.Size(307, 22);
             this.label10.TabIndex = 9;
             this.label10.Text = "** The value in this report are all excluded subcon-out, unless the column with \"" +
     "included subcon-out\".";
@@ -253,9 +255,30 @@
             this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label10.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(96, 195);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 106;
+            // 
+            // labelM
+            // 
+            this.labelM.Location = new System.Drawing.Point(13, 195);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(80, 23);
+            this.labelM.TabIndex = 107;
+            this.labelM.Text = "M";
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(443, 355);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.labelM);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.comboOrderBy);
             this.Controls.Add(this.comboFactory);
@@ -302,6 +325,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -328,5 +353,7 @@
         private Win.UI.ComboBox comboFactory;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label label10;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.Label labelM;
     }
 }
