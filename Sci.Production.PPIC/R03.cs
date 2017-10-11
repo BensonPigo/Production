@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
         string zone, mDivision, factory, subProcess;
         bool bulk, sample, material, forecast,hisOrder,artwork,pap,seperate,poCombo;
         DateTime? buyerDlv1, buyerDlv2, sciDlv1, sciDlv2, cutoff1, cutoff2, custRQS1, custRQS2, planDate1, planDate2, orderCfm1, orderCfm2;
-        DataTable printData, subprocessColumnName, orderArtworkData;
+        DataTable printData, subprocessColumnName,  orderArtworkData;
         decimal stdTMS; int subtrue = 0;
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -1019,13 +1019,123 @@ from (
                     #region 撈Order Subprocess資料
                     try
                     {
-                        MyUtility.Tool.ProcessWithDatatable(subprocessColumnName,
-                            "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno",
-                            @"
+                        StringBuilder sqlcmd_sub = new StringBuilder();
+                        sqlcmd_sub.Append(@"
 with ArtworkData as (
     select * 
     from #tmp
-)
+),
+OrderID as(
+    select ID from orders O where 1 = 1 "
+);
+
+                        if (!MyUtility.Check.Empty(buyerDlv1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(buyerDlv2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDlv2).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(sciDlv1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDlv1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(sciDlv2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDlv2).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(cutoff1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(cutoff2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(custRQS1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(custRQS1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(custRQS2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(custRQS2).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(planDate1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(planDate1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(planDate2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(planDate2).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(orderCfm1))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(orderCfm1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(orderCfm2))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(orderCfm2).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(style))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.StyleID = '{0}'", style));
+                        }
+                        if (!MyUtility.Check.Empty(season))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.SeasonID = '{0}'", season));
+                        }
+                        if (!MyUtility.Check.Empty(brand))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                        }
+                        if (!MyUtility.Check.Empty(custcd))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.CustCDID = '{0}'", custcd));
+                        }
+                        if (!MyUtility.Check.Empty(mDivision))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+                        }
+                        if (!MyUtility.Check.Empty(factory))
+                        {
+                            sqlcmd_sub.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+                        }
+                        if (!hisOrder)
+                        {
+                            sqlcmd_sub.Append(" and o.Finished = 0");
+                        }
+                        if ((bulk || sample || material || forecast))
+                        {
+                            sqlcmd_sub.Append(" and (1=0");
+                            if (bulk)
+                            {
+                                sqlcmd_sub.Append(" or o.Category = 'B'");
+                            }
+                            if (sample)
+                            {
+                                sqlcmd_sub.Append(" or o.Category = 'S'");
+                            }
+                            if (material)
+                            {
+                                sqlcmd_sub.Append(" or o.Category = 'M'");
+                            }
+                            //如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
+                            if (forecast && !seperate)
+                            {
+                                sqlcmd_sub.Append(" or o.Category = ''");
+                            }
+                            sqlcmd_sub.Append(")");
+                        }
+
+                        //forcast 另外出在excel的最下方，因為會與Separate條件衝突，所以另外處理
+                        if (forecast)
+                        {
+                            sqlcmd_sub.Append(" and o.Category = ''");
+                        }
+
+                        sqlcmd_sub.Append(@" )
 select  ot.ID
         , ot.ArtworkTypeID
         , ot.ArtworkUnit
@@ -1051,7 +1161,13 @@ left join ArtworkData a1 on a1.FakeID = ot.Seq+'U2'
 left join ArtworkData a2 on a2.FakeID = ot.Seq
 left join ArtworkData a3 on a3.FakeID = 'T'+ot.Seq+'U1' 
 left join ArtworkData a4 on a4.FakeID = 'T'+ot.Seq+'U2'
-left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
+left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from OrderID where ot.ID = OrderID.ID )");
+                        MyUtility.Tool.ProcessWithDatatable(subprocessColumnName,
+                            "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno", sqlcmd_sub.ToString()
+                            , out orderArtworkData);
+
+       
+
                     }
                     catch (Exception ex)
                     {
@@ -1116,8 +1232,21 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             object[,] objArray = new object[1, lastCol];
            
             string KPIChangeReasonName;  //CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
+            
+            excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
             foreach (DataRow dr in printData.Rows)
             {
+                //EMBROIDERY 如果Qty price都是0該筆資料不show
+                if (orderArtworkData.Rows.Count > 0) {
+                    DataRow[] find_subprocess = orderArtworkData.Select(string.Format("ID = '{0}' and ArtworkTypeID = '{1}' and (Price > 0 or Qty > 0)", MyUtility.Convert.GetString(dr["ID"]), subProcess));
+                    if (find_subprocess.Length == 0)
+                    {
+                        continue;
+                    }
+                }
+                
+                   
+
                 #region 填固定欄位資料
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
@@ -1321,9 +1450,11 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191))))); //底色
                 worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
                 intRowsStart++;
+
+
             }
             subtrue = 0;
-            excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
+            
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R03_PPICMasterList");
