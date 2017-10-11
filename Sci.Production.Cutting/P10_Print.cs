@@ -139,7 +139,7 @@ outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
 	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.POID
+		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
 		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
 		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
 		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
@@ -213,7 +213,7 @@ outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
 	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.POID
+		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
 		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
 		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
 		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
@@ -313,7 +313,7 @@ outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
 	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.POID
+		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
 		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
 		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
 		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
@@ -390,7 +390,7 @@ outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
 	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.POID
+		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
 		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
 		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
 		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
