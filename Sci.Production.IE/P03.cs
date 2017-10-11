@@ -109,6 +109,7 @@ order by ld.No, ld.GroupKey", masterID);
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         dr["Cycle"] = 0;
+                        dr["Efficiency"] = 0;
                     }
                     else
                     {
@@ -117,6 +118,7 @@ order by ld.No, ld.GroupKey", masterID);
                             if (MyUtility.Convert.GetDecimal(e.FormattedValue) < 0)
                             {
                                 dr["Cycle"] = 0;
+                                dr["Efficiency"] = 0;
                                 MyUtility.Msg.WarningBox("Cycle time can't less than 0!!");
                             }
                             else
@@ -128,22 +130,28 @@ order by ld.No, ld.GroupKey", masterID);
                                 }
                                 else
                                 {
-                                   dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                                   string c = dr["Cycle"].ToString();
-                                  DataTable EffData;
-                                  string Eff = string.Format(@"
-                                            select ld.*,o.DescEN as Description,e.Name as EmployeeName,
-                                                    e.Skill as EmployeeSkill,
-                                                    iif(ld.Cycle = 0,0,ROUND(ld.GSD/'{1}',2)*100) as Efficiency
-                                            from LineMapping_Detail ld WITH (NOLOCK) 
-                                            left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-                                            left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-                                            where ld.ID = '{0}' and ld.No='{2}' and ld.Annotation='{3}' 
-                                                  and ld.GroupKey='{4}' and ld.OperationID='{5}' 
-                                            order by ld.No,ld.GroupKey", dr["ID"], c, dr["No"], dr["Annotation"], dr["GroupKey"], dr["OperationID"]);
-                                  DualResult result = DBProxy.Current.Select(null, Eff, out EffData);
-                                  dr["Efficiency"] = EffData.Rows[0]["Efficiency"];    
+                                    dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
+
+                                    //string c = dr["Cycle"].ToString();
+                                    //DataTable EffData;
+                                    //string Eff = string.Format(@"
+                                    //        select ld.*,o.DescEN as Description,e.Name as EmployeeName,
+                                    //                e.Skill as EmployeeSkill,
+                                    //                iif(ld.Cycle = 0,0,ROUND(ld.GSD/'{1}',2)*100) as Efficiency
+                                    //        from LineMapping_Detail ld WITH (NOLOCK) 
+                                    //        left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+                                    //        left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+                                    //        where ld.ID = '{0}' and ld.No='{2}' and ld.Annotation='{3}' 
+                                    //              and ld.GroupKey='{4}' and ld.OperationID='{5}' 
+                                    //        order by ld.No,ld.GroupKey", dr["ID"], c, dr["No"], dr["Annotation"], dr["GroupKey"], dr["OperationID"]);
+                                    //DualResult result = DBProxy.Current.Select(null, Eff, out EffData);
+
+                                    //dr["Efficiency"] = EffData.Rows[0]["Efficiency"];
+
+                                    
+
                                 }
+                                dr["Efficiency"] = Math.Round(MyUtility.Convert.GetDecimal(dr["GSD"]) / MyUtility.Convert.GetDecimal(dr["Cycle"]), 2) * 100;
                             }
                         }
                     }
