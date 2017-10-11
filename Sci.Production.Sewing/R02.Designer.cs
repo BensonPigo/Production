@@ -108,7 +108,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 192);
+            this.labelFactory.Location = new System.Drawing.Point(13, 231);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
             this.labelFactory.TabIndex = 99;
@@ -225,7 +225,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(97, 192);
+            this.comboFactory.Location = new System.Drawing.Point(97, 231);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(65, 24);
             this.comboFactory.TabIndex = 7;
@@ -261,14 +261,14 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(96, 230);
+            this.comboM.Location = new System.Drawing.Point(96, 195);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(66, 24);
             this.comboM.TabIndex = 106;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 230);
+            this.labelM.Location = new System.Drawing.Point(13, 195);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(80, 23);
             this.labelM.TabIndex = 107;

@@ -710,18 +710,25 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             {
                 sqlCmd.Append(string.Format(" and f.id= '{0}'",factory));
             }
+            if (mDivision!="")
+            {
+                sqlCmd.Append(string.Format(" and f.MDivisionID = '{0}'", mDivision));
+            }
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out vphData);
             if (!result)
             {
                 failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
             }
-            foreach (DataRow dr in vphData.Rows)
+            if (factory != "")
             {
-                if (dr["ActiveManpower"].Empty())
+                foreach (DataRow dr in vphData.Rows)
                 {
-                    failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
-                    return failResult;
+                    if (dr["ActiveManpower"].Empty())
+                    {
+                        failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
+                        return failResult;
+                    }
                 }
             }
             return Result.True;
