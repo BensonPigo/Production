@@ -37,6 +37,20 @@ namespace Sci.Production.Shipping
             btn.Size = new Size(120, 30);//預設是(80,30)
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
             this.grid.Columns[0].Visible = false;
+            //新增Import From Batch按鈕
+            Sci.Win.UI.Button btn2 = new Sci.Win.UI.Button();
+            btn2.Text = "Batch Import";
+            btn2.Click += Btn2_Click;
+            browsetop.Controls.Add(btn2);
+            btn2.Size = new Size(120, 30);//預設是(80,30)
+        }
+
+        private void Btn2_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Shipping.B42_BatchImport callNextForm = new Sci.Production.Shipping.B42_BatchImport();
+            DialogResult result = callNextForm.ShowDialog(this);
+
+            ReloadDatas();
         }
 
         //Batch Create按鈕的Click事件
