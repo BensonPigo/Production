@@ -1046,10 +1046,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
 				        , ''
                         , ( SELECT   Concat(stock7X.value
                                             , char(10)
-                                            , 'Ref#'
-                                            , fbr.Refno
-                                            , char(10)
-                                            , Description
+                                            , rtrim( fbr.DescDetail)
                                             , char(10)
                                             , char(10)
                                             , (Select concat(ID, '-', Name) from Color WITH (NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
