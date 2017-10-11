@@ -183,12 +183,11 @@ select  s.OutputDate
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId and o.Category != 'G'
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 											 and sl.Location = sd.ComboType
-where s.OutputDate between '{0}' and '{1}'
-      and o.Category != 'G'"
+where s.OutputDate between '{0}' and '{1}'"
                 , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
             {
@@ -612,12 +611,11 @@ tmpAllSubprocess as(
 		   , Price = Round(sum(a.QAQty) * ot.Price * (isnull(sl.Rate, 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-			and ot.Price > 0
-		    and o.Category != 'G'
+			and ot.Price > 0		    
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, sl.Rate
 )
 select ArtworkTypeID = t1.ID
