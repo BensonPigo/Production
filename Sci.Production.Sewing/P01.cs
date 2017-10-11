@@ -22,7 +22,7 @@ namespace Sci.Production.Sewing
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();        
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         private DateTime systemLockDate;
         private decimal? oldttlqaqty;
         public P01(ToolStripMenuItem menuitem)
@@ -41,20 +41,38 @@ namespace Sci.Production.Sewing
                 {
                     this.OnDetailGridInsert();
                 }
-            };
+            };                    
+        }
 
-            detailgrid.RowsRemoved += (s, e) =>
+        protected override void OnDetailGridDelete()
+        {
+            if (CurrentDetailData["AutoCreate"].EqualString("True"))
+            {
+                MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
+                return;
+            }
+            base.OnDetailGridDelete();
+
+            if (this.EditMode && this.detailgridbs.DataSource != null)
             {
                 //重新計算表頭 QAQty, InlineQty, DefectQty
-                if (this.detailgridbs.DataSource != null)
+                if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("False")))
                 {
-                    CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
+                    CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                     && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", "");
                     CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
-                    CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(DefectQty)", "");
+                    CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                         && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(DefectQty)", "");
                 }
-            };
+                else
+                {
+                    CurrentMaintain["QAQty"] = 0;
+                    CurrentMaintain["InlineQty"] = 0;
+                    CurrentMaintain["DefectQty"] = 0;
+                }
+            }
         }
-        
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -70,7 +88,6 @@ select  sd.*
         , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
         , [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
-        , [isAutoCreate] = iif (sd.AutoCreate = 1, 'Y', '')
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
@@ -117,10 +134,10 @@ where sd.ID = '{0}'"
 	where SewingOutput_DetailUKey = '{0}'
 	and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
 )
-select a.*,
-[Variance] = a.OrderQty-a.AccumQty, 
-[BalQty] = a.OrderQty-a.AccumQty-a.QAQty,
-[Seq] = isnull(os.Seq,0)
+select  a.*
+        , [Variance] = a.OrderQty-a.AccumQty
+        , [BalQty] = a.OrderQty-a.AccumQty-a.QAQty
+        , [Seq] = isnull(os.Seq,0)
 from AllQty a
 left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
@@ -133,18 +150,18 @@ order by a.OrderId,os.Seq"
         {
             base.OnDetailGridSetup();
             qaoutput.CellMouseDoubleClick += (s, e) =>
-                {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                    {
-                        OpenSubDetailPage();
-                    }
-                };
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {  
+                    OpenSubDetailPage();
+                }
+            };
             #region SP#的Right click & Validating
             orderid.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    if (this.EditMode)
+                    if (this.EditMode && CurrentDetailData["AutoCreate"].EqualString("False"))
                     {
                         if (e.RowIndex != -1)
                         {
@@ -152,9 +169,11 @@ order by a.OrderId,os.Seq"
                             string sqlCmd = string.Format(@"
 select distinct ss.OrderID 
 from SewingSchedule ss WITH (NOLOCK) 
+inner join Orders o With (NoLock) on ss.OrderID = o.ID
 where   ss.FactoryID = '{0}' 
         and ss.SewingLineID = '{1}' 
-        and ss.OrderFinished = 0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
+        and ss.OrderFinished = 0
+		and o.Category != 'G'", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -207,6 +226,7 @@ from Orders o WITH (NOLOCK)
 inner join Factory f on o.FactoryID = f.ID
 where   o.FtyGroup = @factoryid 
         and o.ID = @id
+		and o.Category != 'G'
         and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
                         if (!result || OrdersData.Rows.Count <= 0)
@@ -304,7 +324,7 @@ where   o.FtyGroup = @factoryid
                 {
                     if (this.EditMode)
                     {
-                        if (e.RowIndex != -1)
+                        if (e.RowIndex != -1 && CurrentDetailData["AutoCreate"].EqualString("False"))
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
@@ -338,7 +358,7 @@ where   o.FtyGroup = @factoryid
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    if (this.EditMode)
+                    if (this.EditMode && CurrentDetailData["AutoCreate"].EqualString("False"))
                     {
                         if (e.RowIndex != -1)
                         {
@@ -442,21 +462,59 @@ where   o.FtyGroup = @factoryid
             };
             #endregion
 
+            Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
+            Ict.Win.UI.DataGridViewTextBoxColumn textArticleSetting;
+            Ict.Win.UI.DataGridViewNumericBoxColumn numInLineQtySetting;
+            Ict.Win.UI.DataGridViewNumericBoxColumn numWorkHourSetting;
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: orderid)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: orderid).Get(out textOrderIDSetting)
                 .Text("ComboType", header: "*", width: Widths.AnsiChars(1), iseditingreadonly: true, settings: combotype)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: article)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: article).Get(out textArticleSetting)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("QAOutput", header: "QA Output", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: qaoutput)
                 .Numeric("QAQty", header: "QA Ttl Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: inlineqty)
+                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: inlineqty).Get(out numInLineQtySetting)
                 .Numeric("DefectQty", header: "Defect Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("WorkHour", header: "W’Hours", width: Widths.AnsiChars(5), decimal_places: 3, maximum: 999.999m, minimum: 0m)
+                .Numeric("WorkHour", header: "W’Hours", width: Widths.AnsiChars(5), decimal_places: 3, maximum: 999.999m, minimum: 0m).Get(out numWorkHourSetting)
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 //.Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true)
-                .Text("isAutoCreate", header: "Auto Create", iseditingreadonly: true);
+                .CheckBox("AutoCreate", header: "Auto Create", trueValue: 1, falseValue: 0, iseditable: false);
+
+            this.detailgrid.RowEnter += (s, e) =>
+            {
+                if (e.RowIndex < 0 || EditMode == false) { return; }
+                var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+                if (data == null) { return; }
+
+                bool isAutoCreate = data["AutoCreate"].EqualString("True");
+                textOrderIDSetting.IsEditingReadOnly = isAutoCreate;
+                textArticleSetting.IsEditingReadOnly = isAutoCreate;
+                numInLineQtySetting.IsEditingReadOnly = isAutoCreate;
+                numWorkHourSetting.IsEditingReadOnly = isAutoCreate;
+
+                DoSubForm.IsSupportDelete = !isAutoCreate;
+                DoSubForm.IsSupportUpdate = !isAutoCreate;
+                DoSubForm.IsSupportNew = !isAutoCreate;
+            };
+
+            this.detailgrid.RowsAdded += (s, e) =>
+            {
+                if(EditMode == false || e.RowIndex < 0) return;
+                
+                int index = e.RowIndex;
+                for (int i = 0; i < e.RowCount; i++)
+                {
+                    DataGridViewRow dr = detailgrid.Rows[index];
+                    bool isAutoCreate = dr.Cells["AutoCreate"].Value.EqualString("True");
+                    dr.Cells["OrderID"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    dr.Cells["Article"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    dr.Cells["InlineQty"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    dr.Cells["WorkHour"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    index++;
+                }
+            };
         }
 
         //設定表身RFT的預設值
@@ -464,6 +522,7 @@ where   o.FtyGroup = @factoryid
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["Rft"] = "0.00%";
+            CurrentDetailData["AutoCreate"] = 0;
             
         }
        
@@ -671,6 +730,7 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
             CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1);
             CurrentMaintain["Shift"] = "D";
             CurrentMaintain["Team"] = "A";
+            CurrentDetailData["AutoCreate"] = 0;
             CurrentDetailData["RFT"] = "0.00%";
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             
@@ -749,6 +809,14 @@ have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToStr
                 return false;
             }
             #endregion
+
+            #region 若表身擁有 AutoCreate 的資料，則不可刪除
+            if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("True")))
+            {
+                MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
+                return false;
+            }
+            #endregion  
 
             //第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
             string sqlcmdD ="Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
@@ -850,7 +918,17 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             decimal gridWHours = 0;//加總表身W/Hours
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "WorkHour,QAQty,InlineQty,DefectQty,OrderID,ComboType,Article", "select isnull(sum(WorkHour),0) as sumWorkHour,isnull(sum(QAQty),0) as sumQaqty,isnull(sum(InlineQty),0) as sumInlineQty,isnull(sum(DefectQty),0) as sumDefectQty from #tmp where (OrderID <> '' or OrderID is not null) and (ComboType <> '' or ComboType is not null) and (Article <> '' or Article is not null)", out SumQty, "#tmp");
+                string strSumQty = @"
+select isnull(sum(WorkHour),0) as sumWorkHour
+       , isnull(sum(QAQty),0) as sumQaqty
+       , isnull(sum(InlineQty),0) as sumInlineQty
+       , isnull(sum(DefectQty),0) as sumDefectQty 
+from #tmp 
+where (OrderID <> '' or OrderID is not null) 
+      and (ComboType <> '' or ComboType is not null) 
+      and (Article <> '' or Article is not null)
+      and Convert (bit, AutoCreate) != 1";
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "WorkHour,QAQty,InlineQty,DefectQty,OrderID,ComboType,Article,AutoCreate", strSumQty, out SumQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -899,7 +977,8 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                 }
                 else
                 {
-                    gridTms = gridTms + (MyUtility.Convert.GetDecimal(dr["TMS"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) / MyUtility.Convert.GetDecimal(gridQaQty));
+                    if (dr["AutoCreate"].EqualString("False"))
+                        gridTms = gridTms + (MyUtility.Convert.GetDecimal(dr["TMS"]) * MyUtility.Convert.GetDecimal(dr["QAQty"]) / MyUtility.Convert.GetDecimal(gridQaQty));
                 }
                 recCnt += 1;
                 //填入HourlyStandardOutput
@@ -955,38 +1034,74 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             }
             #endregion
 
-            #region 產出數量不能小於已出貨的數量
-            DataTable dtCheckQty;
-            if (!MyUtility.Check.Empty(dtQACheck) && dtQACheck.Rows.Count> 0)
+            DataTable dtSubDetail = null;
+            foreach (DataRow dr in DetailDatas)
             {
-               
-                MyUtility.Tool.ProcessWithDatatable(dtQACheck, 
-                    "OrderID,Article,SizeCode,QAQty",
-@" SELECT * 
-FROM   (SELECT ( t.qaqty )    AS SewQty, 
-               (pack.PackQty) AS PackQty, 
-               t.orderid, 
-               t.article, 
-               t.sizecode 
-        FROM   #tmp t 
-		outer apply
-		(
-			select Sum(b.shipqty) AS PackQty
-			from PackingList a
-			inner join PackingList_Detail b on a.ID=b.ID
-			where b.OrderID=t.OrderId
-			and b.Article=t.Article and b.SizeCode=t.SizeCode
-			and a.Status= 'Confirmed'
-		) pack
-       ) a 
-WHERE  sewqty < packqty ", out dtCheckQty);
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    DataTable subDt;
+                    GetSubDetailDatas(dr, out subDt);
+                    subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
+                    subDt.Columns.Add("AutoCreate");
+                    if (dtSubDetail == null) dtSubDetail = subDt.Clone();
+
+                    foreach (DataRow subDr in subDt.Rows)
+                    {
+                        subDr["AutoCreate"] = dr["AutoCreate"];
+                        dtSubDetail.ImportRow(subDr);
+                    }
+                }
+            }
+
+            #region 產出數量不能小於已出貨的數量
+            DualResult resultCheckQty;
+            DataTable dtCheckQty;
+            
+            if (!MyUtility.Check.Empty(dtSubDetail) && dtSubDetail.Rows.Count> 0)
+            {
+                string strCheckQty = @" 
+SELECT * 
+FROM   (
+    SELECT SewQty = t.AccumQty + t.qaqty 
+           , PackQty = pack.PackQty
+           , t.orderid
+           , t.ComboType
+           , t.article
+           , t.sizecode 
+    FROM   #tmp t 
+	outer apply
+	(
+		select Sum(b.shipqty) AS PackQty
+		from PackingList a
+		inner join PackingList_Detail b on a.ID=b.ID
+		where b.OrderID=t.OrderId
+		      and b.Article = t.Article 
+              and b.SizeCode = t.SizeCode
+		      and a.Status= 'Confirmed'
+	) pack
+    where Convert (bit, t.AutoCreate) != 1
+) a 
+WHERE  sewqty < packqty ";
+
+                resultCheckQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckQty, out dtCheckQty);
                 string error = "";
-                if (!MyUtility.Check.Empty(dtCheckQty) || dtCheckQty.Rows.Count>0)
+
+                if (resultCheckQty == false)
+                {
+                    MyUtility.Msg.WarningBox(resultCheckQty.ToString());
+                    return false;
+                }
+                else if (dtCheckQty != null && dtCheckQty.Rows.Count > 0)
                 {
                     for (int i = 0; i < dtCheckQty.Rows.Count; i++)
                     {
-                        error = error + string.Format(@"Order: <{0}> Article: <{1}> Size: <{2}> 
-QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["SizeCode"].ToString(), dtCheckQty.Rows[i]["SewQty"].ToString(), dtCheckQty.Rows[i]["PackQty"].ToString()) + Environment.NewLine;
+                        error = error + string.Format(@"
+Order: <{0}> ComboType: <{1}> Article: <{2}> Size: <{3}> QAQty: <{4}>  less than ShipQty: <{5}>", dtCheckQty.Rows[i]["Orderid"].ToString()
+                                       , dtCheckQty.Rows[i]["ComboType"].ToString()
+                                       , dtCheckQty.Rows[i]["Article"].ToString()
+                                       , dtCheckQty.Rows[i]["SizeCode"].ToString()
+                                       , dtCheckQty.Rows[i]["SewQty"].ToString()
+                                       , dtCheckQty.Rows[i]["PackQty"].ToString());
                     }
 
                     if (!MyUtility.Check.Empty(error.ToString()))
@@ -996,6 +1111,72 @@ QAQty: <{3}>  less than ShipQty: <{4}>", dtCheckQty.Rows[i]["Orderid"].ToString(
                     }
                 }
                 
+            }
+            #endregion
+
+            #region 確認子單數量加總不會超過母單數量
+            DualResult resultCheckSubOutputQty;
+            DataTable dtCheckSubOutputQty;
+            string strCheckSubOutputQty = @"
+select Child.*
+	   , MotherQaQty = isnull (Mother.MotherQaQty, 0)
+from (
+	select #tmp.ComboType
+		   , #tmp.Article
+		   , #tmp.SizeCode
+		   , ChildQaQty = sum (#tmp.QAQty)
+	from #tmp
+	where Convert (bit, #tmp.AutoCreate) = 1
+	group by #tmp.ComboType, #tmp.Article, #tmp.SizeCode
+) Child
+left join (
+	select #tmp.OrderId, #tmp.ComboType
+		   , #tmp.Article
+		   , #tmp.SizeCode
+		   , MotherQaQty = sum (#tmp.QAQty)
+	from #tmp
+	where exists (select 1 
+				  from #tmp ToSPTmp
+				  inner join Order_Qty_Garment OQG on ToSPTmp.OrderId = OQG.ID
+													  and ToSPTmp.Article = OQG.Article
+													  and ToSPTmp.SizeCode = OQG.SizeCode
+				  inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
+				  inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
+												  and ToSPTmp.ComboType = SL.Location
+				  where Convert (bit, ToSPTmp.AutoCreate) = 1
+						and OQG.OrderIDFrom = #tmp.OrderId)
+	group by #tmp.OrderId,#tmp.ComboType, #tmp.Article, #tmp.SizeCode
+) Mother on Child.ComboType = Mother.ComboType
+			and Child.Article = Mother.Article
+			and Child.SizeCode = Mother.SizeCode
+where ChildQaQty > isnull (MotherQaQty, 0)";
+
+            resultCheckSubOutputQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckSubOutputQty, out dtCheckSubOutputQty);
+
+            if (resultCheckSubOutputQty == false)
+            {
+                MyUtility.Msg.WarningBox(resultCheckSubOutputQty.ToString());
+                return false;
+            }
+            else if (dtCheckSubOutputQty != null && dtCheckSubOutputQty.Rows.Count > 0)
+            {
+                StringBuilder errMsg = new StringBuilder();
+                for (int i = 0; i < dtCheckSubOutputQty.Rows.Count; i++)
+                {
+                    errMsg.Append(string.Format(@"
+FromSP ComboType: <{0}> Article: <{1}> Size: <{2}> 
+QAQty: <{3}>  less than AutoCreate Items QAQty: <{4}>", dtCheckSubOutputQty.Rows[i]["ComboType"].ToString()
+                                                , dtCheckSubOutputQty.Rows[i]["Article"].ToString()
+                                                , dtCheckSubOutputQty.Rows[i]["SizeCode"].ToString()
+                                                , dtCheckSubOutputQty.Rows[i]["MotherQaQty"].ToString()
+                                                , dtCheckSubOutputQty.Rows[i]["ChildQaQty"].ToString()));
+                }
+
+                if (errMsg.ToString().Empty() == false)
+                {
+                    MyUtility.Msg.WarningBox(errMsg.ToString());
+                    return false;
+                }
             }
             #endregion
 
@@ -1205,7 +1386,12 @@ where not exists (select 1
             DataTable SumQaQty;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp", out SumQaQty, "#tmp");
+                string strSumQaQty = @"
+select sumQaqty = isnull(sum(QAQty*TMS),0)
+       , RecCnt = isnull(count(QAQty),0)
+from #tmp
+where Convert (bit, AutoCreate) != 1";
+                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID,AutoCreate", strSumQaQty, out SumQaQty, "#tmp");
             }
             catch (Exception ex)
             {
@@ -1227,7 +1413,11 @@ where not exists (select 1
                 recCnt = recCnt - 1;
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (recCnt == 0)
+                    if (dr["AutoCreate"].EqualString("True"))
+                    {
+                        dr["WorkHour"] = 0;
+                    }
+                    else if (recCnt == 0)
                     {
                         dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
                     }
