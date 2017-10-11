@@ -612,48 +612,115 @@ namespace Sci.Production.Shipping
             {
                 if (localPurchase)
                 {
-                    sqlCmd = string.Format(@"select e.ID,ed.POID,'' as Seq1, '' as Seq2,IIF(ed.UnitID = 'CONE',li.MeterToCone,1)*ed.Qty as OriImportQty,IIF(ed.UnitID = 'CONE','M',ed.UnitID) as OriUnit,
-ed.RefNo as SCIRefno,ed.RefNo,'' as BrandID,ed.MtlTypeID as Type,li.Description,'' as DescDetail,
-isnull(li.NLCode,'') as NLCode,isnull(li.HSCode,'') as HSCode,isnull(li.CustomsUnit,'') as CustomsUnit,
-isnull(li.PcsLength,0.0) as PcsLength,isnull(li.PcsWidth,0.0) as PcsWidth,isnull(li.PcsKg,0.0) as PcsKg,
-isnull(li.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate,
-'01' as POSeq
+                    sqlCmd = string.Format(@"
+select e.ID
+	   , ed.POID
+	   , Seq1 = ''
+	   , Seq2 = '' 
+	   , OriImportQty = IIF(ed.UnitID = 'CONE', li.MeterToCone, 1) * ed.Qty 
+	   , OriUnit = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID)
+	   , SCIRefno = ed.RefNo
+	   , ed.RefNo
+	   , BrandID = ''
+	   , Type = ed.MtlTypeID
+	   , li.Description
+	   , DescDetail = ''
+	   , NLCode = isnull(li.NLCode,'')
+	   , HSCode = isnull(li.HSCode,'')
+	   , CustomsUnit = isnull(li.CustomsUnit,'')
+	   , PcsLength = isnull(li.PcsLength,0.0) 
+	   , PcsWidth = isnull(li.PcsWidth,0.0) 
+	   , PcsKg = isnull(li.PcsKg,0.0) 
+	   , NoDeclare = isnull(li.NoDeclare,0)
+	   , ed.Price
+	   , UnitRate = isnull((select Rate 
+	   						from Unit_Rate WITH (NOLOCK) 
+	   						where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+								  and UnitTo = li.CustomsUnit),'') 
+	   , M2UnitRate = isnull((select Rate 
+	   						  from Unit_Rate WITH (NOLOCK) 
+	   						  where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+	   						  		and UnitTo = 'M'),'') 
+	   , POSeq = '01'
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
+										and li.LocalSuppid = ed.SuppID
 where {0}", sqlWhere);
                 }
                 else
                 {
-                    sqlCmd = string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.SCIRefno,'') as SCIRefno,isnull(f.Refno,'') as Refno,isnull(f.BrandID,'') as BrandID,
-isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,isnull(f.DescDetail,'') as DescDetail,
-isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
-isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
-isnull(f.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
-isnull(psd.Seq1,'') as POSeq
+                    sqlCmd = string.Format(@"
+select e.ID
+	   , ed.PoID
+	   , ed.Seq1
+	   , ed.Seq2
+	   , OriImportQty = ed.qty 
+	   , OriUnit = ed.UnitId 
+	   , SCIRefno = isnull(f.SCIRefno, '') 
+	   , Refno = isnull(f.Refno, '') 
+	   , BrandID = isnull(f.BrandID, '')
+	   , Type = isnull(f.Type, '') 
+	   , Description = isnull(f.Description, '') 
+	   , DescDetail = isnull(f.DescDetail, '') 
+	   , NLCode = isnull(f.NLCode, '') 
+	   , HSCode = isnull(f.HSCode, '') 
+	   , CustomsUnit = isnull(f.CustomsUnit, '') 
+	   , PcsLength = isnull(f.PcsLength, 0.0) 
+	   , PcsWidth = isnull(f.PcsWidth, 0.0) 
+	   , PcsKg = isnull(f.PcsKg, 0.0) 
+	   , NoDeclare = isnull(f.NoDeclare, 0) 
+	   , ed.Price
+	   , UnitRate = isnull((select Rate 
+	   						from Unit_Rate WITH (NOLOCK) 
+	   						where UnitFrom = ed.UnitId 
+	   							  and UnitTo = f.CustomsUnit), '') 
+	   , M2UnitRate = isnull((select Rate 
+	   						  from Unit_Rate WITH (NOLOCK) 
+	   						  where UnitFrom = ed.UnitId 
+	   						  		and UnitTo = 'M'), '') 
+	   , POSeq = isnull(psd.Seq1, '') 
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
+										  	  and psd.SEQ1 = ed.Seq1 
+										  	  and psd.SEQ2 = ed.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where {0}", sqlWhere);
                 }
             }
             else
             {
-                sqlCmd = string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty+ed.Foc as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.SCIRefno,'') as SCIRefno,isnull(f.Refno,'') as Refno,isnull(f.BrandID,'') as BrandID,
-isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,isnull(f.DescDetail,'') as DescDetail,
-isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
-isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
-isnull(f.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
-isnull(psd.Seq1,'') as POSeq
+                sqlCmd = string.Format(@"
+select e.ID
+	   , ed.PoID
+	   , ed.Seq1
+	   , ed.Seq2
+	   , OriImportQty = ed.qty + ed.Foc 
+	   , OriUnit = ed.UnitId
+	   , SCIRefno = isnull(f.SCIRefno, '')
+	   , Refno = isnull(f.Refno, '') 
+	   , BrandID = isnull(f.BrandID, '') 
+	   , Type = isnull(f.Type, '') 
+	   , Description = isnull(f.Description, '') 
+	   , DescDetail = isnull(f.DescDetail, '') 
+	   , NLCode = isnull(f.NLCode, '') 
+	   , HSCode = isnull(f.HSCode, '') 
+	   , CustomsUnit = isnull(f.CustomsUnit, '') 
+	   , PcsLength = isnull(f.PcsLength, 0.0) 
+	   , PcsWidth = isnull(f.PcsWidth, 0.0) 
+	   , PcsKg = isnull(f.PcsKg, 0.0) 
+	   , NoDeclare = isnull(f.NoDeclare, 0) 
+	   , ed.Price
+	   , UnitRate = isnull((select Rate 
+	   						from Unit_Rate WITH (NOLOCK) 
+	   						where UnitFrom = ed.UnitId 
+	   							  and UnitTo = f.CustomsUnit), '') 
+	   , M2UnitRate = isnull((select Rate 
+	   						  from Unit_Rate WITH (NOLOCK) 
+	   						  where UnitFrom = ed.UnitId 
+	   						  		and UnitTo = 'M'), '') 
+	   , POSeq = isnull(psd.Seq1, '') 
 from Export e WITH (NOLOCK) 
 inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
@@ -718,9 +785,8 @@ where {0}", sqlWhere);
                 }
                 if ((MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
                     (MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Check.Empty(dr["UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) != "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) != "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && MyUtility.Check.Empty(dr["UnitRate"])) ||
-                    (MyUtility.Convert.GetString(dr["Type"]) != "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"])))
+                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && dr["PcsLength"].ToString().EqualDecimal(0)) ||
+                    (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"]) && dr["PcsLength"].ToString().EqualDecimal(0)))
                 {
                     DataRow[] findrow = UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     if (findrow.Length == 0)
@@ -747,74 +813,234 @@ where {0}", sqlWhere);
         private void CalaulateData(string sqlWhere)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"with ExportDetail
-as (
+            sqlCmd.Append(@"
+with ExportDetail as (
 ");
             #region 組撈資料Sql
             if (MyUtility.Convert.GetString(CurrentMaintain["IsFtyExport"]).ToUpper() == "TRUE")
             {
                 if (localPurchase)
                 {
-                    sqlCmd.Append(string.Format(@"select e.ID,ed.POID,'' as Seq1, '' as Seq2,IIF(ed.UnitID = 'CONE',li.MeterToCone,1)*ed.Qty as OriImportQty,IIF(ed.UnitID = 'CONE','M',ed.UnitID) as OriUnit,
-ed.MtlTypeID as Type,IIF(ed.UnitID = 'CONE',(ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate)))/li.MeterToCone,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate))) as Price,
-isnull(li.NLCode,'') as NLCode,isnull(li.HSCode,'') as HSCode,isnull(li.CustomsUnit,'') as CustomsUnit,
-isnull(li.PcsLength,0.0) as PcsLength,isnull(li.PcsWidth,0.0) as PcsWidth,isnull(li.PcsKg,0.0) as PcsKg,
-isnull(li.NoDeclare,0) as NoDeclare,0.0 as Width,
-isnull((select RateValue from dbo.View_Unitrate where FROM_U = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and TO_U = li.CustomsUnit),1) as RateValue,
-(select RateValue from dbo.View_Unitrate where FROM_U = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate
-from FtyExport e WITH (NOLOCK) 
-inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
-where {0}", sqlWhere));
+                    sqlCmd.Append(string.Format(@"
+    select e.ID
+	       , ed.POID
+	       , Seq1 = ''
+	       , Seq2 = '' 
+	       , OriImportQty = IIF(ed.UnitID = 'CONE', li.MeterToCone, 1) * ed.Qty 
+	       , OriUnit = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID)
+	       , Type = ed.MtlTypeID
+	       , Price = IIF(ed.UnitID = 'CONE',(ed.Price * (select Rate 
+	   												     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.AddDate)))
+	   											      / li.MeterToCone
+									       , ed.Price * (select Rate 
+									   				     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.AddDate)))
+	       , NLCode = isnull(li.NLCode, '') 
+	       , HSCode = isnull(li.HSCode, '')
+	       , CustomsUnit = isnull(li.CustomsUnit, '')
+	       , PcsLength = isnull(li.PcsLength, 0.0) 
+	       , PcsWidth = isnull(li.PcsWidth, 0.0) 
+	       , PcsKg = isnull(li.PcsKg, 0.0) 
+	       , NoDeclare = isnull(li.NoDeclare, 0)
+	       , Width = 0.0 
+	       , RateValue = isnull((select RateValue 
+	   						     from dbo.View_Unitrate 
+	   						     where FROM_U = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+					 			       and TO_U = li.CustomsUnit)
+							    , 1) 
+	       , M2RateValue = (select RateValue 
+	   					    from dbo.View_Unitrate 
+	   					    where FROM_U = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+   							      and TO_U = 'M') 
+	       , UnitRate = isnull((select Rate 
+	   						    from Unit_Rate WITH (NOLOCK) 
+	   						    where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+	   							      and UnitTo = li.CustomsUnit),'') 
+	       , M2UnitRate = isnull((select Rate 
+	   						      from Unit_Rate WITH (NOLOCK) 
+	   						      where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
+	   						  		    and UnitTo = 'M'),'')
+    from FtyExport e WITH (NOLOCK) 
+    inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+    left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
+										    and li.LocalSuppid = ed.SuppID
+    where {0}", sqlWhere));
                 }
                 else
                 {
-                    sqlCmd.Append(string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.Type,'') as Type,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.AddDate)) as Price,
-isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
-isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
-isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
-isnull((select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = f.CustomsUnit),1) as RateValue,
-(select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
-from FtyExport e WITH (NOLOCK) 
-inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-where {0}", sqlWhere));
+                    sqlCmd.Append(string.Format(@"
+    select e.ID
+	       , ed.PoID
+	       , ed.Seq1
+	       , ed.Seq2
+	       , OriImportQty = ed.qty 
+	       , OriUnit = ed.UnitId
+	       , Type = isnull(f.Type, '')
+	       , Price = ed.Price * (select Rate 
+	   						     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.AddDate))
+	       , NLCode = isnull(f.NLCode,'')
+	       , HSCode = isnull(f.HSCode,'') 
+	       , CustomsUnit = isnull(f.CustomsUnit,'') 
+	       , PcsLength = isnull(f.PcsLength, 0.0)
+	       , PcsWidth = isnull(f.PcsWidth, 0.0) 
+	       , PcsKg = isnull(f.PcsKg, 0.0)
+	       , NoDeclare = isnull(f.NoDeclare, 0) 
+	       , Width = isnull(f.Width, 0) 
+	       , RateValue = isnull((select RateValue 
+	   						     from dbo.View_Unitrate 
+	   						     where FROM_U = ed.UnitId 
+	   						 	       and TO_U = f.CustomsUnit)
+	   						    , 1) 
+	       , M2RateValue = (select RateValue 
+	   					    from dbo.View_Unitrate 
+	   					    where FROM_U = ed.UnitId 
+	   						      and TO_U = 'M') 
+	       , UnitRate = isnull((select Rate 
+	   						    from Unit_Rate WITH (NOLOCK) 
+	   						    where UnitFrom = ed.UnitId 
+	   							      and UnitTo = f.CustomsUnit), '')
+	       , M2UnitRate = isnull((select Rate 
+	   						      from Unit_Rate WITH (NOLOCK) 
+	   						      where UnitFrom = ed.UnitId 
+	   						  		    and UnitTo = 'M'),'') 
+    from FtyExport e WITH (NOLOCK) 
+    inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
+											      and psd.SEQ1 = ed.Seq1 
+											      and psd.SEQ2 = ed.Seq2
+    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    where {0}", sqlWhere));
                 }
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select e.ID,ed.PoID,ed.Seq1,ed.Seq2,ed.qty+ed.Foc as OriImportQty,ed.UnitId as OriUnit,
-isnull(f.Type,'') as Type,ed.Price*(select Rate from dbo.GetCurrencyRate('20',ed.CurrencyID,'USD',e.CloseDate)) as Price,
-isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
-isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
-isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
-isnull((select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = f.CustomsUnit),1) as RateValue,
-(select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
-from Export e WITH (NOLOCK) 
-inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-where {0}", sqlWhere));
+                sqlCmd.Append(string.Format(@"
+    select e.ID
+	       , ed.PoID
+	       , ed.Seq1
+	       , ed.Seq2
+	       , OriImportQty = ed.qty + ed.Foc
+	       , OriUnit = ed.UnitId
+	       , Type = isnull(f.Type,'')
+	       , Price = ed.Price * (select Rate 
+	   						     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.CloseDate)) 
+	       , NLCode = isnull(f.NLCode, '') 
+	       , HSCode = isnull(f.HSCode, '') 
+	       , CustomsUnit = isnull(f.CustomsUnit, '') 
+	       , PcsLength = isnull(f.PcsLength, 0.0) 
+	       , PcsWidth = isnull(f.PcsWidth, 0.0) 
+	       , PcsKg = isnull(f.PcsKg, 0.0)
+	       , NoDeclare = isnull(f.NoDeclare, 0)
+	       , Width = isnull(f.Width, 0)
+	       , RateValue = isnull((select RateValue 
+	   						     from dbo.View_Unitrate 
+	   						     where FROM_U = ed.UnitId 
+	   						 	       and TO_U = f.CustomsUnit)
+	   						    , 1) 
+	       , M2RateValue = (select RateValue 
+	   					    from dbo.View_Unitrate 
+	   					    where FROM_U = ed.UnitId 
+	   						      and TO_U = 'M') 
+	       , UnitRate = isnull((select Rate 
+	   						    from Unit_Rate WITH (NOLOCK) 
+	   						    where UnitFrom = ed.UnitId 
+   								      and UnitTo = f.CustomsUnit), '') 
+	       , M2UnitRate = isnull((select Rate 
+	   						      from Unit_Rate WITH (NOLOCK) 
+	   						      where UnitFrom = ed.UnitId 
+	   						  		    and UnitTo = 'M'), '') 
+    from Export e WITH (NOLOCK) 
+    inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
+											      and psd.SEQ1 = ed.Seq1 
+											      and psd.SEQ2 = ed.Seq2
+    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    where {0}", sqlWhere));
             }
             #endregion
             sqlCmd.Append(@"
+),
+NotInPo as (
+	select #tmp.POID 
+           , #tmp.Seq1 
+           , #tmp.Seq2
+           , #tmp.NLCode
+           , #tmp.HSCode
+	       , #tmp.CustomsUnit
+           , #tmp.Price
+		   , #tmp.Type
+           , #tmp.OriUnit
+           , #tmp.OriImportQty
+           , #tmp.Width
+           , #tmp.PcsWidth
+           , #tmp.PcsLength
+           , #tmp.PcsKg
+           , M2RateValue = M2RateValue.value
+           , RateValue = RateValue.value
+           , M2UnitRate = M2UnitRate.value
+           , UnitRate = UnitRate.value
+	from #tmp
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID 
+											    and psd.SEQ1 = #tmp.Seq1 
+											    and psd.SEQ2 = #tmp.Seq2
+    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    outer apply (
+        select value = (select RateValue 
+	   					from dbo.View_Unitrate 
+	   					where FROM_U = #tmp.OriUnit 
+	   						and TO_U = 'M') 
+    ) M2RateValue
+    outer apply (
+        select value = isnull((select RateValue 
+	   						   from dbo.View_Unitrate 
+	   						   where FROM_U = #tmp.OriUnit 
+	   						 	     and TO_U = f.CustomsUnit)
+	   						  , 1) 
+    ) RateValue
+    outer apply (
+        select value = isnull((select Rate 
+	   						   from Unit_Rate WITH (NOLOCK) 
+	   						   where UnitFrom = #tmp.OriUnit 
+	   						  	     and UnitTo = 'M'), '') 
+    ) M2UnitRate
+    outer apply (
+        select value = isnull((select Rate 
+	   						   from Unit_Rate WITH (NOLOCK) 
+	   						   where UnitFrom = #tmp.OriUnit 
+   								     and UnitTo = f.CustomsUnit), '') 
+    ) UnitRate
+	where #tmp.NoDeclare = 0
 )
-select NLCode,HSCode,CustomsUnit,sum(NewQty) as NewQty, sum(NewQty*Price) as Price from (
-select *,[dbo].getVNUnitTransfer(Type,OriUnit,CustomsUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
-from ExportDetail WITH (NOLOCK) 
-where NoDeclare = 0) a
-group by NLCode,HSCode,CustomsUnit");
+select NLCode
+	   , HSCode
+	   , CustomsUnit
+	   , sum(NewQty) as NewQty
+	   , sum(NewQty * Price) as Price 
+from (
+	select NLCode
+	       , HSCode
+	       , CustomsUnit
+           , Price
+		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
+    from ExportDetail WITH (NOLOCK) 
+    where NoDeclare = 0
+          and not exists (select 1
+                          from #tmp 
+                          where #tmp.Poid = ExportDetail.Poid
+                                and #tmp.seq1 = ExportDetail.seq1
+                                and #tmp.seq2 = ExportDetail.seq2)
+    
+    union all
+    select NLCode
+	       , HSCode
+	       , CustomsUnit
+           , Price
+		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
+    from NotInPo WITH (NOLOCK) 
+) a
+group by NLCode, HSCode, CustomsUnit");
 
             DataTable selectedData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectedData);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(NotInPO, null, sqlCmd.ToString(), out selectedData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Calculate fail!!\r\n"+result.ToString());
@@ -823,55 +1049,19 @@ group by NLCode,HSCode,CustomsUnit");
 
             // 將Not in po的資料加入
             DataTable GroupNoInPOData;
-            if (NotInPO.Rows.Count > 0)
-            {
-                try
-                {
-                    MyUtility.Tool.ProcessWithDatatable(NotInPO, @"NLCode,HSCode,CustomsUnit,Type,OriUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,NoDeclare,Price",
-                        @"select NLCode,HSCode,CustomsUnit,sum(NewQty) as NewQty, sum(Price*NewQty) as Price from (
-select *,[dbo].getVNUnitTransfer(Type,OriUnit,CustomsUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
-from #tmp
-where NoDeclare = 0) a
-group by NLCode,HSCode,CustomsUnit", out GroupNoInPOData);
-                }
-                catch (Exception ex)
-                {
-                    MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + ex.ToString());
-                    return;
-                }
-                if (GroupNoInPOData != null)
-                {
-                    foreach (DataRow dr in GroupNoInPOData.Rows)
-                    {
-                        DataRow[] findrow = selectedData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
-                        if (findrow.Length == 0)
-                        {
-                            DataRow newRow = selectedData.NewRow();
-                            newRow["NLCode"] = dr["NLCode"];
-                            newRow["HSCode"] = dr["HSCode"];
-                            newRow["CustomsUnit"] = dr["CustomsUnit"];
-                            newRow["NewQty"] = dr["NewQty"];
-                            newRow["Price"] = dr["Price"];
-                            selectedData.Rows.Add(newRow);
-                        }
-                        else
-                        {
-                            findrow[0]["NewQty"] = MyUtility.Convert.GetDecimal(findrow[0]["NewQty"]) + MyUtility.Convert.GetDecimal(dr["NewQty"]);
-                            findrow[0]["Price"] = MyUtility.Convert.GetDecimal(findrow[0]["Price"]) + MyUtility.Convert.GetDecimal(dr["Price"]);
-                        }
-                    }
-                    
-                }
-                
-            }
 
             //將資料做排序
             try
             {
                 MyUtility.Tool.ProcessWithDatatable(selectedData, @"NLCode,HSCode,CustomsUnit,NewQty,Price",
-                    @"select NLCode,HSCode,CustomsUnit,NewQty,Price/NewQty as Price
+                    @"
+select NLCode
+	   , HSCode
+	   , CustomsUnit
+	   , NewQty
+	   , Price = Price / NewQty
 from #tmp
-order by CONVERT(int,SUBSTRING(NLCode,3,3))", out GroupNoInPOData);
+order by CONVERT(int, SUBSTRING(NLCode, 3, 3))", out GroupNoInPOData);
             }
             catch (Exception ex)
             {

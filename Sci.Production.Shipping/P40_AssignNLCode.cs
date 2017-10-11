@@ -188,5 +188,10 @@ namespace Sci.Production.Shipping
 
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
