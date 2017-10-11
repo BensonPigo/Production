@@ -93,7 +93,7 @@ select  s.OutputDate
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId and o.CateGory != 'G'
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 														    and sl.Location = sd.ComboType
@@ -109,8 +109,7 @@ outer apply(
 		  and r.Team = s.Team
 ) as r
 where s.OutputDate = '{0}'
-	  and s.FactoryID = '{1}'
-      and o.CateGory != 'G'"
+	  and s.FactoryID = '{1}'"
                 , Convert.ToDateTime(_date).ToString("d"), _factory));
 
             if (!MyUtility.Check.Empty(_team))
@@ -170,10 +169,9 @@ inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID
 										   and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate 
 										   and s.FactoryID = t.FactoryID
 inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId and o.Category != 'G'
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
-      and o.Category != 'G'
+where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)    
 order by style, s.OutputDate
 
 select w.Hours
@@ -495,13 +493,12 @@ tmpAllSubprocess as (
 		   , Price = Round(sum(a.QAQty) * ot.Price * (isnull(sl.Rate, 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
 	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-		  and ot.Price > 0
-          and o.Category != 'G'
+		  and ot.Price > 0         
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, sl.Rate
 )
 select ArtworkTypeID
