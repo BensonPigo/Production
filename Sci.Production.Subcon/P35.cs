@@ -204,19 +204,38 @@ where lapd.id = '{0}'"
             }
 
             #region 加總明細金額至表頭
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
-            if (str == null || string.IsNullOrWhiteSpace(str))
-            {
+            //string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            //if (str == null || string.IsNullOrWhiteSpace(str))
+            //{
+            //    MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
+            //    return false;
+            //}
+            //int exact = int.Parse(str);
+            if (!get_exact()) {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
                 return false;
             }
-            int exact = int.Parse(str);
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(amount)", "");
             CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        string old_currencyID = "";
+        int exact = 2;
+        private bool get_exact() {
+            if (!old_currencyID.Equals(CurrentMaintain["currencyID"].ToString())) {
+                string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
+                if (str == null || string.IsNullOrWhiteSpace(str))
+                {
+                    return false;
+                }
+                exact = int.Parse(str);
+                old_currencyID = CurrentMaintain["currencyID"].ToString();
+            }
+            return true;
         }
 
         // grid 加工填值
@@ -245,7 +264,7 @@ where lapd.id = '{0}'"
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
                     numTotal.Text = amount.ToString();
                 }
-
+                get_exact();
                 decimal x = 0; decimal x1 = 0; decimal x2 = 0; decimal totalqty = 0;
                 foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
                 {
@@ -253,7 +272,8 @@ where lapd.id = '{0}'"
                     if (!MyUtility.Check.Empty(drr["Qty"].ToString()))
                         totalqty += (decimal)drr["Qty"];                  
                 }
-                x2 = x * (decimal)CurrentMaintain["VatRate"] / 100;
+                x = MyUtility.Math.Round(x, 2);
+                x2 = MyUtility.Math.Round(x * (decimal)CurrentMaintain["VatRate"] / 100, exact);
                 x1 += x + x2;
                 Console.WriteLine("get {0}", x);
                 numAmount.Text = x.ToString();
@@ -329,7 +349,7 @@ where lapd.id = '{0}'"
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6),settings:ns2)    //5
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true) //6
             .Numeric("price", header: "Price", width: Widths.AnsiChars(5), decimal_places: 4, integer_places: 4, iseditingreadonly: true)     //7
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //8
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 15, integer_places: 14)  //8
             .Numeric("inqty", header: "Accumulated" + Environment.NewLine + "Received Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //9
             .Numeric("apqty", header: "Accumulated" + Environment.NewLine + "Paid Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //10
             .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);    //11
