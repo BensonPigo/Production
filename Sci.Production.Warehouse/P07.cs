@@ -486,7 +486,7 @@ select  e.poid
         , eta = (SELECT eta from dbo.export WITH (NOLOCK) where id = e.id)
         , M.InQty
         , p.pounit
-        , p.StockUnit
+        , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
         , M.OutQty
         , M.AdjustQty
         , BalanceQty = M.inqty - M.OutQty + M.AdjustQty
