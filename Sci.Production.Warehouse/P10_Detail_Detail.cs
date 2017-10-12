@@ -55,33 +55,48 @@ namespace Sci.Production.Warehouse
             strSQLCmd.Append(string.Format(@"
 with cte as 
 (
-select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
-from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
-where poid='{0}' and Stocktype='B' and inqty-OutQty+AdjustQty > 0
-and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
-Group by Dyelot
+      select Dyelot
+             , sum(inqty-OutQty+AdjustQty) as GroupQty
+      from dbo.FtyInventory a WITH (NOLOCK) 
+      inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID 
+                                                       and p.seq1 = a.Seq1 
+                                                       and p.seq2 = a.Seq2
+      where poid = '{0}' 
+            and Stocktype = 'B' 
+            and inqty-OutQty+AdjustQty > 0
+            and p.SCIRefno = '{2}' 
+            and p.ColorID = '{3}' 
+            and a.Seq1 BETWEEN '00' AND '99'
+      Group by Dyelot
 ) 
-
-select 0 as selected ,'' id,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.FabricType
-,a.stockunit
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,c.Roll
-,c.Dyelot
-,0.00 as Qty
-,'B' StockType
-,c.ukey as ftyinventoryukey
-,dbo.Getlocation(c.ukey) as location
-,c.inqty-c.outqty + c.adjustqty as balanceqty
-,c.inqty,c.outqty, c.adjustqty 
+select 0 as selected 
+       , id = '' 
+       , PoId = a.id
+       , a.Seq1
+       , a.Seq2
+       , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+       , a.FabricType
+       , a.stockunit
+       , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+       , Roll = Rtrim(Ltrim(c.Roll))
+       , Dyelot = Rtrim(Ltrim(c.Dyelot))
+       , Qty = 0.00
+       , StockType = 'B'
+       , ftyinventoryukey = c.ukey 
+       , location = dbo.Getlocation(c.ukey) 
+       , balanceqty = c.inqty-c.outqty + c.adjustqty
+       , c.inqty
+       , c.outqty
+       , c.adjustqty 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.scirefno='{2}' and a.colorid='{3}' and ltrim(a.seq1) between '01' and '99'
-order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
-"
-                , dr_master["poid"], Sci.Env.User.Keyword, dr_master["scirefno"], dr_master["colorid"]));
+order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", dr_master["poid"]
+                                                  , Sci.Env.User.Keyword
+                                                  , dr_master["scirefno"]
+                                                  , dr_master["colorid"]));
             #endregion
 
             P10_Detail.ShowWaitMessage("Data Loading....");
