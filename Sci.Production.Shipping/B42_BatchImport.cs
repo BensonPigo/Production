@@ -141,7 +141,7 @@ where ID = '{0}' and NLCode = '{1}'
                 else
                 {
                     idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1 where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
-                    idu.Append(string.Format(@"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{1}' and VNContractID = '{2}' ;", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
+                    idu.Append(string.Format(@"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
                     c++;
                 }
             }
