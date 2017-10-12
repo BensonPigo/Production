@@ -131,18 +131,30 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             #endregion
 
             #region NLCode
-            DataGridViewGeneratorMaskedTextColumnSettings Nlcode = new DataGridViewGeneratorMaskedTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Nlcode = new DataGridViewGeneratorTextColumnSettings();
             Nlcode.CellEditable += (s, e) =>
             {
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (!MyUtility.Convert.GetBool(dr["UserCreate"])) e.IsEditable = false;
             };
-
+            Nlcode.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
+                if (!MyUtility.Check.Seek(string.Format("select 1 from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, CurrentMaintain["VNContractID"].ToString())))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("NLCode:{0} not found!", newvalue));
+                    dr["NLCode"] = "";
+                }
+            };
             #endregion
 
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .MaskedText("NLCode", header: "Customs Code", width: Widths.AnsiChars(7),mask: "LL000", settings: Nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty)

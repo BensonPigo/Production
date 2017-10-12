@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DBProxy.Current.Select(null, "select CustomSP,VNContractID,ID,StyleID,SeasonID,SizeCode,NLCode='',Qty,Remark='' from VNConsumption where 1=0", out dt);
+            DBProxy.Current.Select(null, "select CustomSP,VNContractID,ID,StyleID,SeasonID,SizeCode,NLCode='',Qty=0.0000,Remark='' from VNConsumption where 1=0", out dt);
             Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract Id", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -32,7 +32,7 @@ namespace Sci.Production.Shipping
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("NLCode", header: "NLCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 9999, iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(9), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
             listControlBindingSource1.DataSource = dt;
         }
@@ -61,7 +61,7 @@ namespace Sci.Production.Shipping
             int intRowsCount = worksheet.UsedRange.Rows.Count;
             int intColumnsCount = worksheet.UsedRange.Columns.Count;
             int intRowsStart = 2;
-            int intRowsRead = intRowsStart - 0;
+            int intRowsRead = intRowsStart - 1;
 
             Microsoft.Office.Interop.Excel.Range range;
             object[,] objCellArray;
@@ -80,7 +80,7 @@ namespace Sci.Production.Shipping
                 string remark = "";
                 if (!MyUtility.Check.Seek(B43check))
                 {
-                    remark = "NLCode not found in Contract";
+                    remark = "NLCode not found in Contract. ";
                 }
                 string CustomSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
                 string B42check = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", ContractID, CustomSP);
@@ -114,48 +114,16 @@ namespace Sci.Production.Shipping
             numericdetailrecord.Value = dt.Rows.Count;
 
             this.HideWaitMessage();
-            /////
             MyUtility.Msg.InfoBox("Import Complete!!");
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            //DataTable dt2, dt3;
             DataRow[] drs = dt.Select("remark = ''");
             DualResult drt;
-            //dt2 = dt.Clone();
-            //foreach (DataRow drr in drs)
-            //{
-            //    dt2.ImportRow(drr);
-            //}
-            //           dr = MyUtility.Tool.ProcessWithDatatable(dt2, "", @"
-            //merge VNConsumption_Detail t
-            //using(
-            //	select t.*,vd.HSCode,vd.UnitID
-            //	from #tmp t,VNContract_Detail vd
-            //	where vd.ID = t.VNContractID and vd.NLCode = t.NLCode
-            //)s
-            //on t.id = s.id and t.NLCode = s.NLCode
-            //when matched then
-            //	update set
-            //	t.qty = s.qty
-            //when not matched then
-            //	insert(id,NLCode,HSCode,UnitID,Qty,UserCreate,SystemQty)
-            //	values(s.id,s.NLCode,s.HSCode,s.UnitID,s.Qty,1,0)
-            //when not matched by source and t.id = s.id then
-            //	delete;
-            //", out dt3);
-            //            if (!dr)
-            //            {
-            //                MyUtility.Msg.ErrorBox("Insert/Update datas error!");
-            //            }
-            //            else
-            //            {
-            //                MyUtility.Msg.InfoBox("Complete!!");
-            //            }
 
             StringBuilder idu = new StringBuilder();
-            int c = 0,c2=0;
+            int c = 0;
             foreach (DataRow dr in drs)
             {
                 string CustomSP = MyUtility.Convert.GetString(dr["CustomSP"]);
@@ -179,7 +147,7 @@ where ID = '{0}' and NLCode = '{1}'
                     c++;
                 }
             }
-            DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP,VNContractID" });
+            DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP","VNContractID" });
             foreach (DataRow dr in Distinct.Rows)
             {
                 string d = string.Format(@"select vd.NLCode 
@@ -187,16 +155,20 @@ from VNConsumption v,VNConsumption_Detail vd
 where v.id = vd.id
 and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(), dr["CustomSP"].ToString());
                 DataTable dlt;
-                DBProxy.Current.Select(null, d, out dlt);
-                //DataRow[] drN = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}'", dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
-                foreach (DataRow dn in dlt.Rows)
+                drt = DBProxy.Current.Select(null, d, out dlt);//根據VNContractID,CustomSP去找DB內detail有的NLCode
+                if (!drt)
                 {
-                    DataRow[] dra = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}'"
-                        , dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
+                    MyUtility.Msg.ErrorBox("Insert/Update datas error!");
+                    return;
+                }               
+                foreach (DataRow dn in dlt.Rows)//找Excel匯入資料有沒有這NLCode
+                {
                     DataRow[] drN = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}' and NLCode = '{2}'"
                         , dr["VNContractID"].ToString(), dr["CustomSP"].ToString(), dn["NLCode"].ToString()));
                     if (drN.Length == 0)
                     {
+                        DataRow[] dra = dt.Select(string.Format("remark = '' and VNContractID = '{0}' and CustomSP = '{1}'"
+                            , dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
                         idu.Append(string.Format("delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}'"
                             ,dra[0]["ID"].ToString(), dn["NLCode"].ToString()));
                     }
@@ -210,10 +182,10 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(
             }
             else
             {
-                MyUtility.Msg.InfoBox("Complete!!");
                 DataRow[] drsf = dt.Select("remark <> ''");
                 numericFail.Value = drsf.Length;
                 numericSucessSP.Value = c;
+                MyUtility.Msg.InfoBox("Complete!!");
             }
         }
 
