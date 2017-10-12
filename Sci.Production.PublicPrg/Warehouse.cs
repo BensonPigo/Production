@@ -644,9 +644,9 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , POID
         , a.seq1
         , a.Seq2
-        , roll
+        , roll = RTRIM(LTRIM(roll))
         , stocktype
-        , a.Dyelot
+        , Dyelot = RTRIM(LTRIM(a.Dyelot))
         , inqty - OutQty + AdjustQty qty
         , inqty
         , outqty
@@ -697,9 +697,9 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , POID
         , a.seq1
         , a.Seq2
-        , roll
+        , roll = RTRIM(LTRIM(roll))
         , stocktype
-        , a.Dyelot
+        , Dyelot = RTRIM(LTRIM(a.Dyelot))
         , inqty - OutQty + AdjustQty qty
         , inqty
         , outqty
@@ -749,9 +749,9 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , POID
         , a.seq1
         , a.Seq2
-        , roll
+        , roll = RTRIM(LTRIM(roll))
         , stocktype
-        , a.Dyelot
+        , Dyelot = RTRIM(LTRIM(a.Dyelot))
         , inqty - OutQty + AdjustQty qty
         , inqty
         , outqty
