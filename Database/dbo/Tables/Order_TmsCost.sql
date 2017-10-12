@@ -113,3 +113,8 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Order_TmsCost]([ArtworkTypeID] ASC, [LocalSuppID] ASC, [ApvDate] ASC)
     INCLUDE([ID], [Price], [InhouseOSP]);
 
+GO
+CREATE NONCLUSTERED INDEX [Index_Seq] ON [dbo].[Order_TmsCost]
+(
+	[Seq] ASC
+)

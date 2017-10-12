@@ -712,6 +712,7 @@ select	sel = 0
 from Order_Qty_Garment OQG
 inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
 inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
+inner join factory f on ToSPOrders.FactoryID=f.id and f.IsProduceFty=1 --判斷是否為生產工廠
 outer apply (
 	select value = isnull (OQG.Qty, 0)
 ) ToSPQty
