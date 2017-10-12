@@ -365,7 +365,8 @@ left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth <> Fabric.Width
 group by f.Suppid
 ------#TmpFinal 
-select distinct Tmp.SuppID 
+select --distinct 
+    Tmp.SuppID 
 	,Tmp.refno 
     ,Tmp.abben 
     ,Tmp.stockqty 
@@ -398,7 +399,7 @@ select distinct Tmp.SuppID
     ,SHORTWIDTHLevel = sl6.ID
 into #TmpFinal
 from (
-	select SuppID, refno, abben, stockqty, TotalInspYds, yrds			
+	select distinct SuppID, refno, abben, stockqty, TotalInspYds, yrds			
 	,[Fabric(%)] = IIF(TotalInspYds!=0, round((yrds/TotalInspYds)*100, 2), 0)        		
 	from #tmp	
 )Tmp 	
@@ -459,7 +460,7 @@ ORDER BY SUPPID
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
-,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C
+,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ");
            #endregion
             return base.ValidateInput();
