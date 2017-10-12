@@ -327,6 +327,8 @@ order by LD.OrderId, L.Category, L.LocalSuppID", M));
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             if (dataSet == null) return;
+            if (dtGrid1.Rows.Count == 0) return;
+            if (dtGrid2.Rows.Count == 0) return;
             DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
             DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
             dtMaster.Columns.Remove("Poid");
