@@ -10,6 +10,7 @@ using Sci.Data;
 using Ict.Win;
 using Ict;
 using Sci;
+using System.Data.SqlClient;
 
 namespace Sci
 {
@@ -348,8 +349,10 @@ namespace Sci
                     DataRow pass_dr;
                     if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        string seekSql = string.Format("select id,Name from Pass1 where id = '{0}'", e.FormattedValue.ToString());
-                        if (!MyUtility.Check.Seek(seekSql, out pass_dr))
+                        List<SqlParameter> listSqlParameter = new List<SqlParameter>();
+                        listSqlParameter.Add(new SqlParameter("@UserID", e.FormattedValue.ToString()));
+                        string seekSql = "select id,Name from Pass1 where id = @UserID";
+                        if (!MyUtility.Check.Seek(seekSql, listSqlParameter, out pass_dr))
                         {
                             dr[propertyname] = "";
                             e.Cancel = true;
