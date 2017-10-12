@@ -343,6 +343,11 @@ where   o.FtyGroup = @factoryid
                     {
                         if (e.RowIndex != -1 && CurrentDetailData["AutoCreate"].EqualString("False"))
                         {
+                            if (CheckRemoveRow() == false)
+                            {
+                                return;
+                            }
+
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable LocationData;
