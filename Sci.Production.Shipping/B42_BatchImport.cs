@@ -45,10 +45,7 @@ namespace Sci.Production.Shipping
             }
 
             //刪除表身Grid資料
-            foreach (DataRow dr in dt.Rows)
-            {
-                dr.Delete();
-            }
+            dt.Clear();
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
             if (excel == null) return;
@@ -121,7 +118,7 @@ namespace Sci.Production.Shipping
         {
             DataRow[] drs = dt.Select("remark = ''");
             DualResult drt;
-
+            string datetime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             StringBuilder idu = new StringBuilder();
             int c = 0;
             foreach (DataRow dr in drs)
@@ -143,11 +140,12 @@ where ID = '{0}' and NLCode = '{1}'
                 }
                 else
                 {
-                    idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}' where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
+                    idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1 where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
+                    idu.Append(string.Format(@"update VNConsumption set EditName = '{0},EditDate = '{1}' where CustomSP = '{1}' and VNContractID = '{2}' ;'", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
                     c++;
                 }
             }
-            DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP","VNContractID" });
+            DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP", "VNContractID" });
             foreach (DataRow dr in Distinct.Rows)
             {
                 string d = string.Format(@"select vd.NLCode 
@@ -160,7 +158,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(
                 {
                     MyUtility.Msg.ErrorBox("Insert/Update datas error!");
                     return;
-                }               
+                }
                 foreach (DataRow dn in dlt.Rows)//找Excel匯入資料有沒有這NLCode
                 {
                     DataRow[] drN = dt.Select(string.Format("remark = ''and VNContractID = '{0}' and CustomSP = '{1}' and NLCode = '{2}'"
@@ -170,7 +168,7 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(
                         DataRow[] dra = dt.Select(string.Format("remark = '' and VNContractID = '{0}' and CustomSP = '{1}'"
                             , dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
                         idu.Append(string.Format("delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}'"
-                            ,dra[0]["ID"].ToString(), dn["NLCode"].ToString()));
+                            , dra[0]["ID"].ToString(), dn["NLCode"].ToString()));
                     }
                 }
             }
