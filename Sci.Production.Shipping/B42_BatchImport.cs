@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DBProxy.Current.Select(null, "select CustomSP,VNContractID,ID,StyleID,SeasonID,SizeCode,NLCode='',Qty=0.0000,Remark='' from VNConsumption where 1=0", out dt);
+            DBProxy.Current.Select(null, "select CustomSP,VNContractID,ID,StyleID,SeasonID,SizeCode,NLCode='',Qty=0.0000,Remark='' ,checkS=0 from VNConsumption where 1=0", out dt);
             Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract Id", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -45,7 +45,11 @@ namespace Sci.Production.Shipping
             }
 
             //刪除表身Grid資料
-            dt.Clear();
+            if (dt !=null && dt.Rows.Count>0)
+            {
+                dt.Clear();
+            }
+            
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
             if (excel == null) return;
@@ -120,7 +124,6 @@ namespace Sci.Production.Shipping
             DualResult drt;
             string datetime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             StringBuilder idu = new StringBuilder();
-            int c = 0;
             foreach (DataRow dr in drs)
             {
                 string CustomSP = MyUtility.Convert.GetString(dr["CustomSP"]);
@@ -136,13 +139,13 @@ from VNContract_Detail
 where ID = '{0}' and NLCode = '{1}'
 ;"
                         , VNContractID, NLCode, dr["id"].ToString(), dr["Qty"].ToString()));
-                    c++;
+                    dr["checkS"] = 1;
                 }
                 else
                 {
                     idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1 where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
                     idu.Append(string.Format(@"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
-                    c++;
+                    dr["checkS"] = 1;
                 }
             }
             DataTable Distinct = dt.DefaultView.ToTable(true, new string[] { "CustomSP", "VNContractID" });
@@ -185,7 +188,9 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(
             {
                 DataRow[] drsf = dt.Select("remark <> ''");
                 numericFail.Value = drsf.Length;
-                numericSucessSP.Value = c;
+                DataTable Distinctchk = dt.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
+                DataRow[] drs2 = Distinctchk.Select("checkS = 1");
+                numericSucessSP.Value = drs2.Length;
                 MyUtility.Msg.InfoBox("Complete!!");
             }
         }
