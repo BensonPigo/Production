@@ -127,10 +127,7 @@ and ClogLocationId !='' and ClogLocationId is not null
                                         and pd.ID = p.ID 
                                         and p.Status <> 'New')
                               , 0)
-        , RetCtnBySP = isnull ((select count(*)
-                                from ClogReturn cr
-                                where cr.OrderID = o.ID)
-                              , 0)
+into #tmp
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 where o.Category = 'B'");
@@ -162,7 +159,20 @@ where o.Category = 'B'");
             {
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
             }
-            sqlCmd.Append(" order by o.FtyGroup,o.ID,oq.BuyerDelivery");
+            sqlCmd.Append(@"
+select t.ID,RetCtnBySP = count(cr.ID)
+into #tmp2
+from #tmp t left join ClogReturn cr on cr.OrderID = t.ID
+group by t.ID
+
+select t.*,t2.RetCtnBySP
+from #tmp t,#tmp2 t2
+where t.id = t2.ID
+order by t.FactoryID,t.ID,t.BuyerDelivery
+
+drop table #tmp,#tmp2
+                
+");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
