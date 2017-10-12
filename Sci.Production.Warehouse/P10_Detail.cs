@@ -42,12 +42,27 @@ namespace Sci.Production.Warehouse
                 Ict.DualResult result;
                 if (!(result = MyUtility.Tool.ProcessWithDatatable
                         (temp, "", @"          
-            select t.*,FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey),GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over(partition by t.dyelot)
-            from #tmp t
-            Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
-            order by GroupQty desc,t.dyelot,balanceqty desc
-
-            ", out dtFtyinventory, "#tmp")))
+select t.poid
+       , t.Seq1
+       , t.Seq2
+       , roll = Rtrim(Ltrim(t.roll))
+       , dyelot = Rtrim(Ltrim(t.dyelot))
+       , t.Qty
+       , t.ID
+       , t.Issue_SummaryUkey
+       , t.FtyInventoryUkey
+       , t.MDivisionID
+       , t.StockType
+       , t.ukey
+	   , FTY.InQty
+	   , FTY.OutQty
+	   , FTY.AdjustQty
+	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty as balanceqty
+	   , [location] = dbo.Getlocation(FTY.Ukey)
+	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
+from #tmp t
+Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
+order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
