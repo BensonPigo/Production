@@ -141,7 +141,7 @@ where ID = '{0}' and NLCode = '{1}'
                 else
                 {
                     idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1 where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
-                    idu.Append(string.Format(@"update VNConsumption set EditName = '{0},EditDate = '{1}' where CustomSP = '{1}' and VNContractID = '{2}' ;'", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
+                    idu.Append(string.Format(@"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{1}' and VNContractID = '{2}' ;", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
                     c++;
                 }
             }
@@ -167,8 +167,11 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'", dr["VNContractID"].ToString(
                     {
                         DataRow[] dra = dt.Select(string.Format("remark = '' and VNContractID = '{0}' and CustomSP = '{1}'"
                             , dr["VNContractID"].ToString(), dr["CustomSP"].ToString()));
-                        idu.Append(string.Format("delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}'"
+                        if (dra.Length !=0)
+                        {
+                            idu.Append(string.Format("delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}';"
                             , dra[0]["ID"].ToString(), dn["NLCode"].ToString()));
+                        }                        
                     }
                 }
             }
