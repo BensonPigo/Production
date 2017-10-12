@@ -253,19 +253,23 @@ SELECT A = A2.CountryID
        , N = (Select CountPullOut = Count(id) 
               from Pullout_Detail WITH (NOLOCK) 
               where OrderID = A1.ID)
-       , O = CASE 
+      , O = CASE 
                 WHEN A1.GMTComplete = 'C' OR A1.GMTComplete = 'S' THEN 'Y' 
                 ELSE '' 
              END
-       , P = (SELECT TOP 1 A1.ReasonID  
-              from Order_History A1 WITH (NOLOCK) 
-              Where A1.OldValue =  A1.ID  
-                    And A1.HisType = 'Delivery')
-       , Q = (Select TOP 1 A2.Name  
-              from Order_History A1 WITH (NOLOCK) 
-              LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
-              Where A1.OldValue = A1.ID 
-                    And A1.HisType = 'Delivery')
+       --, P = (SELECT TOP 1 A1.ReasonID  
+       --       from Order_History A1 WITH (NOLOCK) 
+       --       Where A1.OldValue =  A1.ID  
+       --             And A1.HisType = 'Delivery')
+       --, Q = (Select TOP 1 A2.Name  
+       --       from Order_History A1 WITH (NOLOCK) 
+       --       LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
+       --       Where A1.OldValue = A1.ID 
+       --             And A1.HisType = 'Delivery')
+	   , P= Order_QS.ReasonID
+	   , Q = case A1.Category when 'B' then r.Name
+		 when 'S' then rs.Name
+		 else '' end 
        , R = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
        , S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
        , T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
@@ -280,6 +284,18 @@ LEFT JOIN PullOut_Detail onTimePD WITH (NOLOCK) ON A1.ID = onTimePD.ORDERID
 left join PullOut onTimeP With (Nolock) on onTimePD.ID = onTimeP.ID
                                            and onTimeP.Status in ('Locked', 'Confirmed')
 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+outer apply (
+	select * from Order_QtyShip
+	where Id=a1.ID
+) Order_QS
+outer apply(
+	select * from Reason
+	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery'
+)r
+outer apply(
+	select * from Reason
+	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery_sample'
+)rs
 OUTER APPLY(
   SELECT ShipQty 
   FROM PullOut_Detail WITH (NOLOCK) 
@@ -346,7 +362,8 @@ WHERE 1 = 1
 GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo ";
+                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo 
+                        ,Order_QS.ReasonID,A1.Category,r.Name,rs.Name ";
                     strSQL += @" 
 ORDER BY A1.ID";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
@@ -409,7 +426,8 @@ FROM ORDERS A1 WITH (NOLOCK)
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID 
-WHERE 1= 1 AND A4.PullOutDate > A1.FtyKPI ";
+WHERE 1= 1 --AND A4.PullOutDate > A1.FtyKPI 
+";
                     if (dateFactoryKPIDate.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
@@ -528,13 +546,19 @@ ORDER BY A1.ID";
         {
             DualResult result = Result.True;
             //string strPath = PrivUtils.getPath_XLT(System.Windows.Forms.Application.StartupPath);
-            string temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
+            string temfile = "";
 
-            //Microsoft.Office.Interop.Excel.Application excel = null;
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx");
-            try
+            if (this.checkExportDetailData.Checked)
             {
-                //if (!(result = PrivUtils.Excels.CreateExcel(temfile, out excel))) return result;
+                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17_Detail.xltx";
+            }
+            else
+            {
+                temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
+            }
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
+            try
+            {               
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 int intRowsCount = gdtDatas.Rows.Count;
@@ -578,11 +602,12 @@ ORDER BY A1.ID";
                 worksheet.Range[String.Format("A{0}:F{1}", 2, row + 1)].Borders.Color = Color.Black;
                 if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                 {
-                    if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                        worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                    else
-                        worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                    intWorkIndex++;
+                    //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
+                    //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
+                    //else
+                    //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
+                    //intWorkIndex++;
+                    worksheet= excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
                     string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
@@ -622,11 +647,12 @@ ORDER BY A1.ID";
                 {
                     if ((gdtOrderDetail != null) && (gdtOrderDetail.Rows.Count > 0))
                     {
-                        if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                            worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        else
-                            worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        intWorkIndex++;
+                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
+                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
+                        //else
+                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
+                        //intWorkIndex++;
+                        worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
@@ -663,11 +689,12 @@ ORDER BY A1.ID";
                     }
                     if ((gdtPullOut != null) && (gdtPullOut.Rows.Count > 0))
                     {
-                        if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                            worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        else
-                            worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        intWorkIndex++;
+                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
+                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
+                        //else
+                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
+                        //intWorkIndex++;
+                        worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
@@ -703,11 +730,12 @@ ORDER BY A1.ID";
                     }
                     if ((gdtFailDetail != null) && (gdtFailDetail.Rows.Count > 0))
                     {
-                        if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                            worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        else
-                            worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        intWorkIndex++;
+                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
+                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
+                        //else
+                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
+                        //intWorkIndex++;
+                        worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
