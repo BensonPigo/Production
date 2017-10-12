@@ -32,6 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label8 = new System.Windows.Forms.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
@@ -48,7 +49,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
-            this.label8 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -78,6 +78,15 @@
             this.panel1.Size = new System.Drawing.Size(1004, 65);
             this.panel1.TabIndex = 1;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(260, 11);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "～";
+            // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -91,6 +100,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.Location = new System.Drawing.Point(545, 34);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
@@ -106,6 +129,20 @@
             // 
             // dateSewingInline
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInline.DateBox1.Name = "";
+            this.dateSewingInline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInline.DateBox2.Name = "";
+            this.dateSewingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox2.TabIndex = 1;
             this.dateSewingInline.Location = new System.Drawing.Point(108, 34);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.Size = new System.Drawing.Size(280, 23);
@@ -262,15 +299,6 @@
             this.grid2.Size = new System.Drawing.Size(1004, 233);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(260, 11);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(22, 17);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "～";
             // 
             // P32
             // 
