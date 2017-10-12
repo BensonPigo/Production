@@ -57,8 +57,8 @@ select  selected = 0
         , a.FabricType
         , a.stockunit
         , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
-        , c.Roll
-        , c.Dyelot
+        , Roll = Rtrim(Ltrim(c.Roll))
+        , Dyelot = Rtrim(Ltrim(c.Dyelot))
         , Qty = 0.00 
         , StockType = 'B' 
         , ftyinventoryukey = c.ukey  
