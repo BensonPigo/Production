@@ -606,7 +606,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             // CutRefTb.DefaultView.
             //DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
             DataTable dtDis = null;
-            MyUtility.Tool.ProcessWithDatatable(CutRefTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);            
+            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);            
             foreach (DataRow dr in dtDis.Rows)
             {
                 DataTable tmpTb;
