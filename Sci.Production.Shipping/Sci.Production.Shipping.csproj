@@ -192,6 +192,12 @@
     <Compile Include="B42.Designer.cs">
       <DependentUpon>B42.cs</DependentUpon>
     </Compile>
+    <Compile Include="B42_BatchImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B42_BatchImport.Designer.cs">
+      <DependentUpon>B42_BatchImport.cs</DependentUpon>
+    </Compile>
     <Compile Include="B42_BatchCreate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -687,6 +693,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B42.resx">
       <DependentUpon>B42.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B42_BatchImport.resx">
+      <DependentUpon>B42_BatchImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B42_BatchCreate.resx">
       <DependentUpon>B42_BatchCreate.cs</DependentUpon>
