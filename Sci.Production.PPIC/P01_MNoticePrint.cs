@@ -267,7 +267,7 @@ namespace Sci.Production.PPIC
 
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_SP" + idxStr + sxr.CRPrefix + sIdx, dr["ID"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Style" + idxStr + sxr.CRPrefix + sIdx, dr["sty"].ToString());
-                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sxr.CRPrefix + sIdx, dr["QTY"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S3_QTY" + idxStr + sxr.CRPrefix + sIdx, dr["QTY"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_CUSTCD" + idxStr + sxr.CRPrefix + sIdx, dr["CustCDID"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_PoNo" + idxStr + sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
                         sxr.DicDatas.Add(sxr.VPrefix + "S3_Order" + idxStr + sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
@@ -355,16 +355,15 @@ SELECT MAKER=max(FactoryID)
 ,sty=max(StyleID)+'-'+max(SeasonID)
 ,QTY=sum(QTY)
 --,'SPNO'=RTRIM(POID)+b.spno 
-,'SPNO'=b.spno
+,'SPNO'=b.OrderComboList
 ,(select CustCDID from MnOrder o where o.ID = @ID) as CustCD
 ,(select CustPONo from MnOrder o where o.ID = @ID) as pono
 ,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
 ,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1
 FROM MNOrder a WITH (NOLOCK) 
 --OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
-OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
-	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where OrderComboID = @ID group by POID,b.spno";
+OUTER APPLY(Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID  = @ID) b
+where OrderComboID = @ID group by POID,b.OrderComboList";
             }
             else
             {
