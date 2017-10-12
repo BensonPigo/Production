@@ -37,6 +37,20 @@ namespace Sci.Production.Shipping
             btn.Size = new Size(120, 30);//預設是(80,30)
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
             this.grid.Columns[0].Visible = false;
+            //新增Import From Batch按鈕
+            Sci.Win.UI.Button btn2 = new Sci.Win.UI.Button();
+            btn2.Text = "Batch Import";
+            btn2.Click += Btn2_Click;
+            browsetop.Controls.Add(btn2);
+            btn2.Size = new Size(120, 30);//預設是(80,30)
+        }
+
+        private void Btn2_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Shipping.B42_BatchImport callNextForm = new Sci.Production.Shipping.B42_BatchImport();
+            DialogResult result = callNextForm.ShowDialog(this);
+
+            ReloadDatas();
         }
 
         //Batch Create按鈕的Click事件
@@ -123,7 +137,19 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (!MyUtility.Convert.GetBool(dr["UserCreate"])) e.IsEditable = false;
             };
-
+            Nlcode.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue) return;
+                if (!MyUtility.Check.Seek(string.Format("select 1 from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, CurrentMaintain["VNContractID"].ToString())))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("NLCode:{0} not found!", newvalue));
+                    dr["NLCode"] = "";
+                }
+            };
             #endregion
 
             base.OnDetailGridSetup();
