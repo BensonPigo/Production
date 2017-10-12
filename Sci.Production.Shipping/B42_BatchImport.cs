@@ -72,14 +72,14 @@ namespace Sci.Production.Shipping
 
                 DataRow newRow = dt.NewRow();
                 string NLCode = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"));
-                string ContractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C"));
+                string ContractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
                 string B43check = string.Format("select 1 from VNContract_Detail with(nolock) where id = '{0}' and NLCode = '{1}'", ContractID, NLCode);
                 string remark = "";
                 if (!MyUtility.Check.Seek(B43check))
                 {
                     remark = "NLCode not found in Contract. ";
                 }
-                string CustomSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
+                string CustomSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C"));
                 string B42check = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", ContractID, CustomSP);
                 DataRow drc;
                 if (!MyUtility.Check.Seek(B42check, out drc))
