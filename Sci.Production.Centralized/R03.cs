@@ -147,7 +147,7 @@ And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdC
                     strSQL += string.Format(" AND Orders.FactoryID = '{0}' ", txtCentralizedFactory1.Text);
                 if (gstrCategory != "")
                 {
-                    strSQL += string.Format(" AND Orders.Category = {0} ", gstrCategory);
+                    strSQL += string.Format(" AND Orders.Category in ({0}) ", gstrCategory);
                 }
                 if (txtCountry1.TextBox1.Text != "")
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
