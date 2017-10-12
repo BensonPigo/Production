@@ -47,6 +47,7 @@ namespace Sci.Production.Quality
             lis = new List<SqlParameter>();
             string sqlWhere = "";
             string sqlRWhere = "";
+            string sqlSuppWhere = "";
             List<string> sqlWheres = new List<string>();
             List<string> RWheres = new List<string>();
             #region --組WHERE--
@@ -64,7 +65,7 @@ namespace Sci.Production.Quality
             
             if (!this.Supp.Empty())
            {
-               sqlWheres.Add("ps.suppid = @Supp");
+                sqlSuppWhere= " and a.SuppID = @Supp ";
                lis.Add(new SqlParameter("@Supp", Supp));
               
            } if (!this.refno.Empty())
@@ -455,8 +456,8 @@ from(
 	from #TmpFinal t,#Weight
 ) a
 ,SuppLevel s
-where s.type='F' and s.Junk=0 and [AVG] between s.range1 and s.range2 
-ORDER BY SUPPID
+where s.type='F' and s.Junk=0 and [AVG] between s.range1 and s.range2 "+ sqlSuppWhere +
+@"  ORDER BY SUPPID
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
