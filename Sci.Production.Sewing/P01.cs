@@ -196,9 +196,9 @@ where   ss.FactoryID = '{0}'
 
             orderid.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && CurrentDetailData["OrderID"].EqualString(e.FormattedValue) == false)
                 {
-                    if (CheckRemoveRow() == false)
+                    if (CurrentDetailData["OrderID"].Empty() == false && CheckRemoveRow() == false)
                     {
                         this.detailgrid.GetDataRow<DataRow>(e.RowIndex)["OrderID"] = CurrentDetailData["OrderID"];
                         return;
@@ -417,9 +417,9 @@ where   o.FtyGroup = @factoryid
 
             article.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && CurrentDetailData["Article"].EqualString(e.FormattedValue) == false)
                 {
-                    if(CheckRemoveRow() == false)
+                    if(CurrentDetailData["Article"].Empty() == false && CheckRemoveRow() == false)
                     {
                         this.detailgrid.GetDataRow<DataRow>(e.RowIndex)["Article"] = CurrentDetailData["Article"];
                         return;
