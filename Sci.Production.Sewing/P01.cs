@@ -1459,7 +1459,6 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
         {
             DataTable subDt;
             GetSubDetailDatas(CurrentDetailData, out subDt);
-            subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
 
             #region 產出數量不能小於已出貨的數量
             DualResult resultCheckQty;
