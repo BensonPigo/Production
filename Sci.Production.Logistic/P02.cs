@@ -235,7 +235,7 @@ where 1=0";
                     while ((line = reader.ReadLine()) != null)
                     {
                         System.Diagnostics.Debug.WriteLine(line);
-                        IList<string> sl = line.Split(" \t\r\n".ToCharArray());
+                        IList<string> sl = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         if (sl[0] != "2")
                         {
                             MyUtility.Msg.WarningBox("Format is not correct!");

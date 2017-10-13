@@ -165,7 +165,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                     while ((line = reader.ReadLine()) != null)
                     {
                         System.Diagnostics.Debug.WriteLine(line);
-                        IList<string> sl = line.Split(" \t\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                        IList<string> sl = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         if (sl.Count == 0 || sl[0] != "1")
                         {
                             MyUtility.Msg.WarningBox("Format is not correct!");
