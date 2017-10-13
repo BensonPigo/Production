@@ -102,29 +102,86 @@ namespace Sci.Production.Planning
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-                select o.MDivisionID,o.FactoryID,S.BuyerDelivery,o.SciDelivery,O.CRDDate,O.CFMDate
-                ,O.ID OrderID,O.Dest,O.StyleID,O.SeasonID,O.ProjectID,O.Customize1,O.BuyMonth
-                ,O.CustPONo,O.BrandID,O.CustCDID,O.ProgramID,O.CdCodeID,O.CPU,O.Qty,S.Qty [Qty_byShip]
-                ,O.FOCQty,O.PoPrice,O.CMPPrice,O.KPILETA,O.LETA,O.MTLETA,O.SewETA
-                ,O.PackETA,O.MTLComplete,O.SewInLine,O.SewOffLine,O.CutInLine,O.CutOffLine
-                ,O.Category,O.IsForecast,O.PulloutDate,O.ActPulloutDate,O.SMR,O.MRHandle
-                ,O.MCHandle,O.OrigBuyerDelivery,O.DoxType
-                ,O.TotalCTN,O.FtyCTN,O.ClogCTN
-                ,O.VasShas,O.TissuePaper,O.MTLExport,O.SewLine,O.ShipModeList,s.ShipmodeID,O.PlanDate
-                ,O.FirstProduction,O.Finished,O.FtyGroup,O.OrderTypeID,O.SpecialMark,O.GFR
-                ,O.SampleReason,O.InspDate,O.MnorderApv,O.FtyKPI,O.KPIChangeReason
-                ,O.StyleUkey
-                ,O.POID
-				,InspResult = IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))
-				,InspHandle = (o.InspHandle +'-'+ I.Name)
-                into #cte 
-                from dbo.Orders o WITH (NOLOCK) inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
-				OUTER APPLY(
-					SELECT  Name 
-					FROM Pass1 WITH (NOLOCK) 
-					WHERE Pass1.ID = O.InspHandle
-				)I
-                WHERE 1=1 
+select o.MDivisionID
+       , o.FactoryID
+       , S.BuyerDelivery
+	   , s.Seq
+       , o.SciDelivery
+       , O.CRDDate
+       , O.CFMDate
+       , OrderID = O.ID 
+       , O.Dest
+       , O.StyleID
+       , O.SeasonID
+       , O.ProjectID
+       , O.Customize1
+       , O.BuyMonth
+       , O.CustPONo
+       , O.BrandID
+       , O.CustCDID
+       , O.ProgramID
+       , O.CdCodeID
+       , O.CPU
+       , O.Qty
+       , [Qty_byShip] = S.Qty 
+       , O.FOCQty
+       , O.PoPrice
+       , O.CMPPrice
+       , O.KPILETA
+       , O.LETA
+       , O.MTLETA
+       , O.SewETA
+       , O.PackETA
+       , O.MTLComplete
+       , O.SewInLine
+       , O.SewOffLine
+       , O.CutInLine
+       , O.CutOffLine
+       , O.Category
+       , O.IsForecast
+       , O.PulloutDate
+       , O.ActPulloutDate
+       , O.SMR
+       , O.MRHandle
+       , O.MCHandle
+       , O.OrigBuyerDelivery
+       , O.DoxType
+       , O.TotalCTN
+       , O.FtyCTN
+       , O.ClogCTN
+       , O.VasShas
+       , O.TissuePaper
+       , O.MTLExport
+       , O.SewLine
+       , O.ShipModeList
+       , s.ShipmodeID
+       , O.PlanDate
+       , O.FirstProduction
+       , O.Finished
+       , O.FtyGroup
+       , O.OrderTypeID
+       , O.SpecialMark
+       , O.GFR
+       , O.SampleReason
+       , O.InspDate
+       , O.MnorderApv
+       , O.FtyKPI
+       , O.KPIChangeReason
+       , O.StyleUkey
+       , O.POID
+       , InspResult = IIF(o.InspResult='P', 'Pass'
+                                          , IIF(o.InspResult = 'F', 'Fail'
+                                                                  , ''))
+       , InspHandle = (o.InspHandle +'-'+ I.Name)
+into #cte 
+from dbo.Orders o WITH (NOLOCK) 
+inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
+OUTER APPLY(
+      SELECT  Name 
+      FROM Pass1 WITH (NOLOCK) 
+      WHERE Pass1.ID = O.InspHandle
+)I
+WHERE 1=1 
                 "));
 
             #region --- 條件組合  ---
@@ -223,24 +280,27 @@ namespace Sci.Production.Planning
             if (isArtwork)
             {
                 sqlCmd.Append(@"
-                --依取得的訂單資料取得訂單的 TMS Cost
-                select aa.orderid,bb.ArtworkTypeID,iif(cc.IsTMS=1,bb.tms,bb.price) price_tms 
-                into #rawdata_tmscost
-                from #cte aa 
-                inner join dbo.Order_TmsCost bb on bb.id = aa.orderid
-                inner join dbo.ArtworkType cc on cc.id = bb.ArtworkTypeID
-                where IsTMS =1 or IsPrice = 1
+--依取得的訂單資料取得訂單的 TMS Cost
+select aa.orderid
+       , bb.ArtworkTypeID
+       , price_tms = iif(cc.IsTMS=1,bb.tms,bb.price)  
+into #rawdata_tmscost
+from #cte aa 
+inner join dbo.Order_TmsCost bb on bb.id = aa.orderid
+inner join dbo.ArtworkType cc on cc.id = bb.ArtworkTypeID
+where IsTMS =1 or IsPrice = 1
                 ");
 
-                sqlCmd.Append(string.Format(@"--將取得Tms Cost做成樞紐表
-                select * 
-                into #tmscost_pvt
-                from #rawdata_tmscost
-                pivot
-                (
-                    sum(price_tms)
-                    for artworktypeid in ( {0})
-                )as pvt ", artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
+                sqlCmd.Append(string.Format(@"
+--將取得Tms Cost做成樞紐表
+select * 
+into #tmscost_pvt
+from #rawdata_tmscost
+pivot
+(
+    sum(price_tms)
+    for artworktypeid in ( {0})
+)as pvt ", artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
             }
             #endregion
 
@@ -573,248 +633,376 @@ from (
 
             sqlCmd.Append(string.Format(@"
                 -- 依撈出來的order資料(cte)去找各製程的WIP
-                select 
-                 t.OrderID
-                 ,(SELECT SUM(CWIP.Qty) FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) WHERE CWIP.OrderID = T.OrderID) cut_qty
-                 ,(SELECT MIN(a.cDate) from dbo.CuttingOutput a WITH (NOLOCK) 
-	                 inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id 
-	                 inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
-	                 where c.OrderID = t.OrderID) first_cut_date
-                ,(select MIN(isnull(tt.qaqty,0)) from dbo.style_location sl WITH (NOLOCK) left join 
-	                (SELECT b.ComboType,sum(b.QAQty) qaqty FROM DBO.SewingOutput a WITH (NOLOCK) 
-	                inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
-	                where b.OrderId = t.OrderID
-	                group by ComboType ) tt on tt.ComboType = sl.Location
-	                where sl.StyleUkey = t.StyleUkey) sewing_output
+select t.OrderID
+       , t.Seq
+	   , t.ShipmodeID
+       , cut_qty = (SELECT SUM(CWIP.Qty) 
+                    FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) 
+                    WHERE CWIP.OrderID = T.OrderID)
+       , first_cut_date = (SELECT MIN(a.cDate) 
+                           from dbo.CuttingOutput a WITH (NOLOCK) 
+                           inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id 
+                           inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
+                           where c.OrderID = t.OrderID) 
+       , sewing_output = (select MIN(isnull(tt.qaqty,0)) 
+                          from dbo.style_location sl WITH (NOLOCK) 
+                          left join (
+                                SELECT b.ComboType
+                                       , qaqty = sum(b.QAQty)  
+                                FROM DBO.SewingOutput a WITH (NOLOCK) 
+                                inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
+                                where b.OrderId = t.OrderID
+                                group by ComboType 
+                          ) tt on tt.ComboType = sl.Location
+                          where sl.StyleUkey = t.StyleUkey) 
+       , t.StyleUkey
+       , EMBROIDERY_qty = (select qty = min(qty)  
+                           from (
+                                select qty = sum(b.Qty) 
+                                       , c.PatternCode
+                                       , c.ArtworkID 
+                                from dbo.farmin a WITH (NOLOCK) 
+                                inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
+                                right join (
+                                    select distinct v.ArtworkTypeID
+                                           , v.Article
+                                           , v.ArtworkID
+                                           , v.PatternCode 
+                                   from dbo.View_Order_Artworks v 
+                                   where v.ID=t.OrderID
+                                ) c on c.ArtworkTypeID = a.ArtworkTypeId 
+                                       and c.PatternCode = b.PatternCode 
+                                       and c.ArtworkID = b.ArtworkID
+                                where a.ArtworkTypeId='EMBROIDERY' 
+                                      and b.Orderid = t.OrderID
+                                group by c.PatternCode,c.ArtworkID
+                          ) x) 
+       , BONDING_qty = (select qty = min(qty)  
+                        from (
+                           select qty = sum(b.Qty)  
+                                  , c.PatternCode
+                                  , c.ArtworkID 
+                           from dbo.farmin a WITH (NOLOCK) 
+                           inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
+                           right join (
+                                select distinct v.ArtworkTypeID
+                                       , v.ArtworkID
+                                       , v.PatternCode 
+                                from dbo.View_Order_Artworks v 
+                                where v.ID = t.OrderID
+                           ) c on c.ArtworkTypeID = a.ArtworkTypeId 
+                                  and c.PatternCode = b.PatternCode 
+                                  and c.ArtworkID = b.ArtworkID
+                           where a.ArtworkTypeId='BONDING' 
+                                 and b.Orderid = t.OrderID
+                           group by c.PatternCode, c.ArtworkID
+                       ) x) 
+       , PRINTING_qty = (select qty = min(qty) 
+                         from (
+                           select qty = sum(b.Qty) 
+                                  , c.PatternCode
+                                  , c.ArtworkID 
+                           from dbo.farmin a WITH (NOLOCK) 
+                           inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
+                           right join (
+                                select distinct v.ArtworkTypeID
+                                       , v.ArtworkID
+                                       , v.PatternCode 
+                                from dbo.View_Order_Artworks v 
+                                where v.ID=t.OrderID
+                           ) c on c.ArtworkTypeID = a.ArtworkTypeId 
+                                  and c.PatternCode = b.PatternCode 
+                                  and c.ArtworkID = b.ArtworkID
+                           where a.ArtworkTypeId = 'PRINTING' 
+                                 and b.Orderid = t.OrderID
+                           group by c.PatternCode, c.ArtworkID
+                         ) x) 
+       , SEWOUTPUT.*
+into #cte2
+from #cte t
+outer apply (
+    SELECT firstSewingDate = min(X.OutputDate) 
+           , lastestSewingDate = max(X.OutputDate) 
+           , QAQTY = sum(X.QAQty) 
+           , AVG_QAQTY = AVG(X.QAQTY)
+    from (
+        SELECT a.OutputDate
+               , QAQty = sum(a.QAQty) 
+        FROM DBO.SewingOutput a WITH (NOLOCK) 
+        inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
+        where b.OrderId = t.OrderID 
+        group by a.OutputDate 
+    ) X
+) SEWOUTPUT
 
-                ,t.StyleUkey
-                ,(select min(qty) qty from (
-                select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
-                right join (select distinct v.ArtworkTypeID, v.Article,v.ArtworkID,v.PatternCode 
-                from dbo.View_Order_Artworks v 
-                where v.ID=t.OrderID) c on c.ArtworkTypeID = a.ArtworkTypeId 
-                and c.PatternCode = b.PatternCode 
-                and c.ArtworkID = b.ArtworkID
-                where a.ArtworkTypeId='EMBROIDERY' 
-	                and b.Orderid = t.OrderID
-	                group by c.PatternCode,c.ArtworkID) x) EMBROIDERY_qty
-
-                ,(select min(qty) qty from (
-                select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
-                right join (select distinct v.ArtworkTypeID,v.ArtworkID,v.PatternCode 
-                from dbo.View_Order_Artworks v where v.ID=t.OrderID) c 
-                on c.ArtworkTypeID = a.ArtworkTypeId 
-                and c.PatternCode = b.PatternCode 
-                and c.ArtworkID = b.ArtworkID
-                where a.ArtworkTypeId='BONDING' 
-	                and b.Orderid = t.OrderID
-	                group by c.PatternCode,c.ArtworkID) x) BONDING_qty
-
-                ,(select min(qty) qty from (
-                select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
-                right join (select distinct v.ArtworkTypeID,v.ArtworkID,v.PatternCode 
-                from dbo.View_Order_Artworks v 
-                where v.ID=t.OrderID) c on c.ArtworkTypeID = a.ArtworkTypeId 
-                and c.PatternCode = b.PatternCode 
-                and c.ArtworkID = b.ArtworkID
-                where a.ArtworkTypeId='PRINTING' 
-	                and b.Orderid = t.OrderID
-	                group by c.PatternCode,c.ArtworkID) x) PRINTING_qty
-                ,SEWOUTPUT.*
-                into #cte2
-                from #cte t
-                outer apply (SELECT min(X.OutputDate) firstSewingDate, max(X.OutputDate) lastestSewingDate
-                ,sum(X.QAQty) QAQTY ,AVG(X.QAQTY) AVG_QAQTY
-                from (SELECT a.OutputDate,sum(a.QAQty) QAQty FROM DBO.SewingOutput a WITH (NOLOCK) 
-                inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
-                where b.OrderId = t.OrderID group by a.OutputDate ) X) SEWOUTPUT
-
-                select t.MDivisionID,t.FactoryID,t.SewLine,t.BuyerDelivery,t.SewInLine,t.SewOffLine
-                ,t.BrandID,t.OrderID
-                ,Dest = Country.Alias
-				,t.StyleID,t.OrderTypeID
-                ,t.ShipmodeID
-				,[OrderNo]=t.Customize1
-				,t.CustPONo,t.CustCDID,t.ProgramID,t.CdCodeID,t.KPILETA
-                ,t.LETA,t.MTLETA,t.SewETA,t.PackETA,t.CPU
-                ,t.Qty_byShip,#cte2.first_cut_date
-				,#cte2.cut_qty
-                ,[RFID Cut Qty]= CutQty.[RFID Cut Qty]
-			    ,[RFID Loading Qty]= isnull(loading.AccuLoad,0)				
-				,[RFID Emb Farm In Qty] =Embin.[RFID Emb Farm In Qty]
-				,[RFID Emb Farm Out Qty] = Embout.[RFID Emb Farm Out Qty]
-				,[RFID Bond Farm In Qty] =Bondin.[RFID Bond Farm In Qty]
-				,[RFID Bond Farm Out Qty] = Bondout.[RFID Bond Farm Out Qty]
-				,[RFID Print Farm In Qty] =Printin.[RFID Print Farm In Qty]
-				,[RFID Print Farm Out Qty] = Printout.[RFID Print Farm Out Qty]
-				,[RFID AT Farm In Qty] =ATin.[RFID AT Farm In Qty]
-				,[RFID AT Farm Out Qty] = ATout.[RFID AT Farm Out Qty]
-				,[RFID Pad Print Farm In Qty] =PadPrintin.[RFID Pad Print Farm In Qty]
-				,[RFID Pad Print Farm Out Qty] = PadPrintout.[RFID Pad Print Farm Out Qty]
-				,[RFID Emboss Farm In Qty] =Embossin.[RFID Emboss Farm In Qty]
-				,[RFID Emboss Farm Out Qty] = Embossout.[RFID Emboss Farm Out Qty]
-				,[RFID HT Farm In Qty] =htin.[RFID HT Farm In Qty]
-				,[RFID HT Farm Out Qty] = htout.[RFID HT Farm Out Qty]
-                ,#cte2.EMBROIDERY_qty,#cte2.BONDING_qty
-                ,#cte2.PRINTING_qty,#cte2.sewing_output,t.qty+t.FOCQty - #cte2.sewing_output [Balance]
-                ,#cte2.firstSewingDate				
-				,[Last Sewn Date] = (select Max(so.OutputDate) 
-                         from SewingOutput so WITH (NOLOCK) 
-                         inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-                         where sod.OrderID = t.OrderID)
-				,#cte2.AVG_QAQTY
-                ,DATEADD(DAY,iif(isnull(#cte2.AVG_QAQTY,0) = 0,0,ceiling((t.qty+t.FOCQty - #cte2.sewing_output)/(#cte2.AVG_QAQTY*1.0))),#cte2.firstSewingDate) [Est_offline]
-                ,IIF(isnull(t.TotalCTN,0)=0, 0, round(t.ClogCTN / (t.TotalCTN*1.0),4) * 100 ) [pack_rate]
-                ,t.TotalCTN                
-                ,t.TotalCTN-t.FtyCTN as FtyCtn
-                , t.ClogCTN, t.InspDate
-				, InspResult
-				, [CFA Name] = InspHandle
-				, t.ActPulloutDate,t.FtyKPI                
-                ,KPIChangeReason.KPIChangeReason  KPIChangeReason
-                ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
-                ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
-                ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]             
-                ,dbo.getTPEPass1(t.McHandle) [MC Handle]
-                ,t.DoxType
-                ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q WITH (NOLOCK) where q.ID = t.OrderID) t for xml path('')) article_list                
-                , (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = t.SpecialMark) [SpecMark]
-                , t.GFR, t.SampleReason
-                ,(select s.StdTms * t.CPU from System s WITH (NOLOCK) ) [TMS]
+select t.MDivisionID
+       , t.FactoryID
+       , t.SewLine
+       , t.BuyerDelivery
+       , t.SewInLine
+       , t.SewOffLine
+       , t.BrandID
+       , t.OrderID
+       , Dest = Country.Alias
+       , t.StyleID
+       , t.OrderTypeID
+       , t.ShipmodeID
+       , [OrderNo] = t.Customize1
+       , t.CustPONo
+       , t.CustCDID
+       , t.ProgramID
+       , t.CdCodeID
+       , t.KPILETA
+       , t.LETA
+       , t.MTLETA
+       , t.SewETA
+       , t.PackETA
+       , t.CPU
+       , t.Qty_byShip
+       , #cte2.first_cut_date
+       , #cte2.cut_qty
+       , [RFID Cut Qty] = CutQty.[RFID Cut Qty]
+       , [RFID Loading Qty] = isnull(loading.AccuLoad,0)             
+       , [RFID Emb Farm In Qty] = Embin.[RFID Emb Farm In Qty]
+       , [RFID Emb Farm Out Qty] = Embout.[RFID Emb Farm Out Qty]
+       , [RFID Bond Farm In Qty] =Bondin.[RFID Bond Farm In Qty]
+       , [RFID Bond Farm Out Qty] = Bondout.[RFID Bond Farm Out Qty]
+       , [RFID Print Farm In Qty] = Printin.[RFID Print Farm In Qty]
+       , [RFID Print Farm Out Qty] = Printout.[RFID Print Farm Out Qty]
+       , [RFID AT Farm In Qty] = ATin.[RFID AT Farm In Qty]
+       , [RFID AT Farm Out Qty] = ATout.[RFID AT Farm Out Qty]
+       , [RFID Pad Print Farm In Qty] = PadPrintin.[RFID Pad Print Farm In Qty]
+       , [RFID Pad Print Farm Out Qty] = PadPrintout.[RFID Pad Print Farm Out Qty]
+       , [RFID Emboss Farm In Qty] = Embossin.[RFID Emboss Farm In Qty]
+       , [RFID Emboss Farm Out Qty] = Embossout.[RFID Emboss Farm Out Qty]
+       , [RFID HT Farm In Qty] = htin.[RFID HT Farm In Qty]
+       , [RFID HT Farm Out Qty] = htout.[RFID HT Farm Out Qty]
+       , #cte2.EMBROIDERY_qty
+       , #cte2.BONDING_qty
+       , #cte2.PRINTING_qty
+       , #cte2.sewing_output
+       , [Balance] = t.qty + t.FOCQty - #cte2.sewing_output 
+       , #cte2.firstSewingDate              
+       , [Last Sewn Date] = (select Max(so.OutputDate) 
+                             from SewingOutput so WITH (NOLOCK) 
+                             inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
+                             where sod.OrderID = t.OrderID)
+       , #cte2.AVG_QAQTY
+       , [Est_offline] = DATEADD(DAY
+                                 , iif(isnull(#cte2.AVG_QAQTY, 0) = 0, 0
+                                                                     , ceiling((t.qty+t.FOCQty - #cte2.sewing_output) / (#cte2.AVG_QAQTY*1.0)))
+                                 , #cte2.firstSewingDate) 
+       , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
+                                                    , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
+       , t.TotalCTN                
+       , FtyCtn = t.TotalCTN - t.FtyCTN
+       , t.ClogCTN
+       , t.InspDate
+       , InspResult
+       , [CFA Name] = InspHandle
+       , t.ActPulloutDate
+       , t.FtyKPI                
+       , KPIChangeReason = KPIChangeReason.KPIChangeReason  
+       , t.PlanDate
+       , dbo.getTPEPass1(t.SMR) [SMR]
+       , dbo.getTPEPass1(T.MRHandle) [Handle]
+       , [PO SMR] = (select dbo.getTPEPass1(p.POSMR) 
+                     from dbo.PO p WITH (NOLOCK) 
+                     where p.ID = t.POID) 
+       , [PO Handle] = (select dbo.getTPEPass1(p.POHandle) 
+                        from dbo.PO p WITH (NOLOCK) 
+                        where p.ID = t.POID)   
+       , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
+       , t.DoxType
+       , article_list = (select article + ',' 
+                         from (
+                              select distinct q.Article  
+                              from dbo.Order_Qty q WITH (NOLOCK) 
+                              where q.ID = t.OrderID
+                         ) t 
+                         for xml path('')) 
+       , [SpecMark] = (select Name 
+                       from Reason WITH (NOLOCK) 
+                       where ReasonTypeID = 'Style_SpecialMark' 
+                             and ID = t.SpecialMark) 
+       , t.GFR
+       , t.SampleReason
+       , [TMS] = (select s.StdTms * t.CPU 
+                  from System s WITH (NOLOCK)) 
 "));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
-            sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID  
+            sqlCmd.Append(string.Format(@" 
+from #cte t 
+inner join #cte2 on #cte2.OrderID = t.OrderID 
+                    and #cte2.Seq = t.Seq
+                    and #cte2.ShipmodeID = t.ShipmodeID 
 left join Country with (Nolock) on Country.id= t.Dest"));
             if (isArtwork) 
-                sqlCmd.Append(string.Format(@" left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
+                sqlCmd.Append(string.Format(@" 
+left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
 
             //KPIChangeReason
             sqlCmd.Append(@"  
-outer apply ( select ID + '-' + Name KPIChangeReason  from Reason 
-where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason 
-and t.KPIChangeReason !='' and t.KPIChangeReason is not null 
+outer apply ( 
+    select KPIChangeReason = ID + '-' + Name   
+    from Reason 
+    where ReasonTypeID = 'Order_BuyerDelivery' 
+          and ID = t.KPIChangeReason 
+          and t.KPIChangeReason != '' 
+          and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-	select 
-	[RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
+	select [RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='SORTING'
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'SORTING'
 ) CutQty
-outer apply 
-(
-	select [AccuLoad] = AccuLoad from 
-	(select distinct FactoryID,SP,StyleID,Line,AccuLoad,SewingDate from #print ) a
-	where SP=t.OrderID and  StyleID=t.StyleID
-	and FactoryID=t.FactoryID
-	and line=t.SewLine
-    and SewingDate= CONVERT(date, GETDATE())
-)loading
-
+outer apply (
+	select [AccuLoad] = AccuLoad 
+    from (
+        select distinct FactoryID
+               , SP
+               , StyleID
+               , Line
+               , AccuLoad
+               , SewingDate 
+        from #print 
+    ) a
+	where SP = t.OrderID 
+          and  StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SewingDate = CONVERT(date, GETDATE())
+) loading
 outer apply(
-	select [RFID Emb Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	select [RFID Emb Farm In Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='Emb' and BIO.InComing is not null
-)Embin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'Emb' 
+          and BIO.InComing is not null
+) Embin
 outer apply(
 	select [RFID Emb Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='Emb' and BIO.OutGoing is not null
-)Embout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'Emb' 
+          and BIO.OutGoing is not null
+) Embout
 outer apply(
-	select [RFID Bond Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	select [RFID Bond Farm In Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='BO' and BIO.InComing is not null
-)Bondin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'BO' 
+          and BIO.InComing is not null
+) Bondin
 outer apply(
 	select [RFID Bond Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='BO' and BIO.OutGoing is not null
-)Bondout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'BO' 
+          and BIO.OutGoing is not null
+) Bondout
 outer apply(
-	select [RFID Print Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	select [RFID Print Farm In Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='PRT' and BIO.InComing is not null
-)Printin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'PRT' 
+          and BIO.InComing is not null
+) Printin
 outer apply(
 	select [RFID Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='PRT' and BIO.OutGoing is not null
-)Printout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'PRT' 
+          and BIO.OutGoing is not null
+) Printout
 outer apply(
-	select [RFID AT Farm In Qty] =isnull(sum(BD.Qty), 0) 
+	select [RFID AT Farm In Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='AT' and BIO.InComing is not null
-)ATin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'AT' 
+          and BIO.InComing is not null
+) ATin
 outer apply(
 	select [RFID AT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='AT' and BIO.OutGoing is not null
-)ATout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'AT' 
+          and BIO.OutGoing is not null
+) ATout
 outer apply(
 	select [RFID Pad Print Farm In Qty] =isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='PAD-PRT' and BIO.InComing is not null
-)PadPrintin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'PAD-PRT' 
+          and BIO.InComing is not null
+) PadPrintin
 outer apply(
 	select [RFID Pad Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='PAD-PRT' and BIO.OutGoing is not null
-)PadPrintout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'PAD-PRT' 
+          and BIO.OutGoing is not null
+) PadPrintout
 outer apply(
 	select [RFID Emboss Farm In Qty] =isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='SUBCONEMB' and BIO.InComing is not null
-)Embossin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'SUBCONEMB' 
+          and BIO.InComing is not null
+) Embossin
 outer apply(
 	select [RFID Emboss Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='SUBCONEMB' and BIO.OutGoing is not null
-)Embossout
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'SUBCONEMB' 
+          and BIO.OutGoing is not null
+) Embossout
 outer apply(
 	select [RFID HT Farm In Qty] =isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='HT' and BIO.InComing is not null
-)htin
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'HT' 
+          and BIO.InComing is not null
+) htin
 outer apply(
 	select [RFID HT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
 	from Bundle B
 	left join Bundle_Detail BD on BD.Id=B.ID
 	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid=t.OrderID and BIO.SubProcessId='HT' and BIO.OutGoing is not null
-)htout
-
+	where Orderid = t.OrderID 
+          and BIO.SubProcessId = 'HT' 
+          and BIO.OutGoing is not null
+) htout
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", orderby));
@@ -878,7 +1066,7 @@ drop table #CBDate
 
                 for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
                 {
-                    objSheets.Cells[1, 55 + i] = dtArtworkType.Rows[i]["id"].ToString();
+                    objSheets.Cells[1, 73 + i] = dtArtworkType.Rows[i]["id"].ToString();
                 }
 
                 //首列資料篩選
