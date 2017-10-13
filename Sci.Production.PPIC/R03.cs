@@ -188,7 +188,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
-    where 1=1");
+    where o.junk=0 ");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
@@ -1027,7 +1027,7 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O where 1 = 1 "
+    select ID from orders O where  o.junk=0 "
 );
 
                         if (!MyUtility.Check.Empty(buyerDlv1))
@@ -1232,16 +1232,22 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             object[,] objArray = new object[printData.Rows.Count, lastCol];
            
             string KPIChangeReasonName;  //CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
-            //Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
+                                         //Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
 
+            if (orderArtworkData == null) {
+                orderArtworkData = new DataTable();
+                orderArtworkData.ColumnsStringAdd("ID");
+            }
             var lookupID = orderArtworkData.AsEnumerable().ToLookup(row => row["ID"].ToString());
+            
+            
 
 
             excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
             foreach (DataRow dr in printData.Rows)
             {
                 //EMBROIDERY 如果Qty price都是0該筆資料不show
-                if (orderArtworkData.Rows.Count > 0 && !MyUtility.Check.Empty( subProcess)) {
+                if ( orderArtworkData.Rows.Count > 0 && !MyUtility.Check.Empty( subProcess)) {
                     //DataRow[] find_subprocess = orderArtworkData.Select(string.Format("ID = '{0}' and ArtworkTypeID = '{1}' and (Price > 0 or Qty > 0)", MyUtility.Convert.GetString(dr["ID"]), subProcess));
                     var records = from record in lookupID[MyUtility.Convert.GetString(dr["ID"])]
                                   where record.Field<string>("ArtworkTypeID") == subProcess
