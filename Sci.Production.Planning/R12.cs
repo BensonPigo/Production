@@ -69,7 +69,7 @@ namespace Sci.Production.Planning
                                                 O.Qty , O.StyleID , F.CountryID
                                         From Orders O WITH (NOLOCK)
                                         Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
-                                        Where 1=1 {0}", where, StandardTms);
+                                        Where O.Category in ('B','S') {0}", where, StandardTms);
 
             BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style,Order Data capture, data may be many, please wait (Step 1/5)"); });
             result = DBProxy.Current.SelectByConn(con, SqlData1, out tmpData1);

@@ -109,7 +109,7 @@ select SewingSchedule.id,SewingSchedule.factoryid,sewinglineid
 	where w.FactoryID = SewingSchedule.FactoryID and w.SewingLineID = SewingSchedule.SewingLineID
 	and w.Date between cast(Inline as date) and cast(offline as date) and w.Holiday = 0) avg_workhours
 from dbo.SewingSchedule WITH (NOLOCK) 
-inner join dbo.orders WITH (NOLOCK) on orders.id = SewingSchedule.OrderID
+inner join dbo.orders WITH (NOLOCK) on orders.id = SewingSchedule.OrderID and orders.Category  in ('B','S')
 inner join dbo.Order_TmsCost WITH (NOLOCK) on Order_TmsCost.ID = orders.id 
 where Order_TmsCost.ArtworkTypeID='HEAT TRANSFER' 
 AND Order_TmsCost.TMS > 0 

@@ -127,7 +127,7 @@ AND orders.IsForecast = 0
 AND orders.Junk = 0 
 and factory.mdivisionid = '{1}'
 and Order_TmsCost.localsuppid !=''
-and Orders.category != 'M'", poType, Sci.Env.User.Keyword);
+and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
 
@@ -200,7 +200,7 @@ and orders.Finished=0
 and orders.IsForecast = 0
 and orders.Junk = 0
 and Order_TmsCost.localsuppid !=''
-and Orders.category != 'M'", poType, Sci.Env.User.Keyword);
+and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
