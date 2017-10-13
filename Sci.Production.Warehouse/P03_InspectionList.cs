@@ -157,7 +157,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                     else
                     {
                         DataRow data = dt.Rows[0];
-                        var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
+                        var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data,false);
                         frm.ShowDialog(this);
                         frm.Dispose();
                     };
