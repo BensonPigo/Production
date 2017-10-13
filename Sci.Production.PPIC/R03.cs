@@ -1027,7 +1027,7 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O where  o.junk=0 "
+    select ID from orders O  WITH (NOLOCK)  where  o.junk=0 "
 );
 
                         if (!MyUtility.Check.Empty(buyerDlv1))
