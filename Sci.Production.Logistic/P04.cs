@@ -89,7 +89,8 @@ namespace Sci.Production.Logistic
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 //.Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("TransferSlipNo", header: "TransferSlipNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -183,6 +184,7 @@ from (
                  , PLD.OrderID
                  , orders.CustPONo
                  , PLD.CTNStartNo
+                 , TransferSlipNo = TtClog.TransferSlipNo
                  , PLD.ClogLocationId
                  , PLD.Remark
                  , orders.BrandID
@@ -194,11 +196,12 @@ from (
                                                             where ID = orders.Dest),'')
                  , orders.TotalCTN
                  , orders.ClogCTN
-          from TransferToClog TtClog
-          inner join PackingList PL WITH (NOLOCK) on TtClog.PackingListID = PL.ID
+          from PackingList PL WITH (NOLOCK)
           inner join PackingList_Detail PLD WITH (NOLOCK) on PL.ID = PLD.ID
           inner join Orders orders WITH (NOLOCK) on PLD.OrderID = orders.ID
-                                                    and TtClog.OrderID = orders.ID
+          left join  TransferToClog TtClog WITH (NOLOCK) on PL.ID = TtClog.PackingListID
+                                                           and PLD.CTNStartNo = TtClog.CTNStartNo
+                                                           and PLD.OrderID = TtClog.OrderID
           where (PL.Type = 'B' or PL.Type = 'L')
                 and PLD.ReceiveDate is not null
                 and PLD.CTNQty = 1
@@ -206,22 +209,22 @@ from (
             #region 組條件
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and TtClog.OrderID >= '{0}'", this.txtSPNoStart.Text));
+                sqlCmd.Append(string.Format(" and orders.ID >= '{0}'", this.txtSPNoStart.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and TtClog.OrderID <= '{0}'", this.txtSPNoEnd.Text));
+                sqlCmd.Append(string.Format(" and orders.ID <= '{0}'", this.txtSPNoEnd.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackIDStart.Text))
             {
-                sqlCmd.Append(string.Format(" and TtClog.PackingListID >= '{0}'", this.txtPackIDStart.Text));
+                sqlCmd.Append(string.Format(" and PL.ID >= '{0}'", this.txtPackIDStart.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and TtClog.PackingListID <= '{0}'", this.txtPackIDEnd.Text));
+                sqlCmd.Append(string.Format(" and PL.ID <= '{0}'", this.txtPackIDEnd.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtPONoStart.Text))
