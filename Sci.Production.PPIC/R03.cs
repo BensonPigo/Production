@@ -1122,18 +1122,11 @@ OrderID as(
                             {
                                 sqlcmd_sub.Append(" or o.Category = 'M'");
                             }
-                            //如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
-                            if (forecast && !seperate)
+                            if (forecast)
                             {
                                 sqlcmd_sub.Append(" or o.Category = ''");
                             }
                             sqlcmd_sub.Append(")");
-                        }
-
-                        //forcast 另外出在excel的最下方，因為會與Separate條件衝突，所以另外處理
-                        if (forecast)
-                        {
-                            sqlcmd_sub.Append(" and o.Category = ''");
                         }
 
                         sqlcmd_sub.Append(@" )
@@ -1485,6 +1478,24 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
+            //空值給0
+            if (artwork || pap)
+            {
+                for (int j = 0; j < intRowsStart; j++)
+                {
+                    for (int i = 115; i < lastCol; i++)
+                    {
+                        if (objArray[j, i] == null)
+                        {
+                            objArray[j, i] = 0;
+                        }
+
+                    }
+                }
+            }
+          
+
             worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); //篩選
             worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191))))); //底色
             worksheet.Range[String.Format("A{0}:{1}{2}", 2, excelColEng, intRowsStart + 1)].Value2 = objArray;
