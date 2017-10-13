@@ -245,7 +245,7 @@ where	WEAVETYPEID = '{0}'
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
                 grid.ValidateControl();
-                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr,editm);
+                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr,this.EditMode);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
                 frm.ShowDialog(this);
                 if(EditMode) get_total_point();
