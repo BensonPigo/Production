@@ -125,7 +125,7 @@ where a.ApvToPurchase = 1
       and d.localsuppid = '{3}'
       --and a.factoryid = '{0}'    
       and a.mdivisionid ='{1}'
-      and c.Category != 'M'
+      and c.Category  in ('B','S')
       and c.Junk = 0
 ", Env.User.Factory
                      , Env.User.Keyword
@@ -219,7 +219,7 @@ where a.status = 'Approved'
       --and a.factoryid = '{0}'
       and d.localsuppid= '{3}'
       and a.Mdivisionid = '{1}'
-      and c.Category !='M'
+      and c.Category  in ('B','S')
       and exists (select id from orders where poid=b.OrderID and junk=0)
       and b.PurchaseQty > 0 
       and b.PoId = ''
