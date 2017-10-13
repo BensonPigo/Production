@@ -45,10 +45,12 @@
             this.txtPONoEnd = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.txtPackIDEnd = new Sci.Win.UI.TextBox();
+            this.textTransferSlipNo = new Sci.Win.UI.TextBox();
             this.txtPackIDStart = new Sci.Win.UI.TextBox();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelPONo = new Sci.Win.UI.Label();
+            this.labelTransferSlipNo = new Sci.Win.UI.Label();
             this.labelPackID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
@@ -100,10 +102,12 @@
             this.panel3.Controls.Add(this.txtPONoEnd);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.txtPackIDEnd);
+            this.panel3.Controls.Add(this.textTransferSlipNo);
             this.panel3.Controls.Add(this.txtPackIDStart);
             this.panel3.Controls.Add(this.txtSPNoEnd);
             this.panel3.Controls.Add(this.txtSPNoStart);
             this.panel3.Controls.Add(this.labelPONo);
+            this.panel3.Controls.Add(this.labelTransferSlipNo);
             this.panel3.Controls.Add(this.labelPackID);
             this.panel3.Controls.Add(this.labelSPNo);
             this.panel3.Controls.Add(this.shapeContainer1);
@@ -244,6 +248,15 @@
             this.txtPackIDEnd.Size = new System.Drawing.Size(120, 23);
             this.txtPackIDEnd.TabIndex = 5;
             // 
+            // textTransferSlipNo
+            // 
+            this.textTransferSlipNo.BackColor = System.Drawing.Color.White;
+            this.textTransferSlipNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textTransferSlipNo.Location = new System.Drawing.Point(470, 35);
+            this.textTransferSlipNo.Name = "textTransferSlipNo";
+            this.textTransferSlipNo.Size = new System.Drawing.Size(120, 23);
+            this.textTransferSlipNo.TabIndex = 4;
+            // 
             // txtPackIDStart
             // 
             this.txtPackIDStart.BackColor = System.Drawing.Color.White;
@@ -278,6 +291,14 @@
             this.labelPONo.Size = new System.Drawing.Size(55, 23);
             this.labelPONo.TabIndex = 3;
             this.labelPONo.Text = "PO#";
+            // 
+            // labelTransferSlipNo
+            // 
+            this.labelTransferSlipNo.Location = new System.Drawing.Point(362, 36);
+            this.labelTransferSlipNo.Name = "labelTransferSlipNo";
+            this.labelTransferSlipNo.Size = new System.Drawing.Size(105, 23);
+            this.labelTransferSlipNo.TabIndex = 2;
+            this.labelTransferSlipNo.Text = "TransferSlipNo";
             // 
             // labelPackID
             // 
@@ -473,5 +494,7 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridPackID;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.TextBox textTransferSlipNo;
+        private Win.UI.Label labelTransferSlipNo;
     }
 }
