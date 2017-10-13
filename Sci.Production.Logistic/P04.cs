@@ -89,7 +89,8 @@ namespace Sci.Production.Logistic
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 //.Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("TransferSlipNo", header: "TransferSlipNo", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O.#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -135,7 +136,10 @@ namespace Sci.Production.Logistic
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text) && MyUtility.Check.Empty(this.txtPackIDStart.Text) && MyUtility.Check.Empty(this.txtPackIDEnd.Text) && MyUtility.Check.Empty(this.txtPONoStart.Text) && MyUtility.Check.Empty(this.txtPONoEnd.Text))
+            if (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text)
+                && MyUtility.Check.Empty(this.txtPackIDStart.Text) && MyUtility.Check.Empty(this.txtPackIDEnd.Text)
+                && MyUtility.Check.Empty(this.txtPONoStart.Text) && MyUtility.Check.Empty(this.txtPONoEnd.Text)
+                && MyUtility.Check.Empty(this.textTransferSlipNo.Text))
             {
                 this.txtSPNoStart.Focus();
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
@@ -145,63 +149,103 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-select *,
-    rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-    , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
+select *
+       , rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+       , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
 from (
-    select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
-    (select sum(QtyPerCTN) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
-    (select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
-    substring((select cast(Article as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
-    substring((select cast(Color as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
-    substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
+    select 0 as selected
+           , d.*
+           , TransferPerCent = iif(d.TotalCTN > 0, ROUND((CONVERT(decimal, d.ClogCTN) / d.TotalCTN), 4), 0)
+           , QtyPerCTN = (select sum(QtyPerCTN) 
+                          from PackingList_Detail WITH (NOLOCK) 
+                          where ID = d.ID 
+                                and CTNStartNo = d.CTNStartNo)
+           , ShipQty = (select sum(ShipQty) 
+                        from PackingList_Detail WITH (NOLOCK) 
+                        where ID = d.ID 
+                              and CTNStartNo = d.CTNStartNo)
+           , Article = stuff((select ',' + cast(Article as nvarchar) 
+                                  from PackingList_Detail WITH (NOLOCK) 
+                                  where ID = d.ID 
+                                        and CTNStartNo = d.CTNStartNo for xml path(''))
+                             , 1, 1, '')
+           , Color = stuff((select ',' + cast(Color as nvarchar)
+                            from PackingList_Detail WITH (NOLOCK) 
+                            where ID = d.ID 
+                                  and CTNStartNo = d.CTNStartNo for xml path(''))
+                           , 1, 1, '')
+           , SizeCode =  stuff((select ',' + cast(SizeCode as nvarchar) 
+                                from PackingList_Detail WITH (NOLOCK) 
+                                where ID = d.ID 
+                                      and CTNStartNo = d.CTNStartNo for xml path(''))
+                               , 1, 1, '')
     from (
-	      select distinct  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
-	      from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) 
-	      where (a.Type = 'B' or a.Type = 'L')
-	      and a.ID = b.ID
-	      and b.ReceiveDate is not null
-	      and b.CTNQty = 1
-	      and b.OrderID = c.ID
-	      and c.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+          select distinct  PLD.ID
+                 , PLD.OrderID
+                 , orders.CustPONo
+                 , PLD.CTNStartNo
+                 , TransferSlipNo = TtClog.TransferSlipNo
+                 , PLD.ClogLocationId
+                 , PLD.Remark
+                 , orders.BrandID
+                 , orders.BuyerDelivery
+                 , orders.StyleID
+                 , orders.FtyGroup
+                 , Dest = '(' + orders.Dest + ')' + isnull((select Alias 
+                                                            from Country 
+                                                            where ID = orders.Dest),'')
+                 , orders.TotalCTN
+                 , orders.ClogCTN
+          from PackingList PL WITH (NOLOCK)
+          inner join PackingList_Detail PLD WITH (NOLOCK) on PL.ID = PLD.ID
+          inner join Orders orders WITH (NOLOCK) on PLD.OrderID = orders.ID
+          left join  TransferToClog TtClog WITH (NOLOCK) on PL.ID = TtClog.PackingListID
+                                                           and PLD.CTNStartNo = TtClog.CTNStartNo
+                                                           and PLD.OrderID = TtClog.OrderID
+          where (PL.Type = 'B' or PL.Type = 'L')
+                and PLD.ReceiveDate is not null
+                and PLD.CTNQty = 1
+                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and c.ID >= '{0}'", this.txtSPNoStart.Text));
+                sqlCmd.Append(string.Format(" and orders.ID >= '{0}'", this.txtSPNoStart.Text));
             }
+
             if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and c.ID <= '{0}'", this.txtSPNoEnd.Text));
+                sqlCmd.Append(string.Format(" and orders.ID <= '{0}'", this.txtSPNoEnd.Text));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackIDStart.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.txtPackIDStart.Text));
-            }
-            if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
-            {
-                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.txtPackIDEnd.Text));
+                sqlCmd.Append(string.Format(" and PL.ID >= '{0}'", this.txtPackIDStart.Text));
             }
 
-            //if (!MyUtility.Check.Empty(this.textBox5.Text))
-            //{
-            //    sqlCmd.Append(string.Format(" and b.TransferToClogID >= '{0}'", this.textBox5.Text));
-            //}
-            //if (!MyUtility.Check.Empty(this.textBox6.Text))
-            //{
-            //    sqlCmd.Append(string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text));
-            //}
+            if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
+            {
+                sqlCmd.Append(string.Format(" and PL.ID <= '{0}'", this.txtPackIDEnd.Text));
+            }
 
             if (!MyUtility.Check.Empty(this.txtPONoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo >= '{0}'", this.txtPONoStart.Text));
+                sqlCmd.Append(string.Format(" and orders.CustPONo >= '{0}'", this.txtPONoStart.Text));
             }
+
             if (!MyUtility.Check.Empty(this.txtPONoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo <= '{0}'", this.txtPONoEnd.Text));
+                sqlCmd.Append(string.Format(" and orders.CustPONo <= '{0}'", this.txtPONoEnd.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.textTransferSlipNo.Text))
+            {
+                sqlCmd.Append(string.Format(" and TtClog.TransferSlipNo = '{0}'", this.textTransferSlipNo.Text));
             }
             #endregion
-            sqlCmd.Append(") d)X order by rn");
+            sqlCmd.Append(@"
+    ) d
+)X 
+order by rn");
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
@@ -212,7 +256,7 @@ from (
             }
             else
             {
-                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                 return;
             }
             listControlBindingSource1.DataSource = gridData;
@@ -383,7 +427,7 @@ from (
             this.txtSPNoStart.Text = "";
             this.txtSPNoEnd.Text = "";
             this.txtPackIDStart.Text = "";
-            this.txtPackIDEnd.Text = "";            
+            this.txtPackIDEnd.Text = "";
             this.txtPONoStart.Text = "";
             this.txtPONoEnd.Text = "";
             this.comboFilter.SelectedValue = "1";
@@ -392,7 +436,7 @@ from (
             string sqlCmd = @"select 0 as selected,  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark
                                            from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) where 1=0";
             DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out gridData);
-          
+
             listControlBindingSource1.DataSource = gridData;
         }
 
@@ -465,7 +509,7 @@ from (
                     case "1":
                         break;
                     case "2":
-                        gridData.DefaultView.RowFilter = "CTNStartNo = '"+comboFilter2.SelectedValue.ToString() +"'";
+                        gridData.DefaultView.RowFilter = "CTNStartNo = '" + comboFilter2.SelectedValue.ToString() + "'";
                         break;
                     case "3":
                         comboFilter2.DataSource = comboBox2_RowSource3;
@@ -519,7 +563,7 @@ from (
                 rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", Report_UpdateLocation));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(comboRequestby.SelectedValue)));
-                
+
                 using (var frm = new Sci.Win.Subs.ReportView(rd))
                 {
                     frm.ShowDialog(this);
