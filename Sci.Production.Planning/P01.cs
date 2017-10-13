@@ -24,8 +24,7 @@ namespace Sci.Production.Planning
         {
             InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
-            this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
-in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
+            this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 ";
             firstTime = false;
         }
         public P01(ToolStripMenuItem menuitem, string history)
@@ -35,13 +34,11 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
             if (history.ToUpper() == "Y")
             {
-                this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 and factoryid  in 
-(select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
+                this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 ";
             }
             else
             {
-                this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
-in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
+                this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 ";
             }
             this.Text = "P01 Sub-process master list (History)";
             this.IsSupportEdit = false;

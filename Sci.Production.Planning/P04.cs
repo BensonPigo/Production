@@ -463,8 +463,7 @@ inner join dbo.factory on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category != 'M' 
         and b.tms > 0  
-        and a.IsForecast=0
-        and factory.mdivisionid = '{2}'" + orderby, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
+        and a.IsForecast=0 " + orderby, numWorkHours.Text, numEfficiency.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
