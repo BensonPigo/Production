@@ -168,7 +168,7 @@ with tmpOrders as (
             , InspHandle = (o.InspHandle +'-'+ I.Name)
             , o.MnorderApv
             , o.PulloutComplete
-            , o.FtyKPI
+            , oq.FtyKPI
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk
@@ -391,7 +391,7 @@ tmpFilterZone as (
             , InspHandle = (o.InspHandle +'-'+ I.Name)
             , o.MnorderApv
             , o.PulloutComplete
-            , o.FtyKPI
+            , oq.FtyKPI
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk

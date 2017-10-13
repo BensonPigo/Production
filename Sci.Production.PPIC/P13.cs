@@ -281,7 +281,7 @@ as
  and oa.ArtworkTypeID = at.ID) a
  for xml path('')) as tmpArtworkType,o.CuttingSP
  from Orders o WITH (NOLOCK) 
- where o.Finished = 0
+ where o.Finished = 0 and o.category in ('B','S')
  and o.IsForecast = 0
  and o.FtyGroup = '{0}'", Sci.Env.User.Factory));
             if (!MyUtility.Check.Empty(txtSPStart.Text))
