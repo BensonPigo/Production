@@ -115,7 +115,7 @@ outer apply (
                 and ad.PatternCode= oa.PatternCode
 ) IssueQty
 where   1=1 
-        and o.category != 'M'
+        and o.category  in ('B','S')
 ");
 
                 strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
