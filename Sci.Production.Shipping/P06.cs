@@ -472,7 +472,22 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Pullout date can't greater than today!");
                 return;
             }
-
+            StringBuilder errmsg = new StringBuilder();
+            errmsg.Append("Cannot confirm this Pullout!!\r\n");
+            bool errchk = false;
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                if(MyUtility.Convert.GetDecimal(dr["Variance"])<0)
+                {
+                    errchk = true;
+                    errmsg.Append(string.Format("Please check <SP#> {0}, Variance:{1}\r\n", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetDecimal(dr["Variance"])));
+                }
+            }
+            if (errchk)
+            {
+                MyUtility.Msg.WarningBox(errmsg.ToString());
+                return;
+            }
             //模擬按Edit行為
             toolbar.cmdEdit.PerformClick();
             if (!ReviseData()) //當Revise有錯誤時就不做任何事
