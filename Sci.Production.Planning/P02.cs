@@ -421,8 +421,7 @@ outer apply(
 where	a.Finished = 0 
 		and a.Category !='M' 
 		and b.ArtworkTypeID = 'PRINTING' 
-        and a.IsForecast=0
-		and factory.mdivisionid = '{0}'" + orderby, Sci.Env.User.Keyword);
+        and a.IsForecast=0 " + orderby);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
