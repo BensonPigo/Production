@@ -329,12 +329,12 @@ from (
 			, BundleGroup = BundleGroup.value
 	from #cutcomb
 	outer apply (
-		select distinct value = SizeCode
+		select top 1 value = SizeCode
 		from #cur_bdltrack2 
 		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
 	) SizeCode
 	outer apply (
-		select distinct value = BundleGroup
+		select top 1 value = BundleGroup
 		from #cur_bdltrack2 
 		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
 	) BundleGroup
@@ -397,9 +397,13 @@ from (
 		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
 	)x 
 	outer apply(
-		select	value = isnull(( select sum(s.StdQ)
+		select	value = isnull(( iif((select sum(s.StdQ)
 									from dbo.getDailystdq(x.orderid) s
-									where s.Date between @StartDate and @EndDate)
+									where s.Date between @StartDate and @EndDate
+									)=0,0,(select sum(s.StdQ)
+									from dbo.getDailystdq(x.orderid) s
+									where s.Date <= @EndDate
+									)))
 								, 0)
 	) std
 	group by FactoryID, orderID, StyleID, cdate2, SewLine, std.value
@@ -478,6 +482,7 @@ outer apply (
 	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
 ) BCS
 where SewingDate between @StartDate and @EndDate
+and p.AccuStd !=0
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
 drop table #tsp
