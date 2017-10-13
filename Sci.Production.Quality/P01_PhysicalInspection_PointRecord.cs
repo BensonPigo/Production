@@ -21,12 +21,12 @@ namespace Sci.Production.Quality
         private DataTable defRecord;
         private string def_num;
         private DataRow def_dr;
-
-        public P01_PhysicalInspection_PointRecord(DataRow data_dr,string n_column)
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
+        public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
         {
             InitializeComponent();
             string defect_str = data_dr["def" + n_column].ToString();
-            string[] defect = defect_str.Split(new char[]{'/'});
+            string[] defect = defect_str.Split(new char[] { '/' });
             def_num = n_column;
             def_dr = data_dr;
             DBProxy.Current.Select(null, "Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) ", out defRecord);
@@ -52,10 +52,14 @@ namespace Sci.Production.Quality
             .Text("ID", header: "Code", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("DescriptionEN", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4);
+            .Numeric("Points", header: "Points", width: Widths.AnsiChars(4), integer_places: 4).Get(out col_Points);
+            GridEditing(edit);
 
         }
-
+        private void GridEditing(bool isEditing)
+        {
+            col_Points.IsEditingReadOnly = !isEditing;
+        }
         private void btnOK_Click(object sender, EventArgs e) //OK
         {
             gridPhysicalInspection.ValidateControl();
