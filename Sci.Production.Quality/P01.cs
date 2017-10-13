@@ -93,7 +93,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             phy.CellMouseDoubleClick += (s, e) =>
             {              
                     var dr = this.CurrentDetailData; if (null == dr) return;
-                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr,this.EditMode);
+                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                     frm.ShowDialog(this);
                     frm.Dispose();
                     this.RenewData();
@@ -101,7 +101,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             phyD.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr, this.EditMode);
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -110,7 +110,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             phyYds.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData; if (null == dr) return;
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr, this.EditMode);
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -508,7 +508,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
             var currentID = this.CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr, this.EditMode);
+            var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
