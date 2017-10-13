@@ -473,8 +473,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category != 'M' 
         and a.IsForecast=0
-        and b.ArtworkTypeID = 'EMBROIDERY'  
-        and factory.mdivisionid = '{3}'" + orderby, numHeads.Text, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
+        and b.ArtworkTypeID = 'EMBROIDERY' " + orderby, numHeads.Text, numWorkHours.Text, numEfficiency.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}

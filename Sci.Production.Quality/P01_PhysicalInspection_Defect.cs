@@ -20,13 +20,13 @@ namespace Sci.Production.Quality
         DataTable DefectTb, DefectFilterTb;
         private DataTable gridTb;
         public DataRow mainrow;
-        
-        public P01_PhysicalInspection_Defect(DataTable defectTb,DataRow maindr)
+        bool editm = false;
+        public P01_PhysicalInspection_Defect(DataTable defectTb,DataRow maindr,bool edit)
         {
             InitializeComponent();
             DefectTb = defectTb;
             mainrow = maindr;
-
+            editm = edit;
         }
 
         protected override void OnAttached(DataRow data)
@@ -125,27 +125,27 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings DefectsCell3 = new DataGridViewGeneratorTextColumnSettings();
             DefectsCell1.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.RowIndex == -1 || !this.EditMode) return;
+                if (e.RowIndex == -1 ) return;
                 
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds1"])) return;
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"1");
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"1", editm);
                 frm.ShowDialog(this);
             };
             DefectsCell2.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.RowIndex == -1 || !this.EditMode) return;
+                if (e.RowIndex == -1 ) return;
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds2"])) return;
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"2");
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"2", editm);
                 frm.ShowDialog(this);
             };
             DefectsCell3.CellMouseDoubleClick += (s, e) =>
             {
-                if (e.RowIndex == -1 || !this.EditMode) return;
+                if (e.RowIndex == -1 ) return;
                 DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds3"])) return;
-                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"3");
+                var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"3", editm);
                 frm.ShowDialog(this);
             };
              Helper.Controls.Grid.Generator(gridFabricInspection)

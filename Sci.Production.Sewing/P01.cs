@@ -51,6 +51,12 @@ namespace Sci.Production.Sewing
                 MyUtility.Msg.WarningBox("Can't delete autocreate Item.");
                 return;
             }
+
+            if (CheckRemoveRow() == false)
+            {
+                return;
+            }
+
             base.OnDetailGridDelete();
 
             if (this.EditMode && this.detailgridbs.DataSource != null)
@@ -165,6 +171,11 @@ order by a.OrderId,os.Seq"
                     {
                         if (e.RowIndex != -1)
                         {
+                            if (CheckRemoveRow() == false)
+                            {
+                                return;
+                            }
+
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format(@"
 select distinct ss.OrderID 
@@ -185,8 +196,14 @@ where   ss.FactoryID = '{0}'
 
             orderid.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && CurrentDetailData["OrderID"].EqualString(e.FormattedValue) == false)
                 {
+                    if (CurrentDetailData["OrderID"].Empty() == false && CheckRemoveRow() == false)
+                    {
+                        this.detailgrid.GetDataRow<DataRow>(e.RowIndex)["OrderID"] = CurrentDetailData["OrderID"];
+                        return;
+                    }
+
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["OrderID"]))
                     {
@@ -326,6 +343,11 @@ where   o.FtyGroup = @factoryid
                     {
                         if (e.RowIndex != -1 && CurrentDetailData["AutoCreate"].EqualString("False"))
                         {
+                            if (CheckRemoveRow() == false)
+                            {
+                                return;
+                            }
+
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable LocationData;
@@ -362,6 +384,11 @@ where   o.FtyGroup = @factoryid
                     {
                         if (e.RowIndex != -1)
                         {
+                            if (CheckRemoveRow() == false)
+                            {
+                                return;
+                            }
+
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select Article,ColorID from View_OrderFAColor where Id = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]));
 
@@ -390,8 +417,14 @@ where   o.FtyGroup = @factoryid
 
             article.CellValidating += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode && CurrentDetailData["Article"].EqualString(e.FormattedValue) == false)
                 {
+                    if(CurrentDetailData["Article"].Empty() == false && CheckRemoveRow() == false)
+                    {
+                        this.detailgrid.GetDataRow<DataRow>(e.RowIndex)["Article"] = CurrentDetailData["Article"];
+                        return;
+                    }
+
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Article"]))
                     {
@@ -763,6 +796,7 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
 
         protected override bool ClickDeleteBefore()
         {
+            DualResult result;
             if (!MyUtility.Check.Empty(CurrentMaintain["LockDate"]))
             {
                 MyUtility.Msg.WarningBox("This record already locked, can't delete.");
@@ -774,41 +808,6 @@ order by a.OrderId,os.Seq", this.CurrentMaintain["ID"]);
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
             }
-            #region 判斷不可以有出貨紀錄
-            DataTable dtCheckQty;
-            DualResult result;
-            string sqlSewQty = string.Format(@"
-select 
-a.OrderId
-,a.Article
-,a.SizeCode
-,sum(b.ShipQty) ShipQty
-from SewingOutput_Detail_Detail a
-inner join PackingList_Detail b on a.OrderId= b.OrderID 
-and a. Article = b. Article and a. SizeCode = b. SizeCode
-inner join PackingList c on b.id=c.ID
-where c.Status='Confirmed'
-and a.id='{0}'
-group by a.OrderId,a.Article,a.SizeCode"
-, CurrentMaintain["ID"].ToString());
-            if (!(result = DBProxy.Current.Select(null, sqlSewQty, out dtCheckQty)))
-            {
-                ShowErr(sqlSewQty, result);
-                return false;
-            }
-            string error = "";
-            for (int i = 0; i < dtCheckQty.Rows.Count; i++)
-            {
-                error = error + string.Format(@"Order: <{0}> Article: <{1}> Size: <{2}> 
-have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToString(), dtCheckQty.Rows[i]["Article"].ToString(), dtCheckQty.Rows[i]["SizeCode"].ToString(), dtCheckQty.Rows[i]["ShipQty"].ToString()) + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(error.ToString()))
-            {
-                MyUtility.Msg.WarningBox(error.ToString());
-                return false;
-            }
-            #endregion
 
             #region 若表身擁有 AutoCreate 的資料，則不可刪除
             if (((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted && row["AutoCreate"].EqualString("True")))
@@ -817,6 +816,32 @@ have ShipQty: <{3}> already,cannot delete.", dtCheckQty.Rows[i]["Orderid"].ToStr
                 return false;
             }
             #endregion  
+
+            #region 刪除的數量不能小於已出貨的數量
+            DataTable dtSubDetail = null;
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    DataTable subDt;
+                    GetSubDetailDatas(dr, out subDt);
+                    subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
+                    subDt.Columns.Add("AutoCreate");
+                    if (dtSubDetail == null) dtSubDetail = subDt.Clone();
+
+                    foreach (DataRow subDr in subDt.Rows)
+                    {
+                        subDr["AutoCreate"] = dr["AutoCreate"];
+                        dtSubDetail.ImportRow(subDr);
+                    }
+                }
+            }
+
+            if (SaveDeleteCheckPacking(dtSubDetail, false) == false)
+            {
+                return false;
+            }
+            #endregion            
 
             //第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
             string sqlcmdD ="Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
@@ -1054,63 +1079,9 @@ where (OrderID <> '' or OrderID is not null)
             }
 
             #region 產出數量不能小於已出貨的數量
-            DualResult resultCheckQty;
-            DataTable dtCheckQty;
-            
-            if (!MyUtility.Check.Empty(dtSubDetail) && dtSubDetail.Rows.Count> 0)
+            if (SaveDeleteCheckPacking(dtSubDetail, true) == false)
             {
-                string strCheckQty = @" 
-SELECT * 
-FROM   (
-    SELECT SewQty = t.AccumQty + t.qaqty 
-           , PackQty = pack.PackQty
-           , t.orderid
-           , t.ComboType
-           , t.article
-           , t.sizecode 
-    FROM   #tmp t 
-	outer apply
-	(
-		select Sum(b.shipqty) AS PackQty
-		from PackingList a
-		inner join PackingList_Detail b on a.ID=b.ID
-		where b.OrderID=t.OrderId
-		      and b.Article = t.Article 
-              and b.SizeCode = t.SizeCode
-		      and a.Status= 'Confirmed'
-	) pack
-    where Convert (bit, t.AutoCreate) != 1
-) a 
-WHERE  sewqty < packqty ";
-
-                resultCheckQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckQty, out dtCheckQty);
-                string error = "";
-
-                if (resultCheckQty == false)
-                {
-                    MyUtility.Msg.WarningBox(resultCheckQty.ToString());
-                    return false;
-                }
-                else if (dtCheckQty != null && dtCheckQty.Rows.Count > 0)
-                {
-                    for (int i = 0; i < dtCheckQty.Rows.Count; i++)
-                    {
-                        error = error + string.Format(@"
-Order: <{0}> ComboType: <{1}> Article: <{2}> Size: <{3}> QAQty: <{4}>  less than ShipQty: <{5}>", dtCheckQty.Rows[i]["Orderid"].ToString()
-                                       , dtCheckQty.Rows[i]["ComboType"].ToString()
-                                       , dtCheckQty.Rows[i]["Article"].ToString()
-                                       , dtCheckQty.Rows[i]["SizeCode"].ToString()
-                                       , dtCheckQty.Rows[i]["SewQty"].ToString()
-                                       , dtCheckQty.Rows[i]["PackQty"].ToString());
-                    }
-
-                    if (!MyUtility.Check.Empty(error.ToString()))
-                    {
-                        MyUtility.Msg.WarningBox(error.ToString());
-                        return false;
-                    }
-                }
-                
+                return false;
             }
             #endregion
 
@@ -1477,6 +1448,148 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
             }
 
            
+        }
+
+        /// <summary>
+        /// 當 Row 資料修改 or 刪除時
+        /// 必須檢查 Packing 數量
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckRemoveRow()
+        {
+            DataTable subDt;
+            GetSubDetailDatas(CurrentDetailData, out subDt);
+
+            #region 產出數量不能小於已出貨的數量
+            DualResult resultCheckQty;
+            DataTable dtCheckQty;
+
+            if (subDt.Rows.Count > 0)
+            {
+                string strCheckQty = @" 
+SELECT * 
+FROM   (
+    SELECT SewQty = t.AccumQty
+           , PackQty = pack.PackQty
+           , t.orderid
+           , t.ComboType
+           , t.article
+           , t.sizecode 
+    FROM   #tmp t 
+	outer apply
+	(
+		select Sum(b.shipqty) AS PackQty
+		from PackingList a
+		inner join PackingList_Detail b on a.ID=b.ID
+		where b.OrderID=t.OrderId
+		      and b.Article = t.Article 
+              and b.SizeCode = t.SizeCode
+		      and a.Status= 'Confirmed'
+	) pack
+) a 
+WHERE  sewqty < packqty ";
+
+                resultCheckQty = MyUtility.Tool.ProcessWithDatatable(subDt, null, strCheckQty, out dtCheckQty);
+                string error = "";
+
+                if (resultCheckQty == false)
+                {
+                    MyUtility.Msg.WarningBox(resultCheckQty.ToString());
+                    return false;
+                }
+                else if (dtCheckQty != null && dtCheckQty.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+                    {
+                        error = error + string.Format(@"
+Order: <{0}> ComboType: <{1}> Article: <{2}> Size: <{3}> QAQty: <{4}>  less than ShipQty: <{5}>", dtCheckQty.Rows[i]["Orderid"].ToString()
+                                       , dtCheckQty.Rows[i]["ComboType"].ToString()
+                                       , dtCheckQty.Rows[i]["Article"].ToString()
+                                       , dtCheckQty.Rows[i]["SizeCode"].ToString()
+                                       , dtCheckQty.Rows[i]["SewQty"].ToString()
+                                       , dtCheckQty.Rows[i]["PackQty"].ToString());
+                    }
+
+                    if (!MyUtility.Check.Empty(error.ToString()))
+                    {
+                        MyUtility.Msg.WarningBox(error.ToString());
+                        return false;
+                    }
+                }
+            }
+            #endregion
+            return true;
+        }
+
+        /// <summary>
+        /// 刪除 & 儲存前 檢查 Packing 數量
+        /// Save 必須加上 QaQty
+        /// Delete 則不用
+        /// </summary>
+        /// <param name="dtSubDetail">第三層資料</param>
+        /// <param name="saveCheck">true : Save; false : Delete</param>
+        /// <returns></returns>
+        private bool SaveDeleteCheckPacking(DataTable dtSubDetail, bool saveCheck)
+        {
+            DualResult resultCheckQty;
+            DataTable dtCheckQty;
+
+            if (!MyUtility.Check.Empty(dtSubDetail) && dtSubDetail.Rows.Count > 0)
+            {
+                string strCheckQty = string.Format(@" 
+SELECT * 
+FROM   (
+    SELECT SewQty = t.AccumQty {0}
+           , PackQty = pack.PackQty
+           , t.orderid
+           , t.ComboType
+           , t.article
+           , t.sizecode 
+    FROM   #tmp t 
+	outer apply
+	(
+		select Sum(b.shipqty) AS PackQty
+		from PackingList a
+		inner join PackingList_Detail b on a.ID=b.ID
+		where b.OrderID=t.OrderId
+		      and b.Article = t.Article 
+              and b.SizeCode = t.SizeCode
+		      and a.Status= 'Confirmed'
+	) pack
+    where Convert (bit, t.AutoCreate) != 1
+) a 
+WHERE  sewqty < packqty ", (saveCheck) ? "+ t.qaqty " : "");
+
+                resultCheckQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckQty, out dtCheckQty);
+                string error = "";
+
+                if (resultCheckQty == false)
+                {
+                    MyUtility.Msg.WarningBox(resultCheckQty.ToString());
+                    return false;
+                }
+                else if (dtCheckQty != null && dtCheckQty.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dtCheckQty.Rows.Count; i++)
+                    {
+                        error = error + string.Format(@"
+Order: <{0}> ComboType: <{1}> Article: <{2}> Size: <{3}> QAQty: <{4}>  less than ShipQty: <{5}>", dtCheckQty.Rows[i]["Orderid"].ToString()
+                                       , dtCheckQty.Rows[i]["ComboType"].ToString()
+                                       , dtCheckQty.Rows[i]["Article"].ToString()
+                                       , dtCheckQty.Rows[i]["SizeCode"].ToString()
+                                       , dtCheckQty.Rows[i]["SewQty"].ToString()
+                                       , dtCheckQty.Rows[i]["PackQty"].ToString());
+                    }
+
+                    if (!MyUtility.Check.Empty(error.ToString()))
+                    {
+                        MyUtility.Msg.WarningBox(error.ToString());
+                        return false;
+                    }
+                }
+
+            }
+            return true;
         }
     }
 }

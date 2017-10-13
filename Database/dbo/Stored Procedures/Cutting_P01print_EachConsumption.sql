@@ -17,16 +17,18 @@ BEGIN
 	GROUP BY d.MarkerNo,d.SMNoticeID,CuttingSP,POID,d.spno,StyleID,SeasonID,FactoryID
 	
 	Select a.id,a.Ukey
-	,'COMB' = FabricPanelCode
-	,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
-	,MarkerName,SizeCode,MarkerLength,a.ConsPC
-	,Seq,a.REMARK,Qty
+	,'COMB' = a.FabricPanelCode
+	--,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
+	,'COMBdes' = om.Remark+ '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
+	,a.MarkerName,SizeCode,a.MarkerLength,a.ConsPC
+	,a.Seq,a.REMARK,Qty
 	,ColorID,Orderqty,Layer,CutQty,Variance,c.Order_EachConsUkey,c.YDS
 	,MarkerDownloadID,Article into #tmp
 	From dbo.Order_EachCons a WITH (NOLOCK)
 	inner join dbo.Order_EachCons_SizeQty b  WITH (NOLOCK) on a.Id = b.Id and a.Ukey = b.Order_EachConsUkey
 	inner join dbo.Order_EachCons_Color c WITH (NOLOCK) on a.Id = c.Id and a.Ukey = c.Order_EachConsUkey
 	inner join dbo.Order_BOF d WITH (NOLOCK) on a.Id = d.Id and a.FabricCode = d.FabricCode
+	inner join dbo.Order_MarkerList om with(nolock) on om.Id=a.Id and om.MarkerName=a.MarkerName and om.FabricPanelCode=a.FabricPanelCode
 	inner join dbo.Fabric e WITH (NOLOCK) on d.SCIRefno = e.SCIRefno
 	where a.id in (select CuttingSP from dbo.Orders WITH (NOLOCK) where Id = @OrderID)
 	order by Seq

@@ -27,13 +27,13 @@ namespace Sci.Production.Quality
         string excelFile = "";
         DataTable Fir_physical_Defect;
         int addline = 0;
-
-        public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr)
+        bool editm = false;
+        public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr,bool edit)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
         {
             InitializeComponent();
-            
+            editm = edit;
 
             txtsupplier.TextBox1.IsSupportEditMode = false;
             txtsupplier.TextBox1.ReadOnly = true;
@@ -245,7 +245,7 @@ where	WEAVETYPEID = '{0}'
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
                 grid.ValidateControl();
-                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr);
+                P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr,this.EditMode);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
                 frm.ShowDialog(this);
                 if(EditMode) get_total_point();
