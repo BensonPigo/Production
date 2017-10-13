@@ -507,8 +507,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 if (!this.EditMode && (CurrentMaintain["status"].ToString().ToUpper() == "Approved"))
                 {
                     if (MyUtility.Check.Seek(string.Format(@"
-select price from order_tmscost ot WITH (NOLOCK) left join orders o on o.id = ot.id
-where ot.id = '{0}' and artworktypeid = '{1}' and o.Category  in ('B','S')"
+                    select price from order_tmscost ot WITH (NOLOCK) left join orders o on o.id = ot.id
+                    where ot.id = '{0}' and artworktypeid = '{1}' and o.Category  in ('B','S')"
                         , e.FormattedValue, CurrentMaintain["category"]), out dr, null))
                     {
                         if ((decimal)dr["price"] == 0m)
@@ -525,7 +525,9 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category  in ('B','S')"
                         return;
                     }
                 }
-                if (MyUtility.Check.Seek(string.Format("select FactoryID,POID,StyleID,SciDelivery,sewinline from orders  WITH (NOLOCK)  where id = '{0}'and MDivisionID='{1}' and orders.Category  in ('B','S') and orders.Junk=0", e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
+                if (MyUtility.Check.Seek(string.Format(@"select FactoryID,POID,StyleID,SciDelivery,sewinline from orders  WITH (NOLOCK)  
+                    where id = '{0}'and MDivisionID='{1}' and orders.Category  in ('B','S') and orders.Junk=0 and Finished=0 "
+                    , e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
                 {
                     CurrentDetailData["orderid"] = e.FormattedValue;
                     CurrentDetailData["factoryid"] = dr["FactoryID"];
