@@ -188,7 +188,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
-    where 1=1");
+    where o.junk=0 ");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
@@ -1027,7 +1027,7 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O where 1 = 1 "
+    select ID from orders O  WITH (NOLOCK)  where  o.junk=0 "
 );
 
                         if (!MyUtility.Check.Empty(buyerDlv1))
@@ -1122,18 +1122,11 @@ OrderID as(
                             {
                                 sqlcmd_sub.Append(" or o.Category = 'M'");
                             }
-                            //如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
-                            if (forecast && !seperate)
+                            if (forecast)
                             {
                                 sqlcmd_sub.Append(" or o.Category = ''");
                             }
                             sqlcmd_sub.Append(")");
-                        }
-
-                        //forcast 另外出在excel的最下方，因為會與Separate條件衝突，所以另外處理
-                        if (forecast)
-                        {
-                            sqlcmd_sub.Append(" and o.Category = ''");
                         }
 
                         sqlcmd_sub.Append(@" )
@@ -1232,16 +1225,22 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             object[,] objArray = new object[printData.Rows.Count, lastCol];
            
             string KPIChangeReasonName;  //CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
-            //Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
+                                         //Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
 
+            if (orderArtworkData == null) {
+                orderArtworkData = new DataTable();
+                orderArtworkData.ColumnsStringAdd("ID");
+            }
             var lookupID = orderArtworkData.AsEnumerable().ToLookup(row => row["ID"].ToString());
+            
+            
 
 
             excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
             foreach (DataRow dr in printData.Rows)
             {
                 //EMBROIDERY 如果Qty price都是0該筆資料不show
-                if (orderArtworkData.Rows.Count > 0 && !MyUtility.Check.Empty( subProcess)) {
+                if ( orderArtworkData.Rows.Count > 0 && !MyUtility.Check.Empty( subProcess)) {
                     //DataRow[] find_subprocess = orderArtworkData.Select(string.Format("ID = '{0}' and ArtworkTypeID = '{1}' and (Price > 0 or Qty > 0)", MyUtility.Convert.GetString(dr["ID"]), subProcess));
                     var records = from record in lookupID[MyUtility.Convert.GetString(dr["ID"])]
                                   where record.Field<string>("ArtworkTypeID") == subProcess
@@ -1479,6 +1478,24 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
+            //空值給0
+            if (artwork || pap)
+            {
+                for (int j = 0; j < intRowsStart; j++)
+                {
+                    for (int i = 115; i < lastCol; i++)
+                    {
+                        if (objArray[j, i] == null)
+                        {
+                            objArray[j, i] = 0;
+                        }
+
+                    }
+                }
+            }
+          
+
             worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); //篩選
             worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191))))); //底色
             worksheet.Range[String.Format("A{0}:{1}{2}", 2, excelColEng, intRowsStart + 1)].Value2 = objArray;
