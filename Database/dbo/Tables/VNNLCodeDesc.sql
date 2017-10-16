@@ -7,6 +7,8 @@
     [AddDate]  DATETIME       NULL,
     [EditName] VARCHAR (10)   CONSTRAINT [DF_VNNLCodeDesc_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME       NULL,
+    [WasteLower] NUMERIC(5, 3) NOT NULL, 
+    [WasteUpper] NUMERIC(5, 3) NOT NULL, 
     CONSTRAINT [PK_VNNLCodeDesc] PRIMARY KEY CLUSTERED ([NLCode] ASC)
 );
 
