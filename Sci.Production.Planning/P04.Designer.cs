@@ -397,7 +397,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 1;
-            this.txtmfactory.FilteMDivision = true;
+            this.txtmfactory.FilteMDivision = false;
             // 
             // labelArtworkType
             // 
