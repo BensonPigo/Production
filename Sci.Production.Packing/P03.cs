@@ -214,7 +214,7 @@ Select  ID
         , FtyGroup
 from Orders WITH (NOLOCK) 
 where   ID = '{0}' 
-        and ((Category = 'B' and LocalOrder = 0) or Category = 'S')
+        and ((Category = 'B' and LocalOrder = 0) or Category = 'S' or Category = 'G')
         and BrandID = '{1}' 
         and Dest = '{2}' 
         and CustCDID = '{3}'
