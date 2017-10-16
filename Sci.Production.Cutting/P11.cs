@@ -337,7 +337,7 @@ namespace Sci.Production.Cutting
            .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
            .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: Cellcell)
            .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
-           .Numeric("Cutoutput", header: "CutOutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
            .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
             gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
