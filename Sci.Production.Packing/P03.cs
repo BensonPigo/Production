@@ -180,8 +180,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 gridicon.Remove.Enabled = true;
             }
         }
-
-        
         
         protected override void OnDetailGridSetup()
         {
@@ -216,7 +214,7 @@ Select  ID
         , FtyGroup
 from Orders WITH (NOLOCK) 
 where   ID = '{0}' 
-        and ((Category = 'B' and LocalOrder = 0) or Category = 'S')
+        and ((Category = 'B' and LocalOrder = 0) or Category = 'S' or Category = 'G')
         and BrandID = '{1}' 
         and Dest = '{2}' 
         and CustCDID = '{3}'
@@ -741,6 +739,11 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 return false;
             }
 
+            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE
+            if (!CheckShipMode())
+            {
+                return false;
+            }
 
             //刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
@@ -1629,6 +1632,32 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
         }
 
+        //檢查表身的ShipMode與表頭的ShipMode要相同
+        private bool CheckShipMode()
+        {
+            StringBuilder msg = new StringBuilder();
+            DualResult result;
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable chktb;
+            string chkshipmode = string.Format(@"select distinct t.OrderID,t.OrderShipmodeSeq,o.ShipModeID
+from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.OrderShipmodeSeq = o.Seq");
+            result = MyUtility.Tool.ProcessWithDatatable(dt, "", chkshipmode, out chktb, "#tmp");
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Sql command error!");
+                return false;
+            }
+            foreach (DataRow dr in chktb.Select(string.Format("ShipModeID <> '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
+            {
+                msg.Append(string.Format("SP#:{0},  Seq:{1} Shipping Mode:{2}\r\n", MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"]), MyUtility.Convert.GetString(dr["ShipModeID"])));
+            }
+            if (msg.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Ship Mode are different, please check!\r\n" + msg.ToString());
+                return false;
+            }
+            return true;
+        }
         //Find Now
         private void btnFindNow_Click(object sender, EventArgs e)
         {
