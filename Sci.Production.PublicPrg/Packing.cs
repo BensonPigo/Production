@@ -1468,7 +1468,7 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
-                            if (size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
+                            if (article != MyUtility.Convert.GetString(dr["Article"])||size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
                                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["SizeSpec"]);
