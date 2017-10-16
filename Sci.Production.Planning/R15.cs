@@ -388,6 +388,8 @@ select	#tsp.masterID
 		, #cur_artwork.artwork 
 		, #tsp.SewLine
 		, #tsp.FactoryID
+        , SubProcessID = SubProcessID.ID
+        , isInComing = isInComing.value
 into #cutcomb
 from #tsp
 inner join (
@@ -418,110 +420,97 @@ inner join (
 									and oec.FabricCombo = wo.FabricCombo 
 									and oec.FabricPanelCode = wo.FabricPanelCode 
 									and oec.FabricCode = wo.FabricCode
-
 	where ob.Kind not in ('0','3')
 	      and oec.CuttingPiece = 0
 )#cur_artwork on #tsp.orderID = #cur_artwork.orderID
+outer apply (
+    select distinct ID
+    from SubProcess
+) SubProcessID
+outer apply (
+    select value = 'T'
+    union all
+    select value = 'F'
+) isInComing
 
 /*
 Step2
- 取出被 Loader 收下的 Bundle Data
-*		條件 SubProcessId = 'Loading'
+ 取出被各個部門收下的 Bundle Data
 *		排除
 *			1. Order_BOF.Kind = 0 (表Other) 
 *			2. Order_BOF.Kind = 3 (表Polyfill)的資料
 *			3. 外裁項 【Bundle_Detail 不會出現外裁項的資料】
 *		BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差
 */
-select	b.orderid
-		, bd.SizeCode
-		, cdate2 = cDate.value
-		, b.Article
-		, bd.BundleGroup
-		, FabricCombo = wo.FabricPanelCode
-		, PatternCode = bd.Patterncode
-		, artwork = isnull(ArtWork.value, '')
-		, qty = sum(isnull(bd.qty, 0))
+select *
 into #cur_bdltrack2
-from BundleInOut bio
-inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
-inner join Bundle b on b.id = bd.id
-inner join WorkOrder wo on b.POID = wo.id
-						   and b.CutRef = wo.CutRef
-left join Order_BOF ob on ob.Id = wo.Id 
-						  and ob.FabricCode = wo.FabricCode
-inner join #tsp on b.Orderid = #tsp.orderID
-outer apply (
-	select value = stuff ((	select '+' + subprocessid
-							from (
-								select distinct bda.subprocessid
-								from Bundle_Detail_Art bda
-								where bd.BundleNo = bda.Bundleno
-							) k
-							for xml path('')
-							), 1, 1, '')
-) ArtWork
-outer apply(
-	select value = CONVERT(char(10), bio.InComing, 120)
-) cDate
-where	bio.SubProcessId = 'loading'
-		and ob.Kind not in ('0','3')		
-		-- 篩選 OrderID		
-group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup;
+from (
+    select	b.orderid
+		    , bd.SizeCode
+		    , b.Article
+		    , bd.BundleGroup
+		    , FabricCombo = wo.FabricPanelCode
+		    , PatternCode = bd.Patterncode
+		    , artwork = isnull(ArtWork.value, '')
+		    , qty = sum(isnull(bd.qty, 0))
+            , bio.SubProcessId
+            , isInComing = 'T'
+    from BundleInOut bio
+    inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
+    inner join Bundle b on b.id = bd.id
+    inner join WorkOrder wo on b.POID = wo.id
+						       and b.CutRef = wo.CutRef
+    left join Order_BOF ob on ob.Id = wo.Id 
+						      and ob.FabricCode = wo.FabricCode
+    inner join #tsp on b.Orderid = #tsp.orderID
+    outer apply (
+	    select value = stuff ((	select '+' + subprocessid
+							    from (
+								    select distinct bda.subprocessid
+								    from Bundle_Detail_Art bda
+								    where bd.BundleNo = bda.Bundleno
+							    ) k
+							    for xml path('')
+							    ), 1, 1, '')
+    ) ArtWork
+    where	ob.Kind not in ('0','3')
+    group by b.orderid, bd.SizeCode, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup, bio.SubProcessId
+
+    union all
+    select	b.orderid
+		    , bd.SizeCode
+		    , b.Article
+		    , bd.BundleGroup
+		    , FabricCombo = wo.FabricPanelCode
+		    , PatternCode = bd.Patterncode
+		    , artwork = isnull(ArtWork.value, '')
+		    , qty = sum(isnull(bd.qty, 0))
+            , bio.SubProcessId
+            , isInComing = 'F'
+    from BundleInOut bio
+    inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
+    inner join Bundle b on b.id = bd.id
+    inner join WorkOrder wo on b.POID = wo.id
+						       and b.CutRef = wo.CutRef
+    left join Order_BOF ob on ob.Id = wo.Id 
+						      and ob.FabricCode = wo.FabricCode
+    inner join #tsp on b.Orderid = #tsp.orderID
+    outer apply (
+	    select value = stuff ((	select '+' + subprocessid
+							    from (
+								    select distinct bda.subprocessid
+								    from Bundle_Detail_Art bda
+								    where bd.BundleNo = bda.Bundleno
+							    ) k
+							    for xml path('')
+							    ), 1, 1, '')
+    ) ArtWork
+    where	ob.Kind not in ('0','3')
+            and bio.OutGoing is not null
+    group by b.orderid, bd.SizeCode, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup, bio.SubProcessId
+) x;
 
 ------------------------------------------------------------------------------------------------------------------
-
-/*
-*	根據每一個 OrderID 取得 SewInDate  日期展開至 EndDate
-*	這邊會影響到最後計算成衣件數
-*/
-create table #CBDate (
-	OrderID varchar(13)
-	, SewDate date
-);
-
-Declare rs Cursor For Select orderID, SewInLine from #tsp
-Declare @OrderID varchar(20);
-Declare @StartInLine date;
-Declare @SewInLine date;
-Declare @count int = 0;
-
-/*
-*	指向 #tsp 第一筆資料
-*	@@FETCH_STATUS = 0，代表資料指向成功
-*/
-Open rs
-Fetch Next From rs Into @OrderID, @SewInLine
-While @@FETCH_STATUS = 0
-Begin	
-	select top 1 @StartInLine = iif(cdate2 is null or cdate2 = '', @SewInLine, cdate2)
-	from #cur_bdltrack2 
-	where #cur_bdltrack2.Orderid = @OrderID
-	order by cdate2
-	
-	;with qa as (
-		select	OrderID = @OrderID
-				, qdate = @StartInLine
-
-		union all
-		select	OrderID = @OrderID
-				, DATEADD(day, 1, qdate)
-		from qa 
-		where	qdate < @EndDate
-	) 
-	insert into #CBDate
-	select OrderID, qdate
-	from qa
-	Option (maxrecursion 365);
-
-/*
-*	Fetch 指向 #tsp 下一筆資料
-*/
-	Fetch Next From rs Into @OrderID, @SewInLine
-End;
-Close rs;
-Deallocate rs; 
------------------------------------------------------
 
 /*	
 *	Step4 已收的bundle資料中找出各 
@@ -530,13 +519,11 @@ Deallocate rs;
 *			部位
 *			artwork
 *			加總數量
-*	Step5 計算 sp# 上線日至下線日的產出
-*	Step6 依條件日期區間，至 sewing 取得 stdqty 加總以及抓取備妥的成衣件數
+*	Step5 計算 sp# 的產出
 */
 select	NewCutComb.FactoryID
 		, NewCutComb.orderid
 		, NewCutComb.StyleID
-		, NewCutComb.cdate2
 		, NewCutComb.SewLine
 		, NewCutComb.Article
 		, NewCutComb.SizeCode
@@ -544,17 +531,15 @@ select	NewCutComb.FactoryID
 		, NewCutComb.FabricCombo
 		, NewCutComb.PatternCode
 		, NewCutComb.artwork
-		, qty = isnull(#cur_bdltrack2.qty, 0)
-		, AccuLoadingQty = sum(isnull(#cur_bdltrack2.qty, 0)) over (partition by NewCutComb.FactoryID, NewCutComb.orderid,  NewCutComb.Article, NewCutComb.SizeCode, NewCutComb.BundleGroup, NewCutComb.FabricCombo, NewCutComb.PatternCode, NewCutComb.artwork
-																    order by NewCutComb.cdate2)
+		, AccuInComingQty = sum(isnull(#cur_bdltrack2.qty, 0))
+        , SubProcessId = NewCutComb.SubProcessId
+        , isInComing = NewCutComb.isInComing
 into #Min_cut
 from (
 /*
-*	組出每一天，同 OrderID, Artwork, Article, SizeCode 需要的 FabricCombe & PatternCode
-*	這邊會在 CutComb 成衣組合中，加入需計算的日期	
+*	組出，同 OrderID, Artwork, Article, SizeCode 需要的 FabricCombe & PatternCode
 */
 	select	distinct #cutcomb.*
-			, cdate2 = #CBDate.SewDate
 			, SizeCode = SizeCode.value
 			, BundleGroup = BundleGroup.value
 	from #cutcomb
@@ -568,7 +553,6 @@ from (
 		from #cur_bdltrack2 
 		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
 	) BundleGroup
-	inner join #CBDate on #cutcomb.orderID = #CBDate.OrderID
 ) NewCutComb 
 left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork 
 							and NewCutComb.FabricCombo = #cur_bdltrack2.FabricCombo
@@ -576,32 +560,38 @@ left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork
 							and NewCutComb.orderID = #cur_bdltrack2.orderid
 							and NewCutComb.Article = #cur_bdltrack2.Article 
 							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
-                            and NewCutComb.Cdate2 = #cur_bdltrack2.Cdate2	
-							and NewCutComb.BundleGroup = #cur_bdltrack2.BundleGroup;						
---order by cdate2, orderid, Article, SizeCode, FabricCombo, PatternCode, artwork
+							and NewCutComb.BundleGroup = #cur_bdltrack2.BundleGroup
+                            and NewCutComb.SubProcessId = #cur_bdltrack2.SubProcessId
+                            and NewCutComb.isInComing = #cur_bdltrack2.isInComing
+group by NewCutComb.FactoryID, NewCutComb.orderid, NewCutComb.StyleID, NewCutComb.SewLine, NewCutComb.Article
+         , NewCutComb.SizeCode, NewCutComb.BundleGroup, NewCutComb.FabricCombo, NewCutComb.PatternCode
+         , NewCutComb.artwork, NewCutComb.SubProcessId, NewCutComb.isInComing;
+--order by orderid, Article, SizeCode, FabricCombo, PatternCode, artwork
 
 -----------------------------------------------------------
 
 /*
-*	準備好要印的資料
+*	準備 InComing 資料
 */
 select	FactoryID
 		, SP
 		, StyleID
-		, SewingDate = DateAdd(day, 1 ,SewingDate)
 		, Line
-		, AccuLoad = AccuLoading
-into #print
+        , SubProcessId
+		, AccuQty = AccuInComing
+        , isInComing
+into #AccuInComeData
 from (
 	select	FactoryID
 			, SP = orderID
 			, StyleID
-			, SewingDate = cdate2
 			, Line = SewLine
-			, AccuLoading = sum (isnull(MinLoadingQty, 0))
+            , SubProcessId
+			, AccuInComing = sum (isnull(MinInComingQty, 0))
+            , isInComing
 	from (
 /*
-*		依照【日期, SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
+*		依照【SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
 *		判斷 BundleGroup
 *			第一次群組判斷最小數量需要加上 BundleGroup
 *			第二次群組加總所有成衣數量		
@@ -609,24 +599,28 @@ from (
 		select FactoryID
 				, orderID
 				, StyleID
-				, cdate2
 				, SewLine
-				, Article, SizeCode
-				, MinLoadingQty = sum (MinLoadingQty)
+				, Article
+                , SizeCode
+                , SubProcessId
+				, MinInComingQty = sum (MinInComingQty)
+                , isInComing
 		from (
 			select	FactoryID
 					, orderID
 					, StyleID
-					, cdate2
 					, SewLine
-					, Article, SizeCode
-					, MinLoadingQty = min(AccuLoadingQty)
+					, Article
+                    , SizeCode
+                    , SubProcessId
+					, MinInComingQty = min(AccuInComingQty)
+                    , isInComing
 			from #Min_cut 
-			group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode, BundleGroup
+			group by FactoryID, orderID	,StyleID, SewLine, Article, SizeCode, BundleGroup, SubProcessId, isInComing
 		)w
-		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
+		group by FactoryID, orderID	,StyleID, SewLine, Article, SizeCode, SubProcessId, isInComing
 	)x 
-	group by FactoryID, orderID, StyleID, cdate2, SewLine
+	group by FactoryID, orderID, StyleID, SewLine, SubProcessId, isInComing
 ) a
 ");
             #endregion
@@ -761,21 +755,21 @@ select t.MDivisionID
        , t.Qty_byShip
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = CutQty.[RFID Cut Qty]
-       , [RFID Loading Qty] = isnull(loading.AccuLoad,0)             
-       , [RFID Emb Farm In Qty] = Embin.[RFID Emb Farm In Qty]
+       , [RFID Cut Qty] = isnull (CutQty.AccuInCome, 0)
+       , [RFID Loading Qty] = isnull (loading.AccuInCome,0)             
+       , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
        , [RFID Emb Farm Out Qty] = Embout.[RFID Emb Farm Out Qty]
-       , [RFID Bond Farm In Qty] =Bondin.[RFID Bond Farm In Qty]
+       , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)
        , [RFID Bond Farm Out Qty] = Bondout.[RFID Bond Farm Out Qty]
-       , [RFID Print Farm In Qty] = Printin.[RFID Print Farm In Qty]
+       , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
        , [RFID Print Farm Out Qty] = Printout.[RFID Print Farm Out Qty]
-       , [RFID AT Farm In Qty] = ATin.[RFID AT Farm In Qty]
+       , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
        , [RFID AT Farm Out Qty] = ATout.[RFID AT Farm Out Qty]
-       , [RFID Pad Print Farm In Qty] = PadPrintin.[RFID Pad Print Farm In Qty]
+       , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
        , [RFID Pad Print Farm Out Qty] = PadPrintout.[RFID Pad Print Farm Out Qty]
-       , [RFID Emboss Farm In Qty] = Embossin.[RFID Emboss Farm In Qty]
+       , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
        , [RFID Emboss Farm Out Qty] = Embossout.[RFID Emboss Farm Out Qty]
-       , [RFID HT Farm In Qty] = htin.[RFID HT Farm In Qty]
+       , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
        , [RFID HT Farm Out Qty] = htout.[RFID HT Farm Out Qty]
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -853,155 +847,164 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-	select [RFID Cut Qty] = isnull(sum(BD.Qty), 0)   
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'SORTING'
-) CutQty
-outer apply (
-	select [AccuLoad] = AccuLoad 
-    from (
-        select distinct FactoryID
-               , SP
-               , StyleID
-               , Line
-               , AccuLoad
-               , SewingDate 
-        from #print 
-    ) a
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
 	where SP = t.OrderID 
-          and  StyleID = t.StyleID
+          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
 	      and line = t.SewLine
-          and SewingDate = CONVERT(date, GETDATE())
+          and SubProcessId = 'SORTING'
+          and isInComing = 'T'
+) CutQty
+outer apply (
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'loading'
+          and isInComing = 'T'
 ) loading
 outer apply(
-	select [RFID Emb Farm In Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'Emb' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'Emb'
+          and isInComing = 'T'
 ) Embin
 outer apply(
-	select [RFID Emb Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'Emb' 
-          and BIO.OutGoing is not null
+	select [RFID Emb Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'Emb'
+          and isInComing = 'F'
 ) Embout
 outer apply(
-	select [RFID Bond Farm In Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'BO' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'BO'
+          and isInComing = 'T'
 ) Bondin
 outer apply(
-	select [RFID Bond Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'BO' 
-          and BIO.OutGoing is not null
+	select [RFID Bond Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'BO'
+          and isInComing = 'F'
 ) Bondout
 outer apply(
-	select [RFID Print Farm In Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'PRT' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'PRT'
+          and isInComing = 'T'
 ) Printin
 outer apply(
-	select [RFID Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'PRT' 
-          and BIO.OutGoing is not null
+	select [RFID Print Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'PRT'
+          and isInComing = 'F'
 ) Printout
 outer apply(
-	select [RFID AT Farm In Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'AT' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'AT'
+          and isInComing = 'T'
 ) ATin
 outer apply(
-	select [RFID AT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'AT' 
-          and BIO.OutGoing is not null
+	select [RFID AT Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'AT'
+          and isInComing = 'F'
 ) ATout
 outer apply(
-	select [RFID Pad Print Farm In Qty] =isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'PAD-PRT' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'PAD-PRT'
+          and isInComing = 'T'
 ) PadPrintin
 outer apply(
-	select [RFID Pad Print Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'PAD-PRT' 
-          and BIO.OutGoing is not null
+	select [RFID Pad Print Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'PAD-PRT'
+          and isInComing = 'F'
 ) PadPrintout
 outer apply(
-	select [RFID Emboss Farm In Qty] =isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'SUBCONEMB' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'SUBCONEMB'
+          and isInComing = 'T'
 ) Embossin
 outer apply(
-	select [RFID Emboss Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'SUBCONEMB' 
-          and BIO.OutGoing is not null
+	select [RFID Emboss Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'SUBCONEMB'
+          and isInComing = 'F'
 ) Embossout
 outer apply(
-	select [RFID HT Farm In Qty] =isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'HT' 
-          and BIO.InComing is not null
+	select [AccuInCome] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'HT'
+          and isInComing = 'T'
 ) htin
 outer apply(
-	select [RFID HT Farm Out Qty] = isnull(sum(BD.Qty), 0) 
-	from Bundle B
-	left join Bundle_Detail BD on BD.Id=B.ID
-	left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
-	where Orderid = t.OrderID 
-          and BIO.SubProcessId = 'HT' 
-          and BIO.OutGoing is not null
+	select [RFID HT Farm Out Qty] = AccuQty 
+    from #AccuInComeData 
+	where SP = t.OrderID 
+          and StyleID = t.StyleID
+	      and FactoryID = t.FactoryID
+	      and line = t.SewLine
+          and SubProcessId = 'HT'
+          and isInComing = 'F'
 ) htout
 ");
 
@@ -1012,10 +1015,9 @@ drop table #tsp
 drop table #cutcomb
 drop table #cur_bdltrack2
 drop table #Min_cut
-drop table #print
+drop table #AccuInComeData
 drop table #TablePatternUkey;
 drop table #TablePatternCode
-drop table #CBDate
 ");
             if (isArtwork)
             {
