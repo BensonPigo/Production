@@ -1468,18 +1468,18 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
-                            if (article != MyUtility.Convert.GetString(dr["Article"]))
-                            {
-                                worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["Article"]) + ' ' + MyUtility.Convert.GetString(dr["Color"]);
-                                article = MyUtility.Convert.GetString(dr["Article"]);
-                            }
-                            if (size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
+                            if (article != MyUtility.Convert.GetString(dr["Article"])||size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
                                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["SizeSpec"]);
                                 size = MyUtility.Convert.GetString(dr["SizeCode"]);
                                 qtyPerCTN = MyUtility.Convert.GetInt(dr["QtyPerCTN"]);
                                 worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["QtyPerCTN"]);
+                            }
+                            if (article != MyUtility.Convert.GetString(dr["Article"]))
+                            {
+                                worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["Article"]) + ' ' + MyUtility.Convert.GetString(dr["Color"]);
+                                article = MyUtility.Convert.GetString(dr["Article"]);
                             }
                         }
 
