@@ -318,7 +318,8 @@ namespace Sci.Production.Cutting
            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
            .Date("estCutdate", header: "Est.CutDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Text("Fabriccombo", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+           .Text("Fabriccombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
+           .Text("FabricPanelCode", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true) 
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true);
             gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -334,10 +335,10 @@ namespace Sci.Production.Cutting
            .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
-           .Text("SewingCell", header: "Sew Cell", width: Widths.AnsiChars(2), settings: Cellcell)
-           .Numeric("Qty", header: "No of Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
-           .Numeric("Cutoutput", header: "CutOutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-           .Numeric("TotalParts", header: "Total Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
+           .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: Cellcell)
+           .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
+           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+           .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
             gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -422,6 +423,7 @@ Select  distinct 0 as sel
         , ord.poid
         , a.estcutdate
         , a.Fabriccombo
+        , a.FabricPanelCode
         , a.cutno
         , item = ( Select Reason.Name 
                    from   Reason WITH (NOLOCK) 
