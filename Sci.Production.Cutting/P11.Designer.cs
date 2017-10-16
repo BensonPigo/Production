@@ -449,7 +449,7 @@
             this.gridArticleSize.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridArticleSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridArticleSize.Location = new System.Drawing.Point(417, 38);
+            this.gridArticleSize.Location = new System.Drawing.Point(460, 38);
             this.gridArticleSize.Name = "gridArticleSize";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -463,7 +463,7 @@
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridArticleSize.Size = new System.Drawing.Size(580, 267);
+            this.gridArticleSize.Size = new System.Drawing.Size(537, 267);
             this.gridArticleSize.TabIndex = 20;
             this.gridArticleSize.TabStop = false;
             this.gridArticleSize.SelectionChanged += new System.EventHandler(this.gridArticleSize_SelectionChanged);
@@ -577,7 +577,7 @@
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutRef.Size = new System.Drawing.Size(399, 267);
+            this.gridCutRef.Size = new System.Drawing.Size(446, 267);
             this.gridCutRef.TabIndex = 22;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.gridCutRef_SelectionChanged);
@@ -608,9 +608,10 @@
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM.Location = new System.Drawing.Point(430, 8);
             this.txtfactoryByM.FilteMDivision = true;
+            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IssupportJunk = false;
+            this.txtfactoryByM.Location = new System.Drawing.Point(430, 8);
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 96;
