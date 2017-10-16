@@ -32,6 +32,7 @@ namespace Sci.Production.Quality
 
         {
             InitializeComponent();
+
             txtsupplier.TextBox1.IsSupportEditMode = false;
             txtsupplier.TextBox1.ReadOnly = true;
             txtuserApprover.TextBox1.IsSupportEditMode = false;
