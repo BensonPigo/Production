@@ -344,11 +344,13 @@ namespace Sci.Production.Warehouse
                     {
                         gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
                     }
-
+                    //
+                    decimal ShipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
+                    decimal Qty = MyUtility.Check.Empty(dr["Qty"].ToString()) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
-                    if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
+                    if (ShipQty < Qty)
                     {
-                        gridMaterialStatus.Rows[i].Cells["NETQty"].Style.ForeColor = Color.Red;
+                        gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
