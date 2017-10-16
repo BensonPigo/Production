@@ -36,6 +36,10 @@
             this.txtEnglishDesc = new Sci.Win.UI.TextBox();
             this.txtVietnamDesc = new Sci.Win.UI.TextBox();
             this.txtVietnamUnit = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,6 +54,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.numericBox3);
+            this.detailcont.Controls.Add(this.numericBox2);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtVietnamUnit);
             this.detailcont.Controls.Add(this.txtVietnamDesc);
             this.detailcont.Controls.Add(this.txtEnglishDesc);
@@ -64,7 +72,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 289);
             this.detailbtm.Size = new System.Drawing.Size(829, 38);
-            //  
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(829, 327);
@@ -88,37 +96,33 @@
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Lines = 0;
             this.labelNLCode.Location = new System.Drawing.Point(22, 14);
             this.labelNLCode.Name = "labelNLCode";
-            this.labelNLCode.Size = new System.Drawing.Size(91, 23);
+            this.labelNLCode.Size = new System.Drawing.Size(95, 23);
             this.labelNLCode.TabIndex = 2;
             this.labelNLCode.Text = "Customs Code";
             // 
             // labelEnglishDesc
             // 
-            this.labelEnglishDesc.Lines = 0;
             this.labelEnglishDesc.Location = new System.Drawing.Point(22, 50);
             this.labelEnglishDesc.Name = "labelEnglishDesc";
-            this.labelEnglishDesc.Size = new System.Drawing.Size(91, 23);
+            this.labelEnglishDesc.Size = new System.Drawing.Size(95, 23);
             this.labelEnglishDesc.TabIndex = 3;
             this.labelEnglishDesc.Text = "English Desc";
             // 
             // labelVietnamDesc
             // 
-            this.labelVietnamDesc.Lines = 0;
             this.labelVietnamDesc.Location = new System.Drawing.Point(22, 87);
             this.labelVietnamDesc.Name = "labelVietnamDesc";
-            this.labelVietnamDesc.Size = new System.Drawing.Size(91, 23);
+            this.labelVietnamDesc.Size = new System.Drawing.Size(95, 23);
             this.labelVietnamDesc.TabIndex = 4;
             this.labelVietnamDesc.Text = "Vietnam Desc";
             // 
             // labelVietnamUnit
             // 
-            this.labelVietnamUnit.Lines = 0;
             this.labelVietnamUnit.Location = new System.Drawing.Point(22, 125);
             this.labelVietnamUnit.Name = "labelVietnamUnit";
-            this.labelVietnamUnit.Size = new System.Drawing.Size(91, 23);
+            this.labelVietnamUnit.Size = new System.Drawing.Size(95, 23);
             this.labelVietnamUnit.TabIndex = 5;
             this.labelVietnamUnit.Text = "Vietnam Unit";
             // 
@@ -127,7 +131,7 @@
             this.txtNLCode.BackColor = System.Drawing.Color.White;
             this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
             this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(117, 14);
+            this.txtNLCode.Location = new System.Drawing.Point(120, 14);
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(68, 23);
             this.txtNLCode.TabIndex = 0;
@@ -140,7 +144,7 @@
             this.txtEnglishDesc.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEnglishDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
             this.txtEnglishDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEnglishDesc.Location = new System.Drawing.Point(117, 50);
+            this.txtEnglishDesc.Location = new System.Drawing.Point(120, 50);
             this.txtEnglishDesc.Name = "txtEnglishDesc";
             this.txtEnglishDesc.Size = new System.Drawing.Size(479, 23);
             this.txtEnglishDesc.TabIndex = 6;
@@ -151,7 +155,7 @@
             this.txtVietnamDesc.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtVietnamDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescVI", true));
             this.txtVietnamDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtVietnamDesc.Location = new System.Drawing.Point(117, 87);
+            this.txtVietnamDesc.Location = new System.Drawing.Point(120, 87);
             this.txtVietnamDesc.Name = "txtVietnamDesc";
             this.txtVietnamDesc.Size = new System.Drawing.Size(479, 23);
             this.txtVietnamDesc.TabIndex = 7;
@@ -162,10 +166,67 @@
             this.txtVietnamUnit.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtVietnamUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitVI", true));
             this.txtVietnamUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtVietnamUnit.Location = new System.Drawing.Point(117, 125);
+            this.txtVietnamUnit.Location = new System.Drawing.Point(120, 125);
             this.txtVietnamUnit.Name = "txtVietnamUnit";
             this.txtVietnamUnit.Size = new System.Drawing.Size(68, 23);
             this.txtVietnamUnit.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(22, 163);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 23);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Waste";
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.White;
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WasteLower", true));
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox2.Location = new System.Drawing.Point(120, 163);
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox2.Size = new System.Drawing.Size(68, 23);
+            this.numericBox2.TabIndex = 10;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numericBox3
+            // 
+            this.numericBox3.BackColor = System.Drawing.Color.White;
+            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WasteUpper", true));
+            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericBox3.Location = new System.Drawing.Point(216, 163);
+            this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox3.Size = new System.Drawing.Size(68, 23);
+            this.numericBox3.TabIndex = 11;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(194, 169);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(16, 17);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "~";
             // 
             // B44
             // 
@@ -200,5 +261,9 @@
         private Win.UI.Label labelVietnamDesc;
         private Win.UI.Label labelEnglishDesc;
         private Win.UI.Label labelNLCode;
+        private System.Windows.Forms.Label label3;
+        private Win.UI.NumericBox numericBox3;
+        private Win.UI.NumericBox numericBox2;
+        private Win.UI.Label label1;
     }
 }

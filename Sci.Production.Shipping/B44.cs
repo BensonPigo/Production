@@ -29,6 +29,11 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Customs Code can't empty");
                 return false;
             }
+            if (MyUtility.Convert.GetDecimal(CurrentMaintain["WasteLower"]) > MyUtility.Convert.GetDecimal(CurrentMaintain["WasteUpper"]))
+            {
+                MyUtility.Msg.WarningBox("WasteLower can't bigger than wasteUpper");
+                return false;
+            }
             return base.ClickSaveBefore();
         }
 
