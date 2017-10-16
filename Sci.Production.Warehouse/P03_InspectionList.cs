@@ -23,6 +23,118 @@ namespace Sci.Production.Warehouse
             this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", dr["fabrictype2"], dr["seq1"], dr["seq2"], dr["id"]);
         }
 
+        private void open_QA_program(string this_inv, string inp_type) {
+            string sql = @"
+                                    Select 
+                                        a.id,
+                                        a.poid,
+                                        SEQ1,
+                                        SEQ2,
+                                        Receivingid,
+                                        Refno,
+                                        SCIRefno,
+                                        Suppid,
+                                        ArriveQty,
+                                        InspDeadline,
+                                        Result,
+                                        PhysicalEncode,
+                                        WeightEncode,
+                                        ShadeBondEncode,
+                                        ContinuityEncode,
+                                        NonPhysical,
+                                        Physical,
+                                        TotalInspYds,
+                                        PhysicalDate,
+                                        Physical,
+                                        NonWeight, 
+                                        Weight,
+                                        WeightDate,
+                                        Weight,
+                                        NonShadebond,
+                                        Shadebond,
+                                        ShadebondDate,
+                                        shadebond,
+                                        NonContinuity,
+                                        Continuity,
+                                        ContinuityDate,
+                                        Continuity,
+                                        a.Status,ReplacementReportID,(seq1+seq2) as seq,
+                                        (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
+                                        c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
+                                        (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
+                                        (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
+                                        c.ExportID as Wkno
+                                    From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+                                    Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo order by seq1,seq2 ";
+            List<SqlParameter> sqlPar = new List<SqlParameter>();
+            sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
+            sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
+            sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));
+            
+            sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
+
+            DataTable dt;
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sql, sqlPar, out dt)))
+            {
+                MyUtility.Msg.ErrorBox(result.Description);
+                return;
+            }
+            else if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found!!");
+                return;
+            }
+            else
+            {
+                DataRow data = dt.Rows[0];
+
+                if (inp_type.Equals("inspection")) {
+                    var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("weight")) {
+                    var frm = new Sci.Production.Quality.P01_Weight(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("shadebond"))
+                {
+                    var frm = new Sci.Production.Quality.P01_ShadeBond(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("continuity"))
+                {
+                    var frm = new Sci.Production.Quality.P01_Continuity(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("crocking"))
+                {
+                    var frm = new Sci.Production.Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("heat"))
+                {
+                    var frm = new Sci.Production.Quality.P03_Heat(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+                else if (inp_type.Equals("wash"))
+                {
+                    var frm = new Sci.Production.Quality.P03_Wash(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
+
+
+            };
+
+        }
+
         protected override void OnFormLoaded()
         {
             StringBuilder sqlcmd = new StringBuilder();
@@ -86,82 +198,42 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
                 //};
-                #endregion
-
                 DataGridViewGeneratorNumericColumnSettings inspection = new DataGridViewGeneratorNumericColumnSettings();
                 inspection.CellMouseDoubleClick += (s, e) =>
                 {
-                    string sql = @"
-                                    Select 
-                                        a.id,
-                                        a.poid,
-                                        SEQ1,
-                                        SEQ2,
-                                        Receivingid,
-                                        Refno,
-                                        SCIRefno,
-                                        Suppid,
-                                        ArriveQty,
-                                        InspDeadline,
-                                        Result,
-                                        PhysicalEncode,
-                                        WeightEncode,
-                                        ShadeBondEncode,
-                                        ContinuityEncode,
-                                        NonPhysical,
-                                        Physical,
-                                        TotalInspYds,
-                                        PhysicalDate,
-                                        Physical,
-                                        NonWeight, 
-                                        Weight,
-                                        WeightDate,
-                                        Weight,
-                                        NonShadebond,
-                                        Shadebond,
-                                        ShadebondDate,
-                                        shadebond,
-                                        NonContinuity,
-                                        Continuity,
-                                        ContinuityDate,
-                                        Continuity,
-                                        a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                                        (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
-                                        c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
-                                        (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
-                                        (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
-                                        c.ExportID as Wkno
-                                    From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                                    Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo order by seq1,seq2 ";
-                    List<SqlParameter> sqlPar = new List<SqlParameter>();
-                    sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
-                    sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
-                    sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));
-
-                    string this_inv;
-                    this_inv = dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString();
-                    sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
-
-                    DataTable dt;
-                    DualResult result;
-                    if (!(result = DBProxy.Current.Select(null, sql, sqlPar, out dt)))
-                    {
-                        MyUtility.Msg.ErrorBox(result.Description);
-                        return;
-                    }
-                    else if (dt == null || dt.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.ErrorBox("Data not found!!");
-                        return;
-                    }
-                    else
-                    {
-                        DataRow data = dt.Rows[0];
-                        var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data,false);
-                        frm.ShowDialog(this);
-                        frm.Dispose();
-                    };
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection");
                 };
+
+                DataGridViewGeneratorTextColumnSettings physical = new DataGridViewGeneratorTextColumnSettings();
+                physical.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection");
+                };
+
+                DataGridViewGeneratorTextColumnSettings weight = new DataGridViewGeneratorTextColumnSettings();
+                weight.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight");
+                };
+
+                DataGridViewGeneratorTextColumnSettings shadebond = new DataGridViewGeneratorTextColumnSettings();
+                shadebond.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond");
+
+                };
+
+                DataGridViewGeneratorTextColumnSettings continuity = new DataGridViewGeneratorTextColumnSettings();
+                continuity.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity");
+                };
+                #endregion
+
+
+
+
+
                 //設定gridFirAir的顯示欄位
                 this.gridFirAir.IsEditingReadOnly = true;
                 this.gridFirAir.DataSource = bsAIR_FIR;
@@ -175,13 +247,13 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Numeric("InspRate", header: "% of" + Environment.NewLine + "Inspection", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, settings: inspection)
                      .Numeric("TotalInspYds", header: "Total" + Environment.NewLine + "Inspected YDS", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Numeric("TotalDefectPoint", header: "Total Point" + Environment.NewLine + "Defects", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
-                     .Text("Physical", header: "Physical", width: Widths.AnsiChars(8))
+                     .Text("Physical", header: "Physical", width: Widths.AnsiChars(8), settings: physical)
                      .Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13))
-                     .Text("Weight", header: "Weight", width: Widths.AnsiChars(8))
+                     .Text("Weight", header: "Weight", width: Widths.AnsiChars(8), settings: weight)
                      .Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13))
-                     .Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8))
+                     .Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8), settings: shadebond)
                      .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13))
-                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8))
+                     .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8),settings : continuity)
                      .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
                      //.Text("Physical", header: "Physical", width: Widths.AnsiChars(8), settings: ts1)
                      //.Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13), settings: ds1)
@@ -241,6 +313,22 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                 //    var frm = new Sci.Production.Quality.P01_PhysicalInspection(long.Parse(data["id"].ToString()));
                 //    frm.ShowDialog(this);
                 //};
+
+                DataGridViewGeneratorTextColumnSettings crocking = new DataGridViewGeneratorTextColumnSettings();
+                crocking.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking");
+                };
+                DataGridViewGeneratorTextColumnSettings heat = new DataGridViewGeneratorTextColumnSettings();
+                heat.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat");
+                };
+                DataGridViewGeneratorTextColumnSettings wash = new DataGridViewGeneratorTextColumnSettings();
+                wash.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash");
+                };
                 #endregion
                 //設定gridFir_Laboratory的顯示欄位
                 this.gridFir_Laboratory.IsEditingReadOnly = true;
@@ -252,11 +340,11 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                      .Numeric("ArriveQty", header: "Total" + Environment.NewLine + "Ship Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13))
-                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8))
+                     .Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8),settings : crocking)
                      .Date("CrockingDate", header: "Crocking Date", width: Widths.AnsiChars(13))
-                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8))
+                     .Text("Heat", header: "Heat" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8),settings : heat)
                      .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13))
-                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8))
+                     .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8),settings : wash)
                      .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13))
                      ;
                      //.Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)

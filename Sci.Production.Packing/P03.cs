@@ -835,14 +835,37 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 if (detailData.Length <= 0)
                 {
                     //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+                    sqlCmd = string.Format(@"
+
+select OrderID = oqd.Id
+	   , OrderShipmodeSeq = oqd.Seq
+	   , oqd.Article
+	   , oqd.SizeCode
+	   , Qty = (oqd.Qty - isnull(AccuShipQty.value, 0) - isnull(InvAdjustDiffQty.value, 0))
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
-left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
-left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
+outer apply (
+	select value = sum(pld.ShipQty)
+	from PackingList pl With (NoLock)
+	inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
+	where pl.Status = 'Confirmed'
+		  and pl.ID != '{0}'
+		  and pld.OrderID = oqd.Id 
+		  and pld.OrderShipmodeSeq = oqd.Seq
+		  and pld.Article = oqd.Article
+		  and pld.SizeCode = oqd.SizeCode		  
+) AccuShipQty
+outer apply (
+	select value = sum (iaq.DiffQty)
+	from InvAdjust ia WITH (NOLOCK)
+	inner join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID 
+											 
+	where ia.OrderID = oqd.ID 
+		  and ia.OrderShipmodeSeq = oqd.Seq
+		  and iaq.Article = oqd.Article 
+		  and iaq.SizeCode = oqd.SizeCode
+) InvAdjustDiffQty
 where oqd.Id = '{1}'
-and oqd.Seq = '{2}'
-group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+	  and oqd.Seq = '{2}'", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
                     if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");

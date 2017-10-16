@@ -277,13 +277,6 @@ where o.ID = @orderid";
                 return false;
             }
 
-            //檢查OrderID+Seq不可以重複建立
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
-            {
-                MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
-                return false;
-            }
-
             //檢查表身不可以沒有資料
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select();
             if (detailData.Length == 0)

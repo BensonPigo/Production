@@ -27,14 +27,11 @@ namespace Sci.Production.Quality
         string excelFile = "";
         DataTable Fir_physical_Defect;
         int addline = 0;
-        bool editm = false;
-        public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr,bool edit)
+        public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
         {
             InitializeComponent();
-            editm = edit;
-
             txtsupplier.TextBox1.IsSupportEditMode = false;
             txtsupplier.TextBox1.ReadOnly = true;
             txtuserApprover.TextBox1.IsSupportEditMode = false;
