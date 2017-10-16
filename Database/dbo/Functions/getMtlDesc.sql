@@ -36,9 +36,6 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
 			set @string = rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10)));
 		END
 		ELSE
@@ -50,9 +47,6 @@ BEGIN
 		if @repeat = 0
 		BEGIN	
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(10));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(10));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(10));
 			set @string = concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',iif(@suppcolor='',@fabric_detaildesc,@fabric_detaildesc + CHAR(10))))
 								, rtrim(iif(isnull(@suppcolor, '') = '','',iif(@po_desc='',@suppcolor,@suppcolor + CHAR(10))))
 								, rtrim(iif(isnull(@po_desc, '') = '','',replace(@po_desc,char(10),'') )));
@@ -67,9 +61,6 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL([Description],'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
-			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
 			set @string = 'Ref#'+ @refno + ', ' + rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10))) + rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10)));
 		End
 		ELSE
@@ -83,5 +74,14 @@ BEGIN
 							, isnull(@string, ''));
 	END 
 
+
+	-- @fabric_detaildesc 去除結尾過多的 Enter
+	set @string = replace(@string, char(10), char(13));
+	while (CHARINDEX(char(13) + char(13), @string, 0) > 0)
+	Begin
+		set @string = replace(@string, char(13) + char(13), char(13));
+	end
+	set @string = replace(@string, char(13), char(13) + char(10));
+	-- end
     RETURN ltrim(rtrim(@string))
 END

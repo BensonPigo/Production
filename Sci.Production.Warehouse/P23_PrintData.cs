@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
         public string Unit { get; set; }
         public string BULKLOCATION { get; set; }
         public string INVENTORYLOCATION {get; set; }
-        public string QTY { get; set; }
+        public decimal QTY { get; set; }
         public string TotalQTY { get; set; }
         public string groupby { get { return this.StockSP + this.StockSEQ; } }
         

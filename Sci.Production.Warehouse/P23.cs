@@ -1161,7 +1161,7 @@ order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
                     Unit = row1["StockUnit"].ToString().Trim(),
                     BULKLOCATION = row1["BULKLOCATION"].ToString().Trim(),
                     INVENTORYLOCATION = row1["Tolocation"].ToString().Trim(),
-                    QTY = row1["Qty"].ToString().Trim(),
+                    QTY = Convert.ToDecimal(row1["Qty"].ToString()),
                     TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
