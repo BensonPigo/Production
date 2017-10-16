@@ -882,7 +882,8 @@ BEGIN
 		FROM Trade_To_Pms.dbo.Order_TmsCost A WITH (NOLOCK)
 		INNER JOIN #TOrder B ON A.ID=B.ID
 		INNER JOIN Production.dbo.ArtworkType C WITH (NOLOCK) ON A.ArtworkTypeID=C.ID
-		where a.Id not in (select id from Production.dbo.Order_TmsCost WITH (NOLOCK))
+		LEFT JOIN Production.dbo.Order_TmsCost D WITH (NOLOCK) ON D.id = a.Id and D.ArtworkTypeID = A.ArtworkTypeID
+		where D.id is null
 	
 	
 		-----------------Order_SizeCode---------------------------¤Ø¤oªí Size Spec(¦s¤Ø¤o½X)
