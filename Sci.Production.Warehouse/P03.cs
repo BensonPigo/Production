@@ -348,9 +348,9 @@ namespace Sci.Production.Warehouse
                     decimal ShipQty = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"])) ? 0 : MyUtility.Convert.GetDecimal(dr["ShipQty"]) + MyUtility.Convert.GetDecimal(dr["ShipFOC"]);
                     decimal Qty = MyUtility.Check.Empty(dr["Qty"].ToString()) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     if (!dr["ShipQty"].ToString().Empty() && !dr["Qty"].ToString().Empty())
-                        if (ShipQty < Qty)
+                    if (ShipQty < Qty)
                     {
-                        gridMaterialStatus.Rows[i].Cells["NETQty"].Style.ForeColor = Color.Red;
+                        gridMaterialStatus.Rows[i].Cells["ShipQty"].Style.ForeColor = Color.Red;
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
