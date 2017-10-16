@@ -105,7 +105,7 @@ outer apply(
 					where oa.id=o.ID
 					for xml path('')),1,1,'')
 ) oa
-Where 1=1 and o.junk=0 "));
+Where 1=1 and ( o.junk = 0 or o.junk is null) "));
             #region --- 條件組合  ---
             condition.Clear();
             if (!MyUtility.Check.Empty(sciDelivery1))
