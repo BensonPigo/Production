@@ -188,7 +188,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
-    where o.junk=0 ");
+    where  ( o.junk = 0 or o.junk is null) ");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
@@ -405,12 +405,13 @@ tmpFilterZone as (
             , o.GFR "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
+    left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
     OUTER APPLY (
         SELECT Name 
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID=O.InspHandle
     )I
-    where POID IN (select distinct POID from tmpFilterSubProcess)
+    where o.POID IN (select distinct POID from tmpFilterSubProcess) and   ( o.junk = 0 or o.junk is null)
 )");
             }
             else
@@ -1027,7 +1028,7 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O  WITH (NOLOCK)  where  o.junk=0 "
+    select ID from orders O  WITH (NOLOCK)  where  ( o.junk = 0 or o.junk is null) "
 );
 
                         if (!MyUtility.Check.Empty(buyerDlv1))
