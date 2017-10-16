@@ -36,17 +36,18 @@ namespace Sci.Production.PPIC
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
                 .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
+                .Date("FtyKPI", header: "FtyKPI", width: Widths.AnsiChars(10))
                 .Numeric("Qty", header: "Total Q'ty", width: Widths.AnsiChars(6))
                 .Text("AddName", header: "Create by", width: Widths.AnsiChars(10))
                 .DateTime("AddDate", header: "Create at", width: Widths.AnsiChars(18))
                 .Text("EditName", header: "Edit by", width: Widths.AnsiChars(10))
                 .DateTime("EditDate", header: "Edit at", width: Widths.AnsiChars(18));
 
-            string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
+            string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
             order by Seq", orderID);
             DualResult result = DBProxy.Current.Select(null,sqlCmd,out grid1Data);
-            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
+            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
             order by Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out grid1Data_OriQty);
