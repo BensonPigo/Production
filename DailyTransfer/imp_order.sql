@@ -198,6 +198,24 @@ BEGIN
 				, s.BuyerDelivery		, s.SCIDelivery			, s.MDivisionID	, s.FactoryID		, @dToDay
 				, @OldDate
 			);
+		--------3.1.2.Delete 舊工廠的資料，資料帶入 PMS.Orders(跨M)
+		Merge Production.dbo.OrderComparisonList as t
+		Using (	
+			select c.*
+			, Transfer2Factroy = a.FactoryID
+			from Trade_To_Pms.dbo.Orders a
+			left join Production.dbo.Orders b on a.ID = b.ID and a.FactoryID != b.FactoryID
+			inner join OrderComparisonList c on c.OrderID = a.id
+			where b.id is null
+			and a.FactoryID not in (select ID from Production.dbo.Factory)
+		) as s
+		on t.OrderID = s.OrderID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then 
+		update set
+			t.DeleteOrder				= 1
+			, t.TransferToFactory		= s.Transfer2Factroy
+			, t.TransferDate			= @OldDate;
+
 
 		 -------3.2.New 新工廠的資料，資料帶入 Trade.Orders
 	    Merge Production.dbo.OrderComparisonList as t
