@@ -104,9 +104,15 @@ cross apply(
             and s1.Id !='{1}'
 ) xx
 
-select * 
-from #tmp 
-order by poid,seq1,seq2 ;
+select distinct aa.* 
+from #tmp aa
+inner join dbo.FtyInventory fi WITH (NOLOCK) 
+on fi.POID = aa.InventoryPOID 
+and fi.seq1 = aa.Inventoryseq1 
+and fi.seq2 = aa.InventorySEQ2 
+and fi.StockType = 'I'
+where fi.Lock = 0 
+order by aa.poid,aa.seq1,aa.seq2 ;
 
 select  0 AS selected
         , '' as id
@@ -188,14 +194,6 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
-
-                foreach (DataRow dr in TaipeiInput.Rows)
-                {
-                    if (MyUtility.Check.Empty(dr["balanceqty"]))
-                    {
-                        dr.Delete();
-                    }
-                }
                 myFilter();
 
                 this.HideWaitMessage();
