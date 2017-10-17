@@ -134,6 +134,20 @@
             // 
             // dateSewingInline
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInline.DateBox1.Name = "";
+            this.dateSewingInline.DateBox1.Size = new System.Drawing.Size(97, 23);
+            this.dateSewingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox2.Location = new System.Drawing.Point(119, 0);
+            this.dateSewingInline.DateBox2.Name = "";
+            this.dateSewingInline.DateBox2.Size = new System.Drawing.Size(97, 23);
+            this.dateSewingInline.DateBox2.TabIndex = 1;
             this.dateSewingInline.IsRequired = false;
             this.dateSewingInline.Location = new System.Drawing.Point(120, 102);
             this.dateSewingInline.Name = "dateSewingInline";
@@ -150,6 +164,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(97, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(119, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(97, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(120, 73);
             this.dateSCIDelivery.Name = "dateSCIDelivery";

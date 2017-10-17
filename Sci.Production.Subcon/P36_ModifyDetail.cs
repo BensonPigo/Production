@@ -49,8 +49,11 @@ namespace Sci.Production.Subcon
             sp_id.Value = txtSPNo.Text;
             cmds.Add(sp_id);
             #endregion
-            if (!MyUtility.Check.Seek(string.Format(@"select id from dbo.orders WITH (NOLOCK) 
-                    where FtyGroup='{0}' and id = @id", Sci.Env.User.Factory), cmds))
+            if (!MyUtility.Check.Seek(string.Format(@"select orders.id from dbo.orders WITH (NOLOCK) 
+inner join factory WITH (NOLOCK) on orders.FactoryID = factory.id
+where orders.FtyGroup='{0}' 
+and factory.IsProduceFty = 1 
+and orders.id = @id", Sci.Env.User.Factory), cmds))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("SP# is not found, Please check value is right and belong to login factory!!");

@@ -126,6 +126,7 @@ and orders.Finished=0
 AND orders.IsForecast = 0                                                             
 AND orders.Junk = 0 
 and factory.mdivisionid = '{1}'
+and factory.IsProduceFty = 1
 and Order_TmsCost.localsuppid !=''
 and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
 
@@ -196,6 +197,7 @@ inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
 WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
 and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID ) 
 and factory.mdivisionid = '{1}' 
+and factory.IsProduceFty = 1
 and orders.Finished=0
 and orders.IsForecast = 0
 and orders.Junk = 0

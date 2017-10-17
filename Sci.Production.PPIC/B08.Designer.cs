@@ -125,7 +125,6 @@
             // 
             // labelName
             // 
-            this.labelName.Lines = 0;
             this.labelName.Location = new System.Drawing.Point(11, 13);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(75, 23);
@@ -134,7 +133,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(11, 40);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);

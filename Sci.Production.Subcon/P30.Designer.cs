@@ -510,13 +510,14 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(334, 13);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
             this.txtmfactory.TabStop = false;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserApprove
             // 
