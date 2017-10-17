@@ -550,13 +550,26 @@ where   o.FtyGroup = @factoryid
             };
         }
 
-        //設定表身RFT的預設值
+        //設定表身 RFT & AutoCreate 的預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
-            CurrentDetailData["Rft"] = "0.00%";
-            CurrentDetailData["AutoCreate"] = 0;
-            
+
+            DataTable dt = ((DataTable)((BindingSource)detailgrid.DataSource).DataSource);
+            string gridSort = dt.DefaultView.Sort;
+            dt.DefaultView.Sort = "";
+
+            if (index == -1)
+            {
+                CurrentDetailData["Rft"] = "0.00%";
+                CurrentDetailData["AutoCreate"] = 0;
+            }else
+            {
+                dt.Rows[index]["Rft"] = "0.00";
+                dt.Rows[index]["AutoCreate"] = 0;
+            }
+
+            dt.DefaultView.Sort = gridSort;
         }
        
         //重組表身Grid的QA Qty資料
