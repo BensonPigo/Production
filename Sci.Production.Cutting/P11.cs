@@ -1115,6 +1115,7 @@ order by ArticleGroup", patternukey);
             DataRow selectDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
         }
+        
 
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
