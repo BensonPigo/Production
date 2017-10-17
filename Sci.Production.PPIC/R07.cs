@@ -79,7 +79,7 @@ FROM cte
 select FactoryID,SewingLineID,Date,Hours,Holiday
 into #workhourtmp
 from WorkHour w
-where FactoryID = @FactoryID or @FactoryID =''
+where (FactoryID = @FactoryID or @FactoryID ='')
 and Date between @sewinginline and DATEADD(DAY,1,@sewingoffline)
 --order by Date
 --準備一整個月workhour的資料判斷Holiday
@@ -87,7 +87,7 @@ select distinct d.date,w.FactoryID,w.SewingLineID
 into #tmpd
 from #daterange d,#workhourtmp w
 --
-select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Hours = 0 ,1,0)
+select distinct d.FactoryID,d.SewingLineID,d.date,Holiday = iif(w.Holiday is null or w.Holiday = 1 or w.Hours = 0,1,0)
 into #Holiday
 from #tmpd d
 left join #workhourtmp w on d.date = w.Date and d.FactoryID = w.FactoryID and d.SewingLineID = w.SewingLineID
