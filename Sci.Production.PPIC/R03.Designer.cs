@@ -66,26 +66,26 @@
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.checkGarment = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(386, 12);
+            this.print.Location = new System.Drawing.Point(428, 12);
             this.print.TabIndex = 24;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(386, 48);
+            this.toexcel.Location = new System.Drawing.Point(428, 48);
             this.toexcel.TabIndex = 25;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(386, 84);
+            this.close.Location = new System.Drawing.Point(428, 84);
             this.close.TabIndex = 26;
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 11);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
@@ -94,7 +94,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 39);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(102, 23);
@@ -103,7 +102,6 @@
             // 
             // labelCutOffDate
             // 
-            this.labelCutOffDate.Lines = 0;
             this.labelCutOffDate.Location = new System.Drawing.Point(13, 67);
             this.labelCutOffDate.Name = "labelCutOffDate";
             this.labelCutOffDate.Size = new System.Drawing.Size(102, 23);
@@ -112,7 +110,6 @@
             // 
             // labelCustRQSDate
             // 
-            this.labelCustRQSDate.Lines = 0;
             this.labelCustRQSDate.Location = new System.Drawing.Point(13, 95);
             this.labelCustRQSDate.Name = "labelCustRQSDate";
             this.labelCustRQSDate.Size = new System.Drawing.Size(102, 23);
@@ -121,7 +118,6 @@
             // 
             // labelPlanDate
             // 
-            this.labelPlanDate.Lines = 0;
             this.labelPlanDate.Location = new System.Drawing.Point(13, 123);
             this.labelPlanDate.Name = "labelPlanDate";
             this.labelPlanDate.Size = new System.Drawing.Size(102, 23);
@@ -130,7 +126,6 @@
             // 
             // labelOrderCfmDate
             // 
-            this.labelOrderCfmDate.Lines = 0;
             this.labelOrderCfmDate.Location = new System.Drawing.Point(13, 151);
             this.labelOrderCfmDate.Name = "labelOrderCfmDate";
             this.labelOrderCfmDate.Size = new System.Drawing.Size(102, 23);
@@ -139,7 +134,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 179);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(102, 23);
@@ -148,7 +142,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 207);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(102, 23);
@@ -157,7 +150,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 235);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(102, 23);
@@ -166,7 +158,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(13, 263);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(102, 23);
@@ -175,7 +166,6 @@
             // 
             // labelZone
             // 
-            this.labelZone.Lines = 0;
             this.labelZone.Location = new System.Drawing.Point(13, 291);
             this.labelZone.Name = "labelZone";
             this.labelZone.Size = new System.Drawing.Size(102, 23);
@@ -184,7 +174,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 319);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(102, 23);
@@ -193,7 +182,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 347);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(102, 23);
@@ -202,7 +190,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 375);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(102, 23);
@@ -211,7 +198,6 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Lines = 0;
             this.labelSubProcess.Location = new System.Drawing.Point(13, 403);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(102, 23);
@@ -220,6 +206,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(119, 11);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -228,6 +228,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(119, 39);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -236,6 +250,20 @@
             // 
             // dateCutOffDate
             // 
+            // 
+            // 
+            // 
+            this.dateCutOffDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCutOffDate.DateBox1.Name = "";
+            this.dateCutOffDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateCutOffDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCutOffDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateCutOffDate.DateBox2.Name = "";
+            this.dateCutOffDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateCutOffDate.DateBox2.TabIndex = 1;
             this.dateCutOffDate.IsRequired = false;
             this.dateCutOffDate.Location = new System.Drawing.Point(119, 67);
             this.dateCutOffDate.Name = "dateCutOffDate";
@@ -244,6 +272,20 @@
             // 
             // dateCustRQSDate
             // 
+            // 
+            // 
+            // 
+            this.dateCustRQSDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCustRQSDate.DateBox1.Name = "";
+            this.dateCustRQSDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateCustRQSDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCustRQSDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateCustRQSDate.DateBox2.Name = "";
+            this.dateCustRQSDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateCustRQSDate.DateBox2.TabIndex = 1;
             this.dateCustRQSDate.IsRequired = false;
             this.dateCustRQSDate.Location = new System.Drawing.Point(119, 95);
             this.dateCustRQSDate.Name = "dateCustRQSDate";
@@ -252,6 +294,20 @@
             // 
             // datePlanDate
             // 
+            // 
+            // 
+            // 
+            this.datePlanDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePlanDate.DateBox1.Name = "";
+            this.datePlanDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.datePlanDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePlanDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.datePlanDate.DateBox2.Name = "";
+            this.datePlanDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.datePlanDate.DateBox2.TabIndex = 1;
             this.datePlanDate.IsRequired = false;
             this.datePlanDate.Location = new System.Drawing.Point(119, 123);
             this.datePlanDate.Name = "datePlanDate";
@@ -260,6 +316,20 @@
             // 
             // dateOrderCfmDate
             // 
+            // 
+            // 
+            // 
+            this.dateOrderCfmDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOrderCfmDate.DateBox1.Name = "";
+            this.dateOrderCfmDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateOrderCfmDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOrderCfmDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateOrderCfmDate.DateBox2.Name = "";
+            this.dateOrderCfmDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateOrderCfmDate.DateBox2.TabIndex = 1;
             this.dateOrderCfmDate.IsRequired = false;
             this.dateOrderCfmDate.Location = new System.Drawing.Point(119, 151);
             this.dateOrderCfmDate.Name = "dateOrderCfmDate";
@@ -314,6 +384,7 @@
             // 
             this.checkIncludeHistoryOrder.AutoSize = true;
             this.checkIncludeHistoryOrder.Checked = true;
+            this.checkIncludeHistoryOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkIncludeHistoryOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkIncludeHistoryOrder.Location = new System.Drawing.Point(13, 430);
             this.checkIncludeHistoryOrder.Name = "checkIncludeHistoryOrder";
@@ -348,6 +419,7 @@
             // 
             this.checkQtyBDownByShipmode.AutoSize = true;
             this.checkQtyBDownByShipmode.Checked = true;
+            this.checkQtyBDownByShipmode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQtyBDownByShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 514);
             this.checkQtyBDownByShipmode.Name = "checkQtyBDownByShipmode";
@@ -450,9 +522,21 @@
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 9;
             // 
+            // checkGarment
+            // 
+            this.checkGarment.AutoSize = true;
+            this.checkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkGarment.Location = new System.Drawing.Point(432, 375);
+            this.checkGarment.Name = "checkGarment";
+            this.checkGarment.Size = new System.Drawing.Size(82, 21);
+            this.checkGarment.TabIndex = 109;
+            this.checkGarment.Text = "Garment";
+            this.checkGarment.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(478, 590);
+            this.ClientSize = new System.Drawing.Size(520, 590);
+            this.Controls.Add(this.checkGarment);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtcustcd);
             this.Controls.Add(this.txtseason);
@@ -537,6 +621,7 @@
             this.Controls.SetChildIndex(this.txtseason, 0);
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.checkGarment, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -582,5 +667,6 @@
         private Class.txtseason txtseason;
         private Class.txtcustcd txtcustcd;
         private Class.txtbrand txtbrand;
+        private Win.UI.CheckBox checkGarment;
     }
 }

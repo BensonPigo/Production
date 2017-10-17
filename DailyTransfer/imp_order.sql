@@ -872,7 +872,7 @@ BEGIN
 														   FROM Production.dbo.Style A	WITH (NOLOCK)
 														   INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) 
 										)
-									  , (SELECT LocalSuppID 
+									  , (SELECT top 1 LocalSuppID 
 										 FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID=A.ID)
 					 )
 				, A.AddName
