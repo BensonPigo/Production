@@ -588,24 +588,46 @@ where a.id='{0}'
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            string sqlcmd = @"select 
-                   F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
-	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,format(A.Amount,'#,###,###,##0.00')Amount,ap.PayTermID+'-'+P.name as Terms,
-	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
-	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,format(ap.Amount,'#,###,###,##0.00') as Total,format(ap.Vat,'#,###,###,##0.00') as Vat,format(ap.Amount+ap.Vat,'#,###,###,##0.00') as GrandTotal,ap.currencyid as Currency
-                   from DBO.artworkap ap WITH (NOLOCK) 
-	               LEFT JOIN dbo.factory F WITH (NOLOCK) 
-	               ON  F.ID = ap.factoryid
-	               LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
-	               ON  L.ID = ap.LocalSuppID
-	               LEFT JOIN dbo.Artworkap_Detail A WITH (NOLOCK) 
-	               ON  A.ID = ap.ID
-	               LEFT JOIN dbo.LocalSupp_Bank LOB WITH (NOLOCK) 
-	               ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
-	               LEFT JOIN DBO.PayTerm P WITH (NOLOCK) 
-	               ON P.ID = ap.PayTermID
-	               LEFT JOIN DBO.Pass1 pas WITH (NOLOCK) 
-	               ON pas.ID = ap.Handle where ap.ID= @ID";
+            string sqlcmd = @"
+select F.nameEn
+,AddressEN = REPLACE(REPLACE(F.AddressEN,Char(13),''),Char(10),'')
+,F.Tel
+,ap.LocalSuppID+'-'+L.name AS Supplier
+,L.Address
+,L.tel
+,ap.ID
+,A.ArtworkPoID
+,A.OrderID
+,A.ArtworkId
+,A.PatternDesc
+,A.Price
+,A.ApQty
+,format(A.Amount,'#,###,###,##0.00')Amount
+,ap.PayTermID+'-'+P.name as Terms
+,LOB.AccountNo
+,LOB.AccountName
+,LOB.BankName
+,LOB.CountryID+'/'+LOB.City as Country
+,LOB.SWIFTCode
+,ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy
+,format(ap.Amount,'#,###,###,##0.00') as Total
+,format(ap.Vat,'#,###,###,##0.00') as Vat
+,format(ap.Amount+ap.Vat,'#,###,###,##0.00') as GrandTotal
+,ap.currencyid as Currency
+from DBO.artworkap ap WITH (NOLOCK) 
+LEFT JOIN dbo.factory F WITH (NOLOCK) 
+    ON  F.ID = ap.factoryid
+LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
+    ON  L.ID = ap.LocalSuppID
+LEFT JOIN dbo.Artworkap_Detail A WITH (NOLOCK) 
+    ON  A.ID = ap.ID
+LEFT JOIN dbo.LocalSupp_Bank LOB WITH (NOLOCK) 
+    ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
+LEFT JOIN DBO.PayTerm P WITH (NOLOCK) 
+    ON P.ID = ap.PayTermID
+LEFT JOIN DBO.Pass1 pas WITH (NOLOCK) 
+    ON pas.ID = ap.Handle 
+where ap.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             string RptTitle = dtDetail.Rows[0]["nameEn"].ToString();

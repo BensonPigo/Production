@@ -61,7 +61,7 @@ select lapd.Localpoid
 	   , lapd.price	
 	   , inqty	
 	   , apqty
-	   , amount = lapd.price*lapd.Qty
+	   --, amount = lapd.price*lapd.Qty
 	   , balance = inqty - apqty,inqty,apqty
 	   , lapd.LocalPo_DetailUkey
 	   , dbo.getItemDesc(localap.Category,lapd.Refno) as description 
@@ -243,6 +243,7 @@ where lapd.id = '{0}'"
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
+                e.Details.ColumnsDecimalAdd("Amount", 0, "Qty*Price");
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());                    
