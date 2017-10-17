@@ -48,7 +48,7 @@ namespace Sci.Production.Thread
                       NewCone = tid.NewCone,
                       UsedCone = tid.UsedCone,
                       Location = tid.ThreadLocationid,
-					  Remark = ti.Remark
+					  Remark = tid.Remark
                     FROM ThreadIssue ti WITH (NOLOCK) 
                     inner join ThreadIssue_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
                     left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
@@ -141,7 +141,7 @@ namespace Sci.Production.Thread
             {
                 if (sqlWhere.Count > 0)
                     sql += " where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
-                sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid, ti.Remark";
+                sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid, tid.Remark";
             }
             else if (radioSummary.Checked == true)
             {

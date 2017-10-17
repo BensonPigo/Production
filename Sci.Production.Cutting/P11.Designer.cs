@@ -74,6 +74,14 @@
             this.labelGroup = new Sci.Win.UI.Label();
             this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer6 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer7 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer8 = new System.Windows.Forms.SplitContainer();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -82,6 +90,38 @@
             this.allpart_contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridQty)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutRef)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).BeginInit();
+            this.splitContainer6.Panel1.SuspendLayout();
+            this.splitContainer6.Panel2.SuspendLayout();
+            this.splitContainer6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).BeginInit();
+            this.splitContainer7.Panel1.SuspendLayout();
+            this.splitContainer7.Panel2.SuspendLayout();
+            this.splitContainer7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer8)).BeginInit();
+            this.splitContainer8.Panel1.SuspendLayout();
+            this.splitContainer8.Panel2.SuspendLayout();
+            this.splitContainer8.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioWithcuto
@@ -103,7 +143,7 @@
             this.radioGroup1.Controls.Add(this.radioWithcuto);
             this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(685, 582);
+            this.radioGroup1.Location = new System.Drawing.Point(685, 3);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(114, 43);
             this.radioGroup1.TabIndex = 14;
@@ -123,7 +163,7 @@
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnClose.Location = new System.Drawing.Point(917, 584);
+            this.btnClose.Location = new System.Drawing.Point(917, 9);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 16;
@@ -134,7 +174,7 @@
             // btnBatchCreate
             // 
             this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnBatchCreate.Location = new System.Drawing.Point(811, 584);
+            this.btnBatchCreate.Location = new System.Drawing.Point(811, 9);
             this.btnBatchCreate.Name = "btnBatchCreate";
             this.btnBatchCreate.Size = new System.Drawing.Size(100, 30);
             this.btnBatchCreate.TabIndex = 15;
@@ -146,7 +186,7 @@
             // 
             this.label_TotalQty.BackColor = System.Drawing.Color.Transparent;
             this.label_TotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label_TotalQty.Location = new System.Drawing.Point(87, 585);
+            this.label_TotalQty.Location = new System.Drawing.Point(87, 13);
             this.label_TotalQty.Name = "label_TotalQty";
             this.label_TotalQty.Size = new System.Drawing.Size(54, 23);
             this.label_TotalQty.TabIndex = 11;
@@ -157,7 +197,7 @@
             // btnCopy_to_same_Cutref
             // 
             this.btnCopy_to_same_Cutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnCopy_to_same_Cutref.Location = new System.Drawing.Point(158, 582);
+            this.btnCopy_to_same_Cutref.Location = new System.Drawing.Point(158, 9);
             this.btnCopy_to_same_Cutref.Name = "btnCopy_to_same_Cutref";
             this.btnCopy_to_same_Cutref.Size = new System.Drawing.Size(224, 30);
             this.btnCopy_to_same_Cutref.TabIndex = 12;
@@ -168,7 +208,7 @@
             // btnCopy_to_other_Cutref
             // 
             this.btnCopy_to_other_Cutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnCopy_to_other_Cutref.Location = new System.Drawing.Point(383, 582);
+            this.btnCopy_to_other_Cutref.Location = new System.Drawing.Point(383, 9);
             this.btnCopy_to_other_Cutref.Name = "btnCopy_to_other_Cutref";
             this.btnCopy_to_other_Cutref.Size = new System.Drawing.Size(219, 30);
             this.btnCopy_to_other_Cutref.TabIndex = 13;
@@ -178,8 +218,9 @@
             // 
             // btnColorComb
             // 
+            this.btnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnColorComb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnColorComb.Location = new System.Drawing.Point(902, 310);
+            this.btnColorComb.Location = new System.Drawing.Point(903, 1);
             this.btnColorComb.Name = "btnColorComb";
             this.btnColorComb.Size = new System.Drawing.Size(97, 30);
             this.btnColorComb.TabIndex = 8;
@@ -193,7 +234,7 @@
             this.numTotalPart.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.numTotalPart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numTotalPart.IsSupportEditMode = false;
-            this.numTotalPart.Location = new System.Drawing.Point(446, 312);
+            this.numTotalPart.Location = new System.Drawing.Point(447, 6);
             this.numTotalPart.Minimum = new decimal(new int[] {
             0,
             0,
@@ -216,7 +257,7 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Location = new System.Drawing.Point(362, 312);
+            this.label7.Location = new System.Drawing.Point(363, 5);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(82, 23);
             this.label7.TabIndex = 95;
@@ -225,7 +266,7 @@
             // btnGarmentList
             // 
             this.btnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnGarmentList.Location = new System.Drawing.Point(488, 310);
+            this.btnGarmentList.Location = new System.Drawing.Point(489, 1);
             this.btnGarmentList.Name = "btnGarmentList";
             this.btnGarmentList.Size = new System.Drawing.Size(97, 30);
             this.btnGarmentList.TabIndex = 7;
@@ -235,9 +276,10 @@
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label5.Location = new System.Drawing.Point(646, 320);
+            this.label5.Location = new System.Drawing.Point(647, 5);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(116, 23);
             this.label5.TabIndex = 93;
@@ -247,7 +289,7 @@
             // btn_LefttoRight
             // 
             this.btn_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.btn_LefttoRight.Location = new System.Drawing.Point(605, 415);
+            this.btn_LefttoRight.Location = new System.Drawing.Point(3, 93);
             this.btn_LefttoRight.Name = "btn_LefttoRight";
             this.btn_LefttoRight.Size = new System.Drawing.Size(38, 30);
             this.btn_LefttoRight.TabIndex = 9;
@@ -258,7 +300,7 @@
             // btn_RighttoLeft
             // 
             this.btn_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.btn_RighttoLeft.Location = new System.Drawing.Point(605, 484);
+            this.btn_RighttoLeft.Location = new System.Drawing.Point(3, 162);
             this.btn_RighttoLeft.Name = "btn_RighttoLeft";
             this.btn_RighttoLeft.Size = new System.Drawing.Size(38, 30);
             this.btn_RighttoLeft.TabIndex = 10;
@@ -271,7 +313,7 @@
             this.numNoOfBundle.BackColor = System.Drawing.Color.White;
             this.numNoOfBundle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.numNoOfBundle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numNoOfBundle.Location = new System.Drawing.Point(101, 312);
+            this.numNoOfBundle.Location = new System.Drawing.Point(102, 6);
             this.numNoOfBundle.Name = "numNoOfBundle";
             this.numNoOfBundle.NullValue = new decimal(new int[] {
             0,
@@ -291,7 +333,7 @@
             // 
             this.label_TotalCutOutput.BackColor = System.Drawing.Color.Transparent;
             this.label_TotalCutOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label_TotalCutOutput.Location = new System.Drawing.Point(250, 312);
+            this.label_TotalCutOutput.Location = new System.Drawing.Point(251, 5);
             this.label_TotalCutOutput.Name = "label_TotalCutOutput";
             this.label_TotalCutOutput.Size = new System.Drawing.Size(54, 23);
             this.label_TotalCutOutput.TabIndex = 5;
@@ -302,7 +344,7 @@
             // labelNoOfBundle
             // 
             this.labelNoOfBundle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelNoOfBundle.Location = new System.Drawing.Point(8, 311);
+            this.labelNoOfBundle.Location = new System.Drawing.Point(9, 5);
             this.labelNoOfBundle.Name = "labelNoOfBundle";
             this.labelNoOfBundle.Size = new System.Drawing.Size(90, 23);
             this.labelNoOfBundle.TabIndex = 88;
@@ -311,7 +353,7 @@
             // labelTotalQty
             // 
             this.labelTotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTotalQty.Location = new System.Drawing.Point(9, 585);
+            this.labelTotalQty.Location = new System.Drawing.Point(9, 13);
             this.labelTotalQty.Name = "labelTotalQty";
             this.labelTotalQty.Size = new System.Drawing.Size(75, 23);
             this.labelTotalQty.TabIndex = 87;
@@ -321,7 +363,7 @@
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Location = new System.Drawing.Point(139, 312);
+            this.label4.Location = new System.Drawing.Point(140, 5);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(111, 23);
             this.label4.TabIndex = 86;
@@ -332,7 +374,7 @@
             // dateEstCutDate
             // 
             this.dateEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.dateEstCutDate.Location = new System.Drawing.Point(249, 9);
+            this.dateEstCutDate.Location = new System.Drawing.Point(250, 6);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(130, 21);
             this.dateEstCutDate.TabIndex = 1;
@@ -342,7 +384,7 @@
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOID.Location = new System.Drawing.Point(577, 9);
+            this.txtPOID.Location = new System.Drawing.Point(578, 6);
             this.txtPOID.Name = "txtPOID";
             this.txtPOID.Size = new System.Drawing.Size(108, 21);
             this.txtPOID.TabIndex = 2;
@@ -350,7 +392,7 @@
             // labelPOID
             // 
             this.labelPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPOID.Location = new System.Drawing.Point(499, 8);
+            this.labelPOID.Location = new System.Drawing.Point(500, 5);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(75, 23);
             this.labelPOID.TabIndex = 83;
@@ -359,7 +401,7 @@
             // labelEstCutDate
             // 
             this.labelEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEstCutDate.Location = new System.Drawing.Point(162, 8);
+            this.labelEstCutDate.Location = new System.Drawing.Point(163, 5);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(83, 23);
             this.labelEstCutDate.TabIndex = 82;
@@ -370,7 +412,7 @@
             this.txtCutref.BackColor = System.Drawing.Color.White;
             this.txtCutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtCutref.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutref.Location = new System.Drawing.Point(86, 9);
+            this.txtCutref.Location = new System.Drawing.Point(87, 6);
             this.txtCutref.Name = "txtCutref";
             this.txtCutref.Size = new System.Drawing.Size(70, 21);
             this.txtCutref.TabIndex = 0;
@@ -378,7 +420,7 @@
             // labelCutref
             // 
             this.labelCutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCutref.Location = new System.Drawing.Point(9, 8);
+            this.labelCutref.Location = new System.Drawing.Point(10, 5);
             this.labelCutref.Name = "labelCutref";
             this.labelCutref.Size = new System.Drawing.Size(75, 23);
             this.labelCutref.TabIndex = 80;
@@ -393,11 +435,12 @@
             this.gridCutpart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridCutpart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridCutpart.ContextMenuStrip = this.art_contextMenuStrip;
+            this.gridCutpart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridCutpart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridCutpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCutpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCutpart.Location = new System.Drawing.Point(160, 346);
+            this.gridCutpart.Location = new System.Drawing.Point(0, 0);
             this.gridCutpart.Name = "gridCutpart";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -411,7 +454,7 @@
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutpart.RowTemplate.Height = 24;
             this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutpart.Size = new System.Drawing.Size(439, 230);
+            this.gridCutpart.Size = new System.Drawing.Size(443, 283);
             this.gridCutpart.TabIndex = 79;
             this.gridCutpart.TabStop = false;
             // 
@@ -445,11 +488,12 @@
             this.gridArticleSize.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridArticleSize.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridArticleSize.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridArticleSize.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridArticleSize.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridArticleSize.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridArticleSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridArticleSize.Location = new System.Drawing.Point(488, 38);
+            this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -463,7 +507,7 @@
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridArticleSize.Size = new System.Drawing.Size(509, 267);
+            this.gridArticleSize.Size = new System.Drawing.Size(512, 220);
             this.gridArticleSize.TabIndex = 20;
             this.gridArticleSize.TabStop = false;
             this.gridArticleSize.SelectionChanged += new System.EventHandler(this.gridArticleSize_SelectionChanged);
@@ -477,11 +521,12 @@
             this.gridAllPart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridAllPart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridAllPart.ContextMenuStrip = this.allpart_contextMenuStrip;
+            this.gridAllPart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridAllPart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridAllPart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridAllPart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAllPart.Location = new System.Drawing.Point(646, 346);
+            this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -495,7 +540,7 @@
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAllPart.Size = new System.Drawing.Size(353, 230);
+            this.gridAllPart.Size = new System.Drawing.Size(362, 283);
             this.gridAllPart.TabIndex = 76;
             this.gridAllPart.TabStop = false;
             // 
@@ -529,11 +574,12 @@
             this.gridQty.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQty.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQty.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridQty.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridQty.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridQty.Location = new System.Drawing.Point(8, 346);
+            this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
@@ -547,7 +593,7 @@
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
             this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQty.Size = new System.Drawing.Size(148, 230);
+            this.gridQty.Size = new System.Drawing.Size(149, 283);
             this.gridQty.TabIndex = 77;
             this.gridQty.TabStop = false;
             // 
@@ -559,11 +605,12 @@
             this.gridCutRef.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridCutRef.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridCutRef.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCutRef.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridCutRef.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridCutRef.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCutRef.Location = new System.Drawing.Point(8, 38);
+            this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
@@ -577,7 +624,7 @@
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutRef.Size = new System.Drawing.Size(474, 267);
+            this.gridCutRef.Size = new System.Drawing.Size(492, 220);
             this.gridCutRef.TabIndex = 22;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.gridCutRef_SelectionChanged);
@@ -585,7 +632,7 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnQuery.Location = new System.Drawing.Point(695, 4);
+            this.btnQuery.Location = new System.Drawing.Point(696, 1);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 3;
@@ -597,7 +644,7 @@
             // 
             this.labelGroup.BackColor = System.Drawing.Color.Transparent;
             this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(657, 591);
+            this.labelGroup.Location = new System.Drawing.Point(657, 13);
             this.labelGroup.Name = "labelGroup";
             this.labelGroup.Size = new System.Drawing.Size(35, 23);
             this.labelGroup.TabIndex = 17;
@@ -611,7 +658,7 @@
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.IssupportJunk = false;
-            this.txtfactoryByM.Location = new System.Drawing.Point(430, 8);
+            this.txtfactoryByM.Location = new System.Drawing.Point(431, 5);
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 96;
@@ -619,86 +666,186 @@
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label1.Location = new System.Drawing.Point(382, 8);
+            this.label1.Location = new System.Drawing.Point(383, 5);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 23);
             this.label1.TabIndex = 97;
             this.label1.Text = "Factory";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.gridCutRef);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.gridArticleSize);
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 220);
+            this.splitContainer1.SplitterDistance = 492;
+            this.splitContainer1.TabIndex = 98;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.gridQty);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Size = new System.Drawing.Size(1008, 283);
+            this.splitContainer2.SplitterDistance = 149;
+            this.splitContainer2.TabIndex = 99;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.gridCutpart);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
+            this.splitContainer3.Size = new System.Drawing.Size(855, 283);
+            this.splitContainer3.SplitterDistance = 443;
+            this.splitContainer3.TabIndex = 0;
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.btn_RighttoLeft);
+            this.splitContainer4.Panel1.Controls.Add(this.btn_LefttoRight);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.gridAllPart);
+            this.splitContainer4.Size = new System.Drawing.Size(408, 283);
+            this.splitContainer4.SplitterDistance = 42;
+            this.splitContainer4.TabIndex = 0;
+            // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Name = "splitContainer5";
+            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.labelCutref);
+            this.splitContainer5.Panel1.Controls.Add(this.txtCutref);
+            this.splitContainer5.Panel1.Controls.Add(this.labelEstCutDate);
+            this.splitContainer5.Panel1.Controls.Add(this.labelPOID);
+            this.splitContainer5.Panel1.Controls.Add(this.label1);
+            this.splitContainer5.Panel1.Controls.Add(this.txtPOID);
+            this.splitContainer5.Panel1.Controls.Add(this.txtfactoryByM);
+            this.splitContainer5.Panel1.Controls.Add(this.dateEstCutDate);
+            this.splitContainer5.Panel1.Controls.Add(this.btnQuery);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.splitContainer6);
+            this.splitContainer5.Size = new System.Drawing.Size(1008, 630);
+            this.splitContainer5.SplitterDistance = 31;
+            this.splitContainer5.TabIndex = 100;
+            // 
+            // splitContainer6
+            // 
+            this.splitContainer6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer6.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer6.Name = "splitContainer6";
+            this.splitContainer6.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer6.Panel1
+            // 
+            this.splitContainer6.Panel1.Controls.Add(this.splitContainer1);
+            // 
+            // splitContainer6.Panel2
+            // 
+            this.splitContainer6.Panel2.Controls.Add(this.splitContainer7);
+            this.splitContainer6.Size = new System.Drawing.Size(1008, 595);
+            this.splitContainer6.SplitterDistance = 220;
+            this.splitContainer6.TabIndex = 0;
+            // 
+            // splitContainer7
+            // 
+            this.splitContainer7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer7.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer7.Name = "splitContainer7";
+            this.splitContainer7.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer7.Panel1
+            // 
+            this.splitContainer7.Panel1.Controls.Add(this.labelNoOfBundle);
+            this.splitContainer7.Panel1.Controls.Add(this.label4);
+            this.splitContainer7.Panel1.Controls.Add(this.label_TotalCutOutput);
+            this.splitContainer7.Panel1.Controls.Add(this.numNoOfBundle);
+            this.splitContainer7.Panel1.Controls.Add(this.label5);
+            this.splitContainer7.Panel1.Controls.Add(this.btnGarmentList);
+            this.splitContainer7.Panel1.Controls.Add(this.label7);
+            this.splitContainer7.Panel1.Controls.Add(this.numTotalPart);
+            this.splitContainer7.Panel1.Controls.Add(this.btnColorComb);
+            // 
+            // splitContainer7.Panel2
+            // 
+            this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
+            this.splitContainer7.Size = new System.Drawing.Size(1008, 371);
+            this.splitContainer7.SplitterDistance = 35;
+            this.splitContainer7.TabIndex = 0;
+            // 
+            // splitContainer8
+            // 
+            this.splitContainer8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer8.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer8.Name = "splitContainer8";
+            this.splitContainer8.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer8.Panel1
+            // 
+            this.splitContainer8.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // splitContainer8.Panel2
+            // 
+            this.splitContainer8.Panel2.Controls.Add(this.labelTotalQty);
+            this.splitContainer8.Panel2.Controls.Add(this.labelGroup);
+            this.splitContainer8.Panel2.Controls.Add(this.btnCopy_to_other_Cutref);
+            this.splitContainer8.Panel2.Controls.Add(this.radioGroup1);
+            this.splitContainer8.Panel2.Controls.Add(this.btnCopy_to_same_Cutref);
+            this.splitContainer8.Panel2.Controls.Add(this.btnClose);
+            this.splitContainer8.Panel2.Controls.Add(this.label_TotalQty);
+            this.splitContainer8.Panel2.Controls.Add(this.btnBatchCreate);
+            this.splitContainer8.Size = new System.Drawing.Size(1008, 332);
+            this.splitContainer8.SplitterDistance = 283;
+            this.splitContainer8.TabIndex = 0;
+            // 
             // P11
             // 
             this.ClientSize = new System.Drawing.Size(1008, 630);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtfactoryByM);
-            this.Controls.Add(this.labelGroup);
-            this.Controls.Add(this.btnQuery);
-            this.Controls.Add(this.radioGroup1);
-            this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.btnBatchCreate);
-            this.Controls.Add(this.label_TotalQty);
-            this.Controls.Add(this.btnCopy_to_same_Cutref);
-            this.Controls.Add(this.btnCopy_to_other_Cutref);
-            this.Controls.Add(this.btnColorComb);
-            this.Controls.Add(this.numTotalPart);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.btnGarmentList);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.btn_LefttoRight);
-            this.Controls.Add(this.btn_RighttoLeft);
-            this.Controls.Add(this.numNoOfBundle);
-            this.Controls.Add(this.label_TotalCutOutput);
-            this.Controls.Add(this.labelNoOfBundle);
-            this.Controls.Add(this.labelTotalQty);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.dateEstCutDate);
-            this.Controls.Add(this.txtPOID);
-            this.Controls.Add(this.labelPOID);
-            this.Controls.Add(this.labelEstCutDate);
-            this.Controls.Add(this.txtCutref);
-            this.Controls.Add(this.labelCutref);
-            this.Controls.Add(this.gridCutpart);
-            this.Controls.Add(this.gridArticleSize);
-            this.Controls.Add(this.gridAllPart);
-            this.Controls.Add(this.gridQty);
-            this.Controls.Add(this.gridCutRef);
+            this.Controls.Add(this.splitContainer5);
             this.DefaultControl = "txtCutref";
             this.DefaultControlForEdit = "txtCutref";
             this.EditMode = true;
             this.Name = "P11";
             this.Text = "P11.Batch Create Bundle Card";
-            this.Controls.SetChildIndex(this.gridCutRef, 0);
-            this.Controls.SetChildIndex(this.gridQty, 0);
-            this.Controls.SetChildIndex(this.gridAllPart, 0);
-            this.Controls.SetChildIndex(this.gridArticleSize, 0);
-            this.Controls.SetChildIndex(this.gridCutpart, 0);
-            this.Controls.SetChildIndex(this.labelCutref, 0);
-            this.Controls.SetChildIndex(this.txtCutref, 0);
-            this.Controls.SetChildIndex(this.labelEstCutDate, 0);
-            this.Controls.SetChildIndex(this.labelPOID, 0);
-            this.Controls.SetChildIndex(this.txtPOID, 0);
-            this.Controls.SetChildIndex(this.dateEstCutDate, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.labelTotalQty, 0);
-            this.Controls.SetChildIndex(this.labelNoOfBundle, 0);
-            this.Controls.SetChildIndex(this.label_TotalCutOutput, 0);
-            this.Controls.SetChildIndex(this.numNoOfBundle, 0);
-            this.Controls.SetChildIndex(this.btn_RighttoLeft, 0);
-            this.Controls.SetChildIndex(this.btn_LefttoRight, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.btnGarmentList, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.numTotalPart, 0);
-            this.Controls.SetChildIndex(this.btnColorComb, 0);
-            this.Controls.SetChildIndex(this.btnCopy_to_other_Cutref, 0);
-            this.Controls.SetChildIndex(this.btnCopy_to_same_Cutref, 0);
-            this.Controls.SetChildIndex(this.label_TotalQty, 0);
-            this.Controls.SetChildIndex(this.btnBatchCreate, 0);
-            this.Controls.SetChildIndex(this.btnClose, 0);
-            this.Controls.SetChildIndex(this.radioGroup1, 0);
-            this.Controls.SetChildIndex(this.btnQuery, 0);
-            this.Controls.SetChildIndex(this.labelGroup, 0);
-            this.Controls.SetChildIndex(this.txtfactoryByM, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.splitContainer5, 0);
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
@@ -708,8 +855,41 @@
             this.allpart_contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridQty)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutRef)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel1.PerformLayout();
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
+            this.splitContainer6.Panel1.ResumeLayout(false);
+            this.splitContainer6.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).EndInit();
+            this.splitContainer6.ResumeLayout(false);
+            this.splitContainer7.Panel1.ResumeLayout(false);
+            this.splitContainer7.Panel1.PerformLayout();
+            this.splitContainer7.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).EndInit();
+            this.splitContainer7.ResumeLayout(false);
+            this.splitContainer8.Panel1.ResumeLayout(false);
+            this.splitContainer8.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer8)).EndInit();
+            this.splitContainer8.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -756,5 +936,13 @@
         private Win.UI.Label labelGroup;
         private Class.txtfactory txtfactoryByM;
         private Win.UI.Label label1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.SplitContainer splitContainer6;
+        private System.Windows.Forms.SplitContainer splitContainer7;
+        private System.Windows.Forms.SplitContainer splitContainer8;
     }
 }

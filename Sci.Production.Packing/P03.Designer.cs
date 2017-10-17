@@ -769,7 +769,7 @@
             this.ExpressQuery = true;
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "ID,CTNStartNo,Article,SizeCode";
+            this.GridUniqueKey = "ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;

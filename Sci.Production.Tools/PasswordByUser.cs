@@ -110,20 +110,20 @@ namespace Sci.Production.Tools
             }
         }
 
-        protected override bool OnGridSetup()
-        {
-            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-            ts.UseSystemPasswordChar = true;  // 預設為*
-            //ts.PasswordChar = "*";
+        //protected override bool OnGridSetup()
+        //{
+        //    DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+        //    ts.UseSystemPasswordChar = true;  // 預設為*
+        //    //ts.PasswordChar = "*";
 
-            Helper.Controls.Grid.Generator(this.grid)
-                .Text("ID", header: "User ID", width: Widths.AnsiChars(10))
-                .Text("NAME", header: "Name", width: Widths.AnsiChars(20))
-                .Text("PASSWORD", header: "Password", width: Widths.AnsiChars(10), settings: ts)
-                .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1))
-                .DateTime("LastLoginTime", header: "Last Login Time", width: Widths.AnsiChars(20));
-            return true;
-        }
+        //    Helper.Controls.Grid.Generator(this.grid)
+        //        .Text("ID", header: "User ID", width: Widths.AnsiChars(10))
+        //        .Text("NAME", header: "Name", width: Widths.AnsiChars(20))
+        //        .Text("PASSWORD", header: "Password", width: Widths.AnsiChars(10), settings: ts)
+        //        .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1))
+        //        .DateTime("LastLoginTime", header: "Last Login Time", width: Widths.AnsiChars(20));
+        //    return true;
+        //}
 
         protected override void OnFormLoaded()
         {
