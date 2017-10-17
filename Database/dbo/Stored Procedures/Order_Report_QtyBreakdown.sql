@@ -9,15 +9,16 @@ declare @OrderComboID varchar(13) = (select OrderComboID from MNOrder where ID =
 declare @tbl table (seq bigint, id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID = (select id from Production.dbo.MNOrder where id = @OrderID and qty !=0)
 else if(@ByType = 1)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID)
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID and qty !=0)
 else if(@ByType = 2)
-	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID )
-
+	insert into @tbl SELECT seq,id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where OrderComboID = @OrderComboID and qty !=0)
 
 --主要資料
-SELECT a.seq, b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT c.seq, b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a 
+	left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID
+	left join ( select Article, min(seq) as seq from @tbl group by Article) c on a.Article = c.Article
 where b.ID is not null
 
 
@@ -41,7 +42,7 @@ if exists(select 1 from #tmp_col)
 			select Seq=999, ''TTL.'','+ @str3 +',Total='+ @str4 +'
 			from (SELECT Article,SizeCode,Qty FROM #tmp) a
 			pivot ( sum(Qty) for SizeCode in ('+ @str1 +') ) b 
-		) c order by Seq'
+		) c order by Seq,Article'
 
 		print @sql
 		exec (@sql)
@@ -53,5 +54,6 @@ else
 
 drop table #tmp
 drop table #tmp_col
+
 
 END
