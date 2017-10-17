@@ -27,7 +27,7 @@
     [SendDate]         DATETIME       NULL,
     [PayDate]          DATE           NULL,
     [CurrencyID]       VARCHAR (8)    CONSTRAINT [DF_Express_CurrencyID] DEFAULT ('') NULL,
-    [Amount]           NUMERIC (7, 2) CONSTRAINT [DF_Express_Amount] DEFAULT ((0)) NULL,
+    [Amount]           NUMERIC (9, 2) CONSTRAINT [DF_Express_Amount] DEFAULT ((0)) NULL,
     [InvNo]            VARCHAR (25)   CONSTRAINT [DF_Express_InvNo] DEFAULT ('') NULL,
     [AddName]          VARCHAR (10)   CONSTRAINT [DF_Express_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME       NULL,

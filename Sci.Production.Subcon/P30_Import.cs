@@ -280,16 +280,13 @@ where a.status = 'Approved'
                     { ShowErr(strSQLCmd, result); }
 
                 #region 加工remark欄位
-                string category;
+                string category,Finished;
                 decimal price;
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
                     if (category == "B")
                     {
-                        //554: SUBCON_P30_Import_Import Thread or Carton item
-                        //price = decimal.Parse(MyUtility.GetValue.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
-                        //                                                                    , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper()), null));
                         sql = string.Format(@"select price from order_tmscost WITH (NOLOCK) where id='{0}' and artworktypeid='{1}'"
                                             , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper());
                         tmp = MyUtility.GetValue.Lookup(sql);
@@ -303,6 +300,12 @@ where a.status = 'Approved'
                             dr["remark"] = "Price is 0, can not be transfered to local purchase!!";
                             dr["selected"] = 0;
                         }
+                    }
+                    Finished = MyUtility.GetValue.Lookup(string.Format(@"select Finished from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
+                    if (Finished == "True")
+                    {
+                        dr["remark"] += "  This orders already finished, can not be transfered to local purchase!!";
+                        dr["selected"] = 0;
                     }
                 }
                 #endregion  

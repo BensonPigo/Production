@@ -6,6 +6,7 @@
     [Qty]        NUMERIC (17, 6) CONSTRAINT [DF_VNConsumption_Detail_Qty] DEFAULT ((0)) NULL,
     [UserCreate] BIT             CONSTRAINT [DF_VNConsumption_Detail_UserCreate] DEFAULT ((0)) NULL,
     [SystemQty]  NUMERIC (14, 3) CONSTRAINT [DF__VNConsump__Syste__0FE30493] DEFAULT ((0)) NULL,
+    [Waste] NUMERIC(5, 3) NOT NULL, 
     CONSTRAINT [PK_VNConsumption_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [NLCode] ASC)
 );
 
