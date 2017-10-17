@@ -577,7 +577,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //    return;
             //}
             //確認orders.id + 工廠有沒有這筆,沒有則return
-            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FtyGroup = '{1}'", id, factory)))
+            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) inner join Factory on orders.FactoryID=Factory.ID where orders.id='{0}' and orders.FtyGroup = '{1}' and Factory.IsProduceFty=1", id, factory)))
             {
                 e.Cancel = true;
                 txtSP.Text = "";
