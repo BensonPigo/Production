@@ -304,7 +304,7 @@ pivot
             }
             #endregion
 
-            #region -- 產生RFID Loading Qty --
+            #region -- 產生所有 SubProcessID Qty --
             sqlCmd.Append(@"/*Cur_bdltrack2*/
 
 declare @EndDate date = CONVERT(date, GETDATE());
@@ -352,6 +352,10 @@ inner join Pattern pt on	pt.StyleUkey = o.StyleUkey
 *	FabricPanelCode 只需要取 FabricCode 不為空白
 *	Distinct 原因是會有多筆 Article Group
 *	PatternCode 只要 Annotation = 空值，則 PatterCode = 'ALLPARTS'	
+*   
+*   ※除了 SORTING, LOADING 
+*   ※其他 SubProcess 需依照 Pattern_GL.Annotation
+*   ※計算各個部位如何才能算一件成衣
 */
 Select	distinct tpu.Poid
 		, PatternCode = case
@@ -359,6 +363,7 @@ Select	distinct tpu.Poid
 							else PatternCode.value
 						end
 		, F_CODE = a.FabricPanelCode
+        , SubProcessID = SubProcessID.Data
 into #TablePatternCode
 from #TablePatternUkey tpu
 inner join Pattern_GL pg WITH (NOLOCK) on tpu.UKey = pg.PatternUKEY
@@ -368,6 +373,17 @@ inner join Pattern_GL_LectraCode a WITH (NOLOCK) on	 a.PatternUkey = tpu.Ukey
 outer apply (
 	select value = iif(a.SEQ = '0001', SubString(a.PatternCode, 11, Len(a.PatternCode)), a.PatternCode)
 ) PatternCode
+outer apply (
+	select Data = splitAnnotation.Data
+	from dbo.SplitString(pg.Annotation, '+') splitAnnotation
+	inner join SubProcess sp on splitAnnotation.Data = sp.Id
+
+	union all 
+	select Data = 'SORTING'
+
+	union all
+	select Data = 'LOADING'
+) SubProcessID
 
 ------------------------------------------------------------------------------------------------------------------
 /*
@@ -388,7 +404,7 @@ select	#tsp.masterID
 		, #cur_artwork.artwork 
 		, #tsp.SewLine
 		, #tsp.FactoryID
-        , SubProcessID = SubProcessID.ID
+        , #cur_artwork.SubProcessID
         , isInComing = isInComing.value
 into #cutcomb
 from #tsp
@@ -406,6 +422,7 @@ inner join (
 									  ), 1, 1, '')
 							  , '')
 			, PatternCode = tpc.PatternCode
+            , tpc.SubProcessID
 	from #TablePatternCode tpc
 	left join Bundle b on b.POID = tpc.Poid
 	left join Bundle_Detail bd on b.id = bd.id
@@ -424,101 +441,102 @@ inner join (
 	      and oec.CuttingPiece = 0
 )#cur_artwork on #tsp.orderID = #cur_artwork.orderID
 outer apply (
-    select distinct ID
-    from SubProcess
-) SubProcessID
-outer apply (
     select value = 'T'
     union all
     select value = 'F'
 ) isInComing
 
 /*
-Step2
- 取出被各個部門收下的 Bundle Data
+* Step3
+* 取出被各個部門收下的 Bundle Data
 *		排除
 *			1. Order_BOF.Kind = 0 (表Other) 
 *			2. Order_BOF.Kind = 3 (表Polyfill)的資料
 *			3. 外裁項 【Bundle_Detail 不會出現外裁項的資料】
 *		BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差
 */
+select	b.orderid
+		, bd.SizeCode
+		, b.Article
+		, bd.BundleGroup
+		, FabricCombo = wo.FabricPanelCode
+		, PatternCode = bd.Patterncode
+		, artwork = isnull(ArtWork.value, '')
+		, qty = isnull (bd.qty, 0)
+        , bio.SubProcessId
+        , haveOutGoing = case 
+                            when bio.OutGoing is not null then 'T'
+                            else 'F'
+                         end
+into #tmpBundleInOutQty
+from BundleInOut bio
+inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
+inner join Bundle b on b.id = bd.id
+inner join WorkOrder wo on b.POID = wo.id
+						    and b.CutRef = wo.CutRef
+left join Order_BOF ob on ob.Id = wo.Id 
+						    and ob.FabricCode = wo.FabricCode
+inner join #tsp on b.Orderid = #tsp.orderID
+outer apply (
+	select value = stuff ((	select '+' + subprocessid
+							from (
+								select distinct bda.subprocessid
+								from Bundle_Detail_Art bda
+								where bd.BundleNo = bda.Bundleno
+							) k
+							for xml path('')
+							), 1, 1, '')
+) ArtWork
+where	ob.Kind not in ('0','3')
+
+/*
+ * 分成兩個群組 
+ * 1. InComing
+ * 2. OutGoing
+ */ 
 select *
 into #cur_bdltrack2
 from (
-    select	b.orderid
-		    , bd.SizeCode
-		    , b.Article
-		    , bd.BundleGroup
-		    , FabricCombo = wo.FabricPanelCode
-		    , PatternCode = bd.Patterncode
-		    , artwork = isnull(ArtWork.value, '')
-		    , qty = sum(isnull(bd.qty, 0))
-            , bio.SubProcessId
+    select 	orderid
+		    , SizeCode
+		    , Article
+		    , BundleGroup
+		    , FabricCombo
+		    , PatternCode
+		    , artwork
+		    , qty = sum (isnull (qty, 0))
+            , SubProcessId
             , isInComing = 'T'
-    from BundleInOut bio
-    inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
-    inner join Bundle b on b.id = bd.id
-    inner join WorkOrder wo on b.POID = wo.id
-						       and b.CutRef = wo.CutRef
-    left join Order_BOF ob on ob.Id = wo.Id 
-						      and ob.FabricCode = wo.FabricCode
-    inner join #tsp on b.Orderid = #tsp.orderID
-    outer apply (
-	    select value = stuff ((	select '+' + subprocessid
-							    from (
-								    select distinct bda.subprocessid
-								    from Bundle_Detail_Art bda
-								    where bd.BundleNo = bda.Bundleno
-							    ) k
-							    for xml path('')
-							    ), 1, 1, '')
-    ) ArtWork
-    where	ob.Kind not in ('0','3')
-    group by b.orderid, bd.SizeCode, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup, bio.SubProcessId
+    from #tmpBundleInOutQty
+    group by orderid, SizeCode, Article, BundleGroup, FabricCombo, PatternCode
+             , artwork, SubProcessId
 
     union all
-    select	b.orderid
-		    , bd.SizeCode
-		    , b.Article
-		    , bd.BundleGroup
-		    , FabricCombo = wo.FabricPanelCode
-		    , PatternCode = bd.Patterncode
-		    , artwork = isnull(ArtWork.value, '')
-		    , qty = sum(isnull(bd.qty, 0))
-            , bio.SubProcessId
+    select  orderid
+		    , SizeCode
+		    , Article
+		    , BundleGroup
+		    , FabricCombo
+		    , PatternCode
+		    , artwork
+		    , qty = sum (isnull (qty, 0))
+            , SubProcessId
             , isInComing = 'F'
-    from BundleInOut bio
-    inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
-    inner join Bundle b on b.id = bd.id
-    inner join WorkOrder wo on b.POID = wo.id
-						       and b.CutRef = wo.CutRef
-    left join Order_BOF ob on ob.Id = wo.Id 
-						      and ob.FabricCode = wo.FabricCode
-    inner join #tsp on b.Orderid = #tsp.orderID
-    outer apply (
-	    select value = stuff ((	select '+' + subprocessid
-							    from (
-								    select distinct bda.subprocessid
-								    from Bundle_Detail_Art bda
-								    where bd.BundleNo = bda.Bundleno
-							    ) k
-							    for xml path('')
-							    ), 1, 1, '')
-    ) ArtWork
-    where	ob.Kind not in ('0','3')
-            and bio.OutGoing is not null
-    group by b.orderid, bd.SizeCode, b.Article, wo.FabricPanelCode, ArtWork.value, bd.Patterncode, bd.BundleGroup, bio.SubProcessId
+    from #tmpBundleInOutQty
+    where haveOutGoing = 'T'
+    group by orderid, SizeCode, Article, BundleGroup, FabricCombo, PatternCode
+             , artwork, SubProcessId
 ) x;
 
 ------------------------------------------------------------------------------------------------------------------
 
 /*	
-*	Step4 已收的bundle資料中找出各 
+*	Step4 已收的 bundle 資料中找出 
 *			article 
 *			size
 *			部位
 *			artwork
-*			加總數量
+*		  各個部門的加總數量
 *	Step5 計算 sp# 的產出
 */
 select	NewCutComb.FactoryID
@@ -571,7 +589,7 @@ group by NewCutComb.FactoryID, NewCutComb.orderid, NewCutComb.StyleID, NewCutCom
 -----------------------------------------------------------
 
 /*
-*	準備 InComing 資料
+*	準備 InComing & OutGoing 資料
 */
 select	FactoryID
 		, SP
@@ -593,7 +611,8 @@ from (
 /*
 *		依照【SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
 *		判斷 BundleGroup
-*			第一次群組判斷最小數量需要加上 BundleGroup
+*			第一次群組判斷最小數量需要加上 BundleGroup 
+*                 (BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差)
 *			第二次群組加總所有成衣數量		
 */
 		select FactoryID
@@ -758,19 +777,19 @@ select t.MDivisionID
        , [RFID Cut Qty] = isnull (CutQty.AccuInCome, 0)
        , [RFID Loading Qty] = isnull (loading.AccuInCome,0)             
        , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
-       , [RFID Emb Farm Out Qty] = Embout.[RFID Emb Farm Out Qty]
+       , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
        , [RFID Bond Farm In Qty] = isnull (Bondin.AccuInCome, 0)
-       , [RFID Bond Farm Out Qty] = Bondout.[RFID Bond Farm Out Qty]
+       , [RFID Bond Farm Out Qty] = isnull (Bondout.AccuOutGo, 0)
        , [RFID Print Farm In Qty] = isnull (Printin.AccuInCome, 0)
-       , [RFID Print Farm Out Qty] = Printout.[RFID Print Farm Out Qty]
+       , [RFID Print Farm Out Qty] = isnull (Printout.AccuOutGo, 0)
        , [RFID AT Farm In Qty] = isnull (ATin.AccuInCome, 0)
-       , [RFID AT Farm Out Qty] = ATout.[RFID AT Farm Out Qty]
+       , [RFID AT Farm Out Qty] = isnull (ATout.AccuOutGo, 0)
        , [RFID Pad Print Farm In Qty] = isnull (PadPrintin.AccuInCome, 0)
-       , [RFID Pad Print Farm Out Qty] = PadPrintout.[RFID Pad Print Farm Out Qty]
+       , [RFID Pad Print Farm Out Qty] = isnull (PadPrintout.AccuOutGo, 0)
        , [RFID Emboss Farm In Qty] = isnull (Embossin.AccuInCome, 0)
-       , [RFID Emboss Farm Out Qty] = Embossout.[RFID Emboss Farm Out Qty]
+       , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
        , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
-       , [RFID HT Farm Out Qty] = htout.[RFID HT Farm Out Qty]
+       , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
        , #cte2.PRINTING_qty
@@ -877,7 +896,7 @@ outer apply(
           and isInComing = 'T'
 ) Embin
 outer apply(
-	select [RFID Emb Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -897,7 +916,7 @@ outer apply(
           and isInComing = 'T'
 ) Bondin
 outer apply(
-	select [RFID Bond Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -917,7 +936,7 @@ outer apply(
           and isInComing = 'T'
 ) Printin
 outer apply(
-	select [RFID Print Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -937,7 +956,7 @@ outer apply(
           and isInComing = 'T'
 ) ATin
 outer apply(
-	select [RFID AT Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -957,7 +976,7 @@ outer apply(
           and isInComing = 'T'
 ) PadPrintin
 outer apply(
-	select [RFID Pad Print Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -977,7 +996,7 @@ outer apply(
           and isInComing = 'T'
 ) Embossin
 outer apply(
-	select [RFID Emboss Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -997,7 +1016,7 @@ outer apply(
           and isInComing = 'T'
 ) htin
 outer apply(
-	select [RFID HT Farm Out Qty] = AccuQty 
+	select [AccuOutGo] = AccuQty 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -1010,14 +1029,8 @@ outer apply(
 
             sqlCmd.Append(string.Format(@" order by {0}", orderby));
             sqlCmd.Append(@" 
-DROP TABLE #cte2,#cte
-drop table #tsp
-drop table #cutcomb
-drop table #cur_bdltrack2
-drop table #Min_cut
-drop table #AccuInComeData
-drop table #TablePatternUkey;
-drop table #TablePatternCode
+DROP TABLE #cte2, #cteㄝ, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
+           , #AccuInComeData, #TablePatternUkey, #TablePatternCode;
 ");
             if (isArtwork)
             {
@@ -1025,7 +1038,7 @@ drop table #TablePatternCode
             }
 
 
-            DBProxy.Current.DefaultTimeout = 1800;
+            DBProxy.Current.DefaultTimeout = 2700;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
@@ -1068,7 +1081,7 @@ drop table #TablePatternCode
 
                 for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
                 {
-                    objSheets.Cells[1, 73 + i] = dtArtworkType.Rows[i]["id"].ToString();
+                    objSheets.Cells[1, 74 + i] = dtArtworkType.Rows[i]["id"].ToString();
                 }
 
                 //首列資料篩選
