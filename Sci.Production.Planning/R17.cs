@@ -21,7 +21,7 @@ namespace Sci.Production.Planning
 {
     public partial class R17 : Sci.Win.Tems.PrintForm
     {
-        System.Data.DataTable gdtDatas, gdtOrderDetail, gdtPullOut, gdtFailDetail, gdtSP;
+        System.Data.DataTable gdtOrderDetail, gdtPullOut, gdtFailDetail, gdtSP, gdtSDP;
 
         public R17()
         {
@@ -53,111 +53,191 @@ namespace Sci.Production.Planning
             DualResult result = new DualResult(true);
             try
             {
-                string strSQL = "";
-                StringBuilder sqlcmd = new StringBuilder();
-                sqlcmd.Append(@" 
-select A = A1.FACTORYID,B = A3.ALIAS, A1.ID, Order_QS.FtyKPI ,C = SUM(A1.QTY)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS)
-into #tmp
+                #region Order Detail
+               string strSQL = @" 
+SELECT   A = A2.CountryID
+       , B = A2.KpiCode
+       , C = A1.FactoryID 
+       , D = A1.ID
+       , E = A1.BRANDID
+       , F = Convert(varchar,A1.BuyerDelivery )
+       , G = Convert(varchar,cast( Order_QS.FtyKPI as date)) 
+       , H = (SELECT strData + ',' 
+              FROM (
+                SELECT strData = Convert(varchar, Order_QtyShip.ShipmodeID) 
+                                 + '-' 
+                                 + Convert(varchar, Order_QtyShip.Qty) 
+                                 + '(' 
+                                 +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery), '-', '/') 
+                                 + ')'
+                FROM Order_QtyShip WITH (NOLOCK) 
+                where id = A1.ID
+              ) t for xml path('')) 
+       , I = Order_QS.QTY
+       , J = Cast(isnull(pd.Qty,0) as int)
+	   , K = Cast(isnull(pd.FailQty,0) as int)
+       , L = (select strData + ',' 
+              from (
+                Select strData = REPLACE(convert(varchar,PulloutDate), '-', '/') 
+                from Pullout_Detail WITH (NOLOCK) 
+                where OrderID = A1.ID
+              ) t for xml path(''))       
+       , M = t.strData
+       , N = (Select CountPullOut = Count(id) 
+              from Pullout_Detail WITH (NOLOCK) 
+              where OrderID = A1.ID)
+       , O = CASE 
+                WHEN A1.GMTComplete = 'C' OR A1.GMTComplete = 'S' THEN 'Y' 
+                ELSE '' 
+             END
+	   , P= Order_QS.ReasonID
+	   , Q = case A1.Category when 'B' then r.Name
+		 when 'S' then rs.Name
+		 else '' end 
+       , R = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
+       , S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
+       , T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
+       , U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
 FROM ORDERS A1 WITH (NOLOCK) 
-Left Join Order_QtyShip Order_QS on A1.ID = Order_QS.ID
+LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-WHERE 1= 1  ");
+LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
+LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+outer apply(
+	select * from Reason
+	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery'
+)r
+outer apply(
+	select * from Reason
+	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery_sample'
+)rs
+OUTER APPLY(
+   select strData = stuff ((Select DISTINCT concat(',', ShipmodeID)
+                            from Order_QtyShip WITH (NOLOCK) 
+                            where id = A1.ID  
+                            Group by ShipModeID
+                            for xml path('')
+                            )
+                           , 1, 1, '')
+) t
+outer apply (
+  SELECT ExtNo = ' #' + ExtNo 
+  from dbo.TPEPASS1 a WITH (NOLOCK) 
+  where a.ID = A1.MRHandle 
+) vs1
+outer apply (
+  SELECT ExtNo = ' #' + ExtNo 
+  from dbo.TPEPASS1 a WITH (NOLOCK) 
+  where a.ID = A1.SMR 
+) vs2
+outer apply (
+  SELECT ExtNo = ' #' + ExtNo 
+  from dbo.TPEPASS1 a WITH (NOLOCK) 
+  where a.ID = A6.POHandle 
+) vs3
+outer apply (
+  SELECT ExtNo = ' #' + ExtNo 
+  from dbo.TPEPASS1 a WITH (NOLOCK) 
+  where a.ID = A6.POSMR 
+) vs4
+outer apply (
+	Select 
+		Qty = Sum(rA.Qty),
+		FailQty = Sum(rB.Qty)
+	From Pullout_Detail pd
+	Outer apply (Select Qty = IIF(pd.PulloutDate <= Order_QS.FtyKPI, pd.shipqty, 0)) rA
+	Outer apply (Select Qty = IIF(pd.PulloutDate >  Order_QS.FtyKPI, pd.shipqty, 0)) rB
+	where pd.OrderID = A1.ID 
+	and pd.OrderShipmodeSeq = Order_QS.Seq
+) pd
+WHERE 1 = 1 ";
                 if (dateFactoryKPIDate.Value1 != null)
-                    sqlcmd.Append(string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd")));
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                 if (dateFactoryKPIDate.Value2 != null)
-                    sqlcmd.Append(string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd")));
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                //補上 Orders.Cateory and Factory.Type 判斷
                 if (radioBulk.Checked)
                 {
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     {
-                        sqlcmd.Append(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
+                        strSQL += (" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
                     }
                     else  //factory有值
                     {
-                        sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
+                        strSQL += (string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
                     }
-                    sqlcmd.Append(" AND A1.Category='B'");
+                    strSQL += (" AND A1.Category='B'");
                 }
                 else if (radioSample.Checked)
                 {
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     {
-                        sqlcmd.Append(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
+                        strSQL += (" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
                     }
                     else  //factory有值
                     {
-                        sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
+                        strSQL += (string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
                     }
-                    sqlcmd.Append(" AND A1.Category='S'");
+                    strSQL += (" AND A1.Category='S'");
                 }
-                  
-                //
-               
-                sqlcmd.Append(@" 
 
-SELECT a, 
-       b, 
-       c, 
-       Iif(c - d - e <> 0, d + ( c - d - e ), d) AS d, 
-       --註解: if Order_Qty <> (Ontime_Qty+Delay_qty), 就將差額加回去去OntimeQty 
-       e, 
-       f 
-FROM   (SELECT a, 
-               b, 
-               c, 
-               Sum(d + variance)d, 
-               Sum(e)           e, 
-               F=Concat(Iif(c - Sum(d + variance) - Sum(e) <> 0, 
-                                 Round(CONVERT(FLOAT, Sum(d + variance) + ( 
-                                                      c - Sum(d + variance) 
-                                                      - Sum( 
-                                                      e) )) / 
-                                       CONVERT 
-                                             (FLOAT, c) * 100, 2), Round( 
-                                 CONVERT(FLOAT, Sum(d + variance 
-                                                )) / CONVERT(FLOAT, c) * 100, 2) 
-                        ), '%') 
-        FROM   (SELECT DISTINCT a, 
-                                b, 
-                                c, 
-                                a1.id, 
-                                Isnull(pass.qty, 0)        AS d, 
-                                ( Isnull(Variance.qty, 0) )AS Variance, 
-                                Isnull(delay.qty, 0)       AS e 
-                FROM   #tmp A1 
-                       LEFT JOIN pullout_detail F WITH (nolock) 
-                              ON A1.id = F.orderid 
-                       OUTER apply(SELECT Sum(Isnull(orderqty, 0) - Isnull( 
-                                              shipqty, 0)) 
-                                          qty 
-                                   FROM   pullout_detail 
-                                   WHERE  orderid = A1.id 
-                                          AND ( status = 'S' )) Variance 
-                       OUTER apply(SELECT Sum(shipqty) qty 
-                                   FROM   pullout_detail 
-                                   WHERE  orderid = A1.id 
-                                          AND pulloutdate <= ftykpi) pass 
-                       OUTER apply(SELECT Sum(shipqty) qty 
-                                   FROM   pullout_detail 
-                                   WHERE  orderid = A1.id 
-                                          AND pulloutdate > ftykpi
-                                UNION 
-                    SELECT  SUM(Qty) qty 
-                    FROM Orders WITH (NOLOCK)                     
-                    WHERE A1.ID = ID AND KPIChangeReason=0005
-                    AND NOT EXISTS (SELECT 1 FROM Pullout_Detail WHERE OrderID=A1.ID)
-                    
-) delay) aa 
-        GROUP  BY a, 
-                  b, 
-                  c) aa 
-
-      drop table #tmp");
-                result = DBProxy.Current.Select(null, sqlcmd.ToString(), null, out gdtDatas);
+                strSQL += @" 
+GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
+, A1.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
+, CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
+, A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo 
+,Order_QS.ReasonID,A1.Category,r.Name,rs.Name,PD.Qty,PD.FailQty ";
+                strSQL += @" 
+ORDER BY A1.ID";
+                result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
                 if (!result) return result;
-                if ((gdtDatas == null) || (gdtDatas.Rows.Count == 0))
-                    return new DualResult(false, "Datas not found!");
+
+                if ((gdtOrderDetail==null) || (gdtOrderDetail.Rows.Count==0))
+                {                    
+                    return new DualResult(false, "Data not found!");
+                }
+
+                #endregion Order Detail
+
+                #region SDP 
+                strSQL = @" SELECT  '' AS A,  '' AS B, 0 AS C, 0 AS D, 0 AS E, 0.00 AS F FROM ORDERS WHERE 1 = 0 ";
+                result = DBProxy.Current.Select(null, strSQL, null, out gdtSDP);
+                if (!result)
+                {
+                    return result;
+                }
+                List<string> lstSDP = new List<string>();
+                for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
+                {
+                    DataRow drData = this.gdtOrderDetail.Rows[intIndex];
+                    string handleName = string.Empty;
+                    #region Calc SDP Data          
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["A"].ToString()); // A         
+                    DataRow drSDP;
+                    if (intIndex_SDP < 0)
+                    {
+                        drSDP = this.gdtSDP.NewRow();
+                        drSDP["A"] = drData["B"].ToString();
+                        drSDP["B"] = MyUtility.GetValue.Lookup("ALIAS", drData["A"].ToString(), "Country", "ID");
+                        this.gdtSDP.Rows.Add(drSDP);
+                        lstSDP.Add(drData["B"].ToString() + "___" + drData["A"].ToString()); // A
+                    }
+                    else
+                    {
+                        drSDP = this.gdtSDP.Rows[intIndex_SDP];
+                    }
+
+
+                    drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["I"].ToString() != string.Empty ? Convert.ToDecimal(drData["I"].ToString()) : 0);
+                    drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["J"].ToString() != string.Empty ? Convert.ToDecimal(drData["J"].ToString()) : 0);
+                    drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
+                    drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
+                    #endregion Calc SDP Data
+                }
+
+              
+                #endregion
 
                 #region Fail Order List by SP
                 strSQL = @"
@@ -257,169 +337,7 @@ ORDER BY A1.ID";
 
                 //有勾選
                 if (checkExportDetailData.Checked)
-                {
-                    #region Order Detail
-                    strSQL = @" 
-SELECT A = A2.CountryID
-       , B = A2.KpiCode
-       , C = A1.FactoryID 
-       , D = A1.ID
-       , E = A1.BRANDID
-       , F = Convert(varchar,A1.BuyerDelivery )
-       , G = Convert(varchar,cast( Order_QS.FtyKPI as date)) 
-       , H = (SELECT strData + ',' 
-              FROM (
-                SELECT strData = Convert(varchar, Order_QtyShip.ShipmodeID) 
-                                 + '-' 
-                                 + Convert(varchar, Order_QtyShip.Qty) 
-                                 + '(' 
-                                 +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery), '-', '/') 
-                                 + ')'
-                FROM Order_QtyShip WITH (NOLOCK) 
-                where id = A1.ID
-              ) t for xml path('')) 
-       , I = Order_QS.QTY
-       , J = isnull(Sum(onTimePD.ShipQty), 0)
-       , K = ISNULL(Sum(A5.ShipQty), 0)
-       , L = (select strData + ',' 
-              from (
-                Select strData = REPLACE(convert(varchar,PulloutDate), '-', '/') 
-                from Pullout_Detail WITH (NOLOCK) 
-                where OrderID = A1.ID
-              ) t for xml path(''))       
-       , M = t.strData
-       , N = (Select CountPullOut = Count(id) 
-              from Pullout_Detail WITH (NOLOCK) 
-              where OrderID = A1.ID)
-      , O = CASE 
-                WHEN A1.GMTComplete = 'C' OR A1.GMTComplete = 'S' THEN 'Y' 
-                ELSE '' 
-             END
-       --, P = (SELECT TOP 1 A1.ReasonID  
-       --       from Order_History A1 WITH (NOLOCK) 
-       --       Where A1.OldValue =  A1.ID  
-       --             And A1.HisType = 'Delivery')
-       --, Q = (Select TOP 1 A2.Name  
-       --       from Order_History A1 WITH (NOLOCK) 
-       --       LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
-       --       Where A1.OldValue = A1.ID 
-       --             And A1.HisType = 'Delivery')
-	   , P= Order_QS.ReasonID
-	   , Q = case A1.Category when 'B' then r.Name
-		 when 'S' then rs.Name
-		 else '' end 
-       , R = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
-       , S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
-       , T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
-       , U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
-FROM ORDERS A1 WITH (NOLOCK) 
-LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
-LEFT JOIN PullOut_Detail onTimePD WITH (NOLOCK) ON A1.ID = onTimePD.ORDERID 
-                                                   AND onTimePD.PullOutDate <= Order_QS.FtyKPI 
-                                                   AND onTimePD.UKey = AP.UKey
-left join PullOut onTimeP With (Nolock) on onTimePD.ID = onTimeP.ID
-                                           and onTimeP.Status in ('Locked', 'Confirmed')
-LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
-outer apply(
-	select * from Reason
-	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery'
-)r
-outer apply(
-	select * from Reason
-	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery_sample'
-)rs
-OUTER APPLY(
-  SELECT ShipQty 
-  FROM PullOut_Detail WITH (NOLOCK) 
-  WHERE A1.ID = ORDERID 
-        AND PullOutDate > Order_QS.FtyKPI
-        AND UKey=AP.UKey
-
-  UNION 
-  SELECT ShipQty = Qty 
-  FROM Orders WITH (NOLOCK) 
-  WHERE A1.ID = ID 
-        AND KPIChangeReason = 0005
-        AND NOT EXISTS (SELECT 1 
-                        FROM pullout_detail 
-                        WHERE orderid = A1.id)
-) A5
-OUTER APPLY(
-   select strData = stuff ((Select DISTINCT concat(',', ShipmodeID)
-                            from Order_QtyShip WITH (NOLOCK) 
-                            where id = A1.ID  
-                            Group by ShipModeID
-                            for xml path('')
-                            )
-                           , 1, 1, '')
-) t
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A1.MRHandle 
-) vs1
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A1.SMR 
-) vs2
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A6.POHandle 
-) vs3
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A6.POSMR 
-) vs4
-WHERE 1 = 1 
-      and a1.Qty <> 0 ";
-                    if (dateFactoryKPIDate.Value1 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateFactoryKPIDate.Value2 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    //補上 Orders.Cateory and Factory.Type 判斷
-                    if (radioBulk.Checked)
-                    {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='B'");
-                    }
-                    else if (radioSample.Checked)
-                    {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='S'");
-                    }
-
-                    strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
-                                                        , A1.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
-                                                        , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo 
-                        ,Order_QS.ReasonID,A1.Category,r.Name,rs.Name ";
-                    strSQL += @" 
-ORDER BY A1.ID";
-                    result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
-                    if (!result) return result;
-
-                    #endregion Order Detail
+                {                    
 
                     #region On time Order List by PullOut
                     strSQL = @" 
@@ -684,23 +602,18 @@ ORDER BY A1.ID";
             {               
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                int intRowsCount = gdtDatas.Rows.Count;
+                int intRowsCount = gdtSDP.Rows.Count;
                 int intRowsStart = 2;//匯入起始位置
                 int rownum = intRowsStart; //每筆資料匯入之位置 
-                int intColumns = 6;//匯入欄位數
-                int intWorkIndex = 2;
-                int row = 0;
+                int intColumns = 6;//匯入欄位數                                
                 string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
                 object[,] objArray = new object[1, intColumns];//每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
+
+                #region 匯出SDP
                 for (int i = 0; i < intRowsCount; i += 1)
-                {
-                    //this.progressBar1.Value = i + 1;
-                    DataRow dr = gdtDatas.Rows[i];
-                    //string Ukey = dr["Ukey"].ToString();
-                    //關聯參考資料 Key1
-                    //string sKey = dr["ID"].ToString();
-                    //end
+                {   
+                    DataRow dr = gdtSDP.Rows[i];                    
                     for (int k = 0; k < intColumns; k++)
                     {
                         objArray[0, k] = "";
@@ -714,24 +627,22 @@ ORDER BY A1.ID";
                     objArray[0, 5] = dr["F"];
 
                     worksheet.Range[String.Format("A{0}:F{0}", rownum + i)].Value2 = objArray;
-                    row++;
+                    worksheet.Cells[rownum + i, 6].NumberFormatLocal = "0.00";
                 }
-                worksheet.Cells[row + 2, 1] = "Total:";
-                worksheet.Cells[row + 2, 2] = " ";
-                worksheet.Cells[row + 2, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row + 1));
-                worksheet.Cells[row + 2, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row + 1));
-                worksheet.Cells[row + 2, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row + 1));
-                worksheet.Cells[row + 2, 6] = string.Format("=(D{0}/C{0})", MyUtility.Convert.GetString(row + 1));
-                worksheet.Range[String.Format("A{0}:F{1}", 2, row + 1)].Borders.Color = Color.Black;                
-                //worksheet.Range["E2:E3", "E2:E3"].NumberFormatLocal= "#,##0_ ";
-                excel.Worksheets[1].Columns(5).NumberFormatlocal = "#,##0_ ";
-                if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
+                if (intRowsCount > 0)
                 {
-                    //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                    //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                    //else
-                    //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                    //intWorkIndex++;
+                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "Total";
+                    worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
+                    worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
+                    worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
+                    worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
+                    worksheet.Cells[rownum + intRowsCount, 6].NumberFormatLocal = "0.00";
+                }
+                #endregion
+
+                #region 匯出 Fail Order List by SP Data
+                if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
+                {                    
                     worksheet= excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
                     string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
@@ -767,16 +678,12 @@ ORDER BY A1.ID";
                     // 進行凍結視窗
                     excel.ActiveWindow.FreezePanes = true;
                 }
-
+                #endregion
                 if (checkExportDetailData.Checked)
                 {
+                    #region 匯出 Order Detail
                     if ((gdtOrderDetail != null) && (gdtOrderDetail.Rows.Count > 0))
                     {
-                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        //else
-                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        //intWorkIndex++;
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
@@ -812,13 +719,11 @@ ORDER BY A1.ID";
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
+                    #endregion
+
+                    #region 匯出 On time Order List by PullOut
                     if ((gdtPullOut != null) && (gdtPullOut.Rows.Count > 0))
                     {
-                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        //else
-                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        //intWorkIndex++;
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
@@ -853,13 +758,11 @@ ORDER BY A1.ID";
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
+                    #endregion
+
+                    #region 匯出 Fail Detail
                     if ((gdtFailDetail != null) && (gdtFailDetail.Rows.Count > 0))
                     {
-                        //if (excel.ActiveWorkbook.Worksheets.Count >= intWorkIndex)
-                        //    worksheet = excel.ActiveWorkbook.Worksheets[intWorkIndex];
-                        //else
-                        //    worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
-                        //intWorkIndex++;
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
                         string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
@@ -895,6 +798,7 @@ ORDER BY A1.ID";
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
+                    #endregion
                 }
                 #endregion
 
