@@ -66,7 +66,7 @@ namespace Sci.Production.Shipping
             // 	Form for custom system
             if (reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select vcd.NLCode,vcd.Qty,isnull(vd.Waste,0)*100 as Waste,'' as Orignal,vc.CustomSP,vc.VNContractID
+                sqlCmd.Append(string.Format(@"select vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,'' as Orignal,vc.CustomSP,vc.VNContractID
 from VNConsumption vc WITH (NOLOCK) 
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
@@ -118,7 +118,7 @@ and 1=1"));
                 sqlCmd.Append(string.Format(@"select vc.VNContractID,v.StartDate,v.EndDate,isnull(v.SubConName,'') as SubConName,
 isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
 vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
-isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vd.Waste,0)*100 as Waste,
+isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vcd.Waste,0)*100 as Waste,
 isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'NOVNBUY')),'') as Original,
 isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select PicPath from System WITH (NOLOCK) ) as PicPath,vc.StyleID
 from VNConsumption vc WITH (NOLOCK) 

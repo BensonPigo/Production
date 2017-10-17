@@ -163,8 +163,8 @@ order by v.ID", sqlCondition);
         {
             string sqlCmd = string.Format(@"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
 isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vd.Qty,0) as Usage,
-isnull(vd.UnitID,'') as UnitID,isnull(vcd.Waste,0) as Waste,
-Round(ed.ExportQty*isnull(vd.Qty,0)*(1+isnull(vcd.Waste,0)),3) as Total,
+isnull(vd.UnitID,'') as UnitID,isnull(vd.Waste,0) as Waste,
+Round(ed.ExportQty*isnull(vd.Qty,0)*(1+isnull(vd.Waste,0)),3) as Total,
 IIF(v.Status = 'Junked','Y','') as Cancel
 from VNExportDeclaration v WITH (NOLOCK) 
 inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
