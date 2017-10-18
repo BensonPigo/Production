@@ -24,6 +24,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             dr_localAp = master;
+            detail.ColumnsDecimalAdd("Amount", 0);
             dt_localApDetail = detail;
             this.Text += string.Format(" ( Categgory:{0} - Supplier:{1} )", dr_localAp["category"].ToString(), dr_localAp["localsuppid"].ToString());
         }
