@@ -622,8 +622,9 @@ where   o.FtyGroup = @factoryid
                 
                 CalculateDefectQty(e.Detail);
                 //總計第二層 Qty 填入第一層 QAQty
-                CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
-                CurrentMaintain["InlineQty"] =MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
+                CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                                     && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", "");
+                CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
             }
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
@@ -1059,7 +1060,7 @@ where (OrderID <> '' or OrderID is not null)
                 decimal NQ = 0;
                 foreach (DataRow dr in DetailDatas)
                 {
-                    if (!MyUtility.Check.Empty(dr["QAQty"]))
+                    if (!MyUtility.Check.Empty(dr["QAQty"]) && dr["AutoCreate"].EqualString("False"))
                     {
                         NQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
                     }
