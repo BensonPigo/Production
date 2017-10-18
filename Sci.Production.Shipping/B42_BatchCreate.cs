@@ -441,8 +441,7 @@ inner join LocalPO_Detail ld WITH (NOLOCK) on ld.OrderId = (select TOP 1 ID
                                                             order by BuyerDelivery, ID)
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = @vncontractid 
-                                                and vd.NLCode = li.NLCode
+left join View_VNNLCodeWaste vd WITH (NOLOCK) on  vd.NLCode = li.NLCode
 where li.NoDeclare = 0
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -537,7 +536,7 @@ select  StyleID
         , NLCode
         , HSCode
         , CustomsUnit
-        , sum(isnull(NewQty,0)-(isnull(NewQty,0)*isnull(Waste,0))) as Qty
+        , sum(isnull(NewQty,0)) as Qty
         , 1 as LocalItem
         , StyleCPU
         , StyleUKey
@@ -677,10 +676,10 @@ from (
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select 	t.*
-		, Waste
+		,0 Waste
 from #tlast t 
-left join VNContract_Detail v with(nolock) on id = @vncontractid 
-											  and v.NLCode = t.NLCode
+--left join VNContract_Detail v with(nolock) on id = @vncontractid 
+--											  and v.NLCode = t.NLCode
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 drop table #tmpAllStyle
