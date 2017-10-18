@@ -93,7 +93,7 @@ select  s.OutputDate
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId and o.CateGory != 'G'
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 														    and sl.Location = sd.ComboType
@@ -109,7 +109,8 @@ outer apply(
 		  and r.Team = s.Team
 ) as r
 where s.OutputDate = '{0}'
-	  and s.FactoryID = '{1}'"
+	  and s.FactoryID = '{1}'
+      and (o.CateGory != 'G' or s.Category='M')  "
                 , Convert.ToDateTime(_date).ToString("d"), _factory));
 
             if (!MyUtility.Check.Empty(_team))
@@ -169,9 +170,9 @@ inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID
 										   and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate 
 										   and s.FactoryID = t.FactoryID
 inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId and o.Category != 'G'
+left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)    
+where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle) and (o.CateGory != 'G' or t.Category='M')   
 order by style, s.OutputDate
 
 select w.Hours
