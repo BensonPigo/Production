@@ -387,6 +387,11 @@ order by rd.Seq1,rd.Seq2", masterID);
                     //用登入的Factory 抓取對應的FtyGroup
                     DataTable FtyGroupData;
                     DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out FtyGroupData);
+                    if (FtyGroupData.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Not found Datas!");
+                        return;
+                    }
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", FtyGroupData.Rows[0]["FTYGroup"].ToString());
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
