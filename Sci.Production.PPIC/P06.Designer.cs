@@ -42,13 +42,13 @@
             this.labelExpPoutDate = new Sci.Win.UI.Label();
             this.dateExpPoutDate = new Sci.Win.UI.DateBox();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel4 = new Sci.Win.UI.Panel();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridShipmentSchedule = new Sci.Win.UI.Grid();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
@@ -73,6 +73,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboDropDownListCategory);
             this.panel3.Controls.Add(this.btnFindNow);
             this.panel3.Controls.Add(this.txtLocateForSP);
             this.panel3.Controls.Add(this.labelLocateForSP);
@@ -83,7 +84,6 @@
             this.panel3.Controls.Add(this.labelExpPoutDate);
             this.panel3.Controls.Add(this.dateExpPoutDate);
             this.panel3.Controls.Add(this.labelCategory);
-            this.panel3.Controls.Add(this.txtdropdownlistCategory);
             this.panel3.Controls.Add(this.shapeContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
@@ -186,19 +186,6 @@
             this.labelCategory.TabIndex = 6;
             this.labelCategory.Text = "Category";
             // 
-            // txtdropdownlistCategory
-            // 
-            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistCategory.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistCategory.FormattingEnabled = true;
-            this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(329, 24);
-            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
-            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlistCategory.TabIndex = 3;
-            this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
-            // 
             // shapeContainer1
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
@@ -259,6 +246,18 @@
             this.gridShipmentSchedule.TabIndex = 0;
             this.gridShipmentSchedule.TabStop = false;
             // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(328, 23);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 14;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
+            // 
             // P06
             // 
             this.ClientSize = new System.Drawing.Size(856, 483);
@@ -298,7 +297,6 @@
         private Win.UI.Label labelExpPoutDate;
         private Win.UI.DateBox dateExpPoutDate;
         private Win.UI.Label labelCategory;
-        private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnQuitWithoutSave;
@@ -308,5 +306,6 @@
         private Win.UI.Button btnFindNow;
         private Win.UI.TextBox txtLocateForSP;
         private Win.UI.Label labelLocateForSP;
+        private Class.comboDropDownList comboDropDownListCategory;
     }
 }

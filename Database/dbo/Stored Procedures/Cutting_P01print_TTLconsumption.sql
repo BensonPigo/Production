@@ -8,10 +8,10 @@ BEGIN
 	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
 
 	--SELECT ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
-	SELECT d.POComboList as OrderNo,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY = (select FactoryID from Orders where Id = @OrderID) ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
+	SELECT d.POComboList as OrderNo,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY = (select FactoryID from Orders where Id = @OrderID) ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,isnull(e.MarkerDownloadID,'') as MarkerDownloadID
 	FROM dbo.Orders a WITH (NOLOCK)
 	inner join dbo.Style b WITH (NOLOCK) on a.StyleID = b.Id and a.BrandID = b.BrandID and a.SeasonID = b.SeasonID
-	inner join dbo.LossRateFabric c WITH (NOLOCK) on b.FabricType = c.WeaveTypeID
+	left join dbo.LossRateFabric c WITH (NOLOCK) on b.FabricType = c.WeaveTypeID
 	  Left Join dbo.Order_POComboList as d On a.POID = d.ID
 	--OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
 	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Production.dbo.Order_EachCons WITH (NOLOCK) WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
@@ -87,7 +87,10 @@ BEGIN
 	*/
 	Select CuttingSP Into #tmpCuttingList From Production.dbo.Orders Where Orders.POID = @OrderID Group by CuttingSP;
 
-	Select * Into #tmpFabLoss From dbo.GetLossFabric(@OrderID, '');
+	Select SciRefNo, ColorID, FabricCode, PlusName, 
+		sum(LossYds) as LossYds,
+		sum(RealLoss) as RealLoss 
+	Into #tmpFabLoss From dbo.GetLossFabric(@OrderID, '') group by SciRefNo,ColorID,FabricCode,PlusName;
 
 	With tmpTtlEachCons as
 	(

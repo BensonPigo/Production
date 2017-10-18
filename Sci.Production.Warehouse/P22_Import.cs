@@ -99,7 +99,17 @@ outer apply
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
 		) xx
   ) xxx;
-select * from #tmp order by poid,seq1,seq2 ;
+
+select distinct cte.* 
+from #tmp cte
+inner join dbo.FtyInventory fi WITH (NOLOCK) 
+on fi.POID = cte.poid 
+and fi.seq1 = cte.seq1 
+and fi.seq2 = cte.SEQ2 
+and fi.StockType = 'B'
+where fi.Lock = 0 
+order by cte.poid,cte.seq1,cte.seq2 ;
+
 select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
@@ -154,13 +164,6 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
-                foreach (DataRow dr in TaipeiInput.Rows)
-                {
-                    if (MyUtility.Check.Empty(dr["balanceqty"]))
-                    {
-                        dr.Delete();
-                    }
-                }
                 myFilter();
 
                 this.HideWaitMessage();

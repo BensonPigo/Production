@@ -24,6 +24,7 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             //Exp P/out date預設帶出下個月的最後一天
             dateExpPoutDate.Value = (DateTime.Today.AddMonths(2)).AddDays(1 - (DateTime.Today.AddMonths(2)).Day - 1);
+            comboDropDownListCategory.SelectedIndex = 0;
         }
 
         protected override void OnFormLoaded()
@@ -106,16 +107,17 @@ namespace Sci.Production.PPIC
                 dateExpPoutDate.Focus();
                 return;
             }
-            if (MyUtility.Check.Empty(txtdropdownlistCategory.SelectedValue))
+            if (comboDropDownListCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't be empty!");
-                txtdropdownlistCategory.Focus();
+                comboDropDownListCategory.Focus();
                 return;
             }
             #endregion
 
             this.ShowWaitMessage("Data processing, please wait...");
             StringBuilder sqlCmd = new StringBuilder();
+            string category = comboDropDownListCategory.SelectedValue.ToString();
             # region 組SQL
             sqlCmd.Append(string.Format(@"
 select distinct oq.Id, oq.Seq , pd.ClogLocationId
@@ -128,17 +130,10 @@ and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Finished = 0
 and o.Qty > 0
-and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}') ",
-            Sci.Env.User.Keyword, Convert.ToDateTime(dateExpPoutDate.Value).ToString("d")));
-            
-            if (txtdropdownlistCategory.SelectedValue.ToString() == "BS")
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
-            else
-            {
-                sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlistCategory.SelectedValue));
-            }
+and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
+and o.Category in ({2})
+",
+            Sci.Env.User.Keyword, Convert.ToDateTime(dateExpPoutDate.Value).ToString("d"), category));
 
             sqlCmd.Append(@"
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids

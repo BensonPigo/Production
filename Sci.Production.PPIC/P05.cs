@@ -312,7 +312,7 @@ with tempData as (
     left join Orders o WITH (NOLOCK) on o.ID = oq.Id
     left join PO p WITH (NOLOCK) on p.ID = o.POID
     left join System s WITH (NOLOCK) on 1=1
-    where   (o.Category = 'B' or o.Category = 'S')
+    where   o.Category in ('B','S','G')
             and o.PulloutComplete = 0
             and oq.Qty > 0
             and o.FtyGroup = '{0}'
