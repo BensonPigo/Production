@@ -62,20 +62,20 @@ namespace Sci.Production.Shipping
             ReloadDatas();
         }
 
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            string contraceNo = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["VNContractID"]);
-            this.DetailSelectCommand = string.Format(@"
-select  vd.*
-        , cd.Waste
-from VNConsumption_Detail vd WITH (NOLOCK) 
-left join VNContract_Detail cd WITH (NOLOCK) on  cd.NLCode = vd.NLCode 
-                                                 and cd.ID = '{0}'
-where vd.ID = '{1}'
-order by CONVERT (int, SUBSTRING (vd.NLCode, 3, 3))", contraceNo, masterID);
-            return base.OnDetailSelectCommandPrepare(e);
-        }
+//        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+//        {
+//            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
+//            string contraceNo = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["VNContractID"]);
+//            this.DetailSelectCommand = string.Format(@"
+//select  vd.*
+//        , cd.Waste
+//from VNConsumption_Detail vd WITH (NOLOCK) 
+//left join VNContract_Detail cd WITH (NOLOCK) on  cd.NLCode = vd.NLCode 
+//                                                 and cd.ID = '{0}'
+//where vd.ID = '{1}'
+//order by CONVERT (int, SUBSTRING (vd.NLCode, 3, 3))", contraceNo, masterID);
+//            return base.OnDetailSelectCommandPrepare(e);
+//        }
 
         protected override void OnDetailEntered()
         {
@@ -644,7 +644,7 @@ select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUn
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join VNContract_Detail vd on vd.ID = @vncontractid and vd.NLCode = li.NLCode
+left join View_VNNLCodeWaste vd on vd.NLCode = li.NLCode
 where ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
 and li.NoDeclare = 0
 ),
@@ -669,7 +669,7 @@ from tmpPrepareRate
 ),
 tmpLocalData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)-(isnull(NewQty,0)*isnull(Waste,0))) as Qty, 1 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 1 as LocalItem
 from tmpLocalNewQty
 group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit)
 
@@ -778,7 +778,7 @@ from Style_MarkerList sm WITH (NOLOCK)
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
 inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
 left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqtWITH (NOLOCK)  on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
+left join Style_FabricCode_QT sfqt WITH (NOLOCK)  on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and sm.StyleUkey = @styleukey and (sma.Article is null or sma.Article = @article)
 and sc.Article = @article
 ),
@@ -824,7 +824,7 @@ select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUn
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = @vncontractid and vd.NLCode = li.NLCode
+left join View_VNNLCodeWaste vd WITH (NOLOCK) on vd.NLCode = li.NLCode
 where ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
 and li.NoDeclare = 0
 ),
@@ -901,12 +901,16 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             }
             foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
             {
-                 DataRow[] queryData =  queryDetail2Data.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
-                 if (queryData.Length <= 0)
-                 {
-                     dr.Delete();
-                 }
+                if (dr.RowState != DataRowState.Deleted) {
+                    DataRow[] queryData = queryDetail2Data.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
+                    if (queryData.Length <= 0)
+                    {
+                        dr.Delete();
+                    }
+                }
+               
             }
+
             #endregion
 
             #region 塞資料進VNConsumption_Detail與VNConsumption_Detail_Detail
@@ -920,7 +924,8 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     newRow["HSCode"] = dr["HSCode"];
                     newRow["UnitID"] = dr["CustomsUnit"];
                     newRow["Qty"] = dr["Qty"];
-                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["NLCode"]))));
+                    newRow["SystemQty"] = dr["Qty"];
+                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from View_VNNLCodeWaste WITH (NOLOCK) where  NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"]))));
                     newRow["UserCreate"] = 0;
                     ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
                 }
