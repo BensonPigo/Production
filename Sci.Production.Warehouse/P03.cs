@@ -386,11 +386,7 @@ namespace Sci.Production.Warehouse
             DataTable dtData;
             string junk_where1 = "", junk_where2 = "";
             string spno = txtSPNo.Text.TrimEnd() + "%";
-            #region -- SQL Command --
-            if (chk_includeJunk.Checked == false) {
-                junk_where1 = "where a.junk <> 'true'";
-                junk_where2 = "and a.junk <> 'true'";
-            }
+            #region -- SQL Command --           
             string sqlcmd
                 = @"
 declare @id varchar(20) = @sp1		
@@ -552,7 +548,7 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            "+ junk_where1 +
+            "+ (chk_includeJunk.Checked? @" " : @" where a.junk=0 ")+
 @"--很重要要看到,修正欄位要上下一起改
             union
 
@@ -631,8 +627,8 @@ from(
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
                 AND a.id IS NOT NULL 
-               "+ junk_where2 +@"
-        ) as xxx
+                " + (chk_includeJunk.Checked ? @" " : @" AND a.junk=0 ") +
+               @") as xxx
     ) as xxx2
 ) as xxx3
 where ROW_NUMBER_D =1       
@@ -757,6 +753,11 @@ where ROW_NUMBER_D =1
                 data.Clear();
                 return;
             }
+        }
+
+        private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
+        {
+            Query();
         }
     }
 }
