@@ -676,10 +676,9 @@ from (
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select 	t.*
-		,0 Waste
+		,v.Waste Waste
 from #tlast t 
---left join VNContract_Detail v with(nolock) on id = @vncontractid 
---											  and v.NLCode = t.NLCode
+left join View_VNNLCodeWaste v with(nolock) on  v.NLCode = t.NLCode
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 drop table #tmpAllStyle
@@ -1333,16 +1332,17 @@ Insert into VNConsumption_Article (
                             insertCmds.Add(string.Format(@"
 Insert into VNConsumption_Detail (
 	ID 				, NLCode 	, HSCode 	, UnitID 	, Qty
-	, UserCreate	, SystemQty
+	, UserCreate	, SystemQty,Waste
 ) Values (
 	'{0}' 			, '{1}' 	, '{2}' 	, '{3}' 	, {4}
-	, {5}			, {4}
+	, {5}			, {4},{6}
 );" , newID
     , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
     , MyUtility.Convert.GetString(selectedData[i]["HSCode"])
     , MyUtility.Convert.GetString(selectedData[i]["UnitID"])
     , MyUtility.Convert.GetString(selectedData[i]["Qty"])
-    , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"));
+    , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"
+    , MyUtility.Convert.GetString(selectedData[i]["Waste"])));
 
                             DataRow[] selectedDetailData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
                             for (int j = 0; j < selectedDetailData.Length; j++)
