@@ -1198,15 +1198,24 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
             //當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
             {
-                string sqlCmd = string.Format(@"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID
+                string sqlCmd = string.Format(@"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID,o.Category
 from (Select distinct b.OrderID,b.OrderShipmodeSeq 
       from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
+left join orders o WITH (NOLOCK) on o.ID = p.OrderID
 left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (result)
                 {
-                    DataRow[] row = selectData.Select("AirPPID = ''");
+                    //如果此SP的 Category='S' 且 shipmode='E/P'時, 沒有AirPP# , 也可以Confirm，這邊不check category = 'S'
+                    DataRow[] row;
+                    if (CurrentMaintain["ShipModeID"].Equals("E/P"))
+                    {
+                        row = selectData.Select("AirPPID = '' and Category <> 'S'");
+                    }
+                    else {
+                       row = selectData.Select("AirPPID = ''");
+                    }
                     if (row.Length > 0)
                     {
                         MyUtility.Msg.WarningBox("Still have not yet assigned AirPP No.!");
