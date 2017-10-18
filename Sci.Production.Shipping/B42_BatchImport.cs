@@ -133,17 +133,19 @@ namespace Sci.Production.Shipping
                 if (!MyUtility.Check.Seek(chk))
                 {
                     idu.Append(string.Format(@"
-insert into VNConsumption_Detail
-select '{2}','{1}',HSCode,UnitID,'{3}',1,0
-from VNContract_Detail
-where ID = '{0}' and NLCode = '{1}'
+insert into VNConsumption_Detail(ID,NLCode,HSCode,UnitID,Qty,UserCreate,SystemQty,Waste)
+select '{2}','{1}',a.HSCode,a.UnitID,'{3}',1,'{3}',isnull(b.Waste,0)
+from VNContract_Detail a WITH (NOLOCK)
+left join View_VNNLCodeWaste b  WITH (NOLOCK) on a.NLCode = b.NLCode
+where a.ID = '{0}' and a.NLCode = '{1}'
 ;"
                         , VNContractID, NLCode, dr["id"].ToString(), dr["Qty"].ToString()));
                     dr["checkS"] = 1;
                 }
                 else
                 {
-                    idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1 where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
+                    idu.Append(string.Format(@"update VNConsumption_Detail set qty = '{0}',UserCreate = 1,Waste = isnull((select Waste from View_VNNLCodeWaste where  NLCode = '{2}' ),0)
+                                                where id = '{1}' and NLCode = '{2}';", dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString()));
                     idu.Append(string.Format(@"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;", Sci.Env.User.UserID, datetime, CustomSP, VNContractID));
                     dr["checkS"] = 1;
                 }

@@ -441,8 +441,7 @@ inner join LocalPO_Detail ld WITH (NOLOCK) on ld.OrderId = (select TOP 1 ID
                                                             order by BuyerDelivery, ID)
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = @vncontractid 
-                                                and vd.NLCode = li.NLCode
+left join View_VNNLCodeWaste vd WITH (NOLOCK) on  vd.NLCode = li.NLCode
 where li.NoDeclare = 0
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -537,7 +536,7 @@ select  StyleID
         , NLCode
         , HSCode
         , CustomsUnit
-        , sum(isnull(NewQty,0)-(isnull(NewQty,0)*isnull(Waste,0))) as Qty
+        , sum(isnull(NewQty,0)) as Qty
         , 1 as LocalItem
         , StyleCPU
         , StyleUKey
@@ -677,10 +676,9 @@ from (
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 select 	t.*
-		, Waste
+		,v.Waste Waste
 from #tlast t 
-left join VNContract_Detail v with(nolock) on id = @vncontractid 
-											  and v.NLCode = t.NLCode
+left join View_VNNLCodeWaste v with(nolock) on  v.NLCode = t.NLCode
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 drop table #tmpAllStyle
@@ -1334,16 +1332,17 @@ Insert into VNConsumption_Article (
                             insertCmds.Add(string.Format(@"
 Insert into VNConsumption_Detail (
 	ID 				, NLCode 	, HSCode 	, UnitID 	, Qty
-	, UserCreate	, SystemQty
+	, UserCreate	, SystemQty,Waste
 ) Values (
 	'{0}' 			, '{1}' 	, '{2}' 	, '{3}' 	, {4}
-	, {5}			, {4}
+	, {5}			, {4},{6}
 );" , newID
     , MyUtility.Convert.GetString(selectedData[i]["NLCode"])
     , MyUtility.Convert.GetString(selectedData[i]["HSCode"])
     , MyUtility.Convert.GetString(selectedData[i]["UnitID"])
     , MyUtility.Convert.GetString(selectedData[i]["Qty"])
-    , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"));
+    , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"
+    , MyUtility.Convert.GetString(selectedData[i]["Waste"])));
 
                             DataRow[] selectedDetailData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
                             for (int j = 0; j < selectedDetailData.Length; j++)
