@@ -641,6 +641,7 @@
             // labConfirm
             // 
             this.labConfirm.AutoSize = true;
+            this.labConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "status", true));
             this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labConfirm.ForeColor = System.Drawing.Color.Red;
             this.labConfirm.Location = new System.Drawing.Point(821, 4);
