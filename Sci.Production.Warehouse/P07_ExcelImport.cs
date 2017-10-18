@@ -52,6 +52,8 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("seq1", typeof(String));
             grid2Data.Columns.Add("seq2", typeof(String));
             grid2Data.Columns.Add("seq", typeof(String));
+            grid2Data.Columns.Add("PoIdSeq1", typeof(String));
+            grid2Data.Columns.Add("PoIdSeq", typeof(String));
             grid2Data.Columns.Add("roll", typeof(String));
             grid2Data.Columns.Add("dyelot", typeof(String));
             grid2Data.Columns.Add("qty", typeof(decimal));
@@ -263,6 +265,8 @@ namespace Sci.Production.Warehouse
                                 newRow["seq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");
                                 newRow["seq2"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
                                 newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
+                                newRow["PoIdSeq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C")+ MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString();
+                                newRow["PoIdSeq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C")+ MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
                                 newRow["roll"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C")) ? "" :
                                     MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Replace("'", "").Trim(), "C");
                                 newRow["dyelot"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C")) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Replace("'", "").Trim(), "C");
@@ -515,6 +519,7 @@ where   stocktype='{0}'
 
 
             MyUtility.Msg.InfoBox("Write in completed!!");
+            detailData.AcceptChanges();
             DialogResult = System.Windows.Forms.DialogResult.OK;
 
         }

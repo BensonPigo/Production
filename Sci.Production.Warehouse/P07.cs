@@ -124,7 +124,8 @@ namespace Sci.Production.Warehouse
                     listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
 
                 // Dyelot varchar(4)
-                if (row["Dyelot"].ToString().Length > 4)
+                byte[] DyelotTemp = System.Text.Encoding.Default.GetBytes(row["Dyelot"].ToString());
+                if (DyelotTemp.Length > 4)
                     listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
 
                 // ShipQty  numeric(11, 2)
@@ -1395,7 +1396,11 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         //delete all
         private void btDeleteAllDetail_Click(object sender, EventArgs e)
         {
-            ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+            //((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows) {
+                dr.Delete();
+            }
+            
         }
 
         //Accumulated Qty
@@ -1456,17 +1461,17 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             //判斷 Poid
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
+                index = detailgridbs.Find("PoId", txtLocateForSP.Text.TrimEnd());
             }
             //判斷 Poid + Seq1
             else if (txtSeq1.checkSeq2Empty())
             {
-                index = detailgridbs.Find("PoidSeq1", txtLocateForSP.Text.TrimEnd() + txtSeq1.seq1);
+                index = detailgridbs.Find("PoIdSeq1", txtLocateForSP.Text.TrimEnd() + txtSeq1.seq1);
             }
             //判斷 Poid + Seq1 + Seq2
             else
             {
-                index = detailgridbs.Find("PoidSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
+                index = detailgridbs.Find("PoIdSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
             }
 
             if (index == -1)
