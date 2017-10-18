@@ -381,7 +381,9 @@ order by rd.Seq1,rd.Seq2", masterID);
                      DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out FtyGroupData);
                     if (FtyGroupData.Rows.Count ==0)
                     {
-                        MyUtility.Msg.WarningBox("Factory not found!");
+                        MyUtility.Msg.WarningBox("SP No. not found!!");
+                        CurrentMaintain["POID"] = "";
+                        CurrentMaintain["FactoryID"] = "";
                         e.Cancel = true;
                         return;
                     }
