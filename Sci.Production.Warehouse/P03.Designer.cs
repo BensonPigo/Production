@@ -81,6 +81,7 @@
             this.chk_includeJunk.TabIndex = 19;
             this.chk_includeJunk.Text = "Include Junk Material";
             this.chk_includeJunk.UseVisualStyleBackColor = true;
+            this.chk_includeJunk.CheckedChanged += new System.EventHandler(this.chk_includeJunk_CheckedChanged);
             // 
             // btnNewSearch
             // 
