@@ -581,7 +581,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                         DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out FtyGroupData);
                         if (FtyGroupData.Rows.Count == 0)
                         {
-                            MyUtility.Msg.WarningBox("Not found Datas!");
+                            MyUtility.Msg.WarningBox("Factory not found!");
+                            e.Cancel = true;
                             return;
                         }
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", FtyGroupData.Rows[0]["FTYGroup"].ToString());
