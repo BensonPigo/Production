@@ -555,43 +555,110 @@ drop table #tmp");
                 return;
             }
 
-            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now);
-                if (MyUtility.Check.Empty(tmpId))
-                {
-                    MyUtility.Msg.WarningBox("Get document ID fail!!");
-                    return ;
-                }
+            /*
+             * 依照 From POID 建立 P23
+             */
+            var listPoid = findrow.Select(row => row["frompoid"]).Distinct().ToList();
+            var tmpId = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now, batchNumber: listPoid.Count);
+            if (MyUtility.Check.Empty(tmpId))
+            {
+                MyUtility.Msg.WarningBox("Get document ID fail!!");
+                return;
+            }
 
-            StringBuilder insertMaster = new StringBuilder();
-            StringBuilder insertDetail = new StringBuilder();
+            #region 準備 insert subtransfer & subtransfer_detail 語法與 DataTable dtMaster & dtDetail
+            //insert 欄位順序必須與 dtMaster, dtDetail 一致
+            string insertMaster = @"
+insert into subtransfer
+(id      , type   , issuedate, mdivisionid, FactoryID
+ , status, addname, adddate, remark)
+select *
+from #tmp";
+            string insertDetail = @"
+insert into subtransfer_detail
+(ID        , FromFtyInventoryUkey, FromFactoryID, FromPOID  , FromSeq1
+ , FromSeq2, FromRoll            , FromStockType, FromDyelot, ToFactoryID
+ , ToPOID  , ToSeq1              , ToSeq2       , ToRoll    , ToStockType
+ , ToDyelot, Qty                 , ToLocation)
+select *
+from #tmp";
 
-            insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,FactoryID,status,addname,adddate,remark)
-            values ('{0}','B',getdate(),'{1}','{3}','New','{2}',getdate(),'Batch create by P29')", tmpId, Env.User.Keyword, Env.User.UserID,Sci.Env.User.Factory));
+            DataTable dtMaster = new DataTable();
+            dtMaster.Columns.Add("Poid");
+            dtMaster.Columns.Add("id");
+            dtMaster.Columns.Add("type");
+            dtMaster.Columns.Add("issuedate");
+            dtMaster.Columns.Add("mdivisionid");
+            dtMaster.Columns.Add("FactoryID");
+            dtMaster.Columns.Add("status");
+            dtMaster.Columns.Add("addname");
+            dtMaster.Columns.Add("adddate");
+            dtMaster.Columns.Add("remark");
+
+            DataTable dtDetail = new DataTable();
+            dtDetail.Columns.Add("ID");
+            dtDetail.Columns.Add("FromFtyInventoryUkey");
+            dtDetail.Columns.Add("FromFactoryID");
+            dtDetail.Columns.Add("FromPOID");
+            dtDetail.Columns.Add("FromSeq1");
+            dtDetail.Columns.Add("FromSeq2");
+            dtDetail.Columns.Add("FromRoll");
+            dtDetail.Columns.Add("FromStockType");
+            dtDetail.Columns.Add("FromDyelot");
+            dtDetail.Columns.Add("ToFactoryID");
+            dtDetail.Columns.Add("ToPOID");
+            dtDetail.Columns.Add("ToSeq1");
+            dtDetail.Columns.Add("ToSeq2");
+            dtDetail.Columns.Add("ToRoll");
+            dtDetail.Columns.Add("ToStockType");
+            dtDetail.Columns.Add("ToDyelot");
+            dtDetail.Columns.Add("Qty");
+            dtDetail.Columns.Add("ToLocation");
+
+            for (int i = 0; i < listPoid.Count; i++)
+            {
+                DataRow drNewMaster = dtMaster.NewRow();
+                drNewMaster["poid"] = listPoid[i].ToString();
+                drNewMaster["id"] = tmpId[i].ToString();
+                drNewMaster["type"] = "B";
+                drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+                drNewMaster["mdivisionid"] = Env.User.Keyword;
+                drNewMaster["FactoryID"] = Sci.Env.User.Factory;
+                drNewMaster["status"] = "New";
+                drNewMaster["addname"] = Env.User.UserID;
+                drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+                drNewMaster["remark"] = "Batch create by P29";
+                dtMaster.Rows.Add(drNewMaster);
+            }
 
             foreach (DataRow item in findrow)
             {
-                insertDetail.Append(string.Format(@"insert into dbo.subtransfer_detail ([ID]
-           ,[FromFtyInventoryUkey]
-           ,[FromFactoryID]
-           ,[FromPOID]
-           ,[FromSeq1]
-           ,[FromSeq2]
-           ,[FromRoll]
-           ,[FromStockType]
-           ,[FromDyelot]
-           ,[toFactoryID]
-           ,[ToPOID]
-           ,[ToSeq1]
-           ,[ToSeq2]
-           ,[ToRoll]
-           ,[ToStockType]
-           ,[ToDyelot]
-           ,[Qty]
-           ,[ToLocation])
-values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
-,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], item["FromFactoryID"], item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
-          , item["toFactoryID"], item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
+                DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["frompoid"])).ToArray();
+                DataRow drNewDetail = dtDetail.NewRow();
+                drNewDetail["ID"] = drGetID[0]["ID"];
+                drNewDetail["FromFtyInventoryUkey"] = item["fromftyinventoryukey"];
+                drNewDetail["FromFactoryID"] = item["FromFactoryID"];
+                drNewDetail["FromPOID"] = item["frompoid"];
+                drNewDetail["FromSeq1"] = item["fromseq1"];
+                drNewDetail["FromSeq2"] = item["fromseq2"];
+                drNewDetail["FromRoll"] = item["fromroll"];
+                drNewDetail["FromStockType"] = item["fromstocktype"];
+                drNewDetail["FromDyelot"] = item["fromdyelot"];
+                drNewDetail["ToFactoryID"] = item["ToFactoryID"];
+                drNewDetail["ToPOID"] = item["topoid"];
+                drNewDetail["ToSeq1"] = item["toseq1"];
+                drNewDetail["ToSeq2"] = item["toseq2"];
+                drNewDetail["ToRoll"] = item["toroll"];
+                drNewDetail["ToStockType"] = item["toStocktype"];
+                drNewDetail["ToDyelot"] = item["toDyelot"];
+                drNewDetail["Qty"] = item["qty"];
+                drNewDetail["ToLocation"] = item["tolocation"];
+                dtDetail.Rows.Add(drNewDetail);
             }
+
+            //insert Master 時不需要 Poid 欄位
+            dtMaster.Columns.Remove("poid");
+            #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
             DualResult result;
@@ -599,16 +666,18 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
             {
                 try
                 {
-                    if (!(result = Sci.Data.DBProxy.Current.Execute(null, insertMaster.ToString())))
+                    DataTable dtResult;
+                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, insertMaster, out dtResult)) == false)
                     {
                         _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox("Create failed");
+                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return;
                     }
-                    if (!(result = Sci.Data.DBProxy.Current.Execute(null, insertDetail.ToString())))
+
+                    if ((result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, insertDetail, out dtResult)) == false)
                     {
                         _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox("Create failed");
+                        MyUtility.Msg.WarningBox(result.ToString(), "Create failed");
                         return; ;
                     }
                     _transactionscope.Complete();
