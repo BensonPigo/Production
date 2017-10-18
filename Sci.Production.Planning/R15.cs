@@ -866,7 +866,7 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -876,7 +876,7 @@ outer apply (
           and isInComing = 'T'
 ) CutQty
 outer apply (
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -886,7 +886,7 @@ outer apply (
           and isInComing = 'T'
 ) loading
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -896,7 +896,7 @@ outer apply(
           and isInComing = 'T'
 ) Embin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -906,7 +906,7 @@ outer apply(
           and isInComing = 'F'
 ) Embout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -916,7 +916,7 @@ outer apply(
           and isInComing = 'T'
 ) Bondin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -926,7 +926,7 @@ outer apply(
           and isInComing = 'F'
 ) Bondout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -936,7 +936,7 @@ outer apply(
           and isInComing = 'T'
 ) Printin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -946,7 +946,7 @@ outer apply(
           and isInComing = 'F'
 ) Printout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -956,7 +956,7 @@ outer apply(
           and isInComing = 'T'
 ) ATin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -966,7 +966,7 @@ outer apply(
           and isInComing = 'F'
 ) ATout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -976,7 +976,7 @@ outer apply(
           and isInComing = 'T'
 ) PadPrintin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -986,7 +986,7 @@ outer apply(
           and isInComing = 'F'
 ) PadPrintout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -996,7 +996,7 @@ outer apply(
           and isInComing = 'T'
 ) Embossin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -1006,7 +1006,7 @@ outer apply(
           and isInComing = 'F'
 ) Embossout
 outer apply(
-	select [AccuInCome] = AccuQty 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
@@ -1016,7 +1016,7 @@ outer apply(
           and isInComing = 'T'
 ) htin
 outer apply(
-	select [AccuOutGo] = AccuQty 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #AccuInComeData 
 	where SP = t.OrderID 
           and StyleID = t.StyleID
