@@ -106,50 +106,80 @@ namespace Sci.Production.Warehouse
 
             #region check Columns length
             List<string> listColumnLengthErrMsg = new List<string>();
-
+            Dictionary<string, string> errormsgDir = new Dictionary<string, string>();
+            string errorkey;
             foreach (DataRow row in DetailDatas)
             {
-                List<string> listRowErrMsg = new List<string>();
+                
+                //List<string> listRowErrMsg = new List<string>();
+                errorkey = string.Format("<SP#> : {0}, <Seq> : {1}", row["Poid"], row["Seq"]);
+                if (!errormsgDir.ContainsKey(errorkey))
+                    errormsgDir.Add(errorkey, "");
 
                 // Seq1 varchar(3)
                 if (row["Seq1"].ToString().Length > 3)
-                    listRowErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
+                    if (!errormsgDir[errorkey].Contains("<SEQ1> length can't be more than 3 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<SEQ1> length can't be more than 3 Characters.";
+                //listRowErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
 
                 // Seq2 varchar(2)
                 if (row["Seq2"].ToString().Length > 2)
-                    listRowErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
+                    if (!errormsgDir[errorkey].Contains("<SEQ2> length can't be more than 2 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<SEQ2> length can't be more than 2 Characters.";
+                //listRowErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
 
                 // Roll varchar(8)
                 if (row["Roll"].ToString().Length > 8)
-                    listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
+                    if (!errormsgDir[errorkey].Contains("<Roll> length can't be more than 8 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Roll> length can't be more than 8 Characters.";
+                //listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
 
                 // Dyelot varchar(4)
-                if (row["Dyelot"].ToString().Length > 4)
-                    listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
+                byte[] DyelotTemp = System.Text.Encoding.Default.GetBytes(row["Dyelot"].ToString());
+                if (DyelotTemp.Length > 4)
+                    if (!errormsgDir[errorkey].Contains("<Dyelot> length can't be more than 4 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Dyelot> length can't be more than 4 Characters.";
+                //listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
 
                 // ShipQty  numeric(11, 2)
                 if (decimal.Parse(row["ShipQty"].ToString()) > 999999999)
-                    listRowErrMsg.Add("<Ship Qty> value can't be more than 999,999,999");
+                    if (!errormsgDir[errorkey].Contains("<Ship Qty> value can't be more than 999,999,999"))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Ship Qty> value can't be more than 999,999,999";
+                //listRowErrMsg.Add("<Ship Qty> value can't be more than 999,999,999");
 
                 // ActualQty  numeric (11, 2)
                 if (decimal.Parse(row["ActualQty"].ToString()) > 999999999)
-                    listRowErrMsg.Add("<Actual Qty> value can't be more than 999,999,999");
+                    if (!errormsgDir[errorkey].Contains("<Actual Qty> value can't be more than 999,999,999"))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Actual Qty> value can't be more than 999,999,999";
+                //listRowErrMsg.Add("<Actual Qty> value can't be more than 999,999,999");
 
                 // actualWeight numeric (7, 2)
                 if (decimal.Parse(row["actualWeight"].ToString()) > 99999)
-                    listRowErrMsg.Add("<Act.(kg)> value can't be more than 99,999");
+                    if (!errormsgDir[errorkey].Contains("<Act.(kg)> value can't be more than 99,999"))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Act.(kg)> value can't be more than 99,999";
+                //listRowErrMsg.Add("<Act.(kg)> value can't be more than 99,999");
 
                 // Weight numeric (7, 2)
                 if (decimal.Parse(row["Weight"].ToString()) > 99999)
-                    listRowErrMsg.Add("<G.W(kg)> value can't be more than 99,999");
+                    if (!errormsgDir[errorkey].Contains("<G.W(kg)> value can't be more than 99,999"))
+                        errormsgDir[errorkey] += Environment.NewLine + "<G.W(kg)> value can't be more than 99,999";
+                //listRowErrMsg.Add("<G.W(kg)> value can't be more than 99,999");
 
                 // Location varchar(60)
                 if (row["Location"].ToString().Length > 60)
-                    listRowErrMsg.Add("<Location> length can't be more than 60 Characters.");
+                    if (!errormsgDir[errorkey].Contains("<Location> length can't be more than 60 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Location> length can't be more than 60 Characters.";
+                //listRowErrMsg.Add("<Location> length can't be more than 60 Characters.");
 
-                if (listRowErrMsg.Count > 0)
-                    listColumnLengthErrMsg.Add(string.Format("<SP#> : {0}, <Seq> : {1}", row["Poid"], row["Seq"]) + Environment.NewLine + listRowErrMsg.JoinToString(Environment.NewLine));
+               
             }
+
+            foreach (KeyValuePair<string, string> item in errormsgDir) {
+                if (item.Value.Length > 0) {
+                    listColumnLengthErrMsg.Add(item.Key + item.Value);
+                }
+            }
+            
             if (listColumnLengthErrMsg.Count > 0)
             {
                 MyUtility.Msg.WarningBox(listColumnLengthErrMsg.JoinToString(Environment.NewLine + Environment.NewLine));
@@ -1395,7 +1425,11 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         //delete all
         private void btDeleteAllDetail_Click(object sender, EventArgs e)
         {
-            ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+            //((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows) {
+                dr.Delete();
+            }
+            
         }
 
         //Accumulated Qty
@@ -1456,17 +1490,17 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             //判斷 Poid
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
+                index = detailgridbs.Find("PoId", txtLocateForSP.Text.TrimEnd());
             }
             //判斷 Poid + Seq1
             else if (txtSeq1.checkSeq2Empty())
             {
-                index = detailgridbs.Find("PoidSeq1", txtLocateForSP.Text.TrimEnd() + txtSeq1.seq1);
+                index = detailgridbs.Find("PoIdSeq1", txtLocateForSP.Text.TrimEnd() + txtSeq1.seq1);
             }
             //判斷 Poid + Seq1 + Seq2
             else
             {
-                index = detailgridbs.Find("PoidSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
+                index = detailgridbs.Find("PoIdSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
             }
 
             if (index == -1)

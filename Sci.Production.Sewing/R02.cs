@@ -187,11 +187,11 @@ select  s.OutputDate
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId and o.Category != 'G'
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 											 and sl.Location = sd.ComboType
-where s.OutputDate between '{0}' and '{1}'"
+where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category='M')"
                 , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
             {
@@ -623,7 +623,7 @@ tmpAllSubprocess as(
 	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-			and ot.Price > 0		    
+			and ot.Price > 0 		    
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, sl.Rate
 )
 select ArtworkTypeID = t1.ID
