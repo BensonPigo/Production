@@ -207,18 +207,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     {
                         DataRow orderData;
                         if (!MyUtility.Check.Seek(string.Format(@"
-Select  ID
-        , SeasonID
-        , StyleID
-        , CustPONo 
-        , FtyGroup
-from Orders WITH (NOLOCK) 
-where   ID = '{0}' 
-        and ((Category = 'B' and LocalOrder = 0) or Category = 'S' or Category = 'G')
-        and BrandID = '{1}' 
-        and Dest = '{2}' 
-        and CustCDID = '{3}'
-        and MDivisionID = '{4}'"
+Select  o.ID
+        , o.SeasonID
+        , o.StyleID
+        , o.CustPONo 
+        , o.FtyGroup
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where   o.ID = '{0}' 
+        and ((o.Category = 'B' and o.LocalOrder = 0) or o.Category = 'S' or o.Category = 'G')
+        and o.BrandID = '{1}' 
+        and o.Dest = '{2}' 
+        and o.CustCDID = '{3}'
+        and o.MDivisionID = '{4}'
+        and f.IsProduceFty = 1"
                             , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Keyword), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
