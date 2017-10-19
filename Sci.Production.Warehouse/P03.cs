@@ -285,10 +285,10 @@ namespace Sci.Production.Warehouse
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
             .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
-            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //13
-            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //14
-            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //15
-            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true, settings: ts3)    //16
+            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
+            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
+            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
             .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
             .Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
@@ -386,11 +386,7 @@ namespace Sci.Production.Warehouse
             DataTable dtData;
             string junk_where1 = "", junk_where2 = "";
             string spno = txtSPNo.Text.TrimEnd() + "%";
-            #region -- SQL Command --
-            if (chk_includeJunk.Checked == false) {
-                junk_where1 = "where a.junk <> 'true'";
-                junk_where2 = "and a.junk <> 'true'";
-            }
+            #region -- SQL Command --           
             string sqlcmd
                 = @"
 declare @id varchar(20) = @sp1		
@@ -552,8 +548,8 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            "+ junk_where1 +
-@"--很重要要看到,修正欄位要上下一起改
+            
+--很重要要看到,修正欄位要上下一起改
             union
 
             select  distinct m.ukey
@@ -630,12 +626,12 @@ from(
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
-                AND a.id IS NOT NULL 
-               "+ junk_where2 +@"
-        ) as xxx
+                AND a.id IS NOT NULL                 
+               ) as xxx
     ) as xxx2
 ) as xxx3
-where ROW_NUMBER_D =1       
+where ROW_NUMBER_D =1 
+drop table #tmpOrder
             ";
             #endregion
             #region -- 準備sql參數資料 --
@@ -654,6 +650,7 @@ where ROW_NUMBER_D =1
                 if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
+                grid_Filter();
                 grid1_sorting();
                 ChangeDetailColor();
                 ButtonOpen = false;
@@ -663,6 +660,27 @@ where ROW_NUMBER_D =1
                 ShowErr(result);
             }
             this.HideWaitMessage();
+        }
+        private void grid_Filter()
+        {
+            if (gridMaterialStatus.RowCount > 0)
+            {
+                string filter = "";
+                switch (chk_includeJunk.Checked)
+                {                    
+                    case true:
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        filter = "";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        filter = " junk=0 ";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
 
         private void grid1_sorting()
@@ -706,15 +724,10 @@ where ROW_NUMBER_D =1
         }
         private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-           // this.grid1_sorting();
-            if (MyUtility.Check.Empty(txtSPNo.Text))
-            {
-               // MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-               // txtSPNo.Focus();
-                return;
-            }
-            Query();
-           // Query();
+            if (MyUtility.Check.Empty(txtSPNo.Text))return;
+            grid_Filter();
+            grid1_sorting();
+            ChangeDetailColor();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -757,6 +770,13 @@ where ROW_NUMBER_D =1
                 data.Clear();
                 return;
             }
+        }
+
+        private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
+        {
+            grid_Filter();
+            grid1_sorting();
+            ChangeDetailColor();
         }
     }
 }
