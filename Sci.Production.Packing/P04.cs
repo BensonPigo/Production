@@ -107,7 +107,17 @@ namespace Sci.Production.Packing
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string sqlCmd = "Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and Category = 'S' and BrandID = @brandid";
+                        string sqlCmd = @"
+Select o.ID
+	   , o.SeasonID
+	   , o.StyleID
+	   , o.CustPONo 
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where o.ID = @orderid 
+	  and o.Category = 'S' 
+	  and o.BrandID = @brandid
+	  and f.IsProduceFty = 1";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);

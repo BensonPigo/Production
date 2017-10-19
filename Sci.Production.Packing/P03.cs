@@ -12,7 +12,7 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
 using System.IO;
-
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -207,18 +207,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     {
                         DataRow orderData;
                         if (!MyUtility.Check.Seek(string.Format(@"
-Select  ID
-        , SeasonID
-        , StyleID
-        , CustPONo 
-        , FtyGroup
-from Orders WITH (NOLOCK) 
-where   ID = '{0}' 
-        and ((Category = 'B' and LocalOrder = 0) or Category = 'S' or Category = 'G')
-        and BrandID = '{1}' 
-        and Dest = '{2}' 
-        and CustCDID = '{3}'
-        and MDivisionID = '{4}'"
+Select  o.ID
+        , o.SeasonID
+        , o.StyleID
+        , o.CustPONo 
+        , o.FtyGroup
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where   o.ID = '{0}' 
+        and ((o.Category = 'B' and o.LocalOrder = 0) or o.Category = 'S' or o.Category = 'G')
+        and o.BrandID = '{1}' 
+        and o.Dest = '{2}' 
+        and o.CustCDID = '{3}'
+        and o.MDivisionID = '{4}'
+        and f.IsProduceFty = 1"
                             , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Keyword), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
@@ -666,15 +668,11 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             if (CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
                 txtbrand.ReadOnly = true;
-                txtcustcd.ReadOnly = true;
-                txtcountry.TextBox1.ReadOnly = true;
             }
             //部分欄位會依某些條件來決定是否可以被修改
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {
                 txtbrand.ReadOnly = true;
-                txtcustcd.ReadOnly = true;
-                txtcountry.TextBox1.ReadOnly = true;
                 editRemark.ReadOnly = true;
                 txtshipmode.ReadOnly = true;
                 gridicon.Append.Enabled = false;
@@ -745,6 +743,32 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 return false;
             }
 
+            #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
+            DataTable dtCheckCustCD;
+            List<SqlParameter> listCheckCustCDSqlParameter = new List<SqlParameter>();
+            listCheckCustCDSqlParameter.Add(new SqlParameter("@CustCD", txtcustcd.Text));
+            string strCheckCustCD = @"
+select OrderID
+from #tmp
+outer apply (
+    select value = isnull (o.CustCDID, '')
+    from Orders o
+    where #tmp.OrderID = o.ID
+) CustCD
+where CustCD.value != @CustCD
+      or CustCD.value is null";
+            DualResult reslut = MyUtility.Tool.ProcessWithDatatable(DetailDatas.CopyToDataTable(), null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
+            if (reslut == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }else if(dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
+            {
+                MyUtility.Msg.WarningBox("CustCD are different, please check!");
+                return false;
+            }
+            #endregion
+
             //刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, ttlShipQty = 0, needPackQty = 0, count = 0;
             double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
@@ -760,21 +784,6 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 MyUtility.Msg.WarningBox("Query  schema fail!");
                 return false;
             }
-
-            ////計算needPackQty
-            //string OrderIDs = string.Empty;
-            //foreach (DataRow dr in DetailDatas) OrderIDs += "'" + dr["OrderID"].ToString().Trim() + "',";
-            //OrderIDs = OrderIDs.TrimEnd(',');
-            //if (MyUtility.Check.Empty(OrderIDs))
-            //{
-            //    MyUtility.Msg.WarningBox("OrderID is empty,can't save! ");
-            //    return false;
-            //}
-            //sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail WITH (NOLOCK) where OrderID IN ({0})", OrderIDs);
-            //needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
-
-           
-
 
              foreach (DataRow dr in DetailDatas.OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
             {
@@ -916,7 +925,6 @@ where oqd.Id = '{1}'
                 count = count + 1;
             }
 
-
              #region ship mode 有變更時 check Order_QtyShip
 
              //if (shipmode_Valid)
@@ -1039,6 +1047,7 @@ where oqd.Id = '{1}'
                 }
                 CurrentMaintain["ID"] = id;
             }
+
             //表身重新計算後,再判斷CBM or GW 是不是0
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
@@ -1287,11 +1296,6 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
             {
                 CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
-            }
-            if (MyUtility.Check.Empty(txtcustcd.OldValue)) return;
-            if (EditMode && txtcustcd.OldValue != txtcustcd.Text)
-            {
-                DeleteDetailData(txtcustcd, txtcustcd.OldValue);
             }
         }
 
@@ -1658,6 +1662,7 @@ from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.O
             }
             return true;
         }
+
         //Find Now
         private void btnFindNow_Click(object sender, EventArgs e)
         {
@@ -1724,6 +1729,5 @@ from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.O
             Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             nextForm.ShowDialog(this);
         }
-
     }
 }
