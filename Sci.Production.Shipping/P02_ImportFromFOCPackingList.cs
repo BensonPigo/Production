@@ -82,7 +82,9 @@ t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-where pd.ID = '{0}'", txtFOCPL.Text);
+left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+where pd.ID = '{0}'
+and Factory.IsProduceFty=1", txtFOCPL.Text);
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
