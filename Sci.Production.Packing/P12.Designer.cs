@@ -32,11 +32,11 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.labelExpPoutDate = new Sci.Win.UI.Label();
             this.dateExpPoutDate = new Sci.Win.UI.DateBox();
             this.btnFindNow = new Sci.Win.UI.Button();
             this.labelCategory = new Sci.Win.UI.Label();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.labelLocateForSP = new Sci.Win.UI.Label();
@@ -72,11 +72,11 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboDropDownListCategory);
             this.panel3.Controls.Add(this.labelExpPoutDate);
             this.panel3.Controls.Add(this.dateExpPoutDate);
             this.panel3.Controls.Add(this.btnFindNow);
             this.panel3.Controls.Add(this.labelCategory);
-            this.panel3.Controls.Add(this.txtdropdownlistCategory);
             this.panel3.Controls.Add(this.txtLocateForSP);
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.labelLocateForSP);
@@ -89,9 +89,20 @@
             this.panel3.Size = new System.Drawing.Size(846, 89);
             this.panel3.TabIndex = 3;
             // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(343, 11);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 15;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
+            // 
             // labelExpPoutDate
             // 
-            this.labelExpPoutDate.Lines = 0;
             this.labelExpPoutDate.Location = new System.Drawing.Point(4, 12);
             this.labelExpPoutDate.Name = "labelExpPoutDate";
             this.labelExpPoutDate.Size = new System.Drawing.Size(99, 23);
@@ -117,24 +128,11 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(278, 11);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(62, 23);
             this.labelCategory.TabIndex = 2;
             this.labelCategory.Text = "Category";
-            // 
-            // txtdropdownlistCategory
-            // 
-            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistCategory.FormattingEnabled = true;
-            this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(344, 12);
-            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
-            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlistCategory.TabIndex = 3;
-            this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
             // 
             // txtLocateForSP
             // 
@@ -159,7 +157,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(4, 57);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(99, 23);
@@ -286,7 +283,6 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridDetail;
         private Win.UI.Button btnFindNow;
-        private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.TextBox txtLocateForSP;
         private Win.UI.Button btnClose;
         private Win.UI.Label labelLocateForSP;
@@ -294,5 +290,6 @@
         private Win.UI.Button btnToExcel;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private Class.comboDropDownList comboDropDownListCategory;
     }
 }

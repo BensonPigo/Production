@@ -139,6 +139,20 @@
             // 
             // dateSewingInline
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInline.DateBox1.Name = "";
+            this.dateSewingInline.DateBox1.Size = new System.Drawing.Size(100, 23);
+            this.dateSewingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox2.Location = new System.Drawing.Point(122, 0);
+            this.dateSewingInline.DateBox2.Name = "";
+            this.dateSewingInline.DateBox2.Size = new System.Drawing.Size(100, 23);
+            this.dateSewingInline.DateBox2.TabIndex = 1;
             this.dateSewingInline.IsRequired = false;
             this.dateSewingInline.Location = new System.Drawing.Point(372, 44);
             this.dateSewingInline.Name = "dateSewingInline";
@@ -155,6 +169,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(100, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(122, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(100, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(372, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -215,23 +243,25 @@
             // pictureBox4
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox4.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
+            this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
             this.pictureBox4.Location = new System.Drawing.Point(766, 7);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(25, 31);
             this.pictureBox4.TabIndex = 35;
             this.pictureBox4.TabStop = false;
+            this.pictureBox4.WaitOnLoad = true;
             this.pictureBox4.Click += new System.EventHandler(this.pictureBox4_Click);
             // 
             // pictureBox3
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
+            this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
             this.pictureBox3.Location = new System.Drawing.Point(634, 7);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(25, 31);
             this.pictureBox3.TabIndex = 34;
             this.pictureBox3.TabStop = false;
+            this.pictureBox3.WaitOnLoad = true;
             this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
             // 
             // dateArtworkOffLine
@@ -312,6 +342,7 @@
             this.pictureBox2.Size = new System.Drawing.Size(25, 31);
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.WaitOnLoad = true;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // pictureBox1
@@ -324,6 +355,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(25, 31);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // labelCheckedQty
@@ -392,12 +424,13 @@
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.FilteMDivision = false;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(108, 129);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 1;
-            this.txtmfactory.FilteMDivision = false;
             // 
             // label16
             // 
@@ -504,6 +537,20 @@
             // 
             // dateInlineDate
             // 
+            // 
+            // 
+            // 
+            this.dateInlineDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInlineDate.DateBox1.Name = "";
+            this.dateInlineDate.DateBox1.Size = new System.Drawing.Size(100, 23);
+            this.dateInlineDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInlineDate.DateBox2.Location = new System.Drawing.Point(122, 0);
+            this.dateInlineDate.DateBox2.Name = "";
+            this.dateInlineDate.DateBox2.Size = new System.Drawing.Size(100, 23);
+            this.dateInlineDate.DateBox2.TabIndex = 1;
             this.dateInlineDate.IsRequired = false;
             this.dateInlineDate.Location = new System.Drawing.Point(372, 73);
             this.dateInlineDate.Name = "dateInlineDate";

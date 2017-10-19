@@ -419,7 +419,7 @@ outer apply(
     where id = b.LocalSuppID
 ) SuppAbb
 where	a.Finished = 0 
-		and a.Category !='M' 
+		and a.Category !='M'  and factory.IsProduceFty = 1
 		and b.ArtworkTypeID = 'PRINTING' 
         and a.IsForecast=0 " + orderby);
 
