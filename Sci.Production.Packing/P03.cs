@@ -1297,11 +1297,6 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             {
                 CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
             }
-            if (MyUtility.Check.Empty(txtcustcd.OldValue)) return;
-            if (EditMode && txtcustcd.OldValue != txtcustcd.Text)
-            {
-                DeleteDetailData(txtcustcd, txtcustcd.OldValue);
-            }
         }
 
         //Destination
