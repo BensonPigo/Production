@@ -70,7 +70,12 @@ namespace Sci.Production.Quality
             {
                 DataTable dt; 
                 DualResult result;
-                string cmd = string.Format(@"select id,styleid,dest,cpu from Orders WITH (NOLOCK) where ID='{0}' and FtyGroup='{1}'", textValue, Sci.Env.User.Factory);
+                string cmd = string.Format(@"
+select o.id,o.styleid,o.dest,o.cpu 
+from Orders o WITH (NOLOCK) 
+inner join Factory f WITH (NOLOCK) on o.FactoryID=f.ID
+where o.ID='{0}' and o.FtyGroup='{1}'
+and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                 
                 if (result = DBProxy.Current.Select(null, cmd, out dt))
                 {                    
@@ -143,13 +148,6 @@ namespace Sci.Production.Quality
                 this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
-          
-            DataRow drStatus;
-            string Sql_status = string.Format(@"select Status from rft WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
-            if (MyUtility.Check.Seek(Sql_status, out drStatus))
-            {
-                this.labConfirm.Text = drStatus["Status"].ToString();
-            }
             base.OnDetailEntered();
         }
 

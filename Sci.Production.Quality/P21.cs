@@ -128,14 +128,7 @@ from Factory ";
                 this.txtPO.Text = "";
                 this.numInspectQty.Text = "0";   
                 this.numSQR.Text = "0";   
-            }            
-            DataRow drStatus;
-
-            if (MyUtility.Check.Seek(string.Format("select status from cfa WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim()), out drStatus))
-            {
-                this.labConfirm.Text = drStatus["status"].ToString();
-            }
-
+            }  
             base.OnDetailEntered();            
         }
 
@@ -702,10 +695,14 @@ where a.ID='{0}'",
                 this.txtSP.Focus();
                 return;
             }
-            DataTable dt;
+            DataTable dt;   
             DualResult result;
-            string sqlcmd = string.Format(@"select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
-where a.ID='{0}'", txtSP.Text);
+            string sqlcmd = string.Format(@"
+select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty 
+from Orders a WITH (NOLOCK) 
+inner join Factory f WITH (NOLOCK) on a.FactoryID=f.ID
+where a.ID='{0}'
+and f.IsProduceFty=1 ", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {

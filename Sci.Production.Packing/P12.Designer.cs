@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.labelExpPoutDate = new Sci.Win.UI.Label();
             this.dateExpPoutDate = new Sci.Win.UI.DateBox();
             this.btnFindNow = new Sci.Win.UI.Button();
@@ -47,7 +48,6 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
@@ -88,6 +88,18 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(846, 89);
             this.panel3.TabIndex = 3;
+            // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(343, 11);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 15;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
             // 
             // labelExpPoutDate
             // 
@@ -231,18 +243,6 @@
             this.gridDetail.Size = new System.Drawing.Size(846, 379);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            // 
-            // comboDropDownListCategory
-            // 
-            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
-            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownListCategory.FormattingEnabled = true;
-            this.comboDropDownListCategory.IsSupportUnselect = true;
-            this.comboDropDownListCategory.Location = new System.Drawing.Point(343, 11);
-            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
-            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
-            this.comboDropDownListCategory.TabIndex = 15;
-            this.comboDropDownListCategory.Type = "Fty_GMT_Simple";
             // 
             // P12
             // 

@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.btnFindNow = new Sci.Win.UI.Button();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
@@ -48,7 +49,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridShipmentSchedule = new Sci.Win.UI.Grid();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
@@ -90,6 +90,18 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(846, 108);
             this.panel3.TabIndex = 3;
+            // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(328, 23);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 14;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
             // 
             // btnFindNow
             // 
@@ -245,18 +257,6 @@
             this.gridShipmentSchedule.Size = new System.Drawing.Size(846, 360);
             this.gridShipmentSchedule.TabIndex = 0;
             this.gridShipmentSchedule.TabStop = false;
-            // 
-            // comboDropDownListCategory
-            // 
-            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
-            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownListCategory.FormattingEnabled = true;
-            this.comboDropDownListCategory.IsSupportUnselect = true;
-            this.comboDropDownListCategory.Location = new System.Drawing.Point(328, 23);
-            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
-            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
-            this.comboDropDownListCategory.TabIndex = 14;
-            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
             // 
             // P06
             // 

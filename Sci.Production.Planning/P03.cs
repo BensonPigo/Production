@@ -464,7 +464,7 @@ inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID)
 inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
 inner join factory WITH (NOLOCK) on factory.id = a.factoryid
 where   a.Finished = 0 
-        and a.Category != 'M' 
+        and a.Category != 'M'  and factory.IsProduceFty = 1
         and b.ArtworkTypeID = 'LASER'
         and b.tms > 0  
         and a.IsForecast=0 "
