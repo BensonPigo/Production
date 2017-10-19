@@ -173,6 +173,7 @@ select o.MDivisionID
                                           , IIF(o.InspResult = 'F', 'Fail'
                                                                   , ''))
        , InspHandle = (o.InspHandle +'-'+ I.Name)
+       , OrdersBuyerDelivery = o.BuyerDelivery
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
@@ -751,7 +752,7 @@ outer apply (
 select t.MDivisionID
        , t.FactoryID
        , t.SewLine
-       , t.BuyerDelivery
+       , t.OrdersBuyerDelivery
        , t.SewInLine
        , t.SewOffLine
        , t.BrandID
@@ -759,7 +760,7 @@ select t.MDivisionID
        , Dest = Country.Alias
        , t.StyleID
        , t.OrderTypeID
-       , t.ShipmodeID
+       , t.ShipModeList
        , [OrderNo] = t.Customize1
        , t.CustPONo
        , t.CustCDID
@@ -771,7 +772,7 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
-       , t.Qty_byShip
+       , t.Qty
        , #cte2.first_cut_date
        , #cte2.cut_qty
        , [RFID Cut Qty] = isnull (CutQty.AccuInCome, 0)
