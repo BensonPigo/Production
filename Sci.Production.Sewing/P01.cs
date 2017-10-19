@@ -1106,18 +1106,22 @@ where (OrderID <> '' or OrderID is not null)
 select #tmp.*
 into #Mother
 from #tmp
-inner join Order_Qty_Garment OQG on #tmp.OrderID = OQG.OrderIDFrom
-                                    and #tmp.Article = OQG.Article
-                                    and #tmp.SizeCode = OQG.SizeCode
-where Convert (bit, #tmp.AutoCreate) = 0
+where exists (select 1
+              from Order_Qty_Garment OQG 
+              where #tmp.OrderID = OQG.OrderIDFrom
+                    and #tmp.Article = OQG.Article
+                    and #tmp.SizeCode = OQG.SizeCode)
+      and Convert (bit, #tmp.AutoCreate) = 0
 
 select #tmp.*
 into #Child
 from #tmp
-inner join Order_Qty_Garment OQG on #tmp.OrderID = OQG.ID
-                                    and #tmp.Article = OQG.Article
-                                    and #tmp.SizeCode = OQG.SizeCode
-where Convert (bit, #tmp.AutoCreate) = 1
+where exists (select 1
+              from Order_Qty_Garment OQG 
+              where #tmp.OrderID = OQG.ID
+                    and #tmp.Article = OQG.Article
+                    and #tmp.SizeCode = OQG.SizeCode)
+      and Convert (bit, #tmp.AutoCreate) = 1
 
 select Child.*
 	   , MotherQaQty = isnull (Mother.MotherQaQty, 0)
