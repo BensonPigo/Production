@@ -724,15 +724,10 @@ drop table #tmpOrder
         }
         private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-           // this.grid1_sorting();
-            if (MyUtility.Check.Empty(txtSPNo.Text))
-            {
-               // MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-               // txtSPNo.Focus();
-                return;
-            }
-            Query();
-           // Query();
+            if (MyUtility.Check.Empty(txtSPNo.Text))return;
+            grid_Filter();
+            grid1_sorting();
+            ChangeDetailColor();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
