@@ -65,7 +65,7 @@ where 1=1
                 }
                 if (!MyUtility.Check.Empty(SP2))
                 {
-                    sqlCmd.Append(string.Format(@" and td.POID <='{1}'", SP2));
+                    sqlCmd.Append(string.Format(@" and td.POID <='{0}'", SP2));
                 }
                 if (!MyUtility.Check.Empty(mdivisionid))
                 {
