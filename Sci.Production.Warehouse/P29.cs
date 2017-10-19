@@ -570,9 +570,10 @@ drop table #tmp");
             //insert 欄位順序必須與 dtMaster, dtDetail 一致
             string insertMaster = @"
 insert into subtransfer
-(id      , type   , issuedate, mdivisionid, FactoryID
- , status, addname, adddate, remark)
-select *
+        (id      , type   , issuedate, mdivisionid, FactoryID
+         , status, addname, adddate  , remark)
+select   id      , type   , issuedate, mdivisionid, FactoryID
+         , status, addname, adddate   , remark
 from #tmp";
             string insertDetail = @"
 insert into subtransfer_detail
@@ -655,9 +656,6 @@ from #tmp";
                 drNewDetail["ToLocation"] = item["tolocation"];
                 dtDetail.Rows.Add(drNewDetail);
             }
-
-            //insert Master 時不需要 Poid 欄位
-            dtMaster.Columns.Remove("poid");
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -682,7 +680,7 @@ from #tmp";
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox(string.Format("Trans. ID {0} be created!!",tmpId),"Complete!");
+                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!","Complete!");
                 }
                 catch(Exception ex)
                 {
@@ -698,8 +696,9 @@ from #tmp";
             {
                 if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
+                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["frompoid"])).ToArray();
                     Alldetailrows.GetParentRow("rel1")["selected"] = true;
-                    Alldetailrows.GetParentRow("rel1")["TransID"] = tmpId;
+                    Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
             }
             //Create後Btn失效，需重新Qurey才能再使用。
