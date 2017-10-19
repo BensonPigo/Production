@@ -13,8 +13,7 @@ using Sci.Production.PublicPrg;
 namespace Sci.Production.Packing
 {
     public partial class P05 : Sci.Win.Tems.Input6
-    {
-        
+    {        
         private string masterID;
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -119,18 +118,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         cmds.Add(sp3);
 
                         string sqlCmd = @"
-Select  ID
-        , SeasonID
-        , StyleID
-        , CustPONo 
-        , FtyGroup
-from Orders WITH (NOLOCK) 
-where   ID = @orderid 
-        and MDivisionID = @mdivisionid  
-        and BrandID = @brandid 
-        and IsForecast = 0 
-        and LocalOrder = 0 
-        and Junk = 0";
+Select  o.ID
+        , o.SeasonID
+        , o.StyleID
+        , o.CustPONo 
+        , o.FtyGroup
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where   o.ID = @orderid 
+        and o.MDivisionID = @mdivisionid  
+        and o.BrandID = @brandid 
+        and o.IsForecast = 0 
+        and o.LocalOrder = 0 
+        and o.Junk = 0
+        and f.IsProduceFty = 1";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
