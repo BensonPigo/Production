@@ -548,8 +548,8 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-            "+ (chk_includeJunk.Checked? @" " : @" where a.junk=0 ")+
-@"--很重要要看到,修正欄位要上下一起改
+            
+--很重要要看到,修正欄位要上下一起改
             union
 
             select  distinct m.ukey
@@ -626,12 +626,12 @@ from(
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
-                AND a.id IS NOT NULL 
-                " + (chk_includeJunk.Checked ? @" " : @" AND a.junk=0 ") +
-               @") as xxx
+                AND a.id IS NOT NULL                 
+               ) as xxx
     ) as xxx2
 ) as xxx3
-where ROW_NUMBER_D =1       
+where ROW_NUMBER_D =1 
+drop table #tmpOrder
             ";
             #endregion
             #region -- 準備sql參數資料 --
@@ -650,6 +650,7 @@ where ROW_NUMBER_D =1
                 if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
+                grid_Filter();
                 grid1_sorting();
                 ChangeDetailColor();
                 ButtonOpen = false;
@@ -659,6 +660,27 @@ where ROW_NUMBER_D =1
                 ShowErr(result);
             }
             this.HideWaitMessage();
+        }
+        private void grid_Filter()
+        {
+            if (gridMaterialStatus.RowCount > 0)
+            {
+                string filter = "";
+                switch (chk_includeJunk.Checked)
+                {                    
+                    case true:
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        filter = "";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
+                        filter = " junk=0 ";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
 
         private void grid1_sorting()
@@ -757,7 +779,9 @@ where ROW_NUMBER_D =1
 
         private void chk_includeJunk_CheckedChanged(object sender, EventArgs e)
         {
-            Query();
+            grid_Filter();
+            grid1_sorting();
+            ChangeDetailColor();
         }
     }
 }
