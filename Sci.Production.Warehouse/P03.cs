@@ -285,10 +285,10 @@ namespace Sci.Production.Warehouse
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
             .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
-            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //13
-            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //14
-            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(5), iseditingreadonly: true)    //15
-            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true, settings: ts3)    //16
+            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
+            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
+            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
             .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
             .Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
