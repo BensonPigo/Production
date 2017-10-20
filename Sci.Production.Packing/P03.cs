@@ -1535,6 +1535,21 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     return;
                 }
             }
+            DataTable Dtt;
+            string chkpullout = string.Format(@"select p.Status, pl.PulloutId  from Pullout p,packinglist pl where pl.PulloutId = p.ID and pl.id='{0}'", CurrentMaintain["id"].ToString());
+            DualResult dr = DBProxy.Current.Select(null, chkpullout, out Dtt);
+            if (!dr)
+            {
+                MyUtility.Msg.ErrorBox("Sql command Error!");
+                return;
+            }
+            if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
+            {
+                MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
+Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
+                return;
+            }
+
 
             //問是否要做Unconfirm，確定才繼續往下做
             buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", buttons);
