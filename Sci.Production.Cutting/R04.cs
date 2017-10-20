@@ -118,11 +118,7 @@ namespace Sci.Production.Cutting
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-
-            #region radiobtnByM
-            if (radioByM.Checked)
-            {
-                sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(@"
 create table #dateranges ([EstCutDate] [date])
 declare @startDate date = '{0}' 
 declare @EndDate date = '{1}'
@@ -131,27 +127,17 @@ begin
 	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
 end"
                     , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
-               
+
+            #region radiobtnByM
+            if (radioByM.Checked)
+            {               
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished,[ATofCES] = d5.ct
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
 into #tmpWO
 from WorkOrder WO
 left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
 left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
-
-outer apply(	
-	select Count(co5.ID) as ct 
-	from CuttingOutput co5 WITH (NOLOCK) 
-	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
-	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
-	where 1=1
-		and co5.Status != 'New' 
-		and co5.CDate = wo.EstCutDate
-		and co5.CDate < w5.EstCutDate
-		and w5.EstCutDate > wo.EstCutDate
-		and co5.MDivisionId = WO.mdivisionid
-) as d5
 where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -193,7 +179,7 @@ outer apply(
 	select count(*) as ct 
 	from #tmpWO 
 	Where EstCutDate = dr.EstCutDate 
-		and CDate <= dr.EstCutDate
+		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 ) as d3
 outer apply(
@@ -204,9 +190,11 @@ outer apply(
 		and MDivisionId = M.MDivisionId
 ) as d4
 outer apply(	
-		select [ATofCES] as ct 
-		from #tmpWO 
-		where EstCutDate = dr.EstCutDate
+	select count(*) as ct 
+	from #tmpWO
+	Where EstCutDate > dr.EstCutDate 
+		and CDate = dr.EstCutDate
+		and MDivisionId = M.MDivisionId
 ) as d5
 order by dr.EstCutDate
 
@@ -219,44 +207,13 @@ drop table #tmpWO
             #region radioByFactory
             if (radioByFactory.Checked)
             {
-                sqlCmd.Append(string.Format(@"
-create table #dateranges ([EstCutDate] [date])
-declare @startDate date = '{0}' 
-declare @EndDate date = '{1}'
-while @startDate <= @EndDate
-begin
-	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
-end"
-                    , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
-
                 sqlCmd.Append(@"
-select wo.id
-	   , co.Status
-	   , wo.EstCutDate
-	   , wo.mdivisionid
-	   , wo.FactoryID
-	   , co.CDate
-	   , c.Finished
-	   , [ATofCES] = d5.ct
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished,wo.FactoryID
 into #tmpWO
 from WorkOrder WO
 left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
 left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
 INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
-
-outer apply(	
-	select Count(co5.ID) as ct 
-	from CuttingOutput co5 WITH (NOLOCK) 
-	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
-	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
-	where 1=1
-		and co5.Status != 'New' 
-		and co5.CDate = wo.EstCutDate
-		and co5.CDate < w5.EstCutDate
-		and w5.EstCutDate > wo.EstCutDate
-		and co5.MDivisionId = WO.mdivisionid
-        and co5.FactoryId = WO.FactoryId
-) as d5
 where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -310,7 +267,7 @@ outer apply(
 	select count(*) as ct 
 	from #tmpWO 
 	Where EstCutDate = dr.EstCutDate 
-		  and CDate <= dr.EstCutDate
+		  and CDate = dr.EstCutDate
 		  and MDivisionId = M.MDivisionId
           and FactoryId = M.FactoryId
 ) as d3
@@ -322,12 +279,13 @@ outer apply(
 		  and MDivisionId = M.MDivisionId
           and FactoryId = M.FactoryId
 ) as d4
-outer apply(	
-		select distinct [ATofCES] as ct 
-		from #tmpWO 
-		where EstCutDate = dr.EstCutDate
-		      and MDivisionId = M.MDivisionId
-              and FactoryId = M.FactoryId
+outer apply(
+	select count(*) as ct 
+	from #tmpWO
+	Where EstCutDate > dr.EstCutDate 
+		  and CDate = dr.EstCutDate
+		  and MDivisionId = M.MDivisionId
+          and FactoryId = M.FactoryId
 ) as d5
 order by dr.EstCutDate, m.MDivisionId, m.FactoryID
 
@@ -340,38 +298,14 @@ drop table #tmpWO
             #region radioBtnByCutCell
             if (radioByCutCell.Checked)
             {
-                sqlCmd.Append(string.Format(@"
-create table #dateranges ([EstCutDate] [date])
-declare @startDate date = '{0}' 
-declare @EndDate date = '{1}'
-while @startDate <= @EndDate
-begin
-	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
-end"
-                     , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
-
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,cc.id as ccid,wo.cutcellid,c.Finished,
-[ATofCES] = d5.ct
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished,cc.id ccid,wo.cutcellid
 into #tmpWO
 from  WorkOrder as wo  
 inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
 inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
 left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
 left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
-outer apply(	
-	select Count(co5.ID) as ct 
-	from CuttingOutput co5 WITH (NOLOCK) 
-	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
-	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
-	where 1=1
-		and co5.Status != 'New'
-		and co5.CDate = wo.EstCutDate
-		and co5.CDate < w5.EstCutDate
-		and w5.EstCutDate > wo.EstCutDate
-		and co5.MDivisionId = WO.MDivisionId
-		AND W5.CutCellid = CC.ID	
-) as d5
 where 1 = 1  AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -427,7 +361,7 @@ outer apply(
 	select count(*) as ct 
 	from #tmpWO 
 	Where EstCutDate = dr.EstCutDate 
-		and CDate < dr.EstCutDate
+		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 		and CutCellID = m2.ccid
 ) as d3
@@ -435,14 +369,17 @@ outer apply(
 	select count(*) as ct 
 	from #tmpWO
 	Where EstCutDate < dr.EstCutDate 
-	and CDate = dr.EstCutDate
+		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 		and CutCellID = m2.ccid
 ) as d4
-outer apply(	
-		select [ATofCES] as ct 
-		from #tmpWO 
-		where EstCutDate = dr.EstCutDate  AND cutcellid = m2.ccid
+outer apply(
+	select count(*) as ct 
+	from #tmpWO
+	Where EstCutDate > dr.EstCutDate 
+		and CDate = dr.EstCutDate
+		and MDivisionId = M.MDivisionId
+		and CutCellID = m2.ccid
 ) as d5
 order by m2.ccid, dr.EstCutDate
 drop table #DateRanges
