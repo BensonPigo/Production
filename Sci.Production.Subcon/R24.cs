@@ -140,14 +140,15 @@ namespace Sci.Production.Subcon
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-;with cte as (
-	select distinct b.OrderId 
-            , a.FactoryID
-			, artworktypeid = a.Category
-    from dbo.localap a WITH (NOLOCK) 
-    inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id  
-	join ArtworkType c on a.Category = c.ID 
-    where c.Classify='P' 
+select distinct o.poid 
+        , a.FactoryID
+		, artworktypeid = a.Category
+into #tmp
+from dbo.localap a WITH (NOLOCK) 
+inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id  
+join ArtworkType c on a.Category = c.ID 
+inner join orders o WITH (NOLOCK) on o.id = b.OrderId 
+where c.Classify='P' 
 ");
 
             #region -- 條件組合 --
@@ -252,47 +253,49 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(" and c.id = @artworktype");
             }
 
-            sqlCmd.Append(string.Format(@")
-select cte.FactoryID
-,cte.artworktypeid
-,aa.POID
-,aa.StyleID
-,cc.BuyerID
-,aa.BrandID
-,dbo.getTPEPass1(aa.SMR) smr
-,y.order_qty
-,x.ap_qty
-,x.ap_amt
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
---,y.order_amt
---,y.order_qty
-,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
-from cte
-left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
-left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
+            sqlCmd.Append(string.Format(@"
+select distinct t.FactoryID
+    ,t.artworktypeid
+    ,aa.POID
+    ,aa.StyleID
+    ,cc.BuyerID
+    ,aa.BrandID
+    ,dbo.getTPEPass1(aa.SMR) smr
+    ,y.order_qty
+    ,x.ap_qty
+    ,x.ap_amt
+    ,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
+    --,y.order_amt
+    --,y.order_qty
+    ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
+    ,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
+into #tmp2
+from #tmp t
+left join orders aa WITH (NOLOCK) on aa.poid = t.poid
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
 left join Brand cc on aa.BrandID=cc.id
 outer apply (
 	select isnull(sum(t.ap_amt),0.00) ap_amt
             , isnull(sum(t.ap_qty),0) ap_qty 
 from (
-	select currencyid,
-			apd.Price,
+	select --currencyid,
+			--apd.Price,
 			apd.Qty ap_qty
 			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt
-			,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
+			--,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
 	from localap ap WITH (NOLOCK) inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-		where ap.Category = cte.artworktypeid and apd.OrderId = aa.POID AND AP.Status = 'Approved') t
-		) x		
+	where ap.Category = t.artworktypeid and apd.OrderId = t.POID AND AP.Status = 'Approved') t
+) x		
 outer apply(
-	select orders.POID
-	,isnull(sum(orders.qty),0) order_qty
+	select --orders.POID
+	isnull(sum(orders.qty),0) order_qty
 	,sum(orders.qty*Price) order_amt 
 	from orders WITH (NOLOCK) 
 	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
-	group by orders.poid,ArtworkTypeID) y
-where ap_qty > 0 
+	where poid= t.POID and ArtworkTypeID= t.artworktypeid
+	group by orders.poid,ArtworkTypeID
+) y
+where ap_qty > 0 and aa.category in ('B')
 ", ratetype));
             #endregion
 
@@ -336,6 +339,10 @@ where ap_qty > 0
                 cmds.Add(sp_brandid);
             }
 
+
+            sqlCmd.Append(@" 
+select distinct *from #tmp2
+drop table #tmp,#tmp2");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             if (!result)
