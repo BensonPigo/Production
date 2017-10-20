@@ -344,7 +344,7 @@ WHERE MNOrder.ordercomboid = @POID
             }
         }
 
-        private DataRow GetTitleDataByCustCD(string poid, string id, bool ByCustCD = true)
+        private DataRow GetTitleDataByCustCD(string ordercomboid, string id, bool ByCustCD = true)
         {
             DataRow drvar;
             string cmd = "";
@@ -361,9 +361,9 @@ SELECT MAKER=max(FactoryID)
 ,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
 ,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1
 FROM MNOrder a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ID
 OUTER APPLY(Select Top 1 OrderComboList from dbo.Order_OrderComboList with(nolock) where ID  = @ID) b
-where OrderComboID = @ID group by POID,b.OrderComboList";
+where OrderComboID = @ordercomboid group by POID,b.OrderComboList";
             }
             else
             {
@@ -379,13 +379,13 @@ MAKER=max(FactoryID)
 ,(select BuyerDelivery from MnOrder o where o.ID = @ID) as delDate
 ,(select Customize1 from MnOrder o where o.ID = @ID) as Customize1 
 FROM MNOrder a WITH (NOLOCK) 
---OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
-OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @poid
+--OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@ordercomboid,'') FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
+OUTER APPLY(SELECT STUFF((SELECT '/'+ID FROM MNOrder WITH (NOLOCK) WHERE OrderComboID = @ordercomboid
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where OrderComboID = @poid group by POID,b.spno";
+where OrderComboID = @ordercomboid group by POID,b.spno";
             }
 
-            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@ordercomboid", ordercomboid), new SqlParameter("@ID", id) }, out drvar, null);
             if (res)
                 return drvar;
             else
