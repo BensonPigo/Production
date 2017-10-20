@@ -92,6 +92,10 @@ and Factory.IsProduceFty=1", txtFOCPL.Text);
                 MyUtility.Msg.ErrorBox("Query error." + result.ToString());
                 return;
             }
+            if (selectData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!!!");
+            }
             listControlBindingSource1.DataSource = selectData;
         }
 
