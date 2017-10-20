@@ -995,13 +995,21 @@ where ID = @INVNo";
                 }
             }
 
-            string chkpullout = string.Format(@"select p.Status from Pullout p,packinglist pl where pl.PulloutId = p.ID and p.status = 'NEW' and pl.id='{0}'", CurrentMaintain["id"].ToString());
-            if (!MyUtility.Check.Seek(chkpullout))
+            DataTable Dtt;
+            string chkpullout = string.Format(@"select p.Status, pl.PulloutId  from Pullout p,packinglist pl where pl.PulloutId = p.ID and pl.id='{0}'", CurrentMaintain["id"].ToString());
+            DualResult dr = DBProxy.Current.Select(null, chkpullout, out Dtt);
+            if (!dr)
             {
-                MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
-Pullout No. < {0} > ", CurrentMaintain["id"].ToString()));
+                MyUtility.Msg.ErrorBox("Sql command Error!");
                 return;
             }
+            if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
+            {
+                MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
+Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
+                return;
+            }
+
             //問是否要做Unconfirm，確定才繼續往下做
             buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)

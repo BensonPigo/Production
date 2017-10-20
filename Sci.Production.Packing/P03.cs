@@ -1535,12 +1535,18 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     return;
                 }
             }
-
-            string chkpullout = string.Format(@"select p.Status from Pullout p,packinglist pl where pl.PulloutId = p.ID and p.status = 'NEW' and pl.id='{0}'", CurrentMaintain["id"].ToString());
-            if (!MyUtility.Check.Seek(chkpullout))
+            DataTable Dtt;
+            string chkpullout = string.Format(@"select p.Status, pl.PulloutId  from Pullout p,packinglist pl where pl.PulloutId = p.ID and pl.id='{0}'", CurrentMaintain["id"].ToString());
+            DualResult dr = DBProxy.Current.Select(null, chkpullout, out Dtt);
+            if (!dr)
+            {
+                MyUtility.Msg.ErrorBox("Sql command Error!");
+                return;
+            }
+            if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
             {
                 MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
-Pullout No. < {0} > ",CurrentMaintain["id"].ToString()));
+Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
