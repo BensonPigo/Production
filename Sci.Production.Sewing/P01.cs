@@ -1416,7 +1416,6 @@ where Convert (bit, AutoCreate) != 1";
             decimal subSum = 0;
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
-                recCnt = recCnt - 1;
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     if (dr["AutoCreate"].EqualString("True"))
@@ -1433,6 +1432,7 @@ where Convert (bit, AutoCreate) != 1";
                     }
                     subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
                 }
+                recCnt = recCnt - 1;
             }
         }
 
