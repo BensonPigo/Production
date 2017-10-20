@@ -995,6 +995,13 @@ where ID = @INVNo";
                 }
             }
 
+            string chkpullout = string.Format(@"select p.Status from Pullout p,packinglist pl where pl.PulloutId = p.ID and p.status = 'NEW' and pl.id='{0}'", CurrentMaintain["id"].ToString());
+            if (!MyUtility.Check.Seek(chkpullout))
+            {
+                MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
+Pullout No. < {0} > ", CurrentMaintain["id"].ToString()));
+                return;
+            }
             //問是否要做Unconfirm，確定才繼續往下做
             buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
@@ -1009,8 +1016,6 @@ where ID = @INVNo";
             {
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
-
-           
         }
 
         //Download excel format
