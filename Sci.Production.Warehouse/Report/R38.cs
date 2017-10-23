@@ -63,7 +63,10 @@ select	fi.POID
         ,fi.OutQty
         ,fi.AdjustQty
         ,Balance = fi.InQty - fi.OutQty + fi.AdjustQty
-        ,fi.StockType
+        ,case   when fi.StockType = 'B' then 'Bulk'
+                when fi.StockType = 'I' then 'Inventory'
+                when fi.StockType = 'O' then 'Scrap'
+                else fi.StockType end as StockType
         ,fid.MtlLocationID
         ,Description = dbo.getMtlDesc(fi.POID, fi.Seq1,fi.Seq2,2,0) 
         ,o.StyleID
@@ -133,7 +136,10 @@ select	fi.POID
                             ,fi.OutQty
                             ,fi.AdjustQty
                             ,fi.InQty - fi.OutQty + fi.AdjustQty 
-                            ,fi.StockType
+                            ,case   when fi.StockType = 'B' then 'Bulk'
+                                     when fi.StockType = 'I' then 'Inventory'
+                                     when fi.StockType = 'O' then 'Scrap'
+                                     else fi.StockType end
                             ,fid.MtlLocationID
                             ,dbo.getMtlDesc(fi.POID, fi.Seq1,fi.Seq2,2,0) 
                             ,o.StyleID
