@@ -1414,14 +1414,11 @@ where Convert (bit, AutoCreate) != 1";
             decimal ttlQaqty = MyUtility.Convert.GetDecimal(SumQaQty.Rows[0]["sumQaqty"]);
 
             decimal subSum = 0;
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select("AutoCreate != 1 or AutoCreate !='True'"))
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    if (dr["AutoCreate"].EqualString("True"))
-                    {
-                        dr["WorkHour"] = 0;
-                    }
+                    recCnt = recCnt - 1;
                     else if (recCnt == 0)
                     {
                         dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
@@ -1432,7 +1429,14 @@ where Convert (bit, AutoCreate) != 1";
                     }
                     subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
                 }
-                recCnt = recCnt - 1;
+            }
+
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select("AutoCreate = 1 or AutoCreate ='True'"))
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                        dr["WorkHour"] = 0;
+                }
             }
         }
 
