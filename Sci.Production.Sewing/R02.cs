@@ -871,7 +871,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 1] = "VPH";
 
             //[VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
-            c = System.Math.Round(c, 2, MidpointRounding.AwayFromZero);
+            c = Sci.MyUtility.Math.Round(c, 2);
             // WorkDay => 
             int intWorkDay;
             DataTable dtWorkDay;
@@ -888,8 +888,8 @@ where LastShift <> 'O'";
             {
                 intWorkDay = dtWorkDay.Rows.Count;
             }
-            decimal tempA = System.Math.Round(ttlm * c / intWorkDay, 2, MidpointRounding.AwayFromZero);
-            worksheet.Cells[insertRow, 3] = System.Math.Round(tempA / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]), 2, MidpointRounding.AwayFromZero);
+            decimal tempA = Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2);
+            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(tempA / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]));
 
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);

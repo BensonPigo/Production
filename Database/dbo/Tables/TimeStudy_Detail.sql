@@ -2,7 +2,7 @@
     [ID]            BIGINT         CONSTRAINT [DF_TimeStudy_Detail_TimeStudyUKey] DEFAULT ((0)) NOT NULL,
     [Seq]           VARCHAR (4)    CONSTRAINT [DF_TimeStudy_Detail_Seq] DEFAULT ('') NOT NULL,
     [OperationID]   VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_OperationID] DEFAULT ('') NULL,
-    [Annotation]    NVARCHAR (200) CONSTRAINT [DF_TimeStudy_Detail_Annotation] DEFAULT ('') NULL,
+    [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_TimeStudy_Detail_Annotation] DEFAULT ('') NULL,
     [PcsPerHour]    NUMERIC (8, 1) CONSTRAINT [DF_TimeStudy_Detail_PcsPerHour] DEFAULT ((0)) NULL,
     [Sewer]         NUMERIC (4, 1) CONSTRAINT [DF_TimeStudy_Detail_Sewer] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_MachineTypeID] DEFAULT ('') NULL,

@@ -612,7 +612,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             foreach (DataRow dr in dtDis.Rows)
             {
                 DataTable tmpTb;
-                PublicPrg.Prgs.GetGarmentListTable(dr["CutRef"].ToString(),dr["POID"].ToString(), out tmpTb);
+                PublicPrg.Prgs.GetGarmentListTable("",dr["POID"].ToString(), out tmpTb);
                 if (GarmentTb == null)
                 {
                     GarmentTb = tmpTb;
