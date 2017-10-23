@@ -98,7 +98,8 @@ left join PO_Supp ps WITH (NOLOCK) on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
 left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
 left join Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-where psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtility.Check.Empty(txtSEQ1.Text) ? "" : " and psd.SEQ1 = '" + txtSEQ1.Text+"'",
+left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
+where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtility.Check.Empty(txtSEQ1.Text) ? "" : " and psd.SEQ1 = '" + txtSEQ1.Text+"'",
                                MyUtility.Check.Empty(txtSEQ2.Text) ? "" : " and psd.SEQ2 = '" + txtSEQ2.Text+"'");
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);

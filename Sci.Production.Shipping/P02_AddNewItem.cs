@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -40,25 +41,25 @@ namespace Sci.Production.Shipping
             if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
                 //sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
+                //System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
+                cmds.Add(new SqlParameter("@id", txtSPNo.Text));
 
-                string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id";
+                string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
                 DataTable OrderData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
 
-                if (!result && OrderData.Rows.Count <= 0)
+                if (!result)
                 {
-                    if (!result)
-                    {
-                        MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("SP# not found!!");
-                    }
+                    MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+                    CurrentData["OrderID"] = "";
+                    e.Cancel = true;
+                    return;
+                }
+                if (OrderData.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!!");
                     CurrentData["OrderID"] = "";
                     e.Cancel = true;
                     return;
