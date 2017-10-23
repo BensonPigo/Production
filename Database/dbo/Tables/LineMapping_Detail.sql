@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[LineMapping_Detail] (
     [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
     [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NOT NULL,
-    [Annotation]    NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
+    [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
     [GSD]           NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
     [TotalGSD]      NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
     [Cycle]         NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_Cycle] DEFAULT ((0)) NULL,
