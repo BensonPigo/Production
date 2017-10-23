@@ -61,7 +61,7 @@ select lapd.Localpoid
 	   , lapd.price	
 	   , inqty	
 	   , apqty
-	   --, amount = lapd.price*lapd.Qty
+	   , amount = lapd.price*lapd.Qty
 	   , balance = inqty - apqty,inqty,apqty
 	   , lapd.LocalPo_DetailUkey
 	   , dbo.getItemDesc(localap.Category,lapd.Refno) as description 
@@ -243,6 +243,8 @@ where lapd.id = '{0}'"
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
+                if (e.Details.Columns.Contains("Amount"))
+                    e.Details.Columns.Remove("Amount");
                 e.Details.ColumnsDecimalAdd("Amount", 0, "Qty*Price");
                 foreach (DataRow dr in e.Details.Rows)
                 {
@@ -734,12 +736,13 @@ where a.id = @ID"
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result = DBProxy.Current.Select("",
-            @"select a.OrderId [SP]
-                    ,[Description]=dbo.getItemDesc(b.Category,a.Refno)
-                    ,a.price [Price]
-                    ,a.qty [Qty]
-                    ,a.unitid [Unit]
-                    ,format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00') [Amount]
+            @"select [SP] = a.OrderId 
+                     , [Description] = dbo.getItemDesc(b.Category,a.Refno)
+                     , ThreadColorID = isnull (a.ThreadColorID, 0)
+                     , [Price] = a.price
+                     , [Qty] = a.qty
+                     , [Unit] = a.unitid
+                     , [Amount] = format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00')
             from dbo.LocalAP_Detail a WITH (NOLOCK) 
             left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
             where a.id= @ID", pars, out dd);
@@ -751,6 +754,7 @@ where a.id = @ID"
                 {
                     SP = row1["SP"].ToString(),
                     Description = row1["Description"].ToString(),
+                    ThreadColorID = row1["ThreadColorID"].ToString(),
                     Price = row1["Price"].ToString(),
                     Qty = row1["Qty"].ToString(),
                     Unit = row1["Unit"].ToString(),
