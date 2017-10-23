@@ -575,7 +575,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                     if (!MyUtility.Check.Empty(txtSP.Text))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSP.Text);
+                        string poid = MyUtility.GetValue.Lookup("poid", txtSP.Text, "orders", "id");
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", poid);
                         //用登入的Factory 抓取對應的FtyGroup
                         DataTable FtyGroupData;
                         DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out FtyGroupData);
