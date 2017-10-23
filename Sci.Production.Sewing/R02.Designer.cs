@@ -53,17 +53,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(351, 12);
+            this.print.Location = new System.Drawing.Point(355, 12);
             this.print.TabIndex = 10;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(351, 48);
+            this.toexcel.Location = new System.Drawing.Point(355, 48);
             this.toexcel.TabIndex = 11;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(351, 84);
+            this.close.Location = new System.Drawing.Point(355, 84);
             this.close.TabIndex = 12;
             // 
             // labelDate
@@ -246,7 +246,7 @@
             this.label10.BackColor = System.Drawing.Color.Transparent;
             this.label10.Location = new System.Drawing.Point(13, 296);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(307, 22);
+            this.label10.Size = new System.Drawing.Size(341, 47);
             this.label10.TabIndex = 9;
             this.label10.Text = "** The value in this report are all excluded subcon-out, unless the column with \"" +
     "included subcon-out\".";
@@ -276,7 +276,7 @@
             // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(443, 355);
+            this.ClientSize = new System.Drawing.Size(447, 377);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.label10);

@@ -22,7 +22,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             InitializeComponent();
-            label10.Text = "** The value in this report are all excluded \r\nsubcon-out, unless the column with \r\n\"included subcon-out\".";
+            label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
             DataTable factory, mDivision;
             DBProxy.Current.Select(null, @"select '' as FtyGroup 
 union all
