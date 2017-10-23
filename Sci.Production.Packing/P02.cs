@@ -30,15 +30,28 @@ namespace Sci.Production.Packing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.ID,a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
-                                                                                       from PackingGuide_Detail a WITH (NOLOCK) 
-                                                                                       left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
-                                                                                       left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
-                                                                                       left join Orders d WITH (NOLOCK) on b.OrderID = d.ID
-                                                                                       left join Order_Article e WITH (NOLOCK) on b.OrderID = e.Id and a.Article = e.Article
-                                                                                       left join Order_SizeCode f WITH (NOLOCK) on d.POID = f.Id and a.SizeCode = f.SizeCode
-                                                                                       where a.Id ='{0}'
-                                                                                       order by e.Seq,f.Seq", masterID);
+            this.DetailSelectCommand = string.Format(@"
+select a.ID
+	   , a.Refno
+	   , a.Article
+	   , a.Color
+	   , a.SizeCode
+	   , a.QtyPerCTN
+	   , a.ShipQty
+	   , a.NW
+	   , a.GW
+	   , a.NNW
+	   , c.Description
+from PackingGuide_Detail a WITH (NOLOCK) 
+left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
+left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
+left join Orders d WITH (NOLOCK) on b.OrderID = d.ID
+left join Order_Article e WITH (NOLOCK) on b.OrderID = e.Id 
+										   and a.Article = e.Article
+left join Order_SizeCode f WITH (NOLOCK) on d.POID = f.Id 
+											and a.SizeCode = f.SizeCode
+where a.Id = '{0}'
+order by e.Seq, f.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -722,7 +735,15 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     if (!MyUtility.Check.Empty(txtSPNo.Text))
                     {
                         DataRow orderData;
-                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders WITH (NOLOCK) where ID = '{0}' and MDivisionID = '{1}'", txtSPNo.Text, Sci.Env.User.Keyword);
+                        string sqlCmd = string.Format(@"
+select o.Category
+       , o.LocalOrder
+       , o.IsForecast 
+from Orders o WITH (NOLOCK) 
+inner join Factory f on o.FactoryID = f.ID
+where o.ID = '{0}' 
+      and o.MDivisionID = '{1}'
+      and f.IsProduceFty = 1", txtSPNo.Text, Sci.Env.User.Keyword);
                         if (MyUtility.Check.Seek(sqlCmd, out orderData))
                         {
                             string msg = "";

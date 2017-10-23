@@ -1103,34 +1103,55 @@ where (OrderID <> '' or OrderID is not null)
             DualResult resultCheckSubOutputQty;
             DataTable dtCheckSubOutputQty;
             string strCheckSubOutputQty = @"
+select #tmp.*
+into #Mother
+from #tmp
+where exists (select 1
+              from Order_Qty_Garment OQG 
+              where #tmp.OrderID = OQG.OrderIDFrom
+                    and #tmp.Article = OQG.Article
+                    and #tmp.SizeCode = OQG.SizeCode)
+      and Convert (bit, #tmp.AutoCreate) = 0
+
+select #tmp.*
+into #Child
+from #tmp
+where exists (select 1
+              from Order_Qty_Garment OQG 
+              where #tmp.OrderID = OQG.ID
+                    and #tmp.Article = OQG.Article
+                    and #tmp.SizeCode = OQG.SizeCode)
+      and Convert (bit, #tmp.AutoCreate) = 1
+
 select Child.*
 	   , MotherQaQty = isnull (Mother.MotherQaQty, 0)
 from (
-	select #tmp.ComboType
-		   , #tmp.Article
-		   , #tmp.SizeCode
-		   , ChildQaQty = sum (#tmp.QAQty)
-	from #tmp
-	where Convert (bit, #tmp.AutoCreate) = 1
-	group by #tmp.ComboType, #tmp.Article, #tmp.SizeCode
+	select #Child.ComboType
+		   , #Child.Article
+		   , #Child.SizeCode
+		   , ChildQaQty = sum (#Child.QAQty)
+	from #Child
+	group by #Child.ComboType, #Child.Article, #Child.SizeCode
 ) Child
 left join (
-	select #tmp.OrderId, #tmp.ComboType
-		   , #tmp.Article
-		   , #tmp.SizeCode
-		   , MotherQaQty = sum (#tmp.QAQty)
-	from #tmp
+	select #Mother.ComboType
+		   , #Mother.Article
+		   , #Mother.SizeCode
+		   , MotherQaQty = sum (#Mother.QAQty)
+	from #Mother
 	where exists (select 1 
-				  from #tmp ToSPTmp
+				  from #Child ToSPTmp
 				  inner join Order_Qty_Garment OQG on ToSPTmp.OrderId = OQG.ID
 													  and ToSPTmp.Article = OQG.Article
 													  and ToSPTmp.SizeCode = OQG.SizeCode
 				  inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
 				  inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
 												  and ToSPTmp.ComboType = SL.Location
-				  where Convert (bit, ToSPTmp.AutoCreate) = 1
-						and OQG.OrderIDFrom = #tmp.OrderId)
-	group by #tmp.OrderId,#tmp.ComboType, #tmp.Article, #tmp.SizeCode
+				  where OQG.OrderIDFrom = #Mother.OrderId
+				  		and ToSPTmp.ComboType = #Mother.ComboType
+				  		and ToSPTmp.Article = #Mother.Article
+				  		and ToSPTmp.SizeCode = #Mother.SizeCode)
+	group by #Mother.ComboType, #Mother.Article, #Mother.SizeCode
 ) Mother on Child.ComboType = Mother.ComboType
 			and Child.Article = Mother.Article
 			and Child.SizeCode = Mother.SizeCode
