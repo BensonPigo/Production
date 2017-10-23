@@ -194,7 +194,7 @@ select  #tmp.Poid
 		, #tmp.SciDelivery
 		, #tmp.SewinLine
 		, Carton = case
-			            when #tmp.Category='CARTON,' then 'Y'
+			            when #tmp.Category like '%CARTON%' then 'Y'
 			            when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
 			            when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
 			            when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
@@ -208,7 +208,7 @@ select  #tmp.Poid
 			            ELSE 'N'
 		          END
 		, SPThread = case
-			            when #tmp.Category='SP_THREAD,' then 'Y'
+			            when #tmp.Category like '%SP_THREAD%' then 'Y'
 			            when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
 			            when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
 			            when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
@@ -222,7 +222,7 @@ select  #tmp.Poid
 			            ELSE 'N'
 		            END
         , EmbThread = case
-			            when #tmp.Category='EMB_THREAD,' then 'Y'
+			            when #tmp.Category like '%EMB_THREAD%' then 'Y'
 			            when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
 			            when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
 			            when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
