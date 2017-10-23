@@ -1003,12 +1003,16 @@ where ID = @INVNo";
                 MyUtility.Msg.ErrorBox("Sql command Error!");
                 return;
             }
-            if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
+            if (Dtt.Rows.Count>0)
             {
-                MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
+                if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
 Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
-                return;
+                    return;
+                }
             }
+            
 
             //問是否要做Unconfirm，確定才繼續往下做
             buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
