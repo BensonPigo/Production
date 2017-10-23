@@ -104,8 +104,6 @@ namespace Sci.Production.Planning
             sqlCmd.Append(string.Format(@"
 select o.MDivisionID
        , o.FactoryID
-       , S.BuyerDelivery
-	   , s.Seq
        , o.SciDelivery
        , O.CRDDate
        , O.CFMDate
@@ -123,7 +121,6 @@ select o.MDivisionID
        , O.CdCodeID
        , O.CPU
        , O.Qty
-       , [Qty_byShip] = S.Qty 
        , O.FOCQty
        , O.PoPrice
        , O.CMPPrice
@@ -154,7 +151,6 @@ select o.MDivisionID
        , O.MTLExport
        , O.SewLine
        , O.ShipModeList
-       , s.ShipmodeID
        , O.PlanDate
        , O.FirstProduction
        , O.Finished
@@ -176,102 +172,142 @@ select o.MDivisionID
        , OrdersBuyerDelivery = o.BuyerDelivery
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
-inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
 OUTER APPLY(
       SELECT  Name 
       FROM Pass1 WITH (NOLOCK) 
       WHERE Pass1.ID = O.InspHandle
 )I
-WHERE 1=1 
-                "));
+WHERE 1=1"));
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(BuyerDelivery1))
+
+            if (MyUtility.Check.Empty(BuyerDelivery1) == false && MyUtility.Check.Empty(BuyerDelivery2) == false)
             {
-                sqlCmd.Append(string.Format(@" and s.BuyerDelivery >= '{0}'", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and exists (
+            select 1 
+            from Order_QtyShip s WITH (NOLOCK) 
+            where s.id = o.ID
+                  and s.BuyerDelivery between '{0}' and '{1}'
+      )", Convert.ToDateTime(BuyerDelivery1).ToString("d")
+                                                              , Convert.ToDateTime(BuyerDelivery2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            else if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and s.BuyerDelivery <= '{0}'", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and exists (
+            select 1 
+            from Order_QtyShip s WITH (NOLOCK) 
+            where s.id = o.ID
+                  and s.BuyerDelivery >= '{0}'
+      )", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
             }
+            else if (!MyUtility.Check.Empty(BuyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" 
+      and exists (
+            select 1 
+            from Order_QtyShip s WITH (NOLOCK) 
+            where s.id = o.ID
+                  and s.BuyerDelivery <= '{0}'
+      )", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(CustRqsDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(CustRqsDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.CRDDate >= '{0}'", Convert.ToDateTime(CustRqsDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(CustRqsDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(CustRqsDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.CRDDate <= '{0}'", Convert.ToDateTime(CustRqsDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(CutOffDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(CutOffDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.SDPDate >= '{0}'", Convert.ToDateTime(CutOffDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(CutOffDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(CutOffDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.SDPDate <= '{0}'", Convert.ToDateTime(CutOffDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(planDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(planDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.PlanDate >= '{0}'", Convert.ToDateTime(planDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(planDate2))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" 
+      and o.PlanDate <= '{0}'", Convert.ToDateTime(planDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlCmd.Append(" and o.id >= @spno1 ");
+                sqlCmd.Append(@" 
+      and o.id >= @spno1 ");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno1", spno1));
             }
             if (!MyUtility.Check.Empty(spno2))
             {
-                sqlCmd.Append(" and o.id <= @spno2 ");
+                sqlCmd.Append(@" 
+      and o.id <= @spno2 ");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno2", spno2));
             }
 
             if (!MyUtility.Check.Empty(brandid))
             {
-                sqlCmd.Append(string.Format(@" and o.brandid = @brandid"));
+                sqlCmd.Append(string.Format(@"
+      and o.brandid = @brandid"));
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@brandid", brandid));
             }
 
             if (!MyUtility.Check.Empty(custcd))
             {
-                sqlCmd.Append(string.Format(@" and o.CustCDID = @custcd"));
+                sqlCmd.Append(string.Format(@" 
+      and o.CustCDID = @custcd"));
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@custcd", custcd));
             }
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and o.mdivisionid = @MDivision");
+                sqlCmd.Append(@" 
+      and o.mdivisionid = @MDivision");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@MDivision", mdivision));
             }
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(" and o.factoryid = @factory");
+                sqlCmd.Append(@" 
+      and o.factoryid = @factory");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", factory));
             }
 
             switch (selectindex)
             {
                 case 0:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
+                    sqlCmd.Append(@" 
+      and (o.Category = 'B' or o.Category = 'S')");
                     break;
                 case 1:
-                    sqlCmd.Append(@" and o.Category = 'B' ");
+                    sqlCmd.Append(@" 
+      and o.Category = 'B' ");
                     break;
                 case 2:
-                    sqlCmd.Append(@" and (o.Category = 'S')");
+                    sqlCmd.Append(@" 
+      and (o.Category = 'S')");
                     break;
             }
 
@@ -648,8 +684,6 @@ from (
             sqlCmd.Append(string.Format(@"
                 -- 依撈出來的order資料(cte)去找各製程的WIP
 select t.OrderID
-       , t.Seq
-	   , t.ShipmodeID
        , cut_qty = (SELECT SUM(CWIP.Qty) 
                     FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) 
                     WHERE CWIP.OrderID = T.OrderID)
@@ -849,8 +883,6 @@ select t.MDivisionID
             sqlCmd.Append(string.Format(@" 
 from #cte t 
 inner join #cte2 on #cte2.OrderID = t.OrderID 
-                    and #cte2.Seq = t.Seq
-                    and #cte2.ShipmodeID = t.ShipmodeID 
 left join Country with (Nolock) on Country.id= t.Dest"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@" 
