@@ -143,7 +143,7 @@ BEGIN
 	DEALLOCATE cursor_holiday
 
 	--刪除PMS多的資料
-	CREATE TABLE #tmpHoliday (FromDate varchar(10), ToDate varchar(10));
+	CREATE TABLE #tmpHoliday (FromDate datetime, ToDate datetime);
 	SET @cmd = 'insert into #tmpHoliday SELECT Holiday.FromDate,Holiday.ToDate FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday WHERE Factory.CODE = '''+ @factoryid + ''' and Holiday.FactoryId = Factory.Id and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE()))'
 	execute (@cmd)
 
