@@ -909,7 +909,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             //刪除原有資料
             foreach (DataRow dr in DetailDatas)
             {
-                dr.Delete();
+                dr.Delete();                
             }
 
             //將IETMS_Detail資料寫入表身
@@ -925,6 +925,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
                 detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
+            ((DataTable)detailgridbs.DataSource).AcceptChanges();
         }
 
         //History
