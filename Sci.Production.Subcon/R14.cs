@@ -246,6 +246,7 @@ namespace Sci.Production.Subcon
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,dbo.getTPEPass1(aa.SMR) smr
+                ,xx.Stitch
                 ,y.order_qty
                 ,x.ap_qty
                 ,round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) amount
@@ -298,6 +299,13 @@ namespace Sci.Production.Subcon
 		                            where ap.Category = 'EMB_THREAD' and orders.POId = aa.POID AND ap.Status = 'Approved'
                             ) tt
 		                ) z
+                outer apply(
+                     select top 1 OART.qty as Stitch
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and OART.article=OA.article
+                            WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
+                        ) xx
                 where ap_qty > 0
                 ", ratetype,ordertype));
 
@@ -317,6 +325,7 @@ namespace Sci.Production.Subcon
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,dbo.getTPEPass1(aa.SMR) smr
+                ,xx.Stitch
                 ,y.order_qty
                 ,x.ap_qty
                 ,round(x.ap_amt,2) ap_amt
@@ -348,6 +357,13 @@ namespace Sci.Production.Subcon
 	                inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	                where poid= aa.POID and ArtworkTypeID= #cte.artworktypeid
 	                group by orders.poid,ArtworkTypeID) y
+                outer apply(
+                     select top 1 OART.qty as Stitch
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and OART.article=OA.article
+                            WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
+                        ) xx
                 where ap_qty > 0
                 ", ratetype,ordertype));
             }
