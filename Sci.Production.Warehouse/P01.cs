@@ -575,6 +575,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callP03 = new P03(CurrentMaintain["ID"].ToString(), P03MenuItem);            
             callP03.MdiParent = MdiParent;                      
             callP03.Show();
+            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+            callP03.P03Data(CurrentMaintain["ID"].ToString());
             callP03.ChangeDetailColor();
             #region BackUP
             //callP03.FormClosed += (s, e) =>

@@ -115,6 +115,8 @@ namespace Sci.Production.Warehouse
 
             call.MdiParent = MdiParent;            
             call.Show();
+            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+            call.P03Data(PPIC_SPNo);
             call.Activate();
             call.ChangeDetailColor();
         }
