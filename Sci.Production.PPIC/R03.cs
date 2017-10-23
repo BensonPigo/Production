@@ -99,12 +99,14 @@ from Factory f WITH (NOLOCK) where Zone <> ''", out zone);
         private StringBuilder select_cmd(string p_type)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            string seperCmd = "";
+            string seperCmd = "", seperCmdkpi="", seperCmdkpi2="";
             #region 組SQL
             if (seperate && p_type.Equals("ALL"))
             {
                 seperCmd = " ,oq.Seq";
             }
+            seperCmdkpi = seperate ? "oq.FtyKPI" : "o.FtyKPI";
+            seperCmdkpi2 = seperate ? " left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id" : "";
             sqlCmd.Append(@"
 with tmpOrders as (
     select  o.ID
@@ -169,7 +171,7 @@ with tmpOrders as (
             , InspHandle = (o.InspHandle +'-'+ I.Name)
             , o.MnorderApv
             , o.PulloutComplete
-            , oq.FtyKPI
+            , "+ seperCmdkpi +@"
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk
@@ -183,7 +185,7 @@ with tmpOrders as (
             , o.GFR "
             + seperCmd +
     @" from Orders o WITH (NOLOCK) 
-    left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+   " +seperCmdkpi2+@"
     OUTER APPLY(
         SELECT  Name 
         FROM Pass1 WITH (NOLOCK) 
@@ -206,13 +208,18 @@ with tmpOrders as (
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDlv2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(cutoff1))
+            if (!MyUtility.Check.Empty(cutoff1)|| !MyUtility.Check.Empty(cutoff2))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(cutoff2))
-            {
-                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
+                sqlCmd.Append("and o.id in (select id from Order_QtyShip oq2 WITH (NOLOCK) where 1=1");
+                if (!MyUtility.Check.Empty(cutoff1))
+                {
+                    sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(cutoff2))
+                {
+                    sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
+                }
+                sqlCmd.Append(")");
             }
             if (!MyUtility.Check.Empty(custRQS1))
             {
@@ -396,7 +403,7 @@ tmpFilterZone as (
             , InspHandle = (o.InspHandle +'-'+ I.Name)
             , o.MnorderApv
             , o.PulloutComplete
-            , oq.FtyKPI
+            , "+ seperCmdkpi +@"
             , o.KPIChangeReason
             , o.EachConsApv
             , o.Junk
@@ -410,7 +417,7 @@ tmpFilterZone as (
             , o.GFR "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
-    left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+   " + seperCmdkpi2 + @"
     OUTER APPLY (
         SELECT Name 
         FROM Pass1 WITH (NOLOCK) 
@@ -517,7 +524,7 @@ tmpFilterZone as (
 			, pdm.ClogRcvDate
     into #tmpFilterSeperate
     from #tmpListPoCombo t
-    inner join Order_QtyShip oq WITH (NOLOCK) on t.ID = oq.Id and t.Seq=oq.Seq
+    inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
     outer apply( select Sum( pd.CTNQty) PackingCTN ,
 					Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
 					Sum( case when p.Type in ('B', 'L') and pd.TransferDate is null then pd.CTNQty else 0 end) FtyCtn,
@@ -994,13 +1001,18 @@ OrderID as(
                         {
                             sqlcmd_sub.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDlv2).ToString("d")));
                         }
-                        if (!MyUtility.Check.Empty(cutoff1))
+                        if (!MyUtility.Check.Empty(cutoff1) || !MyUtility.Check.Empty(cutoff2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
-                        }
-                        if (!MyUtility.Check.Empty(cutoff2))
-                        {
-                            sqlcmd_sub.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
+                            sqlCmd.Append("and o.id in (select id from Order_QtyShip oq2 WITH (NOLOCK) where 1=1");
+                            if (!MyUtility.Check.Empty(cutoff1))
+                            {
+                                sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(cutoff1).ToString("d")));
+                            }
+                            if (!MyUtility.Check.Empty(cutoff2))
+                            {
+                                sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(cutoff2).ToString("d")));
+                            }
+                            sqlCmd.Append(")");
                         }
                         if (!MyUtility.Check.Empty(custRQS1))
                         {
