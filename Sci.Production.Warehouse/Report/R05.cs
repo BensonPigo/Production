@@ -69,7 +69,7 @@ where 1=1
                 }
                 if (!MyUtility.Check.Empty(mdivisionid))
                 {
-                    sqlCmd.Append(string.Format(@" and td.MDivisionID = '{0}'", mdivisionid));
+                    sqlCmd.Append(string.Format(@" and t.MDivisionID = '{0}'", mdivisionid));
                 }
                 if (!MyUtility.Check.Empty(factory))
                 {
@@ -105,7 +105,7 @@ where 1=1
                 }
                 if (!MyUtility.Check.Empty(mdivisionid))
                 {
-                    sqlCmd.Append(string.Format(@" and td.MDivisionID = '{0}'", mdivisionid));
+                    sqlCmd.Append(string.Format(@" and t.MDivisionID = '{0}'", mdivisionid));
                 }
                 if (!MyUtility.Check.Empty(factory))
                 {
@@ -135,7 +135,6 @@ where 1=1
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R05.xltx"); //預先開啟excel app            
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R05.xltx", 1, true, null, objApp);      // 將datatable copy to excel
-
             Marshal.ReleaseComObject(objSheets);
             return true;
         }
