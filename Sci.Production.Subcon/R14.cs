@@ -303,7 +303,7 @@ namespace Sci.Production.Subcon
                      select top 1 OART.qty as Stitch
                             from orders O WITH (NOLOCK) 
                             left join Order_article OA on OA.id=O.ID
-                            left join Order_Artwork OART on OART.id=O.ID and OART.article=OA.article
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
                             WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
                         ) xx
                 where ap_qty > 0
@@ -361,7 +361,7 @@ namespace Sci.Production.Subcon
                      select top 1 OART.qty as Stitch
                             from orders O WITH (NOLOCK) 
                             left join Order_article OA on OA.id=O.ID
-                            left join Order_Artwork OART on OART.id=O.ID and OART.article=OA.article
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
                             WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
                         ) xx
                 where ap_qty > 0
