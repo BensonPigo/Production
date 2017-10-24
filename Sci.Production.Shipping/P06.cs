@@ -336,7 +336,7 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTi
                                 result = WriteRevise("Delete", dr);
 
                                 #region update PulloutID 到PackingList
-                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                                string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{0}'",dr["PackingListID"]);
                                 DBProxy.Current.Execute(null, updatePklst);
                                 #endregion
 
