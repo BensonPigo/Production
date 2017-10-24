@@ -1342,7 +1342,7 @@ Insert into VNConsumption_Detail (
     , MyUtility.Convert.GetString(selectedData[i]["UnitID"])
     , MyUtility.Convert.GetString(selectedData[i]["Qty"])
     , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"
-    , MyUtility.Convert.GetString(selectedData[i]["Waste"])));
+    , MyUtility.Convert.GetDecimal(selectedData[i]["Waste"])));
 
                             DataRow[] selectedDetailData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
                             for (int j = 0; j < selectedDetailData.Length; j++)
