@@ -58,7 +58,7 @@ select	fi.POID
         ,fi.Dyelot
         ,'Locked' Lock
         ,fi.LockDate
-        ,fi.LockName
+        ,LockName  = (select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) 
         ,fi.InQty
         ,fi.OutQty
         ,fi.AdjustQty
@@ -67,18 +67,25 @@ select	fi.POID
                 when fi.StockType = 'I' then 'Inventory'
                 when fi.StockType = 'O' then 'Scrap'
                 else fi.StockType end as StockType
-        ,fid.MtlLocationID
+        ,MtlLocationID = dbo.Getlocation(fi.ukey)
         ,Description = dbo.getMtlDesc(fi.POID, fi.Seq1,fi.Seq2,2,0) 
         ,o.StyleID
         ,pd. ColorID
-        ,BuyerDelivery = min(o.BuyerDelivery) 
-        ,SciDelivery = min(o.SciDelivery)
+        ,BuyerDelivery = x.earliest_BuyerDelivery
+        ,SciDelivery = x.earliest_SciDelivery
         ,o.BrandID
         ,o. FactoryID
         from FtyInventory  fi WITH (NOLOCK)
         left join FtyInventory_Detail fid  WITH (NOLOCK) on fi.Ukey = fid.Ukey
         left join Orders o WITH (NOLOCK)  on fi.POID = o.ID
         left join PO_Supp_Detail pd   WITH (NOLOCK) on fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2
+        cross apply
+        (
+        	select  earliest_BuyerDelivery = min(o1.BuyerDelivery)  
+                    , earliest_SciDelivery = min(o1.SciDelivery)  
+        	from dbo.orders o1 WITH (NOLOCK) 
+            where o1.POID = fi.POID and o1.Junk = 0
+        ) x
 ";
 
             List<string> listWhere = new List<string>();
@@ -123,29 +130,7 @@ select	fi.POID
           
             if (listWhere.Count > 0)
                 strSql += "where" + listWhere.JoinToString("and") +
-                          @" and fi.Lock = '1' 
-                            group by 
-		                    fi.POID
-                            ,fi.Seq1
-                            ,fi.Seq2
-                            ,fi.Roll
-                            ,fi.Dyelot
-                            ,fi.LockDate
-                            ,fi.LockName
-                            ,fi.InQty
-                            ,fi.OutQty
-                            ,fi.AdjustQty
-                            ,fi.InQty - fi.OutQty + fi.AdjustQty 
-                            ,case   when fi.StockType = 'B' then 'Bulk'
-                                     when fi.StockType = 'I' then 'Inventory'
-                                     when fi.StockType = 'O' then 'Scrap'
-                                     else fi.StockType end
-                            ,fid.MtlLocationID
-                            ,dbo.getMtlDesc(fi.POID, fi.Seq1,fi.Seq2,2,0) 
-                            ,o.StyleID
-                            ,pd. ColorID
-		                    ,o.BrandID
-                            ,o. FactoryID";
+                          @" and fi.Lock = '1' ";
             #endregion 
             #region SQL Data Loading...
             DualResult result = DBProxy.Current.Select(null, strSql, listPar, out dataTable);
