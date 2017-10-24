@@ -1118,6 +1118,12 @@
     <Compile Include="P39_Import.Designer.cs">
       <DependentUpon>P39_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R38.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R38.Designer.cs">
+      <DependentUpon>R38.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1722,6 +1728,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
+    <EmbeddedResource Include="Report\R38.resx">
+      <DependentUpon>R38.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
