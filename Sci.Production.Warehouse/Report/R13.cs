@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory");
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory,O,Scrap");
             comboStockType.SelectedIndex = 0;
             txtReason.SelectedIndex = 0;
         }
@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
             string[] x = new string[3];
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(@"
 SELECT  a.MDivisionID
         , orders.FactoryID
         , a.id
@@ -89,8 +89,15 @@ FROM adjust a WITH (NOLOCK)
 inner join adjust_detail b WITH (NOLOCK) on a.id = b.id
 inner join Orders orders on b.POID = orders.ID
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
-Where a.Status = 'Confirmed' and a.type = '{0}'
-", stocktype));
+Where a.Status = 'Confirmed' ");
+            if (stocktype=="O")
+            {
+                sqlCmd.Append(@" and b.stocktype='O' ");
+            }
+            else
+            {
+                sqlCmd.Append(string.Format(@" and a.type='{0}' ", stocktype));
+            }
             if (!MyUtility.Check.Empty(issueDate1))
                 sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
             if(!MyUtility.Check.Empty(issueDate2))
