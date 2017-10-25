@@ -143,8 +143,8 @@ outer apply (
 ) vs4
 outer apply (
 	Select 
-		Qty = Sum(rA.Qty),
-		FailQty = Sum(rB.Qty)
+		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( A1.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
+		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( A1.ID ,Order_QS.Seq,Order_QS.FtyKPI,'>')
 	From Pullout_Detail pd
 	Outer apply (Select Qty = IIF(pd.PulloutDate <= Order_QS.FtyKPI, pd.shipqty, 0)) rA
 	Outer apply (Select Qty = IIF(pd.PulloutDate >  Order_QS.FtyKPI, pd.shipqty, 0)) rB
@@ -250,8 +250,8 @@ SELECT   A= A2.CountryID
 		,G = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
 		,H = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
 		,I = Order_QS.QTY  
-		,J = Sum(A4.ShipQty) 
-		,K = ISNULL(Sum(A5.ShipQty),0) 
+		,J = Sum(A4.ShipQty) - dbo.getInvAdjQtyByDate(A1.ID,null,Order_QS.FtyKPI,'<=')
+		,K = ISNULL(Sum(A5.ShipQty),0)  - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
 		,L = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
 		,M = t.strData 
 		,N = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
@@ -358,7 +358,7 @@ FROM ORDERS A1 WITH (NOLOCK)
 LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-OUTER APPLY (select sum(ShipQty) as sQty 
+OUTER APPLY (select sum(ShipQty)  - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ,Order_QS.FtyKPI,'<=') as sQty 
              from Pullout_Detail pd 
              where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= Order_QS.FtyKPI ) opd
 OUTER APPLY (select top 1 PulloutDate 
@@ -428,7 +428,7 @@ LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID
 LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
-OUTER APPLY (select sum(ShipQty) as sQty 
+OUTER APPLY (select sum(ShipQty)   - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ,Order_QS.FtyKPI,'>')  as sQty 
              from Pullout_Detail pd 
              where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate > Order_QS.FtyKPI ) opd
 OUTER APPLY (select top 1 PulloutDate 
@@ -484,8 +484,8 @@ SELECT   A= A2.CountryID
 		,G = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
 		,H = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
 		,I = Order_QS.QTY  
-		,J = Sum(A4.ShipQty) 
-		,K = ISNULL(Sum(A5.ShipQty),0) 
+		,J = Sum(A4.ShipQty)   - dbo.getInvAdjQtyByDate(A1.ID, null,Order_QS.FtyKPI,'<=') 
+		,K = ISNULL(Sum(A5.ShipQty),0) - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
 		,L = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
 		,M = t.strData 
 		,N = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
