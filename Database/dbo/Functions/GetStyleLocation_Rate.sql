@@ -7,7 +7,7 @@ CREATE FUNCTION [dbo].[GetStyleLocation_Rate]
 (
 	@StyleUkey BIGINT,@ComboType varchar(1)
 )
-RETURNS NUMERIC(8,2)
+RETURNS NUMERIC(5,2)
 AS
 BEGIN
 	-- Declare the return variable here
