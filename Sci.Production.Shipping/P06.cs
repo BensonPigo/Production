@@ -907,6 +907,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                 }
                 else
                 {
+                    updatePackinglist += string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", CurrentMaintain["ID"], dr["PackingListID"]);
                     #region 合併計算 ShipQty
                     int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
                     #endregion
@@ -1024,7 +1025,8 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     DataRow[] PullDetail = null;
                     if (detailgridbs != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
                     {
-                        PullDetail = ((DataTable)detailgridbs.DataSource).Select(string.Format("PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
+                        DataTable dt = ((DataTable)detailgridbs.DataSource);
+                        PullDetail = dt.Select(string.Format("PackingListID = '{0}' and OrderID = '{1}' and OrderShipmodeSeq = '{2}'", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["OrderShipmodeSeq"])));
                     }
                     if (PullDetail == null || PullDetail.Length <= 0)
                     {
