@@ -49,6 +49,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
+            this.checkSampleFty = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -274,9 +275,21 @@
             this.labelM.TabIndex = 107;
             this.labelM.Text = "M";
             // 
+            // checkSampleFty
+            // 
+            this.checkSampleFty.AutoSize = true;
+            this.checkSampleFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSampleFty.Location = new System.Drawing.Point(241, 269);
+            this.checkSampleFty.Name = "checkSampleFty";
+            this.checkSampleFty.Size = new System.Drawing.Size(178, 21);
+            this.checkSampleFty.TabIndex = 108;
+            this.checkSampleFty.Text = "Exclude Sample Factory";
+            this.checkSampleFty.UseVisualStyleBackColor = true;
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(447, 377);
+            this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.label10);
@@ -327,6 +340,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.checkSampleFty, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,5 +369,6 @@
         private Win.UI.Label label10;
         private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
+        private Win.UI.CheckBox checkSampleFty;
     }
 }
