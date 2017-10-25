@@ -62,17 +62,28 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select pd.*,o.StyleID,o.BrandID,o.Dest,
-(pd.OrderQty - isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)) as Variance,
-case pd.Status 
-when 'P' then 'Partial'
-when 'C' then 'Complete'
-when 'E' then 'Exceed'
-when 'S' then 'Shortage'
-else ''
-end as StatusExp
+            this.DetailSelectCommand = string.Format(@"
+select pd.ID
+	,pd.OldUkey,pd.OrderID,pd.OrderQty,pd.OrderShipmodeSeq
+	,a.packinglistid
+	,a.INVNo
+	,pd.PackingListType,pd.PulloutDate,pd.Remark,pd.ReviseDate,pd.ShipmodeID,pd.ShipModeSeqQty,pd.ShipQty,pd.Status,pd.UKey
+	,o.StyleID,o.BrandID,o.Dest,
+	(pd.OrderQty - isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)) as Variance,
+	case pd.Status 
+	when 'P' then 'Partial'
+	when 'C' then 'Complete'
+	when 'E' then 'Exceed'
+	when 'S' then 'Shortage'
+	else ''
+	end as StatusExp
 from Pullout_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+outer apply(
+	select packinglistid=id ,pd.INVNo
+	from packinglist 
+	where id = pd.PackingListID and(PulloutID=pd.id or PulloutID=''or PulloutID is null)
+)a
 where pd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -81,13 +92,20 @@ where pd.ID = '{0}'", masterID);
         {
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
 
-            this.SubDetailSelectCommand = string.Format(@"select pdd.*,oqd.Qty,(oqd.Qty-pdd.ShipQty) as Variance
+            this.SubDetailSelectCommand = string.Format(@"
+select pdd.*,oqd.Qty,(oqd.Qty-pdd.ShipQty) as Variance,a.PulloutID
 from Pullout_Detail_Detail pdd WITH (NOLOCK) 
 left join Pullout_Detail pd WITH (NOLOCK) on pd.UKey = pdd.Pullout_DetailUKey
 left join Orders o WITH (NOLOCK) on o.ID = pdd.OrderID
 left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and os.SizeCode = pdd.SizeCode
 left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pdd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pdd.Article and oqd.SizeCode = pdd.SizeCode
+outer apply(
+	select PulloutID
+	from packinglist 
+	where id = pd.PackingListID 
+)a
 where pdd.Pullout_DetailUKey = {0}
+and(a.PulloutID=pd.id or a.PulloutID=''or a.PulloutID is null)
 order by os.Seq", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
@@ -907,7 +925,13 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                 }
                 else
                 {
-                    updatePackinglist += string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", CurrentMaintain["ID"], dr["PackingListID"]);
+                    string chkpulloutid = string.Format(@"select pulloutid from packinglist where id = '{0}'", dr["PackingListID"]);
+                    string pulloutid = MyUtility.GetValue.Lookup(chkpulloutid);
+                    if (pulloutid == "")
+                    {
+                        updatePackinglist += string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'; ", CurrentMaintain["ID"], dr["PackingListID"]);
+                    }
+                    
                     #region 合併計算 ShipQty
                     int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
                     #endregion
@@ -1105,10 +1129,8 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             if (ReviseData())
             {
                 MyUtility.Msg.InfoBox("Revise completed!");
-
-                // this.grid.ValidateControl();
+                
                 this.detailgrid.ValidateControl();
-
             }
         }
 
