@@ -158,7 +158,7 @@ and Factory.IsProduceFty = '1'
                         strSQL += string.Format(" AND Orders.Category in ({0})", gstrCategory);
                 }
                 if (chx == "Exclude")
-                    strSQL += " and o.LocalOrder = 0 ";
+                    strSQL += " and Orders.LocalOrder = 0 ";
                 if (txtCountry1.TextBox1.Text != "")
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", txtCountry1.TextBox1.Text);
                 #region 1.	By Factory
