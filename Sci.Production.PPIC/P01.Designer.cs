@@ -208,7 +208,6 @@
             this.labelCustCD = new Sci.Win.UI.Label();
             this.labelDestination = new Sci.Win.UI.Label();
             this.labelShipMode = new Sci.Win.UI.Label();
-            this.displayCustCD = new Sci.Win.UI.DisplayBox();
             this.editShipMode = new Sci.Win.UI.EditBox();
             this.labelSpecialId1 = new Sci.Win.UI.Label();
             this.labelSpecialId2 = new Sci.Win.UI.Label();
@@ -284,6 +283,7 @@
             this.displayOrderCombo = new Sci.Win.UI.DisplayBox();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.disCustCD = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -293,8 +293,14 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.disCustCD);
             this.detailcont.Controls.Add(this.labeOrderCombo);
             this.detailcont.Controls.Add(this.displayOrderCombo);
             this.detailcont.Controls.Add(this.txtmfactory);
@@ -359,7 +365,6 @@
             this.detailcont.Controls.Add(this.labelSpecialId2);
             this.detailcont.Controls.Add(this.labelSpecialId1);
             this.detailcont.Controls.Add(this.editShipMode);
-            this.detailcont.Controls.Add(this.displayCustCD);
             this.detailcont.Controls.Add(this.labelShipMode);
             this.detailcont.Controls.Add(this.labelDestination);
             this.detailcont.Controls.Add(this.labelCustCD);
@@ -426,12 +431,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -580,10 +585,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1648,7 +1653,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2108,7 +2113,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2315,16 +2320,6 @@
             this.labelShipMode.Size = new System.Drawing.Size(65, 21);
             this.labelShipMode.TabIndex = 66;
             this.labelShipMode.Text = "Ship Mode";
-            // 
-            // displayCustCD
-            // 
-            this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCustCD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustCDID", true));
-            this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCustCD.Location = new System.Drawing.Point(462, 197);
-            this.displayCustCD.Name = "displayCustCD";
-            this.displayCustCD.Size = new System.Drawing.Size(150, 21);
-            this.displayCustCD.TabIndex = 27;
             // 
             // editShipMode
             // 
@@ -3179,6 +3174,17 @@
             this.shapeContainer4.TabIndex = 45;
             this.shapeContainer4.TabStop = false;
             // 
+            // disCustCD
+            // 
+            this.disCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disCustCD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustCDID", true));
+            this.disCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disCustCD.Location = new System.Drawing.Point(462, 197);
+            this.disCustCD.Name = "disCustCD";
+            this.disCustCD.Size = new System.Drawing.Size(84, 21);
+            this.disCustCD.TabIndex = 130;
+            this.disCustCD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.disCustCD_MouseDown);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3256,7 +3262,6 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.EditBox editShipMode;
         private Class.txtcountry txtcountry1;
-        private Win.UI.DisplayBox displayCustCD;
         private Win.UI.Label labelShipMode;
         private Win.UI.Label labelDestination;
         private Win.UI.Label labelCustCD;
@@ -3466,5 +3471,6 @@
         private Win.UI.Button btnMeterialStatus_Local;
         private Win.UI.Button btnMeterialStatus;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
+        private Win.UI.DisplayBox disCustCD;
     }
 }
