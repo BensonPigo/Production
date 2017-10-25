@@ -5,13 +5,13 @@
 -- =============================================
 CREATE FUNCTION [dbo].[GetStyleLocation_Rate]
 (
-	@StyleUkey varchar(20),@ComboType varchar(7)
+	@StyleUkey BIGINT,@ComboType varchar(1)
 )
-RETURNS varchar(300)
+RETURNS NUMERIC(8,2)
 AS
 BEGIN
 	-- Declare the return variable here
-	DECLARE @Rate as int;
+	DECLARE @Rate as NUMERIC(5,2);
 
 	-- Add the T-SQL statements to compute the return value here
 	IF (select styleunit from style where ukey = @StyleUkey) = 'PCS'
