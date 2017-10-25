@@ -86,7 +86,7 @@ select  s.OutputDate
 		, [MockupStyle] = isnull(mo.StyleID,'')
 		, [OrderSeason] = isnull(o.SeasonID,'')
 		, [MockupSeason] = isnull(mo.SeasonID,'')
-		, [Rate] = isnull(sl.Rate,100)/100
+	    , [Rate] = isnull([dbo].[GetStyleLocation_Rate](o.StyleUkey, sd.ComboType),100)/100
 		, System.StdTMS
 		, [InspectQty] = isnull(r.InspectQty,0)
 		, [RejectQty] = isnull(r.RejectQty,0)
@@ -95,8 +95,8 @@ from System,SewingOutput s WITH (NOLOCK)
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
-														    and sl.Location = sd.ComboType
+--left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+--														    and sl.Location = sd.ComboType
 outer apply(
 	select top 1 RejectQty
 		   , InspectQty 
@@ -491,16 +491,16 @@ tmpAllSubprocess as (
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-		   , Price = Round(sum(a.QAQty) * ot.Price * (isnull(sl.Rate, 100) / 100), 2) 
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetStyleLocation_Rate](o.StyleUkey ,a.ComboType), 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 	inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
-	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
-												 and sl.Location = a.ComboType
+--	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+--												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
 		  and ot.Price > 0         
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price, sl.Rate
+    group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetStyleLocation_Rate](o.StyleUkey ,a.ComboType)
 )
 select ArtworkTypeID
 	   , Price = sum(Price)

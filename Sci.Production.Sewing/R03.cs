@@ -81,7 +81,7 @@ with tmp1stData as (
             , sod.WorkHour
             , sod.QAQty
             , o.CPUFactor
-            , Rate = isnull(sl.Rate/100,0) 
+            , Rate = isnull([dbo].[GetStyleLocation_Rate]( s.Ukey ,sod.ComboType)/100,0) 
             , StyleDesc = s.Description
             , CDDesc = c.Description
             , s.ModularParent
@@ -91,8 +91,8 @@ with tmp1stData as (
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
-    left join Style_Location sl WITH (NOLOCK) on  sl.StyleUkey = s.Ukey 
-                                                  and sl.Location = sod.ComboType
+--    left join Style_Location sl WITH (NOLOCK) on  sl.StyleUkey = s.Ukey 
+--                                                  and sl.Location = sod.ComboType
     where   1=1
             and so.Shift <> 'O'
             and o.Category in ({0})", category));

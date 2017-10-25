@@ -294,7 +294,7 @@ where   o.FtyGroup = @factoryid
                             GetRFT(dr);
 
                             #region 若此SP是套裝的話，就跳出視窗讓使用者選擇部位
-                            sqlCmd = string.Format("select Location,Rate from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(OrdersData.Rows[0]["StyleUkey"]));
+                            sqlCmd = string.Format("select Location,Rate = [dbo].[GetStyleLocation_Rate]('{0}',Location) from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(OrdersData.Rows[0]["StyleUkey"]));
                             DataTable StyleLocation;
                             result = DBProxy.Current.Select(null, sqlCmd, out StyleLocation);
                             if (!result || StyleLocation.Rows.Count < 0)
@@ -349,7 +349,7 @@ where   o.FtyGroup = @factoryid
                             }
 
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
+                            string sqlCmd = string.Format("select sl.Location,Rate = [dbo].[GetStyleLocation_Rate](o.StyleUkey ,sl.Location),o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable LocationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(LocationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");

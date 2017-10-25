@@ -1247,5 +1247,21 @@ where POID = @poid group by POID,b.spno";
                 callMethod.Invoke(null, new object[] { CurrentMaintain["ID"].ToString() });
             }
         }
+
+        private void disCustCD_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (EditMode)
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format(
+                @"select id,countryid,city from Custcd where brandid= '{0}' and junk=0 ", displayBrand.Text), "16,2,16", this.disCustCD.Text);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) return;
+                    CurrentMaintain["CustCDID"] = item.GetSelectedString();
+                }
+
+            }
+        }
     }
 }

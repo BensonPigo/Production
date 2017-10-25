@@ -114,7 +114,7 @@ namespace Sci.Production.Planning
             comboDate.SelectedIndex = 0;
 
             #region 取得 Report 資料
-            string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', ' ', '0000' order by SEQ";
+            string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', 'ALL', '0000' order by SEQ";
             DataTable dt_ref = null;
             DualResult result = DBProxy.Current.Select(null, sql, out dt_ref);
 
@@ -986,8 +986,11 @@ namespace Sci.Production.Planning
                         decimal Capacity2 = 0;
                         if (rows.Length > 0)
                         {
-                            Capacity1 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                            Capacity2 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                            for (int tmpRow = 0; tmpRow < rows.Length; tmpRow++)
+                            {
+                                Capacity1 += rows[tmpRow]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity1"]) : 0;
+                                Capacity2 += rows[tmpRow]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity2"]) : 0;
+                            }
                         }
                         wks.Cells[sheetStart, 5 + idx * 2].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2), sheetStart - 1, Capacity1);
                         wks.Cells[sheetStart, 5 + idx * 2 + 1].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2 + 1), sheetStart - 1, Capacity2);
