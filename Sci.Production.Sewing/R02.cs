@@ -191,6 +191,7 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --											 and sl.Location = sd.ComboType
+left join factory f WITH (NOLOCK) on f.id=s.FactoryID
 where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category='M')"
                 , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
@@ -208,6 +209,10 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category=
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));
+            }
+            if (checkSampleFty.Checked)
+            {
+                sqlCmd.Append(string.Format(" and f.type <> 'S' ", mDivision));
             }
 
             sqlCmd.Append(@"
