@@ -13,14 +13,22 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
---  Invadj1    invadjust
---PMS多,[OrderShipmodeSeq]
---      ,[MDivisionID]
 
-
--------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.InvAdjust(
-        ID
+--更新使用Merge寫法 ----------------InvAdjust
+Merge Production.dbo.InvAdjust as t
+using (
+	select b.*,p.OrderShipmodeSeq from Trade_To_Pms.dbo.InvAdjust b WITH (NOLOCK) 
+	inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID=c.ID
+	outer apply(
+		select OrderShipmodeSeq from Production.dbo.Pullout_Detail
+		where invno=b.GarmentInvoiceID
+		and orderid=b.orderid
+		and pulldate=b.pulldate
+	) as p	
+) as s
+on t.id=s.id
+when not matched by target then 
+insert(ID
       ,IssueDate
       ,REASON
       ,GarmentInvoiceID
@@ -50,50 +58,48 @@ INSERT INTO Production.dbo.InvAdjust(
       ,EditName
       ,EditDate
       ,PriceCheckID
+	  ,OrderShipmodeSeq)
+values( s.ID
+      ,s.IssueDate
+      ,s.REASON
+      ,s.GarmentInvoiceID
+      ,s.OrderID
+      ,s.PullDate
+      ,s.Ukey_Pullout
+      ,s.BrandID
+      ,s.FactoryID
+      ,s.ARVoucherID
+      ,s.VoucherID
+      ,s.Status
+      ,s.OrigPulloutQty
+      ,s.OrigPrice
+      ,s.OrigPulloutAmt
+      ,s.OrigSurcharge
+      ,s.OrigAddCharge
+      ,s.OrigCommission
+      ,s.OrigDocFee
+      ,s.AdjustPulloutQty
+      ,s.AdjustPulloutAmt
+      ,s.AdjustSurcharge
+      ,s.AdjustAddCharge
+      ,s.AdjustCommission
+      ,s.AdjustDocFee
+      ,s.AddName
+      ,s.AddDate
+      ,s.EditName
+      ,s.EditDate
+      ,s.PriceCheckID
+	  ,isnull(s.OrderShipmodeSeq,''));
 
-)
-select 
-        b.ID
-      ,IssueDate
-      ,REASON
-      ,GarmentInvoiceID
-      ,OrderID
-      ,PullDate
-      ,Ukey_Pullout
-      ,BrandID
-      ,FactoryID
-      ,ARVoucherID
-      ,VoucherID
-      ,Status
-      ,OrigPulloutQty
-      ,OrigPrice
-      ,OrigPulloutAmt
-      ,OrigSurcharge
-      ,OrigAddCharge
-      ,OrigCommission
-      ,OrigDocFee
-      ,AdjustPulloutQty
-      ,AdjustPulloutAmt
-      ,AdjustSurcharge
-      ,AdjustAddCharge
-      ,AdjustCommission
-      ,AdjustDocFee
-      ,b.AddName
-      ,b.AddDate
-      ,b.EditName
-      ,b.EditDate
-      ,PriceCheckID
-
-from Trade_To_Pms.dbo.InvAdjust as b WITH (NOLOCK)
-inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID=c.ID
-where not exists(select id from Production.dbo.InvAdjust as a where a.id = b.id)
-
---InvAdjust_Qty
---PMS多
---,[Pullout3Qty]
--------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.InvAdjust_Qty(
-      ID
+--更新Merge 寫法-------------------------InvAdjust_Qty
+Merge Production.dbo.InvAdjust_Qty as t
+using (
+	select b.* from Trade_To_Pms.dbo.InvAdjust_Qty as b WITH (NOLOCK)
+	inner join Trade_To_Pms.dbo.InvAdjust as c WITH (NOLOCK) on b.ID=c.ID 
+) as s
+on t.id=s.id and t.Article=s.Article and t.SizeCode=s.SizeCode
+when not matched by target then
+insert( ID
       ,Article
       ,SizeCode
       ,OrderQty
@@ -101,26 +107,18 @@ INSERT INTO Production.dbo.InvAdjust_Qty(
       ,AdjustQty
       ,Price
       ,NewItem
-      ,DiffQty
-)
-select 
-     b.ID
-      ,b.Article
-      ,b.SizeCode
-      ,b.OrderQty
-      ,b.OrigQty
-      ,b.AdjustQty
-      ,b.Price
-      ,b.NewItem
-      ,b.DiffQty
-from Trade_To_Pms.dbo.InvAdjust_Qty as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.InvAdjust as c WITH (NOLOCK) on b.ID=c.ID 
-where not exists(select id from Production.dbo.InvAdjust_Qty as a WITH (NOLOCK) where a.id = b.id and a.Article=b.Article and a.SizeCode = b.SizeCode)
+      ,DiffQty)
+values( 
+	   s.ID
+      ,s.Article
+      ,s.SizeCode
+      ,s.OrderQty
+      ,s.OrigQty
+      ,s.AdjustQty
+      ,s.Price
+      ,s.NewItem
+      ,s.DiffQty);
 
---pullout2
---select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID
-
-
---SELECT sum(DiffQty) FROM  Production.dbo.InvAdjust_Qty A inner join Production.dbo.InvAdjust B ON  A.ID = B.ID
 
 SELECT MAX(PulloutDate) as PulloutDate --,a.ID
 INTO #TMPPullout2Cdate
@@ -145,7 +143,6 @@ SET
 ,a.MDClose = getdate()
 
 from Production.dbo.Orders as a 
---inner join Trade_To_Pms.dbo.TTTTTTTTTTTTTTTTTTTTT as b ON a.id=b.id
 where a.Qty = (select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID)
 +(SELECT sum(DiffQty) FROM  Production.dbo.InvAdjust_Qty A inner join Production.dbo.InvAdjust B ON  A.ID = B.ID)
 and a.PulloutComplete = 0
