@@ -14,7 +14,7 @@ BEGIN
 	DECLARE @Rate as int;
 
 	-- Add the T-SQL statements to compute the return value here
-	IF (select styleunit from style where ukey = @StyleUkey and combotype = @ComboType) = 'PCS'
+	IF (select styleunit from style where ukey = @StyleUkey) = 'PCS'
 	Begin
 		set @Rate = 100
 	End
