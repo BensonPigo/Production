@@ -20,8 +20,9 @@ BEGIN
 	,'COMB' = a.FabricPanelCode
 	--,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
 	,'COMBdes' = om.Remark+ '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
-	,a.MarkerName,SizeCode,a.MarkerLength,a.ConsPC
-	,a.Seq,a.REMARK,Qty
+	,a.MarkerName,B.SizeCode,a.MarkerLength,a.ConsPC
+	,Seq = DENSE_RANK() OVER(ORDER BY  a.CuttingPiece,f.SizeGroup,a.FabricPanelCode,newSeq)
+	,a.REMARK,Qty
 	,ColorID,Orderqty,Layer,CutQty,Variance,c.Order_EachConsUkey,c.YDS
 	,MarkerDownloadID,Article into #tmp
 	From dbo.Order_EachCons a WITH (NOLOCK)
@@ -30,10 +31,20 @@ BEGIN
 	inner join dbo.Order_BOF d WITH (NOLOCK) on a.Id = d.Id and a.FabricCode = d.FabricCode
 	inner join dbo.Order_MarkerList om with(nolock) on om.Id=a.Id and om.MarkerName=a.MarkerName and om.FabricPanelCode=a.FabricPanelCode
 	inner join dbo.Fabric e WITH (NOLOCK) on d.SCIRefno = e.SCIRefno
+	inner join dbo.Order_SizeCode f on a.Id = f.Id and b.SizeCode = f.SizeCode
+	OUTER APPLY (select newSeq = SUBSTRING(a.MarkerName, PATINDEX('%[0-9]%',a.MarkerName), len(a.MarkerName))) ns
 	where a.id in (select CuttingSP from dbo.Orders WITH (NOLOCK) where Id = @OrderID)
 	order by Seq
 
-	select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,2) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
+	select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,seq) Seq Into #SizeCodes from (
+		select distinct a.SizeCode,sm.SizeGroup,o.Seq  from Order_EachCons_SizeQty a
+		left join Order_EachCons b on a.Order_EachConsUkey = b.Ukey
+		left join SMNotice sm on b.SMNoticeID = sm.ID
+		outer apply (select seq from  Order_SizeCode os where os.SizeCode = a.SizeCode and os.SizeGroup = sm.SizeGroup and os.id = @OrderID) o
+		where a.id = @OrderID
+	) c
+
+	--select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,2) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
 
 	--SELECT SizeGroup FROM #SizeCodes group by SizeGroup
 
