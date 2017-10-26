@@ -1079,7 +1079,7 @@
     <None Include="XLT\Warehouse_R04.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Warehouse_R05.xltx">
+	<None Include="XLT\Warehouse_R05.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_R06.xltx">
