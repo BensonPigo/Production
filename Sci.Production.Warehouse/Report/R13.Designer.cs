@@ -35,9 +35,9 @@
             this.comboStockType = new System.Windows.Forms.ComboBox();
             this.labelReasonCode = new Sci.Win.UI.Label();
             this.txtReason = new Sci.Production.Class.txtReason();
-            this.labelAdjustDate = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -57,6 +57,20 @@
             // 
             // dateAdjustDate
             // 
+            // 
+            // 
+            // 
+            this.dateAdjustDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateAdjustDate.DateBox1.Name = "";
+            this.dateAdjustDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateAdjustDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateAdjustDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateAdjustDate.DateBox2.Name = "";
+            this.dateAdjustDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateAdjustDate.DateBox2.TabIndex = 1;
             this.dateAdjustDate.IsRequired = false;
             this.dateAdjustDate.Location = new System.Drawing.Point(115, 12);
             this.dateAdjustDate.Name = "dateAdjustDate";
@@ -65,7 +79,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -83,7 +96,6 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(13, 48);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(98, 23);
@@ -100,7 +112,6 @@
             // 
             // labelReasonCode
             // 
-            this.labelReasonCode.Lines = 0;
             this.labelReasonCode.Location = new System.Drawing.Point(12, 152);
             this.labelReasonCode.Name = "labelReasonCode";
             this.labelReasonCode.Size = new System.Drawing.Size(98, 23);
@@ -119,46 +130,41 @@
             this.txtReason.Size = new System.Drawing.Size(388, 24);
             this.txtReason.TabIndex = 3;
             // 
-            // labelAdjustDate
-            // 
-            this.labelAdjustDate.Lines = 0;
-            this.labelAdjustDate.Location = new System.Drawing.Point(14, 12);
-            this.labelAdjustDate.Name = "labelAdjustDate";
-            this.labelAdjustDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelAdjustDate.RectStyle.BorderWidth = 1F;
-            this.labelAdjustDate.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.labelAdjustDate.RectStyle.ExtBorderWidth = 1F;
-            this.labelAdjustDate.Size = new System.Drawing.Size(98, 23);
-            this.labelAdjustDate.TabIndex = 122;
-            this.labelAdjustDate.Text = "Adjust Date";
-            this.labelAdjustDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelAdjustDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 119);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 123;
-            this.txtfactory.IssupportJunk = true;
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 119);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 124;
             this.labelFactory.Text = "Factory";
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.SkyBlue;
+            this.label1.Location = new System.Drawing.Point(14, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(98, 23);
+            this.label1.TabIndex = 125;
+            this.label1.Text = "Adjust Date";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R13
             // 
             this.ClientSize = new System.Drawing.Size(639, 212);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.txtfactory);
-            this.Controls.Add(this.labelAdjustDate);
             this.Controls.Add(this.txtReason);
             this.Controls.Add(this.labelReasonCode);
             this.Controls.Add(this.comboStockType);
@@ -179,9 +185,9 @@
             this.Controls.SetChildIndex(this.comboStockType, 0);
             this.Controls.SetChildIndex(this.labelReasonCode, 0);
             this.Controls.SetChildIndex(this.txtReason, 0);
-            this.Controls.SetChildIndex(this.labelAdjustDate, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,8 +202,8 @@
         private System.Windows.Forms.ComboBox comboStockType;
         private Win.UI.Label labelReasonCode;
         private Class.txtReason txtReason;
-        private Win.UI.Label labelAdjustDate;
         private Class.txtfactory txtfactory;
         private Win.UI.Label labelFactory;
+        private Win.UI.Label label1;
     }
 }
