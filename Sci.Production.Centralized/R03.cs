@@ -152,9 +152,6 @@ and Factory.IsProduceFty = '1'
                     strSQL += string.Format(" AND Orders.FactoryID = '{0}' ", txtCentralizedFactory1.Text);
                 if (gstrCategory != "")
                 {
-                    if (gstrCategory == "BS")
-                        strSQL += " AND Orders.Category IN ( 'B', 'S') ";
-                    else
                         strSQL += string.Format(" AND Orders.Category in ({0})", gstrCategory);
                 }
                 if (chx == "Exclude")

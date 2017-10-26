@@ -30,6 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboLocal = new Sci.Win.UI.ComboBox();
+            this.label13 = new Sci.Win.UI.Label();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.label12 = new Sci.Win.UI.Label();
@@ -51,9 +54,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.comboLocal = new Sci.Win.UI.ComboBox();
-            this.label13 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,6 +101,37 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // comboLocal
+            // 
+            this.comboLocal.BackColor = System.Drawing.Color.White;
+            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLocal.FormattingEnabled = true;
+            this.comboLocal.IsSupportUnselect = true;
+            this.comboLocal.Location = new System.Drawing.Point(132, 253);
+            this.comboLocal.Name = "comboLocal";
+            this.comboLocal.Size = new System.Drawing.Size(80, 24);
+            this.comboLocal.TabIndex = 223;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(4, 254);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(127, 23);
+            this.label13.TabIndex = 224;
+            this.label13.Text = "Local Order";
+            // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 228);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 222;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
+            // 
             // txtstyle1
             // 
             this.txtstyle1.BackColor = System.Drawing.Color.White;
@@ -144,7 +175,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(420, 23);
             this.label11.TabIndex = 218;
-            this.label11.Text = "Local Order From sister/non sister and all suncon-out are excluded";
+            this.label11.Text = "All suncon-out are excluded";
             this.label11.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label11.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -326,37 +357,6 @@
             this.label10.Text = "Paper Size A4";
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label10.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // comboDropDownListCategory
-            // 
-            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
-            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownListCategory.FormattingEnabled = true;
-            this.comboDropDownListCategory.IsSupportUnselect = true;
-            this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 228);
-            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
-            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
-            this.comboDropDownListCategory.TabIndex = 222;
-            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
-            // 
-            // comboLocal
-            // 
-            this.comboLocal.BackColor = System.Drawing.Color.White;
-            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLocal.FormattingEnabled = true;
-            this.comboLocal.IsSupportUnselect = true;
-            this.comboLocal.Location = new System.Drawing.Point(132, 253);
-            this.comboLocal.Name = "comboLocal";
-            this.comboLocal.Size = new System.Drawing.Size(80, 24);
-            this.comboLocal.TabIndex = 223;
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(4, 254);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(127, 23);
-            this.label13.TabIndex = 224;
-            this.label13.Text = "Local Order";
             // 
             // R03
             // 
