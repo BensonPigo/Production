@@ -32,7 +32,6 @@
             this.labelM = new Sci.Win.UI.Label();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.labelReasonCode = new Sci.Win.UI.Label();
-            this.labelIssueDate = new Sci.Win.UI.Label();
             this.txtwhseReasonCode = new Sci.Production.Class.txtwhseReason();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
@@ -40,6 +39,7 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -59,6 +59,20 @@
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -67,7 +81,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -85,27 +98,11 @@
             // 
             // labelReasonCode
             // 
-            this.labelReasonCode.Lines = 0;
             this.labelReasonCode.Location = new System.Drawing.Point(14, 152);
             this.labelReasonCode.Name = "labelReasonCode";
             this.labelReasonCode.Size = new System.Drawing.Size(98, 23);
             this.labelReasonCode.TabIndex = 120;
             this.labelReasonCode.Text = "Reason Code";
-            // 
-            // labelIssueDate
-            // 
-            this.labelIssueDate.Lines = 0;
-            this.labelIssueDate.Location = new System.Drawing.Point(13, 12);
-            this.labelIssueDate.Name = "labelIssueDate";
-            this.labelIssueDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelIssueDate.RectStyle.BorderWidth = 1F;
-            this.labelIssueDate.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.labelIssueDate.RectStyle.ExtBorderWidth = 1F;
-            this.labelIssueDate.Size = new System.Drawing.Size(98, 23);
-            this.labelIssueDate.TabIndex = 123;
-            this.labelIssueDate.Text = "Issue Date";
-            this.labelIssueDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelIssueDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtwhseReasonCode
             // 
@@ -137,7 +134,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(246, 48);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -146,7 +142,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(14, 48);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
@@ -155,7 +150,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(14, 119);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -165,16 +159,28 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 119);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 131;
-            this.txtfactory.IssupportJunk = true;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.SkyBlue;
+            this.label1.Location = new System.Drawing.Point(14, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(98, 23);
+            this.label1.TabIndex = 132;
+            this.label1.Text = "Issue Date";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R15
             // 
             this.ClientSize = new System.Drawing.Size(654, 207);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelSPNo);
@@ -182,7 +188,6 @@
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.txtwhseReasonCode);
-            this.Controls.Add(this.labelIssueDate);
             this.Controls.Add(this.labelReasonCode);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.txtMdivision);
@@ -197,7 +202,6 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelReasonCode, 0);
-            this.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.Controls.SetChildIndex(this.txtwhseReasonCode, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
@@ -205,6 +209,7 @@
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -216,7 +221,6 @@
         private Class.txtMdivision txtMdivision;
         private Win.UI.Label labelM;
         private Win.UI.Label labelReasonCode;
-        private Win.UI.Label labelIssueDate;
         private Class.txtwhseReason txtwhseReasonCode;
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.TextBox txtSPNoStart;
@@ -224,5 +228,6 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelFactory;
         private Class.txtfactory txtfactory;
+        private Win.UI.Label label1;
     }
 }
