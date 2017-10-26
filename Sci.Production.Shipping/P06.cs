@@ -641,7 +641,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
             callNextForm.ShowDialog(this);
         }
 
-        string updatePackinglist = "";
+        string updatePackinglist;//用來先在ReviseData()準備更新Packinglist.pulloutid的SQL, 在save才執行
         //Revise from ship plan and FOC/LO packing list
         private bool ReviseData()
         {
@@ -655,7 +655,8 @@ and MDivisionID = '{1}'
 and Status = 'New' 
 and (Type = 'F' or Type = 'L')", Convert.ToDateTime(CurrentMaintain["PulloutDate"]).ToString("d"), Sci.Env.User.Keyword);
             DataTable PacklistData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out PacklistData);
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlCmd, out PacklistData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query packing list fail!\r\n" + result.ToString());
@@ -663,18 +664,7 @@ and (Type = 'F' or Type = 'L')", Convert.ToDateTime(CurrentMaintain["PulloutDate
             }
             if (PacklistData != null && PacklistData.Rows.Count > 0)
             {
-                msgString.Append("Packing List ID: " + string.Join(",", PacklistData.AsEnumerable().Select(row => row["ID"].ToString())));
-                //for (int i = 0; i < PacklistData.Rows.Count; i++)
-                //{
-                //    if (i == 0)
-                //    {
-                //        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
-                //    }
-                //    else
-                //    {
-                //        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(PacklistData.Rows[0]["ID"])));
-                //    }
-                //}                
+                msgString.Append("Packing List ID: " + string.Join(",", PacklistData.AsEnumerable().Select(row => row["ID"].ToString())));            
             }
 
             sqlCmd = string.Format(@"
@@ -694,24 +684,9 @@ and (s.Status != 'Confirmed' or p.Status = 'New')", Convert.ToDateTime(CurrentMa
             }
             if (ShipPlanData != null && ShipPlanData.Rows.Count > 0)
             {
-                if (msgString.Length > 0)
-                {
-                    msgString.Append("\r\n");
-                }
+                if (msgString.Length > 0) msgString.Append("\r\n");
                 msgString.Append("Ship Plan ID:" + string.Join(", ", ShipPlanData.AsEnumerable().Select(row => row["ShipPlanID"].ToString())));
-                //for (int i = 0; i < ShipPlanData.Rows.Count; i++)
-                //{
-                //    if (i == 0)
-                //    {
-                //        msgString.Append(string.Format("{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
-                //    }
-                //    else
-                //    {
-                //        msgString.Append(string.Format(",{0}", MyUtility.Convert.GetString(ShipPlanData.Rows[0]["ShipPlanID"])));
-                //    }
-                //}
             }
-
             if (msgString.Length > 0)
             {
                 MyUtility.Msg.WarningBox(string.Format("Below data not yet confirm!!\r\n{0}", msgString.ToString()));
@@ -864,9 +839,9 @@ from SummaryData
                     {
                         ddr.Delete();
                     }
-                    //
-                    updatePackinglist += string.Format(@"Update PackingList set pulloutID = '' where id='{0}'; ", dr["PackingListID"]);
-                    #region 判斷 Status
+                    //清空PackingList.pulloutID
+                    updatePackinglist += string.Format(@"Update PackingList set pulloutID = '' where id='{0}' and pulloutID = '{1}'; ", dr["PackingListID"],CurrentMaintain["id"].ToString());
+                    
                     #region 合併計算 ShipQty
                     int sumShipQty = 0;
                     if (AllPackData.AsEnumerable().Any(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")))
@@ -876,25 +851,25 @@ from SummaryData
                     string strAllShipQty = string.Format(@"
 select AllShipQty = (isnull ((select sum(ShipQty) 
                              from Pullout_Detail WITH (NOLOCK) 
-                             where ID <> '{0}'  
-                                   and OrderID = '{1}'), 0) 
-                     + isnull ((select sum(DiffQty) 
+                             where ID <> '{0}' and OrderID = '{1}'), 0) --此orderid,非此單的Pullout_Detail.ShipQty
+                          + isnull ((select sum(DiffQty) 
                                 from InvAdjust_Qty iq WITH (NOLOCK) 
                                 inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
-                                where i.OrderID = '{1}'), 0))", MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(CurrentMaintain["ID"])
-                                                              , dr["OrderID"]);
+                                where i.OrderID = '{1}'), 0))"
+, MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["OrderID"]);
                     int allShipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(strAllShipQty));
                     int totalShipQty = sumShipQty + allShipQty;
                     #endregion
-
+                    #region 判斷 Status
                     string newStatus = "";
                     if (dr["Status"].ToString().ToUpper() == "SHORTAGE" || dr["Status"].ToString().ToUpper() == "S")
                     {
                         newStatus = "S";
                     }
                     else
-                    {
-                        newStatus = totalShipQty == MyUtility.Convert.GetInt(dr["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(dr["OrderQty"]) ? "E" : "P";
+                    {                        
+                        int OrderQty = MyUtility.Convert.GetInt(dr["OrderQty"]);
+                        newStatus = totalShipQty == OrderQty ? "C" : totalShipQty > OrderQty ? "E" : "P";                        
                     }
                     #endregion
 
@@ -907,6 +882,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                 }
                 else
                 {
+                    #region 判斷此筆PackingListID→packinglist.pulloutid是否和此單一樣
                     string chkpulloutid = string.Format(@"select pulloutid from packinglist where id = '{0}'", dr["PackingListID"]);
                     string pulloutid = MyUtility.GetValue.Lookup(chkpulloutid);
                     if (pulloutid == ""|| pulloutid==CurrentMaintain["id"].ToString())
@@ -918,7 +894,6 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                         dr["PackingListID"] = "";
                         dr["INVNo"] = "";
                         dr["ShipQty"] = 0;
-
                         //刪除第3層資料
                         DataTable SubDetailData2;
                         GetSubDetailDatas(dr, out SubDetailData2);
@@ -932,11 +907,12 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                             ddr.Delete();
                         }
                     }
-                    
+                    #endregion
                     #region 合併計算 ShipQty
                     int sumShipQty = MyUtility.Convert.GetInt(AllPackData.AsEnumerable().Where(row => row["OrderID"].EqualString(dr["OrderID"]) && row["DataType"].EqualString("S")).CopyToDataTable().Compute("sum(ShipQty)", null));
-                    #endregion
                     int totalShipQty = sumShipQty + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);
+                    #endregion
+                    #region 判斷 Status
                     string newStatus = "";
                     if (dr["Status"].ToString().ToUpper() == "SHORTAGE"|| dr["Status"].ToString().ToUpper() == "S")
                     {
@@ -944,8 +920,10 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                     }
                     else
                     {
-                        newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
+                        int OrderQty = MyUtility.Convert.GetInt(packData[0]["OrderQty"]);
+                        newStatus = totalShipQty == OrderQty ? "C" : totalShipQty > OrderQty ? "E" : "P";
                     }
+                    #endregion
                     //shipQty,OrderQty,InvNo 修改過才會更換資料
                     if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
                     {
@@ -953,17 +931,15 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                         dr["OrderQty"] = packData[0]["OrderQty"];
                         dr["ShipModeSeqQty"] = packData[0]["OrderShipmodeSeq"];
                         dr["Status"] = newStatus;
+                        dr["StatusExp"] = GetStatusName(newStatus);
                         dr["INVNo"] = packData[0]["INVNo"];
                         dr["ShipmodeID"] = packData[0]["ShipmodeID"];
                         dr["ReviseDate"] = DateTime.Now;
-                        dr["StatusExp"] = GetStatusName(newStatus);
                         dr["Variance"] = MyUtility.Convert.GetInt(packData[0]["OrderQty"]) - totalShipQty;
                     }
                     //不管資料有無修改,都會重新更新status資料
-                    if (MyUtility.Convert.GetString(dr["Status"])== newStatus)
-                    {
-                        dr["Status"] = newStatus;
-                    }
+                    dr["Status"] = newStatus;
+                    dr["StatusExp"] = GetStatusName(newStatus);
 
 
                     //取出第3層資料，比對是否有異動
@@ -1110,11 +1086,9 @@ select AllShipQty = (isnull ((select sum(ShipQty)
             }
             #endregion
 
-            detailgridbs.ResumeBinding();
+            detailgridbs.ResumeBinding();//detailgridbs.SuspendBinding();之後要做
             this.detailgrid.ValidateControl();
-            this.status_Change();
-
-
+            //this.status_Change();
             return true;
         }
         //Revise from ship plan and FOC/LO packing list
