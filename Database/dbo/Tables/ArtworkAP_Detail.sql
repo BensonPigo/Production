@@ -74,3 +74,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'累計結�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ArtworkAP_Detail', @level2type = N'COLUMN', @level2name = N'ArtworkPo_DetailUkey';
 
+GO
+CREATE NONCLUSTERED INDEX index_OrderID ON dbo.ArtworkAP_Detail(OrderID ASC) include([ID],[Price],[ApQty])
+

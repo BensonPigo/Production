@@ -246,7 +246,7 @@ namespace Sci.Production.Subcon
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,dbo.getTPEPass1(aa.SMR) smr
-                ,xx.Stitch
+                ,xx.PCS
                 ,y.order_qty
                 ,x.ap_qty
                 ,round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) amount
@@ -300,11 +300,11 @@ namespace Sci.Production.Subcon
                             ) tt
 		                ) z
                 outer apply(
-                     select top 1 OART.qty as Stitch
+                     select count(1) as PCS
                             from orders O WITH (NOLOCK) 
                             left join Order_article OA on OA.id=O.ID
                             left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
-                            WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
+                            WHERE O.ID =aa.POID and artworktypeid ='EMBROIDERY'
                         ) xx
                 where ap_qty > 0
                 ", ratetype,ordertype));
@@ -325,7 +325,7 @@ namespace Sci.Production.Subcon
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,dbo.getTPEPass1(aa.SMR) smr
-                ,xx.Stitch
+                ,iif(#cte.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) as PCS
                 ,y.order_qty
                 ,x.ap_qty
                 ,round(x.ap_amt,2) ap_amt
@@ -358,12 +358,19 @@ namespace Sci.Production.Subcon
 	                where poid= aa.POID and ArtworkTypeID= #cte.artworktypeid
 	                group by orders.poid,ArtworkTypeID) y
                 outer apply(
-                     select top 1 OART.qty as Stitch
+                     select count(1) as PCS
                             from orders O WITH (NOLOCK) 
                             left join Order_article OA on OA.id=O.ID
                             left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
-                            WHERE O.ID = aa.POID and  artworktypeid in ('EMBROIDERY','PRINTING')
+                            WHERE O.ID =aa.POID and artworktypeid = 'EMBROIDERY'
                         ) xx
+                outer apply(
+                     select sum(OART.qty) as PCS
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
+                            WHERE O.ID =aa.POID and artworktypeid = 'PRINTING'
+                        ) yy
                 where ap_qty > 0
                 ", ratetype,ordertype));
             }
