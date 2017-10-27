@@ -11,6 +11,9 @@ BEGIN
 	DECLARE @StockSP VARCHAR(25)	-- 暫存po_supp_detail.stockpoid
 	DECLARE @scirefno varchar(35)	-- 暫存po_supp_detail.scirefno
 	DECLARE @refno varchar(35)		-- 暫存po_supp_detail.refno
+	Declare @Spec VarChar(max);
+	Declare @BomZipperInsert VarChar(5);
+	Declare @ZipperName NVarChar(500);
 
     SET @string = ''
 	SET @po_desc=''
@@ -26,9 +29,16 @@ BEGIN
 		, @po_desc=@po_desc + iif(ISNULL(p.Special,'') = '', '', p.Special + CHAR(10))
 		, @po_desc=@po_desc + iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(10))
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
+		, @Spec = stockPO3.Spec
+		, @BomZipperInsert= stockPO3.BomZipperInsert 
 		from dbo.po_supp_detail p WITH (NOLOCK)
 		left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
 		left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and p.ColorID = c.ID 
+		 outer apply ( select Spec, BomZipperInsert from PO_Supp_Detail tmpPO3
+        where tmpPO3.ID = IIF(IsNull(p.StockPOID, '') = '' , p.ID, p.StockPOID)
+			and tmpPO3.Seq1 = IIF(IsNull(p.StockPOID, '') = '' , p.Seq1, p.StockSeq1)
+			and tmpPO3.Seq2 = IIF(IsNull(p.StockPOID, '') = '' , p.Seq2, p.StockSeq2)
+			) stockPO3
 		WHERE p.ID=@poid and seq1 = @seq1 and seq2=@seq2;
 
 	IF  @type = 1
@@ -73,6 +83,18 @@ BEGIN
 							, CHAR(13) , CHAR(10)
 							, isnull(@string, ''));
 	END 
+
+	------------------------
+	--增加Zipper 
+	Set @ZipperName = '';
+	Select @ZipperName = DropDownList.Name
+	  From Production.dbo.DropDownList
+	 Where Type = 'Zipper'
+	   And ID = @BomZipperInsert;
+
+	Set @string += IIF(IsNull(@string,'') = '', '', char(13)+char(10)  + IIF(IsNull(@ZipperName, '') = '', '', 'Spec:'+ @ZipperName + Char(13) + Char(10))+ RTrim(@Spec));
+	----------------------------
+
 
 
 	-- @fabric_detaildesc 去除結尾過多的 Enter
