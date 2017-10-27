@@ -113,10 +113,11 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode 
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty  
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
+      inner join orders o WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '{0}'
 ),
@@ -156,10 +157,11 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.OriQty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode 
+             , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
+      inner join orders o WITH (NOLOCK) on o.ID = oq.ID 
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '{0}'
 ),
@@ -195,8 +197,8 @@ order by RowNo", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivo
 with tmpData as (
       select o.ID
              , oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
@@ -233,12 +235,12 @@ order by rnk", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToS
 with tmpData as (
       select o.ID
              , oq.Article
-             , oq.SizeCode
-             , oq.OriQty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-      where o.POID = '{0}'
+      where o.POID = '{0}' 
 ),
 SubTotal as (
       select '' as ID
@@ -280,13 +282,13 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
-      where o.POID = '{0}'
+      where o.POID = '{0}' 
 ),
 SubTotal as (
       select 'TTL' as Article,SizeCode,SUM(Qty) as Qty
@@ -324,13 +326,13 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.OriQty
+             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID      
       inner join SortBy sb on oq.Article = sb.Article
-      where o.POID = '{0}'
+      where o.POID = '{0}' 
 ),
 SubTotal as (
       select 'TTL' as Article
@@ -373,15 +375,15 @@ with SortBy as (
 tmpData as (
       select oq.BuyerDelivery
              , oqd.Article
-             , oqd.SizeCode
-             , oqd.Qty
+             , iif(o.junk = 1 , '' ,oqd.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oqd.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
       inner join SortBy sb on oqd.Article = sb.Article
-      where o.POID = '{0}'
+      where o.POID = '{0}' 
 ),
 SubTotal as (
       select null as BuyerDelivery
@@ -424,15 +426,15 @@ with SortBy as (
 tmpData as (
       select oq.BuyerDelivery
              , oqd.Article
-             , oqd.SizeCode
-             , oqd.OriQty
+             , iif(o.junk = 1 , '' ,oqd.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oqd.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
       inner join SortBy sb on oqd.Article = sb.Article
-      where o.POID = '{0}'
+      where o.POID = '{0}'  
 ),
 SubTotal as (
       select null as BuyerDelivery
@@ -543,10 +545,11 @@ SET @sql = N'
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
+      inner join orders o WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '''+@ID+'''
 ),
@@ -603,14 +606,14 @@ SET @sql = N'
 tmpData as (
       select o.ID
              , oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
-      where o.POID = '''+@ID+'''
+      where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
       select '''' as ID
@@ -665,13 +668,13 @@ SET @sql = N'
 ),
 tmpData as (
       select oq.Article
-             , oq.SizeCode
-             , oq.Qty
+             , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
-      where o.POID = '''+@ID+'''
+      where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
     select ''TTL'' as Article
@@ -729,8 +732,8 @@ SET @sql = N'
 tmpData as (
     select oq.BuyerDelivery
            , oqd.Article
-           , oqd.SizeCode
-           , oqd.Qty
+           , iif(o.junk = 1 , '''' ,oqd.SizeCode) as SizeCode
+           , iif(o.junk = 1 , 0 ,oqd.Qty) as Qty
            , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
            , sb.RowNo
     from Orders o WITH (NOLOCK) 
@@ -738,7 +741,7 @@ tmpData as (
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
                                                          and oq.Seq = oqd.Seq
     inner join SortBy sb on oqd.Article = sb.Article
-    where o.POID = '''+@ID+'''
+    where o.POID = '''+@ID+''' 
 ),
 SubTotal as (
     select null as BuyerDelivery
@@ -798,12 +801,14 @@ SET @sql = N'
 ), 
 tmpData as (
     select oq.Article
-           , oq.SizeCode
-           , oq.OriQty
+           , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+           , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
            , sb.RowNo
     from Order_Qty oq WITH (NOLOCK) 
+    inner join orders o WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
     where oq.ID = '''+@ID+'''
+
 ),
 SubTotal as (
     select ''TTL'' as Article
@@ -856,14 +861,14 @@ SET @sql = N'
 tmpData as (
     select o.ID
            , oq.Article
-           , oq.SizeCode
-           , oq.OriQty
+           , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+           , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
            , sb.RowNo
     from Orders o WITH (NOLOCK) 
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
-    where o.POID = '''+@ID+'''
+    where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
     select '''' as ID
@@ -918,13 +923,13 @@ SET @sql = N'
 ),
 tmpData as (
     select oq.Article
-           , oq.SizeCode
-           , oq.OriQty
+           , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
+           , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
            , sb.RowNo
     from Orders o WITH (NOLOCK) 
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
-    where o.POID = '''+@ID+'''
+    where o.POID = '''+@ID+'''   
 ),
 SubTotal as (
     select ''TTL'' as Article
@@ -980,8 +985,8 @@ SET @sql = N'
 tmpData as (
     select oq.BuyerDelivery
            , oqd.Article
-           , oqd.SizeCode
-           , oqd.OriQty
+           , iif(o.junk = 1 , '''' ,oqd.SizeCode) as SizeCode
+           , iif(o.junk = 1 , 0 ,oqd.OriQty) as OriQty
            , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
            , sb.RowNo
     from Orders o WITH (NOLOCK) 
@@ -989,7 +994,7 @@ tmpData as (
     inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID 
                                                          and oq.Seq = oqd.Seq
     inner join SortBy sb on oqd.Article = sb.Article
-    where o.POID = '''+@ID+'''
+    where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
     select null as BuyerDelivery
