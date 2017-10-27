@@ -264,7 +264,7 @@ select distinct t.FactoryID
     ,y.order_qty
     ,x.ap_qty
     ,x.ap_amt
-    ,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
+    ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
     --,y.order_amt
     --,y.order_qty
     ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
@@ -284,7 +284,7 @@ from (
 			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt
 			--,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
 	from localap ap WITH (NOLOCK) inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-	where ap.Category = t.artworktypeid and apd.OrderId = t.POID AND AP.Status = 'Approved') t
+    where ap.Category = t.artworktypeid and apd.OrderId = t.POID AND AP.Status = 'Approved'  and t.FactoryID = ap.FactoryId) t
 ) x		
 outer apply(
 	select --orders.POID
