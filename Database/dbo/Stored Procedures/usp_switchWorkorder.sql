@@ -16,7 +16,7 @@ CREATE PROCEDURE [dbo].[usp_switchWorkorder]
 	)
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
+		-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
@@ -270,76 +270,102 @@ BEGIN
 				--新法-------------------------------------------------------------
 				--先組依Article和Maxlayer的分配表#dis_tmpAL
 				Begin
-					;with A as(
-						select distinct Order_EachCons_ColorUkey, Article,Layer
-						from Order_EachCons_Color_Article 
-						where id = @Cuttingid and ColorID = @Colorid and Order_EachCons_ColorUkey = @Order_EachCons_ColorUkey
-					)
-					select  Article,sum(Layer) Layer,IDENTITY(int,1,1) as Rowid,modlayer =sum(Layer)
-					into #tmpAL 
-					from A group by Article
+					--舊寫法
+					--;with A as(
+					--	select distinct Order_EachCons_ColorUkey, Article,Layer
+					--	from Order_EachCons_Color_Article 
+					--	where id = @Cuttingid and ColorID = @Colorid and Order_EachCons_ColorUkey = @Order_EachCons_ColorUkey
+					--)
+					--select  Article,sum(Layer) Layer,IDENTITY(int,1,1) as Rowid,modlayer =sum(Layer)
+					--into #tmpAL 
+					--from A group by Article
 
-					declare @rowid int, @maxrowid int
-					select @rowid=min(Rowid),@maxrowid=MAX(Rowid) 
-					from #tmpAL
+					--declare @rowid int, @maxrowid int
+					--select @rowid=min(Rowid),@maxrowid=MAX(Rowid) 
+					--from #tmpAL
 				
+					--create table #dis_tmpAL (Article varchar(8),Layer int,byWorkorder int)
+					----Declare @maxLayer int
+					----Declare @modlayer int
+					----Declare @Article varchar(8)
+					--Declare @byWorkorder int
+					--Declare @dislayer int
+					--Declare @thisLayer int
+					--set @byWorkorder = 1
+					--set @dislayer = 0
+
+					--while(@rowid <= @maxrowid)--Article
+					--Begin
+					--	select @modlayer = modlayer,@Article = article 
+					--	from #tmpAL where rowid = @rowid
+					--	while(@modlayer>0)
+					--	Begin
+					--		if(@modlayer > @maxLayer and @dislayer = 0)
+					--		Begin				
+					--			insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+					--			values(@Article,@maxLayer,@byWorkorder)
+					--			set @byWorkorder +=1
+					--			set @modlayer = @modlayer - @maxLayer
+					--			update #tmpAL set modlayer = @modlayer where rowid = @rowid			
+					--		END
+					--		Else
+					--		begin
+					--			set @thisLayer = 0
+					--			if(@dislayer > 0)
+					--			Begin
+					--				set @thisLayer = @maxlayer - @dislayer
+					--				if(@modlayer <= @thisLayer)
+					--				Begin
+					--					set @thisLayer = @modlayer
+					--				END
+					--			End
+					--			Else
+					--			Begin
+					--				set @thisLayer = @modlayer
+					--			End
+
+					--			insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+					--			values(@Article,@thisLayer,@byWorkorder)
+					--			set @dislayer += @thisLayer
+
+					--			if(@dislayer = @maxLayer)
+					--			begin
+					--				set @dislayer = 0
+					--				set @byWorkorder +=1
+					--			end
+
+					--			set @modlayer -= @thisLayer
+					--			update #tmpAL set modlayer = @modlayer where rowid = @rowid	
+					--		END
+					--	END
+					--	set @rowid += 1
+					--END
+					--drop table #tmpAL
+				
+
+					--新寫法 不依article拆layer
 					create table #dis_tmpAL (Article varchar(8),Layer int,byWorkorder int)
-					--Declare @maxLayer int
-					--Declare @modlayer int
-					--Declare @Article varchar(8)
-					Declare @byWorkorder int
-					Declare @dislayer int
-					Declare @thisLayer int
-					set @byWorkorder = 1
-					set @dislayer = 0
+					declare @t_layer int = 0
+					Declare @byWorkorder int = 1
+					--依max layer,total 計算要cut幾次
+					while @t_layer <	@TotalLayer
+					begin
+						set @t_layer	=	@t_layer + @maxLayer
+						--最後需cut零頭層數
+						if @t_layer > @TotalLayer
+						begin
+							insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+											values('*',@TotalLayer % @maxLayer,@byWorkorder)
+						end
+						else
+						begin
 
-					while(@rowid <= @maxrowid)--Article
-					Begin
-						select @modlayer = modlayer,@Article = article 
-						from #tmpAL where rowid = @rowid
-						while(@modlayer>0)
-						Begin
-							if(@modlayer > @maxLayer and @dislayer = 0)
-							Begin				
-								insert into #dis_tmpAL(Article,Layer,byWorkorder) 
-								values(@Article,@maxLayer,@byWorkorder)
-								set @byWorkorder +=1
-								set @modlayer = @modlayer - @maxLayer
-								update #tmpAL set modlayer = @modlayer where rowid = @rowid			
-							END
-							Else
-							begin
-								set @thisLayer = 0
-								if(@dislayer > 0)
-								Begin
-									set @thisLayer = @maxlayer - @dislayer
-									if(@modlayer <= @thisLayer)
-									Begin
-										set @thisLayer = @modlayer
-									END
-								End
-								Else
-								Begin
-									set @thisLayer = @modlayer
-								End
-
-								insert into #dis_tmpAL(Article,Layer,byWorkorder) 
-								values(@Article,@thisLayer,@byWorkorder)
-								set @dislayer += @thisLayer
-
-								if(@dislayer = @maxLayer)
-								begin
-									set @dislayer = 0
-									set @byWorkorder +=1
-								end
-
-								set @modlayer -= @thisLayer
-								update #tmpAL set modlayer = @modlayer where rowid = @rowid	
-							END
-						END
-						set @rowid += 1
-					END
-					drop table #tmpAL
+							insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+											values('*',@maxLayer,@byWorkorder)
+						end
+						set @byWorkorder = @byWorkorder +1
+					end
+					
 				End--End--組依Article和Maxlayer的分配表#dis_tmpAL
 				Begin
 					select *,IDENTITY(int,1,1) as Rowid 
@@ -357,7 +383,7 @@ BEGIN
 
 					while(@nowRowid<=@Rowcount)
 					Begin
-						select @newWorkerordernum = byWorkorder,@Article = Article,@Layer = Layer
+						select @newWorkerordernum = byWorkorder,@Layer = Layer
 						from #dis_tmpAL_rowid where Rowid = @nowRowid
 
 						--準備Cons
@@ -403,8 +429,8 @@ BEGIN
 							select id,disqty,Article,orderqty,IDENTITY(int,1,1) as Rowid,Convert(Bigint,identRowid) as identRowid
 							into #disorder_modlayer 
 							from #disQty 
-							Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and Article = @Article
-
+							Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo--因為不同article要一起計算，所以這邊拿掉 and Article = @Article
+							order by Article
 							set @disQtyRowID = 1
 							Select @disQtyRowID = Min(RowID), @disQtyRowCount = Max(RowID) 
 							from #disorder_modlayer
@@ -413,7 +439,8 @@ BEGIN
 								Select @distributeQty = disQty,
 									   @OrderQty = orderqty,
 									   @WorkOrder_DisOrderID = ID,
-									   @WorkOrder_DisidenRow = identRowid
+									   @WorkOrder_DisidenRow = identRowid,
+									   @Article = Article
 								from #disorder_modlayer 
 								Where Rowid = @disQtyRowID
 
@@ -647,7 +674,7 @@ BEGIN
 									Set @distOrderRowid_again += 1
 								End
 								Drop table #distOrder_again
-								if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
+								if(@CutQty>0 ) ---若全分配完還有剩就要給EXCESS
 								Begin
 									insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 									Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey,0)		
@@ -796,7 +823,7 @@ BEGIN
 								Drop table #distOrder_againmod
 								SET @sizeQtyRowid_again += 1
 							
-								if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
+								if(@CutQty>0 ) ---若全分配完還有剩就要給EXCESS
 								Begin
 									insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 									Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey,0)		
