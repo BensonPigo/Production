@@ -260,9 +260,9 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             }
 
             //Air Qty要等於Order Qty
-            if (MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]) != MyUtility.Convert.GetInt(numOrderQty.Value))
+            if (MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]) > MyUtility.Convert.GetInt(numOrderQty.Value))
             {
-                MyUtility.Msg.WarningBox("Air Q'ty not equal to Order Q'ty!!");
+                MyUtility.Msg.WarningBox("Air Q'ty<"+ CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty Order Q'ty<"+ numOrderQty.Value + ">!!");
                 return false;
             }
             #endregion
