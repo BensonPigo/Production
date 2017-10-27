@@ -92,7 +92,7 @@ BEGIN
 	 Where Type = 'Zipper'
 	   And ID = @BomZipperInsert;
 	
-	Set @string += IIF(IsNull(@string,'') = '', '', char(13)+char(10) + 'Spec:' + IIF(IsNull(@ZipperName, '') = '', '', @ZipperName + Char(13) + Char(10))+ RTrim(@Spec));
+	Set @string += IIF(IsNull(@string,'') = '', '', char(13)+char(10)  + IIF(IsNull(@ZipperName, '') = '', '', 'Spec:'+ @ZipperName + Char(13) + Char(10))+ RTrim(@Spec));
 	----------------------------
 
 
