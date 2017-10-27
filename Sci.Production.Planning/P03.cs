@@ -466,8 +466,7 @@ inner join factory WITH (NOLOCK) on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category != 'M'  and factory.IsProduceFty = 1
         and b.ArtworkTypeID = 'LASER'
-        and b.tms > 0  
-        and a.IsForecast=0 "
+        and b.tms > 0   "
                 , numWorkHours.Text, numEfficiency.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))

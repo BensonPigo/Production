@@ -462,8 +462,7 @@ inner join SewingSchedule c on a.id = c.OrderID
 inner join dbo.factory on factory.id = a.factoryid
 where   a.Finished = 0 
         and a.Category != 'M'  and factory.IsProduceFty = 1
-        and b.tms > 0  
-        and a.IsForecast=0 " + orderby, numWorkHours.Text, numEfficiency.Text);
+        and b.tms > 0   " + orderby, numWorkHours.Text, numEfficiency.Text);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}

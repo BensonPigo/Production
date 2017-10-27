@@ -420,8 +420,7 @@ outer apply(
 ) SuppAbb
 where	a.Finished = 0 
 		and a.Category !='M'  and factory.IsProduceFty = 1
-		and b.ArtworkTypeID = 'PRINTING' 
-        and a.IsForecast=0 " + orderby);
+		and b.ArtworkTypeID = 'PRINTING'  " + orderby);
 
             if (!(MyUtility.Check.Empty(styleid)))
             { sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid); }
