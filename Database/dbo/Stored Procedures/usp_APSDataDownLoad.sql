@@ -178,6 +178,23 @@ BEGIN
 
 	drop table #tmpHoliday;
 	END
+		
+	--把holiday, 在workHour上標記為1, 或取消為0
+	BEGIN
+	declare @enddate datetime = DATEADD(day,160, GETDATE())
+	update w set
+		w.holiday = 1
+	FROM Holiday h,WorkHour w
+	where h.HolidayDate = w.Date
+	and h.HolidayDate >= @enddate
+	and w.holiday = 0
+	update w set
+		w.holiday = 0
+	FROM WorkHour w
+	where w.Date not in (select HolidayDate from Holiday h where h.HolidayDate >= @enddate)
+	and w.date >= @enddate
+	and w.holiday = 1
+	END
 
 	--WorkHour
 	--因為APS系統有3個WorkHour的資料來源，特殊時間(SPECIALCALENDAR)->生產線日曆(WORKCALENDARAPPLY, TARGETTYPE = 1)->工廠日曆(WORKCALENDARAPPLY, TARGETTYPE = 0)，回寫至PMS順序為工廠日曆->生產線日曆->特殊時間
