@@ -91,7 +91,7 @@ BEGIN
 	  From Production.dbo.DropDownList
 	 Where Type = 'Zipper'
 	   And ID = @BomZipperInsert;
-	
+
 	Set @string += IIF(IsNull(@string,'') = '', '', char(13)+char(10)  + IIF(IsNull(@ZipperName, '') = '', '', 'Spec:'+ @ZipperName + Char(13) + Char(10))+ RTrim(@Spec));
 	----------------------------
 
