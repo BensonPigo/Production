@@ -265,10 +265,8 @@ select distinct t.FactoryID
     ,x.ap_qty
     ,x.ap_amt
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
-    --,y.order_amt
-    --,y.order_qty
     ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-    ,round(x.ap_amt / iif(x.ap_qty=0,1,x.ap_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
+    ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
 into #tmp2
 from #tmp t
 left join orders aa WITH (NOLOCK) on aa.poid = t.poid
