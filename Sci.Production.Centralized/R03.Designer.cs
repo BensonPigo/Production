@@ -30,7 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.comboDropDownList = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboLocal = new Sci.Win.UI.ComboBox();
+            this.label13 = new Sci.Win.UI.Label();
+            this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.label12 = new Sci.Win.UI.Label();
@@ -69,7 +71,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.comboDropDownList);
+            this.groupBox1.Controls.Add(this.comboLocal);
+            this.groupBox1.Controls.Add(this.label13);
+            this.groupBox1.Controls.Add(this.comboDropDownListCategory);
             this.groupBox1.Controls.Add(this.txtstyle1);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.txtCentralizedFactory1);
@@ -92,22 +96,41 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(4, -5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(419, 286);
+            this.groupBox1.Size = new System.Drawing.Size(419, 297);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // comboDropDownList
+            // comboLocal
             // 
-            this.comboDropDownList.BackColor = System.Drawing.Color.White;
-            this.comboDropDownList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownList.FormattingEnabled = true;
-            this.comboDropDownList.IsSupportUnselect = true;
-            this.comboDropDownList.Location = new System.Drawing.Point(132, 229);
-            this.comboDropDownList.Name = "comboDropDownList";
-            this.comboDropDownList.Size = new System.Drawing.Size(160, 24);
-            this.comboDropDownList.TabIndex = 222;
-            this.comboDropDownList.Type = "Pms_GMT_Simple";
+            this.comboLocal.BackColor = System.Drawing.Color.White;
+            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLocal.FormattingEnabled = true;
+            this.comboLocal.IsSupportUnselect = true;
+            this.comboLocal.Location = new System.Drawing.Point(132, 253);
+            this.comboLocal.Name = "comboLocal";
+            this.comboLocal.Size = new System.Drawing.Size(80, 24);
+            this.comboLocal.TabIndex = 223;
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(4, 254);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(127, 23);
+            this.label13.TabIndex = 224;
+            this.label13.Text = "Local Order";
+            // 
+            // comboDropDownListCategory
+            // 
+            this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
+            this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownListCategory.FormattingEnabled = true;
+            this.comboDropDownListCategory.IsSupportUnselect = true;
+            this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 228);
+            this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
+            this.comboDropDownListCategory.TabIndex = 222;
+            this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
             // 
             // txtstyle1
             // 
@@ -148,11 +171,11 @@
             // label11
             // 
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(4, 256);
+            this.label11.Location = new System.Drawing.Point(4, 277);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(420, 23);
             this.label11.TabIndex = 218;
-            this.label11.Text = "Local Order From sister/non sister and all suncon-out are excluded";
+            this.label11.Text = "All suncon-out are excluded";
             this.label11.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label11.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -190,6 +213,20 @@
             // 
             // dateRange3
             // 
+            // 
+            // 
+            // 
+            this.dateRange3.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRange3.DateBox1.Name = "";
+            this.dateRange3.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRange3.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRange3.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRange3.DateBox2.Name = "";
+            this.dateRange3.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRange3.DateBox2.TabIndex = 1;
             this.dateRange3.Location = new System.Drawing.Point(132, 61);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
@@ -197,6 +234,20 @@
             // 
             // dateRange2
             // 
+            // 
+            // 
+            // 
+            this.dateRange2.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRange2.DateBox1.Name = "";
+            this.dateRange2.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRange2.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRange2.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRange2.DateBox2.Name = "";
+            this.dateRange2.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRange2.DateBox2.TabIndex = 1;
             this.dateRange2.Location = new System.Drawing.Point(132, 37);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
@@ -204,6 +255,20 @@
             // 
             // dateRange1
             // 
+            // 
+            // 
+            // 
+            this.dateRange1.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRange1.DateBox1.Name = "";
+            this.dateRange1.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRange1.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRange1.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRange1.DateBox2.Name = "";
+            this.dateRange1.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRange1.DateBox2.TabIndex = 1;
             this.dateRange1.Location = new System.Drawing.Point(132, 13);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
@@ -295,7 +360,7 @@
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 306);
+            this.ClientSize = new System.Drawing.Size(520, 318);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
@@ -338,6 +403,8 @@
         private Class.txtCentralizedFactory txtCentralizedFactory1;
         private Class.txtstyle txtstyle1;
         private Win.UI.Label label12;
-        private Class.comboDropDownList comboDropDownList;
+        private Class.comboDropDownList comboDropDownListCategory;
+        private Win.UI.ComboBox comboLocal;
+        private Win.UI.Label label13;
     }
 }
