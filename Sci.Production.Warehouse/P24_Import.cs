@@ -60,7 +60,7 @@ select 	selected = 0
 		, fromStocktype = c.StockType 
 		, balance = c.inqty-c.outqty + c.adjustqty 
 		, qty = 0.00 
-		, a.FabricType
+		, FabricType  = Case a.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
 		, a.stockunit
 		, a.InputQty
 		, topoid = a.id 

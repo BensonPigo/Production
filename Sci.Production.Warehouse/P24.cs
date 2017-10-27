@@ -110,7 +110,7 @@ namespace Sci.Production.Warehouse
                         , row["frompoid"], row["fromseq1"], row["fromseq2"], row["fromroll"], row["fromdyelot"]) + Environment.NewLine);
                 }
 
-                if (row["fabrictype"].ToString().ToUpper() != "F")
+                if (row["fabrictype"].ToString().ToUpper() !=  "F" && row["fabrictype"].ToString().ToUpper() != "FABRIC" )
                 {
                     row["toroll"] = "";
                     row["todyelot"] = "";
