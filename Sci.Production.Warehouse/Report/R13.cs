@@ -79,7 +79,8 @@ SELECT  a.MDivisionID
         , [description] = dbo.getMtlDesc(b.poid,b.seq1,b.seq2,2,0)
         , stock = iif(b.StockType='B', 'Bulk'
                                      , iif(b.stocktype ='I','Inventory'
-                                                           ,b.stocktype)) 
+                                                           , iif(b.stocktype ='O','Scrap'
+                                                           , b.stocktype)))
         , b.QtyBefore
         , b.QtyAfter
         , reasonNm = b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) 
