@@ -505,8 +505,6 @@ where   stocktype='{0}'
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = master["id"];
-                        dr2.AcceptChanges();
-                        dr2.SetAdded();
                         detailData.ImportRow(dr2);
                     }
                 }
@@ -519,7 +517,6 @@ where   stocktype='{0}'
 
 
             MyUtility.Msg.InfoBox("Write in completed!!");
-            detailData.AcceptChanges();
             DialogResult = System.Windows.Forms.DialogResult.OK;
 
         }
