@@ -33,6 +33,7 @@
     [NoDeclare]      BIT             CONSTRAINT [DF_LocalItem_NoDeclare] DEFAULT ((0)) NULL,
     [NLCodeEditName] VARCHAR (10)    CONSTRAINT [DF_LocalItem_NLCodeEditName] DEFAULT ('') NULL,
     [NLCodeEditDate] DATETIME        NULL,
+    [ArtTkt ] VARCHAR(20) NULL DEFAULT (''), 
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 

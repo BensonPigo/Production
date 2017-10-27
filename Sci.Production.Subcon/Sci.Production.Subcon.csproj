@@ -140,6 +140,12 @@
     <Compile Include="B01_History.Designer.cs">
       <DependentUpon>B01_History.cs</DependentUpon>
     </Compile>
+    <Compile Include="P30_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P30_Print.Designer.cs">
+      <DependentUpon>P30_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="B01_Quotation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -529,6 +535,9 @@
     <EmbeddedResource Include="B01_History.resx">
       <DependentUpon>B01_History.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P30_Print.resx">
+      <DependentUpon>P30_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B01_Quotation.resx">
       <DependentUpon>B01_Quotation.cs</DependentUpon>
