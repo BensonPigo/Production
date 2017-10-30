@@ -1205,6 +1205,11 @@
             要使用的連線名稱，預設為空字串
             </summary>
         </member>
+        <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.AliasName">
+            <summary>
+            指定本次載回的資料表，TableName的值，預設會透過GetSchema去抓sql取回的主資料表名稱，但有可能需要抓同一個表兩次，所以提供此屬性，讓呼叫端可以調整要使用的名稱
+            </summary>
+        </member>
         <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.Sql">
             <summary>
             要執行的TSQL

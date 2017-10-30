@@ -237,6 +237,7 @@ from(
         ,a.Qty [Qty]
         ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
         ,c.FactoryID  [left]
+        ,e.MarkerNo
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -281,6 +282,7 @@ from(
         ,a.Qty [Qty]
         ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
         ,c.FactoryID  [left]
+        ,e.MarkerNo
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -346,6 +348,7 @@ from(
         ,a.Qty [Qty]
         ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
         ,c.FactoryID  [left]
+        ,e.MarkerNo
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -390,6 +393,7 @@ from(
         ,a.Qty [Qty]
         ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
         ,c.FactoryID  [left]
+        ,e.MarkerNo
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -501,6 +505,7 @@ outer apply
                 Cell = row1["Cell"].ToString(),
                 SP = row1["SP"].ToString(),
                 Style = row1["Style"].ToString(),
+                MarkerNo = row1["MarkerNo"].ToString(),
                 Item = row1["Item"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
                 Parts = row1["Parts"].ToString(),
@@ -524,6 +529,7 @@ outer apply
                Cell2 = row1["Cell"].ToString(),
                SP2 = row1["SP"].ToString(),
                Style2 = row1["Style"].ToString(),
+               MarkerNo2 = row1["MarkerNo"].ToString(),
                Item2 = row1["Item"].ToString(),
                Body_Cut2 = row1["Body_Cut"].ToString(),
                Parts2 = row1["Parts"].ToString(),
@@ -547,6 +553,7 @@ outer apply
                Cell3 = row1["Cell"].ToString(),
                SP3 = row1["SP"].ToString(),
                Style3 = row1["Style"].ToString(),
+               MarkerNo3 = row1["MarkerNo"].ToString(),
                Item3 = row1["Item"].ToString(),
                Body_Cut3 = row1["Body_Cut"].ToString(),
                Parts3 = row1["Parts"].ToString(),

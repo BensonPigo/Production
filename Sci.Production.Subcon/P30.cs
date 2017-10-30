@@ -929,144 +929,14 @@ and factory.IsProduceFty = 1 "
 
         protected override bool ClickPrint()
         {
-
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString().Trim();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString().Trim();
 
-            #region  抓表頭資料
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select("",
-            @"select b.NameEN [RptTitle]
-	                ,a.LocalSuppID+'-'+c.Name [Supplier]
-	                ,c.Tel [Tel]
-	                ,c.Address [Address]
-                    ,a.FactoryID
-                    ,b.AddressEN
-                    ,[fTel] =b.Tel
-                    ,c.Fax
-            from dbo.localpo a WITH (NOLOCK) 
-            inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
-	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
-            where b.id = a.factoryid
-            and a.id = @ID", pars, out dt);
-            if (!result) { this.ShowErr(result); }
+            P30_Print callPrintForm = new P30_Print(row, id, issuedate);
+            callPrintForm.ShowDialog(this);
 
-            string RptTitle = dt.Rows[0]["RptTitle"].ToString().Trim();
-            string Supplier = dt.Rows[0]["Supplier"].ToString().Trim();
-            string FactoryID = dt.Rows[0]["FactoryID"].ToString().Trim();
-            string Tel = dt.Rows[0]["Tel"].ToString().Trim();
-            string Address = dt.Rows[0]["Address"].ToString().Trim();
-            string AddressEN = dt.Rows[0]["AddressEN"].ToString().Trim();
-            string fTel = dt.Rows[0]["fTel"].ToString().Trim();
-            string Fax = dt.Rows[0]["Fax"].ToString().Trim();
-            decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
-            decimal vat = MyUtility.Convert.GetDecimal(CurrentMaintain["vat"]);
-            string CurrencyID = CurrentMaintain["CurrencyID"].ToString();
-            string vatrate = CurrentMaintain["vatrate"].ToString() + "%";
-            string Remark = CurrentMaintain["remark"].ToString();
-            decimal Total = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
-
-            #endregion
-            #region  抓表身資料
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"
-select 	
-        Sort = ROW_NUMBER() Over (Partition By a.Delivery, a.Refno Order By a.Delivery, a.Refno)
-		,a.OrderId [SP]
-        ,a.Delivery [Delivery]
-        ,a.Refno [Refno]
-        ,a.ThreadColorID [Color_Shade]
-        ,dbo.getItemDesc(b.Category,a.Refno) [Description]
-        ,a.Price [UPrice]
-        ,a.Qty [Order_Qty]
-        ,a.UnitId [Unit]
-        ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
-		,SortRefno = ROW_NUMBER() Over (Partition By Refno Order By a.Delivery, a.Refno)
-		,b.Category
---into #tmp
-from dbo.LocalPO_Detail a WITH (NOLOCK) 
-left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
-where a.id=@ID
-order by a.Delivery, a.Refno
-
---select Sort,[SP],[Delivery]
---	,[Refno]
---	,[Refno2] = iif(SortRefno = 1,[Refno],'')
---	,[Color_Shade]
---	,[Description] = iif(SortRefno = 1,dbo.getItemDesc(Category,Refno),'')
---	,[UPrice],[Order_Qty],[Unit],[Amount]
---from #tmp
---order by Sort
---
---drop table #tmp", pars, out dd);
-            if (!result) { this.ShowErr(result); }
-
-
-            // 傳 list 資料            
-            List<P30_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P30_PrintData()
-                {
-                    Sort = row1["Sort"].ToString().Trim(),
-                    SP = row1["SP"].ToString().Trim(),
-                    Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
-                    Refno = row1["Refno"].ToString().Trim(),
-                    //Refno2 = row1["Refno2"].ToString().Trim(),
-                    Color_Shade = row1["Color_Shade"].ToString().Trim(),
-                    Description = row1["Description"].ToString().Trim(),
-                    UPrice = row1["UPrice"].ToString().Trim(),
-                    Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
-                    Unit = row1["Unit"].ToString().Trim(),
-                    Amount = Convert.ToDecimal(row1["Amount"]),
-                }).ToList();
-
-            report.ReportDataSource = data;
-            #endregion
-            // 指定是哪個 RDLC
-            #region  指定是哪個 RDLC
-            //DualResult result;
-            Type ReportResourceNamespace = typeof(P30_PrintData);
-            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P30_Print.rdlc";
-
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
-            {
-                //this.ShowException(result);
-                return false;
-            }
-
-            report.ReportResource = reportresource;
-            #endregion
-            // 開啟 report view
-            var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
-            frm.Show();
-
-            return true;
-
+            return true;   
         }
 
         private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
