@@ -794,7 +794,12 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     #endregion
                     #region startno
                     int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
+                    int nGroup = startno - Convert.ToInt32(CurrentMaintain["startno"]);
                     CurrentMaintain["startno"] = startno;
+                    foreach (DataRow dr in DetailDatas)
+                    {
+                        dr["BundleGroup"] = Convert.ToDecimal(dr["BundleGroup"]) + nGroup;
+                    }
                     #endregion
                     #region Article colorid
                     if (MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
