@@ -123,7 +123,7 @@ a.OrderId
 ,b.BrandID
 ,a.Qty
 ,a.Delivery
-,a.POID
+,a.ID
 ,d.BuyerID
 ,b.FactoryID
 from localpo_detail a WITH (NOLOCK) 
