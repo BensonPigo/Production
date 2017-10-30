@@ -69,6 +69,8 @@
             this.numW = new Sci.Win.UI.NumericBox();
             this.numL = new Sci.Win.UI.NumericBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtArtTkt = new Sci.Win.UI.TextBox();
             this.numCone = new Sci.Win.UI.NumericBox();
             this.numWeightofAxle = new Sci.Win.UI.NumericBox();
             this.numThreadTex = new Sci.Win.UI.NumericBox();
@@ -643,6 +645,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.txtArtTkt);
             this.groupBox2.Controls.Add(this.numCone);
             this.groupBox2.Controls.Add(this.numWeightofAxle);
             this.groupBox2.Controls.Add(this.numThreadTex);
@@ -663,6 +667,24 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thread Only";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(319, 86);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 23);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Art/tkt";
+            // 
+            // txtArtTkt
+            // 
+            this.txtArtTkt.BackColor = System.Drawing.Color.White;
+            this.txtArtTkt.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArtTkt", true));
+            this.txtArtTkt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtArtTkt.Location = new System.Drawing.Point(408, 86);
+            this.txtArtTkt.Name = "txtArtTkt";
+            this.txtArtTkt.Size = new System.Drawing.Size(152, 23);
+            this.txtArtTkt.TabIndex = 20;
             // 
             // numCone
             // 
@@ -931,5 +953,7 @@
         private Win.UI.NumericBox numCTNWeight;
         private Win.UI.Label labelKG;
         private Win.UI.Label labelCTNWeight;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtArtTkt;
     }
 }
