@@ -737,11 +737,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 return false;
             }
 
-            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE
-            if (!CheckShipMode())
-            {
-                return false;
-            }
+            
 
             #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
             DataTable dtCheckCustCD;
@@ -1493,6 +1489,8 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 }
             }
 
+           
+
             //還沒有Invoice No就不可以做Confirm
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
@@ -1511,6 +1509,37 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             {
                 return;
             }
+
+            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE
+            if (!CheckShipMode())
+            {
+                return;
+            }
+
+            //檢查表身SP是否為製造單，製造單不能confirm
+            var dis_detail = (from r in DetailDatas.AsEnumerable()
+                              select r["OrderID"]).Distinct().ToList();
+            StringBuilder alertmsg = new StringBuilder();
+            foreach (string r in dis_detail)
+            {
+                if (MyUtility.Check.Seek(string.Format(@"select ot.id from OrderType ot 
+                                                            where exists (select o.id from orders o where o.id = '{0}' and
+                                                                                     o.BrandID = ot.BrandID and o.OrderTypeID = ot.ID) 
+                                                                                     and ot.IsGMTMaster = 1 ", r), ""))
+                {
+                    alertmsg.Append("< SP#> " + r + Environment.NewLine);
+                }
+
+            }
+            if (alertmsg.Length > 0)
+            {
+                alertmsg.Insert(0, "The GMT Master order cannot be confirmed!! " + Environment.NewLine);
+                MyUtility.Msg.WarningBox(alertmsg.ToString());
+                return;
+            }
+
+
+
 
             sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, sqlCmd);
