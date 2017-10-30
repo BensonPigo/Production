@@ -80,67 +80,57 @@ BEGIN
 
 	--Holiday
 	BEGIN
-	--撈APS上Hoiday資料
-	SET @cmd = 'DECLARE cursor_holiday CURSOR FOR SELECT Holiday.Name, Holiday.FromDate, DATEDIFF(DAY,Holiday.FromDate,Holiday.ToDate)+1 as DayDiff FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday WHERE Factory.CODE = '''+ @factoryid + ''' and Holiday.FactoryId = Factory.Id and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE()))'
+	--準備日期範圍
+	create table #dateranges ([holidaydate] [date])
+	declare @startDate date = DATEADD(DAY,-10,GETDATE()) 
+	declare @EndDate date = DATEADD(DAY,160,GETDATE())
+	while @startDate <= @EndDate
+	begin
+		insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
+	end
+	set @startDate = DATEADD(DAY,-10,GETDATE()) 
+	--APS上的Holiday
+	CREATE TABLE #APSHoliday([CODE] varchar(8), [Name] nvarchar(20), [FromDate] datetime, [ToDate] datetime)
+	set @cmd = '
+	insert into #APSHoliday
+	SELECT Factory.CODE,Name = convert(nvarchar(20),Holiday.Name), Holiday.FromDate, Holiday.ToDate
+	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory
+		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday
+	WHERE Holiday.FactoryId = Factory.Id
+	and Holiday.FromDate >= DATEADD(DAY,-10,GETDATE())'
 	execute (@cmd)
-	DECLARE @holidayname nvarchar(20),
-			@startdate date,
-			@daydiff int
-
-	OPEN cursor_holiday
-	FETCH NEXT FROM cursor_holiday INTO @holidayname,@startdate,@daydiff
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		set @_i = 0
-		WHILE (@_i < @daydiff)
-		BEGIN
-			declare @tmpname nvarchar(20)
-			SET @tmpname = null   --初始化
-			select @tmpname = Name from Holiday where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate)
-			IF @tmpname is not null
-				BEGIN
-					--當資料已存在PMS且值有改變就更新
-					IF @tmpname <> @holidayname
-						BEGIN
-							Begin Try
-								Begin Transaction
-									--update Holiday set @tmpname = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
-									update Holiday set Name = isnull(@holidayname,''), EditName = @login, EditDate = GETDATE() where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate);
-
-									--更新WorkHour
-									--update WorkHour set Holiday = 1 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
-									update WorkHour set Holiday = 0 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
-								Commit Transaction;
-							End Try
-							Begin Catch
-								RollBack Transaction
-
-								EXECUTE usp_GetErrorInfo;
-							End Catch
-						END
-				END
-			ELSE
-				BEGIN
-					Begin Try
-						Begin Transaction
-							--當資料不存在PMS就新增資料
-							insert into Holiday(FactoryID,HolidayDate,Name,AddName,AddDate) values (@factoryid,DATEADD(DAY,@_i,@startdate),@holidayname,@login, GETDATE());
-							--更新WorkHour
-							update WorkHour set Holiday = 1 where FactoryID = @factoryid and Date = DATEADD(DAY,@_i,@startdate);
-						Commit Transaction;
-					End Try
-					Begin Catch
-						RollBack Transaction
-
-						EXECUTE usp_GetErrorInfo;
-					End Catch
-				END
-			SET @_i = @_i + 1
-		END
-		FETCH NEXT FROM cursor_holiday INTO @holidayname,@startdate,@daydiff
-	END
-	CLOSE cursor_holiday
-	DEALLOCATE cursor_holiday
+	--拆日期FromDate~ToDate
+	select d.holidaydate,h.NAME,h.CODE
+	into #Holiday
+	from #dateranges d inner join #APSHoliday h on d.holidaydate between FromDate and ToDate
+	--更新/新增Table Holiday
+	merge Holiday t
+	using (select * from #Holiday) s
+	on t.HolidayDate = s.HolidayDate and t.FactoryID = s.Code
+	when matched then
+		update set
+		t.Name = s.Name
+		,t.EditName = @login
+		,t.EditDate = GETDATE()
+	when not matched by target then 
+		insert(FactoryID,HolidayDate,Name,AddName,AddDate)
+		values (s.Code,s.HolidayDate,s.Name,@login, GETDATE());
+	--Table WorkHour.holiday 標記為1, 或取消為0
+	BEGIN	
+	update w set
+		w.holiday = 1
+	FROM WorkHour w inner join #Holiday h on h.HolidayDate = w.Date and h.CODE = w.FactoryID
+	and h.HolidayDate between @startDate and @EndDate
+	and w.holiday = 0
+	update w set
+		w.holiday = 0
+	FROM WorkHour w left join #Holiday h on h.HolidayDate = w.Date and h.CODE = w.FactoryID
+	where h.HolidayDate is null
+	and w.date between @startDate and @EndDate
+	and w.holiday = 1
+	END	
+	--
+	drop table #dateranges,#Holiday
 
 	--刪除PMS多的資料
 	CREATE TABLE #tmpHoliday (FromDate datetime, ToDate datetime);
@@ -179,23 +169,6 @@ BEGIN
 	drop table #tmpHoliday;
 	END
 		
-	--把holiday, 在workHour上標記為1, 或取消為0
-	BEGIN
-	declare @enddate datetime = DATEADD(day,160, GETDATE())
-	update w set
-		w.holiday = 1
-	FROM Holiday h,WorkHour w
-	where h.HolidayDate = w.Date
-	and h.HolidayDate >= @enddate
-	and w.holiday = 0
-	update w set
-		w.holiday = 0
-	FROM WorkHour w
-	where w.Date not in (select HolidayDate from Holiday h where h.HolidayDate >= @enddate)
-	and w.date >= @enddate
-	and w.holiday = 1
-	END
-
 	--WorkHour
 	--因為APS系統有3個WorkHour的資料來源，特殊時間(SPECIALCALENDAR)->生產線日曆(WORKCALENDARAPPLY, TARGETTYPE = 1)->工廠日曆(WORKCALENDARAPPLY, TARGETTYPE = 0)，回寫至PMS順序為工廠日曆->生產線日曆->特殊時間
 	BEGIN
