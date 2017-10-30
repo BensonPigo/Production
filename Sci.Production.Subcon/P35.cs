@@ -732,32 +732,32 @@ where a.id = @ID"
 
 
             #region  抓表身資料
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"select [SP] = a.OrderId 
-                     , [Description] = dbo.getItemDesc(b.Category,a.Refno)
-                     , ThreadColorID = isnull (a.ThreadColorID, 0)
-                     , [Price] = a.price
-                     , [Qty] = a.qty
-                     , [Unit] = a.unitid
-                     , [Amount] = format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00')
-            from dbo.LocalAP_Detail a WITH (NOLOCK) 
-            left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
-            where a.id= @ID", pars, out dd);
-            if (!result) { this.ShowErr(result); }
+            //pars = new List<SqlParameter>();
+            //pars.Add(new SqlParameter("@ID", id));
+            //DataTable dd;
+            //result = DBProxy.Current.Select("",
+            //@"select [SP] = a.OrderId 
+            //         , [Description] = dbo.getItemDesc(b.Category,a.Refno)
+            //         , ThreadColorID = isnull (a.ThreadColorID, 0)
+            //         , [Price] = a.price
+            //         , [Qty] = a.qty
+            //         , [Unit] = a.unitid
+            //         , [Amount] = format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00')
+            //from dbo.LocalAP_Detail a WITH (NOLOCK) 
+            //left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
+            //where a.id= @ID", pars, out dd);
+            //if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
-            List<P35_PrintData> data = dd.AsEnumerable()
+            List<P35_PrintData> data = DetailDatas.AsEnumerable()
                 .Select(row1 => new P35_PrintData()
                 {
-                    SP = row1["SP"].ToString(),
+                    SP = row1["orderid"].ToString(),
                     Description = row1["Description"].ToString(),
                     ThreadColorID = row1["ThreadColorID"].ToString(),
                     Price = row1["Price"].ToString(),
                     Qty = row1["Qty"].ToString(),
-                    Unit = row1["Unit"].ToString(),
+                    Unit = row1["Unitid"].ToString(),
                     Amount = row1["Amount"].ToString()
                 }).ToList();
 
