@@ -25,6 +25,7 @@ namespace Sci.Production.Cutting
         public string Qty { get; set; }
         public string Barcode { get; set; }
         public string Patterncode { get; set; }
+        public string MarkerNo { get; set; }
 
         public string Group_right2 { get; set; }
         public string Group_left2 { get; set; }
@@ -43,6 +44,7 @@ namespace Sci.Production.Cutting
         public string Qty2 { get; set; }
         public string Barcode2 { get; set; }
         public string Patterncode2 { get; set; }
+        public string MarkerNo2 { get; set; }
 
         public string Group_right3 { get; set; }
         public string Group_left3 { get; set; }
@@ -61,6 +63,7 @@ namespace Sci.Production.Cutting
         public string Qty3 { get; set; }
         public string Barcode3 { get; set; }
         public string Patterncode3 { get; set; }
+        public string MarkerNo3 { get; set; }
     }
 }
 
