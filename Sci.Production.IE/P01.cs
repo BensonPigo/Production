@@ -925,6 +925,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
                 detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
+                      
         }
 
         //History
@@ -988,10 +989,10 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
             else
             {
-                DataRow dr = DetailDatas[index + 1];
+                DataRow dr = DetailDatas[this.detailgridbs.Position + 1];
                 CurrentDetailData["Seq"] = dr["Seq"];
                 int seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                for (int i = index + 1; i < DetailDatas.Count; i++)
+                for (int i = this.detailgridbs.Position + 1; i < DetailDatas.Count; i++)
                 {
                     seq += 10;
                     DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
