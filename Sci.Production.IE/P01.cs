@@ -925,7 +925,6 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
                 detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
-            ((DataTable)detailgridbs.DataSource).AcceptChanges();
         }
 
         //History
