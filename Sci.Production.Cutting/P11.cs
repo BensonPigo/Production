@@ -616,19 +616,19 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             //DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
             DataTable dtDis = null;
             MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);
-            foreach (DataRow dr in dtDis.Rows)
-            {
-                DataTable tmpTb;
-                PublicPrg.Prgs.GetGarmentListTable("", dr["POID"].ToString(), out tmpTb);
-                if (GarmentTb == null)
-                {
-                    GarmentTb = tmpTb;
-                }
-                else
-                {
-                    GarmentTb.Merge(tmpTb);
-                }
-            }
+            //foreach (DataRow dr in dtDis.Rows)
+            //{
+            //    DataTable tmpTb;
+            //    PublicPrg.Prgs.GetGarmentListTable("", dr["POID"].ToString(), out tmpTb);
+            //    if (GarmentTb == null)
+            //    {
+            //        GarmentTb = tmpTb;
+            //    }
+            //    else
+            //    {
+            //        GarmentTb.Merge(tmpTb);
+            //    }
+            //}
             #endregion
 
             #region ArticleGroup
@@ -654,6 +654,7 @@ AND p.EDITdATE = (
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
                 dr["iden"] = iden;
+                PublicPrg.Prgs.GetGarmentListTable(dr["Cutref"].ToString(), dr["POID"].ToString(), out GarmentTb);
                 #region Create Qtytb
                 DataRow qty_newRow = qtyTb.NewRow();
                 qty_newRow["No"] = 1;
