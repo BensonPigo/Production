@@ -14,11 +14,6 @@ BEGIN
   -- ietms
 --ietms
 
-----------------------�R���DTABLE�h�����
-Delete Production.dbo.IETMS
-from Production.dbo.IETMS as a left join Trade_To_Pms.dbo.IETMS as b
-on a.id = b.id AND a.Version = b.Version
-where b.id is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
 UPDATE a
 SET  
