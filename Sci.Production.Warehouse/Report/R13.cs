@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory");
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory,O,Scrap");
             comboStockType.SelectedIndex = 0;
             txtReason.SelectedIndex = 0;
         }
@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
             string[] x = new string[3];
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(@"
 SELECT  a.MDivisionID
         , orders.FactoryID
         , a.id
@@ -79,18 +79,29 @@ SELECT  a.MDivisionID
         , [description] = dbo.getMtlDesc(b.poid,b.seq1,b.seq2,2,0)
         , stock = iif(b.StockType='B', 'Bulk'
                                      , iif(b.stocktype ='I','Inventory'
-                                                           ,b.stocktype)) 
+                                                           , iif(b.stocktype ='O','Scrap'
+                                                           , b.stocktype)))
         , b.QtyBefore
         , b.QtyAfter
-        , reasonNm = b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) 
+        , reasonNm = 
+			iif(a.type='O' and b.stocktype='O', b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) ,
+			iif(a.type='O' and b.stocktype='R',b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Remove' and Reason.id= b.ReasonId),
+		 b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) ))
         , editor = dbo.getPass1(a.EditName) 
         , a.editdate
 FROM adjust a WITH (NOLOCK) 
 inner join adjust_detail b WITH (NOLOCK) on a.id = b.id
 inner join Orders orders on b.POID = orders.ID
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
-Where a.Status = 'Confirmed' and a.type = '{0}'
-", stocktype));
+Where a.Status = 'Confirmed' ");
+            if (stocktype=="O")
+            {
+                sqlCmd.Append(@" and a.type in ('O','R') ");
+            }
+            else
+            {
+                sqlCmd.Append(string.Format(@" and a.type='{0}' ", stocktype));
+            }
             if (!MyUtility.Check.Empty(issueDate1))
                 sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
             if(!MyUtility.Check.Empty(issueDate2))
