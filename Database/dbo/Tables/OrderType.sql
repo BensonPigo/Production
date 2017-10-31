@@ -15,6 +15,8 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_OrderType_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
+    [IsGMTMaster] BIT NULL, 
+    [IsGMTDetail] BIT NULL, 
     CONSTRAINT [PK_OrderType] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
 
