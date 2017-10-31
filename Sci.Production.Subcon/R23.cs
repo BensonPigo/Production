@@ -261,7 +261,7 @@ namespace Sci.Production.Subcon
             #endregion
 
             sqlCmd.Append(string.Format(@"
-select	O.FactoryID
+select DISTINCT	O.FactoryID
 		, s.Category
 		, O.POID
         , O.StyleID
