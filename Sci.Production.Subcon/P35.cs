@@ -123,6 +123,8 @@ where lapd.id = '{0}'"
             return base.ClickEditBefore();
         }
 
+        
+
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -222,6 +224,25 @@ where lapd.id = '{0}'"
 
             return base.ClickSaveBefore();
         }
+
+
+        protected override void ClickSaveAfter()
+        {
+            //檢查localap ,localap_detail amount與vat在存檔之後是否有差異
+            string chk_sql = string.Format(@"select la.amount,ld.detail_amount
+                                from LocalAP la
+                                inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
+                                 where a.id = '{0}') ld on la.id = ld.id
+                                where la.id = '{0}' and la.amount <> ld.detail_amount", CurrentMaintain["ID"], exact);
+
+            DataRow dr;
+            if (MyUtility.Check.Seek(chk_sql, out dr, "")) {
+                MyUtility.Msg.WarningBox(string.Format("Header Amount<{0}> and Detail Amount<{1}> are different,please check with MIS",dr["amount"],dr["detail_amount"]));
+            }
+
+            base.ClickSaveAfter();
+        }
+
 
         string old_currencyID = "";
         int exact = 2;
@@ -664,9 +685,6 @@ select b.nameEn
         ,e.CountryID [Country]
         ,e.city [city] 
         ,e.swiftcode [SwiftCode]
-		,cast(isnull(round(a.amount,cr.Exact) , 0 ) as float) [Total]	
-		,cast(isnull(round(a.Vat,cr.Exact) , 0 ) as float)  [Vat]				
-        ,cast(isnull(round(a.amount,cr.Exact)+round(a.Vat,cr.Exact) , 0 ) as float)  [Grand_Total]	
         ,a.Handle+f.Name [Prepared_by]
         ,a.CurrencyID[CurrencyID]
 		,a.VatRate[VatRate]
@@ -696,9 +714,9 @@ where a.id = @ID"
             string Country = dt.Rows[0]["Country"].ToString();
             string city = dt.Rows[0]["city"].ToString();
             string SwiftCode = dt.Rows[0]["SwiftCode"].ToString();
-            string Total = dt.Rows[0]["Total"].ToString();
-            string Vat = dt.Rows[0]["Vat"].ToString();
-            string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+            string Total = numAmount.Text;
+            string Vat = numVat.Text;
+            string Grand_Total = (decimal.Parse(numAmount.Text) + decimal.Parse(numVat.Text)).ToString();
             string Prepared_by = dt.Rows[0]["Prepared_by"].ToString();
             string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
             string VatRate = dt.Rows[0]["VatRate"].ToString();

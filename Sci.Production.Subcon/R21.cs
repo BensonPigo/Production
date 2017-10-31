@@ -72,7 +72,9 @@ Select (select FactoryId from orders WITH (NOLOCK) where id = b.OrderId) order_f
         ,a.IssueDate
         ,vs1.Name_Extno Handle
         ,a.CurrencyID
-        ,a.Amount+a.vat apAmount
+        --,a.Amount+a.vat apAmount
+        -- mantis8356 改由detail抓資料
+        ,round(PaAmount.Amount,isnull(cy.exact,2))+ round((PaAmount.Amount * a.VatRate/100),isnull(cy.exact,2)) apAmount
         ,a.Category
         ,b.OrderID
         ,b.Refno
@@ -89,6 +91,7 @@ Select (select FactoryId from orders WITH (NOLOCK) where id = b.OrderId) order_f
 from localap a WITH (NOLOCK) 
 inner join LocalAP_Detail b on a.id = b.id 
 left join LocalPO c on c.ID = b.LocalPoId
+left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id  
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 outer apply (
     (select name = concat(name, ' Ext.', ExtNo)
@@ -100,6 +103,11 @@ outer apply (
     from LocalPo_Detail f
     where c.id = f.id and b.orderid = f.orderid    
 ) PoAmount
+outer apply (
+    select amount = sum(isnull(ld.Price * ld.Qty, 0.00)) 
+    from LocalAP_Detail ld
+    where a.id = ld.id
+) PaAmount
 where a.ApvDate is null and 1=1"));
             #endregion
             System.Data.SqlClient.SqlParameter sp_APdate1 = new System.Data.SqlClient.SqlParameter();
