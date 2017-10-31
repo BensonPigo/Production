@@ -15,7 +15,7 @@ namespace Sci.Production.Subcon
     {
         string artworktype, factory, style, mdivision, spno1, spno2, ordertype,ratetype;//,status;
         int ordertypeindex,statusindex;
-        DateTime? IssueDate1, IssueDate2;
+        DateTime? IssueDate1, IssueDate2, SciDelivery1, SciDelivery2;
         DataTable printData;
 
         public R23(ToolStripMenuItem menuitem)
@@ -39,13 +39,15 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2))
+            if (comboStatus.SelectedIndex != 1 && ((MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2)) && (MyUtility.Check.Empty(dateSciDelivery.Value1) && MyUtility.Check.Empty(dateSciDelivery.Value2))))
             {
-                MyUtility.Msg.WarningBox("Issue Date can't empty!!");
+                MyUtility.Msg.WarningBox("[Issue Date] or [Sci Delivery] must input one condition !!");
                 return false;
             }
             IssueDate1 = dateIssueDate.Value1;
             IssueDate2 = dateIssueDate.Value2;
+            SciDelivery1 = dateSciDelivery.Value1;
+            SciDelivery2 = dateSciDelivery.Value2;
             spno1 = txtSpnoStart.Text;
             spno2 = txtSpnoEnd.Text;
             artworktype = txtartworktype_ftyCategory.Text;
@@ -127,8 +129,8 @@ namespace Sci.Production.Subcon
                     {
                         sqlFilter1.Add(string.Format(@"LP.apvdate is not null and LP.issuedate between '{0}' and '{1}'"
                             , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
-                    }
-                    else 
+                    }                   
+                    else
                     {
                         if (!MyUtility.Check.Empty(IssueDate1))
                         {
@@ -139,6 +141,23 @@ namespace Sci.Production.Subcon
                             sqlFilter1.Add(string.Format(@"LP.apvdate is not null and  LP.issuedate <= '{0}' ", Convert.ToDateTime(IssueDate2).ToString("d")));
                         }
                     }
+                    if (!MyUtility.Check.Empty(SciDelivery1) && !MyUtility.Check.Empty(SciDelivery2))
+                    {
+                        sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery between '{0}' and '{1}'"
+                            , Convert.ToDateTime(SciDelivery1).ToString("d"), Convert.ToDateTime(SciDelivery2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(SciDelivery1))
+                        {
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery >= '{0}' ", Convert.ToDateTime(SciDelivery1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(SciDelivery2))
+                        {
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery <= '{0}' ", Convert.ToDateTime(SciDelivery2).ToString("d")));
+                        }
+                    }
+
                     break;
 
                 case 1:
@@ -162,10 +181,25 @@ namespace Sci.Production.Subcon
                             sqlFilter1.Add(string.Format(@"(LP.issuedate <= '{0}') ", Convert.ToDateTime(IssueDate2).ToString("d")));
                         }
                     }
+                    if (!MyUtility.Check.Empty(SciDelivery1) && !MyUtility.Check.Empty(SciDelivery2))
+                    {
+                        sqlFilter1.Add(string.Format(@"(o.SciDelivery between '{0}' and '{1}')"
+                            , Convert.ToDateTime(SciDelivery1).ToString("d"), Convert.ToDateTime(SciDelivery2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(SciDelivery1))
+                        {
+                            sqlFilter1.Add(string.Format(@"(o.SciDelivery >= '{0}') ", Convert.ToDateTime(SciDelivery1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(SciDelivery2))
+                        {
+                            sqlFilter1.Add(string.Format(@"(o.SciDelivery <= '{0}') ", Convert.ToDateTime(SciDelivery2).ToString("d")));
+                        }
+                    }
                     break;
             }
-
-            
+                        
             if (!MyUtility.Check.Empty(spno1))
             {
                 sqlFilter1.Add("LPD.OrderID >= @spno1");
@@ -203,6 +237,7 @@ namespace Sci.Production.Subcon
             #endregion 
 
             #region SQL Filter1
+            
             if (!MyUtility.Check.Empty(artworktype))
             {
                 sqlFilter2.Add("s.Category = @artworktype");
@@ -226,7 +261,7 @@ namespace Sci.Production.Subcon
             #endregion
 
             sqlCmd.Append(string.Format(@"
-select	O.FactoryID
+select DISTINCT	O.FactoryID
 		, s.Category
 		, O.POID
         , O.StyleID
@@ -243,6 +278,7 @@ from (
 			, LPD.OrderId
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
+    left join Orders O on lpd.OrderId=o.id
 	where 1 = 1 {1}
 ) s
 left join Orders O on s.OrderId = O.ID

@@ -48,6 +48,8 @@
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.txtSpnoEnd = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateSciDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -67,8 +69,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(14, 83);
+            this.labelFactory.Location = new System.Drawing.Point(14, 108);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 94;
@@ -76,8 +77,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
-            this.labelCategory.Location = new System.Drawing.Point(14, 118);
+            this.labelCategory.Location = new System.Drawing.Point(14, 143);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(98, 23);
             this.labelCategory.TabIndex = 95;
@@ -85,8 +85,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
-            this.labelStyle.Location = new System.Drawing.Point(14, 188);
+            this.labelStyle.Location = new System.Drawing.Point(14, 213);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
             this.labelStyle.TabIndex = 100;
@@ -98,13 +97,27 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 82);
+            this.comboFactory.Location = new System.Drawing.Point(115, 107);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 2;
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -113,8 +126,7 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
-            this.labelM.Location = new System.Drawing.Point(14, 48);
+            this.labelM.Location = new System.Drawing.Point(14, 73);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 103;
@@ -122,8 +134,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(14, 154);
+            this.labelSPNo.Location = new System.Drawing.Point(14, 179);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
             this.labelSPNo.TabIndex = 106;
@@ -133,7 +144,7 @@
             // 
             this.txtMdivisionM.BackColor = System.Drawing.Color.White;
             this.txtMdivisionM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivisionM.Location = new System.Drawing.Point(115, 48);
+            this.txtMdivisionM.Location = new System.Drawing.Point(115, 73);
             this.txtMdivisionM.Name = "txtMdivisionM";
             this.txtMdivisionM.Size = new System.Drawing.Size(66, 23);
             this.txtMdivisionM.TabIndex = 1;
@@ -143,7 +154,7 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(116, 188);
+            this.txtstyle.Location = new System.Drawing.Point(116, 213);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 6;
@@ -154,7 +165,7 @@
             this.txtartworktype_ftyCategory.cClassify = "\'P\'";
             this.txtartworktype_ftyCategory.cSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(115, 118);
+            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(115, 143);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyCategory.TabIndex = 3;
@@ -165,15 +176,14 @@
             this.comboOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderType.FormattingEnabled = true;
             this.comboOrderType.IsSupportUnselect = true;
-            this.comboOrderType.Location = new System.Drawing.Point(115, 220);
+            this.comboOrderType.Location = new System.Drawing.Point(115, 245);
             this.comboOrderType.Name = "comboOrderType";
             this.comboOrderType.Size = new System.Drawing.Size(261, 24);
             this.comboOrderType.TabIndex = 7;
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
-            this.labelOrderType.Location = new System.Drawing.Point(14, 221);
+            this.labelOrderType.Location = new System.Drawing.Point(14, 246);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(98, 23);
             this.labelOrderType.TabIndex = 112;
@@ -185,15 +195,14 @@
             this.comboRateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboRateType.FormattingEnabled = true;
             this.comboRateType.IsSupportUnselect = true;
-            this.comboRateType.Location = new System.Drawing.Point(115, 255);
+            this.comboRateType.Location = new System.Drawing.Point(115, 280);
             this.comboRateType.Name = "comboRateType";
             this.comboRateType.Size = new System.Drawing.Size(261, 24);
             this.comboRateType.TabIndex = 8;
             // 
             // labelRateType
             // 
-            this.labelRateType.Lines = 0;
-            this.labelRateType.Location = new System.Drawing.Point(14, 256);
+            this.labelRateType.Location = new System.Drawing.Point(14, 281);
             this.labelRateType.Name = "labelRateType";
             this.labelRateType.Size = new System.Drawing.Size(98, 23);
             this.labelRateType.TabIndex = 114;
@@ -205,7 +214,7 @@
             this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStatus.FormattingEnabled = true;
             this.comboStatus.IsSupportUnselect = true;
-            this.comboStatus.Location = new System.Drawing.Point(115, 291);
+            this.comboStatus.Location = new System.Drawing.Point(115, 316);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.Size = new System.Drawing.Size(158, 24);
             this.comboStatus.TabIndex = 9;
@@ -213,8 +222,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Lines = 0;
-            this.labelStatus.Location = new System.Drawing.Point(14, 292);
+            this.labelStatus.Location = new System.Drawing.Point(14, 317);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(98, 23);
             this.labelStatus.TabIndex = 116;
@@ -224,14 +232,13 @@
             // 
             this.txtSpnoStart.BackColor = System.Drawing.Color.White;
             this.txtSpnoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpnoStart.Location = new System.Drawing.Point(115, 154);
+            this.txtSpnoStart.Location = new System.Drawing.Point(115, 179);
             this.txtSpnoStart.Name = "txtSpnoStart";
             this.txtSpnoStart.Size = new System.Drawing.Size(128, 23);
             this.txtSpnoStart.TabIndex = 4;
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(14, 12);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -248,23 +255,60 @@
             // 
             this.txtSpnoEnd.BackColor = System.Drawing.Color.White;
             this.txtSpnoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpnoEnd.Location = new System.Drawing.Point(269, 154);
+            this.txtSpnoEnd.Location = new System.Drawing.Point(269, 179);
             this.txtSpnoEnd.Name = "txtSpnoEnd";
             this.txtSpnoEnd.Size = new System.Drawing.Size(128, 23);
             this.txtSpnoEnd.TabIndex = 5;
             // 
             // label10
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(247, 154);
+            this.label10.Location = new System.Drawing.Point(247, 179);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
             this.label10.TabIndex = 122;
             this.label10.Text = "～";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(14, 42);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(98, 23);
+            this.label1.TabIndex = 124;
+            this.label1.Text = "Sci Delivery";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateSciDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSciDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSciDelivery.DateBox1.Name = "";
+            this.dateSciDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSciDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSciDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSciDelivery.DateBox2.Name = "";
+            this.dateSciDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSciDelivery.DateBox2.TabIndex = 1;
+            this.dateSciDelivery.IsRequired = false;
+            this.dateSciDelivery.Location = new System.Drawing.Point(115, 42);
+            this.dateSciDelivery.Name = "dateSciDelivery";
+            this.dateSciDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSciDelivery.TabIndex = 123;
+            // 
             // R23
             // 
-            this.ClientSize = new System.Drawing.Size(522, 356);
+            this.ClientSize = new System.Drawing.Size(522, 387);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateSciDelivery);
             this.Controls.Add(this.txtSpnoEnd);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.labelIssueDate);
@@ -313,6 +357,8 @@
             this.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.txtSpnoEnd, 0);
+            this.Controls.SetChildIndex(this.dateSciDelivery, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -340,5 +386,7 @@
         private Win.UI.Label labelIssueDate;
         private Win.UI.TextBox txtSpnoEnd;
         private Win.UI.Label label10;
+        private Win.UI.Label label1;
+        private Win.UI.DateRange dateSciDelivery;
     }
 }

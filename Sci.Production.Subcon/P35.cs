@@ -123,6 +123,8 @@ where lapd.id = '{0}'"
             return base.ClickEditBefore();
         }
 
+        
+
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -222,6 +224,25 @@ where lapd.id = '{0}'"
 
             return base.ClickSaveBefore();
         }
+
+
+        protected override void ClickSaveAfter()
+        {
+            //檢查localap ,localap_detail amount與vat在存檔之後是否有差異
+            string chk_sql = string.Format(@"select la.amount,ld.detail_amount
+                                from LocalAP la
+                                inner join (select '{0}' as id,round(sum(a.price * a.qty),{1}) as detail_amount from localap_detail a 
+                                 where a.id = '{0}') ld on la.id = ld.id
+                                where la.id = '{0}' and la.amount <> ld.detail_amount", CurrentMaintain["ID"], exact);
+
+            DataRow dr;
+            if (MyUtility.Check.Seek(chk_sql, out dr, "")) {
+                MyUtility.Msg.WarningBox(string.Format("Header Amount<{0}> and Detail Amount<{1}> are different,please check with MIS",dr["amount"],dr["detail_amount"]));
+            }
+
+            base.ClickSaveAfter();
+        }
+
 
         string old_currencyID = "";
         int exact = 2;
@@ -664,9 +685,6 @@ select b.nameEn
         ,e.CountryID [Country]
         ,e.city [city] 
         ,e.swiftcode [SwiftCode]
-		,cast(isnull(round(a.amount,cr.Exact) , 0 ) as float) [Total]	
-		,cast(isnull(round(a.Vat,cr.Exact) , 0 ) as float)  [Vat]				
-        ,cast(isnull(round(a.amount,cr.Exact)+round(a.Vat,cr.Exact) , 0 ) as float)  [Grand_Total]	
         ,a.Handle+f.Name [Prepared_by]
         ,a.CurrencyID[CurrencyID]
 		,a.VatRate[VatRate]
@@ -696,9 +714,9 @@ where a.id = @ID"
             string Country = dt.Rows[0]["Country"].ToString();
             string city = dt.Rows[0]["city"].ToString();
             string SwiftCode = dt.Rows[0]["SwiftCode"].ToString();
-            string Total = dt.Rows[0]["Total"].ToString();
-            string Vat = dt.Rows[0]["Vat"].ToString();
-            string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+            string Total = numAmount.Text;
+            string Vat = numVat.Text;
+            string Grand_Total = (decimal.Parse(numAmount.Text) + decimal.Parse(numVat.Text)).ToString();
             string Prepared_by = dt.Rows[0]["Prepared_by"].ToString();
             string CurrencyID = dt.Rows[0]["CurrencyID"].ToString();
             string VatRate = dt.Rows[0]["VatRate"].ToString();
@@ -732,32 +750,32 @@ where a.id = @ID"
 
 
             #region  抓表身資料
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"select [SP] = a.OrderId 
-                     , [Description] = dbo.getItemDesc(b.Category,a.Refno)
-                     , ThreadColorID = isnull (a.ThreadColorID, 0)
-                     , [Price] = a.price
-                     , [Qty] = a.qty
-                     , [Unit] = a.unitid
-                     , [Amount] = format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00')
-            from dbo.LocalAP_Detail a WITH (NOLOCK) 
-            left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
-            where a.id= @ID", pars, out dd);
-            if (!result) { this.ShowErr(result); }
+            //pars = new List<SqlParameter>();
+            //pars.Add(new SqlParameter("@ID", id));
+            //DataTable dd;
+            //result = DBProxy.Current.Select("",
+            //@"select [SP] = a.OrderId 
+            //         , [Description] = dbo.getItemDesc(b.Category,a.Refno)
+            //         , ThreadColorID = isnull (a.ThreadColorID, 0)
+            //         , [Price] = a.price
+            //         , [Qty] = a.qty
+            //         , [Unit] = a.unitid
+            //         , [Amount] = format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00')
+            //from dbo.LocalAP_Detail a WITH (NOLOCK) 
+            //left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
+            //where a.id= @ID", pars, out dd);
+            //if (!result) { this.ShowErr(result); }
 
             // 傳 list 資料            
-            List<P35_PrintData> data = dd.AsEnumerable()
+            List<P35_PrintData> data = DetailDatas.AsEnumerable()
                 .Select(row1 => new P35_PrintData()
                 {
-                    SP = row1["SP"].ToString(),
+                    SP = row1["orderid"].ToString(),
                     Description = row1["Description"].ToString(),
                     ThreadColorID = row1["ThreadColorID"].ToString(),
                     Price = row1["Price"].ToString(),
                     Qty = row1["Qty"].ToString(),
-                    Unit = row1["Unit"].ToString(),
+                    Unit = row1["Unitid"].ToString(),
                     Amount = row1["Amount"].ToString()
                 }).ToList();
 
