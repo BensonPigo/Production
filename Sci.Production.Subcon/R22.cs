@@ -70,10 +70,13 @@ namespace Sci.Production.Subcon
 	                                                ,d.Abb
 	                                                ,a.Category
 	                                                ,a.CurrencyID
-	                                                ,sum(a.Amount + a.Vat) Amt
+	                                                --,sum(a.Amount + a.Vat) Amt mantis8356 改由detail抓資料
+                                                    ,round(sum(b.price * b.qty),isnull(cy.exact,2)) Amt
 	                                                ,a.PaytermID+'-' +(select Name from PayTerm WITH (NOLOCK) where id = a.paytermid) payterm
                                              from LocalAP a WITH (NOLOCK) 
+                                             inner join LocalAP_detail b  WITH (NOLOCK) on a.id = b.id 
                                              left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
+                                             left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id
                                              where 1=1"));
                 #endregion
             }
@@ -91,7 +94,9 @@ Select  a.MDivisionID
 	        ,a.ApvDate
 	        ,vs1.Name_Extno Handle
 	        ,a.CurrencyID
-	        ,a.Amount+a.Vat APAmount
+	        --,a.Amount+a.Vat APAmount
+            -- mantis8356 改由detail抓資料
+            ,round(PaAmount.Amount,isnull(cy.exact,2))+ round((PaAmount.Amount * a.VatRate/100),isnull(cy.exact,2)) APAmount
 	        ,a.Category
 	        ,b.LocalPoId
 	        ,b.OrderId
@@ -110,7 +115,8 @@ from LocalAP a WITH (NOLOCK)
 inner join LocalAP_Detail b WITH (NOLOCK) on b.id=a.id
 left join Orders c WITH (NOLOCK) on b.OrderId=c.ID
 left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
-left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id                                             
+left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id    
+left join Currency cy WITH (NOLOCK) on a.CurrencyID = cy.id                                         
 outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 outer apply (
     (select name = concat(name, ' Ext.', ExtNo)
@@ -122,6 +128,11 @@ outer apply (
     from LocalPo_Detail f
     where e.id = f.id and c.id = f.orderid    
 ) PoAmount
+outer apply (
+    select amount = sum(isnull(ld.Price * ld.Qty, 0.00)) 
+    from LocalAP_Detail ld
+    where a.id = ld.id
+) PaAmount
 where 1=1"));
                 #endregion
             }
@@ -207,7 +218,7 @@ where 1=1"));
 
             if (this.checkSummary.Checked)
             {
-                sqlCmd.Append(@" group by a.MDivisionID, a.FactoryID, a.LocalSuppID, d.Abb, a.Category, a.CurrencyID, a.PayTermID
+                sqlCmd.Append(@" group by a.MDivisionID, a.FactoryID, a.LocalSuppID, d.Abb, a.Category, a.CurrencyID, a.PayTermID,cy.exact
                                 order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
             }
             else
