@@ -83,7 +83,10 @@ SELECT  a.MDivisionID
                                                            , b.stocktype)))
         , b.QtyBefore
         , b.QtyAfter
-        , reasonNm = b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) 
+        , reasonNm = 
+			iif(a.type='O' and b.stocktype='O', b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) ,
+			iif(a.type='O' and b.stocktype='R',b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Remove' and Reason.id= b.ReasonId),
+		 b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) ))
         , editor = dbo.getPass1(a.EditName) 
         , a.editdate
 FROM adjust a WITH (NOLOCK) 
@@ -93,7 +96,7 @@ inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 a
 Where a.Status = 'Confirmed' ");
             if (stocktype=="O")
             {
-                sqlCmd.Append(@" and b.stocktype='O' ");
+                sqlCmd.Append(@" and a.type in ('O','R') ");
             }
             else
             {
