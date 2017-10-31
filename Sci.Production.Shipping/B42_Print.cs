@@ -66,7 +66,7 @@ namespace Sci.Production.Shipping
             // 	Form for custom system
             if (reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)*100+1),4) as CCOA,vncd.DescVI as Remark
+                sqlCmd.Append(string.Format(@"select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0) as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)+1),4) as CCOA,vncd.DescVI as Remark
 from VNConsumption vc WITH (NOLOCK) 
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
