@@ -737,11 +737,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 return false;
             }
 
-            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE
-            if (!CheckShipMode())
-            {
-                return false;
-            }
+            
 
             #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
             DataTable dtCheckCustCD;
@@ -929,13 +925,8 @@ where oqd.Id = '{1}'
 
              //if (shipmode_Valid)
              //{
-                 string seekSql = "";
                  StringBuilder chk_ship_err = new StringBuilder();
                  StringBuilder chk_seq_null = new StringBuilder();
-                 DataRow localItem;
-                 
-
-
                  var check_chip_list = from r1 in DetailDatas.AsEnumerable()
                                        group r1 by new
                                        {
@@ -950,33 +941,11 @@ where oqd.Id = '{1}'
                                        };
                  foreach (var chk_item in check_chip_list)
                  {
-                  
-
-                     seekSql = string.Format("select ShipmodeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and seq = '{1}' ", chk_item.SP, chk_item.Seq);
                      if ( MyUtility.Check.Empty(chk_item.Seq))
                      {
                          chk_seq_null.Append("<SP> " + chk_item.SP + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "]  \r\n");
                      }
-
-                     if (shipmode_Valid && chk_seq_null.Length == 0)
-                     {
-                         if (!MyUtility.Check.Seek(seekSql, out localItem) )
-                         {
-
-                             chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [] \r\n");
-                         }
-                         else
-                         {
-                             if (CurrentMaintain["ShipModeID"].ToString() != localItem["ShipmodeID"].ToString())
-                             {
-
-                                 chk_ship_err.Append("<SP> " + chk_item.SP + " <Seq> " + chk_item.Seq + " <CTN#> [" + ctn_no_combine(chk_item.SP, chk_item.Seq) + "] <ShipMode> [" + localItem["ShipmodeID"].ToString() + "] \r\n");
-                             }
-
-                         }
-                     }
                      
-
                  }
 
                  if (chk_seq_null.Length > 0)
@@ -987,13 +956,6 @@ where oqd.Id = '{1}'
                      return false;
                  }
 
-                if (chk_ship_err.Length > 0)
-                {
-                    chk_ship_err.Insert(0, " This shipmode is not equal, please check again:  \r\n");
-
-                    MyUtility.Msg.WarningBox(chk_ship_err.ToString());
-                    return false;
-                }
              //}
              #endregion
 
@@ -1154,6 +1116,10 @@ where ID = @INVNo";
                 DualResult failResult = new DualResult(false, "Create Order_CTN fail!");
                 return failResult;
             }
+
+            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE，存檔後提醒
+            CheckShipMode("save");
+
             return Result.True;
         }
 
@@ -1493,6 +1459,8 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 }
             }
 
+           
+
             //還沒有Invoice No就不可以做Confirm
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
@@ -1511,6 +1479,37 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             {
                 return;
             }
+
+            //檢查表身的ShipMode與表頭的ShipMode如果不同就不可以SAVE
+            if (!CheckShipMode("confirm"))
+            {
+                return;
+            }
+
+            //檢查表身SP是否為製造單，製造單不能confirm
+            var dis_detail = (from r in DetailDatas.AsEnumerable()
+                              select r["OrderID"]).Distinct().ToList();
+            StringBuilder alertmsg = new StringBuilder();
+            foreach (string r in dis_detail)
+            {
+                if (MyUtility.Check.Seek(string.Format(@"select ot.id from OrderType ot 
+                                                            where exists (select o.id from orders o where o.id = '{0}' and
+                                                                                     o.BrandID = ot.BrandID and o.OrderTypeID = ot.ID) 
+                                                                                     and ot.IsGMTMaster = 1 ", r), ""))
+                {
+                    alertmsg.Append("< SP#> " + r + Environment.NewLine);
+                }
+
+            }
+            if (alertmsg.Length > 0)
+            {
+                alertmsg.Insert(0, "The GMT Master order cannot be confirmed!! " + Environment.NewLine);
+                MyUtility.Msg.WarningBox(alertmsg.ToString());
+                return;
+            }
+
+
+
 
             sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = '{1}' where ID = '{2}'", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"].ToString());
             result = DBProxy.Current.Execute(null, sqlCmd);
@@ -1655,7 +1654,7 @@ Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
         }
 
         //檢查表身的ShipMode與表頭的ShipMode要相同
-        private bool CheckShipMode()
+        private bool CheckShipMode(string p_type)
         {
             StringBuilder msg = new StringBuilder();
             DualResult result;
@@ -1675,7 +1674,14 @@ from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.O
             }
             if (msg.Length > 0)
             {
-                MyUtility.Msg.WarningBox("Ship Mode are different, please check!\r\n" + msg.ToString());
+                if (p_type.Equals("save"))
+                {
+                    MyUtility.Msg.InfoBox("Save successfully, please be reminded the Ship Modes are different!\r\n" + msg.ToString());
+                }
+                else {
+                    MyUtility.Msg.WarningBox("Ship Mode are different, please check!\r\n" + msg.ToString());
+                }
+                
                 return false;
             }
             return true;
