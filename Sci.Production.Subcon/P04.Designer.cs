@@ -160,11 +160,11 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(853, 48);
+            this.btnImport.Location = new System.Drawing.Point(850, 48);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(139, 33);
+            this.btnImport.Size = new System.Drawing.Size(145, 33);
             this.btnImport.TabIndex = 5;
-            this.btnImport.Text = "Batch Import";
+            this.btnImport.Text = "RFID Batch Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Visible = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
