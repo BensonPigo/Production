@@ -5,7 +5,7 @@
     [OrderQty]        NUMERIC (6)     CONSTRAINT [DF_Order_BOA_Expend_OrderQty] DEFAULT ((0)) NULL,
     [Refno]           VARCHAR (20)    CONSTRAINT [DF_Order_BOA_Expend_Refno] DEFAULT ('') NOT NULL,
     [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_Order_BOA_Expend_SCIRefno] DEFAULT ('') NOT NULL,
-    [Price]           NUMERIC (12, 4) CONSTRAINT [DF_Order_BOA_Expend_Price] DEFAULT ((0)) NULL,
+    [Price]           NUMERIC (16, 4) CONSTRAINT [DF_Order_BOA_Expend_Price] DEFAULT ((0)) NULL,
     [UsageQty]        NUMERIC (11, 2) CONSTRAINT [DF_Order_BOA_Expend_UsageQty] DEFAULT ((0)) NULL,
     [UsageUnit]       VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_UsageUnit] DEFAULT ('') NULL,
     [Article]         VARCHAR (8)     CONSTRAINT [DF_Order_BOA_Expend_Article] DEFAULT ('') NULL,

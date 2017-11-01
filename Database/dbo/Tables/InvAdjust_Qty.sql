@@ -5,7 +5,7 @@
     [OrderQty]     INT            CONSTRAINT [DF_InvAdjust_Qty_OrderQty] DEFAULT ((0)) NULL,
     [OrigQty]      INT            CONSTRAINT [DF_InvAdjust_Qty_OrigQty] DEFAULT ((0)) NULL,
     [AdjustQty]    INT            CONSTRAINT [DF_InvAdjust_Qty_AdjustQty] DEFAULT ((0)) NULL,
-    [Price]        NUMERIC (7, 2) CONSTRAINT [DF_InvAdjust_Qty_Price] DEFAULT ((0)) NULL,
+    [Price]        NUMERIC (16, 4) CONSTRAINT [DF_InvAdjust_Qty_Price] DEFAULT ((0)) NULL,
     [NewItem]      BIT            CONSTRAINT [DF_InvAdjust_Qty_NewItem] DEFAULT ((0)) NULL,
     [DiffQty]      INT            CONSTRAINT [DF_InvAdjust_Qty_DiffQty] DEFAULT ((0)) NULL,
     [Pullout3Qty]  INT            CONSTRAINT [DF_InvAdjust_Qty_Pullout3Qty] DEFAULT ((0)) NULL,

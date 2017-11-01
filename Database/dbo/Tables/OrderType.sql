@@ -6,7 +6,7 @@
     [Junk]         BIT            CONSTRAINT [DF_OrderType_Junk] DEFAULT ((0)) NULL,
     [CpuRate]      NUMERIC (3, 1) CONSTRAINT [DF_OrderType_CpuRate] DEFAULT ((0)) NULL,
     [Category]     VARCHAR (1)    CONSTRAINT [DF_OrderType_Category] DEFAULT ('') NULL,
-    [PriceDays]    NUMERIC (2)    CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NULL,
+    [PriceDays]    NUMERIC (16, 4)    CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NULL,
     [MtlLetaDays]  NUMERIC (2)    CONSTRAINT [DF_OrderType_MtlLetaDays] DEFAULT ((0)) NULL,
     [EachConsDays] NUMERIC (2)    CONSTRAINT [DF_OrderType_EachConsDays] DEFAULT ((0)) NULL,
     [KPI]          BIT            CONSTRAINT [DF_OrderType_KPI] DEFAULT ((0)) NULL,
