@@ -270,7 +270,6 @@
     <None Include="Bhtprtd.lib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="SCHEMAS.xsc">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </None>
@@ -1128,7 +1127,7 @@
     <None Include="XLT\Warehouse_R21_Summary.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	<None Include="XLT\Warehouse_R22.xltx">
+    <None Include="XLT\Warehouse_R22.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_R37.xltx">
