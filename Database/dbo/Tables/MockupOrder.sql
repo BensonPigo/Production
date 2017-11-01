@@ -16,7 +16,7 @@
     [Junk]        BIT            CONSTRAINT [DF_MockupOrder_Junk] DEFAULT ((0)) NULL,
     [Remark]      NVARCHAR (MAX) CONSTRAINT [DF_MockupOrder_Remark] DEFAULT ('') NULL,
     [CMPUnit]     VARCHAR (8)    CONSTRAINT [DF_MockupOrder_CMPUnit] DEFAULT ('') NULL,
-    [CMPPrice]    NUMERIC (5, 2) CONSTRAINT [DF_MockupOrder_CMPPrice] DEFAULT ((0)) NULL,
+    [CMPPrice]    NUMERIC (16, 4) CONSTRAINT [DF_MockupOrder_CMPPrice] DEFAULT ((0)) NULL,
     [FTYGroup]    VARCHAR (8)    CONSTRAINT [DF_MockupOrder_FTYGroup] DEFAULT ('') NULL,
     [CPUFactor]   NUMERIC (3, 1) CONSTRAINT [DF_MockupOrder_CPUFactor] DEFAULT ((1)) NULL,
     [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_MockupOrder_MDivisionID] DEFAULT ('') NULL,

@@ -2,7 +2,7 @@
     [Id]        VARCHAR (13)   CONSTRAINT [DF_Order_Surcharge_Id] DEFAULT ('') NOT NULL,
     [Caption]   VARCHAR (30)   CONSTRAINT [DF_Order_Surcharge_Caption] DEFAULT ('') NOT NULL,
     [PriceType] VARCHAR (1)    CONSTRAINT [DF_Order_Surcharge_PriceType] DEFAULT ('') NULL,
-    [Price]     NUMERIC (8, 4) CONSTRAINT [DF_Order_Surcharge_Price] DEFAULT ((0)) NULL,
+    [Price]     NUMERIC (16, 4) CONSTRAINT [DF_Order_Surcharge_Price] DEFAULT ((0)) NULL,
     [Remark]    NVARCHAR (100) CONSTRAINT [DF_Order_Surcharge_Remark] DEFAULT ('') NULL,
     [AddName]   VARCHAR (10)   CONSTRAINT [DF_Order_Surcharge_AddName] DEFAULT ('') NULL,
     [AddDate]   DATETIME       NULL,

@@ -4,7 +4,7 @@
     [ColorId]       VARCHAR (6)    CONSTRAINT [DF_Order_BOF_Expend_ColorId] DEFAULT ('') NOT NULL,
     [SuppColor]     NVARCHAR (MAX) CONSTRAINT [DF_Order_BOF_Expend_SuppColor] DEFAULT ('') NULL,
     [OrderQty]      NUMERIC (10, 4) CONSTRAINT [DF_Order_BOF_Expend_OrderQty] DEFAULT ((0)) NULL,
-    [Price]         NUMERIC (10, 4) CONSTRAINT [DF_Order_BOF_Expend_Price] DEFAULT ((0)) NULL,
+    [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Order_BOF_Expend_Price] DEFAULT ((0)) NULL,
     [UsageQty]      NUMERIC (9, 2) CONSTRAINT [DF_Order_BOF_Expend_UsageQty] DEFAULT ((0)) NULL,
     [UsageUnit]     VARCHAR (8)    CONSTRAINT [DF_Order_BOF_Expend_UsageUnit] DEFAULT ('') NULL,
     [Width]         NUMERIC (4, 1) CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,

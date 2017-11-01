@@ -12,7 +12,7 @@
     [VoucherID]        VARCHAR (16)   CONSTRAINT [DF_InvAdjust_VoucherNo] DEFAULT ('') NULL,
     [Status]           VARCHAR (1)    CONSTRAINT [DF_InvAdjust_Status] DEFAULT ('') NULL,
     [OrigPulloutQty]   INT            CONSTRAINT [DF_InvAdjust_OrigPulloutQty] DEFAULT ((0)) NULL,
-    [OrigPrice]        NUMERIC (7, 2) CONSTRAINT [DF_InvAdjust_OrigPrice] DEFAULT ((0)) NULL,
+    [OrigPrice]        NUMERIC (16, 4) CONSTRAINT [DF_InvAdjust_OrigPrice] DEFAULT ((0)) NULL,
     [OrigPulloutAmt]   NUMERIC (9, 2) CONSTRAINT [DF_InvAdjust_OrigPulloutAmt] DEFAULT ((0)) NULL,
     [OrigSurcharge]    NUMERIC (9, 5) CONSTRAINT [DF_InvAdjust_OrigSurcharge] DEFAULT ((0)) NULL,
     [OrigAddCharge]    NUMERIC (9, 2) CONSTRAINT [DF_InvAdjust_OrigAddCharge] DEFAULT ((0)) NULL,

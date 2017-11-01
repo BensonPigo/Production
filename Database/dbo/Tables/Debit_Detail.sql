@@ -3,7 +3,7 @@
     [OrderID]     VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_OrderID] DEFAULT ('') NULL,
     [ReasonID]    VARCHAR (5)     CONSTRAINT [DF_Debit_Detail_ReasonID] DEFAULT ('') NULL,
     [Description] NVARCHAR (MAX)  CONSTRAINT [DF_Debit_Detail_Description] DEFAULT ('') NULL,
-    [Price]       NUMERIC (7, 3)  CONSTRAINT [DF_Debit_Detail_Price] DEFAULT ((0)) NULL,
+    [Price]       NUMERIC (16, 4)  CONSTRAINT [DF_Debit_Detail_Price] DEFAULT ((0)) NULL,
     [Amount]      NUMERIC (13, 2) CONSTRAINT [DF_Debit_Detail_Amount] DEFAULT ((0)) NULL,
     [UnitID]      VARCHAR (8)     CONSTRAINT [DF_Debit_Detail_UnitID] DEFAULT ('') NULL,
     [SourceID]    VARCHAR (13)    CONSTRAINT [DF_Debit_Detail_SourceID] DEFAULT ('') NULL,
