@@ -320,7 +320,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
             displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
                
-            displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
+            displayMTLCmlpt.Text = (bool)CurrentMaintain["Complete"] ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable detailTb = (DataTable)detailgridbs.DataSource;

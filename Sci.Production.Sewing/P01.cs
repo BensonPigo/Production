@@ -1102,60 +1102,30 @@ where (OrderID <> '' or OrderID is not null)
             #region 確認子單數量加總不會超過母單數量
             DualResult resultCheckSubOutputQty;
             DataTable dtCheckSubOutputQty;
-            string strCheckSubOutputQty = @"
+            string strCheckSubOutputQty = $@"
 select #tmp.*
 into #Mother
 from #tmp
-where exists (select 1
-              from Order_Qty_Garment OQG 
-              where #tmp.OrderID = OQG.OrderIDFrom
-                    and #tmp.Article = OQG.Article
-                    and #tmp.SizeCode = OQG.SizeCode)
-      and Convert (bit, #tmp.AutoCreate) = 0
+where Convert (bit, #tmp.AutoCreate) = 0
 
-select #tmp.*
+select soddG.ComboType
+       , soddG.Article
+       , soddG.SizeCode
+       , soddG.OrderIDFrom
+       , QaQty = sum (soddG.QaQty)
 into #Child
-from #tmp
-where exists (select 1
-              from Order_Qty_Garment OQG 
-              where #tmp.OrderID = OQG.ID
-                    and #tmp.Article = OQG.Article
-                    and #tmp.SizeCode = OQG.SizeCode)
-      and Convert (bit, #tmp.AutoCreate) = 1
+from SewingOutput_Detail_Detail_Garment soddG
+where soddG.ID = '{CurrentMaintain["ID"]}'
+group by soddG.ComboType, soddG.Article, soddG.SizeCode, soddG.OrderIDFrom
 
 select Child.*
-	   , MotherQaQty = isnull (Mother.MotherQaQty, 0)
-from (
-	select #Child.ComboType
-		   , #Child.Article
-		   , #Child.SizeCode
-		   , ChildQaQty = sum (#Child.QAQty)
-	from #Child
-	group by #Child.ComboType, #Child.Article, #Child.SizeCode
-) Child
-left join (
-	select #Mother.ComboType
-		   , #Mother.Article
-		   , #Mother.SizeCode
-		   , MotherQaQty = sum (#Mother.QAQty)
-	from #Mother
-	where exists (select 1 
-				  from #Child ToSPTmp
-				  inner join Order_Qty_Garment OQG on ToSPTmp.OrderId = OQG.ID
-													  and ToSPTmp.Article = OQG.Article
-													  and ToSPTmp.SizeCode = OQG.SizeCode
-				  inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
-				  inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
-												  and ToSPTmp.ComboType = SL.Location
-				  where OQG.OrderIDFrom = #Mother.OrderId
-				  		and ToSPTmp.ComboType = #Mother.ComboType
-				  		and ToSPTmp.Article = #Mother.Article
-				  		and ToSPTmp.SizeCode = #Mother.SizeCode)
-	group by #Mother.ComboType, #Mother.Article, #Mother.SizeCode
-) Mother on Child.ComboType = Mother.ComboType
-			and Child.Article = Mother.Article
-			and Child.SizeCode = Mother.SizeCode
-where ChildQaQty > isnull (MotherQaQty, 0)";
+	   , MotherQaQty = isnull (Mother.QaQty, 0)
+from #Child Child
+left join #Mother Mother on Child.OrderIDFrom = Mother.OrderID
+                            and Child.ComboType = Mother.ComboType
+			                and Child.Article = Mother.Article
+			                and Child.SizeCode = Mother.SizeCode
+where Child.QaQty > isnull (Mother.QaQty, 0)";
 
             resultCheckSubOutputQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckSubOutputQty, out dtCheckSubOutputQty);
 
@@ -1175,7 +1145,7 @@ QAQty: <{3}>  less than AutoCreate Items QAQty: <{4}>", dtCheckSubOutputQty.Rows
                                                 , dtCheckSubOutputQty.Rows[i]["Article"].ToString()
                                                 , dtCheckSubOutputQty.Rows[i]["SizeCode"].ToString()
                                                 , dtCheckSubOutputQty.Rows[i]["MotherQaQty"].ToString()
-                                                , dtCheckSubOutputQty.Rows[i]["ChildQaQty"].ToString()));
+                                                , dtCheckSubOutputQty.Rows[i]["QaQty"].ToString()));
                 }
 
                 if (errMsg.ToString().Empty() == false)
