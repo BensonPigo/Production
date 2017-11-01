@@ -5,7 +5,7 @@
     [Qty]            NUMERIC (6)     CONSTRAINT [DF_Order_TmsCost_Qty] DEFAULT ((0)) NULL,
     [ArtworkUnit]    VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
     [TMS]            NUMERIC (5)     CONSTRAINT [DF_Order_TmsCost_TMS] DEFAULT ((0)) NULL,
-    [Price]          NUMERIC (10, 3) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
+    [Price]          NUMERIC (16, 4) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
     [InhouseOSP]     VARCHAR (1)     CONSTRAINT [DF_Order_TmsCost_InhouseOSP] DEFAULT ('') NULL,
     [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_Order_TmsCost_LocalSuppID] DEFAULT ('') NULL,
     [ArtworkInLine]  DATE            NULL,

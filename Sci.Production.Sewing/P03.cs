@@ -124,13 +124,12 @@ from Order_Qty_Garment OQG
 inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
 inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
 outer apply (
-	select value = isnull (sum (isnull (soddG.QAQty, 0)), 0)
-	from SewingOutput_Detail_Detail_Garment soddG
-	where oqg.ID = soddG.OrderId
-		  and SL.Location = soddG.ComboType
-		  and OQG.Article = soddG.Article
-		  and OQG.SizeCode = soddG.SizeCode
-		  and OQG.OrderIDFrom = soddG.OrderIDFrom
+	select value = isnull (sum (isnull (sodd.QAQty, 0)), 0)
+	from SewingOutput_Detail_Detail sodd 
+	where oqg.ID = sodd.OrderId
+		  and SL.Location = sodd.ComboType
+		  and OQG.Article = sodd.Article
+		  and OQG.SizeCode = sodd.SizeCode
 ) AccuSoddQty
 outer apply (
 	select value = case OQG.Junk
@@ -149,7 +148,7 @@ drop table #OverGarment
 */
 ---- Packing 數量超過準備移除的數量 ---------------------------------------------------------------------------------------
 select #OverGarment.*
-		, PackingLockQty = PackingQty.value - #OverGarment.BalanceQty
+	   , PackingLockQty = PackingQty.value - #OverGarment.BalanceQty
 into #PackingNotEnough
 from #OverGarment
 outer apply (
@@ -157,7 +156,7 @@ outer apply (
 	from PackingList pl
 	inner join PackingList_Detail pld on pl.ID = pld.ID
 	where pld.OrderID = #OverGarment.OrderID
-			and pl.Status = 'Confirmed'	
+		  and pl.Status = 'Confirmed'	
 ) PackingQty
 where PackingQty.value > #OverGarment.BalanceQty
 
@@ -172,127 +171,73 @@ select	ID
 		, ComboType
 		, Article
 		, SizeCode
-		, OrderIDFrom
 		, QAQty
 		, DeleteRunningTotal
 		, tmpStatus = tmpStatus.value
 		, newQaQty = case tmpStatus.value
 						when 'D' then 0
 						when 'U' then DeleteRunningTotal - OverQty
-						end
+					 end
 into #tmpDeleteData
 from (
 	select so.ID
-			, soddG.SewingOutput_DetailUKey
-			, soddG.OrderId
-			, soddG.ComboType
-			, soddG.Article
-			, soddG.SizeCode
-			, soddG.OrderIDFrom
-			, soddG.QAQty
-			, DeleteRunningTotal = sum (soddG.QAQty) over (partition by soddG.OrderId, soddG.ComboType, soddG.Article, soddG.SizeCode, soddG.OrderIDFrom
-															order by so.OutputDate desc, so.ID)
-			, DeleteTmp.OverQty
+		   , sodd.SewingOutput_DetailUKey
+		   , sodd.OrderId
+		   , sodd.ComboType
+		   , sodd.Article
+		   , sodd.SizeCode
+		   , sodd.QAQty
+		   , DeleteRunningTotal = sum (sodd.QAQty) over (partition by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode
+														 order by so.OutputDate desc)
+		   , DeleteTmp.OverQty
 	from SewingOutput so
-	inner join SewingOutput_Detail_Detail_Garment soddG on so.ID = soddG.ID
-	inner join Order_Qty_Garment OQG on soddG.OrderId = OQG.ID
-										and soddG.Article = OQG.Article
-										and soddG.SizeCode = OQG.SizeCode
-										and soddG.OrderIDFrom = OQG.OrderIDFrom
+	inner join SewingOutput_Detail_Detail sodd on so.ID = sodd.ID
+	inner join Order_Qty_Garment OQG on sodd.OrderId = OQG.ID
+										and sodd.Article = OQG.Article
+										and sodd.SizeCode = OQG.SizeCode
 	inner join (
 		select *
 		from #OverGarment
 		where not exists (select 1 
-							from #PackingNotEnough
-							where #OverGarment.OrderID = #PackingNotEnough.OrderID)
-	) DeleteTmp on soddG.OrderId = DeleteTmp.OrderID
-					and OQG.OrderIDFrom = DeleteTmp.POID
-					and soddG.ComboType = DeleteTmp.ComboType
-					and soddG.Article = DeleteTmp.Article
-					and soddG.SizeCode = DeleteTmp.SizeCode
+						  from #PackingNotEnough
+						  where #OverGarment.OrderID = #PackingNotEnough.OrderID)
+	) DeleteTmp on sodd.OrderId = DeleteTmp.OrderID
+				   and OQG.OrderIDFrom = DeleteTmp.POID
+				   and sodd.ComboType = DeleteTmp.ComboType
+				   and sodd.Article = DeleteTmp.Article
+				   and sodd.SizeCode = DeleteTmp.SizeCode
 ) DeleteData
 outer apply (
 	select value = case 
-						when DeleteRunningTotal > OverQty and DeleteRunningTotal - QAQty >= OverQty then 'N'
-						when DeleteRunningTotal > OverQty then 'U'
-						when DeleteRunningTotal <= OverQty then 'D'
-					end
+					  when DeleteRunningTotal > OverQty and DeleteRunningTotal - QAQty >= OverQty then 'N'
+					  when DeleteRunningTotal > OverQty then 'U'
+					  when DeleteRunningTotal <= OverQty then 'D'
+				   end
 ) tmpStatus
 
 /*
 select * from #tmpDeleteData
 drop table #tmpDeleteData
 */
----- Update & Delete : SewingOutput_Detail_Detail_Garment --------------------------------------------------------------------------
-update soddG
-set soddG.QAQty = tmpD.newQaQty
-from SewingOutput_Detail_Detail_Garment soddG
-inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-									and soddG.OrderId = tmpD.OrderId
-									and soddG.ComboType = tmpD.ComboType
-									and soddG.Article = tmpD.Article
-									and soddG.SizeCode = tmpd.SizeCode
-									and soddG.OrderIDFrom = tmpD.OrderIDFrom 
-where tmpD.tmpStatus in ('U')
-
-delete soddG
-from SewingOutput_Detail_Detail_Garment soddG
-inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-									and soddG.OrderId = tmpD.OrderId
-									and soddG.ComboType = tmpD.ComboType
-									and soddG.Article = tmpD.Article
-									and soddG.SizeCode = tmpD.SizeCode
-									and soddG.OrderIDFrom = tmpD.OrderIDFrom
-where tmpD.tmpStatus in ('D')
 ---- Update & Delete : SewingOutput_Detail_Detail ---------------------------------------------------------------------------------------
 update sodd
-set sodd.QAQty = NewQaQty.value
+set sodd.QAQty = tmpD.newQaQty
 from SewingOutput_Detail_Detail sodd
-inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
-		   							and sodd.orderid = tmpd.orderid
-		   							and sodd.combotype = tmpd.combotype
-		   							and sodd.article = tmpd.article
-		   							and sodd.SizeCode = tmpd.SizeCode
-outer apply (
-	select value = isnull (sum (soddG.QaQty), 0)
-	from SewingOutput_Detail_Detail_Garment soddG
-	inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
-		   								and soddG.OrderId = tmpD.OrderId
-		   								and soddG.ComboType = tmpD.ComboType
-		   								and soddG.Article = tmpD.Article
-		   								and soddG.SizeCode = tmpd.SizeCode
-	where sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-		   	and sodd.OrderId = tmpD.OrderId
-		   	and sodd.ComboType = tmpD.ComboType
-		   	and sodd.Article = tmpD.Article
-		   	and sodd.SizeCode = tmpd.SizeCode
-		   	and tmpD.tmpStatus in ('D', 'U')
-) NewQaQty
-where isnull (NewQaQty.value, 0) > 0
+inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+								  and sodd.OrderId = tmpD.OrderId
+								  and sodd.ComboType = tmpD.ComboType
+								  and sodd.Article = tmpD.Article
+								  and sodd.SizeCode = tmpd.SizeCode
+where tmpD.tmpStatus in ('U')
 
 delete sodd
 from SewingOutput_Detail_Detail sodd
-inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
-		   							and sodd.orderid = tmpd.orderid
-		   							and sodd.combotype = tmpd.combotype
-		   							and sodd.article = tmpd.article
-		   							and sodd.SizeCode = tmpd.SizeCode
-outer apply (
-	select value = isnull (sum (soddG.QaQty), 0)
-	from SewingOutput_Detail_Detail_Garment soddG
-	inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
-		   								and soddG.OrderId = tmpD.OrderId
-		   								and soddG.ComboType = tmpD.ComboType
-		   								and soddG.Article = tmpD.Article
-		   								and soddG.SizeCode = tmpd.SizeCode
-	where sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-		   	and sodd.OrderId = tmpD.OrderId
-		   	and sodd.ComboType = tmpD.ComboType
-		   	and sodd.Article = tmpD.Article
-		   	and sodd.SizeCode = tmpd.SizeCode
-		   	and tmpD.tmpStatus in ('D', 'U')
-) NewQaQty
-where isnull (NewQaQty.value, 0) = 0
+inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+								  and sodd.OrderId = tmpD.OrderId
+								  and sodd.ComboType = tmpD.ComboType
+								  and sodd.Article = tmpD.Article
+								  and sodd.SizeCode = tmpd.SizeCode
+where tmpD.tmpStatus in ('D')
 
 ---- Update & Delete : SewingOutput_Detail ---------------------------------------------------------------------------------------
 update sod
@@ -300,38 +245,30 @@ set sod.QAQty = NewQaQty.value
 	, sod.InlineQty = NewQaQty.value
 from SewingOutput_Detail sod
 inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
-									and sod.OrderId = tmpD.OrderId
-									and sod.ComboType = tmpD.ComboType
-									and sod.Article = tmpD.Article
+								  and sod.OrderId = tmpD.OrderId
+								  and sod.ComboType = tmpD.ComboType
+								  and sod.Article = tmpD.Article
 outer apply (
 	select value = isnull (sum (sodd.QaQty), 0)
 	from SewingOutput_Detail_Detail sodd
-	inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
-										and sod.OrderId = tmpD.OrderId
-										and sod.ComboType = tmpD.ComboType
-										and sod.Article = tmpD.Article
 	where sodd.SewingOutput_DetailUKey = sod.UKey
-			and tmpD.tmpStatus in ('D', 'U')
 ) NewQaQty
-where isnull (NewQaQty.value, 0) > 0
+where tmpD.tmpStatus in ('D', 'U')
+	  and NewQaQty.value != 0
 
 delete sod
 from SewingOutput_Detail sod
 inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
-									and sod.OrderId = tmpD.OrderId
-									and sod.ComboType = tmpD.ComboType
-									and sod.Article = tmpD.Article
+								  and sod.OrderId = tmpD.OrderId
+								  and sod.ComboType = tmpD.ComboType
+								  and sod.Article = tmpD.Article
 outer apply (
 	select value = isnull (sum (sodd.QaQty), 0)
 	from SewingOutput_Detail_Detail sodd
-	inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
-										and sod.OrderId = tmpD.OrderId
-										and sod.ComboType = tmpD.ComboType
-										and sod.Article = tmpD.Article
 	where sodd.SewingOutput_DetailUKey = sod.UKey
-			and tmpD.tmpStatus in ('D', 'U')
 ) NewQaQty
-where isnull (NewQaQty.value, 0) = 0
+where tmpD.tmpStatus in ('D', 'U')
+	  and NewQaQty.value = 0
 
 ---- out Packing 數量超過準備移除的數量 ---------------------------------------------------------------------------------------
 select *
@@ -370,13 +307,12 @@ outer apply (
 	select value = isnull (OQG.Qty, 0)
 ) ToSPQty
 outer apply (
-	select value = isnull (sum (SODDG.QAQty), 0)
-	from SewingOutput_Detail_Detail_Garment SODDG
-	where	SODDG.OrderId = OQG.ID
-			and SODDG.ComboType = SL.Location
-			and SODDG.Article = OQG.Article
-			and SODDG.SizeCode = OQG.SizeCode
-			and SODDG.OrderIDfrom = OQG.OrderIDFrom
+	select value = isnull (sum (SODD.QAQty), 0)
+	from SewingOutput_Detail_Detail SODD
+	where	SODD.OrderId = OQG.ID
+			and SODD.ComboType = SL.Location
+			and SODD.Article = OQG.Article
+			and SODD.SizeCode = OQG.SizeCode
 ) ToSPAllocatedQty
 outer apply (
 	select value = ToSPQty.value - ToSPAllocatedQty.value
@@ -390,12 +326,15 @@ outer apply (
 			and SODD.SizeCode = OQG.SizeCode
 ) FromSPSewingOutputQty
 outer apply (
-    select value = isnull (sum(passSoddG.QAQty), 0)
-	from SewingOutput_Detail_Detail_Garment passSoddG
-	where #tmp.OrderIDFrom = passSoddG.OrderIDfrom
-		  and #tmp.StyleLocation = passSoddG.ComboType
-		  and #tmp.Article = passSoddG.Article
-		  and #tmp.SizeCode = passSoddG.SizeCode
+    select value = isnull (sum(passSodd.QAQty), 0)
+	from SewingOutput_Detail passSod
+	inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
+	inner join Orders o on passSod.OrderId = o.ID
+	where o.POID = OQG.OrderIDFrom
+		  and o.ID != o.POID
+		  and SL.Location = passSodd.ComboType
+		  and OQG.Article = passSodd.Article
+		  and OQG.SizeCode = passSodd.SizeCode
 ) FromSPAccrQty
 outer apply (
 	select value = FromSPSewingOutputQty.value - FromSPAccrQty.value
@@ -429,19 +368,23 @@ from (
 		from #SelectData
 	) GroupByPoid
 	inner join SewingOutput_Detail_Detail PoidSodd on GroupByPoid.POID = PoidSodd.OrderId
-												   and GroupByPoid.ComboType = PoidSodd.ComboType
-												   and GroupByPoid.Article = PoidSodd.Article
-												   and GroupByPoid.SizeCode = PoidSodd.SizeCode
+												  and GroupByPoid.ComboType = PoidSodd.ComboType
+												  and GroupByPoid.Article = PoidSodd.Article
+												  and GroupByPoid.SizeCode = PoidSodd.SizeCode
 	inner join SewingOutput_Detail PoidSod on PoidSodd.SewingOutput_DetailUKey = PoidSod.UKey
 	inner join SewingOutput PoidSo on PoidSodd.ID = PoidSo.ID
 	outer apply (
-		select value = PoidSodd.QaQty - isnull (sum (isnull (ReserveSoddG.QAQty, 0)), 0)
-		from SewingOutput_Detail_Detail_Garment ReserveSoddG
-		where PoidSodd.ID = ReserveSoddG.ID
-			  and GroupByPoid.POID = ReserveSoddG.OrderIDfrom
-			  and PoidSodd.ComboType = ReserveSoddG.ComboType
-			  and PoidSodd.Article = ReserveSoddG.Article
-			  and PoidSodd.SizeCode = ReserveSoddG.SizeCode
+		select value = PoidSodd.QaQty - isnull (sum (isnull (ReserveSodd.QAQty, 0)), 0)
+		from Order_Qty_Garment ReserveOrders 
+		inner join SewingOutput_Detail_Detail ReserveSodd on ReserveOrders.ID = ReserveSodd.OrderId
+															 and ReserveOrders.Article = ReserveSodd.Article
+															 and ReserveOrders.SizeCode = ReserveSodd.SizeCode
+		where ReserveOrders.OrderIDFrom = PoidSodd.OrderId
+			  and ReserveOrders.ID != ReserveOrders.OrderIDFrom			  
+			  and PoidSodd.ID = ReserveSodd.ID
+			  and PoidSodd.ComboType = ReserveSodd.ComboType
+			  and PoidSodd.Article = ReserveSodd.Article
+			  and PoidSodd.SizeCode = ReserveSodd.SizeCode
 	) AvailableQty
 	where AvailableQty.value > 0
 ) PoidAvailableReserveQty
@@ -497,7 +440,6 @@ outer apply (
 						when PoidQty < NeedQtyRunningTotal and PoidQty <= (NeedQtyRunningTotal - NeedQty) then 'N'
 					end
 ) AccuNeedStatus
-where NeedQty > 0
 
 /*
 select * from #OrdersAccuNeedQty
@@ -564,11 +506,17 @@ using (
 	select	tmp.SewingOutputID
 			, tmp.ID
 			, tmp.ComboType
-			, tmp.Article
+			, Article
 			, tmp.Color	
 			, takeQty = sum(takeQty)
 	from #OrdersReceiveTmp tmp
-	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color			 
+	left join Orders o on tmp.ID = o.ID
+	left join Style_Location sl on o.StyleUkey = sl.StyleUkey
+								   and tmp.ComboType = sl.Location
+	left join SewingSchedule ss on tmp.ID = ss.OrderID
+								   and tmp.ComboType = ss.ComboType
+								   and tmp.SewingLineID = ss.SewingLineID
+	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, Article, tmp.Color			 
 ) as s on t.ID = s.SewingOutputID
 		  and t.OrderID = s.ID
 		  and t.ComboType = s.ComboType
@@ -591,21 +539,14 @@ when not matched by target then
 ---- 子單 Merge SewingOutput_Detail_Detail ------------------------------------------------------
 Merge SewingOutput_Detail_Detail as t
 using (
-	select	tmp.SewingOutputID
-			, tmp.ID
-			, tmp.ComboType
-			, tmp.Article
-			, tmp.Color	
-            , tmp.SizeCode
+	select	tmp.*
 			, sod.Ukey
-			, takeQty = sum(takeQty)
 	from #OrdersReceiveTmp tmp
 	inner join SewingOutput_Detail sod on sod.ID = tmp.SewingOutputID
 										  and sod.OrderID = tmp.ID
 										  and sod.ComboType = tmp.ComboType
 										  and sod.Article = tmp.Article
 										  and sod.Color = tmp.Color
-    group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color, tmp.SizeCode, sod.Ukey
 ) as s on t.SewingOutput_DetailUkey = s.Ukey
 		  and t.ID = s.SewingOutputID
 		  and t.OrderID = s.ID
@@ -623,35 +564,6 @@ when not matched by target then
 		, s.SizeCode		, s.TakeQty
 	);
 
----- 子單 Merge SewingOutput_Detail_Detail_Garment ----------------------------------------------
-Merge SewingOutput_Detail_Detail_Garment as t
-using (
-	select	tmp.*
-			, sod.Ukey
-	from #OrdersReceiveTmp tmp
-	inner join SewingOutput_Detail sod on sod.ID = tmp.SewingOutputID
-										  and sod.OrderID = tmp.ID
-										  and sod.ComboType = tmp.ComboType
-										  and sod.Article = tmp.Article
-										  and sod.Color = tmp.Color
-) as s on t.SewingOutput_DetailUkey = s.Ukey
-		  and t.ID = s.SewingOutputID
-		  and t.OrderID = s.ID
-		  and t.ComboType = s.ComboType
-		  and t.Article = s.Article
-		  and t.SizeCode = s.SizeCode
-		  and t.OrderIDFrom = s.POID
-when matched then
-	update set	t.QaQty = t.QaQty + s.TakeQty
-when not matched by target then 
-	insert (
-		ID					, SewingOutput_DetailUkey	, OrderID	, ComboType		, Article
-		, SizeCode			, OrderIDFrom 				, QaQty
-	) values (
-		s.SewingOutputID	, s.Ukey					, s.ID		, s.ComboType	, s.Article
-		, s.SizeCode		, s.POID 			        , s.TakeQty
-	);
-
 ---- 成功分配清單 ------------------------------------------------------
 select OrderID = ID
 	   , POID
@@ -663,7 +575,7 @@ select OrderID = ID
 from #OrdersAccuNeedQty
 where AccuNeedStatus in ('O', 'S')
 
-drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp, #SelectData;");
+drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp");
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();
@@ -779,7 +691,7 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
             dicSqlFilte.Add("BuyerDelivery", strBuyerDeliveryFilte);
             #endregion 
             #region SQL Command
-            string strSqlCmd = $@"
+            string strSqlCmd = string.Format(@"
 select	sel = 0
 		, ID = OQG.ID
 		, StyleLocation = SL.Location
@@ -800,20 +712,18 @@ select	sel = 0
 from Order_Qty_Garment OQG
 inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
 inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
-inner join factory f on ToSPOrders.FactoryID = f.id 
-		   				and f.IsProduceFty = 1 --判斷是否為生產工廠
+inner join factory f on ToSPOrders.FactoryID=f.id and f.IsProduceFty=1 --判斷是否為生產工廠
 outer apply (
 	select value = isnull (OQG.Qty, 0)
 ) ToSPQty
 outer apply (
-	select value = isnull (sum (SODDG.QAQty), 0)
-	from SewingOutput_Detail_Detail_Garment SODDG
-	where	SODDG.OrderId = OQG.ID
-			and SODDG.ComboType = SL.Location
-			and SODDG.Article = OQG.Article
-			and SODDG.SizeCode = OQG.SizeCode
-			and SODDG.OrderIDFrom = OQG.OrderIDFrom
-) ToSPAllocatedQty	
+	select value = isnull (sum (SODD.QAQty), 0)
+	from SewingOutput_Detail_Detail SODD
+	where	SODD.OrderId = OQG.ID
+			and SODD.ComboType = SL.Location
+			and SODD.Article = OQG.Article
+			and SODD.SizeCode = OQG.SizeCode
+) ToSPAllocatedQty
 outer apply (
 	select value = ToSPQty.value - ToSPAllocatedQty.value
 ) ToSPBalance
@@ -826,12 +736,15 @@ outer apply (
 			and SODD.SizeCode = OQG.SizeCode
 ) FromSPSewingOutputQty
 outer apply (
-	select value = isnull (sum (SODDG.QAQty), 0)
-	from SewingOutput_Detail_Detail_Garment SODDG
-	where	SODDG.ComboType = SL.Location
-			and SODDG.Article = OQG.Article
-			and SODDG.SizeCode = OQG.SizeCode
-			and SODDG.OrderIDFrom = OQG.OrderIDFrom
+    select value = isnull (sum(passSodd.QAQty), 0)
+	from SewingOutput_Detail passSod
+	inner join SewingOutput_Detail_Detail passSodd on passSod.UKey = passSodd.SewingOutput_DetailUKey
+	inner join Orders o on passSod.OrderId = o.ID
+	where o.POID = OQG.OrderIDFrom
+		  and o.ID != o.POID
+		  and SL.Location = passSodd.ComboType
+		  and OQG.Article = passSodd.Article
+		  and OQG.SizeCode = passSodd.SizeCode
 ) FromSPAccrQty
 outer apply (
 	select value = FromSPSewingOutputQty.value - FromSPAccrQty.value
@@ -840,12 +753,14 @@ where	ToSPBalance.value > 0
         and (OQG.junk = 0 or OQG.junk is null)
         and ToSPOrders.FtyGroup = @Factory
 		-- ToSP
-		{dicSqlFilte["ToSP"]}
-        -- FromSP
-        { dicSqlFilte["FromSP"]}
-        --BuyerDelivery
-        { dicSqlFilte["BuyerDelivery"]}
-order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery";
+		{0}
+		-- FromSP
+		{1}
+		-- BuyerDelivery
+		{2}
+order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery", dicSqlFilte["ToSP"]
+                                                        , dicSqlFilte["FromSP"]
+                                                        , dicSqlFilte["BuyerDelivery"]);
             #endregion
             this.ShowWaitMessage("Data Loading...");
             #region Set Grid Data
@@ -857,7 +772,7 @@ order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery";
             }
             else
             {
-                MyUtility.Msg.WarningBox(result.ToString());
+                MyUtility.Msg.WarningBox(result.Description);
                 this.bindingSource.DataSource = null;
             }
             #endregion
