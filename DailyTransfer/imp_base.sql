@@ -1850,7 +1850,8 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
-
+	  ,a.IsGMTMaster	  =b.IsGMTMaster
+	  ,a.IsGMTDetail      =b.IsGMTDetail
 from Production.dbo.OrderType as a inner join Trade_To_Pms.dbo.OrderType as b ON a.id=b.id and a.BrandID =b.BrandID
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.OrderType(
@@ -1870,6 +1871,8 @@ INSERT INTO Production.dbo.OrderType(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,IsGMTMaster
+	  ,IsGMTDetail
 
 )
 select 
@@ -1889,7 +1892,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,IsGMTMaster
+	  ,IsGMTDetail
 from Trade_To_Pms.dbo.OrderType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.OrderType as a WITH (NOLOCK) where a.id = b.id and a.BrandID =b.BrandID)
 
