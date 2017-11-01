@@ -254,6 +254,12 @@
     <Compile Include="R20.Designer.cs">
       <DependentUpon>R20.cs</DependentUpon>
     </Compile>
+    <Compile Include="Thread_B06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Thread_B06.Designer.cs">
+      <DependentUpon>Thread_B06.cs</DependentUpon>
+    </Compile>
     <Compile Include="WH_B03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -320,6 +326,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Thread_B06.resx">
+      <DependentUpon>Thread_B06.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WH_B03.resx">
       <DependentUpon>WH_B03.cs</DependentUpon>

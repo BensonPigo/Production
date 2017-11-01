@@ -661,34 +661,41 @@ where   c.Styleukey = (select o.Styleukey
 
             //做資料匯整select group 後填入ThreadRequisition_Detail
             sqltr_duk = string.Format(@"
-select  Orderid = '{0}'
-        , #tmp.Refno
-        , ThreadColorId
-        , Threadcombdesc
-        , colordesc
-        , #tmp.MeterToCone
-        , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
-        , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
-                                              , 0)
-        , AllowanceQty =  0.00
-        , PurchaseQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
-                                                , 0.00) 
-        , AutoCreate = 'true' 
-        , UseStockQty = 0
-        , POID = ''
-        , Remark = ''
-        , Article = stuff((select concat (',', Article)
-                           from (
-						       select distinct Article 
-                               from #tmp t
-                               where  t.refno = #tmp.refno 
-                                   and t.threadColorid = #tmp.threadColorid
-						   ) art
-                           for xml path('')
-                          ), 1, 1, '')
-from #tmp
-group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
-                        ", id);
+select *
+       , AllowanceQty = isnull (AllowanceQty.value, 0)
+       , PurchaseQty = TotalQty + isnull (AllowanceQty.value, 0)
+from (
+    select  Orderid = '{0}'
+            , #tmp.Refno
+            , ThreadColorId
+            , Threadcombdesc
+            , colordesc
+            , #tmp.MeterToCone
+            , ConsumptionQty = CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100)
+            , TotalQty = IIF(#tmp.MeterToCone > 0, CEILING (Sum (OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)
+                                                 , 0)
+            , AutoCreate = 'true' 
+            , UseStockQty = 0
+            , POID = ''
+            , Remark = ''
+            , Article = stuff((select concat (',', Article)
+                               from (
+						           select distinct Article 
+                                   from #tmp t
+                                   where  t.refno = #tmp.refno 
+                                       and t.threadColorid = #tmp.threadColorid
+						       ) art
+                               for xml path('')
+                              ), 1, 1, '')
+    from #tmp
+    group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
+) tmp
+outer apply (
+    select top 1 value = CEILING (TotalQty * Allowance)
+    from ThreadAllowanceScale tas
+    where tas.LowerBound <= TotalQty
+          and TotalQty <= tas.UpperBound
+) AllowanceQty", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
             else
