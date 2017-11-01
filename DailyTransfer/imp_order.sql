@@ -601,7 +601,7 @@ BEGIN
 			t.Junk = 1;
     
     ----------Order_Qty_Garment 異動 須同步更新 SewingOutput--------------			
-		---- Output 數量超過 Garment ---------------------------------------------------------------------------------------
+    ---- Output 數量超過 Garment ---------------------------------------------------------------------------------------
 		select OrderID = OQG.ID
 			   , POID = OQG.OrderIDFrom
 			   , ComboType = SL.Location
@@ -618,12 +618,13 @@ BEGIN
 		inner join Orders ToSPOrders on OQG.ID = ToSPOrders.ID
 		inner join Style_Location SL on ToSPOrders.StyleUkey = SL.StyleUkey
 		outer apply (
-			select value = isnull (sum (isnull (sodd.QAQty, 0)), 0)
-			from SewingOutput_Detail_Detail sodd 
-			where oqg.ID = sodd.OrderId
-				  and SL.Location = sodd.ComboType
-				  and OQG.Article = sodd.Article
-				  and OQG.SizeCode = sodd.SizeCode
+			select value = isnull (sum (isnull (soddG.QAQty, 0)), 0)
+			from SewingOutput_Detail_Detail_Garment soddG
+			where oqg.ID = soddG.OrderId
+				  and SL.Location = soddG.ComboType
+				  and OQG.Article = soddG.Article
+				  and OQG.SizeCode = soddG.SizeCode
+				  and OQG.OrderIDFrom = soddG.OrderIDFrom
 		) AccuSoddQty
 		outer apply (
 			select value = case OQG.Junk
@@ -662,6 +663,7 @@ BEGIN
 				, ComboType
 				, Article
 				, SizeCode
+				, OrderIDFrom
 				, QAQty
 				, DeleteRunningTotal
 				, tmpStatus = tmpStatus.value
@@ -672,31 +674,33 @@ BEGIN
 		into #tmpDeleteData
 		from (
 			select so.ID
-				   , sodd.SewingOutput_DetailUKey
-				   , sodd.OrderId
-				   , sodd.ComboType
-				   , sodd.Article
-				   , sodd.SizeCode
-				   , sodd.QAQty
-				   , DeleteRunningTotal = sum (sodd.QAQty) over (partition by sodd.OrderId, sodd.ComboType, sodd.Article, sodd.SizeCode
-																 order by so.OutputDate desc)
+				   , soddG.SewingOutput_DetailUKey
+				   , soddG.OrderId
+				   , soddG.ComboType
+				   , soddG.Article
+				   , soddG.SizeCode
+				   , soddG.OrderIDFrom
+				   , soddG.QAQty
+				   , DeleteRunningTotal = sum (soddG.QAQty) over (partition by soddG.OrderId, soddG.ComboType, soddG.Article, soddG.SizeCode, soddG.OrderIDFrom
+																  order by so.OutputDate desc, so.ID)
 				   , DeleteTmp.OverQty
 			from SewingOutput so
-			inner join SewingOutput_Detail_Detail sodd on so.ID = sodd.ID
-			inner join Order_Qty_Garment OQG on sodd.OrderId = OQG.ID
-												and sodd.Article = OQG.Article
-												and sodd.SizeCode = OQG.SizeCode
+			inner join SewingOutput_Detail_Detail_Garment soddG on so.ID = soddG.ID
+			inner join Order_Qty_Garment OQG on soddG.OrderId = OQG.ID
+												and soddG.Article = OQG.Article
+												and soddG.SizeCode = OQG.SizeCode
+												and soddG.OrderIDFrom = OQG.OrderIDFrom
 			inner join (
 				select *
 				from #OverGarment
 				where not exists (select 1 
 								  from #PackingNotEnough
 								  where #OverGarment.OrderID = #PackingNotEnough.OrderID)
-			) DeleteTmp on sodd.OrderId = DeleteTmp.OrderID
+			) DeleteTmp on soddG.OrderId = DeleteTmp.OrderID
 						   and OQG.OrderIDFrom = DeleteTmp.POID
-						   and sodd.ComboType = DeleteTmp.ComboType
-						   and sodd.Article = DeleteTmp.Article
-						   and sodd.SizeCode = DeleteTmp.SizeCode
+						   and soddG.ComboType = DeleteTmp.ComboType
+						   and soddG.Article = DeleteTmp.Article
+						   and soddG.SizeCode = DeleteTmp.SizeCode
 		) DeleteData
 		outer apply (
 			select value = case 
@@ -710,25 +714,76 @@ BEGIN
 		select * from #tmpDeleteData
 		drop table #tmpDeleteData
 		*/
+		---- Update & Delete : SewingOutput_Detail_Detail_Garment --------------------------------------------------------------------------
+		update soddG
+		set soddG.QAQty = tmpD.newQaQty
+		from SewingOutput_Detail_Detail_Garment soddG
+		inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+										  and soddG.OrderId = tmpD.OrderId
+										  and soddG.ComboType = tmpD.ComboType
+										  and soddG.Article = tmpD.Article
+										  and soddG.SizeCode = tmpd.SizeCode
+										  and soddG.OrderIDFrom = tmpD.OrderIDFrom 
+		where tmpD.tmpStatus in ('U')
+
+		delete soddG
+		from SewingOutput_Detail_Detail_Garment soddG
+		inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+										  and soddG.OrderId = tmpD.OrderId
+										  and soddG.ComboType = tmpD.ComboType
+										  and soddG.Article = tmpD.Article
+										  and soddG.SizeCode = tmpD.SizeCode
+										  and soddG.OrderIDFrom = tmpD.OrderIDFrom
+		where tmpD.tmpStatus in ('D')
 		---- Update & Delete : SewingOutput_Detail_Detail ---------------------------------------------------------------------------------------
 		update sodd
-		set sodd.QAQty = tmpD.newQaQty
+		set sodd.QAQty = NewQaQty.value
 		from SewingOutput_Detail_Detail sodd
-		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-										  and sodd.OrderId = tmpD.OrderId
-										  and sodd.ComboType = tmpD.ComboType
-										  and sodd.Article = tmpD.Article
-										  and sodd.SizeCode = tmpd.SizeCode
-		where tmpD.tmpStatus in ('U')
+		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
+		   								  and sodd.orderid = tmpd.orderid
+		   								  and sodd.combotype = tmpd.combotype
+		   								  and sodd.article = tmpd.article
+		   								  and sodd.SizeCode = tmpd.SizeCode
+		outer apply (
+		   select value = isnull (sum (soddG.QaQty), 0)
+		   from SewingOutput_Detail_Detail_Garment soddG
+		   inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
+		   									 and soddG.OrderId = tmpD.OrderId
+		   									 and soddG.ComboType = tmpD.ComboType
+		   									 and soddG.Article = tmpD.Article
+		   									 and soddG.SizeCode = tmpd.SizeCode
+		   where sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+		   	     and sodd.OrderId = tmpD.OrderId
+		   	     and sodd.ComboType = tmpD.ComboType
+		   	     and sodd.Article = tmpD.Article
+		   	     and sodd.SizeCode = tmpd.SizeCode
+		   	     and tmpD.tmpStatus in ('D', 'U')
+		) NewQaQty
+		where isnull (NewQaQty.value, 0) > 0
 
 		delete sodd
 		from SewingOutput_Detail_Detail sodd
-		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
-										  and sodd.OrderId = tmpD.OrderId
-										  and sodd.ComboType = tmpD.ComboType
-										  and sodd.Article = tmpD.Article
-										  and sodd.SizeCode = tmpd.SizeCode
-		where tmpD.tmpStatus in ('D')
+		inner join #tmpDeleteData tmpD on sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
+		   								  and sodd.orderid = tmpd.orderid
+		   								  and sodd.combotype = tmpd.combotype
+		   								  and sodd.article = tmpd.article
+		   								  and sodd.SizeCode = tmpd.SizeCode
+		outer apply (
+		   select value = isnull (sum (soddG.QaQty), 0)
+		   from SewingOutput_Detail_Detail_Garment soddG
+		   inner join #tmpDeleteData tmpD on soddG.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey 
+		   									 and soddG.OrderId = tmpD.OrderId
+		   									 and soddG.ComboType = tmpD.ComboType
+		   									 and soddG.Article = tmpD.Article
+		   									 and soddG.SizeCode = tmpd.SizeCode
+		   where sodd.SewingOutput_DetailUKey = tmpD.SewingOutput_DetailUKey
+		   	     and sodd.OrderId = tmpD.OrderId
+		   	     and sodd.ComboType = tmpD.ComboType
+		   	     and sodd.Article = tmpD.Article
+		   	     and sodd.SizeCode = tmpd.SizeCode
+		   	     and tmpD.tmpStatus in ('D', 'U')
+		) NewQaQty
+		where isnull (NewQaQty.value, 0) = 0
 
 		---- Update & Delete : SewingOutput_Detail ---------------------------------------------------------------------------------------
 		update sod
@@ -742,10 +797,14 @@ BEGIN
 		outer apply (
 			select value = isnull (sum (sodd.QaQty), 0)
 			from SewingOutput_Detail_Detail sodd
+			inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+										  	  and sod.OrderId = tmpD.OrderId
+										  	  and sod.ComboType = tmpD.ComboType
+										  	  and sod.Article = tmpD.Article
 			where sodd.SewingOutput_DetailUKey = sod.UKey
+				  and tmpD.tmpStatus in ('D', 'U')
 		) NewQaQty
-		where tmpD.tmpStatus in ('D', 'U')
-			  and NewQaQty.value != 0
+		where isnull (NewQaQty.value, 0) > 0
 
 		delete sod
 		from SewingOutput_Detail sod
@@ -756,10 +815,14 @@ BEGIN
 		outer apply (
 			select value = isnull (sum (sodd.QaQty), 0)
 			from SewingOutput_Detail_Detail sodd
+			inner join #tmpDeleteData tmpD on sod.UKey = tmpD.SewingOutput_DetailUKey
+										  	  and sod.OrderId = tmpD.OrderId
+										  	  and sod.ComboType = tmpD.ComboType
+										  	  and sod.Article = tmpD.Article
 			where sodd.SewingOutput_DetailUKey = sod.UKey
+				  and tmpD.tmpStatus in ('D', 'U')
 		) NewQaQty
-		where tmpD.tmpStatus in ('D', 'U')
-			  and NewQaQty.value = 0
+		where isnull (NewQaQty.value, 0) = 0
 
 		drop table #OverGarment, #PackingNotEnough, #tmpDeleteData;
 	----------Order_QtyShip--------------
