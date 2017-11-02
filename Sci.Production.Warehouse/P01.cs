@@ -83,6 +83,9 @@ namespace Sci.Production.Warehouse
         private void btnBatchClose_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P01_BatchCloseRowMaterial();
+            this.ShowWaitMessage("Data Loading....");
+            frm.QueryData(true);
+            this.HideWaitMessage();
             frm.ShowDialog(this);
             ReloadDatas();
             this.RenewData();
