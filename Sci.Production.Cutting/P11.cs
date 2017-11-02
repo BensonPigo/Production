@@ -1424,7 +1424,7 @@ order by ArticleGroup", patternukey);
                             ('{0}','{1}',{2},'{3}',
                             '{4}','{5}',{6},{7},0,0)",
                             id_list[idcount], bundleno_list[bundlenocount], startno, rowPat["PatternCode"],
-                            rowPat["PatternDesc"], artar["SizeCode"], rowqty["Qty"], rowPat["Parts"]);
+                            rowPat["PatternDesc"].ToString().Replace("'","''"), artar["SizeCode"], rowqty["Qty"], rowPat["Parts"]);
                         Insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
                         #endregion
                         if (!MyUtility.Check.Empty(rowPat["art"])) //非空白的Art 才存在
