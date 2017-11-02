@@ -102,7 +102,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select * from VNImportDeclaration_Detail WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = string.Format(@"select v.id,v.HSCode,v.NLCode,Qty = Round(v.Qty,2),v.UnitID,v.Remark,v.Price from VNImportDeclaration_Detail v WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
