@@ -11,8 +11,15 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P05
+    /// </summary>
     public partial class P05 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// P05
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,6 +30,9 @@ namespace Sci.Production.Logistic
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -66,7 +76,7 @@ namespace Sci.Production.Logistic
                     if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
                         this.gridData.DefaultView.Sort = "rn DESC";
-                        this.selectDataTable_DefaultView_Sort = "";
+                        this.selectDataTable_DefaultView_Sort = string.Empty;
                     }
                     else
                     {
@@ -222,11 +232,11 @@ order by PackingListID, OrderID, rn");
             }
 
             // 如果沒勾選資料,會跳訊息
-            foreach (DataRow Dr in excelTable.Rows)
+            foreach (DataRow dr1 in excelTable.Rows)
             {
-                if (Dr["Selected"].EqualString("1"))
+                if (dr1["Selected"].EqualString("1"))
                 {
-                    printDT.ImportRow(Dr);
+                    printDT.ImportRow(dr1);
                 }
             }
 
@@ -247,7 +257,7 @@ order by PackingListID, OrderID, rn");
             printDT.Columns.Remove("rn");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(printDT, "", "Logistic_P05.xltx", 4, false, null, objApp); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printDT, string.Empty, "Logistic_P05.xltx", 4, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = printDT.Rows.Count;
@@ -266,15 +276,15 @@ order by PackingListID, OrderID, rn");
                 objSheets.Cells[1, 1] = "CARTON RECEIVING REPORT";
             }
 
-            string d1 = "", d2 = "";
-            if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
+            string d1 = string.Empty, d2 = string.Empty;
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
             {
-                d1 = Convert.ToDateTime(dateReceiveDate.Value1).ToString("yyyy/MM/dd");
+                d1 = Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("yyyy/MM/dd");
             }
 
-            if (!MyUtility.Check.Empty(dateReceiveDate.Value2))
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value2))
             {
-                d2 = Convert.ToDateTime(dateReceiveDate.Value2).ToString("yyyy/MM/dd");
+                d2 = Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("yyyy/MM/dd");
             }
 
             string drange = d1 + "~" + d2;

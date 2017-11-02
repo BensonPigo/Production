@@ -21,6 +21,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>Sci.Production.Logistic.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\Sci.Production.Logistic.XML</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -271,6 +273,7 @@
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="B01_Print.rdlc" />
     <EmbeddedResource Include="B01_Print.resx">
@@ -358,6 +361,15 @@
     <None Include="packages.config" />
     <None Include="Resources\trffc15.bmp" />
     <None Include="Sci.Production.Logistic.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
+    <None Include="stylecop2.json" />
+    <None Include="stylecop3.json" />
+    <None Include="stylecop4.json" />
+    <None Include="stylecop5.json" />
+    <None Include="stylecop6.json" />
+    <None Include="stylecop7.json" />
+    <None Include="stylecop8.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

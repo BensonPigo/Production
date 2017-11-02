@@ -5,16 +5,27 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P01
+    /// </summary>
     public partial class P01 : Sci.Win.Tems.Input1
     {
-        public P01(ToolStripMenuItem menuitem, string Type)
+        /// <summary>
+        /// P01
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <param name="type">type</param>
+        public P01(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.Text = Type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Keyword);
+            this.InitializeComponent();
+            this.Text = type == "1" ? "P01. Clog Master List" : "P011. Clog Master List (History)";
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 0", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND Finished = 1", Sci.Env.User.Keyword);
         }
 
+        /// <summary>
+        /// OnDetailEntered()
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -29,13 +40,13 @@ namespace Sci.Production.Logistic
             }
             else
             {
-                this.labelSpecialId1.Text = "";
-                this.labelSpecialId2.Text = "";
-                this.labelSpecialId3.Text = "";
+                this.labelSpecialId1.Text = string.Empty;
+                this.labelSpecialId2.Text = string.Empty;
+                this.labelSpecialId3.Text = string.Empty;
             }
 
             this.displayActPullout.Value = this.CurrentMaintain["PulloutComplete"].ToString().ToUpper() == "TRUE" ? "OK" : MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct ID) as CntID from Pullout_Detail where OrderID = '{0}' and ShipQty > 0", this.CurrentMaintain["ID"].ToString()));
-            this.displayCFAFinalInspDate.Value = this.CurrentMaintain["InspResult"].ToString() == "P" ? "Pass" : this.CurrentMaintain["InspResult"].ToString() == "F" ? "Fail" : "";
+            this.displayCFAFinalInspDate.Value = this.CurrentMaintain["InspResult"].ToString() == "P" ? "Pass" : this.CurrentMaintain["InspResult"].ToString() == "F" ? "Fail" : string.Empty;
 
             this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["ClogCTN"]);
             this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
@@ -68,7 +79,7 @@ namespace Sci.Production.Logistic
         // Quantity breakdown
         private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(displayPOCombo.Value));
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOCombo.Value));
             callNextForm.ShowDialog(this);
         }
 
@@ -121,9 +132,9 @@ namespace Sci.Production.Logistic
         // Fabric inspection list
         private void BtnFabricInspectionList_Click(object sender, EventArgs e)
         {
-            //等QA -> P01開發完成後呼叫
-            //Sci.Production.QA.P01 callNextForm = new Sci.Production.QA.P01(this.CurrentMaintain["POID"].ToString());
-            //callNextForm.ShowDialog(this);
+            // 等QA -> P01開發完成後呼叫
+            // Sci.Production.QA.P01 callNextForm = new Sci.Production.QA.P01(this.CurrentMaintain["POID"].ToString());
+            // callNextForm.ShowDialog(this);
         }
 
         // CFA && RFT list
@@ -136,9 +147,9 @@ namespace Sci.Production.Logistic
         // Accessory inspection list
         private void BtnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
-            //等QA -> P02開發完成後呼叫
-            //Sci.Production.QA.P02 callNextForm = new Sci.Production.QA.P02(this.CurrentMaintain["POID"].ToString());
-            //callNextForm.ShowDialog(this);
+            // 等QA -> P02開發完成後呼叫
+            // Sci.Production.QA.P02 callNextForm = new Sci.Production.QA.P02(this.CurrentMaintain["POID"].ToString());
+            // callNextForm.ShowDialog(this);
         }
     }
 }

@@ -5,16 +5,26 @@ using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P01_CFAAndRFTList
+    /// </summary>
     public partial class P01_CFAAndRFTList : Sci.Win.Subs.Base
     {
         private DataRow masterData;
 
+        /// <summary>
+        /// P01_CFAAndRFTList
+        /// </summary>
+        /// <param name="masterData">masterData</param>
         public P01_CFAAndRFTList(DataRow masterData)
         {
             this.InitializeComponent();
             this.masterData = masterData;
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -27,11 +37,14 @@ iif(c.Status = 'New','N','Y') as Status, iif(c.InspectQty = 0,0,round(cast(c.Def
 from Cfa c WITH (NOLOCK) 
 left join SewingLine s WITH (NOLOCK) on c.SewingLineID = s.ID and c.FactoryID = s.FactoryID
 where c.OrderID = '{2}'
-order by c.cDate", this.masterData["POID"].ToString(), this.masterData["Dest"].ToString(), this.masterData["ID"].ToString());
+order by c.cDate",
+                this.masterData["POID"].ToString(),
+                this.masterData["Dest"].ToString(),
+                this.masterData["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out cFA);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query CFA fail!!"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query CFA fail!!" + result.ToString());
             }
 
             this.listControlBindingSource1.DataSource = cFA;
@@ -43,7 +56,9 @@ iif(r.Status = 'New','N','Y') as Status, iif(r.InspectQty = 0,0,round(cast((r.In
 from Rft r WITH (NOLOCK) 
 left join SewingLine s WITH (NOLOCK) on r.SewingLineID = s.ID and r.FactoryID = s.FactoryID
 where r.OrderID = '{1}'
-order by r.cDate", this.masterData["Dest"].ToString(), this.masterData["ID"].ToString());
+order by r.cDate",
+                this.masterData["Dest"].ToString(),
+                this.masterData["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out rFT);
             if (!result)
             {
@@ -52,10 +67,10 @@ order by r.cDate", this.masterData["Dest"].ToString(), this.masterData["ID"].ToS
 
             this.listControlBindingSource2.DataSource = rFT;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridCertifiedFactoryAudit.IsEditingReadOnly = true;
-            this.gridCertifiedFactoryAudit.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridCertifiedFactoryAudit)
+            this.gridCertifiedFactoryAudit.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridCertifiedFactoryAudit)
                 .Date("cDate", header: "Audit date", width: Widths.AnsiChars(10))
                 .Text("SewingLineID", header: "Line#", width: Widths.AnsiChars(2))
                 .Text("SewingCell", header: "Cell#", width: Widths.AnsiChars(2))
@@ -68,10 +83,10 @@ order by r.cDate", this.masterData["Dest"].ToString(), this.masterData["ID"].ToS
                 .Text("POID", header: "PO#", width: Widths.AnsiChars(13))
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(13));
 
-            //設定Grid2的顯示欄位
+            // 設定Grid2的顯示欄位
             this.gridRightFirstTime.IsEditingReadOnly = true;
-            this.gridRightFirstTime.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.gridRightFirstTime)
+            this.gridRightFirstTime.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.gridRightFirstTime)
                 .Date("cDate", header: "Date", width: Widths.AnsiChars(10))
                 .Text("SewingLineID", header: "Line#", width: Widths.AnsiChars(2))
                 .Text("SewingCell", header: "Cell#", width: Widths.AnsiChars(2))

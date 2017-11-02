@@ -11,8 +11,15 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P06
+    /// </summary>
     public partial class P06 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// P06
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -23,6 +30,9 @@ namespace Sci.Production.Logistic
         private string selectDataTable_DefaultView_Sort = string.Empty;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -30,7 +40,7 @@ namespace Sci.Production.Logistic
             // Grid設定
             this.gridReturnDate.IsEditingReadOnly = false;
             this.gridReturnDate.DataSource = this.listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridReturnDate)
+            this.Helper.Controls.Grid.Generator(this.gridReturnDate)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Date("ReturnDate", header: "Return Date", iseditable: false)
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
@@ -57,22 +67,22 @@ namespace Sci.Production.Logistic
             this.gridReturnDate.Sorted += (s, e) =>
             {
                 #region 如果準備排序的欄位 = "CTNStartNo" 則用以下方法排序
-                if ((rowIndex == -1) && (gridData.Columns[columIndex].ColumnName.ToString().EqualString("CTNStartNo")))
+                if ((rowIndex == -1) && this.gridData.Columns[columIndex].ColumnName.ToString().EqualString("CTNStartNo"))
                 {
-                    listControlBindingSource1.DataSource = null;
+                    this.listControlBindingSource1.DataSource = null;
 
-                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
-                        gridData.DefaultView.Sort = "rn DESC";
-                        selectDataTable_DefaultView_Sort = "";
+                        this.gridData.DefaultView.Sort = "rn DESC";
+                        this.selectDataTable_DefaultView_Sort = string.Empty;
                     }
                     else
                     {
-                        gridData.DefaultView.Sort = "rn ASC";
-                        selectDataTable_DefaultView_Sort = "DESC";
+                        this.gridData.DefaultView.Sort = "rn ASC";
+                        this.selectDataTable_DefaultView_Sort = "DESC";
                     }
 
-                    listControlBindingSource1.DataSource = gridData;
+                    this.listControlBindingSource1.DataSource = this.gridData;
                     return;
                 }
                 #endregion
@@ -113,29 +123,32 @@ from (
                                                 and oq.Seq = pd.OrderShipmodeSeq
     where   cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateReturnDate.Value1))
-            {
-                sqlCmd.Append(string.Format(@" 
-            and cr.ReturnDate >= '{0}'", Convert.ToDateTime(dateReturnDate.Value1).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(dateReturnDate.Value2))
-            {
-                sqlCmd.Append(string.Format(@" 
-            and cr.ReturnDate <= '{0}'", Convert.ToDateTime(dateReturnDate.Value2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(txtPackID.Text))
-            {
-                sqlCmd.Append(string.Format(@" 
-            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
-            }
-
-            if (!MyUtility.Check.Empty(txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.dateReturnDate.Value1))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
+            and cr.ReturnDate >= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateReturnDate.Value2))
+            {
+                sqlCmd.Append(string.Format(
+                    @" 
+            and cr.ReturnDate <= '{0}'", Convert.ToDateTime(this.dateReturnDate.Value2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
+            {
+                sqlCmd.Append(string.Format(
+                    @" 
+            and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(this.txtPackID.Text)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            {
+                sqlCmd.Append(string.Format(
+                    @" 
+            and cr.OrderID = '{0}'", MyUtility.Convert.GetString(this.txtSPNo.Text)));
             }
 
             sqlCmd.Append(@"
@@ -171,11 +184,11 @@ order by PackingListID, OrderID, rn");
             }
 
             // 如果沒勾選資料,會跳訊息
-            foreach (DataRow Dr in excelTable.Rows)
+            foreach (DataRow dr1 in excelTable.Rows)
             {
-                if (Dr["Selected"].EqualString("1"))
+                if (dr1["Selected"].EqualString("1"))
                 {
-                    printDT.ImportRow(Dr);
+                    printDT.ImportRow(dr1);
                 }
             }
 
@@ -196,7 +209,7 @@ order by PackingListID, OrderID, rn");
             printDT.Columns.Remove("rn");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(printDT, "", "Logistic_P06.xltx", 3, false, null, objApp); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printDT, string.Empty, "Logistic_P06.xltx", 3, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 

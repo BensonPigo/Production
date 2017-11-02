@@ -13,10 +13,17 @@ using System.Linq;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P03
+    /// </summary>
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <summary>
+        /// P03
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -30,6 +37,9 @@ namespace Sci.Production.Logistic
         private DataTable selectDataTable;
         private string selectDataTable_DefaultView_Sort = string.Empty;
 
+        /// <summary>
+        /// SelectDataTable_DefaultView_Sort
+        /// </summary>
         public string SelectDataTable_DefaultView_Sort
         {
             get
@@ -43,13 +53,16 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridReceiveDate.IsEditingReadOnly = false;
             this.gridReceiveDate.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridReceiveDate)
+            this.Helper.Controls.Grid.Generator(this.gridReceiveDate)
                  .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -162,31 +175,36 @@ from (
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(@" 
+                sqlCmd.Append(string.Format(
+                    @" 
             and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
-                sqlCmd.Append(string.Format(@" 
+                sqlCmd.Append(string.Format(
+                    @" 
             and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(@" 
+                sqlCmd.Append(string.Format(
+                    @" 
             and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {
-                sqlCmd.Append(string.Format(@" 
+                sqlCmd.Append(string.Format(
+                    @" 
             and b.ReceiveDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()));
             }
 
             if (!MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
-                sqlCmd.Append(string.Format(@" 
+                sqlCmd.Append(string.Format(
+                    @" 
             and b.ReceiveDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()));
             }
 
@@ -200,12 +218,12 @@ from (
 order by rn ");
 
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.selectDataTable))
             {
-                if (selectDataTable.Rows.Count == 0)
+                if (this.selectDataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
-                    ControlButton4Text("Close");
+                    this.ControlButton4Text("Close");
                 }
                 else
                 {
@@ -241,16 +259,16 @@ TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
-                if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
+                if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.selectDataTable)))
                 {
                     MyUtility.Msg.WarningBox("Connection faile.!");
                     return;
                 }
 
-                listControlBindingSource1.DataSource = selectDataTable;
+                this.listControlBindingSource1.DataSource = this.selectDataTable;
 
-                //讀檔案
-                using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                // 讀檔案
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
                     string line;
@@ -265,16 +283,18 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                         }
                         else
                         {
-                            DataRow dr = selectDataTable.NewRow();
-                            dr["ID"] = "";
+                            DataRow dr = this.selectDataTable.NewRow();
+                            dr["ID"] = string.Empty;
                             dr["selected"] = 0;
                             dr["PackingListID"] = sl[1].Substring(0, 13);
                             dr["CTNStartNo"] = sl[1].Substring(13);
-                            string sqlCmd = string.Format(@"
+                            string sqlCmd = string.Format(
+                                @"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
-                                dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+                                dr["PackingListID"].ToString(),
+                                dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 if (MyUtility.Check.Empty(seekData["ReturnDate"]))
@@ -302,11 +322,15 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 dr["ClogLocationId"] = seekData["ClogLocationId"];
                                 dr["ReceiveDate"] = seekData["ReceiveDate"];
                                 string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
-                                sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                sqlCmd = string.Format(
+                                    @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
-                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'", MyUtility.Convert.GetString(dr["OrderID"]), Sci.Env.User.Keyword, seq);
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                    MyUtility.Convert.GetString(dr["OrderID"]),
+                                    Env.User.Keyword,
+                                    seq);
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["StyleID"] = seekData["StyleID"];
@@ -323,7 +347,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 dr["Remark"] = "This carton is not in packing list.";
                             }
 
-                            if (dr["Remark"].ToString().Trim() != "")
+                            if (dr["Remark"].ToString().Trim() != string.Empty)
                             {
                                 dr["selected"] = 0;
                             }
@@ -360,7 +384,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
 
             foreach (DataRow dr in selectedData)
             {
-                if (dr["Remark"].ToString().Trim() != "")
+                if (dr["Remark"].ToString().Trim() != string.Empty)
                 {
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
                     return;
@@ -369,24 +393,37 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
 
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
-            //組要Insert進TransferToClog的資料
+
+            // 組要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
-                insertCmds.Add(string.Format(@"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"])));
-                //要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(@"update PackingList_Detail 
+                insertCmds.Add(string.Format(
+                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
+                    Sci.Env.User.Keyword,
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
+
+                // 要順便更新PackingList_Detail
+                updateCmds.Add(string.Format(
+                    @"update PackingList_Detail 
 set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE()
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"])));
+where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ",
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }
 
-            //Update Orders的資料
+            // Update Orders的資料
             DataTable selectData = null;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"select distinct OrderID
-from #tmp a
-where a.Selected = 1", out selectData);
+                MyUtility.Tool.ProcessWithDatatable(
+                    dt,
+                    "Selected,OrderID",
+                    @"select distinct OrderID from #tmp a where a.Selected = 1",
+                    out selectData);
             }
             catch (Exception ex)
             {
@@ -450,7 +487,7 @@ where a.Selected = 1", out selectData);
 
         private void ControlButton4Text(string showText)
         {
-            btnClose.Text = showText;
+            this.btnClose.Text = showText;
         }
     }
 }

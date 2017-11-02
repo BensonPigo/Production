@@ -12,10 +12,17 @@ using System.Linq;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P02
+    /// </summary>
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <summary>
+        /// P02
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -28,6 +35,9 @@ namespace Sci.Production.Logistic
 
         private string selectDataTable_DefaultView_Sort = string.Empty;
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -38,7 +48,7 @@ namespace Sci.Production.Logistic
             this.gridImport.IsEditingReadOnly = false;
             this.gridImport.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridImport)
+            this.Helper.Controls.Grid.Generator(this.gridImport)
                  .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -101,17 +111,18 @@ namespace Sci.Production.Logistic
             }
 
             #region SQL Filte
+
             // 若有輸入 TransferSlipNo 必須增加條件對應至 PackingList_Detail 【OrderID, CtnNum】
             string strTransferSlipNoFilte = string.Format(@"and t.TransferSlipNo = '{0}' and b.OrderID = t.OrderID and b.CTNStartNo = t.CTNStartNo", this.txtTransferSlipNo.Text.Trim());
 
             Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>();
-            dicSqlFilte.Add("PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : "");
-            dicSqlFilte.Add("PackingList_Detail OrderID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : "");
-            dicSqlFilte.Add("Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : "");
-            dicSqlFilte.Add("Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : "");
-            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()) : "");
-            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()) : "");
-            dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : "");
+            dicSqlFilte.Add("PackingList ID", !MyUtility.Check.Empty(this.txtPackID.Text) ? string.Format("and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("PackingList_Detail OrderID", !MyUtility.Check.Empty(this.txtSPNo.Text) ? string.Format("and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("Orders CustPONo", !MyUtility.Check.Empty(this.txtPONo.Text) ? string.Format("and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("Orders FtyGroup", !MyUtility.Check.Empty(this.txtfactory.Text) ? string.Format(@"and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()) : string.Empty);
+            dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()) : string.Empty);
+            dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : string.Empty);
             #endregion
 
             string sqlCmd = string.Format(
@@ -226,10 +237,10 @@ where 1=0";
                     return;
                 }
 
-                listControlBindingSource1.DataSource = selectDataTable;
+                this.listControlBindingSource1.DataSource = selectDataTable;
 
-                //讀檔案
-                using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                // 讀檔案
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
                     string line;
@@ -247,7 +258,7 @@ where 1=0";
                             DataRow dr = selectDataTable.NewRow();
                             try
                             {
-                                dr["ID"] = "";
+                                dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
                                 dr["PackingListID"] = sl[2].Substring(0, 13);
                                 dr["CTNStartNo"] = sl[2].Substring(13);
@@ -259,11 +270,13 @@ where 1=0";
                                 return;
                             }
 
-                            string sqlCmd = string.Format(@"
+                            string sqlCmd = string.Format(
+                                @"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
-                                dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+                                dr["PackingListID"].ToString(),
+                                dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
@@ -291,11 +304,15 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["Remark"] = "The order's M is not equal to login M.";
                                 }
 
-                                sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                sqlCmd = string.Format(
+                                    @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
-                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Keyword, seq);
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                    dr["OrderID"].ToString(),
+                                    Sci.Env.User.Keyword,
+                                    seq);
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     dr["StyleID"] = seekData["StyleID"];
@@ -312,7 +329,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 dr["Remark"] = "This carton is not in packing list.";
                             }
 
-                            if (dr["Remark"].ToString().Trim() != "")
+                            if (dr["Remark"].ToString().Trim() != string.Empty)
                             {
                                 dr["selected"] = 0;
                             }
@@ -348,7 +365,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
 
             foreach (DataRow dr in selectedData)
             {
-                if (dr["Remark"].ToString().Trim() != "")
+                if (dr["Remark"].ToString().Trim() != string.Empty)
                 {
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
                     return;
@@ -384,26 +401,38 @@ insert into ClogReceive (
     , '{3}'
     , '{4}'
     , GETDATE()
-);", Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
-                //要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(@"
+);",
+                    Env.User.Keyword,
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                    MyUtility.Convert.GetString(dr["ClogLocationId"])));
+
+                // 要順便更新PackingList_Detail
+                updateCmds.Add(string.Format(
+                    @"
 update PackingList_Detail 
 set ReceiveDate = GETDATE()
     , ClogLocationId = '{3}'
     , ReturnDate = null 
 where   ID = '{0}' 
         and OrderID = '{1}' 
-        and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+        and CTNStartNo = '{2}'; ",
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                    MyUtility.Convert.GetString(dr["ClogLocationId"])));
             }
 
-            //Update Orders的資料
+            // Update Orders的資料
             DataTable selectData = null;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"
-select distinct OrderID
-from #tmp a
-where a.Selected = 1", out selectData);
+                MyUtility.Tool.ProcessWithDatatable(
+                    dt,
+                    "Selected,OrderID",
+                    @"select distinct OrderID from #tmp a where a.Selected = 1",
+                    out selectData);
             }
             catch (Exception ex)
             {
@@ -431,7 +460,7 @@ where a.Selected = 1", out selectData);
                     {
                         transactionScope.Complete();
                         transactionScope.Dispose();
-                        ControlButton4Text("Close");
+                        this.ControlButton4Text("Close");
                         MyUtility.Msg.InfoBox("Complete!!");
                     }
                     else
@@ -444,14 +473,14 @@ where a.Selected = 1", out selectData);
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
             if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
             {
-                listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
             }
             else
             {
@@ -483,16 +512,16 @@ where a.Selected = 1", out selectData);
             }
 
             this.listControlBindingSource1.Position = pos;
-            gridImport.SuspendLayout();
+            this.gridImport.SuspendLayout();
             this.gridImport.DataSource = null;
-            this.gridImport.DataSource = listControlBindingSource1;
+            this.gridImport.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
-            gridImport.ResumeLayout();
+            this.gridImport.ResumeLayout();
         }
 
         private void ControlButton4Text(string showText)
         {
-            btnClose.Text = showText;
+            this.btnClose.Text = showText;
         }
     }
 }

@@ -2,10 +2,18 @@
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic
+    /// </summary>
     public partial class P02_InputDate : Sci.Win.Subs.Base
     {
         private DateTime returnDate;
 
+        /// <summary>
+        /// P02_InputDate
+        /// </summary>
+        /// <param name="captionName">captionName</param>
+        /// <param name="lableName">lableName</param>
         public P02_InputDate(string captionName, string lableName)
         {
             this.InitializeComponent();
@@ -13,6 +21,9 @@ namespace Sci.Production.Logistic
             this.labelReceiveDate.Text = lableName;
         }
 
+        /// <summary>
+        /// ReturnDate
+        /// </summary>
         public DateTime ReturnDate
         {
             get

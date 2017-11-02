@@ -8,6 +8,9 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_B01_Print
+    /// </summary>
     public partial class B01_Print : Sci.Win.Tems.PrintForm
     {
         private DataRow masterData;
@@ -15,6 +18,9 @@ namespace Sci.Production.Logistic
         private string code2;
         private DataTable printData;
 
+        /// <summary>
+        /// Code2
+        /// </summary>
         public string Code2
         {
             get
@@ -28,6 +34,10 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// B01_Print
+        /// </summary>
+        /// <param name="master">master</param>
         public B01_Print(DataRow master)
         {
             this.InitializeComponent();
@@ -36,7 +46,10 @@ namespace Sci.Production.Logistic
             this.txtCodeEnd.Text = MyUtility.Convert.GetString(this.masterData["ID"]);
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// 驗證輸入條件
+        /// </summary>
+        /// <returns>base.ValidateInput()</returns>
         protected override bool ValidateInput()
         {
             this.code1 = this.txtCodeStart.Text;
@@ -45,7 +58,11 @@ namespace Sci.Production.Logistic
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// 非同步取資料
+        /// </summary>
+        /// <param name="e">Win.ReportEventArgs</param>
+        /// <returns>Result</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -60,28 +77,32 @@ namespace Sci.Production.Logistic
                 sqlCmd.Append(string.Format(" and ID <= '{0}'", this.Code2));
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.Description);
                 return result;
             }
 
-            //e.Report.ReportDataSource = printData;
+            // e.Report.ReportDataSource = printData;
             return Result.True;
         }
 
+        /// <summary>
+        /// ToPrint()
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ToPrint()
         {
             this.ValidateInput();
             this.OnAsyncDataLoad(null);
-            if (printData == null || printData.Rows.Count == 0)
+            if (this.printData == null || this.printData.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
 
-            this.SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Data Loading ...");
             Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
@@ -89,7 +110,7 @@ namespace Sci.Production.Logistic
             Microsoft.Office.Interop.Word._Document document;
             Word.Table tables = null;
 
-            Object printFile = Sci.Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";
+            object printFile = Sci.Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";
             document = winword.Documents.Add(ref printFile);
             try
             {
@@ -99,7 +120,7 @@ namespace Sci.Production.Logistic
                 #region 計算頁數
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
-                int page = (printData.Rows.Count / 6) + ((printData.Rows.Count % 6 > 0) ? 1 : 0);
+                int page = (this.printData.Rows.Count / 6) + ((this.printData.Rows.Count % 6 > 0) ? 1 : 0);
                 for (int i = 1; i < page; i++)
                 {
                     winword.Selection.MoveDown();

@@ -11,6 +11,9 @@ using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P02_ImportFromBarCode
+    /// </summary>
     public partial class P02_ImportFromBarCode : Sci.Win.Subs.Base
     {
         private IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
@@ -18,6 +21,9 @@ namespace Sci.Production.Logistic
         private IList<DataRow> groupData = new List<DataRow>();
         private IList<DataRow> TransferIDData = new List<DataRow>();
 
+        /// <summary>
+        /// TransferIDData1
+        /// </summary>
         public IList<DataRow> TransferIDData1
         {
             get
@@ -31,6 +37,9 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// P02_ImportFromBarCode()
+        /// </summary>
         public P02_ImportFromBarCode()
         {
             this.InitializeComponent();
@@ -38,6 +47,9 @@ namespace Sci.Production.Logistic
             this.filelists.Add(new P02_FileInfo(null, null));
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -159,9 +171,9 @@ namespace Sci.Production.Logistic
                                                             from PackingList_Detail a WITH (NOLOCK) , Orders b WITH (NOLOCK) , Country c WITH (NOLOCK)  where 1=0";
             DataTable groupTable;
             DualResult selectResult;
-            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
+            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.grid2Data)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
@@ -190,6 +202,7 @@ namespace Sci.Production.Logistic
                         {
                             System.Diagnostics.Debug.WriteLine(line);
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
+
                             // 如果有資料重複就不再匯入重複的資料
                             findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[2].Substring(0, 13), sl[2].Substring(13).Trim()));
                             if (findRow.Length == 0)
@@ -199,12 +212,16 @@ namespace Sci.Production.Logistic
                                 dr1["ClogLocationId"] = sl[1];
                                 dr1["PackingListID"] = sl[2].Substring(0, 13);
                                 dr1["CTNStartNo"] = sl[2].Substring(13);
-                                //dr1["MDivisionID"] = sl[2].Substring(0, 3);
+
+                                // dr1["MDivisionID"] = sl[2].Substring(0, 3);
                                 dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
-                                string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID 
+                                string sqlCmd = string.Format(
+                                    @"select OrderID, TransferToClogID, ClogReceiveID 
                                                                                   from PackingList_Detail WITH (NOLOCK) 
-                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and CTNQty = 1",
+                                    dr1["PackingListID"].ToString(),
+                                    dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
@@ -218,10 +235,13 @@ namespace Sci.Production.Logistic
                                         }
                                         else
                                         {
-                                            sqlCmd = string.Format(@"select a.ID 
+                                            sqlCmd = string.Format(
+                                                @"select a.ID 
                                                                                     from ClogReceive a WITH (NOLOCK) , ClogReceive_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
-                                                                                    ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                    ",
+                                                dr1["PackingListID"].ToString(),
+                                                dr1["CTNStartNo"].ToString());
                                             if (MyUtility.Check.Seek(sqlCmd, out seekClogReceiveData))
                                             {
                                                 dr1["ClogReceiveID"] = seekClogReceiveData["ID"].ToString().Trim();
@@ -236,7 +256,8 @@ namespace Sci.Production.Logistic
                                         dr1["InsertData"] = 0;
                                     }
 
-                                    sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                              left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
@@ -256,19 +277,19 @@ namespace Sci.Production.Logistic
                                     dr1["Remark"] = "This carton is not in packing list.";
                                 }
 
-                                grid2Data.Rows.Add(dr1);
+                                this.grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
                                 if (MyUtility.Check.Empty(dr1["ClogReceiveID"]) && (int)dr1["InsertData"] == 1)
                                 {
-                                    recordCount = groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
+                                    recordCount = this.groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
                                     if (recordCount == 0)
                                     {
                                         DataRow dr2 = groupTable.NewRow();
-                                        dr2["ID"] = "";
+                                        dr2["ID"] = string.Empty;
                                         dr2["ReceiveDate"] = DBNull.Value;
                                         dr2["MDivisionID"] = dr1["MDivisionID"];
-                                        groupData.Add(dr2);
+                                        this.groupData.Add(dr2);
                                     }
                                 }
                             }
@@ -297,11 +318,11 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
@@ -311,7 +332,10 @@ namespace Sci.Production.Logistic
             {
                 // Open document
                 bool result = MyUtility.Excel.CopyToXls(excelTable, dlg.FileName, xltfile: "Logistic_P02_ImportFromBarCode.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
             else
             {
@@ -428,11 +452,11 @@ namespace Sci.Production.Logistic
                             detailcmds.Add(detail7);
                             detailcmds.Add(detail8);
                             #endregion
-                            foreach (DataRow dr1 in grid2Data.Rows)
+                            foreach (DataRow dr1 in this.grid2Data.Rows)
                             {
                                 if (dr1["MDivisionID"].ToString().Trim() == dr["MDivisionID"].ToString().Trim())
                                 {
-                                    dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
+                                    dr1["ID"] = newID; // 將ID寫入Grid2的Received ID欄位
                                     dr1["ClogReceiveID"] = newID;
                                     sqlInsertDetail = @"insert into ClogReceive_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, ClogLocationId, AddName, AddDate)
                                                                      values (@id,@transferToClogId,@packingListId,@orderId,@ctnStartNo,@clogLocationId,@addName,@addDate)";
@@ -459,15 +483,15 @@ namespace Sci.Production.Logistic
                                         lostCTN = lostCTN + string.Format("PACK ID: '{0}'  SP#:'{1}'  CTN#:'{2}' \r\n", dr1["PackingListId"].ToString(), dr1["OrderId"].ToString(), dr1["CTNStartNo"].ToString().Trim());
                                     }
 
-                                    //記錄此次Import的所有TransferToClogID
+                                    // 記錄此次Import的所有TransferToClogID
                                     if (!MyUtility.Check.Empty(dr1["TransferToClogId"].ToString()))
                                     {
-                                        int recordCount = TransferIDData.Where(x => x["TransferToClogId"].ToString() == dr1["TransferToClogId"].ToString()).Count();
+                                        int recordCount = this.TransferIDData.Where(x => x["TransferToClogId"].ToString() == dr1["TransferToClogId"].ToString()).Count();
                                         if (recordCount == 0)
                                         {
                                             DataRow dr2 = selectDataTable.NewRow();
                                             dr2["TransferToClogId"] = dr1["TransferToClogId"].ToString();
-                                            TransferIDData.Add(dr2);
+                                            this.TransferIDData.Add(dr2);
                                         }
                                     }
                                 }
@@ -490,7 +514,7 @@ namespace Sci.Production.Logistic
                         catch (Exception ex)
                         {
                             transactionScope.Dispose();
-                            ShowErr("Commit transaction error.", ex);
+                            this.ShowErr("Commit transaction error.", ex);
                             return;
                         }
                     }
@@ -510,9 +534,10 @@ namespace Sci.Production.Logistic
             }
 
             DataTable transferToClogData;
-            foreach (DataRow findDataRow in TransferIDData)
+            foreach (DataRow findDataRow in this.TransferIDData)
             {
-                sqlCmd = string.Format(@"select a.PackingListID, a.OrderID, a.CTNStartNo, isnull(b.Id,'') as ReceiveID 
+                sqlCmd = string.Format(
+                    @"select a.PackingListID, a.OrderID, a.CTNStartNo, isnull(b.Id,'') as ReceiveID 
                                                             from TransferToClog_Detail a 
                                                             left Join ClogReceive_Detail b 
                                                                 on b.TransferToClogId = a.ID 
@@ -529,7 +554,7 @@ namespace Sci.Production.Logistic
 
                 foreach (DataRow transferRow in transferToClogData.Rows)
                 {
-                    if (transferRow["ReceiveID"].ToString().Trim() == "")
+                    if (transferRow["ReceiveID"].ToString().Trim() == string.Empty)
                     {
                         lostCTN = lostCTN + string.Format("Trans. Slip#: '{0}'  PACK ID:'{1}'  SP#:'{2}'  CTN#:'{3}' \r\n", findDataRow["TransferToClogId"].ToString(), transferRow["PackingListId"].ToString(), transferRow["OrderId"].ToString(), transferRow["CTNStartNo"].ToString().Trim());
                         lackMsg = true;

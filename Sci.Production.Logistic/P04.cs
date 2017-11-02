@@ -12,6 +12,9 @@ using System.Reflection;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P04
+    /// </summary>
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -28,12 +31,19 @@ namespace Sci.Production.Logistic
         private BindingSource comboxbs3;
         private string selectDataTable_DefaultView_Sort = string.Empty;
 
+        /// <summary>
+        /// P04
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -84,7 +94,7 @@ namespace Sci.Production.Logistic
             };
 
             this.Helper.Controls.Grid.Generator(this.gridPackID)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
 
                 // .Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -246,9 +256,9 @@ from (
 )X 
 order by rn");
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData))
             {
-                if (gridData.Rows.Count == 0)
+                if (this.gridData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
@@ -259,21 +269,21 @@ order by rn");
                 return;
             }
 
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = this.gridData;
 
-            //組Filter內容
-            foreach (DataRow dr in gridData.Rows)
+            // 組Filter內容
+            foreach (DataRow dr in this.gridData.Rows)
             {
-                //Ctn#
-                if (comboBox2_RowSource2.Contains(dr["CTNStartNo"].ToString()) == false)
+                // Ctn#
+                if (this.comboBox2_RowSource2.Contains(dr["CTNStartNo"].ToString()) == false)
                 {
-                    comboBox2_RowSource2.Add(dr["CTNStartNo"].ToString());
+                    this.comboBox2_RowSource2.Add(dr["CTNStartNo"].ToString());
                 }
 
-                //Color Way
-                if (comboBox2_RowSource3.Contains(dr["Article"].ToString()) == false)
+                // Color Way
+                if (this.comboBox2_RowSource3.Contains(dr["Article"].ToString()) == false)
                 {
-                    comboBox2_RowSource3.Add(dr["Article"].ToString());
+                    this.comboBox2_RowSource3.Add(dr["Article"].ToString());
                 }
 
                 // Color
@@ -300,7 +310,7 @@ order by rn");
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt))
             {
                 MyUtility.Msg.WarningBox("Please select data first!");
@@ -349,8 +359,9 @@ order by rn");
                 try
                 {
                     bool lastResult = true;
-                    //只存畫面上看到的那幾筆資料
-                    foreach (DataRowView currentRowView in gridData.DefaultView)
+
+                    // 只存畫面上看到的那幾筆資料
+                    foreach (DataRowView currentRowView in this.gridData.DefaultView)
                     {
                         DataRow currentRow = currentRowView.Row;
                         if (currentRow["Selected"].ToString() == "1")
@@ -371,10 +382,9 @@ order by rn");
                             sp1.ParameterName = "@clogLocationId";
                             sp1.Value = currentRow["ClogLocationId"].ToString();
 
-                            //System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                            //sp2.ParameterName = "@clogReceiveID";
-                            //sp2.Value = currentRow["ClogReceiveID"].ToString();
-
+                            // System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                            // sp2.ParameterName = "@clogReceiveID";
+                            // sp2.Value = currentRow["ClogReceiveID"].ToString();
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                             sp3.ParameterName = "@id";
                             sp3.Value = currentRow["ID"].ToString();
@@ -393,7 +403,8 @@ order by rn");
 
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
-                            //cmds.Add(sp2);
+
+                            // cmds.Add(sp2);
                             cmds.Add(sp3);
                             cmds.Add(sp4);
                             cmds.Add(sp5);
@@ -421,19 +432,19 @@ order by rn");
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
             #endregion
 
-            //更新成功後，將畫面上的資料都清空
-            this.txtSPNoStart.Text = "";
-            this.txtSPNoEnd.Text = "";
-            this.txtPackIDStart.Text = "";
-            this.txtPackIDEnd.Text = "";
-            this.txtPONoStart.Text = "";
-            this.txtPONoEnd.Text = "";
+            // 更新成功後，將畫面上的資料都清空
+            this.txtSPNoStart.Text = string.Empty;
+            this.txtSPNoEnd.Text = string.Empty;
+            this.txtPackIDStart.Text = string.Empty;
+            this.txtPackIDEnd.Text = string.Empty;
+            this.txtPONoStart.Text = string.Empty;
+            this.txtPONoEnd.Text = string.Empty;
             this.comboFilter.SelectedValue = "1";
             this.comboFilter2.SelectedIndex = -1;
 

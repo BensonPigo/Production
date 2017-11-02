@@ -7,12 +7,18 @@ using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P03_BatchReturn
+    /// </summary>
     public partial class P03_BatchReturn : Sci.Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private int allRecord = 0;
         private DataTable returnDetailData;
 
+        /// <summary>
+        /// AllRecord
+        /// </summary>
         protected int AllRecord
         {
             get
@@ -22,24 +28,32 @@ namespace Sci.Production.Logistic
 
             set
             {
-                allRecord = value;
+                this.allRecord = value;
             }
         }
 
+        /// <summary>
+        /// P03_BatchReturn
+        /// </summary>
+        /// <param name="receiveDate">receiveDate</param>
+        /// <param name="detailData">detailData</param>
         public P03_BatchReturn(DateTime receiveDate, DataTable detailData)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = "Carton Return - Batch Return (Return Date - " + receiveDate.ToString("d") + ")";
-            returnDetailData = detailData;
+            this.returnDetailData = detailData;
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.gridCartonReturn.DataSource = listControlBindingSource1;
+            this.gridCartonReturn.DataSource = this.listControlBindingSource1;
             this.gridCartonReturn.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.gridCartonReturn)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.gridCartonReturn)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -122,18 +136,18 @@ namespace Sci.Production.Logistic
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = returnDetailData.Select(string.Format("TransferToClogId = '{0}' and PackingListId = '{1}' and OrderId = '{2}' and CTNStartNo = '{3}'", currentRow["TransferToClogId"].ToString(), currentRow["PackingListId"].ToString(), currentRow["OrderId"].ToString(), currentRow["CTNStartNo"].ToString()));
+                    DataRow[] findrow = this.returnDetailData.Select(string.Format("TransferToClogId = '{0}' and PackingListId = '{1}' and OrderId = '{2}' and CTNStartNo = '{3}'", currentRow["TransferToClogId"].ToString(), currentRow["PackingListId"].ToString(), currentRow["OrderId"].ToString(), currentRow["CTNStartNo"].ToString()));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
                         currentRow.SetAdded();
-                        returnDetailData.ImportRow(currentRow);
+                        this.returnDetailData.ImportRow(currentRow);
                     }
                 }
             }
 
-            //系統會自動有回傳值
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            // 系統會自動有回傳值
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

@@ -2,8 +2,15 @@
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_B01
+    /// </summary>
     public partial class B01 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// Logistic_B01
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -11,18 +18,28 @@ namespace Sci.Production.Logistic
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
+        /// <summary>
+        /// ClickNewAfter()
+        /// </summary>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
+        /// <summary>
+        /// ClickEditAfter()
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
         }
 
+        /// <summary>
+        /// ClickSaveBefore()
+        /// </summary>
+        /// <returns>base.ClickSaveBefore()</returns>
         protected override bool ClickSaveBefore()
         {
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ID"].ToString()))
@@ -42,6 +59,10 @@ namespace Sci.Production.Logistic
             return base.ClickSaveBefore();
         }
 
+        /// <summary>
+        /// ClickPrint()
+        /// </summary>
+        /// <returns>base.ClickPrint()</returns>
         protected override bool ClickPrint()
         {
             Sci.Production.Logistic.B01_Print callNextForm = new Sci.Production.Logistic.B01_Print(this.CurrentMaintain);

@@ -7,12 +7,18 @@ using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P02_BatchReceiving
+    /// </summary>
     public partial class P02_BatchReceiving : Sci.Win.Subs.Base
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private int allRecord = 0;
         private DataTable receiveDetailData;
 
+        /// <summary>
+        /// AllRecord
+        /// </summary>
         protected int AllRecord
         {
             get
@@ -26,6 +32,11 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// P02_BatchReceiving
+        /// </summary>
+        /// <param name="receiveDate">receiveDate</param>
+        /// <param name="detailData">detailData</param>
         public P02_BatchReceiving(DateTime receiveDate, DataTable detailData)
         {
             this.InitializeComponent();
@@ -33,13 +44,16 @@ namespace Sci.Production.Logistic
             this.receiveDetailData = detailData;
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
             this.gridCartonReceiving.CellValueChanged += (s, e) =>
                 {
-                    if (this.gridCartonReceiving.Columns[e.ColumnIndex].Name == col_chk.Name)
+                    if (this.gridCartonReceiving.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                     {
                         this.numNoOfSelected.Value = this.gridCartonReceiving.GetCheckeds(this.col_chk).Count;
                     }
@@ -88,9 +102,9 @@ namespace Sci.Production.Logistic
             cmds.Add(sp2);
             cmds.Add(sp3);
 
-            string selectCommand1 = this.GridDataSQL(); //Grid Data
-            string selectCommand2 = this.TTLCTNSQL(); //TTL CTN
-            string selectCommand3 = this.ReceivedCTNSQL(); //Received CTN
+            string selectCommand1 = this.GridDataSQL(); // Grid Data
+            string selectCommand2 = this.TTLCTNSQL(); // TTL CTN
+            string selectCommand3 = this.ReceivedCTNSQL(); // Received CTN
 
             DataTable selectDataTable1, selectDataTable2, selectDataTable3;
             DualResult selectResult;
@@ -123,7 +137,7 @@ namespace Sci.Production.Logistic
             this.numNoOfSelected.Value = 0;
         }
 
-        //組撈Grid資料的SQL
+        // 組撈Grid資料的SQL
         private string GridDataSQL()
         {
             return string.Format(
@@ -143,10 +157,10 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   {3})) as a 
 left join Orders b WITH (NOLOCK) On a.OrderID = b.ID 
 left join Country c WITH (NOLOCK) On b.Dest = c.ID",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.Id <= @id2",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and TransferToClogId <= @id2");
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and TransferToClogId <= @id2");
         }
 
         // 組算TTL CTN的SQL
@@ -168,13 +182,13 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   and a.TransferToClogId >= '{2}' 
 	   and a.TransferToClogId <= '{3}' 
 	   and b.Status = 'Confirmed')) as result",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.Id <= @id2",
- MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.Id <= @id2",
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
         }
 
-        //組算Received CTN的SQL
+        // 組算Received CTN的SQL
         private string ReceivedCTNSQL()
         {
             return string.Format(
@@ -194,15 +208,15 @@ from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo
 	   {0}
 	   {1}
 	   and b.Status = 'Confirmed')) as result",
-MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? string.Empty : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? string.Empty : " and a.TransferToClogId <= @id2");
         }
 
         // Update All Location
         private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
-            int pos = this.bindingSource1.Position;     //記錄目前指標位置
+            int pos = this.bindingSource1.Position;     // 記錄目前指標位置
             DataTable dt = (DataTable)this.bindingSource1.DataSource;
             foreach (DataRow currentRecord in dt.Rows)
             {

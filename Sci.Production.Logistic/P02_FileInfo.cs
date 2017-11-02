@@ -2,17 +2,28 @@
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P02_FileInfo
+    /// </summary>
     public class P02_FileInfo : INotifyPropertyChanged
     {
         private string filename;
         private string fullfilename;
 
+        /// <summary>
+        /// P02_FileInfo
+        /// </summary>
+        /// <param name="filename">filename</param>
+        /// <param name="fullfilename">fullfilename</param>
         public P02_FileInfo(string filename, string fullfilename)
         {
             this.filename = filename;
             this.fullfilename = fullfilename;
         }
 
+        /// <summary>
+        /// Filename
+        /// </summary>
         public string Filename
         {
             get
@@ -27,6 +38,9 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// Fullfilename
+        /// </summary>
         public string Fullfilename
         {
             get
@@ -41,6 +55,9 @@ namespace Sci.Production.Logistic
             }
         }
 
+        /// <summary>
+        /// PropertyChanged
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChangeed(string propname)

@@ -14,34 +14,43 @@ using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P03_ImportFromBarCode
+    /// </summary>
     public partial class P03_ImportFromBarCode : Sci.Win.Subs.Base
     {
         private IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
         private DataTable grid2Data;
         private IList<DataRow> groupData = new List<DataRow>();
 
+        /// <summary>
+        /// P03_ImportFromBarCode()
+        /// </summary>
         public P03_ImportFromBarCode()
         {
             this.InitializeComponent();
             this.filelists.Add(new P02_FileInfo(null, null));
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            listControlBindingSource1.DataSource = filelists;
-            this.gridFileList.DataSource = listControlBindingSource1;
+            this.listControlBindingSource1.DataSource = this.filelists;
+            this.gridFileList.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridFileList)
+            this.Helper.Controls.Grid.Generator(this.gridFileList)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Button("Get File", null, header: "Get File", width: Widths.AnsiChars(13), onclick: Eh_getfile);
+                .Button("Get File", null, header: "Get File", width: Widths.AnsiChars(13), onclick: this.Eh_getfile);
 
-            listControlBindingSource2.DataSource = grid2Data;
-            this.gridLocationNo.DataSource = listControlBindingSource2;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
+            this.gridLocationNo.DataSource = this.listControlBindingSource2;
             this.gridLocationNo.IsEditingReadOnly = true;
 
-            Helper.Controls.Grid.Generator(this.gridLocationNo)
+            this.Helper.Controls.Grid.Generator(this.gridLocationNo)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                 .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13))
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13))
@@ -67,7 +76,7 @@ namespace Sci.Production.Logistic
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 ((P02_FileInfo)this.listControlBindingSource1.Current).Fullfilename = this.openFileDialog1.FileName;
-                ((P02_FileInfo)(this.listControlBindingSource1.Current)).Filename = openFileDialog1.SafeFileName;
+                ((P02_FileInfo)this.listControlBindingSource1.Current).Filename = this.openFileDialog1.SafeFileName;
             }
         }
 
@@ -100,9 +109,9 @@ namespace Sci.Production.Logistic
             this.groupData.Clear();
 
             #region 檢查所有檔案格式是否正確
-            string errorMsg = "";
+            string errorMsg = string.Empty;
             int count = 0;
-            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
+            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)this.listControlBindingSource1.DataSource)
             {
                 if (!MyUtility.Check.Empty(dr.Filename))
                 {
@@ -149,16 +158,16 @@ namespace Sci.Production.Logistic
 
             DataTable groupTable;
             DualResult selectResult;
-            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
+            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.grid2Data)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
             selectCommand = "Select ID, ReturnDate, MDivisionID from ClogReturn WITH (NOLOCK) where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
@@ -169,7 +178,7 @@ namespace Sci.Production.Logistic
             int insertCount = 0;
             int recordCount;
             DataRow[] findRow;
-            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
+            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)this.listControlBindingSource1.DataSource)
             {
                 if (!MyUtility.Check.Empty(dr.Filename))
                 {
@@ -180,20 +189,25 @@ namespace Sci.Production.Logistic
                         {
                             System.Diagnostics.Debug.WriteLine(line);
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
-                            //如果有資料重複就不再匯入重複的資料
-                            findRow = grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[1].Substring(0, 13), sl[1].Substring(13).Trim()));
+
+                            // 如果有資料重複就不再匯入重複的資料
+                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[1].Substring(0, 13), sl[1].Substring(13).Trim()));
                             if (findRow.Length == 0)
                             {
-                                DataRow dr1 = grid2Data.NewRow();
-                                dr1["ID"] = "";
+                                DataRow dr1 = this.grid2Data.NewRow();
+                                dr1["ID"] = string.Empty;
                                 dr1["PackingListID"] = sl[1].Substring(0, 13);
                                 dr1["CTNStartNo"] = sl[1].Substring(13);
-                                //dr1["FactoryID"] = sl[1].Substring(0, 3);
+
+                                // dr1["FactoryID"] = sl[1].Substring(0, 3);
                                 dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
-                                string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
+                                string sqlCmd = string.Format(
+                                    @"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
                                                                                       from PackingList_Detail WITH (NOLOCK) 
-                                                                                      where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                      where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1",
+                                    dr1["PackingListID"].ToString(),
+                                    dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
@@ -213,10 +227,13 @@ namespace Sci.Production.Logistic
                                         }
                                         else
                                         {
-                                            sqlCmd = string.Format(@"select a.ID 
+                                            sqlCmd = string.Format(
+                                                @"select a.ID 
                                                                                     from ClogReturn a WITH (NOLOCK) , ClogReturn_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
-                                                                                    ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                    ",
+                                                dr1["PackingListID"].ToString(),
+                                                dr1["CTNStartNo"].ToString());
                                             if (MyUtility.Check.Seek(sqlCmd, out seekClogReturnData))
                                             {
                                                 dr1["ClogReturnID"] = seekClogReturnData["ID"].ToString().Trim();
@@ -231,7 +248,8 @@ namespace Sci.Production.Logistic
                                         dr1["InsertData"] = 0;
                                     }
 
-                                    sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
@@ -252,19 +270,19 @@ namespace Sci.Production.Logistic
                                     dr1["InsertData"] = 0;
                                 }
 
-                                grid2Data.Rows.Add(dr1);
+                                this.grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
                                 if (MyUtility.Check.Empty(dr1["ClogReturnID"]) && (int)dr1["InsertData"] == 1)
                                 {
-                                    recordCount = groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
+                                    recordCount = this.groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
                                     if (recordCount == 0)
                                     {
                                         DataRow dr2 = groupTable.NewRow();
-                                        dr2["ID"] = "";
+                                        dr2["ID"] = string.Empty;
                                         dr2["ReturnDate"] = DBNull.Value;
                                         dr2["MDivisionID"] = dr1["MDivisionID"];
-                                        groupData.Add(dr2);
+                                        this.groupData.Add(dr2);
                                     }
                                 }
                             }
@@ -273,8 +291,8 @@ namespace Sci.Production.Logistic
                 }
             }
 
-            listControlBindingSource2.DataSource = null;
-            listControlBindingSource2.DataSource = grid2Data;
+            this.listControlBindingSource2.DataSource = null;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
             #endregion
         }
 
@@ -306,7 +324,10 @@ namespace Sci.Production.Logistic
             {
                 // Open document
                 bool result = MyUtility.Excel.CopyToXls(excelTable, dlg.FileName, xltfile: "Logistic_P03_ImportFromBarCode.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
             else
             {
@@ -411,7 +432,7 @@ namespace Sci.Production.Logistic
                             detailcmds.Add(detail6);
                             detailcmds.Add(detail7);
                             #endregion
-                            foreach (DataRow dr1 in grid2Data.Rows)
+                            foreach (DataRow dr1 in this.grid2Data.Rows)
                             {
                                 if (dr1["MDivisionID"].ToString().Trim() == dr["MDivisionID"].ToString().Trim() && MyUtility.Check.Empty(dr1["Remark"]))
                                 {
