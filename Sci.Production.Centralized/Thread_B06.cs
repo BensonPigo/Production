@@ -103,11 +103,11 @@ namespace Sci.Production.Centralized
             #region 若 LowerBound、UpperBound、Allowance 若有任一筆資料任一值為空，則不能存檔
             if (((DataTable)bindingSource1.DataSource).AsEnumerable().Any(row => row["LowerBound"].Empty()
                                                                                  || row["UpperBound"].Empty()
-                                                                                 || row["Allowance"].Empty()))
+                                                                                 || row["Allowance"].EqualString("")))
             {
                 var errDt = ((DataTable)bindingSource1.DataSource).AsEnumerable().Where(row => row["LowerBound"].Empty()
                                                                                                || row["UpperBound"].Empty()
-                                                                                               || row["Allowance"].Empty());
+                                                                                               || row["Allowance"].EqualString(""));
                 StringBuilder errStr = new StringBuilder();
                 foreach (DataRow errDr in errDt)
                 {
@@ -220,12 +220,15 @@ when not matched then
 		s.ID       , s.LowerBound, s.UpperBound, s.Allowance, s.Remark
 		, @UserName, GetDate()
 	);";
-                DataTable dtResult;
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(((DataTable)bindingSource1.DataSource)
+            DataTable dtResult;
+            SqlConnection sqlConn = new SqlConnection();
+            DBProxy.Current.OpenConnection(this.ConnectionName, out sqlConn);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(((DataTable)bindingSource1.DataSource)
                                                                         , null
                                                                         , strUpdateTable
                                                                         , out dtResult
-                                                                        , paramters: listSqlParameter);
+                                                                        , paramters: listSqlParameter
+                                                                        , conn: sqlConn);
                 if (result == false)
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
@@ -277,7 +280,7 @@ when not matched then
         private void resetGridData()
         {
             DataTable gridDt;
-            DualResult result = DBProxy.Current.Select(null, "select * from ThreadAllowanceScale", out gridDt);
+            DualResult result = DBProxy.Current.Select(this.ConnectionName, "select * from ThreadAllowanceScale", out gridDt);
             if (result)
             {
                 this.bindingSource1.DataSource = gridDt;
