@@ -40,7 +40,7 @@ namespace Sci.Production.Shipping
             DualResult result;
             if (type == "1")
             {
-                sqlCmd.Append(string.Format(@"select idd.ID,idd.NLCode,idd.Qty,idd.UnitID,idd.Price,nd.DescEN,vc.SubConName,vc.SubConAddress,f.NameEN,f.AddressEN,c.Alias
+                sqlCmd.Append(string.Format(@"select idd.ID,idd.NLCode,Qty = Round(idd.Qty,2),idd.UnitID,idd.Price,nd.DescEN,vc.SubConName,vc.SubConAddress,f.NameEN,f.AddressEN,c.Alias
 from VNImportDeclaration_Detail idd WITH (NOLOCK) 
 inner join VNImportDeclaration id WITH (NOLOCK) on idd.ID = id.ID
 left join VNNLCodeDesc nd WITH (NOLOCK) on idd.NLCode = nd.NLCode
@@ -57,7 +57,7 @@ order by idd.NLCode", MyUtility.Convert.GetString(masterData["VNContractID"]), S
                 }
 
                 sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"select sum(Qty) as Qty,UnitID
+                sqlCmd.Append(string.Format(@"select Round(sum(Qty),2) as Qty,UnitID
 from VNImportDeclaration_Detail WITH (NOLOCK) 
 where ID = '{0}'
 group by UnitID", MyUtility.Convert.GetString(masterData["ID"])));
@@ -70,7 +70,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"])));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select HSCode,NLCode,Qty,UnitID,Price,Round(Qty*Price,2) as Amount,Remark
+                sqlCmd.Append(string.Format(@"select HSCode,NLCode,Qty = Round(Qty,2),UnitID,Price,Round(Qty*Price,2) as Amount,Remark
 from VNImportDeclaration_Detail WITH (NOLOCK) 
 where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
