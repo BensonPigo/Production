@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr_master;
         DataTable dt_detail;
+        bool AutoQuery = false;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable [] dtBatch;
@@ -40,10 +41,10 @@ namespace Sci.Production.Warehouse
         //Find Now Button
         private void btnFindNow_Click(object sender, EventArgs e)
         {
-            QueryData();
+            QueryData(false);
         }
 
-        private void QueryData()
+        public void QueryData(bool AutoQuery)
         {
             DateTime? pulloutdate1, pulloutdate2, buyerDelivery1, buyerDelivery2;
             StringBuilder strSQLCmd = new StringBuilder();
@@ -58,7 +59,8 @@ namespace Sci.Production.Warehouse
             String brand = txtbrand.Text;
             String factory = txtmfactory.Text;
 
-            if (MyUtility.Check.Empty(datePullOutDate.Value1) &&
+            if (!AutoQuery &&
+                MyUtility.Check.Empty(datePullOutDate.Value1) &&
                 MyUtility.Check.Empty(dateBuyerDelivery.Value1) &&
                 (MyUtility.Check.Empty(txtSPNoStart.Text) || MyUtility.Check.Empty(txtSPNoEnd.Text)))
             {
@@ -262,7 +264,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
             this.HideWaitMessage();
 
-            QueryData();
+            QueryData(false);
         }
 
         private void btnToEexcel_Click(object sender, EventArgs e)
