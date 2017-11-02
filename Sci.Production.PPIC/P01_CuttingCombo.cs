@@ -1,41 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_CuttingCombo
+    /// </summary>
     public partial class P01_CuttingCombo : Sci.Win.Subs.Base
     {
         private string poID;
-        public P01_CuttingCombo(string POID)
+
+        /// <summary>
+        /// P01_CuttingCombo
+        /// </summary>
+        /// <param name="pOID">string pOID</param>
+        public P01_CuttingCombo(string pOID)
         {
-            InitializeComponent();
-            poID = POID;
+            this.InitializeComponent();
+            this.poID = pOID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable GridData;
-            string sqlCmd = string.Format("select CuttingSP,ID from Orders WITH (NOLOCK) where POID = '{0}'", poID);
-            DualResult result = DBProxy.Current.Select(null,sqlCmd, out GridData);
+            DataTable gridData;
+            string sqlCmd = string.Format("select CuttingSP,ID from Orders WITH (NOLOCK) where POID = '{0}'", this.poID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
             }
-            listControlBindingSource1.DataSource = GridData;
 
-            //設定Grid1的顯示欄位
+            this.listControlBindingSource1.DataSource = gridData;
+
+            // 設定Grid1的顯示欄位
             this.gridCuttingCombo.IsEditingReadOnly = true;
-            this.gridCuttingCombo.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridCuttingCombo)
+            this.gridCuttingCombo.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridCuttingCombo)
                 .Text("CuttingSP", header: "Cutting SP#", width: Widths.AnsiChars(13))
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15));
         }

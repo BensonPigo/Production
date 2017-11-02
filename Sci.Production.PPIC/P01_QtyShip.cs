@@ -1,38 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_QtyShip
+    /// </summary>
     public partial class P01_QtyShip : Sci.Win.Subs.Base
     {
-        DataTable grid1Data, grid2Data;  //存Qty資料
-        DataTable grid1Data_OriQty, grid2Data_OriQty;  //存OriQty資料
-        string orderID, poID;
+        private DataTable grid1Data;
+        private DataTable grid2Data;  // 存Qty資料
+        private DataTable grid1Data_OriQty;
+        private DataTable grid2Data_OriQty;  // 存OriQty資料
+        private string orderID;
+        private string poID;
 
-        public P01_QtyShip(string OrderID, string POID)
+        /// <summary>
+        /// P01_QtyShip
+        /// </summary>
+        /// <param name="orderID">string orderID</param>
+        /// <param name="poid">string pOID</param>
+        public P01_QtyShip(string orderID, string poid)
         {
-            InitializeComponent();
-            orderID = OrderID;
-            poID = POID;
-            Text = Text + " (" + orderID + ")";
+            this.InitializeComponent();
+            this.orderID = orderID;
+            this.poID = poid;
+            this.Text = this.Text + " (" + this.orderID + ")";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridQtyBreakDownByShipmode.IsEditingReadOnly = true;
-            this.gridQtyBreakDownByShipmode.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridQtyBreakDownByShipmode)
+            this.gridQtyBreakDownByShipmode.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridQtyBreakDownByShipmode)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
                 .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
@@ -43,39 +51,43 @@ namespace Sci.Production.PPIC
                 .Text("EditName", header: "Edit by", width: Widths.AnsiChars(10))
                 .DateTime("EditDate", header: "Edit at", width: Widths.AnsiChars(18));
 
-            string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
+            string sqlCmd = string.Format(
+                @"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
-            order by Seq", orderID);
-            DualResult result = DBProxy.Current.Select(null,sqlCmd,out grid1Data);
-            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
+            order by Seq", this.orderID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.grid1Data);
+            sqlCmd = string.Format(
+                @"select Seq,ShipmodeID,BuyerDelivery,FtyKPI,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
-            order by Seq", orderID);
-            result = DBProxy.Current.Select(null, sqlCmd, out grid1Data_OriQty);
+            order by Seq", this.orderID);
+            result = DBProxy.Current.Select(null, sqlCmd, out this.grid1Data_OriQty);
 
-            sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", poID);
+            sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", this.poID);
             DataTable headerData;
             result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
 
-            //設定Grid2的顯示欄位
+            // 設定Grid2的顯示欄位
             this.gridQtyBreakDownbyArticleSizeDetail.IsEditingReadOnly = true;
-            this.gridQtyBreakDownbyArticleSizeDetail.DataSource = listControlBindingSource2;
-            var gen = Helper.Controls.Grid.Generator(this.gridQtyBreakDownbyArticleSizeDetail);
-            CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
-            CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.gridQtyBreakDownbyArticleSizeDetail.DataSource = this.listControlBindingSource2;
+            var gen = this.Helper.Controls.Grid.Generator(this.gridQtyBreakDownbyArticleSizeDetail);
+            this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
+            this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
                 {
-                    CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
+                    this.CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
                     pivot.Append(string.Format("[{0}],", MyUtility.Convert.GetString(dr["SizeCode"])));
                 }
             }
-            //凍結欄位
-            gridQtyBreakDownbyArticleSizeDetail.Columns[1].Frozen = true;
 
-            //撈Grid2資料
-            sqlCmd = string.Format(@"with tmpData
+            // 凍結欄位
+            this.gridQtyBreakDownbyArticleSizeDetail.Columns[1].Frozen = true;
+
+            // 撈Grid2資料
+            sqlCmd = string.Format(
+                @"with tmpData
             as (
             select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
             from Order_QtyShip_Detail oqd WITH (NOLOCK) 
@@ -104,10 +116,13 @@ namespace Sci.Production.PPIC
             )
             select *,(select sum(Qty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
             from pivotData p
-            order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
-            result = DBProxy.Current.Select(null, sqlCmd, out grid2Data);
+            order by ASeq",
+                this.orderID,
+                MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            result = DBProxy.Current.Select(null, sqlCmd, out this.grid2Data);
 
-            sqlCmd = string.Format(@"with tmpData
+            sqlCmd = string.Format(
+                @"with tmpData
             as (
             select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq as ASeq
             from Order_QtyShip_Detail oqd WITH (NOLOCK) 
@@ -136,41 +151,51 @@ namespace Sci.Production.PPIC
             )
             select *,(select sum(OriQty) from UnionData where Seq = p.Seq and Article = p.Article) as TotalQty
             from pivotData p
-            order by ASeq", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
-            result = DBProxy.Current.Select(null, sqlCmd, out grid2Data_OriQty);
-            
+            order by ASeq",
+                this.orderID,
+                MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToString().Substring(0, pivot.ToString().Length - 1));
+            result = DBProxy.Current.Select(null, sqlCmd, out this.grid2Data_OriQty);
 
-            //設定兩個Grid的關聯
-            if (grid2Data != null)
+            // 設定兩個Grid的關聯
+            if (this.grid2Data != null)
             {
-                gridQtyBreakDownByShipmode.SelectionChanged += (s, e) =>
+                this.gridQtyBreakDownByShipmode.SelectionChanged += (s, e) =>
                 {
-                    gridQtyBreakDownByShipmode.ValidateControl();
-                    DataRow dr = this.gridQtyBreakDownByShipmode.GetDataRow<DataRow>(gridQtyBreakDownByShipmode.GetSelectedRowIndex());
+                    this.gridQtyBreakDownByShipmode.ValidateControl();
+                    DataRow dr = this.gridQtyBreakDownByShipmode.GetDataRow<DataRow>(this.gridQtyBreakDownByShipmode.GetSelectedRowIndex());
                     if (dr != null)
                     {
                         string filter = string.Format("Seq = '{0}'", MyUtility.Convert.GetString(dr["Seq"]));
-                        grid2Data.DefaultView.RowFilter = filter;
+                        this.grid2Data.DefaultView.RowFilter = filter;
                     }
                 };
             }
 
-            listControlBindingSource1.DataSource = grid1Data;
-            listControlBindingSource2.DataSource = grid2Data;
+            this.listControlBindingSource1.DataSource = this.grid1Data;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
         }
 
+        /// <summary>
+        /// CreateGrid
+        /// </summary>
+        /// <param name="gen">IDataGridViewGenerator gen</param>
+        /// <param name="datatype">string datatype</param>
+        /// <param name="propname">string propname</param>
+        /// <param name="header">string header</param>
+        /// <param name="width">IWidth width</param>
         public void CreateGrid(IDataGridViewGenerator gen, string datatype, string propname, string header, IWidth width)
         {
-            CreateGridCol(gen, datatype
-                , propname: propname
-                , header: header
-                , width: width
-            );
+            this.CreateGridCol(gen, datatype, propname: propname, header: header, width: width);
         }
 
-        private void CreateGridCol(IDataGridViewGenerator gen, string datatype
-            , string propname = null, string header = null, IWidth width = null, bool? iseditingreadonly = null
-            , int index = -1)
+        private void CreateGridCol(
+            IDataGridViewGenerator gen,
+            string datatype,
+            string propname = null,
+            string header = null,
+            IWidth width = null,
+            bool? iseditingreadonly = null,
+            int index = -1)
         {
             switch (datatype)
             {
@@ -184,22 +209,18 @@ namespace Sci.Production.PPIC
             }
         }
 
-        private void radioOriQty_CheckedChanged(object sender, EventArgs e)
+        private void RadioOriQty_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioQty.Checked)
+            if (this.radioQty.Checked)
             {
-                listControlBindingSource1.DataSource = grid1Data;
-                listControlBindingSource2.DataSource = grid2Data;
-
+                this.listControlBindingSource1.DataSource = this.grid1Data;
+                this.listControlBindingSource2.DataSource = this.grid2Data;
             }
-            else if (radioOriQty.Checked)
+            else if (this.radioOriQty.Checked)
             {
-                listControlBindingSource1.DataSource = grid1Data_OriQty;
-                listControlBindingSource2.DataSource = grid2Data_OriQty;
-
+                this.listControlBindingSource1.DataSource = this.grid1Data_OriQty;
+                this.listControlBindingSource2.DataSource = this.grid2Data_OriQty;
             }
         }
-
-
     }
 }

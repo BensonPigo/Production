@@ -51,8 +51,8 @@
             this.txtFromSeason.Name = "txtFromSeason";
             this.txtFromSeason.Size = new System.Drawing.Size(90, 23);
             this.txtFromSeason.TabIndex = 1;
-            this.txtFromSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFromSeason_PopUp);
-            this.txtFromSeason.Validating += new System.ComponentModel.CancelEventHandler(this.txtFromSeason_Validating);
+            this.txtFromSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFromSeason_PopUp);
+            this.txtFromSeason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFromSeason_Validating);
             // 
             // btnOK
             // 
@@ -62,7 +62,7 @@
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += new System.EventHandler(this.BtnOK_Click);
             // 
             // btnCancel
             // 

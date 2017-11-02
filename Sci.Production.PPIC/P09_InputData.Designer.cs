@@ -197,7 +197,7 @@
             this.txtSEQ.Name = "txtSEQ";
             this.txtSEQ.Size = new System.Drawing.Size(50, 23);
             this.txtSEQ.TabIndex = 0;
-            this.txtSEQ.Validating += new System.ComponentModel.CancelEventHandler(this.txtSEQ_Validating);
+            this.txtSEQ.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSEQ_Validating);
             // 
             // editDescription
             // 
@@ -373,7 +373,7 @@
             this.txtInvoice.ReadOnly = true;
             this.txtInvoice.Size = new System.Drawing.Size(200, 23);
             this.txtInvoice.TabIndex = 2;
-            this.txtInvoice.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInvoice_PopUp);
+            this.txtInvoice.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtInvoice_PopUp);
             // 
             // labelETA
             // 

@@ -1,31 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// ToolStripMenuItem
+    /// </summary>
     public partial class P01_MTLImport : Sci.Win.Subs.Base
     {
         private DataRow masterData;
-        public P01_MTLImport(DataRow MasterData)
+
+        /// <summary>
+        /// ToolStripMenuItem
+        /// </summary>
+        /// <param name="masterData">DataRow masterData</param>
+        public P01_MTLImport(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
+            this.InitializeComponent();
+            this.masterData = masterData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable MTLImport;
+            DataTable mTLImport;
             #region 組撈資料Sql
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 declare @POID varchar(13), @OrderID varchar(13)
 set @POID = iif('{0}'='',null,'{0}');
 set @OrderID = '{1}';
@@ -60,19 +64,22 @@ union all
 select * from tmpReceive
 union all
 select * from tmpLocalReceiving
-order by ID", masterData["POID"].ToString(), masterData["ID"].ToString());
+order by ID",
+                this.masterData["POID"].ToString(),
+                this.masterData["ID"].ToString());
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out MTLImport);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out mTLImport);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query data fail!!"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
             }
-            listControlBindingSource1.DataSource = MTLImport;
-            //設定Grid的顯示欄位
-           
+
+            this.listControlBindingSource1.DataSource = mTLImport;
+
+            // 設定Grid的顯示欄位
             this.gridImport.IsEditingReadOnly = true;
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(20))
                 .Text("Id", header: "Working No.", width: Widths.AnsiChars(15))
                 .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))

@@ -1,30 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_GMTExport
+    /// </summary>
     public partial class P01_GMTExport : Sci.Win.Subs.Base
     {
-        string orderID;
-        public P01_GMTExport(string OrderID)
+        private string orderID;
+
+        /// <summary>
+        /// P01_GMTExport
+        /// </summary>
+        /// <param name="orderID">string orderID</param>
+        public P01_GMTExport(string orderID)
         {
-            InitializeComponent();
-            orderID = OrderID;
+            this.InitializeComponent();
+            this.orderID = orderID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable QtyBDown, PackingList;
-            string sqlCmd = string.Format(@"select oq.Article,oq.SizeCode,oq.Qty as OrderQty, 
+            DataTable qtyBDown, packingList;
+            string sqlCmd = string.Format(
+                @"
+select oq.Article,oq.SizeCode,oq.Qty as OrderQty, 
 isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = oq.ID and Article = oq.Article and SizeCode = oq.SizeCode),0) as PacklistQty, 
 isnull((select sum(pd.ShipQty) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = oq.ID and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode and p.ID = pd.ID and p.INVNo <> ''),0) as BookingQty, 
 isnull((select sum(pdd.ShipQty) from Pullout_Detail_Detail pdd WITH (NOLOCK) where pdd.OrderID = oq.ID and pdd.Article = oq.Article and pdd.SizeCode = oq.SizeCode),0) as PulloutQty, 
@@ -34,25 +40,28 @@ left join Orders o WITH (NOLOCK) on o.ID = oq.ID
 left join Order_Article oa WITH (NOLOCK) on oa.id = oq.ID and oa.Article = oq.Article
 left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = oq.SizeCode
 where oq.ID = '{0}'
-order by oa.Seq,os.Seq", orderID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out QtyBDown);
+order by oa.Seq,os.Seq", this.orderID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out qtyBDown);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query q'ty b'down fail!!"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query q'ty b'down fail!!" + result.ToString());
             }
-            listControlBindingSource1.DataSource = QtyBDown;
-            object orderQty = QtyBDown.Compute("sum(OrderQty)","");
-            object packlistQty = QtyBDown.Compute("sum(PacklistQty)", "");
-            object bookingQty = QtyBDown.Compute("sum(BookingQty)", "");
-            object pulloutQty = QtyBDown.Compute("sum(PulloutQty)", "");
-            object adjQty = QtyBDown.Compute("sum(AdjQty)", "");
-            numOrderQty.Value = orderQty.Empty() ? 0 : Convert.ToInt32(orderQty);
-            numPackingQty.Value = packlistQty.Empty() ? 0 : Convert.ToInt32(packlistQty);
-            numBookingQty.Value = bookingQty.Empty() ? 0 : Convert.ToInt32(bookingQty);
-            numPulloutQty.Value = pulloutQty.Empty() ? 0 : Convert.ToInt32(pulloutQty);
-            numAdjQty.Value = adjQty.Empty() ? 0 : Convert.ToInt32(adjQty);
 
-            sqlCmd = string.Format(@"with tmpPackingList
+            this.listControlBindingSource1.DataSource = qtyBDown;
+            object orderQty = qtyBDown.Compute("sum(OrderQty)", string.Empty);
+            object packlistQty = qtyBDown.Compute("sum(PacklistQty)", string.Empty);
+            object bookingQty = qtyBDown.Compute("sum(BookingQty)", string.Empty);
+            object pulloutQty = qtyBDown.Compute("sum(PulloutQty)", string.Empty);
+            object adjQty = qtyBDown.Compute("sum(AdjQty)", string.Empty);
+            this.numOrderQty.Value = orderQty.Empty() ? 0 : Convert.ToInt32(orderQty);
+            this.numPackingQty.Value = packlistQty.Empty() ? 0 : Convert.ToInt32(packlistQty);
+            this.numBookingQty.Value = bookingQty.Empty() ? 0 : Convert.ToInt32(bookingQty);
+            this.numPulloutQty.Value = pulloutQty.Empty() ? 0 : Convert.ToInt32(pulloutQty);
+            this.numAdjQty.Value = adjQty.Empty() ? 0 : Convert.ToInt32(adjQty);
+
+            sqlCmd = string.Format(
+                @"
+with tmpPackingList
 as (
 select *,
 (select isnull(sum(iq.DiffQty),0) 
@@ -91,14 +100,14 @@ select * from tmpPackingList
 union all
 select * from tmpPullout
 union all
-select * from tmpInvAdj", orderID);
-            result = DBProxy.Current.Select(null, sqlCmd, out PackingList);
+select * from tmpInvAdj", this.orderID);
+            result = DBProxy.Current.Select(null, sqlCmd, out packingList);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query packing list fail!!" + result.ToString());
             }
-            listControlBindingSource2.DataSource = PackingList;
 
+            this.listControlBindingSource2.DataSource = packingList;
 
             DataGridViewGeneratorNumericColumnSettings orderqty = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings packlistqty = new DataGridViewGeneratorNumericColumnSettings();
@@ -116,10 +125,11 @@ select * from tmpInvAdj", orderID);
             shipqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             adjqty2.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             ctnqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            //設定Grid1的顯示欄位
+
+            // 設定Grid1的顯示欄位
             this.gridQtyBDownByGarmentExport.IsEditingReadOnly = true;
-            this.gridQtyBDownByGarmentExport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridQtyBDownByGarmentExport)
+            this.gridQtyBDownByGarmentExport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridQtyBDownByGarmentExport)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(6), settings: orderqty)
@@ -128,10 +138,10 @@ select * from tmpInvAdj", orderID);
                 .Numeric("PulloutQty", header: "Pull-out Q'ty", width: Widths.AnsiChars(6), settings: pulloutqty)
                 .Numeric("AdjQty", header: "Adj Q'ty", width: Widths.AnsiChars(6), settings: adjqty1);
 
-            //設定Grid2的顯示欄位
+            // 設定Grid2的顯示欄位
             this.gridPackingListBookingPulloutDetail.IsEditingReadOnly = true;
-            this.gridPackingListBookingPulloutDetail.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.gridPackingListBookingPulloutDetail)
+            this.gridPackingListBookingPulloutDetail.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.gridPackingListBookingPulloutDetail)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(6))
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("ID", header: "Packing#", width: Widths.AnsiChars(15))

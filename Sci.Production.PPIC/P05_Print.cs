@@ -11,39 +11,49 @@ using Ict;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P05_Print
+    /// </summary>
     public partial class P05_Print : Sci.Win.Tems.PrintForm
     {
         private DataTable gridData;
-        private string readyDate1, readyDate2, strUp2SCIDelivery;
+        private string readyDate1;
+        private string readyDate2;
+        private string strUp2SCIDelivery;
         private DataRow[] printData;
-        
-        public P05_Print(DataTable GridData, string strUp2SCIDelivery)
+
+        /// <summary>
+        /// P05_Print
+        /// </summary>
+        /// <param name="gridData">DataTable gridData</param>
+        /// <param name="strUp2SCIDelivery">string strUp2SCIDelivery</param>
+        public P05_Print(DataTable gridData, string strUp2SCIDelivery)
         {
-            InitializeComponent();
-            gridData = GridData;
+            this.InitializeComponent();
+            this.gridData = gridData;
             this.strUp2SCIDelivery = strUp2SCIDelivery;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            readyDate1 = MyUtility.Check.Empty(dateReadydate.Value1) ? "" : Convert.ToDateTime(dateReadydate.Value1).ToString("d");
-            readyDate2 = MyUtility.Check.Empty(dateReadydate.Value2) ? "" : Convert.ToDateTime(dateReadydate.Value2).ToString("d");
+            this.readyDate1 = MyUtility.Check.Empty(this.dateReadydate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value1).ToString("d");
+            this.readyDate2 = MyUtility.Check.Empty(this.dateReadydate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReadydate.Value2).ToString("d");
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            printData = gridData.Select(string.Format("{0}{1}", (MyUtility.Check.Empty(readyDate1) ? "1 = 1" : "ReadyDate >= '" + readyDate1 + "'"), (MyUtility.Check.Empty(readyDate2) ? "" : " and ReadyDate <= '" + readyDate2 + "'")));
+            this.printData = this.gridData.Select(string.Format("{0}{1}", MyUtility.Check.Empty(this.readyDate1) ? "1 = 1" : "ReadyDate >= '" + this.readyDate1 + "'", MyUtility.Check.Empty(this.readyDate2) ? string.Empty : " and ReadyDate <= '" + this.readyDate2 + "'"));
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (printData.Length <= 0)
+            if (this.printData.Length <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -51,21 +61,26 @@ namespace Sci.Production.PPIC
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P05_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             #region Header
-            string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
+            string factoryName = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select  NameEN
 from Factory
 where ID = '{0}'", Sci.Env.User.Factory));
-            worksheet.PageSetup.LeftHeader = string.Format("\n\nUp to SCI Delivery : {0}      Ready Date : {1} ~ {2}", strUp2SCIDelivery, readyDate1, readyDate2);
+            worksheet.PageSetup.LeftHeader = string.Format("\n\nUp to SCI Delivery : {0}      Ready Date : {1} ~ {2}", this.strUp2SCIDelivery, this.readyDate1, this.readyDate2);
             worksheet.PageSetup.CenterHeader = string.Format("{0}\nProduction Schedule", factoryName);
-            #endregion             
-            int rownum = 2, counter = 0;            
+            #endregion
+            int rownum = 2, counter = 0;
             object[,] objArray = new object[1, 23];
-            foreach (DataRow dr in printData)
-            {                
+            foreach (DataRow dr in this.printData)
+            {
                 rownum = intRowsStart + counter;
                 worksheet.Cells[rownum, 1] = dr["ID"];
                 worksheet.Cells[rownum, 2] = dr["StyleID"];
@@ -94,9 +109,10 @@ where ID = '{0}'", Sci.Env.User.Factory));
                 ((Excel.Range)worksheet.Range[worksheet.Cells[rownum, 1], worksheet.Cells[rownum, 24]]).Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlDash;
                 counter++;
             }
+
             worksheet.Columns.AutoFit();
 
-            #region Save & Show Excel 
+            #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P05_Print");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
@@ -107,7 +123,7 @@ where ID = '{0}'", Sci.Env.User.Factory));
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

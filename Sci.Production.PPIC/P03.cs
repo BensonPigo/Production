@@ -11,43 +11,53 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P03
+    /// </summary>
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
-        Ict.Win.DataGridViewGeneratorDateColumnSettings rcvDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        Ict.Win.DataGridViewGeneratorTextColumnSettings ftyRemark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        private bool needSave = false, alreadySave = false;
+        private Ict.Win.DataGridViewGeneratorDateColumnSettings rcvDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings ftyRemark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private bool needSave = false;
+        private bool alreadySave = false;
         private DataTable gridData;
-        string f; int query;
+        private string f;
+        private int query;
+
+        /// <summary>
+        /// P03
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable facData = null;
-            string factoryCmd = string.Format(@"
+            string factoryCmd = string.Format(
+                @"
             select distinct sp.FactoryID
             from Style_ProductionKits sp WITH (NOLOCK) 
             left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
             where sp.ReceiveDate is null
             --and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
-            DBProxy.Current.Select("", factoryCmd.ToString(), out facData);
-            facData.Rows.Add(new string[] { "" });
+            DBProxy.Current.Select(string.Empty, factoryCmd.ToString(), out facData);
+            facData.Rows.Add(new string[] { string.Empty });
             facData.DefaultView.Sort = "factoryid";
             this.comboFactory.DataSource = facData;
             this.comboFactory.ValueMember = "factoryid";
             this.EditMode = true;
             this.comboFactory.SelectedIndex = 0;
-           
-         
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-           
-            QueryData();
-           
-            ftyRemark.CharacterCasing = CharacterCasing.Normal;
-            rcvDate.CellValidating += (s, e) =>
+
+            this.QueryData();
+
+            this.ftyRemark.CharacterCasing = CharacterCasing.Normal;
+            this.rcvDate.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridProductionKitsConfirm.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && (Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddDays(180) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-180)))
@@ -58,18 +68,18 @@ namespace Sci.Production.PPIC
                     return;
                 }
             };
-         
-            gridProductionKitsConfirm.DataSource = listControlBindingSource1;
-            gridProductionKitsConfirm.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.gridProductionKitsConfirm)
+
+            this.gridProductionKitsConfirm.DataSource = this.listControlBindingSource1;
+            this.gridProductionKitsConfirm.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridProductionKitsConfirm)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Article", header: "Colorway", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Date("SendDate", header: "TW Send date", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Date("ReceiveDate", header: "FTY MR Rcv date", width: Widths.AnsiChars(8), settings: rcvDate)
-                .Text("FtyRemark", header: "Remark for factory", width: Widths.AnsiChars(15), settings: ftyRemark)
+                .Date("ReceiveDate", header: "FTY MR Rcv date", width: Widths.AnsiChars(8), settings: this.rcvDate)
+                .Text("FtyRemark", header: "Remark for factory", width: Widths.AnsiChars(15), settings: this.ftyRemark)
                 .Date("ProvideDate", header: "Provide date", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Delivery", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -83,40 +93,41 @@ namespace Sci.Production.PPIC
             this.gridProductionKitsConfirm.Columns["FtyRemark"].DefaultCellStyle.BackColor = Color.LightYellow;
         }
 
-        //Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Query
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            f = comboFactory.SelectedValue.ToString();
-            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            this.listControlBindingSource1.EndEdit();
+            this.f = this.comboFactory.SelectedValue.ToString();
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    needSave = true;
+                    this.needSave = true;
                     break;
                 }
             }
 
-            if (needSave && !alreadySave)
+            if (this.needSave && !this.alreadySave)
             {
-                DialogResult buttonResult = MyUtility.Msg.QuestionBox("Do you want to save data?","Confirm", MessageBoxButtons.OKCancel);
+                DialogResult buttonResult = MyUtility.Msg.QuestionBox("Do you want to save data?", "Confirm", MessageBoxButtons.OKCancel);
                 if (buttonResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    if (!SaveData())
+                    if (!this.SaveData())
                     {
                         return;
                     }
                 }
-                needSave = false;
+
+                this.needSave = false;
             }
-             query = 1;
-            QueryData();
+
+            this.query = 1;
+            this.QueryData();
         }
 
         private void QueryData()
         {
-            
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select sp.*,s.ID as StyleID,s.SeasonID,
 (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'ProductionKits' and ID = sp.DOC) as ReasonName,
@@ -128,93 +139,100 @@ iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null "));
-            
-            if (!MyUtility.Check.Empty(txtStyleNo.Text))
+
+            if (!MyUtility.Check.Empty(this.txtStyleNo.Text))
             {
-               sqlCmd.Append(string.Format(" and s.ID = '{0}'",txtStyleNo.Text));   
+               sqlCmd.Append(string.Format(" and s.ID = '{0}'", this.txtStyleNo.Text));
             }
 
-            if (!MyUtility.Check.Empty(txtSeason.Text))
+            if (!MyUtility.Check.Empty(this.txtSeason.Text))
             {
-               sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", txtSeason.Text));
+               sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", this.txtSeason.Text));
             }
 
-            if (!MyUtility.Check.Empty(dateSendDate.Value))
+            if (!MyUtility.Check.Empty(this.dateSendDate.Value))
             {
-               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateSendDate.Value).ToString("d")));               
+               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("d")));
             }
-         
-            if (query == 1)
+
+            if (this.query == 1)
             {
-                if (f == "") { }
-                if (!this.comboFactory.Text.ToString().Empty()&& f !="")
+                if (this.f == string.Empty)
                 {
-                    sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", f));
+                }
+
+                if (!this.comboFactory.Text.ToString().Empty() && this.f != string.Empty)
+                {
+                    sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", this.f));
                 }
             }
+
              sqlCmd.Append(@" order by FactoryID, StyleID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
-            
-            if (!result )
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
+
+            if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
             }
             else
             {
-                if (gridData.Rows.Count == 0 )
+                if (this.gridData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
-            listControlBindingSource1.DataSource = gridData;
-            alreadySave = false;
-            query = 0;
+
+            this.listControlBindingSource1.DataSource = this.gridData;
+            this.alreadySave = false;
+            this.query = 0;
         }
 
-        //Batch update
-        private void btnBatchUpdate_Click(object sender, EventArgs e)
+        // Batch update
+        private void BtnBatchUpdate_Click(object sender, EventArgs e)
         {
-           foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+           foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
-                if (MyUtility.Check.Empty(dateFactoryReceiveDate.Value))
+                if (MyUtility.Check.Empty(this.dateFactoryReceiveDate.Value))
                 {
                     dr["ReceiveDate"] = DBNull.Value;
                 }
                 else
                 {
-                    dr["ReceiveDate"] = dateFactoryReceiveDate.Value;
+                    dr["ReceiveDate"] = this.dateFactoryReceiveDate.Value;
                 }
             }
         }
 
-        //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        // Save
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            SaveData();
+            this.SaveData();
         }
 
         private bool SaveData()
         {
             IList<string> updateCmds = new List<string>();
             this.gridProductionKitsConfirm.ValidateControl();
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             StringBuilder cmds = new StringBuilder();
-            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
                     cmds.Clear();
-                    cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'"+Convert.ToDateTime(dr["ReceiveDate"]).ToString("d")+"'", dr["FtyRemark"].ToString()));
+                    cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("d") + "'", dr["FtyRemark"].ToString()));
                     if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
                     {
                         cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Sci.Env.User.UserID));
                     }
+
                     cmds.Append(string.Format(" where Ukey = {0}", dr["UKey"].ToString()));
 
                     updateCmds.Add(cmds.ToString());
                 }
             }
+
             if (updateCmds.Count != 0)
             {
                 DualResult result = DBProxy.Current.Executes(null, updateCmds);
@@ -224,33 +242,37 @@ where sp.ReceiveDate is null and sp.SendDate is not null "));
                     return false;
                 }
             }
-            alreadySave = true;
+
+            this.alreadySave = true;
             return true;
         }
 
-        //Close
-        private void btnClose_Click(object sender, EventArgs e)
+        // Close
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //View Detail
-        private void btnViewDetail_Click(object sender, EventArgs e)
+        // View Detail
+        private void BtnViewDetail_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
-            Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
-            DoForm.Set(false, ((DataTable)listControlBindingSource1.DataSource).ToList(), gridProductionKitsConfirm.GetDataRow(gridProductionKitsConfirm.GetSelectedRowIndex())); DoForm.ShowDialog(this);
+            Sci.Production.PPIC.P03_Detail doForm = new Sci.Production.PPIC.P03_Detail();
+            doForm.Set(false, ((DataTable)this.listControlBindingSource1.DataSource).ToList(), this.gridProductionKitsConfirm.GetDataRow(this.gridProductionKitsConfirm.GetSelectedRowIndex()));
+            doForm.ShowDialog(this);
         }
 
-        //[send Date]改變時，同步更新GRID資料
-        private void dateSendDate_ValueChanged(object sender, EventArgs e)
+        // [send Date]改變時，同步更新GRID資料
+        private void DateSendDate_ValueChanged(object sender, EventArgs e)
         {
-            if(MyUtility.Check.Empty(dateSendDate.Value))
-                listControlBindingSource1.Filter = "";
+            if (MyUtility.Check.Empty(this.dateSendDate.Value))
+            {
+                this.listControlBindingSource1.Filter = string.Empty;
+            }
             else
-                listControlBindingSource1.Filter = string.Format("SendDate='{0}'", dateSendDate.Text);
+            {
+                this.listControlBindingSource1.Filter = string.Format("SendDate='{0}'", this.dateSendDate.Text);
+            }
         }
-
-
     }
 }

@@ -240,7 +240,7 @@
             this.btnBatchEdit.TabIndex = 7;
             this.btnBatchEdit.Text = "Batch Edit";
             this.btnBatchEdit.UseVisualStyleBackColor = true;
-            this.btnBatchEdit.Click += new System.EventHandler(this.btnBatchEdit_Click);
+            this.btnBatchEdit.Click += new System.EventHandler(this.BtnBatchEdit_Click);
             // 
             // txtSewingLine
             // 

@@ -15,53 +15,69 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_MNoticePrint
+    /// </summary>
     public partial class P01_MNoticePrint : Sci.Win.Tems.PrintForm
     {
         private string _id;
-        //private string _username;
-        //private string _userid;
-        //DualResult result;
-        //DataRow CurrentDataRow ;
 
+        // private string _username;
+        // private string _userid;
+        // DualResult result;
+        // DataRow CurrentDataRow ;
+
+        /// <summary>
+        /// P01_MNoticePrint
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <param name="args">string args</param>
         public P01_MNoticePrint(ToolStripMenuItem menuitem, string args)
             : base(menuitem)
         {
-            Constructor(args);
+            this.Constructor(args);
         }
+
+        /// <summary>
+        /// P01_MNoticePrint
+        /// </summary>
+        /// <param name="args">string args</param>
         public P01_MNoticePrint(string args)
         {
-            Constructor(args);
+            this.Constructor(args);
         }
+
         private void Constructor(string args)
         {
             this._id = args;
-            InitializeComponent();
-            EditMode = true;
+            this.InitializeComponent();
+            this.EditMode = true;
 
-            foreach (var control in groupBox1.Controls)
+            foreach (var control in this.groupBox1.Controls)
             {
                 if (control is Sci.Win.UI.RadioButton)
                 {
                     Sci.Win.UI.RadioButton rdb = (Sci.Win.UI.RadioButton)control;
-                    rdb.CheckedChanged += rd_CheckedChanged;
+                    rdb.CheckedChanged += this.Rd_CheckedChanged;
                 }
             }
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return new DualResult(true);
         }
 
-
+        /// <inheritdoc/>
         protected override bool ToExcel()
         {
             this.ShowWaitMessage("Data processing, please wait ...");
-            if (radioMNotice.Checked == true)
+            if (this.radioMNotice.Checked == true)
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
-                DataRow drvar = GetTitleDataByCustCD(ordercomboid, _id);
+                DataRow drvar = this.GetTitleDataByCustCD(ordercomboid, this._id);
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 if (drvar == null)
                 {
@@ -69,6 +85,7 @@ namespace Sci.Production.PPIC
                     MyUtility.Msg.WarningBox("data not found!!");
                     return true;
                 }
+
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
                 sxr.AddPrintRange = true;
@@ -84,8 +101,8 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
 
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", ordercomboid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
-                
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", ordercomboid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
+
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
@@ -95,12 +112,12 @@ namespace Sci.Production.PPIC
                 }
 
                 sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1", xltTbl);
-                intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
-                sxrc.ReplaceAction ra = ForSizeSpec;
+                this.intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; // 起始位置加一、格線加二
+                sxrc.ReplaceAction ra = this.ForSizeSpec;
                 sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select(string.Empty, "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
@@ -112,13 +129,13 @@ namespace Sci.Production.PPIC
                 sxr.VarToSheetName = sxr.VPrefix + "SP";
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    string ID = dt.Rows[i]["ID"].ToString();
+                    string id = dt.Rows[i]["ID"].ToString();
                     string idxStr = i.ToString();
 
-                    res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", checkAdditionally.Checked) }, out dts);
+                    res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", id), new SqlParameter("@WithZ", this.checkAdditionally.Checked) }, out dts);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, ID);
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, id);
                     sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
@@ -131,22 +148,31 @@ namespace Sci.Production.PPIC
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[0], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[1], 1, 3);
                     sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[2], 1, 0);
-                    SetColumn1toText(tbl1);
-                    SetColumn1toText(tbl2);
-                    SetColumn1toText(tbl3);
+                    this.SetColumn1toText(tbl1);
+                    this.SetColumn1toText(tbl2);
+                    this.SetColumn1toText(tbl3);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3);
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
-                    if (dts[6].Rows.Count>0)
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[3]); // COLOR list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[4]); // Fabric list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[5]); // Accessories list
+                    if (dts[6].Rows.Count > 0)
+                    {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2SHIPINGMARK" + idxStr, new sxrc.XltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                    }
+
                     if (dts[7].Rows.Count > 0)
+                    {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    }
+
                     if (dts[8].Rows.Count > 0)
+                    {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
+                    }
+
                     if (dts[9].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
                     {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XltLongString(dts[9].Rows[0]["Packing2"].ToString()));
@@ -160,14 +186,20 @@ namespace Sci.Production.PPIC
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice"));
             }
 
-             //M/Notict (Combo by ComboID)
+             // M/Notict (Combo by ComboID)
             else
             {
-                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
 
-                System.Data.DataTable dtOrderCombo = GetDtByComboID(ordercomboid);
+                System.Data.DataTable dtOrderCombo = this.GetDtByComboID(ordercomboid);
 
-                if (dtOrderCombo == null) { MyUtility.Msg.WarningBox("data not found!!"); this.HideWaitMessage(); return true; }
+                if (dtOrderCombo == null)
+                {
+                    MyUtility.Msg.WarningBox("data not found!!");
+                    this.HideWaitMessage();
+                    return true;
+                }
+
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.AddPrintRange = true;
@@ -182,12 +214,12 @@ namespace Sci.Production.PPIC
                     string idxStr = ii.ToString();
                     ii += 1;
 
-                    string OrderComboID = row["OrderComboID"].ToString();
+                    string orderComboID = row["OrderComboID"].ToString();
 
-                    DataRow drvar = GetTitleDataByCustCD(ordercomboid, OrderComboID);
+                    DataRow drvar = this.GetTitleDataByCustCD(ordercomboid, orderComboID);
 
                     System.Data.DataTable[] dts;
-                    DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", OrderComboID), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
+                    DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", orderComboID), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
 
                     if (drvar == null | !res)
                     {
@@ -204,11 +236,11 @@ namespace Sci.Production.PPIC
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_CustCD" + idxStr, drvar["CustCD"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
-                    sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, OrderComboID + "-1");
-                    sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, OrderComboID + "-2");
-                    sxr.DicDatas.Add(sxr.VPrefix + "sname3" + idxStr, OrderComboID + "-3");
-                    
-                    //For SizeSpec
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, orderComboID + "-2");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname3" + idxStr, orderComboID + "-3");
+
+                    // For SizeSpec
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
@@ -216,19 +248,20 @@ namespace Sci.Production.PPIC
                         xcinfo.NumberFormate = "@";
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
+
                     xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
                     xltTbl.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
                     sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1" + idxStr, xltTbl);
-                    intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
-                    sxrc.ReplaceAction ra = ForSizeSpec;
+                    this.intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; // 起始位置加一、格線加二
+                    sxrc.ReplaceAction ra = this.ForSizeSpec;
                     sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction" + idxStr, ra);
 
                     sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts[1], 1, 2, true);
                     sxrc.XltRptTable tbl2 = new sxrc.XltRptTable(dts[2], 1, 3);
                     sxrc.XltRptTable tbl3 = new sxrc.XltRptTable(dts[3], 1, 0);
-                    SetColumn1toText(tbl1);
-                    SetColumn1toText(tbl2);
-                    SetColumn1toText(tbl3);
+                    this.SetColumn1toText(tbl1);
+                    this.SetColumn1toText(tbl2);
+                    this.SetColumn1toText(tbl3);
 
                     sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
@@ -242,9 +275,9 @@ namespace Sci.Production.PPIC
                     sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl1" + idxStr, tbl1);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl2" + idxStr, tbl2);
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); //COLOR list                
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[4]); //Fabric list                
-                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[5]); //Accessories list                
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl3" + idxStr, tbl3); // COLOR list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl4" + idxStr, dts[4]); // Fabric list
+                    sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl5" + idxStr, dts[5]); // Accessories list
                     sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl6" + idxStr, dts[6]);
                     sxr.DicDatas.Add(sxr.VPrefix + "S2PACKING" + idxStr, new sxrc.XltLongString(dts[7].Rows[0]["Packing"].ToString()));
                     sxr.DicDatas.Add(sxr.VPrefix + "S2LH" + idxStr, new sxrc.XltLongString(dts[8].Rows[0]["Label"].ToString()));
@@ -256,7 +289,8 @@ namespace Sci.Production.PPIC
                     {
                         sxr.DicDatas.Add(sxr.VPrefix + "S2VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
                     }
-                    //新增Range Repeat數
+
+                    // 新增Range Repeat數
                     sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts[10].Rows.Count);
 
                     int idx = 0;
@@ -288,29 +322,29 @@ namespace Sci.Production.PPIC
                             sxr.DicDatas.Add(sxr.VPrefix + "S3_Tbl" + idxStr + sxr.CRPrefix + sIdx, stbl);
                         }
                     }
+                }
 
-                } //for CustCD 
-
-
-                //#if DEBUG
+                // for CustCD
+                // #if DEBUG
                 //                sxr.ExcelApp.Visible = true;
-                //#endif
-
+                // #endif
                 sxr.BoOpenFile = true;
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04"));
             }
+
             this.HideWaitMessage();
             return true;
         }
 
-        private System.Data.DataTable GetDtByComboID(string POID)
+        private System.Data.DataTable GetDtByComboID(string poid)
         {
             System.Data.DataTable dt;
-            DualResult res = DBProxy.Current.Select("", @"
+            string strSqlSelect = @"
 SELECT distinct OrderComboID from MNOrder
 outer apply (select 1 as cnt from MNOrder tmp where tmp.OrderComboID = MNOrder.ID) cnt
-WHERE MNOrder.ordercomboid = @POID
-", new List<SqlParameter> { new SqlParameter("@POID", POID) }, out dt);
+WHERE MNOrder.ordercomboid = @POID";
+
+            DualResult res = DBProxy.Current.Select(string.Empty, strSqlSelect, new List<SqlParameter> { new SqlParameter("@POID", poid) }, out dt);
 
             if (res && dt.Rows.Count > 0)
             {
@@ -321,7 +355,8 @@ WHERE MNOrder.ordercomboid = @POID
                 return null;
             }
         }
-        void SetColumn1toText(sxrc.XltRptTable tbl)
+
+        private void SetColumn1toText(sxrc.XltRptTable tbl)
         {
             sxrc.XlsColumnInfo c1 = new sxrc.XlsColumnInfo(1);
             c1.NumberFormate = "@";
@@ -330,25 +365,27 @@ WHERE MNOrder.ordercomboid = @POID
 
         private int intSizeSpecRowCnt = 0;
         private int intSizeSpecColumnCnt = 18;
-        void ForSizeSpec(Worksheet oSheet, int rowNo, int columnNo)
+
+        private void ForSizeSpec(Worksheet oSheet, int rowNo, int columnNo)
         {
-            for (int colIdx = 3; colIdx <= intSizeSpecColumnCnt; colIdx++)
+            for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
-                //oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);    
+                // oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
                 oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
-            for (int colIdx = 3; colIdx <= intSizeSpecColumnCnt; colIdx++)
+
+            for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
-                //oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
+                // oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
                 oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
         }
 
-        private DataRow GetTitleDataByCustCD(string ordercomboid, string id, bool ByCustCD = true)
+        private DataRow GetTitleDataByCustCD(string ordercomboid, string id, bool byCustCD = true)
         {
             DataRow drvar;
-            string cmd = "";
-            if (ByCustCD)
+            string cmd = string.Empty;
+            if (byCustCD)
             {
                 cmd = @"
 SELECT MAKER=max(FactoryID)
@@ -387,15 +424,19 @@ where OrderComboID = @ordercomboid group by POID,b.spno";
 
             bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@ordercomboid", ordercomboid), new SqlParameter("@ID", id) }, out drvar, null);
             if (res)
+            {
                 return drvar;
+            }
             else
+            {
                 return null;
+            }
         }
 
-        void rd_CheckedChanged(object sender, EventArgs e)
+        private void Rd_CheckedChanged(object sender, EventArgs e)
         {
-            checkAdditionally.Visible = false;
-            checkAdditionally.Visible = radioMNotice.Checked || radioByOrderCombo.Checked;
+            this.checkAdditionally.Visible = false;
+            this.checkAdditionally.Visible = this.radioMNotice.Checked || this.radioByOrderCombo.Checked;
         }
     }
 }

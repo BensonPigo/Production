@@ -92,8 +92,8 @@
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(66, 23);
             this.txtBuyer.TabIndex = 1;
-            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBuyer_PopUp);
-            this.txtBuyer.Validated += new System.EventHandler(this.txtBuyer_Validated);
+            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBuyer_PopUp);
+            this.txtBuyer.Validated += new System.EventHandler(this.TxtBuyer_Validated);
             // 
             // txtStyle
             // 
@@ -103,8 +103,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(130, 23);
             this.txtStyle.TabIndex = 0;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
-            this.txtStyle.Validated += new System.EventHandler(this.txtStyle_Validated);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
+            this.txtStyle.Validated += new System.EventHandler(this.TxtStyle_Validated);
             // 
             // btnToExcel
             // 
@@ -114,7 +114,7 @@
             this.btnToExcel.TabIndex = 3;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // dateBuyerDelivery
             // 
@@ -123,7 +123,7 @@
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 2;
-            this.dateBuyerDelivery.Validated += new System.EventHandler(this.dateBuyerDelivery_Validated);
+            this.dateBuyerDelivery.Validated += new System.EventHandler(this.DateBuyerDelivery_Validated);
             // 
             // labelBuyerDelivery
             // 
@@ -182,7 +182,7 @@
             this.btnUpdate.TabIndex = 0;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
             // panel5
             // 

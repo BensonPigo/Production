@@ -14,48 +14,64 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// R01
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        string mDivision, factory, line1, line2, brand;
-        DateTime? inline, offline, buyerDelivery1, buyerDelivery2, sciDelivery1, sciDelivery2;
+        private DataTable printData;
+        private string mDivision;
+        private string factory;
+        private string line1;
+        private string line2;
+        private string brand;
+        private DateTime? inline;
+        private DateTime? offline;
+        private DateTime? buyerDelivery1;
+        private DateTime? buyerDelivery2;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
 
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboM.Text = Sci.Env.User.Keyword;
-            
-         //   comboBox2.SelectedIndex = 0;
-            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboM.Text = Sci.Env.User.Keyword;
+
+            // comboBox2.SelectedIndex = 0;
+            this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
-        //Sewing Line
-        private void txtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Sewing Line
+        private void TxtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
+            this.txtSewingLineStart.Text = this.SelectSewingLine(this.txtSewingLineStart.Text);
         }
 
-        //Sewing Line
-        private void txtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Sewing Line
+        private void TxtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
+            this.txtSewingLineEnd.Text = this.SelectSewingLine(this.txtSewingLineEnd.Text);
         }
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboFactory.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
-                return "";
+                return string.Empty;
             }
             else
             {
@@ -63,25 +79,25 @@ namespace Sci.Production.PPIC
             }
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            mDivision = comboM.Text;
-            factory = comboFactory.Text;
-            line1 = txtSewingLineStart.Text;
-            line2 = txtSewingLineEnd.Text;
-            inline = dateInlineAfter.Value;
-            offline = dateOfflineBefore.Value;
-            buyerDelivery1 = dateBuyerDelivery.Value1;
-            buyerDelivery2 = dateBuyerDelivery.Value2;
-            sciDelivery1 = dateSCIDelivery.Value1;
-            sciDelivery2 = dateSCIDelivery.Value2;
-            brand = txtbrand.Text;
+            this.mDivision = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+            this.line1 = this.txtSewingLineStart.Text;
+            this.line2 = this.txtSewingLineEnd.Text;
+            this.inline = this.dateInlineAfter.Value;
+            this.offline = this.dateOfflineBefore.Value;
+            this.buyerDelivery1 = this.dateBuyerDelivery.Value1;
+            this.buyerDelivery2 = this.dateBuyerDelivery.Value2;
+            this.sciDelivery1 = this.dateSCIDelivery.Value1;
+            this.sciDelivery2 = this.dateSCIDelivery.Value2;
+            this.brand = this.txtbrand.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -238,81 +254,82 @@ from (
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     where 1 = 1 
 ");
-            if (!MyUtility.Check.Empty(mDivision))
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", this.mDivision));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", this.factory));
             }
 
-            if (!MyUtility.Check.Empty(line1))
+            if (!MyUtility.Check.Empty(this.line1))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'", line1));
+                sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'", this.line1));
             }
 
-            if (!MyUtility.Check.Empty(line2))
+            if (!MyUtility.Check.Empty(this.line2))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", line2));
+                sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
             }
 
-            if (!MyUtility.Check.Empty(inline))
+            if (!MyUtility.Check.Empty(this.inline))
             {
-                sqlCmd.Append(string.Format(" and s.Inline >= '{0}'", Convert.ToDateTime(inline).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.Inline >= '{0}'", Convert.ToDateTime(this.inline).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(offline))
+            if (!MyUtility.Check.Empty(this.offline))
             {
-                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(offline).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.Offline < '{0}'", Convert.ToDateTime(this.offline).AddDays(1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(buyerDelivery1))
+            if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(buyerDelivery2))
+            if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDelivery2))
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
             }
 
             sqlCmd.Append(@" 
 ) a
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -320,52 +337,55 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
             bool result = false;
 
-            if (checkForPrintOut.Checked == true)
+            if (this.checkForPrintOut.Checked == true)
             {
                 #region PPIC_R01_PrintOut
-                printData.Columns.Remove("MDivisionID");
-                printData.Columns.Remove("PFRemark");
-                printData.Columns.Remove("BuyerDelivery");
-                printData.Columns.Remove("VasShas");
-                printData.Columns.Remove("ShipModeList");
-                printData.Columns.Remove("Alias");
+                this.printData.Columns.Remove("MDivisionID");
+                this.printData.Columns.Remove("PFRemark");
+                this.printData.Columns.Remove("BuyerDelivery");
+                this.printData.Columns.Remove("VasShas");
+                this.printData.Columns.Remove("ShipModeList");
+                this.printData.Columns.Remove("Alias");
 
                 Excel.Application objApp = null;
                 Excel.Worksheet worksheet = null;
 
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
-                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); // 預先開啟excel app
+                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 4, showExcel: false, excelApp: objApp);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox(result.ToString(), "Warning");
                     return false;
                 }
+
                 this.ShowWaitMessage("Excel Processing...");
                 worksheet = objApp.Sheets[1];
 
                 #region Set Excel Title
-                string factoryName = MyUtility.GetValue.Lookup(string.Format(@"
+                string factoryName = MyUtility.GetValue.Lookup(
+                    string.Format(
+                        @"
 select NameEn 
 from Factory 
-where id = '{0}'", Sci.Env.User.Factory), null);
-                worksheet.Cells[1, 1] = factoryName; 
+where id = '{0}'", Env.User.Factory), null);
+                worksheet.Cells[1, 1] = factoryName;
                 worksheet.Cells[2, 1] = "Sewing Line Schedule Report";
                 worksheet.Cells[3, 1] = "Date:" + DateTime.Now.ToString("yyyy/MM/dd");
-                #endregion 
-                for (int i = 1; i < printData.Rows.Count; i++)
+                #endregion
+                for (int i = 1; i < this.printData.Rows.Count; i++)
                 {
-                    DataRow frontRow = printData.Rows[i - 1];
-                    DataRow Row = printData.Rows[i];
+                    DataRow frontRow = this.printData.Rows[i - 1];
+                    DataRow row = this.printData.Rows[i];
 
-                    //當前後 SyleID 不同時，中間加上虛線
-                    if ( !frontRow["StyleID"].EqualString(Row["StyleID"]))
+                    // 當前後 SyleID 不同時，中間加上虛線
+                    if (!frontRow["StyleID"].EqualString(row["StyleID"]))
                     {
-                        // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1 
+                        // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1
                         Excel.Range excelRange = worksheet.get_Range("A" + (i + 5) + ":Z" + (i + 5));
                         excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
                     }
                 }
-                    
+
                 worksheet.Columns[26].ColumnWidth = 30;
 
                 #region Save & Show Excel
@@ -386,48 +406,57 @@ where id = '{0}'", Sci.Env.User.Factory), null);
             else
             {
                 #region PPIC_R01_SewingLineScheduleReport
-                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
+                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox(result.ToString(), "Warning");
                     return false;
                 }
                 #endregion
-            }            
+            }
+
             return true;
         }
 
-        private void comboFactory_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtSewingLineStart.Text = "";
-            txtSewingLineEnd.Text = "";
+            this.txtSewingLineStart.Text = string.Empty;
+            this.txtSewingLineEnd.Text = string.Empty;
         }
 
-        private void txtSewingLineStart_Validating(object sender, CancelEventArgs e)
+        private void TxtSewingLineStart_Validating(object sender, CancelEventArgs e)
         {
-            if (txtSewingLineStart.Text == txtSewingLineStart.OldValue) return;
-            if (!MyUtility.Check.Empty(txtSewingLineStart.Text))
+            if (this.txtSewingLineStart.Text == this.txtSewingLineStart.OldValue)
             {
-                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineStart.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text)); 
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSewingLineStart.Text))
+            {
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", this.txtSewingLineStart.Text, MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" and FactoryID = '{0}'", this.comboFactory.Text));
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    txtSewingLineStart.Text = "";
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineStart.Text));
+                    this.txtSewingLineStart.Text = string.Empty;
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", this.txtSewingLineStart.Text));
                     return;
                 }
             }
         }
 
-        private void txtSewingLineEnd_Validating(object sender, CancelEventArgs e)
+        private void TxtSewingLineEnd_Validating(object sender, CancelEventArgs e)
         {
-            if (txtSewingLineEnd.Text == txtSewingLineEnd.OldValue) return;
-            if (!MyUtility.Check.Empty(txtSewingLineEnd.Text))
+            if (this.txtSewingLineEnd.Text == this.txtSewingLineEnd.OldValue)
             {
-                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineEnd.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text));
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSewingLineEnd.Text))
+            {
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", this.txtSewingLineEnd.Text, MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" and FactoryID = '{0}'", this.comboFactory.Text));
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    txtSewingLineEnd.Text = "";
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineEnd.Text));
+                    this.txtSewingLineEnd.Text = string.Empty;
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", this.txtSewingLineEnd.Text));
                     return;
                 }
             }

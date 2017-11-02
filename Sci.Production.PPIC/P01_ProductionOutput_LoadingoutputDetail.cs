@@ -11,26 +11,42 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_ProductionOutput_LoadingoutputDetail
+    /// </summary>
     public partial class P01_ProductionOutput_LoadingoutputDetail : Sci.Win.Subs.Base
     {
-        string orderID, type, article, sizeCode;
-        public P01_ProductionOutput_LoadingoutputDetail(string OrderID, string Type, string Article, string SizeCode)
+        private string orderID;
+        private string type;
+        private string article;
+        private string sizeCode;
+
+        /// <summary>
+        /// P01_ProductionOutput_LoadingoutputDetail
+        /// </summary>
+        /// <param name="orderID">string orderID</param>
+        /// <param name="type">string type</param>
+        /// <param name="article">string article</param>
+        /// <param name="sizeCode">string sizeCode</param>
+        public P01_ProductionOutput_LoadingoutputDetail(string orderID, string type, string article, string sizeCode)
         {
-            InitializeComponent();
-            orderID = OrderID;
-            type = Type;
-            article = Article;
-            sizeCode = SizeCode;
-            Text = "Loading Output Output - " + orderID;
+            this.InitializeComponent();
+            this.orderID = orderID;
+            this.type = type;
+            this.article = article;
+            this.sizeCode = sizeCode;
+            this.Text = "Loading Output Output - " + this.orderID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //設定Grid1的顯示欄位
+
+            // 設定Grid1的顯示欄位
             this.gridSewingDailyOutput.IsEditingReadOnly = true;
-            this.gridSewingDailyOutput.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridSewingDailyOutput)
+            this.gridSewingDailyOutput.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridSewingDailyOutput)
                  .DateTime("InComing", header: "InComing", width: Widths.AnsiChars(20))
                  .DateTime("OutGoing", header: "OutGoing", width: Widths.AnsiChars(20))
                  .Text("BundleNo", header: "BundleNo", width: Widths.AnsiChars(12))
@@ -39,28 +55,33 @@ namespace Sci.Production.PPIC
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4));
 
             string sqlCmd;
-            if (type == "A")
+            if (this.type == "A")
             {
-                sqlCmd = string.Format(@"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
+                sqlCmd = string.Format(
+                    @"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
 from Bundle B
 left join Bundle_Detail BD on BD.Id=B.ID
 left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
 where Orderid='{0}' and BIO.SubProcessId='LOADING'
-order by BIO.InComing", orderID);
+order by BIO.InComing", this.orderID);
             }
             else
             {
-                sqlCmd = string.Format(@"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
+                sqlCmd = string.Format(
+                    @"select BIO.InComing, BIO.OutGoing, BIO.BundleNo, B.FabricPanelCode, BD.Patterncode, BD.Qty
 from Bundle B
 left join Bundle_Detail BD on BD.Id=B.ID
 left join BundleInOut BIO on BIO.BundleNo=BD.BundleNo 
 where Orderid='{0}' and BIO.SubProcessId='LOADING' and B.Article='{1}' and BD.Sizecode='{2}'
-order by BIO.InComing", orderID, article, sizeCode);
+order by BIO.InComing",
+                    this.orderID,
+                    this.article,
+                    this.sizeCode);
             }
 
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
         }
     }
 }

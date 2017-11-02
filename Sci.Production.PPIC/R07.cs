@@ -12,56 +12,68 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// R07
+    /// </summary>
     public partial class R07 : Sci.Win.Tems.PrintForm
     {
-        int _year, _month;
-        string _mDivision, _factory;
-        DataTable _printData;
-        DateTime _startDate;
+        private int _year;
+        private int _month;
+        private string _mDivision;
+        private string _factory;
+        private DataTable _printData;
+        private DateTime _startDate;
+
+        /// <summary>
+        /// R07
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.Text = Sci.Env.User.Factory;
-            numericUpDownYear.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
-            numericUpDownMonth.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
-
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.numericUpDownYear.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
+            this.numericUpDownMonth.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(numericUpDownYear.Value))
+            if (MyUtility.Check.Empty(this.numericUpDownYear.Value))
             {
                 MyUtility.Msg.WarningBox("Year can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(numericUpDownMonth.Value))
+
+            if (MyUtility.Check.Empty(this.numericUpDownMonth.Value))
             {
                 MyUtility.Msg.WarningBox("Month can't empty!!");
                 return false;
             }
-            _year = (int)numericUpDownYear.Value;
-            _month = (int)numericUpDownMonth.Value;
-            _mDivision = comboM.Text;
-            _factory = comboFactory.Text;
-            _startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(_year), MyUtility.Convert.GetString(_month)));
+
+            this._year = (int)this.numericUpDownYear.Value;
+            this._month = (int)this.numericUpDownMonth.Value;
+            this._mDivision = this.comboM.Text;
+            this._factory = this.comboFactory.Text;
+            this._startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(this._year), MyUtility.Convert.GetString(this._month)));
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 DECLARE @sewinginline DATETIME ='{0}'
 DECLARE @sewingoffline DATETIME ='{1}'
 DECLARE @MDivisionID Nvarchar(8)= '{2}'
@@ -224,26 +236,30 @@ DEALLOCATE cursor_sewingschedule
 
 select * from @tempPintData
 
-drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
-                , _startDate.ToString("d"), _startDate.AddMonths(1).ToString("d"), _mDivision, _factory));
+drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle",
+                this._startDate.ToString("d"),
+                this._startDate.AddMonths(1).ToString("d"),
+                this._mDivision,
+                this._factory));
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this._printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(_printData.Rows.Count);
+            this.SetCount(this._printData.Rows.Count);
 
-            if (_printData.Rows.Count <= 0)
+            if (this._printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -252,32 +268,38 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R07_SewingScheduleGanttChart.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             excel.DisplayAlerts = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            //填內容值
+
+            // 填內容值
             int intRowsStart = 1;
-            string writeFty = "";
-            string line = "";
+            string writeFty = string.Empty;
+            string line = string.Empty;
             int ftyCount = 0;
             int colCount = 1;
-            int monthDays = (_startDate.AddMonths(1).AddDays(-1).Subtract(_startDate)).Days+1;
-            foreach (DataRow dr in _printData.Rows)
+            int monthDays = this._startDate.AddMonths(1).AddDays(-1).Subtract(this._startDate).Days + 1;
+            foreach (DataRow dr in this._printData.Rows)
             {
-                //當有換工廠別時，要換Sheet
+                // 當有換工廠別時，要換Sheet
                 if (writeFty != MyUtility.Convert.GetString(dr["FactoryID"]))
                 {
                     if (ftyCount > 0)
                     {
-                        //將上一間工廠最後一條Line後面沒有Schedule的格子塗黑
+                        // 將上一間工廠最後一條Line後面沒有Schedule的格子塗黑
                         if (colCount - 1 != monthDays)
                         {
                             for (int i = colCount; i <= monthDays; i++)
                             {
-                                worksheet.Range[String.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                                worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
                             }
                         }
-                        //刪除多出來的資料行
+
+                        // 刪除多出來的資料行
                         for (int i = 1; i <= 2; i++)
                         {
                             Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[intRowsStart + 1, Type.Missing];
@@ -285,7 +307,7 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                             rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
                             Marshal.ReleaseComObject(rng);
                         }
-                    }                    
+                    }
 
                     ftyCount++;
                     worksheet = excel.ActiveWorkbook.Worksheets[ftyCount];
@@ -305,25 +327,25 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                     }
                 }
 
-                //換Sewing Line時，要填入Line#
+                // 換Sewing Line時，要填入Line#
                 if (line != MyUtility.Convert.GetString(dr["SewingLineID"]))
                 {
                     if (intRowsStart > 1)
                     {
-                        //將後面沒有Schedule的格子塗黑
-                        if (colCount-1 != monthDays)
+                        // 將後面沒有Schedule的格子塗黑
+                        if (colCount - 1 != monthDays)
                         {
                             for (int i = colCount; i <= monthDays; i++)
                             {
-                                worksheet.Range[String.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i+1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                                worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
                             }
                         }
                     }
-                    
+
                     intRowsStart++;
                     colCount = 1;
 
-                    //先插入一行
+                    // 先插入一行
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(intRowsStart + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
@@ -332,65 +354,66 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                     worksheet.Cells[intRowsStart, 1] = line;
                 }
 
-                //算上下線日的總天數，用來做合併儲存格
+                // 算上下線日的總天數，用來做合併儲存格
                 DateTime sewingStartDate = Convert.ToDateTime(dr["Inline"]);
-                DateTime sewingEndDate = !MyUtility.Check.Empty(dr["Offline"]) ? Convert.ToDateTime(dr["Offline"]) : _startDate.AddMonths(1).AddDays(-1);
-                int startCol = (sewingStartDate.Subtract(_startDate)).Days + 2;
-                int endCol = (sewingEndDate.Subtract(_startDate)).Days + 2;
-                int totalDays = (sewingEndDate.Subtract(sewingStartDate)).Days+1;
+                DateTime sewingEndDate = !MyUtility.Check.Empty(dr["Offline"]) ? Convert.ToDateTime(dr["Offline"]) : this._startDate.AddMonths(1).AddDays(-1);
+                int startCol = sewingStartDate.Subtract(this._startDate).Days + 2;
+                int endCol = sewingEndDate.Subtract(this._startDate).Days + 2;
+                int totalDays = sewingEndDate.Subtract(sewingStartDate).Days + 1;
 
-                //將中間沒有Schedule的格子塗黑
+                // 將中間沒有Schedule的格子塗黑
                 if (colCount + 1 != startCol)
                 {
-                    for (int i = colCount+1; i < startCol; i++)
+                    for (int i = colCount + 1; i < startCol; i++)
                     {
-                        worksheet.Range[String.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                        worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
                     }
                 }
 
-                //算出Excel的Column的英文位置
+                // 算出Excel的Column的英文位置
                 string excelStartColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(startCol);
                 string excelEndColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(endCol);
-                Microsoft.Office.Interop.Excel.Range selrng = worksheet.get_Range(String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
-                //合併儲存格,文字置中
-                worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Merge(Type.Missing);
-                worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                Microsoft.Office.Interop.Excel.Range selrng = worksheet.get_Range(string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng), Type.Missing).EntireRow;
 
-                //顏色顯示優先權：Holiday紅色背景 > SCI Delivery為當月以前的紫色粗體 > SCI Delivery當月為以後的綠色粗體 > Bulk款式藍色粗體 > SMS款式紅色粗體 > 非以上四種情況的黑色字體
+                // 合併儲存格,文字置中
+                worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Merge(Type.Missing);
+                worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
+                // 顏色顯示優先權：Holiday紅色背景 > SCI Delivery為當月以前的紫色粗體 > SCI Delivery當月為以後的綠色粗體 > Bulk款式藍色粗體 > SMS款式紅色粗體 > 非以上四種情況的黑色字體
                 #region 填入內容值
                 if (MyUtility.Convert.GetString(dr["StyleID"]) == "Holiday")
                 {
-                    //設置儲存格的背景色
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = System.Drawing.Color.Red;
+                    // 設置儲存格的背景色
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Cells.Interior.Color = System.Drawing.Color.Red;
                 }
                 else if (MyUtility.Convert.GetString(dr["IsLastMonth"]).ToUpper() == "TRUE")
                 {
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Purple;
-                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), (MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? "" : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d")));
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Purple;
+                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
                 }
                 else if (MyUtility.Convert.GetString(dr["IsNextMonth"]).ToUpper() == "TRUE")
                 {
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Green;
-                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), (MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? "" : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d")));
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Green;
+                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
                 }
                 else if (MyUtility.Convert.GetString(dr["IsBulk"]).ToUpper() == "TRUE")
                 {
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Blue;
-                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), (MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? "" : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d")));
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Blue;
+                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
                 }
                 else if (MyUtility.Convert.GetString(dr["IsSMS"]).ToUpper() == "TRUE")
                 {
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Red;
-                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), (MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? "" : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d")));
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Red;
+                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
                 }
                 else
                 {
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Bold = false;
-                    worksheet.Range[String.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Black;
-                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), (MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? "" : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d")));
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Bold = false;
+                    worksheet.Range[string.Format("{0}{1}:{2}{1}", excelStartColEng, MyUtility.Convert.GetString(intRowsStart), excelEndColEng)].Font.Color = Color.Black;
+                    worksheet.Cells[intRowsStart, startCol] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Check.Empty(dr["MinBuyerDelivery"]) ? string.Empty : " " + Convert.ToDateTime(dr["MinBuyerDelivery"]).ToString("d"));
                 }
                 #endregion
-                colCount = colCount + (startCol - colCount-1) + totalDays;
+                colCount = colCount + (startCol - colCount - 1) + totalDays;
                 Marshal.ReleaseComObject(selrng);
             }
 
@@ -398,10 +421,11 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
             {
                 for (int i = colCount; i <= monthDays; i++)
                 {
-                    worksheet.Range[String.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
+                    worksheet.Range[string.Format("{0}{1}:{0}{1}", PublicPrg.Prgs.GetExcelEnglishColumnName(i + 1), MyUtility.Convert.GetString(intRowsStart))].Cells.Interior.Color = System.Drawing.Color.Black;
                 }
             }
-            //刪除多出來的資料行
+
+            // 刪除多出來的資料行
             for (int i = 1; i <= 2; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[intRowsStart + 1, Type.Missing];
@@ -410,7 +434,7 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                 Marshal.ReleaseComObject(rng);
             }
 
-            //刪除多的Sheet
+            // 刪除多的Sheet
             for (int i = ftyCount + 1; i <= 10; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[ftyCount + 1];
@@ -432,7 +456,7 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

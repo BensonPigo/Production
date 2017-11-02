@@ -83,7 +83,7 @@
             this.btnCopySeason.TabIndex = 95;
             this.btnCopySeason.Text = "Copy Season";
             this.btnCopySeason.UseVisualStyleBackColor = true;
-            this.btnCopySeason.Click += new System.EventHandler(this.btnCopySeason_Click);
+            this.btnCopySeason.Click += new System.EventHandler(this.BtnCopySeason_Click);
             // 
             // P04_WeightData
             // 

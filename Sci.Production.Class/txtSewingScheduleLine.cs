@@ -39,8 +39,7 @@ namespace Sci.Production.Class
             else {
                 FactoryId = Sci.Env.User.Factory;
             }
-
-            DataRow dr;
+            
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.ReadOnly == true) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
