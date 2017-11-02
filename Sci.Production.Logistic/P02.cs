@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -17,17 +14,20 @@ namespace Sci.Production.Logistic
 {
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
-            dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
-            dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
-            dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
+            this.InitializeComponent();
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            this.dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
-        string selectDataTable_DefaultView_Sort = "";
+
+        private string selectDataTable_DefaultView_Sort = string.Empty;
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -36,16 +36,17 @@ namespace Sci.Production.Logistic
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
             this.gridImport.IsEditingReadOnly = false;
-            this.gridImport.DataSource = listControlBindingSource1;
+            this.gridImport.DataSource = this.listControlBindingSource1;
 
             Helper.Controls.Grid.Generator(this.gridImport)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                //.Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) 
+
+                // .Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -57,45 +58,41 @@ namespace Sci.Production.Logistic
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
-            int RowIndex = 0;
-            int ColumIndex = 0;
-            gridImport.CellClick += (s, e) =>
+            int rowIndex = 0;
+            int columIndex = 0;
+            this.gridImport.CellClick += (s, e) =>
             {
-                RowIndex = e.RowIndex;
-                ColumIndex = e.ColumnIndex;
+                rowIndex = e.RowIndex;
+                columIndex = e.ColumnIndex;
             };
 
-            gridImport.Sorted += (s, e) =>
+            this.gridImport.Sorted += (s, e) =>
             {
-
-                if ((RowIndex == -1) & (ColumIndex == 4))
+                if ((rowIndex == -1) & (columIndex == 4))
                 {
+                    this.listControlBindingSource1.DataSource = null;
 
-                    listControlBindingSource1.DataSource = null;
-
-                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
-                        selectDataTable.DefaultView.Sort = "rn1 DESC";
-                        selectDataTable_DefaultView_Sort = "";
+                        this.selectDataTable.DefaultView.Sort = "rn1 DESC";
+                        this.selectDataTable_DefaultView_Sort = string.Empty;
                     }
                     else
                     {
-                        selectDataTable.DefaultView.Sort = "rn1 ASC";
-                        selectDataTable_DefaultView_Sort = "DESC";
+                        this.selectDataTable.DefaultView.Sort = "rn1 ASC";
+                        this.selectDataTable_DefaultView_Sort = "DESC";
                     }
-                    listControlBindingSource1.DataSource = selectDataTable;
+
+                    this.listControlBindingSource1.DataSource = this.selectDataTable;
                     return;
                 }
-
-
             };
-
-
-            //
         }
-        DataTable selectDataTable;
-        //Find
-        private void find()
+
+        private DataTable selectDataTable;
+
+        // Find
+        private void Find()
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
@@ -103,7 +100,7 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            #region SQL Filte 
+            #region SQL Filte
             // 若有輸入 TransferSlipNo 必須增加條件對應至 PackingList_Detail 【OrderID, CtnNum】
             string strTransferSlipNoFilte = string.Format(@"and t.TransferSlipNo = '{0}' and b.OrderID = t.OrderID and b.CTNStartNo = t.CTNStartNo", this.txtTransferSlipNo.Text.Trim());
 
@@ -115,9 +112,10 @@ namespace Sci.Production.Logistic
             dicSqlFilte.Add("TransferToClog AddDate Start", !MyUtility.Check.Empty(this.dateTimePicker1.Text) ? string.Format("and t.AddDate >= '{0}'", this.dateTimePicker1.Text.ToString().Trim()) : "");
             dicSqlFilte.Add("TransferToClog AddDate End", !MyUtility.Check.Empty(this.dateTimePicker2.Text) ? string.Format("and t.AddDate <= '{0}'", this.dateTimePicker2.Text.ToString().Trim()) : "");
             dicSqlFilte.Add("TransferToClog TransferSlipNo", !MyUtility.Check.Empty(this.txtTransferSlipNo.Text) ? strTransferSlipNoFilte : "");
-            #endregion    
+            #endregion
 
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 select *
        , rn = ROW_NUMBER() over(order by PackingListID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
        , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
@@ -169,45 +167,47 @@ from (
             -- TransferToClog TransferSlipNo --
             {7}
 )X 
-order by rn", Sci.Env.User.Keyword
-            , dicSqlFilte["PackingList ID"]
-            , dicSqlFilte["PackingList_Detail OrderID"]
-            , dicSqlFilte["Orders CustPONo"]
-            , dicSqlFilte["Orders FtyGroup"]
-            , dicSqlFilte["TransferToClog AddDate Start"]
-            , dicSqlFilte["TransferToClog AddDate End"]
-            , dicSqlFilte["TransferToClog TransferSlipNo"]);
-            
+order by rn", Sci.Env.User.Keyword,
+            dicSqlFilte["PackingList ID"],
+            dicSqlFilte["PackingList_Detail OrderID"],
+            dicSqlFilte["Orders CustPONo"],
+            dicSqlFilte["Orders FtyGroup"],
+            dicSqlFilte["TransferToClog AddDate Start"],
+            dicSqlFilte["TransferToClog AddDate End"],
+            dicSqlFilte["TransferToClog TransferSlipNo"]);
 
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.selectDataTable))
             {
-                if (selectDataTable.Rows.Count == 0)
+                if (this.selectDataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
-                    ControlButton4Text("Close");
+                    this.ControlButton4Text("Close");
                 }
                 else
                 {
-                    ControlButton4Text("Cancel");
+                    this.ControlButton4Text("Cancel");
                 }
             }
-            listControlBindingSource1.DataSource = selectDataTable;
+
+            this.listControlBindingSource1.DataSource = this.selectDataTable;
         }
 
-        private void buttonFind_Click(object sender, EventArgs e)
+        private void ButtonFind_Click(object sender, EventArgs e)
         {
-            find();
+            this.Find();
         }
 
-        //Import From Barcode
-        private void buttonImport_Click(object sender, EventArgs e)
+        // Import From Barcode
+        private void ButtonImport_Click(object sender, EventArgs e)
         {
-            //設定只能選txt檔
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
+            // 設定只能選txt檔
+            this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //先將Grid的結構給開出來
+                // 先將Grid的結構給開出來
                 string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
 0 as rn,
@@ -225,6 +225,7 @@ where 1=0";
                     MyUtility.Msg.WarningBox("Connection faile.!");
                     return;
                 }
+
                 listControlBindingSource1.DataSource = selectDataTable;
 
                 //讀檔案
@@ -261,8 +262,8 @@ where 1=0";
                             string sqlCmd = string.Format(@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
-                                , dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
+                                dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
@@ -280,6 +281,7 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                                 {
                                     dr["Remark"] = "This carton already in clog.";
                                 }
+
                                 dr["OrderID"] = seekData["OrderID"];
                                 dr["TransferDate"] = seekData["TransferDate"];
 
@@ -309,36 +311,41 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
                             {
                                 dr["Remark"] = "This carton is not in packing list.";
                             }
+
                             if (dr["Remark"].ToString().Trim() != "")
                             {
                                 dr["selected"] = 0;
                             }
+
                             selectDataTable.Rows.Add(dr);
                         }
                     }
-                    ControlButton4Text("Cancel");
+
+                    this.ControlButton4Text("Cancel");
                 }
             }
         }
 
-        //Save
-        private void buttonSave_Click(object sender, EventArgs e)
+        // Save
+        private void ButtonSave_Click(object sender, EventArgs e)
         {
-            //檢查是否有勾選資料
+            // 檢查是否有勾選資料
             this.gridImport.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt))
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
+
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
+
             foreach (DataRow dr in selectedData)
             {
                 if (dr["Remark"].ToString().Trim() != "")
@@ -355,10 +362,12 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
 
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
-            //組要Insert進TransferToClog的資料
+
+            // 組要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
-                insertCmds.Add(string.Format(@"
+                insertCmds.Add(string.Format(
+                    @"
 insert into ClogReceive (
     ReceiveDate
     , MDivisionID
@@ -375,7 +384,7 @@ insert into ClogReceive (
     , '{3}'
     , '{4}'
     , GETDATE()
-);", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
+);", Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"]), MyUtility.Convert.GetString(dr["ClogLocationId"])));
                 //要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(@"
 update PackingList_Detail 
@@ -410,10 +419,12 @@ where a.Selected = 1", out selectData);
                     {
                         result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
                     }
+
                     if (insertCmds.Count > 0)
                     {
                         result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
                     }
+
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
                     if (result1 && result2 && prgResult)
@@ -444,22 +455,22 @@ where a.Selected = 1", out selectData);
             }
             else
             {
-                listControlBindingSource1.DataSource = null;
+                this.listControlBindingSource1.DataSource = null;
             }
         }
 
-        //Cancel
-        private void buttonCancel_Click(object sender, EventArgs e)
+        // Cancel
+        private void ButtonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //Update All Location
-        private void buttonUpdate_Click(object sender, EventArgs e)
+        // Update All Location
+        private void ButtonUpdate_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
-            int pos = this.listControlBindingSource1.Position;     //記錄目前指標位置
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Please select data first!");
@@ -470,6 +481,7 @@ where a.Selected = 1", out selectData);
             {
                 currentRecord["ClogLocationId"] = location;
             }
+
             this.listControlBindingSource1.Position = pos;
             gridImport.SuspendLayout();
             this.gridImport.DataSource = null;

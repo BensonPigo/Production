@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Sci.Production.Logistic
 {
@@ -20,22 +15,37 @@ namespace Sci.Production.Logistic
 
         public string Filename
         {
-            set { this.filename = value; OnPropertyChangeed("Filename"); }
-            get { return this.filename; }
+            get
+            {
+                return this.filename;
+            }
+
+            set
+            {
+                this.filename = value;
+                this.OnPropertyChangeed("Filename");
+            }
         }
 
         public string Fullfilename
         {
-            set { this.fullfilename = value; OnPropertyChangeed("Fullfilename"); }
-            get { return this.fullfilename; }
+            get
+            {
+                return this.fullfilename;
+            }
+
+            set
+            {
+                this.fullfilename = value;
+                this.OnPropertyChangeed("Fullfilename");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChangeed(string propname)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new System.ComponentModel.PropertyChangedEventArgs(propname));
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propname));
         }
     }
 }

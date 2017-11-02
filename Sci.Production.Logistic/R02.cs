@@ -14,32 +14,41 @@ namespace Sci.Production.Logistic
 {
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        string po1, po2, sp1, sp2, brand, mDivision, location1, location2;
-        DateTime? bdate1, bdate2;
-        DataTable printData;
+        private string po1;
+        private string po2;
+        private string sp1;
+        private string sp2;
+        private string brand;
+        private string mDivision;
+        private string location1;
+        private string location2;
+        private DateTime? bdate1;
+        private DateTime? bdate2;
+        private DataTable printData;
+
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            po1 = txtPONoStart.Text;
-            po2 = txtPONoEnd.Text;
-            sp1 = txtSPNoStart.Text;
-            sp2 = txtSPNoEnd.Text;
-            brand = txtbrand.Text;
-            mDivision = comboM.Text;
-            location1 = txtcloglocationLocationStart.Text;
-            location2 = txtcloglocationLocationEnd.Text;
-            bdate1 = dateBuyerDelivery.Value1;
-            bdate2 = dateBuyerDelivery.Value2;
+            this.po1 = this.txtPONoStart.Text;
+            this.po2 = this.txtPONoEnd.Text;
+            this.sp1 = this.txtSPNoStart.Text;
+            this.sp2 = this.txtSPNoEnd.Text;
+            this.brand = this.txtbrand.Text;
+            this.mDivision = this.comboM.Text;
+            this.location1 = this.txtcloglocationLocationStart.Text;
+            this.location2 = this.txtcloglocationLocationEnd.Text;
+            this.bdate1 = this.dateBuyerDelivery.Value1;
+            this.bdate2 = this.dateBuyerDelivery.Value2;
 
             return base.ValidateInput();
         }
@@ -110,6 +119,7 @@ and (p.PulloutID = '' or po.Status = 'New')");
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
@@ -128,7 +138,11 @@ and (p.PulloutID = '' or po.Status = 'New')");
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R02_ClogAuditList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 2] = po1 + " ~ " + po2;
@@ -165,7 +179,7 @@ and (p.PulloutID = '' or po.Status = 'New')");
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             this.HideWaitMessage();
             return true;
         }

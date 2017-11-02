@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using Ict;
-using Ict.Win;
 using Sci.Data;
 using Word = Microsoft.Office.Interop.Word;
 using System.Runtime.InteropServices;
@@ -15,22 +10,37 @@ namespace Sci.Production.Logistic
 {
     public partial class B01_Print : Sci.Win.Tems.PrintForm
     {
-        DataRow masterData;
-        string code1, code2;
-        DataTable printData;
-        public B01_Print(DataRow MasterData)
+        private DataRow masterData;
+        private string code1;
+        private string code2;
+        private DataTable printData;
+
+        public string Code2
         {
-            InitializeComponent();
-            masterData = MasterData;
-            txtCodeStart.Text = MyUtility.Convert.GetString(masterData["ID"]);
-            txtCodeEnd.Text = MyUtility.Convert.GetString(masterData["ID"]);
+            get
+            {
+                return this.code2;
+            }
+
+            set
+            {
+                this.code2 = value;
+            }
+        }
+
+        public B01_Print(DataRow master)
+        {
+            this.InitializeComponent();
+            this.masterData = master;
+            this.txtCodeStart.Text = MyUtility.Convert.GetString(this.masterData["ID"]);
+            this.txtCodeEnd.Text = MyUtility.Convert.GetString(this.masterData["ID"]);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            code1 = txtCodeStart.Text;
-            code2 = txtCodeEnd.Text;
+            this.code1 = this.txtCodeStart.Text;
+            this.Code2 = this.txtCodeEnd.Text;
 
             return base.ValidateInput();
         }
@@ -40,13 +50,14 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and Junk = 0", Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(code1))
+            if (!MyUtility.Check.Empty(this.code1))
             {
-                sqlCmd.Append(string.Format(" and ID >= '{0}'", code1));
+                sqlCmd.Append(string.Format(" and ID >= '{0}'", this.code1));
             }
-            if (!MyUtility.Check.Empty(code2))
+
+            if (!MyUtility.Check.Empty(this.Code2))
             {
-                sqlCmd.Append(string.Format(" and ID <= '{0}'", code2));
+                sqlCmd.Append(string.Format(" and ID <= '{0}'", this.Code2));
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
@@ -54,7 +65,8 @@ namespace Sci.Production.Logistic
             {
                 MyUtility.Msg.WarningBox(result.Description);
                 return result;
-            }            
+            }
+
             //e.Report.ReportDataSource = printData;
             return Result.True;
         }
@@ -68,6 +80,7 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
+
             this.SetCount(printData.Rows.Count);
             this.ShowWaitMessage("Data Loading ...");
             Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
@@ -91,7 +104,10 @@ namespace Sci.Production.Logistic
                 {
                     winword.Selection.MoveDown();
                     if (page > 1)
+                    {
                         winword.Selection.InsertNewPage();
+                    }
+
                     winword.Selection.Paste();
                 }
                 #endregion
@@ -99,17 +115,20 @@ namespace Sci.Production.Logistic
                 for (int i = 0; i < page; i++)
                 {
                     tables = table[i + 1];
-                    for (int p = i * 6; p < i * 6 + 6; p++)
+                    for (int p = i * 6; p < (i * 6) + 6; p++)
                     {
-                        if (p >= printData.Rows.Count) break;
-                        tables.Cell(p % 6 + 1, 1).Range.Text = "*" + printData.Rows[p]["ID"].ToString().Trim() + "*";
-                    }
+                        if (p >= this.printData.Rows.Count)
+                        {
+                            break;
+                        }
 
+                        tables.Cell((p % 6) + 1, 1).Range.Text = "*" + this.printData.Rows[p]["ID"].ToString().Trim() + "*";
+                    }
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
-                #region Show Word                
+                #region Show Word
                 winword.Visible = true;
                 Marshal.ReleaseComObject(winword);
                 Marshal.ReleaseComObject(document);
@@ -125,6 +144,7 @@ namespace Sci.Production.Logistic
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
+
             this.HideWaitMessage();
             return true;
         }
