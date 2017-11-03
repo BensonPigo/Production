@@ -1,41 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P02_FileInfo
+    /// </summary>
     public class P02_FileInfo : INotifyPropertyChanged
     {
         private string filename;
         private string fullfilename;
 
+        /// <summary>
+        /// P02_FileInfo
+        /// </summary>
+        /// <param name="filename">filename</param>
+        /// <param name="fullfilename">fullfilename</param>
         public P02_FileInfo(string filename, string fullfilename)
         {
             this.filename = filename;
             this.fullfilename = fullfilename;
         }
 
+        /// <summary>
+        /// Filename
+        /// </summary>
         public string Filename
         {
-            set { this.filename = value; OnPropertyChangeed("Filename"); }
-            get { return this.filename; }
+            get
+            {
+                return this.filename;
+            }
+
+            set
+            {
+                this.filename = value;
+                this.OnPropertyChangeed("Filename");
+            }
         }
 
+        /// <summary>
+        /// Fullfilename
+        /// </summary>
         public string Fullfilename
         {
-            set { this.fullfilename = value; OnPropertyChangeed("Fullfilename"); }
-            get { return this.fullfilename; }
+            get
+            {
+                return this.fullfilename;
+            }
+
+            set
+            {
+                this.fullfilename = value;
+                this.OnPropertyChangeed("Fullfilename");
+            }
         }
 
+        /// <summary>
+        /// PropertyChanged
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChangeed(string propname)
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new System.ComponentModel.PropertyChangedEventArgs(propname));
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propname));
         }
     }
 }
