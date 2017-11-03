@@ -232,20 +232,28 @@ namespace Sci.Production.Cutting
             {
                 #region TTL consumption (PO Combo)
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out dts);
 
-                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
-                if (dts.Length < 2 || dts[1].Rows.Count <= 0) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+                if (!res)
+                {
+                    MyUtility.Msg.ErrorBox(res.ToString(), "error");
+                    return false;
+                }
 
+                if (dts.Length < 2 || dts[1].Rows.Count <= 0)
+                {
+                    MyUtility.Msg.ErrorBox("no data.", string.Empty);
+                    return false;
+                }
                 DataRow dr = dts[0].Rows[0];
-                extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
+                this.Extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
-                sxrc sxr = new sxrc(xltPath);
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Purchase_P01_TTLconsumptionPOCombo.xlt");
+                sxrc sxr = new sxrc(xltPath, true);
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
 
-                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", dr["QTY"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
 
                 sxr.DicDatas.Add(sxr.VPrefix + "FABTYPE", dr["FABTYPE"]);
@@ -256,14 +264,14 @@ namespace Sci.Production.Cutting
 
                 sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
 
-                //欄位水平對齊
+                // 欄位水平對齊
                 for (int i = 3; i <= dt.Columns.Count; i++)
                 {
                     sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
 
                     if (i == 4 | i == 6 | i == 8 | i == 7)
                     {
-                        citbl.PointCnt = 2; //小數點兩位
+                        citbl.PointCnt = 2; // 小數點兩位
                     }
                     else if (i == 9)
                     {
@@ -273,20 +281,24 @@ namespace Sci.Production.Cutting
                     {
                         citbl.PointCnt = 3;
                     }
+
                     dt.LisColumnInfo.Add(citbl);
                 }
+
                 dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
                 dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                //合併儲存格
-                //dt.lisTitleMerge.Add(new Dictionary<string, string> { { "Usage", string.Format("{0},{1}", 3, 4) }, { "Purchase", string.Format("{0},{1}", 5, 6) } });
+                // 合併儲存格
+                // dt.LisTitleMerge.Add(new Dictionary<string, string> { { "Usage", string.Format("{0},{1}", 3, 4) }, { "Purchase", string.Format("{0},{1}", 5, 6) } });
                 dt.Borders.DependOnColumn.Add(1, 2);
 
-                //不顯示標題列
+                // 不顯示標題列
                 dt.ShowHeader = false;
 
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
-
+                sxr.ActionAfterFillData = this.SetPageAutoFit;
+                
                 sxr.BoOpenFile = true;
+                sxr.Save();
                 sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));                
                 #endregion
             }
@@ -711,6 +723,10 @@ namespace Sci.Production.Cutting
             return true;
         }
 
+        private void SetPageAutoFit(Microsoft.Office.Interop.Excel.Worksheet wks)
+        {
+            wks.UsedRange.EntireColumn.AutoFit();
+        }
         void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
         {
             sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
@@ -788,9 +804,9 @@ namespace Sci.Production.Cutting
             }
         }
 
-        void extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int Qty)
+        private void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int qty)
         {
-            string coltmp = "";
+            string coltmp = string.Empty;
             decimal totaltmp = 0;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -798,15 +814,14 @@ namespace Sci.Production.Cutting
 
                 if (coltmp != col1content)
                 {
-
-                    if (coltmp == "")
+                    if (coltmp == string.Empty)
                     {
                         coltmp = col1content;
                     }
                     else
                     {
                         coltmp = col1content;
-                        addSubTotalRow(dt, totaltmp, i, Qty);
+                        this.AddSubTotalRow(dt, totaltmp, i, qty);
 
                         totaltmp = 0;
                         i += 1;
@@ -823,9 +838,16 @@ namespace Sci.Production.Cutting
                 totaltmp += decimal.Parse(dt.Rows[i]["TOTAL(Inclcut. use)"].ToString());
             }
 
-            addSubTotalRow(dt, totaltmp, dt.Rows.Count, Qty);
+            this.AddSubTotalRow(dt, totaltmp, dt.Rows.Count, qty);
         }
-
+        private void AddSubTotalRow(DataTable dt, decimal tot, int idx, int qty)
+        {
+            DataRow dr = dt.NewRow();
+            dr["TOTAL(Inclcut. use)"] = tot;
+            dr["M/WEIGHT"] = "SubTotal";
+            dr["CONS/PC"] = qty == 0 ? 0 : Math.Round(tot / qty, 3);
+            dt.Rows.InsertAt(dr, idx);
+        }
         void addSubTotalRow(DataTable dt, decimal tot, int idx, int Qty)
         {
             DataRow dr = dt.NewRow();
