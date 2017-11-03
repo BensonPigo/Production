@@ -148,6 +148,7 @@
       <DependentUpon>B03.cs</DependentUpon>
     </Compile>
     <Compile Include="Exts.cs" />
+    <Compile Include="GSchemas\DropDownListHelper.cs" />
     <Compile Include="GSchemas\GLO.Designer.cs" />
     <Compile Include="GSchemas\GLO1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -371,6 +372,9 @@
     <None Include="packages.config" />
     <None Include="Resources\trffc15.bmp" />
     <None Include="Sci.Production.Planning.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
+    <None Include="stylecop2.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
