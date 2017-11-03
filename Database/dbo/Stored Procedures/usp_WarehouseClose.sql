@@ -1,6 +1,7 @@
 ﻿
 
 
+
 CREATE PROCEDURE [dbo].[usp_WarehouseClose] 
 	-- Add the parameters for the stored procedure here
 	@poid varchar(13) -- 採購母單單號
@@ -32,14 +33,6 @@ BEGIN
                1 -- State.
                );
 		END
-
-		--IF EXISTS(SELECT * FROM DBO.Orders a WHERE A.POID = @poid AND a.WhseClose is not null and a.Junk = 0)
-		--BEGIN
-		--	RAISERROR (N'Already closed!!', -- Message text.
-  --             16, -- Severity.
-  --             1 -- State.
-  --             );
-		--END
 
 		IF EXISTS(SELECT * FROM DBO.Orders A WITH (NOLOCK) WHERE A.POID = @poid AND A.Finished =0 and a.Junk = 0)
 		BEGIN
@@ -178,7 +171,39 @@ BEGIN
 		-- 更新Order
 		update dbo.Orders set WhseClose = getdate() where POID = @poid;
 
+		---close 需加上Local物料
+		INSERT INTO SubTransferLocal
+			([ID] ,[MDivisionID],[FactoryID],[IssueDate],[Type],[Status]   ,[Remark],[AddName],[AddDate] )
+		VALUES
+			(@poid,@MDivisionid ,@Factoryid ,GETDATE()  ,'D'   ,'Confrimed','Add by Warehouse Close',@loginid,GETDATE())
+
+		INSERT INTO [dbo].[SubTransferLocal_Detail]
+           ([ID]
+           ,[MDivisionID]
+           ,[Poid]
+           ,[Refno]
+           ,[Color]
+           ,[FromLocation]
+           ,[ToLocation]
+           ,[Qty])
+		select 
+			l.OrderID
+			,@MDivisionid
+			,l.OrderID
+			,l.Refno
+			,l.ThreadColorID
+			,l.ALocation
+			,''
+			,l.InQty-l.OutQty+l.AdjustQty
+		from LocalInventory l where l.OrderID = @poid AND (l.InQty-l.OutQty+l.AdjustQty)!=0
+
+		Update LocalInventory
+		set OutQty= OutQty + (InQty-OutQty+AdjustQty)
+			,LobQty= InQty-OutQty+AdjustQty
+		where OrderID = @poid
+
 		COMMIT TRANSACTION;
+
 	END TRY
 	BEGIN CATCH
 		IF XACT_STATE() <> 0 -- 非0表示有交易

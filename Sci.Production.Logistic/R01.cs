@@ -1,53 +1,83 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_R01
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        DateTime? buyerDelivery1, buyerDelivery2, sciDelivery1, sciDelivery2;
-        string mDivision, brand;
-        DataTable printData;
+        private DateTime? buyerDelivery1;
+        private DateTime? buyerDelivery2;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private string mDivision;
+        private string brand;
+        private DataTable printData;
+
+        /// <summary>
+        /// get,set SciDelivery1
+        /// </summary>
+        public DateTime? SciDelivery1
+        {
+            get
+            {
+                return this.sciDelivery1;
+            }
+
+            set
+            {
+                this.sciDelivery1 = value;
+            }
+        }
+
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.Text = Sci.Env.User.Keyword;
         }
 
-
-        // 驗證輸入條件
+        /// <summary>
+        /// 驗證輸入條件
+        /// </summary>
+        /// <returns>base.ValidateInput()</returns>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value1))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery or SCI Delivery can't be empty!!");
                 return false;
             }
 
-            buyerDelivery1 = dateBuyerDelivery.Value1;
-            buyerDelivery2 = dateBuyerDelivery.Value2;
-            sciDelivery1 = dateSCIDelivery.Value1;
-            sciDelivery2 = dateSCIDelivery.Value2;
-            mDivision = comboM.Text;
-            brand = txtbrand.Text;
+            this.buyerDelivery1 = this.dateBuyerDelivery.Value1;
+            this.buyerDelivery2 = this.dateBuyerDelivery.Value2;
+            this.SciDelivery1 = this.dateSCIDelivery.Value1;
+            this.sciDelivery2 = this.dateSCIDelivery.Value2;
+            this.mDivision = this.comboM.Text;
+            this.brand = this.txtbrand.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// 非同步取資料
+        /// </summary>
+        /// <param name="e">Win.ReportEventArgs</param>
+        /// <returns>Result</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -132,33 +162,36 @@ from Orders o WITH (NOLOCK)
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 where o.Category = 'B'");
 
-            if (!MyUtility.Check.Empty(buyerDelivery1))
+            if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(buyerDelivery2))
-            {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(sciDelivery2))
-            {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.SciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.SciDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(mDivision))
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
             }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.mDivision))
+            {
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
+            }
+
             sqlCmd.Append(@"
 select t.ID,RetCtnBySP = count(cr.ID)
 into #tmp2
@@ -174,22 +207,27 @@ drop table #tmp,#tmp2
                 
 ");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// 產生Excel
+        /// </summary>
+        /// <param name="report">Win.ReportDefinition</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -198,33 +236,39 @@ drop table #tmp,#tmp2
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_R01_CartonStatusReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[2, 1] = string.Format("Buyer Delivery: {0} ~ {1}             SCI Delivery: {2} ~ {3}             M: {4}             Brand: {5}",
-                MyUtility.Check.Empty(buyerDelivery1) ? "" : Convert.ToDateTime(buyerDelivery1).ToString("d"),
-                MyUtility.Check.Empty(buyerDelivery2) ? "" : Convert.ToDateTime(buyerDelivery2).ToString("d"),
-                MyUtility.Check.Empty(sciDelivery1) ? "" : Convert.ToDateTime(sciDelivery1).ToString("d"),
-                MyUtility.Check.Empty(sciDelivery2) ? "" : Convert.ToDateTime(sciDelivery2).ToString("d"),
-                mDivision, brand);
+            worksheet.Cells[2, 1] = string.Format(
+                "Buyer Delivery: {0} ~ {1}             SCI Delivery: {2} ~ {3}             M: {4}             Brand: {5}",
+                MyUtility.Check.Empty(this.buyerDelivery1) ? string.Empty : Convert.ToDateTime(this.buyerDelivery1).ToString("d"),
+                MyUtility.Check.Empty(this.buyerDelivery2) ? string.Empty : Convert.ToDateTime(this.buyerDelivery2).ToString("d"),
+                MyUtility.Check.Empty(this.SciDelivery1) ? string.Empty : Convert.ToDateTime(this.SciDelivery1).ToString("d"),
+                MyUtility.Check.Empty(this.sciDelivery2) ? string.Empty : Convert.ToDateTime(this.sciDelivery2).ToString("d"),
+                this.mDivision,
+                this.brand);
 
-            //填內容值
+            // 填內容值
             int intRowsStart = 4;
             object[,] objArray = new object[1, 33];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["FactoryID"];
                 objArray[0, 1] = dr["MCHandle"];
                 objArray[0, 2] = dr["SewLine"];
                 objArray[0, 3] = dr["ID"];
-                objArray[0, 4] = dr["BrandId"]; 
+                objArray[0, 4] = dr["BrandId"];
                 objArray[0, 5] = dr["CustPONo"];
                 objArray[0, 6] = dr["Customize1"];
                 objArray[0, 7] = dr["SciDelivery"];
                 objArray[0, 8] = dr["BuyerDelivery"];
                 objArray[0, 9] = dr["ShipmodeID"];
                 objArray[0, 10] = dr["Location"];
-                objArray[0,11] = dr["TotalCTN"];
+                objArray[0, 11] = dr["TotalCTN"];
                 objArray[0, 12] = dr["ClogCTN"];
                 objArray[0, 13] = dr["RetCtnBySP"];
                 objArray[0, 14] = string.Format("= L{0} - M{0}", MyUtility.Convert.GetString(intRowsStart));
@@ -246,7 +290,7 @@ drop table #tmp,#tmp2
                 objArray[0, 30] = string.Format("=AC{0}-AD{0}", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 31] = string.Format("=IF(AC{0}=0,0,ROUND(AD{0}/AC{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 32] = dr["PullGMTQty"];
-                worksheet.Range[String.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
