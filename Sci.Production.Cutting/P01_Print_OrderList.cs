@@ -248,7 +248,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
                 this.Extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Purchase_P01_TTLconsumptionPOCombo.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
@@ -299,7 +299,7 @@ namespace Sci.Production.Cutting
                 
                 sxr.BoOpenFile = true;
                 sxr.Save();
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));                
+                //sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_TTLconsumptionPOCombo"));                
                 #endregion
             }
             if (radioColorQtyBDown.Checked)
