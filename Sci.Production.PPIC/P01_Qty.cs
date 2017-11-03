@@ -61,6 +61,7 @@ namespace Sci.Production.PPIC
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            CreateGrid(gen, "string", "ColorID", "Color", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -68,6 +69,7 @@ namespace Sci.Production.PPIC
                     CreateGrid(gen, "int", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["SizeCode"]), Widths.AnsiChars(8));
                 }
             }
+            CreateGrid(gen, "string", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(8));
             //設定Grid3的顯示欄位
             this.gridColorway.IsEditingReadOnly = true;
             this.gridColorway.DataSource = listControlBindingSource3;
@@ -197,19 +199,26 @@ order by RowNo", orderID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivo
 with tmpData as (
       select o.ID
              , oq.Article
+             , occ.ColorID
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+             , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
+                                                      and occ.Article = oq.Article
+                                                      and occ.Patternpanel = 'FA'
       where o.POID = '{0}'
 ), 
 SubTotal as (
-      select '' as ID
-             , 'TTL' as Article
+      select ID = ''
+             , Article = 'TTL'
+             , ColorID = ''
              , SizeCode
-             , SUM(Qty) as Qty
-             , 99999 as rnk
+             , Qty = SUM(Qty)
+             , rnk = 99999
+             , BuyerDelivery = null
       from tmpData
       group by SizeCode
 ),
@@ -235,19 +244,26 @@ order by rnk", poID, MyUtility.Check.Empty(pivot.ToString()) ? "[ ]" : pivot.ToS
 with tmpData as (
       select o.ID
              , oq.Article
+             , occ.ColorID
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+             , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
+                                                      and occ.Article = oq.Article
+                                                      and occ.Patternpanel = 'FA'
       where o.POID = '{0}' 
 ),
 SubTotal as (
-      select '' as ID
-             , 'TTL' as Article
+      select ID = ''
+             , Article = 'TTL'
+             , ColorID = ''
              , SizeCode
-             , SUM(OriQty) as Qty
-             , 99999 as rnk
+             , Qty = SUM(OriQty)
+             , rnk = 99999 
+             , BuyerDelivery = null
       from tmpData
       group by SizeCode
 ),
@@ -606,22 +622,29 @@ SET @sql = N'
 tmpData as (
       select o.ID
              , oq.Article
+             , occ.ColorID
              , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , sb.RowNo
+             , BuyerDelivery = '''''''' + Convert (varchar(10), o.BuyerDelivery)
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
+      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
+                                                      and occ.Article = oq.Article
+                                                      and occ.Patternpanel = ''FA''    
       where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
       select '''' as ID
              , ''TTL'' as Article
+             , '''' as ColorID
              , SizeCode
              , SUM(Qty) as Qty             
              , 99999 as rnk
              , 99999 as RowNo
+             , null as BuyerDelivery
       from tmpData
       group by SizeCode
 ),
@@ -637,8 +660,12 @@ pivotData as (
             sum(Qty)   for SizeCode in ('+@cols+')
       ) a
 )
-select (select sum(Qty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty,[Sp#] = ID,[Colorway] = p.Article
+select TotalQty = (select sum(Qty) from UnionData where ID = p.ID and Article = p.Article)
+       , [Sp#] = ID
+       , [Colorway] = p.Article
+       , Color = p.ColorID
        , '+@cols+'
+       , [Buyer Delivery] = p.BuyerDelivery
 from pivotData p
 order by rnk, RowNo'
 
@@ -861,22 +888,29 @@ SET @sql = N'
 tmpData as (
     select o.ID
            , oq.Article
+           , occ.ColorID
            , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
            , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
            , sb.RowNo
+           , BuyerDelivery = '''''''' + Convert (varchar(10), o.BuyerDelivery)
     from Orders o WITH (NOLOCK) 
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
+    left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
+                                                    and occ.Article = oq.Article
+                                                    and occ.Patternpanel = ''FA''   
     where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
     select '''' as ID
            , ''TTL'' as Article
+           , '''' as ColorID
            , SizeCode
            , SUM(OriQty) as Qty
            , 99999 as rnk
            , 99999 as RowNo
+           , null as BuyerDelivery
     from tmpData
     group by SizeCode
 ),UnionData as (
@@ -893,7 +927,9 @@ SubTotal as (
 select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty
        , [Sp#] = ID
        , [Colorway] = p.Article
+       , Color = p.ColorID
        , '+@cols+'
+       , [Buyer Delivery] = p.BuyerDelivery
 from pivotData p
 order by rnk, RowNo'
 

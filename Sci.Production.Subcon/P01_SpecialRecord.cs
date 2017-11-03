@@ -232,7 +232,7 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
                 return;
             }
 
-            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where  POID = (select distinct POID from orders WITH (NOLOCK) where id='{0}')", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
             string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype WITH (NOLOCK) where id='{0}'", dr["artworktypeid"]), null);
 
             if (cat != "S" && isArtwork.ToUpper() == "TRUE")
