@@ -8,26 +8,35 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B13
+    /// </summary>
     public partial class B13 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B13
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessories");
-            comboBox1_RowSource.Add("", "");
-            comboMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboMaterialType.ValueMember = "Key";
-            comboMaterialType.DisplayMember = "Value";
+            comboBox1_RowSource.Add(string.Empty, string.Empty);
+            this.comboMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboMaterialType.ValueMember = "Key";
+            this.comboMaterialType.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            //在編輯模式下，下列這些欄位都不可以被修改
+
+            // 在編輯模式下，下列這些欄位都不可以被修改
             if (this.EditMode)
             {
                 this.comboMaterialType.ReadOnly = true;

@@ -11,11 +11,19 @@ using Sci.Data;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B16
+    /// </summary>
     public partial class B16 : Sci.Win.Tems.Input1
     {
-        public B16(ToolStripMenuItem menuitem) : base(menuitem)
+        /// <summary>
+        /// B16
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        public B16(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

@@ -591,7 +591,7 @@
             this.btnMailTo.TabIndex = 21;
             this.btnMailTo.Text = "Mail to";
             this.btnMailTo.UseVisualStyleBackColor = true;
-            this.btnMailTo.Click += new System.EventHandler(this.btnMailTo_Click);
+            this.btnMailTo.Click += new System.EventHandler(this.BtnMailTo_Click);
             // 
             // btnSketchFilesPath
             // 
@@ -602,7 +602,7 @@
             this.btnSketchFilesPath.TabIndex = 23;
             this.btnSketchFilesPath.Text = "...";
             this.btnSketchFilesPath.UseVisualStyleBackColor = true;
-            this.btnSketchFilesPath.Click += new System.EventHandler(this.btnSketchFilesPath_Click);
+            this.btnSketchFilesPath.Click += new System.EventHandler(this.BtnSketchFilesPath_Click);
             // 
             // btnCilpFilesPath
             // 
@@ -613,7 +613,7 @@
             this.btnCilpFilesPath.TabIndex = 25;
             this.btnCilpFilesPath.Text = "...";
             this.btnCilpFilesPath.UseVisualStyleBackColor = true;
-            this.btnCilpFilesPath.Click += new System.EventHandler(this.btnCilpFilesPath_Click);
+            this.btnCilpFilesPath.Click += new System.EventHandler(this.BtnCilpFilesPath_Click);
             // 
             // lineShape9
             // 

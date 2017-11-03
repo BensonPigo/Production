@@ -9,33 +9,42 @@ using Sci.Data;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B14
+    /// </summary>
     public partial class B14 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B14
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.labelSubprocessBCSLeadTime.Text = "Subprocess BCS\r\nLead Time";
             this.labelStdLTDayb41stCutDateBaseOnSubProcess.Text = "Std. L/T(Day) b4\r\n1st Cut date base\r\non SubProcess";
 
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            Dictionary<string, string> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("I", "InHouse");
             comboBox1_RowSource.Add("O", "OSP");
-            comboInHouseOSP.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboInHouseOSP.ValueMember = "Key";
-            comboInHouseOSP.DisplayMember = "Value";
+            this.comboInHouseOSP.DataSource = new BindingSource(comboBox1_RowSource, null);
+            this.comboInHouseOSP.ValueMember = "Key";
+            this.comboInHouseOSP.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string sqlCommand = string.Format(@"
+            string sqlCommand = string.Format(
+                @"
 select (
 	select cast(rtrim(ID) as nvarchar) +',' 
 	from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
 	where ATD.ArtworkTypeID = '{0}' for XML Path('')
-) as MatchTypeID"
-                , CurrentMaintain["ID"]);
+) as MatchTypeID",
+                this.CurrentMaintain["ID"]);
             Ict.DualResult returnResult;
             DataTable machineTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))
@@ -44,6 +53,7 @@ select (
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -56,21 +66,22 @@ select (
             this.checkIsttlTMS.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-
-            if (MyUtility.Check.Empty(CurrentMaintain["InhouseOSP"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["InhouseOSP"]))
             {
                 MyUtility.Msg.WarningBox("< InHouse/OSP > can not be empty!");
                 this.comboInHouseOSP.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
-        private void btnMachine_Click(object sender, EventArgs e)
+        private void BtnMachine_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B14_Machine callNextForm = new Sci.Production.Basic.B14_Machine(CurrentMaintain);
+            Sci.Production.Basic.B14_Machine callNextForm = new Sci.Production.Basic.B14_Machine(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }
