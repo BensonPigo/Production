@@ -148,7 +148,7 @@
             this.btnImportFromBarcode.TabIndex = 7;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
-            this.btnImportFromBarcode.Click += new System.EventHandler(this.buttonImport_Click);
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.ButtonImport_Click);
             // 
             // btnFind
             // 
@@ -159,7 +159,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.buttonFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.ButtonFind_Click);
             // 
             // txtPackID
             // 
@@ -222,7 +222,7 @@
             this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.buttonCancel_Click);
+            this.btnClose.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // btnSave
             // 
@@ -233,7 +233,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // labelLocationNo
             // 
@@ -252,7 +252,7 @@
             this.btnUpdateAllLocation.TabIndex = 15;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.buttonUpdate_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.ButtonUpdate_Click);
             // 
             // txtcloglocationLocationNo
             // 

@@ -12,37 +12,45 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic_P03_ImportFromBarCode
+    /// </summary>
     public partial class P03_ImportFromBarCode : Sci.Win.Subs.Base
     {
-        IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
-        DataTable grid2Data;
-        IList<DataRow> groupData = new List<DataRow>();
+        private IList<P02_FileInfo> filelists = new List<P02_FileInfo>();
+        private DataTable grid2Data;
+        private IList<DataRow> groupData = new List<DataRow>();
 
+        /// <summary>
+        /// P03_ImportFromBarCode()
+        /// </summary>
         public P03_ImportFromBarCode()
         {
-            InitializeComponent();
-            filelists.Add(new P02_FileInfo(null, null));
+            this.InitializeComponent();
+            this.filelists.Add(new P02_FileInfo(null, null));
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            listControlBindingSource1.DataSource = filelists;
-            this.gridFileList.DataSource = listControlBindingSource1;
+            this.listControlBindingSource1.DataSource = this.filelists;
+            this.gridFileList.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridFileList)
+            this.Helper.Controls.Grid.Generator(this.gridFileList)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Button("Get File", null, header: "Get File", width: Widths.AnsiChars(13), onclick: eh_getfile);
+                .Button("Get File", null, header: "Get File", width: Widths.AnsiChars(13), onclick: this.Eh_getfile);
 
-            listControlBindingSource2.DataSource = grid2Data;
-            this.gridLocationNo.DataSource = listControlBindingSource2;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
+            this.gridLocationNo.DataSource = this.listControlBindingSource2;
             this.gridLocationNo.IsEditingReadOnly = true;
 
-            Helper.Controls.Grid.Generator(this.gridLocationNo)
+            this.Helper.Controls.Grid.Generator(this.gridLocationNo)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                 .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13))
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13))
@@ -59,48 +67,51 @@ namespace Sci.Production.Logistic
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15));
         }
 
-        //Get File開窗選檔案
-        private void eh_getfile(object sender, EventArgs e)
+        // Get File開窗選檔案
+        private void Eh_getfile(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
+            this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                ((P02_FileInfo)(listControlBindingSource1.Current)).Fullfilename = openFileDialog1.FileName;
-                ((P02_FileInfo)(listControlBindingSource1.Current)).Filename = openFileDialog1.SafeFileName;
+                ((P02_FileInfo)this.listControlBindingSource1.Current).Fullfilename = this.openFileDialog1.FileName;
+                ((P02_FileInfo)this.listControlBindingSource1.Current).Filename = this.openFileDialog1.SafeFileName;
             }
         }
 
-        //Append
-        private void btnAppend_Click(object sender, EventArgs e)
+        // Append
+        private void BtnAppend_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.Add(new P02_FileInfo(null, null));
-            listControlBindingSource1.MoveLast();
-            this.eh_getfile(sender, e);
+            this.listControlBindingSource1.Add(new P02_FileInfo(null, null));
+            this.listControlBindingSource1.MoveLast();
+            this.Eh_getfile(sender, e);
         }
 
-        //Delete
-        private void btnDelete_Click(object sender, EventArgs e)
+        // Delete
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.Position != -1)
+            if (this.listControlBindingSource1.Position != -1)
             {
-                listControlBindingSource1.RemoveCurrent();
+                this.listControlBindingSource1.RemoveCurrent();
             }
         }
 
-        //Import Data
-        private void btnImportData_Click(object sender, EventArgs e)
+        // Import Data
+        private void BtnImportData_Click(object sender, EventArgs e)
         {
-            //清空Grid資料
-            if (grid2Data != null)
+            // 清空Grid資料
+            if (this.grid2Data != null)
             {
-                grid2Data.Clear();
+                this.grid2Data.Clear();
             }
-            groupData.Clear();
+
+            this.groupData.Clear();
 
             #region 檢查所有檔案格式是否正確
-            string errorMsg = "";
+            string errorMsg = string.Empty;
             int count = 0;
-            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
+            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)this.listControlBindingSource1.DataSource)
             {
                 if (!MyUtility.Check.Empty(dr.Filename))
                 {
@@ -119,6 +130,7 @@ namespace Sci.Production.Logistic
                         }
                     }
                 }
+
                 count++;
             }
             #endregion
@@ -143,19 +155,19 @@ namespace Sci.Production.Logistic
             string selectCommand = @"select '' as ID, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate,b.ClogReceiveID, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID,
                                                           a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias, a.MDivisionID, 1 as InsertData, '' as Remark, b.ClogReturnID
                                                          from Orders a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Country c WITH (NOLOCK) where 1=0";
-            
+
             DataTable groupTable;
             DualResult selectResult;
-            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
+            if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.grid2Data)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
             selectCommand = "Select ID, ReturnDate, MDivisionID from ClogReturn WITH (NOLOCK) where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
-                MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
+                MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
                 return;
             }
 
@@ -166,7 +178,7 @@ namespace Sci.Production.Logistic
             int insertCount = 0;
             int recordCount;
             DataRow[] findRow;
-            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)listControlBindingSource1.DataSource)
+            foreach (P02_FileInfo dr in (IList<P02_FileInfo>)this.listControlBindingSource1.DataSource)
             {
                 if (!MyUtility.Check.Empty(dr.Filename))
                 {
@@ -177,20 +189,25 @@ namespace Sci.Production.Logistic
                         {
                             System.Diagnostics.Debug.WriteLine(line);
                             IList<string> sl = line.Split(" \t\r\n".ToCharArray());
-                            //如果有資料重複就不再匯入重複的資料
-                            findRow = grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[1].Substring(0, 13), sl[1].Substring(13).Trim()));
+
+                            // 如果有資料重複就不再匯入重複的資料
+                            findRow = this.grid2Data.Select(string.Format("PackingListID = '{0}' and CTNStartNo = '{1}'", sl[1].Substring(0, 13), sl[1].Substring(13).Trim()));
                             if (findRow.Length == 0)
                             {
-                                DataRow dr1 = grid2Data.NewRow();
-                                dr1["ID"] = "";
+                                DataRow dr1 = this.grid2Data.NewRow();
+                                dr1["ID"] = string.Empty;
                                 dr1["PackingListID"] = sl[1].Substring(0, 13);
                                 dr1["CTNStartNo"] = sl[1].Substring(13);
-                                //dr1["FactoryID"] = sl[1].Substring(0, 3);
+
+                                // dr1["FactoryID"] = sl[1].Substring(0, 3);
                                 dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
-                                string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
+                                string sqlCmd = string.Format(
+                                    @"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
                                                                                       from PackingList_Detail WITH (NOLOCK) 
-                                                                                      where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                      where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1",
+                                    dr1["PackingListID"].ToString(),
+                                    dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
                                     dr1["OrderID"] = seekPacklistData["OrderID"].ToString().Trim();
@@ -201,6 +218,7 @@ namespace Sci.Production.Logistic
                                     {
                                         dr1["ReceiveDate"] = Convert.ToDateTime(seekPacklistData["ReceiveDate"].ToString()).ToString("d");
                                     }
+
                                     if (MyUtility.Check.Empty(dr1["ClogReturnID"]))
                                     {
                                         if (MyUtility.Check.Empty(seekPacklistData["ClogReceiveID"]))
@@ -209,10 +227,13 @@ namespace Sci.Production.Logistic
                                         }
                                         else
                                         {
-                                            sqlCmd = string.Format(@"select a.ID 
+                                            sqlCmd = string.Format(
+                                                @"select a.ID 
                                                                                     from ClogReturn a WITH (NOLOCK) , ClogReturn_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
-                                                                                    ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
+                                                                                    ",
+                                                dr1["PackingListID"].ToString(),
+                                                dr1["CTNStartNo"].ToString());
                                             if (MyUtility.Check.Seek(sqlCmd, out seekClogReturnData))
                                             {
                                                 dr1["ClogReturnID"] = seekClogReturnData["ID"].ToString().Trim();
@@ -226,7 +247,9 @@ namespace Sci.Production.Logistic
                                         dr1["Remark"] = "This carton has been return.";
                                         dr1["InsertData"] = 0;
                                     }
-                                    sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
+
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
@@ -246,19 +269,20 @@ namespace Sci.Production.Logistic
                                     dr1["Remark"] = "This carton is not in packing list.";
                                     dr1["InsertData"] = 0;
                                 }
-                                grid2Data.Rows.Add(dr1);
+
+                                this.grid2Data.Rows.Add(dr1);
                                 insertCount++;
 
                                 if (MyUtility.Check.Empty(dr1["ClogReturnID"]) && (int)dr1["InsertData"] == 1)
                                 {
-                                    recordCount = groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
+                                    recordCount = this.groupData.Where(x => x["MDivisionID"].ToString() == dr1["MDivisionID"].ToString()).Count();
                                     if (recordCount == 0)
                                     {
                                         DataRow dr2 = groupTable.NewRow();
-                                        dr2["ID"] = "";
+                                        dr2["ID"] = string.Empty;
                                         dr2["ReturnDate"] = DBNull.Value;
                                         dr2["MDivisionID"] = dr1["MDivisionID"];
-                                        groupData.Add(dr2);
+                                        this.groupData.Add(dr2);
                                     }
                                 }
                             }
@@ -267,18 +291,18 @@ namespace Sci.Production.Logistic
                 }
             }
 
-            listControlBindingSource2.DataSource = null;
-            listControlBindingSource2.DataSource = grid2Data;
+            this.listControlBindingSource2.DataSource = null;
+            this.listControlBindingSource2.DataSource = this.grid2Data;
             #endregion
         }
 
-        //To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        // To Excel
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable ExcelTable;
+            DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, "ClogLocationId,PackingListId,OrderId,CTNStartNo,ReceiveDate,StyleID,SeasonID,BrandID,CustPONo,Customize1,Alias,BuyerDelivery,ClogReturnID,Remark", "select * from #tmp", out ExcelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource2.DataSource, "ClogLocationId,PackingListId,OrderId,CTNStartNo,ReceiveDate,StyleID,SeasonID,BrandID,CustPONo,Customize1,Alias,BuyerDelivery,ClogReturnID,Remark", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {
@@ -286,11 +310,11 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
+            dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑
             dlg.Title = "Save as Excel File";
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
@@ -299,8 +323,11 @@ namespace Sci.Production.Logistic
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             {
                 // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "Logistic_P03_ImportFromBarCode.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                bool result = MyUtility.Excel.CopyToXls(excelTable, dlg.FileName, xltfile: "Logistic_P03_ImportFromBarCode.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
             else
             {
@@ -308,26 +335,26 @@ namespace Sci.Production.Logistic
             }
         }
 
-        //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        // Save
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            //檢查Return Date不可為空值，若為空值則出訊息告知且不做任何動作
+            // 檢查Return Date不可為空值，若為空值則出訊息告知且不做任何動作
             if (MyUtility.Check.Empty(this.dateReturnDate.Value))
             {
                 MyUtility.Msg.WarningBox("Return date can't empty!");
                 return;
             }
 
-            //將Append、Delete、Import Data這三個按鈕都改成Disable，Cancel按鈕的字樣改成Close
+            // 將Append、Delete、Import Data這三個按鈕都改成Disable，Cancel按鈕的字樣改成Close
             this.btnAppend.Enabled = false;
             this.btnDelete.Enabled = false;
             this.btnImportData.Enabled = false;
             this.btnCancel.Text = "Close";
 
-            string newID = "";
+            string newID = string.Empty;
             string sqlInsertMaster, sqlInsertDetail;
 
-            foreach (DataRow dr in groupData)
+            foreach (DataRow dr in this.groupData)
             {
                 if (MyUtility.Check.Empty(dr["ID"]))
                 {
@@ -405,11 +432,11 @@ namespace Sci.Production.Logistic
                             detailcmds.Add(detail6);
                             detailcmds.Add(detail7);
                             #endregion
-                            foreach (DataRow dr1 in grid2Data.Rows)
+                            foreach (DataRow dr1 in this.grid2Data.Rows)
                             {
                                 if (dr1["MDivisionID"].ToString().Trim() == dr["MDivisionID"].ToString().Trim() && MyUtility.Check.Empty(dr1["Remark"]))
                                 {
-                                    dr1["ID"] = newID; //將ID寫入Grid2的Received ID欄位
+                                    dr1["ID"] = newID; // 將ID寫入Grid2的Received ID欄位
                                     dr1["ClogReturnID"] = newID;
                                     sqlInsertDetail = @"insert into ClogReturn_Detail (ID, TransferToClogId, PackingListId, OrderId, CTNStartNo, AddName, AddDate)
                                                                      values (@id,@transferToClogId,@packingListId,@orderId,@ctnStartNo,@addName,@addDate)";
@@ -449,7 +476,7 @@ namespace Sci.Production.Logistic
                         catch (Exception ex)
                         {
                             transactionScope.Dispose();
-                            ShowErr("Commit transaction error.", ex);
+                            this.ShowErr("Commit transaction error.", ex);
                             return;
                         }
                     }
@@ -458,16 +485,17 @@ namespace Sci.Production.Logistic
         }
 
         // Cancel, Close
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             if (this.btnCancel.Text == "Cancel")
             {
-                DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             }
             else
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                this.DialogResult = System.Windows.Forms.DialogResult.OK;
             }
+
             this.Close();
         }
     }

@@ -20,6 +20,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Sci.Production.Logistic.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\Sci.Production.Logistic.XML</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>Sci.Production.Logistic.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -36,7 +40,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Sci.Production.Logistic.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -45,7 +49,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Sci.Production.Logistic.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1504.2900, Culture=neutral, processorArchitecture=MSIL">
@@ -165,6 +169,7 @@
     <Compile Include="B01_Print.Designer.cs">
       <DependentUpon>B01_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logistic.cs">
       <DependentUpon>Logistic.xsd</DependentUpon>
     </Compile>
@@ -268,6 +273,7 @@
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="B01_Print.rdlc" />
     <EmbeddedResource Include="B01_Print.resx">
@@ -340,6 +346,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Logistic.xsc">
       <DependentUpon>Logistic.xsd</DependentUpon>
     </None>
@@ -351,7 +358,22 @@
     <None Include="Logistic.xss">
       <DependentUpon>Logistic.xsd</DependentUpon>
     </None>
+    <None Include="packages.config" />
     <None Include="Resources\trffc15.bmp" />
+    <None Include="Sci.Production.Logistic.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
+    <None Include="stylecop2.json" />
+    <None Include="stylecop3.json" />
+    <None Include="stylecop4.json" />
+    <None Include="stylecop5.json" />
+    <None Include="stylecop6.json" />
+    <None Include="stylecop7.json" />
+    <None Include="stylecop8.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
