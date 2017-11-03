@@ -1,38 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B03
+    /// </summary>
     public partial class B03 : Sci.Win.Tems.Input1
     {
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// ClickEditAfter
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtM.ReadOnly = true;
+            this.txtM.ReadOnly = true;
         }
 
+        /// <summary>
+        /// ClickSaveBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< M > can not be empty!");
                 this.txtM.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
-
-
     }
 }

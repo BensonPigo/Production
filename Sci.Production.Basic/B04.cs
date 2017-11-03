@@ -8,20 +8,30 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B04
+    /// </summary>
     public partial class B04 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B04
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            //按鈕Accounting chart no變色
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "LocalSupp_AccountNo", "ID"))
+            // 按鈕Accounting chart no變色
+            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "LocalSupp_AccountNo", "ID"))
             {
                 this.btnAccountingChartNo.ForeColor = Color.Blue;
             }
@@ -30,8 +40,8 @@ namespace Sci.Production.Basic
                 this.btnAccountingChartNo.ForeColor = Color.Black;
             }
 
-            //按鈕Bank detail變色
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "LocalSupp_Bank", "ID"))
+            // 按鈕Bank detail變色
+            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "LocalSupp_Bank", "ID"))
             {
                 this.btnBankDetail.ForeColor = Color.Blue;
             }
@@ -41,6 +51,9 @@ namespace Sci.Production.Basic
             }
         }
 
+        /// <summary>
+        /// ClickEditAfter
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -48,50 +61,65 @@ namespace Sci.Production.Basic
             this.txtAbbreviation.ReadOnly = true;
         }
 
+        /// <summary>
+        /// ClickSaveBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Abb"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Abb"]))
             {
                 MyUtility.Msg.WarningBox("< Abbreviation > can not be empty!");
                 this.txtAbbreviation.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["CountryID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CountryID"]))
             {
                 MyUtility.Msg.WarningBox("< Nationality > can not be empty!");
                 this.txtCountryNationality.TextBox1.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Company > can not be empty!");
                 this.txtCompany.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
-        private void btnAccountingChartNo_Click(object sender, EventArgs e)
+        /// <summary>
+        /// btnAccountingChartNo_Click
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void BtnAccountingChartNo_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_AccountNo callNextForm = new Sci.Production.Basic.B04_AccountNo(this.IsSupportEdit,CurrentMaintain["ID"].ToString(),null,null);
+            Sci.Production.Basic.B04_AccountNo callNextForm = new Sci.Production.Basic.B04_AccountNo(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
 
-        private void btnBankDetail_Click(object sender, EventArgs e)
+        /// <summary>
+        /// btnBankDetail_Click
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void BtnBankDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B04_BankData callNextForm = new Sci.Production.Basic.B04_BankData(this.IsSupportEdit, CurrentMaintain["ID"].ToString(), null, null);
+            Sci.Production.Basic.B04_BankData callNextForm = new Sci.Production.Basic.B04_BankData(this.IsSupportEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            this.OnDetailEntered();
         }
     }
 }

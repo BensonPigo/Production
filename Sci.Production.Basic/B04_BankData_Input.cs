@@ -8,13 +8,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B04_BankData_Input
+    /// </summary>
     public partial class B04_BankData_Input : Sci.Win.Subs.Input6A
     {
+        /// <summary>
+        /// B04_BankData_Input
+        /// </summary>
         public B04_BankData_Input()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool DoSave()
         {
             if (MyUtility.Check.Empty(this.txtAccountNo.Text.ToString()))
@@ -48,6 +55,7 @@ namespace Sci.Production.Basic
             return base.DoSave();
         }
 
+        /// <inheritdoc/>
         protected override bool OnAcceptChanging(DataRow data)
         {
             data["CountryName"] = MyUtility.GetValue.Lookup("Alias", data["CountryID"].ToString(), "Country", "ID");
@@ -56,6 +64,7 @@ namespace Sci.Production.Basic
             {
                 data["EditBy"] = data["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", data["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)data["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
+
             return base.OnAcceptChanging(data);
         }
     }

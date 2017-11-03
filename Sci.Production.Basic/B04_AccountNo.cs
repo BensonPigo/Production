@@ -1,31 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tools;
 using Ict;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B04_AccountNo
+    /// </summary>
     public partial class B04_AccountNo : Sci.Win.Subs.Input4
     {
-        DataGridViewGeneratorMaskedTextColumnSettings accountNo = new DataGridViewGeneratorMaskedTextColumnSettings();
+        private DataGridViewGeneratorMaskedTextColumnSettings accountNo = new DataGridViewGeneratorMaskedTextColumnSettings();
+
+        /// <summary>
+        /// B04_AccountNo
+        /// </summary>
+        /// <param name="canedit">canedit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
         public B04_AccountNo(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.displayCode.Text = this.KeyValue1;
             this.displayAbbreviation.Text = MyUtility.GetValue.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
         }
 
+        /// <summary>
+        /// OnRequery
+        /// </summary>
+        /// <returns>DualResult</returns>
         protected override DualResult OnRequery()
         {
-            //sql參數
+            // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
             sp1.Value = this.KeyValue1;
@@ -37,40 +46,46 @@ from (select ID,Seq from ArtworkType WITH (NOLOCK) where IsSubprocess = 1 or Cla
 left join (select ArtworkTypeID,AccountID,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo WITH (NOLOCK) where ID = @id) b on a.ID = b.ArtworkTypeID 
 order by a.Seq";
             Ict.DualResult returnResult;
-            DataTable ArtworkTable = new DataTable();
-            returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out ArtworkTable);
+            DataTable artworkTable = new DataTable();
+            returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out artworkTable);
             if (!returnResult)
             {
                 return returnResult;
             }
-            SetGrid(ArtworkTable);
+
+            this.SetGrid(artworkTable);
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            accountNo.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this.accountNo.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
 
-            Helper.Controls.Grid.Generator(this.grid)
-                .Text("ArtworkTypeID", header: "Type", width: Widths.AnsiChars(20),iseditable:false)
-                .MaskedText("AccountID", "0000-0000", header: "Account No", width: Widths.AnsiChars(8), settings: accountNo);
-            
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("ArtworkTypeID", header: "Type", width: Widths.AnsiChars(20), iseditable: false)
+                .MaskedText("AccountID", "0000-0000", header: "Account No", width: Widths.AnsiChars(8), settings: this.accountNo);
+
             return true;
         }
 
+        /// <summary>
+        /// OnUIConvertToMaintain
+        /// </summary>
         protected override void OnUIConvertToMaintain()
         {
             base.OnUIConvertToMaintain();
-            append.Visible = false;
-            revise.Visible = false;
-            delete.Visible = false;
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSave()
         {
             ITableSchema tableSchema;
             DualResult returnResult = DBProxy.Current.GetTableSchema(null, "LocalSupp_AccountNo", out tableSchema);
-            IList<DataRow> gridData = Datas;
+            IList<DataRow> gridData = this.Datas;
 
             foreach (DataRow currentRecord in gridData)
             {
@@ -107,6 +122,7 @@ order by a.Seq";
                     }
                 }
             }
+
             return Result.True;
         }
     }
