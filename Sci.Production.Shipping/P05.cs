@@ -357,6 +357,12 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 return false;
             }
 
+            //如果表身有資料就不可以delete
+            if (((DataTable)detailgridbs.DataSource).Rows.Count > 0) {
+                MyUtility.Msg.WarningBox("This record had Packing List. Can't be deleted!");
+                return false;
+            }
+
             //已經有做出口費用分攤就不可以被刪除
             if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
