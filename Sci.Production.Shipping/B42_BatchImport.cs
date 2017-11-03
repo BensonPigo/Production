@@ -139,7 +139,7 @@ from VNContract_Detail a WITH (NOLOCK)
 outer apply(
 	select Waste 
 	from(
-		select Waste = (select [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, a.NLCode))
+		select Waste = (select distinct [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, a.NLCode))
 		from VNConsumption v WITH (NOLOCK)
 		inner join VNConsumption_Detail vd WITH (NOLOCK) on v.id = vd.ID
         outer apply(select StyleID,BrandID,SeasonID,VNContractID from VNConsumption where ID = '{2}' )xa
@@ -162,7 +162,7 @@ where a.ID = '{0}' and a.NLCode = '{1}'
 set qty = '{0}'
 ,UserCreate = 1
 ,Waste = (
-	    select [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, '{2}')
+	    select distinct [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, '{2}')
 	    from VNConsumption v WITH (NOLOCK)
 	    inner join VNConsumption_Detail vd WITH (NOLOCK) on v.id = vd.ID
         outer apply(select StyleID,BrandID,SeasonID,VNContractID from VNConsumption where ID = '{1}' )xa
