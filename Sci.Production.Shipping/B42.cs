@@ -61,22 +61,7 @@ namespace Sci.Production.Shipping
 
             ReloadDatas();
         }
-
-//        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-//        {
-//            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-//            string contraceNo = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["VNContractID"]);
-//            this.DetailSelectCommand = string.Format(@"
-//select  vd.*
-//        , cd.Waste
-//from VNConsumption_Detail vd WITH (NOLOCK) 
-//left join VNContract_Detail cd WITH (NOLOCK) on  cd.NLCode = vd.NLCode 
-//                                                 and cd.ID = '{0}'
-//where vd.ID = '{1}'
-//order by CONVERT (int, SUBSTRING (vd.NLCode, 3, 3))", contraceNo, masterID);
-//            return base.OnDetailSelectCommandPrepare(e);
-//        }
-
+        
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -152,14 +137,19 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             };
             #endregion
 
+            Ict.Win.UI.DataGridViewNumericBoxColumn qtyColumn;
+            Ict.Win.UI.DataGridViewNumericBoxColumn SystemQtyColumn;
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Numeric("SystemQty", header: "System Qty", decimal_places: 3, width: Widths.AnsiChars(14), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty)
+                .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(14), iseditingreadonly: true).Get(out SystemQtyColumn)
+                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty).Get(out qtyColumn)
                 .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
+
+            qtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
+            SystemQtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
         }
 
         protected override void EnsureToolbarExt()
@@ -640,7 +630,8 @@ from tmpBOANewQty
 group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
 tmpLocalPO
 as (
-select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty,isnull(vd.Waste,0) as Waste
+select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
+,isnull(vd.Waste,0) as Waste
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
@@ -655,7 +646,7 @@ NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg
 from tmpLocalPO),
 tmpPrepareRate
 as (
-select Refno,Qty/OrderQty as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,
+select Refno,iif(OrderQty=0,0,Qty/OrderQty) as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
@@ -820,7 +811,8 @@ where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or
 ),
 tmpLocalPO
 as (
-select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty,isnull(vd.Waste,0) as Waste
+select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
+,isnull(vd.Waste,0) as Waste
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
@@ -925,7 +917,14 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     newRow["UnitID"] = dr["CustomsUnit"];
                     newRow["Qty"] = dr["Qty"];
                     newRow["SystemQty"] = dr["Qty"];
-                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from View_VNNLCodeWaste WITH (NOLOCK) where  NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"]))));
+                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"
+select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
+
+, MyUtility.Convert.GetString(CurrentMaintain["StyleID"])
+, MyUtility.Convert.GetString(CurrentMaintain["BrandID"])
+, MyUtility.Convert.GetString(CurrentMaintain["SeasonID"])
+, MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])
+, MyUtility.Convert.GetString(dr["NLCode"]))));
                     newRow["UserCreate"] = 0;
                     ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
                 }
@@ -934,6 +933,13 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     queryData[0]["HSCode"] = dr["HSCode"];
                     queryData[0]["UnitID"] = dr["CustomsUnit"];
                     queryData[0]["Qty"] = dr["Qty"];
+                    queryData[0]["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"
+select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
+, MyUtility.Convert.GetString(CurrentMaintain["StyleID"])
+, MyUtility.Convert.GetString(CurrentMaintain["BrandID"])
+, MyUtility.Convert.GetString(CurrentMaintain["SeasonID"])
+, MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])
+, MyUtility.Convert.GetString(dr["NLCode"]))));
                     queryData[0]["UserCreate"] = 0;
                 }
             }
