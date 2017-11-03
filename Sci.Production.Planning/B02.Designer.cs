@@ -139,7 +139,7 @@
             0,
             0,
             0});
-            this.numBeginStitch.Validating += new System.ComponentModel.CancelEventHandler(this.numBeginStitch_Validating);
+            this.numBeginStitch.Validating += new System.ComponentModel.CancelEventHandler(this.NumBeginStitch_Validating);
             // 
             // numEndStitch
             // 
@@ -171,7 +171,7 @@
             0,
             0,
             0});
-            this.numEndStitch.Validating += new System.ComponentModel.CancelEventHandler(this.numEndStitch_Validating);
+            this.numEndStitch.Validating += new System.ComponentModel.CancelEventHandler(this.NumEndStitch_Validating);
             // 
             // numBatchNumber
             // 

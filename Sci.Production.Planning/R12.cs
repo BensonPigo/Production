@@ -302,7 +302,7 @@ order by tmpData2.OrderID";
         {
             DualResult result;
             Helper ghelper = new Helper();
-            if (!(result = ghelper.getProductionSystem(out dtData)))
+            if (!(result = ghelper.GetProductionSystem(out dtData)))
             {
                 ShowErr("Get StandardTms Fail!!");
                 return;
