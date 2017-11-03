@@ -153,7 +153,7 @@
             this.comboCapacityYear.Name = "comboCapacityYear";
             this.comboCapacityYear.Size = new System.Drawing.Size(75, 24);
             this.comboCapacityYear.TabIndex = 1;
-            this.comboCapacityYear.SelectedIndexChanged += new System.EventHandler(this.comboCapacityYear_SelectedIndexChanged);
+            this.comboCapacityYear.SelectedIndexChanged += new System.EventHandler(this.ComboCapacityYear_SelectedIndexChanged);
             // 
             // comboArtwork
             // 
@@ -165,7 +165,7 @@
             this.comboArtwork.Name = "comboArtwork";
             this.comboArtwork.Size = new System.Drawing.Size(154, 24);
             this.comboArtwork.TabIndex = 3;
-            this.comboArtwork.SelectedIndexChanged += new System.EventHandler(this.comboArtwork_SelectedIndexChanged);
+            this.comboArtwork.SelectedIndexChanged += new System.EventHandler(this.ComboArtwork_SelectedIndexChanged);
             // 
             // labelCapacityArtwork
             // 
@@ -249,7 +249,7 @@
             this.comboWorkdayYear.Name = "comboWorkdayYear";
             this.comboWorkdayYear.Size = new System.Drawing.Size(75, 24);
             this.comboWorkdayYear.TabIndex = 3;
-            this.comboWorkdayYear.SelectedIndexChanged += new System.EventHandler(this.comboWorkdayYear_SelectedIndexChanged);
+            this.comboWorkdayYear.SelectedIndexChanged += new System.EventHandler(this.ComboWorkdayYear_SelectedIndexChanged);
             // 
             // btnClose
             // 

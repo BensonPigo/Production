@@ -410,7 +410,7 @@
             this.btnShippingMark.TabIndex = 17;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.BtnShippingMark_Click);
             // 
             // txtPaytermarSample
             // 

@@ -10,15 +10,23 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B06
+    /// </summary>
     public partial class B06 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B06
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -26,81 +34,84 @@ namespace Sci.Production.Basic
             this.txtMonthly.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Year"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Year"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Year > can not be empty!");
                 this.txtYear.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Month"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Month"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Monthly > can not be empty!");
                 this.txtMonthly.Focus();
                 return false;
             }
 
-            if ((String.IsNullOrWhiteSpace(CurrentMaintain["ActiveManpower"].ToString())) || (double.Parse(CurrentMaintain["ActiveManpower"].ToString()) == 0))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ActiveManpower"].ToString()) || (double.Parse(this.CurrentMaintain["ActiveManpower"].ToString()) == 0))
             {
                 MyUtility.Msg.WarningBox("< Active Manpower > can not be empty!");
                 this.numActiveManpower.Focus();
                 return false;
             }
-            CurrentMaintain["MDivisionID"] = MyUtility.GetValue.Lookup(string.Format("select distinct f.MDivisionID from Manpower m left join factory f on m.FactoryID=f.ID where m.FactoryID= '{0}'", CurrentMaintain["FactoryID"]), null);
+
+            this.CurrentMaintain["MDivisionID"] = MyUtility.GetValue.Lookup(string.Format("select distinct f.MDivisionID from Manpower m left join factory f on m.FactoryID=f.ID where m.FactoryID= '{0}'", this.CurrentMaintain["FactoryID"]), null);
             return base.ClickSaveBefore();
         }
 
-        private void txtYear_Validating(object sender, CancelEventArgs e)
+        private void TxtYear_Validating(object sender, CancelEventArgs e)
         {
-            base.OnValidated(e);
+            this.OnValidated(e);
             string textValue = this.txtYear.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtYear.OldValue)
             {
                 int n;
-                if (!int.TryParse(txtYear.Text, out n))
+                if (!int.TryParse(this.txtYear.Text, out n))
                 {
-                    this.txtYear.Text = "";
+                    this.txtYear.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                     return;
                 }
-                if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
+
+                if (!(int.Parse(textValue) >= 2015 && int.Parse(textValue) <= 2100))
                     {
-                        this.txtYear.Text = "";
-                        e.Cancel = true; 
+                        this.txtYear.Text = string.Empty;
+                        e.Cancel = true;
                         MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                         return;
                     }
             }
         }
 
-        private void txtMonthly_Validating(object sender, CancelEventArgs e)
+        private void TxtMonthly_Validating(object sender, CancelEventArgs e)
         {
-            base.OnValidated(e);
+            this.OnValidated(e);
             string textValue = this.txtMonthly.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtMonthly.OldValue)
             {
                 int n;
-                if (!int.TryParse(txtMonthly.Text, out n))
+                if (!int.TryParse(this.txtMonthly.Text, out n))
                 {
-                    
-                    this.txtMonthly.Text = "";
+                    this.txtMonthly.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
                     return;
                 }
-                if (!(1 <= int.Parse(textValue) && int.Parse(textValue) <= 12))
+
+                if (!(int.Parse(textValue) >= 1 && int.Parse(textValue) <= 12))
                 {
-                    
-                    this.txtMonthly.Text = "";
+                    this.txtMonthly.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
                     return;
@@ -108,41 +119,41 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void numActiveManpower_Validated(object sender, EventArgs e)
+        private void NumActiveManpower_Validated(object sender, EventArgs e)
         {
             if ((!string.IsNullOrWhiteSpace(this.numericBox2.Text)) && (!string.IsNullOrWhiteSpace(this.numActiveManpower.Text)))
             {
                 if (double.Parse(this.numericBox2.Text) != 0)
                 {
-                    CurrentMaintain["ManpowerRatio"] = Math.Round(double.Parse(this.numActiveManpower.Text) / double.Parse(this.numericBox2.Text), 2);
+                    this.CurrentMaintain["ManpowerRatio"] = Math.Round(double.Parse(this.numActiveManpower.Text) / double.Parse(this.numericBox2.Text), 2);
                 }
                 else
                 {
-                    CurrentMaintain["ManpowerRatio"] = 0;
+                    this.CurrentMaintain["ManpowerRatio"] = 0;
                 }
             }
             else
             {
-                CurrentMaintain["ManpowerRatio"] = 0;
+                this.CurrentMaintain["ManpowerRatio"] = 0;
             }
         }
 
-        private void numericBox7_Validated(object sender, EventArgs e)
+        private void NumericBox7_Validated(object sender, EventArgs e)
         {
             if ((!string.IsNullOrWhiteSpace(this.numericBox7.Text)) && (!string.IsNullOrWhiteSpace(this.numericBox9.Text)))
             {
                 if (double.Parse(this.numericBox7.Text) != 0)
                 {
-                    CurrentMaintain["PPH"] = Math.Round(double.Parse(this.numericBox9.Text) / double.Parse(this.numericBox7.Text), 2);
+                    this.CurrentMaintain["PPH"] = Math.Round(double.Parse(this.numericBox9.Text) / double.Parse(this.numericBox7.Text), 2);
                 }
                 else
                 {
-                    CurrentMaintain["PPH"] = 0;
+                    this.CurrentMaintain["PPH"] = 0;
                 }
             }
             else
             {
-                CurrentMaintain["PPH"] = 0;
+                this.CurrentMaintain["PPH"] = 0;
             }
         }
     }

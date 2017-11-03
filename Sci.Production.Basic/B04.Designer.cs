@@ -319,7 +319,7 @@
             this.btnAccountingChartNo.TabIndex = 13;
             this.btnAccountingChartNo.Text = "Accounting chart no";
             this.btnAccountingChartNo.UseVisualStyleBackColor = true;
-            this.btnAccountingChartNo.Click += new System.EventHandler(this.btnAccountingChartNo_Click);
+            this.btnAccountingChartNo.Click += new System.EventHandler(this.BtnAccountingChartNo_Click);
             // 
             // btnBankDetail
             // 
@@ -331,7 +331,7 @@
             this.btnBankDetail.TabIndex = 14;
             this.btnBankDetail.Text = "Bank detail";
             this.btnBankDetail.UseVisualStyleBackColor = true;
-            this.btnBankDetail.Click += new System.EventHandler(this.btnBankDetail_Click);
+            this.btnBankDetail.Click += new System.EventHandler(this.BtnBankDetail_Click);
             // 
             // txtpayterm_ftyPaymentTerm
             // 

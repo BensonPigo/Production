@@ -10,18 +10,26 @@ using Sci.Data;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B05_SetHoliday
+    /// </summary>
     public partial class B05_SetHoliday : Sci.Win.Subs.Base
     {
         private DateTime reviseDate;
         private int newRecord;
 
+        /// <summary>
+        /// B05_SetHoliday
+        /// </summary>
+        /// <param name="date">date</param>
         public B05_SetHoliday(DateTime date)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.txtDate.Text = date.ToString("d");
-            reviseDate = date;
+            this.reviseDate = date;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -32,23 +40,23 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(holidayName))
             {
                 this.Text = this.Text + " - New";
-                newRecord = 1;
+                this.newRecord = 1;
             }
             else
             {
                 this.txtDescription.Text = holidayName;
                 this.Text = this.Text + " - Revise";
-                newRecord = 0;
+                this.newRecord = 0;
             }
         }
 
-        private void btnAccept_Click(object sender, EventArgs e)
+        private void BtnAccept_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtDescription.Text))
+            if (MyUtility.Check.Empty(this.txtDescription.Text))
             {
-                if (newRecord == 0)
+                if (this.newRecord == 0)
                 {
-                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", reviseDate.ToString("d"), Sci.Env.User.Factory);
+                    string deleteCmd = string.Format("delete Holiday where HolidayDate = '{0}' and FactoryID = '{1}'", this.reviseDate.ToString("d"), Sci.Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                     if (!result)
                     {
@@ -59,9 +67,9 @@ namespace Sci.Production.Basic
             }
             else
             {
-                if (newRecord == 0)
+                if (this.newRecord == 0)
                 {
-                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", txtDescription.Text, reviseDate.ToString("d"), Sci.Env.User.Factory);
+                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", this.txtDescription.Text, this.reviseDate.ToString("d"), Sci.Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
@@ -71,8 +79,13 @@ namespace Sci.Production.Basic
                 }
                 else
                 {
-                    string insertCmd = string.Format(@"insert into Holiday(FactoryID,HolidayDate,Name,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}',GETDATE());", Sci.Env.User.Factory, reviseDate.ToString("d"), txtDescription.Text, Sci.Env.User.UserID);
+                    string insertCmd = string.Format(
+                        @"insert into Holiday(FactoryID,HolidayDate,Name,AddName,AddDate)
+values ('{0}','{1}','{2}','{3}',GETDATE());",
+                        Env.User.Factory,
+                        this.reviseDate.ToString("d"),
+                        this.txtDescription.Text,
+                        Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {

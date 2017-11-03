@@ -274,7 +274,7 @@
             this.txtYear.Name = "txtYear";
             this.txtYear.Size = new System.Drawing.Size(47, 23);
             this.txtYear.TabIndex = 16;
-            this.txtYear.Validating += new System.ComponentModel.CancelEventHandler(this.txtYear_Validating);
+            this.txtYear.Validating += new System.ComponentModel.CancelEventHandler(this.TxtYear_Validating);
             // 
             // txtMonthly
             // 
@@ -285,7 +285,7 @@
             this.txtMonthly.Name = "txtMonthly";
             this.txtMonthly.Size = new System.Drawing.Size(29, 23);
             this.txtMonthly.TabIndex = 17;
-            this.txtMonthly.Validating += new System.ComponentModel.CancelEventHandler(this.txtMonthly_Validating);
+            this.txtMonthly.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMonthly_Validating);
             // 
             // numericBox1
             // 
@@ -338,7 +338,7 @@
             0,
             0});
             this.numericBox2.Visible = false;
-            this.numericBox2.Validated += new System.EventHandler(this.numActiveManpower_Validated);
+            this.numericBox2.Validated += new System.EventHandler(this.NumActiveManpower_Validated);
             // 
             // numActiveManpower
             // 
@@ -369,7 +369,7 @@
             0,
             0,
             0});
-            this.numActiveManpower.Validated += new System.EventHandler(this.numActiveManpower_Validated);
+            this.numActiveManpower.Validated += new System.EventHandler(this.NumActiveManpower_Validated);
             // 
             // numericBox4
             // 
@@ -493,7 +493,7 @@
             0,
             0});
             this.numericBox7.Visible = false;
-            this.numericBox7.Validated += new System.EventHandler(this.numericBox7_Validated);
+            this.numericBox7.Validated += new System.EventHandler(this.NumericBox7_Validated);
             // 
             // numericBox8
             // 
@@ -549,7 +549,7 @@
             0,
             0});
             this.numericBox9.Visible = false;
-            this.numericBox9.Validated += new System.EventHandler(this.numericBox7_Validated);
+            this.numericBox9.Validated += new System.EventHandler(this.NumericBox7_Validated);
             // 
             // numericBox10
             // 

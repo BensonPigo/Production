@@ -11,15 +11,23 @@ using Sci.Data;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B08_ProductionFabricType
+    /// </summary>
     public partial class B08_ProductionFabricType : Sci.Win.Subs.Input1A
     {
+        /// <summary>
+        /// B08_ProductionFabricType
+        /// </summary>
+        /// <param name="canedit">canedit</param>
+        /// <param name="data">data</param>
         public B08_ProductionFabricType(bool canedit, DataRow data)
             : base(canedit, data)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        private void txtProdTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtProdTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox prodText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
@@ -27,11 +35,15 @@ namespace Sci.Production.Basic
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             prodText.Text = item.GetSelectedString();
         }
 
-        private void txtFabricTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtFabricTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox fabricText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
@@ -39,16 +51,20 @@ namespace Sci.Production.Basic
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", fabricText.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             fabricText.Text = item.GetSelectedString();
         }
 
-        private void txtProdTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
+        private void TxtProdTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
-                //sql參數
+                // sql參數
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                 sp1.ParameterName = "@name";
                 sp1.Value = prodTextValue.Text;
@@ -63,8 +79,7 @@ namespace Sci.Production.Basic
                 {
                     if (reasonID.Rows.Count <= 0)
                     {
-                        
-                        prodTextValue.Text = "";
+                        prodTextValue.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                         return;
@@ -72,8 +87,7 @@ namespace Sci.Production.Basic
                 }
                 else
                 {
-                    
-                    prodTextValue.Text = "";
+                    prodTextValue.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                     return;
@@ -81,12 +95,12 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void txtFabricTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
+        private void TxtFabricTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox fabricTextValue = (Sci.Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)
             {
-                //sql參數
+                // sql參數
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                 sp1.ParameterName = "@name";
                 sp1.Value = fabricTextValue.Text;
@@ -101,7 +115,7 @@ namespace Sci.Production.Basic
                 {
                     if (reasonID.Rows.Count <= 0)
                     {
-                        fabricTextValue.Text = "";
+                        fabricTextValue.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                         return;
@@ -109,7 +123,7 @@ namespace Sci.Production.Basic
                 }
                 else
                 {
-                    fabricTextValue.Text = "";
+                    fabricTextValue.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                     return;

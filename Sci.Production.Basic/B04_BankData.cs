@@ -1,25 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 
 namespace Sci.Production.Basic
 {
-    public partial class B04_BankData : Sci.Win.Subs.Input4
+    /// <summary>
+    /// B04_BankData
+    /// </summary>
+    public partial class B04_BankData : Win.Subs.Input4
     {
+        /// <summary>
+        /// B04_BankData
+        /// </summary>
+        /// <param name="canedit">canedit</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
         public B04_BankData(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
-            DoForm = new B04_BankData_Input();
+            this.InitializeComponent();
+            this.DoForm = new B04_BankData_Input();
             this.Text = "Bank data (" + this.KeyValue1.Trim() + ")";
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -34,12 +42,16 @@ namespace Sci.Production.Basic
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country WITH (NOLOCK) where Junk = 0 order by ID", "4,30", dr["CountryID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) { return; }
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
                             dr["CountryID"] = item.GetSelectedString();
                             IList<DataRow> selectedData = item.GetSelecteds();
                             if (selectedData.Count > 0)
                             {
-                                dr["CountryName"] = (selectedData[0])["Alias"].ToString();
+                                dr["CountryName"] = selectedData[0]["Alias"].ToString();
                             }
                         }
                     }
@@ -53,10 +65,10 @@ namespace Sci.Production.Basic
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
                     {
-                        if (!MyUtility.Check.Seek(e.FormattedValue.ToString(),"Country","ID"))
+                        if (!MyUtility.Check.Seek(e.FormattedValue.ToString(), "Country", "ID"))
                         {
-                            dr["CountryID"] = "";
-                            dr["CountryName"] = "";
+                            dr["CountryID"] = string.Empty;
+                            dr["CountryName"] = string.Empty;
                             MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
                         }
                         else
@@ -68,7 +80,7 @@ namespace Sci.Production.Basic
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("IsDefault", header: "Default", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("AccountNo", header: "Account No.", width: Widths.AnsiChars(20))
                 .Text("SWIFTCode", header: "SWIFT", width: Widths.AnsiChars(11))
@@ -85,6 +97,7 @@ namespace Sci.Production.Basic
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -99,15 +112,17 @@ namespace Sci.Production.Basic
                 {
                     gridData["EditBy"] = gridData["EditName"].ToString() + " - " + MyUtility.GetValue.Lookup("Name", gridData["EditName"].ToString(), "Pass1", "ID") + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 }
+
                 gridData.AcceptChanges();
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             int defaultCount = 0;
 
-            foreach (DataRow gridData in Datas)
+            foreach (DataRow gridData in this.Datas)
             {
                 if (MyUtility.Check.Empty(gridData["AccountNo"]))
                 {
@@ -132,7 +147,6 @@ namespace Sci.Production.Basic
                     MyUtility.Msg.WarningBox("The field < Country > can not be empty!");
                     return false;
                 }
-
 
                 if (gridData["IsDefault"].ToString() == "True")
                 {
