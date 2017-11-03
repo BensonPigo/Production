@@ -47,6 +47,11 @@ namespace Sci.Production.Shipping
                 return false;
             }
             
+            if (CurrentMaintain["HSCode"].Empty() || CurrentMaintain["CustomsUnit"].Empty())
+            {
+                MyUtility.Msg.InfoBox("HS Code cannot be empty!!" + Environment.NewLine + "Customs Unit cannot be empty!!");
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -78,6 +83,7 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "Customs Code
             CurrentMaintain["NLCode"] = item.GetSelectedString();
             CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
             CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
+            CurrentMaintain.EndEdit();
         }
 
         //NL Code
@@ -113,6 +119,7 @@ and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                         return;
                     }
                 }
+                CurrentMaintain.EndEdit();
             }
         }
     }
