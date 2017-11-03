@@ -18,6 +18,46 @@ BEGIN
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
  FROM  Trade_To_Pms.dbo.PO b WITH (NOLOCK) inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID = c.ID
 
+ -----Trade 的區間資料 new Eeit----
+	Declare @DateInfoName VarChar(30) = 'PO';
+	Declare @DateStart Date;
+	Declare @DateEnd Date;
+
+	If Exists (Select 1 From Trade_To_Pms.dbo.DateInfo Where Name = @DateInfoName)
+	Begin
+		Select @DateStart = DateStart
+			 , @DateEnd = DateEnd
+		  From Trade_To_Pms.dbo.DateInfo
+		 Where Name = @DateInfoName;
+	End;
+
+ If Object_ID('tempdb..#TransOrderList') Is Not Null
+	Begin
+		Drop Table #TransOrderList;
+	End;
+		
+	Select Orders.ID, Orders.PoID
+		 , IsNull(Style.Ukey, 0) as StyleUkey
+		 , Orders.FactoryID
+	  Into #TransOrderList
+	  From Production.dbo.Orders
+	  Left Join Production.dbo.Style
+		On	   Style.BrandID = Orders.BrandID
+		   And Style.ID = Orders.StyleID
+		   And Style.SeasonID = Orders.SeasonID
+	 Where Orders.FactoryID != ''
+	  and exists (select 1 from Production.dbo.Factory where id=Orders.FactoryID)
+	   And (   (	Orders.SciDelivery >= @DateStart
+				And Orders.SciDelivery <= @DateEnd
+			   )
+			Or (	Orders.BuyerDelivery >= @DateStart
+				And Orders.BuyerDelivery <= @DateEnd
+			   )
+		   )
+	 Order by PoID, ID;
+
+ ------------
+
 --PO1 PO
 --PMS多的
 --,[FIRRemark]
@@ -141,7 +181,8 @@ Delete Production.dbo.PO_Supp
 from Production.dbo.PO_Supp as a left join Trade_To_Pms.dbo.PO_Supp as b 
 on a.id = b.id and a.SEQ1=b.SEQ1
 where b.id is null
-and  a.id in (select id from #Trade_To_Pms_PO)
+--and  a.id in (select id from #Trade_To_Pms_PO)
+and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -407,7 +448,8 @@ Delete Production.dbo.PO_Supp_Detail
 from Production.dbo.PO_Supp_Detail as a left join Trade_To_Pms.dbo.PO_Supp_Detail as b 
 on a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
 where b.id is null
-and  a.id in (select id from #Trade_To_Pms_PO)
+--and  a.id in (select id from #Trade_To_Pms_PO)
+and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 and a.InputQty = 0
 
 UPDATE a
@@ -443,6 +485,7 @@ from Production.dbo.PO_Supp_Detail_OrderList as a left join Trade_To_Pms.dbo.PO_
 on a.id = b.id and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2 and a.OrderID=b.OrderID
 where b.id is null
 and  a.id in (select id from #Trade_To_Pms_PO)
+and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  

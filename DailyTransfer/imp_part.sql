@@ -10,7 +10,7 @@ BEGIN
 	---------- Parts, type='P'---------------------
 Merge Machine.dbo.Part as t
 	Using (
-	select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno not in ('EM-DBXK5 #8','BK-400-29411','SN-SS-2060210-SP')
+	select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' 
 	)as s
 	on t.id=s.Refno 
 	when matched then 
