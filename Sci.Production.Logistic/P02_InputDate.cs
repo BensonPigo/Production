@@ -1,24 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Logistic
 {
+    /// <summary>
+    /// Logistic
+    /// </summary>
     public partial class P02_InputDate : Sci.Win.Subs.Base
     {
-        public DateTime returnDate;
+        private DateTime returnDate;
+
+        /// <summary>
+        /// P02_InputDate
+        /// </summary>
+        /// <param name="captionName">captionName</param>
+        /// <param name="lableName">lableName</param>
         public P02_InputDate(string captionName, string lableName)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = captionName;
             this.labelReceiveDate.Text = lableName;
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        /// <summary>
+        /// ReturnDate
+        /// </summary>
+        public DateTime ReturnDate
+        {
+            get
+            {
+                return this.returnDate;
+            }
+
+            set
+            {
+                this.returnDate = value;
+            }
+        }
+
+        private void BtnOK_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateReceiveDate.Text))
             {
@@ -27,8 +46,8 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            returnDate = Convert.ToDateTime(this.dateReceiveDate.Text);
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.ReturnDate = Convert.ToDateTime(this.dateReceiveDate.Text);
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }
