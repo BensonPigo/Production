@@ -2229,6 +2229,7 @@
     <Build Include="dbo\Functions\getInvAdjQtyByDate.sql" />
     <Build Include="dbo\Functions\GetStyleLocation_Rate.sql" />
     <Build Include="dbo\Tables\SewingOutput_Detail_Detail_Garment.sql" />
+    <Build Include="dbo\Functions\getWaste.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
