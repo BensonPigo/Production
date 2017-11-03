@@ -1,28 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B01
+    /// </summary>
     public partial class B01 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B01
+        /// </summary>
+        /// <param name="menuitem"> menuitem</param>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            DefaultFilter = string.Format("MDivisionID = '{0}'",Sci.Env.User.Keyword);
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
         }
 
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            //按鈕Shipping Mark變色
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_TMS", "ID") ||
-                MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_WorkHour", "ID"))
+
+            // 按鈕Shipping Mark變色
+            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Factory_TMS", "ID") ||
+                MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Factory_WorkHour", "ID"))
             {
                 this.btnCapacityWorkday.ForeColor = Color.Blue;
             }
@@ -32,36 +39,44 @@ namespace Sci.Production.Basic
             }
         }
 
+        /// <summary>
+        /// ClickEditAfter
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
         }
 
+        /// <summary>
+        /// ClickSaveBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["NameEN"].ToString()))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["NameEN"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Name > can not be empty!");
                 this.txtName.Focus();
                 return false;
             }
-            
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
+
+            // MDivisionID為登入的ID
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
 
             return base.ClickSaveBefore();
         }
 
-        private void btnCapacityWorkday_Click(object sender, EventArgs e)
+        private void BtnCapacityWorkday_Click(object sender, EventArgs e)
         {
-            Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(CurrentMaintain);
+            Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
     }

@@ -1,34 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-//using Sci.Data;
-//using Sci.Win.Tools;
-using Ict;
-
-
-
+﻿using Ict.Win;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B02_MailTo
+    /// </summary>
     public partial class B02_MailTo : Sci.Win.Subs.Input4
     {
+        /// <summary>
+        /// B02_MailTo
+        /// </summary>
+        /// <param name="canedit">可編輯</param>
+        /// <param name="keyvalue1">keyvalue1</param>
+        /// <param name="keyvalue2">keyvalue2</param>
+        /// <param name="keyvalue3">keyvalue3</param>
         public B02_MailTo(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
-            DoForm = new B02_MailTo_Detail();
+            this.InitializeComponent();
+            this.DoForm = new B02_MailTo_Detail();
         }
 
+        /// <summary>
+        /// OnGridSetup
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool OnGridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("ID", header: "Code", width: Widths.AnsiChars(3))
-                .Text("Description", header: "Description", width: Widths.AnsiChars(30),iseditable: false)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditable: false)
                 .Text("Subject", header: "Subject", width: Widths.AnsiChars(30))
                 .EditText("ToAddress", header: "Mail to", width: Widths.AnsiChars(30))
                 .EditText("CcAddress", header: "C.C.", width: Widths.AnsiChars(20))
@@ -36,7 +37,5 @@ namespace Sci.Production.Basic
 
             return true;
         }
-
-       
     }
 }

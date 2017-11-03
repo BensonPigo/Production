@@ -1,46 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B02_MailTo_Detail
+    /// </summary>
     public partial class B02_MailTo_Detail : Sci.Win.Subs.Input6A
     {
+        /// <summary>
+        /// B02_MailTo_Detail
+        /// </summary>
         public B02_MailTo_Detail()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            OnAttached(CurrentData);
+            this.OnAttached(this.CurrentData);
         }
 
+        /// <summary>
+        /// OnAttached
+        /// </summary>
+        /// <param name="data">data</param>
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
 
-            if (EditMode)
+            if (this.EditMode)
             {
-                txtCode.ReadOnly = !MyUtility.Check.Empty(data["id"]);
+                this.txtCode.ReadOnly = !MyUtility.Check.Empty(data["id"]);
             }
         }
 
+        /// <summary>
+        /// DoSave
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool DoSave()
         {
-            if (MyUtility.Check.Empty(txtCode.Text))
+            if (MyUtility.Check.Empty(this.txtCode.Text))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editMailTo.Text))
+            if (MyUtility.Check.Empty(this.editMailTo.Text))
             {
                 MyUtility.Msg.WarningBox("< Mail to > can not be empty!");
                 this.editMailTo.Focus();

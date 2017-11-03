@@ -128,8 +128,8 @@
             this.txtProdTypeTop.Name = "txtProdTypeTop";
             this.txtProdTypeTop.Size = new System.Drawing.Size(140, 23);
             this.txtProdTypeTop.TabIndex = 100;
-            this.txtProdTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProdTypeTopButtomInnerOuter_PopUp);
-            this.txtProdTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.txtProdTypeTopButtomInnerOuter_Validating);
+            this.txtProdTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProdTypeTopButtomInnerOuter_PopUp);
+            this.txtProdTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProdTypeTopButtomInnerOuter_Validating);
             // 
             // txtFabricTypeTop
             // 
@@ -140,8 +140,8 @@
             this.txtFabricTypeTop.Name = "txtFabricTypeTop";
             this.txtFabricTypeTop.Size = new System.Drawing.Size(140, 23);
             this.txtFabricTypeTop.TabIndex = 101;
-            this.txtFabricTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFabricTypeTopButtomInnerOuter_PopUp);
-            this.txtFabricTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricTypeTopButtomInnerOuter_Validating);
+            this.txtFabricTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFabricTypeTopButtomInnerOuter_PopUp);
+            this.txtFabricTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricTypeTopButtomInnerOuter_Validating);
             // 
             // txtProdTypeBottom
             // 
@@ -152,8 +152,8 @@
             this.txtProdTypeBottom.Name = "txtProdTypeBottom";
             this.txtProdTypeBottom.Size = new System.Drawing.Size(140, 23);
             this.txtProdTypeBottom.TabIndex = 102;
-            this.txtProdTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProdTypeTopButtomInnerOuter_PopUp);
-            this.txtProdTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.txtProdTypeTopButtomInnerOuter_Validating);
+            this.txtProdTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProdTypeTopButtomInnerOuter_PopUp);
+            this.txtProdTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProdTypeTopButtomInnerOuter_Validating);
             // 
             // txtFabricTypeBottom
             // 
@@ -164,8 +164,8 @@
             this.txtFabricTypeBottom.Name = "txtFabricTypeBottom";
             this.txtFabricTypeBottom.Size = new System.Drawing.Size(140, 23);
             this.txtFabricTypeBottom.TabIndex = 103;
-            this.txtFabricTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFabricTypeTopButtomInnerOuter_PopUp);
-            this.txtFabricTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricTypeTopButtomInnerOuter_Validating);
+            this.txtFabricTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFabricTypeTopButtomInnerOuter_PopUp);
+            this.txtFabricTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricTypeTopButtomInnerOuter_Validating);
             // 
             // txtProdTypeInner
             // 
@@ -176,8 +176,8 @@
             this.txtProdTypeInner.Name = "txtProdTypeInner";
             this.txtProdTypeInner.Size = new System.Drawing.Size(140, 23);
             this.txtProdTypeInner.TabIndex = 104;
-            this.txtProdTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProdTypeTopButtomInnerOuter_PopUp);
-            this.txtProdTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.txtProdTypeTopButtomInnerOuter_Validating);
+            this.txtProdTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProdTypeTopButtomInnerOuter_PopUp);
+            this.txtProdTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProdTypeTopButtomInnerOuter_Validating);
             // 
             // txtFabricTypeInner
             // 
@@ -188,8 +188,8 @@
             this.txtFabricTypeInner.Name = "txtFabricTypeInner";
             this.txtFabricTypeInner.Size = new System.Drawing.Size(140, 23);
             this.txtFabricTypeInner.TabIndex = 105;
-            this.txtFabricTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFabricTypeTopButtomInnerOuter_PopUp);
-            this.txtFabricTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricTypeTopButtomInnerOuter_Validating);
+            this.txtFabricTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFabricTypeTopButtomInnerOuter_PopUp);
+            this.txtFabricTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricTypeTopButtomInnerOuter_Validating);
             // 
             // txtProdTypeOuter
             // 
@@ -200,8 +200,8 @@
             this.txtProdTypeOuter.Name = "txtProdTypeOuter";
             this.txtProdTypeOuter.Size = new System.Drawing.Size(140, 23);
             this.txtProdTypeOuter.TabIndex = 106;
-            this.txtProdTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProdTypeTopButtomInnerOuter_PopUp);
-            this.txtProdTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.txtProdTypeTopButtomInnerOuter_Validating);
+            this.txtProdTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProdTypeTopButtomInnerOuter_PopUp);
+            this.txtProdTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProdTypeTopButtomInnerOuter_Validating);
             // 
             // txtFabricTypeOuter
             // 
@@ -212,8 +212,8 @@
             this.txtFabricTypeOuter.Name = "txtFabricTypeOuter";
             this.txtFabricTypeOuter.Size = new System.Drawing.Size(140, 23);
             this.txtFabricTypeOuter.TabIndex = 107;
-            this.txtFabricTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFabricTypeTopButtomInnerOuter_PopUp);
-            this.txtFabricTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricTypeTopButtomInnerOuter_Validating);
+            this.txtFabricTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFabricTypeTopButtomInnerOuter_PopUp);
+            this.txtFabricTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricTypeTopButtomInnerOuter_Validating);
             // 
             // B08_ProductionFabricType
             // 

@@ -8,12 +8,19 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B10
+    /// </summary>
     public partial class B10 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

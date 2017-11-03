@@ -173,7 +173,7 @@
             this.btnProdFabricType.TabIndex = 9;
             this.btnProdFabricType.Text = "Prod./Fabric Type";
             this.btnProdFabricType.UseVisualStyleBackColor = true;
-            this.btnProdFabricType.Click += new System.EventHandler(this.btnProdFabricType_Click);
+            this.btnProdFabricType.Click += new System.EventHandler(this.BtnProdFabricType_Click);
             // 
             // B08
             // 

@@ -8,15 +8,23 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Basic
 {
+    /// <summary>
+    /// B11_ShippingMark
+    /// </summary>
     public partial class B11_ShippingMark : Sci.Win.Subs.Input1A
     {
+        /// <summary>
+        /// B11_ShippingMark
+        /// </summary>
+        /// <param name="canedit">canedit</param>
+        /// <param name="data">data</param>
         public B11_ShippingMark(bool canedit, DataRow data)
             : base(canedit, data)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = "Shipping Mark-(" + data["id"].ToString().Trim() + ")";
-            edit.Visible = false;
-            save.Visible = false;
+            this.edit.Visible = false;
+            this.save.Visible = false;
         }
     }
 }
