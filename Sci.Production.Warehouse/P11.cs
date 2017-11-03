@@ -22,7 +22,6 @@ namespace Sci.Production.Warehouse
     public partial class P11 : Sci.Win.Tems.Input8
     {
         StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;
-       // StringBuilder sbIssueBreakDown;
         DataTable dtSizeCode = null, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";
@@ -37,6 +36,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Anchor = AnchorStyles.Right;
 
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultWhere = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             //Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             WorkAlias = "Issue";                        // PK: ID
@@ -1707,6 +1707,34 @@ where   orders.id='{0}'
             detailgrid.Focus();
             detailgrid.CurrentCell = detailgrid[10, 0];
             detailgrid.BeginEdit(true);
+        }
+
+        protected override void OnFormLoaded()
+        {
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
+            base.OnFormLoaded();
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("(SELECT ftygroup FROM orders WHERE ORDERID = orders.id)  = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         private DualResult Detail_Reload()
