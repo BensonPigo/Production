@@ -3098,7 +3098,31 @@ when not matched by target then
 when not matched by source then 
 	delete;	
 
+--------ThreadAllowanceScale---------------
 
+Merge Production.dbo.ThreadAllowanceScale as t
+Using Trade_To_Pms.dbo.ThreadAllowanceScale as s
+on t.ID = s.ID
+when matched then
+      update set
+      t.LowerBound = s.LowerBound,
+      t.UpperBound = s.UpperBound,
+      t.Allowance = s.Allowance,
+      t.Remark = s.Remark,
+      t.AddName = s.AddName,
+      t.AddDate= s.AddDate,
+      t.EditName = s.EditName,
+      t.EditDate = s.EditDate
+when not matched by target then
+      insert (
+            LowerBound  , UpperBound  , Allowance  , Remark    , AddName
+            , AddDate   , EditName    , EditDate
+      ) values (
+            s.LowerBound, s.UpperBound, s.Allowance, s.Remark  , s.AddName
+            , s.AddDate , s.EditName  , s.EditDate
+      )
+when not matched by source then 
+      delete;     
 
 --------GMTBooking---------------
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
