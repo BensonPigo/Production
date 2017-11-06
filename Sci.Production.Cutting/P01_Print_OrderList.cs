@@ -253,7 +253,7 @@ namespace Sci.Production.Cutting
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
 
-                sxr.DicDatas.Add(sxr.VPrefix + "QTY", dr["QTY"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
 
                 sxr.DicDatas.Add(sxr.VPrefix + "FABTYPE", dr["FABTYPE"]);
