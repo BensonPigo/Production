@@ -108,7 +108,7 @@
             this.btnLocateForSPFind.TabIndex = 3;
             this.btnLocateForSPFind.Text = "Find";
             this.btnLocateForSPFind.UseVisualStyleBackColor = true;
-            this.btnLocateForSPFind.Click += new System.EventHandler(this.btnLocateForSPFind_Click);
+            this.btnLocateForSPFind.Click += new System.EventHandler(this.BtnLocateForSPFind_Click);
             // 
             // btnQuery
             // 
@@ -118,7 +118,7 @@
             this.btnQuery.TabIndex = 11;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtLocateForSP
             // 
@@ -250,7 +250,7 @@
             this.pictureBox4.TabIndex = 35;
             this.pictureBox4.TabStop = false;
             this.pictureBox4.WaitOnLoad = true;
-            this.pictureBox4.Click += new System.EventHandler(this.pictureBox4_Click);
+            this.pictureBox4.Click += new System.EventHandler(this.PictureBox4_Click);
             // 
             // pictureBox3
             // 
@@ -262,7 +262,7 @@
             this.pictureBox3.TabIndex = 34;
             this.pictureBox3.TabStop = false;
             this.pictureBox3.WaitOnLoad = true;
-            this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
+            this.pictureBox3.Click += new System.EventHandler(this.PictureBox3_Click);
             // 
             // dateArtworkOffLine
             // 
@@ -287,7 +287,7 @@
             this.btnCheckData.TabIndex = 5;
             this.btnCheckData.Text = "Check Data";
             this.btnCheckData.UseVisualStyleBackColor = true;
-            this.btnCheckData.Click += new System.EventHandler(this.btnCheckData_Click);
+            this.btnCheckData.Click += new System.EventHandler(this.BtnCheckData_Click);
             // 
             // comboInHouseOSP
             // 
@@ -319,7 +319,7 @@
             this.btnClose.TabIndex = 7;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -330,7 +330,7 @@
             this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // pictureBox2
             // 
@@ -343,7 +343,7 @@
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.WaitOnLoad = true;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.pictureBox2.Click += new System.EventHandler(this.PictureBox2_Click);
             // 
             // pictureBox1
             // 
@@ -356,7 +356,7 @@
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // labelCheckedQty
             // 
@@ -698,7 +698,7 @@
             this.btnLocateForStyleFind.TabIndex = 5;
             this.btnLocateForStyleFind.Text = "Find";
             this.btnLocateForStyleFind.UseVisualStyleBackColor = true;
-            this.btnLocateForStyleFind.Click += new System.EventHandler(this.btnLocateForStyleFind_Click);
+            this.btnLocateForStyleFind.Click += new System.EventHandler(this.BtnLocateForStyleFind_Click);
             // 
             // txtLocateForStyle
             // 
@@ -735,7 +735,7 @@
             this.checkSuppID.TabIndex = 0;
             this.checkSuppID.Text = "< Supp ID >";
             this.checkSuppID.UseVisualStyleBackColor = true;
-            this.checkSuppID.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
+            this.checkSuppID.CheckedChanged += new System.EventHandler(this.CheckSuppID_CheckedChanged);
             // 
             // checkInLine
             // 
@@ -747,7 +747,7 @@
             this.checkInLine.TabIndex = 1;
             this.checkInLine.Text = "< In Line >";
             this.checkInLine.UseVisualStyleBackColor = true;
-            this.checkInLine.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
+            this.checkInLine.CheckedChanged += new System.EventHandler(this.CheckSuppID_CheckedChanged);
             // 
             // btnUpdateInline
             // 
@@ -757,7 +757,7 @@
             this.btnUpdateInline.TabIndex = 6;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;
-            this.btnUpdateInline.Click += new System.EventHandler(this.btnUpdateInline_Click);
+            this.btnUpdateInline.Click += new System.EventHandler(this.BtnUpdateInline_Click);
             // 
             // gridFactoryID
             // 
