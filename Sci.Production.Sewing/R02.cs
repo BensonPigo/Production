@@ -893,8 +893,7 @@ where LastShift <> 'O'";
             {
                 intWorkDay = dtWorkDay.Rows.Count;
             }
-            decimal tempA = Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2);
-            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(tempA / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]));
+            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2) / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]),2);
 
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
