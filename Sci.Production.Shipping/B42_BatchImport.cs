@@ -134,22 +134,11 @@ namespace Sci.Production.Shipping
                 {
                     idu.Append(string.Format(@"
 insert into VNConsumption_Detail(ID,NLCode,HSCode,UnitID,Qty,UserCreate,SystemQty,Waste)
-select '{2}','{1}',a.HSCode,a.UnitID,'{3}',1,'{3}',isnull(w2.Waste,0)
+select '{2}','{1}',a.HSCode,a.UnitID,'{3}',1,'{3}',
+Waste = (select Waste = (select MAX( [dbo].[getWaste]( v.StyleID,v.BrandID,v.SeasonID,v.VNContractID, '{1}')))
+		from VNConsumption v  WITH (NOLOCK)
+		where v.ID	   = '{2}')
 from VNContract_Detail a WITH (NOLOCK)
-outer apply(
-	select  top 1 Waste 
-	from(
-		select Waste = (select distinct [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, a.NLCode))
-		from VNConsumption v WITH (NOLOCK)
-		inner join VNConsumption_Detail vd WITH (NOLOCK) on v.id = vd.ID
-        outer apply(select StyleID,BrandID,SeasonID,VNContractID from VNConsumption where ID = '{2}' )xa
-		where v.StyleID	   = xa.StyleID
-	    and v.BrandID	   =xa.BrandID
-	    and v.SeasonID	   =xa.SeasonID
-	    and v.VNContractID =xa.VNContractID
-		and vd.NLCode	   = a.NLCode
-	)w
-)w2
 where a.ID = '{0}' and a.NLCode = '{1}';
 "
                         , VNContractID, NLCode, dr["id"].ToString(), dr["Qty"].ToString()));
@@ -160,19 +149,6 @@ where a.ID = '{0}' and a.NLCode = '{1}';
                     idu.Append(string.Format(@"update VNConsumption_Detail 
 set qty = '{0}'
 ,UserCreate = 1
-,Waste = (
-	    select distinct [dbo].[getWaste]( xa.StyleID,xa.BrandID,xa.SeasonID,xa.VNContractID, '{2}')
-	    from VNConsumption v WITH (NOLOCK)
-	    inner join VNConsumption_Detail vd WITH (NOLOCK) on v.id = vd.ID
-        outer apply(select StyleID,BrandID,SeasonID,VNContractID from VNConsumption where ID = '{1}' )xa
-	    where 
-            v.CustomSP = '{3}'
-        and  v.StyleID	   = xa.StyleID
-	    and v.BrandID	   =xa.BrandID
-	    and v.SeasonID	   =xa.SeasonID
-	    and v.VNContractID =xa.VNContractID
-	    and vd.NLCode	   = '{2}'
-)
 where id = '{1}' and NLCode = '{2}';
 "
 , dr["Qty"].ToString(), dr["id"].ToString(), dr["NLCode"].ToString(), CustomSP));
