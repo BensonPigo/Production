@@ -911,7 +911,6 @@ namespace Sci.Production.Quality
                 {
                     txtArticle.Text = "";
                     txtArticle.Select();
-                    e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Article: {0}> doesn't exist in orders", txtArticle.Text));
                     return;
                 }
