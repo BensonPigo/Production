@@ -3115,10 +3115,10 @@ when matched then
       t.EditDate = s.EditDate
 when not matched by target then
       insert (
-            LowerBound  , UpperBound  , Allowance  , Remark    , AddName
+            ID , LowerBound  , UpperBound  , Allowance  , Remark    , AddName
             , AddDate   , EditName    , EditDate
       ) values (
-            s.LowerBound, s.UpperBound, s.Allowance, s.Remark  , s.AddName
+           s.ID, s.LowerBound, s.UpperBound, s.Allowance, s.Remark  , s.AddName
             , s.AddDate , s.EditName  , s.EditDate
       )
 when not matched by source then 
