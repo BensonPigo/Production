@@ -56,7 +56,7 @@ namespace Sci.Production.Planning
         {
             base.OnFormLoaded();
 
-            this.Text = PrivUtils.getVersion(this.Text);
+            this.Text = PrivUtils.GetVersion(this.Text);
 
             if (IsFormClosed) return;
 

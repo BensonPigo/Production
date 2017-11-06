@@ -253,7 +253,7 @@ order by tmpData2.OrderID";
             string temfile = "", title = "";
             DualResult result = Result.True;
 
-            string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Planning_R12.Matrix.xltx";
 
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
