@@ -63,7 +63,14 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select pd.*,o.StyleID,o.BrandID,o.Dest,
-(pd.OrderQty - isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)) as Variance,
+Variance = (
+	pd.OrderQty 
+	- isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)
+	- isnull ((select sum(DiffQty) 
+	from InvAdjust_Qty iq WITH (NOLOCK) 
+	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+	where i.orderid = pd.OrderID), 0)
+),
 case pd.Status 
 when 'P' then 'Partial'
 when 'C' then 'Complete'
