@@ -169,7 +169,7 @@
             this.checkOnlyAprrovedData.TabIndex = 8;
             this.checkOnlyAprrovedData.Text = "Only Aprroved  Data";
             this.checkOnlyAprrovedData.UseVisualStyleBackColor = true;
-            this.checkOnlyAprrovedData.CheckedChanged += new System.EventHandler(this.checkOnlyAprrovedData_CheckedChanged);
+            this.checkOnlyAprrovedData.CheckedChanged += new System.EventHandler(this.CheckOnlyAprrovedData_CheckedChanged);
             // 
             // labelApproveDate
             // 
@@ -258,7 +258,7 @@
             this.btnQuery.TabIndex = 9;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtSPNoStart
             // 
@@ -288,7 +288,7 @@
             this.btnToExcel.TabIndex = 2;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnClose
             // 
@@ -300,7 +300,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnApprove
             // 
@@ -312,7 +312,7 @@
             this.btnApprove.TabIndex = 0;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
+            this.btnApprove.Click += new System.EventHandler(this.BtnApprove_Click);
             // 
             // groupBox2
             // 
@@ -337,7 +337,7 @@
             this.btnUnApprove.TabIndex = 1;
             this.btnUnApprove.Text = "UnApprove";
             this.btnUnApprove.UseVisualStyleBackColor = true;
-            this.btnUnApprove.Click += new System.EventHandler(this.btnUnApprove_Click);
+            this.btnUnApprove.Click += new System.EventHandler(this.BtnUnApprove_Click);
             // 
             // P01_BatchApprove
             // 
