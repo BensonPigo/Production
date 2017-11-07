@@ -11,18 +11,30 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P03_ExcelImport
+    /// </summary>
     public partial class P03_ExcelImport : Sci.Win.Subs.Base
     {
-        DataRow P03_CurrentMaintain;
-        DataTable grid2Data = new DataTable();
-        DataTable detailData;
-        public P03_ExcelImport(DataRow CurrentMaintain, DataTable DetailData)
+        private DataRow P03_CurrentMaintain;
+        private DataTable grid2Data = new DataTable();
+        private DataTable detailData;
+
+        /// <summary>
+        /// P03_ExcelImport
+        /// </summary>
+        /// <param name="currentMaintain">CurrentMaintain</param>
+        /// <param name="detailData">DetailData</param>
+        public P03_ExcelImport(DataRow currentMaintain, DataTable detailData)
         {
-            InitializeComponent();
-            this.detailData = DetailData;
-            this.P03_CurrentMaintain = CurrentMaintain;
+            this.InitializeComponent();
+            this.detailData = detailData;
+            this.P03_CurrentMaintain = currentMaintain;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -86,36 +98,38 @@ namespace Sci.Production.Packing
                 .Numeric("NWPerPcs", header: "N.W./Pcs", integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0);
             #endregion 
 
-            for (int i = 0; i < gridDetail.ColumnCount; i++)
+            for (int i = 0; i < this.gridDetail.ColumnCount; i++)
             {
-                gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 
-        private void btnAddExcel_Click(object sender, EventArgs e)
+        private void BtnAddExcel_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
+            this.openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                DataRow dr = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-                dr["Filename"] = openFileDialog1.SafeFileName;
-                dr["Status"] = "";
-                dr["Errlog"] = "";
-                dr["FullFileName"] = openFileDialog1.FileName;
-                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(dr);
-                listControlBindingSource1.MoveLast();
+                DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
+                dr["Filename"] = this.openFileDialog1.SafeFileName;
+                dr["Status"] = string.Empty;
+                dr["Errlog"] = string.Empty;
+                dr["FullFileName"] = this.openFileDialog1.FileName;
+                ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
+                this.listControlBindingSource1.MoveLast();
             }
         }
 
-        private void btnRemoveExcel_Click(object sender, EventArgs e)
+        private void BtnRemoveExcel_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.Position != -1)
+            if (this.listControlBindingSource1.Position != -1)
             {
-                listControlBindingSource1.RemoveCurrent();
+                this.listControlBindingSource1.RemoveCurrent();
             }
         }
 
-        private void btnCheckImport_Click(object sender, EventArgs e)
+        private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region 判斷第一個Grid是否有資料
             if (listControlBindingSource1.Count <= 0)
@@ -272,7 +286,7 @@ namespace Sci.Production.Packing
                                 newRow["OrderShipmodeSeq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
 
                                 #region check SP+Seq
-                                if (!checkSP(newRow))
+                                if (!CheckSP(newRow))
                                 {
                                     errStr.Add(string.Format("< Row: {2} >, < SP No. >:{0}, < Seq >:{1} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], intRowsRead));
                                     allPass = false;
@@ -295,7 +309,7 @@ namespace Sci.Production.Packing
                                 newRow["RefNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
 
                                 #region check RefNo
-                                if (!checkRefNo(newRow))
+                                if (!CheckRefNo(newRow))
                                 {
                                     errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < Ref No. >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["RefNo"], intRowsRead));
                                     allPass = false;
@@ -308,7 +322,7 @@ namespace Sci.Production.Packing
                                 newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
 
                                 #region check Article
-                                if (!checkArticle(newRow))
+                                if (!CheckArticle(newRow))
                                 {
                                     errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < ColorWay >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["Article"], intRowsRead));
                                     allPass = false;
@@ -322,7 +336,7 @@ namespace Sci.Production.Packing
                                 newRow["SizeCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
 
                                 #region check SizeCode
-                                if (!checkSize(newRow))
+                                if (!CheckSize(newRow))
                                 {
                                     errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < Size >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["SizeCode"], intRowsRead));
                                     allPass = false;
@@ -365,10 +379,10 @@ namespace Sci.Production.Packing
             #endregion 
         }
 
-        private bool checkSP(DataRow dr)
+        private bool CheckSP(DataRow dr)
         {
             bool pass = true;
-            if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", dr["OrderID"], P03_CurrentMaintain["BrandID"].ToString(), P03_CurrentMaintain["Dest"].ToString(), P03_CurrentMaintain["CustCDID"].ToString())))
+            if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", dr["OrderID"], this.P03_CurrentMaintain["BrandID"].ToString(), this.P03_CurrentMaintain["Dest"].ToString(), this.P03_CurrentMaintain["CustCDID"].ToString())))
             {
                 pass = false;
             }
@@ -380,46 +394,49 @@ namespace Sci.Production.Packing
             return pass;
         }
 
-        private bool checkRefNo(DataRow dr)
+        private bool CheckRefNo(DataRow dr)
         {
             bool pass = true;
             if (!MyUtility.Check.Seek(string.Format("select RefNo from LocalItem WITH (NOLOCK) where RefNo = '{0}'", dr["RefNo"])))
             {
                 pass = false;
             }
+
             return pass;
         }
 
-        private bool checkArticle(DataRow dr)
+        private bool CheckArticle(DataRow dr)
         {
             bool pass = true;
             if (!MyUtility.Check.Seek(string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"], dr["OrderShipmodeSeq"], dr["Article"])))
             {
                 pass = false;
             }
+
             return pass;
         }
 
-        private bool checkSize(DataRow dr)
+        private bool CheckSize(DataRow dr)
         {
             bool pass = true;
             if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"], dr["OrderShipmodeSeq"], dr["Article"], dr["SizeCode"])))
             {
                 pass = false;
             }
+
             return pass;
         }
 
-        private void btnWrite_Click(object sender, EventArgs e)
+        private void BtnWrite_Click(object sender, EventArgs e)
         {
-            for(int i = 0; i < detailData.Rows.Count; i++)
+            for (int i = 0; i < this.detailData.Rows.Count; i++)
             {
-                detailData.Rows[i].Delete();
+                this.detailData.Rows[i].Delete();
             }
 
-            foreach (DataRow dr in ((DataTable)listControlBindingSource2.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource2.DataSource).Rows)
             {
-                DataRow insertRow = detailData.NewRow();
+                DataRow insertRow = this.detailData.NewRow();
                 insertRow["OrderID"] = dr["OrderID"];
                 insertRow["OrderShipmodeSeq"] = dr["OrderShipmodeSeq"];
                 insertRow["StyleID"] = dr["StyleID"];
@@ -437,10 +454,11 @@ namespace Sci.Production.Packing
                 insertRow["GW"] = dr["GW"];
                 insertRow["NNW"] = dr["NNW"];
                 insertRow["NWPerPcs"] = dr["NWPerPcs"];
-                detailData.Rows.Add(insertRow);
+                this.detailData.Rows.Add(insertRow);
             }
+
             MyUtility.Msg.InfoBox("Import complete.	");
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

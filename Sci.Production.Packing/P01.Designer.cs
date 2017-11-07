@@ -428,7 +428,7 @@
             this.btnbdown.TabIndex = 26;
             this.btnbdown.Text = "b\'down";
             this.btnbdown.UseVisualStyleBackColor = true;
-            this.btnbdown.Click += new System.EventHandler(this.btnbdown_Click);
+            this.btnbdown.Click += new System.EventHandler(this.Btnbdown_Click);
             // 
             // checkLocalOrder
             // 
@@ -638,7 +638,7 @@
             this.btnQuantityBreakdown.TabIndex = 45;
             this.btnQuantityBreakdown.Text = "Quantity breakdown";
             this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
-            this.btnQuantityBreakdown.Click += new System.EventHandler(this.btnQuantityBreakdown_Click);
+            this.btnQuantityBreakdown.Click += new System.EventHandler(this.BtnQuantityBreakdown_Click);
             // 
             // btnPackingMethod
             // 
@@ -648,7 +648,7 @@
             this.btnPackingMethod.TabIndex = 46;
             this.btnPackingMethod.Text = "Packing method";
             this.btnPackingMethod.UseVisualStyleBackColor = true;
-            this.btnPackingMethod.Click += new System.EventHandler(this.btnPackingMethod_Click);
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // btnCartonStatus
             // 
@@ -658,7 +658,7 @@
             this.btnCartonStatus.TabIndex = 47;
             this.btnCartonStatus.Text = "Carton Status";
             this.btnCartonStatus.UseVisualStyleBackColor = true;
-            this.btnCartonStatus.Click += new System.EventHandler(this.btnCartonStatus_Click);
+            this.btnCartonStatus.Click += new System.EventHandler(this.BtnCartonStatus_Click);
             // 
             // btnMaterialImport
             // 
@@ -668,7 +668,7 @@
             this.btnMaterialImport.TabIndex = 48;
             this.btnMaterialImport.Text = "Material import";
             this.btnMaterialImport.UseVisualStyleBackColor = true;
-            this.btnMaterialImport.Click += new System.EventHandler(this.btnMaterialImport_Click);
+            this.btnMaterialImport.Click += new System.EventHandler(this.BtnMaterialImport_Click);
             // 
             // btnCartonBooking
             // 
@@ -678,7 +678,7 @@
             this.btnCartonBooking.TabIndex = 49;
             this.btnCartonBooking.Text = "Carton Booking";
             this.btnCartonBooking.UseVisualStyleBackColor = true;
-            this.btnCartonBooking.Click += new System.EventHandler(this.btnCartonBooking_Click);
+            this.btnCartonBooking.Click += new System.EventHandler(this.BtnCartonBooking_Click);
             // 
             // btnOverrunGarmentRecord
             // 
@@ -688,7 +688,7 @@
             this.btnOverrunGarmentRecord.TabIndex = 50;
             this.btnOverrunGarmentRecord.Text = "Overrun garment record";
             this.btnOverrunGarmentRecord.UseVisualStyleBackColor = true;
-            this.btnOverrunGarmentRecord.Click += new System.EventHandler(this.btnOverrunGarmentRecord_Click);
+            this.btnOverrunGarmentRecord.Click += new System.EventHandler(this.BtnOverrunGarmentRecord_Click);
             // 
             // txtdropdownlistPackingMethod
             // 
