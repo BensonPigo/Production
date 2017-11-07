@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory,O,Scrap");
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, ",ALL,A,Bulk,B,Inventory,O,Scrap");
             comboStockType.SelectedIndex = 0;
             txtReason.SelectedIndex = 0;
         }
@@ -98,10 +98,11 @@ Where a.Status = 'Confirmed' ");
             {
                 sqlCmd.Append(@" and a.type in ('O','R') ");
             }
-            else
+            if(!MyUtility.Check.Empty(stocktype) && stocktype !="O")
             {
                 sqlCmd.Append(string.Format(@" and a.type='{0}' ", stocktype));
             }
+           
             if (!MyUtility.Check.Empty(issueDate1))
                 sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
             if(!MyUtility.Check.Empty(issueDate2))
