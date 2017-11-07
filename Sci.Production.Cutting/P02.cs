@@ -1528,8 +1528,8 @@ where w.ID = '{0}'", masterID);
                 txtFabricPanelCode.ReadOnly = false;
                 sizeratioMenuStrip.Enabled = true;
                 distributeMenuStrip.Enabled = true;
-                txtBoxMarkerNo.IsSupportEditMode = true;
-                txtBoxMarkerNo.ReadOnly = false;
+                //txtBoxMarkerNo.IsSupportEditMode = true;
+                //txtBoxMarkerNo.ReadOnly = false;
             }
             else
             {
@@ -1541,8 +1541,8 @@ where w.ID = '{0}'", masterID);
                 txtFabricPanelCode.ReadOnly = true;
                 sizeratioMenuStrip.Enabled = false;
                 distributeMenuStrip.Enabled = false;
-                txtBoxMarkerNo.IsSupportEditMode = false;
-                txtBoxMarkerNo.ReadOnly = true;
+                //txtBoxMarkerNo.IsSupportEditMode = false;
+                //txtBoxMarkerNo.ReadOnly = true;
             }
             #endregion
             totalDisQty();

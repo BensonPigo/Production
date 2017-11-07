@@ -1101,9 +1101,11 @@
             // 
             this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBoxMarkerNo.IsSupportEditMode = false;
             this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
             this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
             this.txtBoxMarkerNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtBoxMarkerNo.ReadOnly = true;
             this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.txtBoxMarkerNo.TabIndex = 63;
             // 
