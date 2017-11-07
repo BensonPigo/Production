@@ -1,32 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-//from here by andy
 using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
 using Sci.Win;
-using Sci.Production.Class.Commons;
-using System.IO;
 using Sci.Utility.Excel;
-//此程式前兩個用統計和半月統計是複製Trade Planning R02
+
+// 此程式前兩個用統計和半月統計是複製Trade Planning R02
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R10
+    /// </summary>
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        DateTime currentTime = System.DateTime.Now;
+        private DateTime currentTime = System.DateTime.Now;
 
         private int ReportType = 1;
-        private string BrandID = "";
-        private string ArtWorkType = "";
+        private string BrandID = string.Empty;
+        private string ArtWorkType = string.Empty;
         private bool isSCIDelivery = true;
         private int intYear;
         private int intMonth;
@@ -36,63 +31,86 @@ namespace Sci.Production.Planning
         private string M;
         private string Fty;
 
-        string title = "";
-        string cmd, cmd2, cmd3, dStart, dEnd, LastDay, dLoad, STARTday, endDay, o, s, b;
-        DataTable dt;
-        Dictionary<string, string> dic = new Dictionary<string, string>();
-        DualResult dtresult;
+        string title = string.Empty;
+        private string cmd;
+        private string cmd2;
+        private string cmd3;
+        private string dStart;
+        private string dEnd;
+        private string LastDay;
+        private string dLoad;
+        private string STARTday;
+        private string endDay;
+        private string o;
+        private string s;
+        private string b;
+        private DataTable dt;
+        private Dictionary<string, string> dic = new Dictionary<string, string>();
+        private DualResult dtresult;
 
-        System.Data.DataTable[] dt2;
-        System.Data.DataTable dt3fty;
-        System.Data.DataTable dt2Factory = null;
-        System.Data.DataTable dt2All = null;
+        private System.Data.DataTable[] dt2;
+        private System.Data.DataTable dt3fty;
+        private System.Data.DataTable dt2Factory = null;
+        private System.Data.DataTable dt2All = null;
+
+        /// <summary>
+        /// R10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            print.Visible = false;
-            txtM.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.print.Visible = false;
+            this.txtM.Text = Sci.Env.User.Keyword;
         }
 
-        protected override bool ValidateInput()  //欄位檢核
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
+        protected override bool ValidateInput()
         {
-            if (numYear.Text == "")
+            if (this.numYear.Text == string.Empty)
             {
-                ShowErr("Year can't be  blank");
+                this.ShowErr("Year can't be  blank");
                 return false;
             }
-            if (radioSemimonthlyReport.Checked)
+
+            if (this.radioSemimonthlyReport.Checked)
             {
-                if (numMonth.Text == "")
+                if (this.numMonth.Text == string.Empty)
                 {
-                    ShowErr("Month can't be  blank");
+                    this.ShowErr("Month can't be  blank");
                     return false;
                 }
             }
 
-            if (!checkOrder.Checked && !checkForecast.Checked && !checkFty.Checked)
+            if (!this.checkOrder.Checked && !this.checkForecast.Checked && !this.checkFty.Checked)
             {
-                ShowErr("Order, Forecast , Fty Local Order must select one at least ");
+                this.ShowErr("Order, Forecast , Fty Local Order must select one at least ");
                 return false;
             }
 
-            ReportType = radioMonthlyReport.Checked ? 1 : 2;
-            BrandID = txtBrand.Text;
-            ArtWorkType = comboReport.SelectedValue.ToString();
-            isSCIDelivery = (comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
+            this.ReportType = this.radioMonthlyReport.Checked ? 1 : 2;
+            this.BrandID = this.txtBrand.Text;
+            this.ArtWorkType = this.comboReport.SelectedValue.ToString();
+            this.isSCIDelivery = (this.comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
+            this.M = this.txtM.Text;
+            this.Fty = this.txtFactory.Text;
 
-            M = txtM.Text;
-            Fty = txtFactory.Text;
-
-            intYear = Convert.ToInt32(numYear.Value);
-            intMonth = Convert.ToInt32(numMonth.Value);
-            SourceStr = (checkOrder.Checked ? "Order," : "")
-                + (checkForecast.Checked ? "Forecast," : "")
-                + (checkFty.Checked ? "Fty Local Order," : "");            
+            this.intYear = Convert.ToInt32(this.numYear.Value);
+            this.intMonth = Convert.ToInt32(this.numMonth.Value);
+            this.SourceStr = (this.checkOrder.Checked ? "Order," : string.Empty)
+                + (this.checkForecast.Checked ? "Forecast," : string.Empty)
+                + (this.checkFty.Checked ? "Fty Local Order," : string.Empty);
             return true;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
