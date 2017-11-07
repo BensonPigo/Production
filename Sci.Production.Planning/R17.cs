@@ -1,60 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using System.Reflection;
-using Microsoft.Office.Interop.Excel;
-
 using Sci.Data;
 using Ict;
-using Ict.Win;
 using Sci.Win;
-using Sci.Production.Report;
 using System.Runtime.InteropServices;
-
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R17
+    /// </summary>
     public partial class R17 : Sci.Win.Tems.PrintForm
     {
-        System.Data.DataTable gdtOrderDetail, gdtPullOut, gdtFailDetail, gdtSP, gdtSDP;
+        private DataTable gdtOrderDetail;
+        private DataTable gdtPullOut;
+        private DataTable gdtFailDetail;
+        private DataTable gdtSP;
+        private DataTable gdtSDP;
 
+        /// <summary>
+        /// R17
+        /// </summary>
         public R17()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// R17
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            print.Visible = false;
-            txtFactory.Text = Sci.Env.User.Factory;
-            dateFactoryKPIDate.Select();
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.print.Visible = false;
+            this.txtFactory.Text = Sci.Env.User.Factory;
+            this.dateFactoryKPIDate.Select();
         }
 
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             return true;
         }
 
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
             return base.ValidateInput();
         }
 
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = new DualResult(true);
             try
             {
                 #region Order Detail
-               string strSQL = @" 
+                string strSQL = @" 
 SELECT   A = A2.CountryID
        , B = A2.KpiCode
        , C = A1.FactoryID 
@@ -152,34 +171,42 @@ outer apply (
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
 WHERE 1 = 1 ";
-                if (dateFactoryKPIDate.Value1 != null)
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                if (dateFactoryKPIDate.Value2 != null)
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                //補上 Orders.Cateory and Factory.Type 判斷
-                if (radioBulk.Checked)
+                if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                    {
-                        strSQL += (" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                    }
-                    else  //factory有值
-                    {
-                        strSQL += (string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
-                    }
-                    strSQL += (" AND A1.Category='B'");
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                 }
-                else if (radioSample.Checked)
+
+                if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                // 補上 Orders.Cateory and Factory.Type 判斷
+                if (this.radioBulk.Checked)
+                {
+                    if (MyUtility.Check.Empty(this.txtFactory.Text))
                     {
-                        strSQL += (" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
                     }
-                    else  //factory有值
+                    else
                     {
-                        strSQL += (string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
-                    strSQL += (" AND A1.Category='S'");
+
+                    strSQL += " AND A1.Category='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    if (MyUtility.Check.Empty(this.txtFactory.Text))
+                    {
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                    }
+                    else
+                    {
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
+                    }
+
+                    strSQL += " AND A1.Category='S'";
                 }
 
                 strSQL += @" 
@@ -190,30 +217,34 @@ GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
 ,Order_QS.ReasonID,A1.Category,r.Name,rs.Name,PD.Qty,PD.FailQty ";
                 strSQL += @" 
 ORDER BY A1.ID";
-                result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
-                if (!result) return result;
+                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
+                if (!result)
+                {
+                    return result;
+                }
 
-                if ((gdtOrderDetail==null) || (gdtOrderDetail.Rows.Count==0))
-                {                    
+                if ((this.gdtOrderDetail == null) || (this.gdtOrderDetail.Rows.Count == 0))
+                {
                     return new DualResult(false, "Data not found!");
                 }
 
                 #endregion Order Detail
 
-                #region SDP 
+                #region SDP
                 strSQL = @" SELECT  '' AS A,  '' AS B, 0 AS C, 0 AS D, 0 AS E, 0.00 AS F FROM ORDERS WHERE 1 = 0 ";
-                result = DBProxy.Current.Select(null, strSQL, null, out gdtSDP);
+                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSDP);
                 if (!result)
                 {
                     return result;
                 }
+
                 List<string> lstSDP = new List<string>();
-                for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
+                for (int intIndex = 0; intIndex < this.gdtOrderDetail.Rows.Count; intIndex++)
                 {
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
                     string handleName = string.Empty;
-                    #region Calc SDP Data          
-                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["A"].ToString()); // A         
+                    #region Calc SDP Data
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["A"].ToString());
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
@@ -228,15 +259,12 @@ ORDER BY A1.ID";
                         drSDP = this.gdtSDP.Rows[intIndex_SDP];
                     }
 
-
                     drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["I"].ToString() != string.Empty ? Convert.ToDecimal(drData["I"].ToString()) : 0);
                     drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["J"].ToString() != string.Empty ? Convert.ToDecimal(drData["J"].ToString()) : 0);
                     drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
                     drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
                     #endregion Calc SDP Data
                 }
-
-              
                 #endregion
 
                 #region Fail Order List by SP
@@ -292,34 +320,42 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
  WHERE 1= 1  ";
-                if (dateFactoryKPIDate.Value1 != null)
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                if (dateFactoryKPIDate.Value2 != null)
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                //補上 Orders.Cateory and Factory.Type 判斷
-                if (radioBulk.Checked)
+                if (this.dateFactoryKPIDate.Value1 != null)
                 {
-                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                    {
-                        strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                    }
-                    else  //factory有值
-                    {
-                        strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
-                    }
-                    strSQL +=(" AND A1.Category='B'");
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                 }
-                else if (radioSample.Checked)
+
+                if (this.dateFactoryKPIDate.Value2 != null)
                 {
-                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                // 補上 Orders.Cateory and Factory.Type 判斷
+                if (this.radioBulk.Checked)
+                {
+                    if (MyUtility.Check.Empty(this.txtFactory.Text))
                     {
-                        strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
                     }
-                    else  //factory有值
+                    else
                     {
-                        strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
-                    strSQL +=(" AND A1.Category='S'");
+
+                    strSQL += " AND A1.Category='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    if (MyUtility.Check.Empty(this.txtFactory.Text))
+                    {
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                    }
+                    else
+                    {
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
+                    }
+
+                    strSQL += " AND A1.Category='S'";
                 }
 
                 strSQL += @" 
@@ -330,15 +366,16 @@ GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChang
 HAVING Sum(A5.ShipQty) > 0 ";
                 strSQL += @" 
 ORDER BY A1.ID";
-                result = DBProxy.Current.Select(null, strSQL, null, out gdtSP);
-                if (!result) return result;
+                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
+                if (!result)
+                {
+                    return result;
+                }
 
                 #endregion Fail Order List by SP
 
-                //有勾選
-                if (checkExportDetailData.Checked)
-                {                    
-
+                if (this.checkExportDetailData.Checked)
+                {
                     #region On time Order List by PullOut
                     strSQL = @" 
 SELECT   A = A2.CountryID 
@@ -366,39 +403,51 @@ OUTER APPLY (select top 1 PulloutDate
 			where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
 Order by pulloutDate desc) pd 
 WHERE 1= 1 and opd.sQty <>0  ";
-                    if (dateFactoryKPIDate.Value1 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateFactoryKPIDate.Value2 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    //補上 Orders.Cateory and Factory.Type 判斷
-                    if (radioBulk.Checked)
+                    if (this.dateFactoryKPIDate.Value1 != null)
                     {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='B'");
+                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     }
-                    else if (radioSample.Checked)
+
+                    if (this.dateFactoryKPIDate.Value2 != null)
                     {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='S'");
+                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
                     }
+
+                    // 補上 Orders.Cateory and Factory.Type 判斷
+                    if (this.radioBulk.Checked)
+                    {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                        }
+                        else
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='B'";
+                    }
+                    else if (this.radioSample.Checked)
+                    {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                        }
+                        else
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='S'";
+                    }
+
                     strSQL += @" 
 ORDER BY A1.ID";
-                    result = DBProxy.Current.Select(null, strSQL, null, out gdtPullOut);
-                    if (!result) return result;
+                    result = DBProxy.Current.Select(null, strSQL, null, out this.gdtPullOut);
+                    if (!result)
+                    {
+                        return result;
+                    }
 
                     #endregion On time Order List by PullOut
 
@@ -437,39 +486,51 @@ Order by pulloutDate desc) pd
 WHERE 1= 1
 and (opd.sQty > 0 or pd.PulloutDate is null)  
 ";
-                    if (dateFactoryKPIDate.Value1 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateFactoryKPIDate.Value2 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    //補上 Orders.Cateory and Factory.Type 判斷
-                    if (radioBulk.Checked)
+                    if (this.dateFactoryKPIDate.Value1 != null)
                     {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL += (" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='B'");
+                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     }
-                    else if (radioSample.Checked)
+
+                    if (this.dateFactoryKPIDate.Value2 != null)
                     {
-                        if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
-                        {
-                            strSQL +=(" AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))");
-                        }
-                        else  //factory有值
-                        {
-                            strSQL +=(string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", txtFactory.Text));
-                        }
-                        strSQL +=(" AND A1.Category='S'");
+                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
                     }
+
+                    // 補上 Orders.Cateory and Factory.Type 判斷
+                    if (this.radioBulk.Checked)
+                    {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                        }
+                        else
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='B'";
+                    }
+                    else if (this.radioSample.Checked)
+                    {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                        }
+                        else
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='S'";
+                    }
+
                     strSQL += @" 
 ORDER BY A1.ID";
-                    result = DBProxy.Current.Select(null, strSQL, null, out gdtFailDetail);
-                    if (!result) return result;
+                    result = DBProxy.Current.Select(null, strSQL, null, out this.gdtFailDetail);
+                    if (!result)
+                    {
+                        return result;
+                    }
 
                     #endregion Fail Detail
 
@@ -526,35 +587,44 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
  WHERE 1= 1  ";
-                    if (dateFactoryKPIDate.Value1 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateFactoryKPIDate.Value2 != null)
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    //補上　Orders.Category and Factory.Type 判斷
-                    if (radioBulk.Checked)
-                    {                        
-                        if (MyUtility.Check.Empty(txtFactory.Text))//factory沒值
-                        {                            
+                    if (this.dateFactoryKPIDate.Value1 != null)
+                    {
+                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    }
+
+                    if (this.dateFactoryKPIDate.Value2 != null)
+                    {
+                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    }
+
+                    // 補上　Orders.Category and Factory.Type 判斷
+                    if (this.radioBulk.Checked)
+                    {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
                             strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                         }
                         else
-                        {                            
-                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='B' ) ", txtFactory.Text);
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='B' ) ", this.txtFactory.Text);
                         }
+
                         strSQL += " AND A1.Category='B'";
                     }
-                    if (radioSample.Checked)
+
+                    if (this.radioSample.Checked)
                     {
-                        if (MyUtility.Check.Empty(txtFactory.Text))//factory沒值
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
                         {
                             strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                         }
                         else
                         {
-                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='S' ) ", txtFactory.Text);
+                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='S' ) ", this.txtFactory.Text);
                         }
+
                         strSQL += " AND A1.Category='S'";
-                    }                 
+                    }
 
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChangeReason
 , Order_QS.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
@@ -563,31 +633,39 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                                                         HAVING Sum(A5.ShipQty) > 0 ";
                     strSQL += @" 
 ORDER BY A1.ID";
-                    result = DBProxy.Current.Select(null, strSQL, null, out gdtSP);
-                    if (!result) return result;
+                    result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
+                    if (!result)
+                    {
+                        return result;
+                    }
 
                     #endregion Fail Order List by SP
                 }
 
                 #region 產生EXCEL
-                if (!(result = transferToExcel()))
+                if (!(result = this.TransferToExcel()))
+                {
                     return result;
-                #endregion 
+                }
+                #endregion
 
             }
             catch (Exception ex)
             {
                 return new DualResult(false, "data loading error.", ex);
             }
+
             return result;
         }
 
-
-        private DualResult transferToExcel()
+        /// <summary>
+        /// transferToExcel
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private DualResult TransferToExcel()
         {
             DualResult result = Result.True;
-            //string strPath = PrivUtils.getPath_XLT(System.Windows.Forms.Application.StartupPath);
-            string temfile = "";
+            string temfile = string.Empty;
 
             if (this.checkExportDetailData.Checked)
             {
@@ -597,26 +675,27 @@ ORDER BY A1.ID";
             {
                 temfile = Sci.Env.Cfg.XltPathDir + "\\Planning_R17.xltx";
             }
+
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(temfile);
             try
-            {               
+            {
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                int intRowsCount = gdtSDP.Rows.Count;
-                int intRowsStart = 2;//匯入起始位置
-                int rownum = intRowsStart; //每筆資料匯入之位置 
-                int intColumns = 6;//匯入欄位數                                
+                int intRowsCount = this.gdtSDP.Rows.Count;
+                int intRowsStart = 2; // 匯入起始位置
+                int rownum = intRowsStart; // 每筆資料匯入之位置
+                int intColumns = 6; // 匯入欄位數
                 string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-                object[,] objArray = new object[1, intColumns];//每列匯入欄位區間
+                object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
 
                 #region 匯出SDP
                 for (int i = 0; i < intRowsCount; i += 1)
-                {   
-                    DataRow dr = gdtSDP.Rows[i];                    
+                {
+                    DataRow dr = this.gdtSDP.Rows[i];
                     for (int k = 0; k < intColumns; k++)
                     {
-                        objArray[0, k] = "";
+                        objArray[0, k] = string.Empty;
                     }
 
                     objArray[0, 0] = dr["A"];
@@ -626,9 +705,10 @@ ORDER BY A1.ID";
                     objArray[0, 4] = dr["E"];
                     objArray[0, 5] = dr["F"];
 
-                    worksheet.Range[String.Format("A{0}:F{0}", rownum + i)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:F{0}", rownum + i)].Value2 = objArray;
                     worksheet.Cells[rownum + i, 6].NumberFormatLocal = "0.00";
                 }
+
                 if (intRowsCount > 0)
                 {
                     worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "Total";
@@ -641,9 +721,9 @@ ORDER BY A1.ID";
                 #endregion
 
                 #region 匯出 Fail Order List by SP Data
-                if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
-                {                    
-                    worksheet= excel.ActiveWorkbook.Worksheets[2];
+                if ((this.gdtSP != null) && (this.gdtSP.Rows.Count > 0))
+                {
+                    worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
                     string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
@@ -651,38 +731,40 @@ ORDER BY A1.ID";
                     {
                         objArray_1[0, intIndex] = aryTitles[intIndex];
                     }
-                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
-                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
-                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
 
-                    //  excelRange.EntireColumn.AutoFit();
-                    int rc = gdtSP.Rows.Count;
+                    worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                    worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1);
+                    worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
+                    worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+
+                    int rc = this.gdtSP.Rows.Count;
                     for (int intIndex = 0; intIndex < rc; intIndex++)
                     {
-
                         for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                         {
-                            objArray_1[0, intIndex_0] = gdtSP.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
+                            objArray_1[0, intIndex_0] = this.gdtSP.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                         }
-                        worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
+
+                        worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                     }
 
                     worksheet.Cells[rc + 2, 2] = "Total:";
                     worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
-                    //設定分割列數
+
+                    // 設定分割列數
                     excel.ActiveWindow.SplitRow = 1;
+
                     // 進行凍結視窗
                     excel.ActiveWindow.FreezePanes = true;
                 }
                 #endregion
-                if (checkExportDetailData.Checked)
+                if (this.checkExportDetailData.Checked)
                 {
                     #region 匯出 Order Detail
-                    if ((gdtOrderDetail != null) && (gdtOrderDetail.Rows.Count > 0))
+                    if ((this.gdtOrderDetail != null) && (this.gdtOrderDetail.Rows.Count > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
@@ -692,37 +774,39 @@ ORDER BY A1.ID";
                         {
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
-                        int rc = gdtOrderDetail.Rows.Count;
-                        //  excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
-                        //  excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd"; 
+
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        int rc = this.gdtOrderDetail.Rows.Count;
                         for (int intIndex = 0; intIndex < rc; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
-                                objArray_1[0, intIndex_0] = gdtOrderDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
+                                objArray_1[0, intIndex_0] = this.gdtOrderDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit();//自動調整欄寬
-                            worksheet.Range[String.Format("F{0}:G{0}", intIndex + 2)].NumberFormatLocal = "yyyy/MM/dd";
+
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
+                            worksheet.Range[string.Format("F{0}:G{0}", intIndex + 2)].NumberFormatLocal = "yyyy/MM/dd";
                         }
 
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
-                        //設定分割列數
+
+                        // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
+
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
                     #endregion
 
                     #region 匯出 On time Order List by PullOut
-                    if ((gdtPullOut != null) && (gdtPullOut.Rows.Count > 0))
+                    if ((this.gdtPullOut != null) && (this.gdtPullOut.Rows.Count > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
@@ -732,36 +816,40 @@ ORDER BY A1.ID";
                         {
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveWorkbook.Worksheets[4].Columns(5).NumberFormatlocal = "yyyy/MM/dd";
                         excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd";
 
-                        int rc = gdtPullOut.Rows.Count;
+                        int rc = this.gdtPullOut.Rows.Count;
                         for (int intIndex = 0; intIndex < rc; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
-                                objArray_1[0, intIndex_0] = gdtPullOut.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
+                                objArray_1[0, intIndex_0] = this.gdtPullOut.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
+
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                         }
 
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
-                        //設定分割列數
+
+                        // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
+
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
                     #endregion
 
                     #region 匯出 Fail Detail
-                    if ((gdtFailDetail != null) && (gdtFailDetail.Rows.Count > 0))
+                    if ((this.gdtFailDetail != null) && (this.gdtFailDetail.Rows.Count > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
@@ -771,30 +859,34 @@ ORDER BY A1.ID";
                         {
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
+
                         worksheet.get_Range("K:K", Type.Missing).NumberFormatLocal = "@";
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
+                        worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveWorkbook.Worksheets[5].Columns(5).NumberFormatlocal = "yyyy/MM/dd";
                         excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd";
-                        int rc = gdtFailDetail.Rows.Count;
+                        int rc = this.gdtFailDetail.Rows.Count;
                         for (int intIndex = 0; intIndex < rc; intIndex++)
                         {
-
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
-                                objArray_1[0, intIndex_0] = gdtFailDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
+                                objArray_1[0, intIndex_0] = this.gdtFailDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
+
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                         }
 
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
+
                         worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
-                        //設定分割列數
+
+                        // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
+
                         // 進行凍結視窗
                         excel.ActiveWindow.FreezePanes = true;
                     }
@@ -813,12 +905,16 @@ ORDER BY A1.ID";
                 Marshal.ReleaseComObject(workbook);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
                 return Result.True;
             }
             catch (Exception ex)
             {
-                if (null != excel) excel.Quit();
+                if (excel != null)
+                {
+                    excel.Quit();
+                }
+
                 return new DualResult(false, "Export excel error.", ex);
             }
         }

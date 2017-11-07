@@ -1,82 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R11
+    /// </summary>
     public partial class R11 : Sci.Win.Tems.PrintForm
     {
-        int selectindex = 0;
-        decimal months;
-        string factory, mdivision;
-        DateTime? sciDelivery1, sciDelivery2;
-        DataTable printData, dtArtworkType;
-        StringBuilder condition = new StringBuilder();
-        StringBuilder artworktypes = new StringBuilder();
-        StringBuilder pvtid = new StringBuilder();
+        private int selectindex = 0;
+        private decimal months;
+        private string factory;
+        private string mdivision;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private DataTable printData;
+        private DataTable dtArtworkType;
+        private StringBuilder condition = new StringBuilder();
+        private StringBuilder artworktypes = new StringBuilder();
+        private StringBuilder pvtid = new StringBuilder();
+
+        /// <summary>
+        /// R11
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            txtfactory.Text = Sci.Env.User.Factory;
-            //comboCategory.SelectedIndex = 1;  //Bulk
-            txtdropdownlist1.Type = "Category_Report";
-           // = "Category_Report"
-          
-           
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.txtdropdownlist1.Type = "Category_Report";
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox(" < SCI Delivery > can't be empty!!");
                 return false;
             }
 
             #region -- 必輸的條件 --
-            sciDelivery1 = dateSCIDelivery.Value1;
-            sciDelivery2 = dateSCIDelivery.Value2;
+            this.sciDelivery1 = this.dateSCIDelivery.Value1;
+            this.sciDelivery2 = this.dateSCIDelivery.Value2;
             #endregion
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
-            selectindex = txtdropdownlist1.SelectedIndex;
-            months = numNewStyleBaseOn.Value;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.selectindex = this.txtdropdownlist1.SelectedIndex;
+            this.months = this.numNewStyleBaseOn.Value;
 
             DualResult result;
-            if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
+            if (!(result = DBProxy.Current.Select(string.Empty, "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out this.dtArtworkType)))
             {
                 MyUtility.Msg.WarningBox(result.ToString());
                 return false;
             }
 
-            if (dtArtworkType.Rows.Count == 0)
+            if (this.dtArtworkType.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Artwork Type data not found, Please inform MIS to check !");
                 return false;
             }
 
-            artworktypes.Clear();
-            pvtid.Clear();
-            for (int i = 0; i < dtArtworkType.Rows.Count;i++ )
+            this.artworktypes.Clear();
+            this.pvtid.Clear();
+            for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
             {
-                artworktypes.Append(string.Format(@"[{0}],", dtArtworkType.Rows[i]["id"].ToString()));
-                pvtid.Append(string.Format(@",isnull([{0}],0)[{0}]",dtArtworkType.Rows[i]["id"].ToString()));
+                this.artworktypes.Append(string.Format(@"[{0}],", this.dtArtworkType.Rows[i]["id"].ToString()));
+                this.pvtid.Append(string.Format(@",isnull([{0}],0)[{0}]", this.dtArtworkType.Rows[i]["id"].ToString()));
             }
+
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
@@ -107,81 +119,80 @@ outer apply(
 ) oa
 Where 1=1 and ( o.junk = 0 or o.junk is null) "));
             #region --- 條件組合  ---
-            condition.Clear();
-            if (!MyUtility.Check.Empty(sciDelivery1))
-            { 
-              sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(sciDelivery2))
-            { 
-              sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
-            }
-            #region [condition]處理
-            if (!MyUtility.Check.Empty(sciDelivery1) && !MyUtility.Check.Empty(sciDelivery2))
+            this.condition.Clear();
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                condition.Append(string.Format(@"SCI Delivery : {0} ~ {1} ", Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
-            }
-            else if (!MyUtility.Check.Empty(sciDelivery1) && MyUtility.Check.Empty(sciDelivery2))
-            {
-                condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sciDelivery1).ToString("d")));
-            }
-            else if (MyUtility.Check.Empty(sciDelivery1) && !MyUtility.Check.Empty(sciDelivery2))
-            {
-                condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(sciDelivery2).ToString("d")));
-            }
-            #endregion
-            if (!MyUtility.Check.Empty(mdivision))
-            {
-                sqlCmd.Append(" and o.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
-                cmds.Add(sp_mdivision);
-                condition.Append(string.Format(@"    M : {0}", mdivision));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+            #region [condition]處理
+            if (!MyUtility.Check.Empty(this.sciDelivery1) && !MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1} ", Convert.ToDateTime(this.sciDelivery1).ToString("d"), Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+            else if (!MyUtility.Check.Empty(this.sciDelivery1) && MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
+            }
+            else if (MyUtility.Check.Empty(this.sciDelivery1) && !MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                this.condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+            #endregion
+            if (!MyUtility.Check.Empty(this.mdivision))
+            {
+                sqlCmd.Append(" and o.mdivisionid = @MDivision");
+                sp_mdivision.Value = this.mdivision;
+                cmds.Add(sp_mdivision);
+                this.condition.Append(string.Format(@"    M : {0}", this.mdivision));
+            }
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and o.FtyGroup = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
-                condition.Append(string.Format(@"    Factory : {0}", factory));
+                this.condition.Append(string.Format(@"    Factory : {0}", this.factory));
             }
-            
-            switch (selectindex)
+
+            switch (this.selectindex)
             {
                 case 0:
                     sqlCmd.Append(@" and o.Category = 'B' ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 1:
                     sqlCmd.Append(@" and o.Category = 'S' ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 2:
                     sqlCmd.Append(@" and o.Category = 'M' ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 3:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 4:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 5:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
-                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 default:
 
                     break;
             }
-            
 
             #endregion
 
             sqlCmd.Append(string.Format(@"
---
 select distinct o.FtyGroup,o.Styleid,oa.Article,
 o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
 into #tmpol
@@ -209,23 +220,24 @@ inner join Orders o on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
 inner join SewingOutput_Detail sod on sod.OrderId = o.ID
 inner join SewingOutput so on sod.id = so.id
 inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)	
-where 1=1"
-                ));
-            if (!MyUtility.Check.Empty(mdivision))
+where 1=1"));
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and o.mdivisionid = @MDivision");
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and o.FtyGroup = @factory");
             }
-            if (numNewStyleBaseOn.Value != 0)
+
+            if (this.numNewStyleBaseOn.Value != 0)
             {
-                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -months));
-                condition.Append(string.Format(@"    New Style base on {0} month(s)", months));
+                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -this.months));
+                this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
             }
-            switch (selectindex)
+
+            switch (this.selectindex)
             {
                 case 0:
                     sqlCmd.Append(@" and o.Category = 'B' ");
@@ -246,10 +258,11 @@ where 1=1"
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
                     break;
                 default:
-                   
                     break;
             }
-            sqlCmd.Append(string.Format(@"
+
+            sqlCmd.Append(string.Format(
+                @"
 select a.StyleID
 	,A = IIF(Sum(a.MH) = 0,' ',format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P'))	
 into #tmp_A
@@ -304,56 +317,61 @@ left join #tmp_P w on w.StyleID = o.StyleID
 left join #cls s on s.StyleID = o.StyleID
 order by o.FtyGroup,o.StyleID,o.SeasonID
 drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
+ ", this.pvtid.ToString()));
 
- ", pvtid.ToString()));
-
-           
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            if (printData.Columns.Count > 16384)
+            if (this.printData.Columns.Count > 16384)
             {
                 MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            if (printData.Rows.Count + 6 > 1048576)
+            if (this.printData.Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
 
             this.ShowWaitMessage("Data Loading...");
-           
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R11.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R11.xltx", 3, false, null, objApp);      // 將datatable copy to excel
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R11.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R11.xltx", 3, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
+            objSheets.Cells[2, 1] = this.condition.ToString();   // 條件字串寫入excel
 
             string strArtworkType = string.Empty;
-            for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
+
+            // 列印動態欄位的表頭
+            for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
             {
-                strArtworkType = dtArtworkType.Rows[i]["id"].ToString().Trim();
+                strArtworkType = this.dtArtworkType.Rows[i]["id"].ToString().Trim();
 
                 #region ArtworkType折行處理，讓EXCEL看起來較美觀
                 switch (strArtworkType)
@@ -426,10 +444,10 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
                 objSheets.Cells[3, 12 + i] = strArtworkType;
             }
 
-            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
-            objApp.Cells.EntireRow.AutoFit();       //自動欄高
-            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
-            objApp.Cells.EntireRow.AutoFit();       //自動欄高
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       // 自動欄高
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
+            objApp.Cells.EntireRow.AutoFit();       // 自動欄高
             objSheets.get_Range("C1:C1").ColumnWidth = 50;
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R11");

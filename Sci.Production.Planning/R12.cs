@@ -1,115 +1,170 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using System.Data.SqlClient;
 using Sci.Production.Report;
 using Sci.Data;
-using Msg = Sci.MyUtility.Msg;
 using Sci.Production.Report.GSchemas;
-using System.Runtime.InteropServices;
 using Sci.Utility.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R12
+    /// </summary>
     public partial class R12 : Sci.Win.Tems.PrintForm
     {
-        DataTable dtPrint = null;
-        DataTable dtData, tmpData1, tmpData2, tmpData3, tmpData4, All_tmpData4, tmpStyleDetail, tmpOrderDetail;
-        string SqlData1, SqlData2, SqlData3, SqlData4, All_SqlData4, SqlStyleDetail, SqlOrderDetail;
-        decimal StandardTms = 0; //int intRowsStart = 2;
+        private DataTable dtPrint = null;
+        private DataTable dtData;
+        private DataTable tmpData1;
+        private DataTable tmpData2;
+        private DataTable tmpData3;
+        private DataTable tmpData4;
+        private DataTable All_tmpData4;
+        private DataTable tmpStyleDetail;
+        private DataTable tmpOrderDetail;
+        private string SqlData1;
+        private string SqlData2;
+        private string SqlData3;
+        private string SqlData4;
+        private string All_SqlData4;
+        private string SqlStyleDetail;
+        private string SqlOrderDetail;
+        private decimal StandardTms = 0;
 
+        /// <summary>
+        /// R12
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            print.Visible = false;
-            GetStandardTms();
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.print.Visible = false;
+            this.GetStandardTms();
         }
 
-        //欄位檢核
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (txtBrand.Text.Trim() == "")
+            if (this.txtBrand.Text.Trim() == string.Empty)
             {
-                ShowErr("Brand can't be  blank");
+                this.ShowErr("Brand can't be  blank");
                 return false;
             }
-            if (txtSeason.Text.Trim() == "")
+
+            if (this.txtSeason.Text.Trim() == string.Empty)
             {
-                ShowErr("Season can't be  blank");
+                this.ShowErr("Season can't be  blank");
                 return false;
             }
+
             return true;
         }
 
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
-        {            
+        {
             return true;
         }
 
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
-            if (dtPrint != null) dtPrint.Rows.Clear();
-            string where = " ", GroupBy, select;
+            if (this.dtPrint != null)
+            {
+                this.dtPrint.Rows.Clear();
+            }
+
+            string where = " ", groupBy, select;
             SqlConnection con;
             SQL.GetConnection(out con);
 
             #region tmpData1
-            if (txtBrand.Text != "") where += string.Format(" and O.BrandID = '{0}' ", txtBrand.Text);
-            if (txtSeason.Text != "") where += string.Format(" and SeasonID =  '{0}' ", txtSeason.Text);
-            SqlData1 = string.Format(@"Select O.ID , O.CPU , O.Cpu * {1} / 60 as SMV , O.CPU * {1} as TMS , O.FactoryID , O.BrandAreaCode , 
-                                                O.Qty , O.StyleID , F.CountryID
-                                        From Orders O WITH (NOLOCK)
-                                        Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
-                                        Where O.Category in ('B','S') {0}", where, StandardTms);
+            if (this.txtBrand.Text != string.Empty)
+            {
+                where += string.Format(" and O.BrandID = '{0}' ", this.txtBrand.Text);
+            }
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style,Order Data capture, data may be many, please wait (Step 1/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlData1, out tmpData1);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
-            if (tmpData1 == null || tmpData1.Rows.Count == 0) return new DualResult(false, "Data not found.");
+            if (this.txtSeason.Text != string.Empty)
+            {
+                where += string.Format(" and SeasonID =  '{0}' ", this.txtSeason.Text);
+            }
+
+            this.SqlData1 = string.Format(
+                @"
+Select O.ID , O.CPU , O.Cpu * {1} / 60 as SMV , O.CPU * {1} as TMS , O.FactoryID , O.BrandAreaCode , O.Qty , O.StyleID , F.CountryID
+From Orders O WITH (NOLOCK)
+Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
+Where O.Category in ('B','S') {0}", where,
+                this.StandardTms);
+
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Style,Order Data capture, data may be many, please wait (Step 1/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlData1, out this.tmpData1);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
+
+            if (this.tmpData1 == null || this.tmpData1.Rows.Count == 0)
+            {
+                return new DualResult(false, "Data not found.");
+            }
 
             DataTable dt;
-            MyUtility.Tool.ProcessWithDatatable(tmpData1, "", " ", out dt, "#tmpData1", con);
+            MyUtility.Tool.ProcessWithDatatable(this.tmpData1, string.Empty, " ", out dt, "#tmpData1", con);
             #endregion
 
             #region tmpData2
-            SqlData2 = @"select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
-                                tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
-                                isnull(SewingOutput_Detail.QAQty,0) as ProdQty,isnull(Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0) ,0)  as StardQty 
-                            from #tmpData1 tmpData1
-                            Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
-                            Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
+            this.SqlData2 = @"
+select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
+    tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
+    isnull(SewingOutput_Detail.QAQty,0) as ProdQty,isnull(Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0) ,0)  as StardQty 
+from #tmpData1 tmpData1
+Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
+Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory Finishing details (Step 2/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlData2, out tmpData2);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
+            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory Finishing details (Step 2/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlData2, out this.tmpData2);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
 
-            MyUtility.Tool.ProcessWithDatatable(tmpData2, "", " ", out dt, "#tmpData2", con);
+            MyUtility.Tool.ProcessWithDatatable(this.tmpData2, string.Empty, " ", out dt, "#tmpData2", con);
             #endregion
 
             #region tmpData3
-            if (radioRegionNo.Checked)
+            if (this.radioRegionNo.Checked)
             {
                 select = " AGCCode ";
-                GroupBy = " AGCCode ";
+                groupBy = " AGCCode ";
             }
             else
             {
                 select = " Factory as Factory ";
-                GroupBy = " Factory ";
+                groupBy = " Factory ";
             }
 
-            SqlData3 = string.Format(@"
+            this.SqlData3 = string.Format(
+                @"
 select * 
     ,CASE WHEN SMV < 40 THEN 'A' WHEN SMV >= 40 and SMV < 50  THEN 'B' WHEN SMV >= 50 and SMV < 60  THEN 'C' WHEN SMV >= 60 and SMV < 70  THEN 'D'
     WHEN SMV >= 70 and SMV < 80  THEN 'E' WHEN SMV >= 80 and SMV < 90  THEN 'F'	WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
@@ -122,29 +177,35 @@ from (
 	from #tmpData2
 	group by Style,FactoryCountry ,{1}
 ) c
-", select, GroupBy);
+",
+                select,
+                groupBy);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Group By Style , Country Finishing details (Step 3/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlData3, out tmpData3);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
+            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Group By Style , Country Finishing details (Step 3/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlData3, out this.tmpData3);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
 
-            MyUtility.Tool.ProcessWithDatatable(tmpData3, "", " ", out dt, "#tmpData3", con);
+            MyUtility.Tool.ProcessWithDatatable(this.tmpData3, string.Empty, " ", out dt, "#tmpData3", con);
             #endregion
 
             #region tmpEFFIC
-            if (radioRegionNo.Checked)
+            if (this.radioRegionNo.Checked)
             {
                 select = "AGCCode";
-                GroupBy = "AGCCode";
+                groupBy = "AGCCode";
             }
             else
             {
                 select = "Factory";
-                GroupBy = "Factory";
+                groupBy = "Factory";
             }
 
-            SqlData4 = string.Format(@"
+            this.SqlData4 = string.Format(
+                @"
 ;with final as (
 	select {0},Country ,sum(SMV / sSMV) as [%] ,SMVEFFX 
 	,max(v1) as v1 ,max(v2) as v2 ,max(v3) as v3
@@ -171,9 +232,12 @@ full join (
 	inner join ( select data from dbo.SplitString('A,B,C,D,E,F,G,H',',') ) b on 1=1
 ) c on c.Country = final.Country and c.Data = final.SMVEFFX and c.{0} = final.{0}
 order by {0} , Country , c.data
-", select, GroupBy);
+",
+                select,
+                groupBy);
 
-            All_SqlData4 = string.Format(@"
+            this.All_SqlData4 = string.Format(
+                @"
 ;with final as (
 	select sum(SMV / sSMV) as [%] ,SMVEFFX 
 	,max(v1) as v1 ,max(v2) as v2 ,max(v3) as v3
@@ -197,50 +261,60 @@ from final
 full join (
 	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
 ) c on c.Data = final.SMVEFFX
-order by c.data", select);
+order by c.data",
+                select);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Produce tmpEFFIC details (Step 3/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlData4, out tmpData4);
-            result = DBProxy.Current.SelectByConn(con, All_SqlData4, out All_tmpData4);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Produce tmpEFFIC details (Step 3/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlData4, out this.tmpData4);
+            result = DBProxy.Current.SelectByConn(con, this.All_SqlData4, out this.All_tmpData4);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
             #endregion
 
             #region tmpStyleDetail
-            if (radioRegionNo.Checked)
-                GroupBy = " AGCCode ";
+            if (this.radioRegionNo.Checked)
+            {
+                groupBy = " AGCCode ";
+            }
             else
-                GroupBy = " Factory ";
+            {
+                groupBy = " Factory ";
+            }
 
-
-            SqlStyleDetail = string.Format(@"select Style,CPU,SMV,{0} as [AGC], StyleProdQty as SewingOutput, StyleStardQty as StdOutput, QtyEFFX, Country from #tmpData3 order by Style", GroupBy);
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Finishing Style Detail Data (Step 4/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlStyleDetail, out tmpStyleDetail);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
+            this.SqlStyleDetail = string.Format(@"select Style,CPU,SMV,{0} as [AGC], StyleProdQty as SewingOutput, StyleStardQty as StdOutput, QtyEFFX, Country from #tmpData3 order by Style", groupBy);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Finishing Style Detail Data (Step 4/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlStyleDetail, out this.tmpStyleDetail);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
             #endregion
 
             #region tmpOrderDetail
-            SqlOrderDetail = @"
+            this.SqlOrderDetail = @"
 select  tmpData2.OrderID as SP#, tmpData2.CPU as CPU, tmpData2.SMV as SMV, tmpData2.TMS as TMS, tmpData2.Factory as Factory, 
 	    tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty], tmpData2.Style as Style, tmpData2.ProdQty as 實際產量, tmpData2.StardQty as 標準產量 
 from #tmpData2 tmpData2
 order by tmpData2.OrderID";
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Finishing Order Detail Data (Step 5/5)"); });
-            result = DBProxy.Current.SelectByConn(con, SqlOrderDetail, out tmpOrderDetail);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
-            if (!result) return result;
+            this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Finishing Order Detail Data (Step 5/5)"); });
+            result = DBProxy.Current.SelectByConn(con, this.SqlOrderDetail, out this.tmpOrderDetail);
+            this.BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            if (!result)
+            {
+                return result;
+            }
             #endregion
 
-
-            e.Report.ReportDataSource = tmpData1;
-            if (tmpData1 != null && tmpData1.Rows.Count > 0)
+            e.Report.ReportDataSource = this.tmpData1;
+            if (this.tmpData1 != null && this.tmpData1.Rows.Count > 0)
             {
-                //顯示筆數
-                SetCount(tmpData1.Rows.Count);
-                //transferToExcel();
-                return transferData();
+                this.SetCount(this.tmpData1.Rows.Count);
+                return this.TransferData();
             }
             else
             {
@@ -248,9 +322,9 @@ order by tmpData2.OrderID";
             }
         }
 
-        private DualResult transferData()
+        private DualResult TransferData()
         {
-            string temfile = "", title = "";
+            string temfile = string.Empty, title = string.Empty;
             DualResult result = Result.True;
 
             string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
@@ -259,26 +333,24 @@ order by tmpData2.OrderID";
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
             sxrc.BoOpenFile = true;
 
-            tmpData4.Merge(All_tmpData4);
+            this.tmpData4.Merge(this.All_tmpData4);
 
-            SaveXltReportCls.XltRptTable xrt1 = new SaveXltReportCls.XltRptTable(tmpData4);
-            //SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(All_tmpData4);
-            SaveXltReportCls.XltRptTable xrt3 = new SaveXltReportCls.XltRptTable(tmpStyleDetail);
-            SaveXltReportCls.XltRptTable xrt4 = new SaveXltReportCls.XltRptTable(tmpOrderDetail);
+            SaveXltReportCls.XltRptTable xrt1 = new SaveXltReportCls.XltRptTable(this.tmpData4);
+            SaveXltReportCls.XltRptTable xrt3 = new SaveXltReportCls.XltRptTable(this.tmpStyleDetail);
+            SaveXltReportCls.XltRptTable xrt4 = new SaveXltReportCls.XltRptTable(this.tmpOrderDetail);
 
             #region 抬頭
-            if (radioRegionNo.Checked)
+            if (this.radioRegionNo.Checked)
             {
-                title = "Season =" + txtSeason.Text + "   , Brand =" + txtBrand.Text + "    , Grouping by Region No";
+                title = "Season =" + this.txtSeason.Text + "   , Brand =" + this.txtBrand.Text + "    , Grouping by Region No";
             }
             else
             {
-                title = "Season =" + txtSeason.Text + "   , Brand =" + txtBrand.Text + "    , Grouping by Factory Code";
+                title = "Season =" + this.txtSeason.Text + "   , Brand =" + this.txtBrand.Text + "    , Grouping by Factory Code";
             }
-            #endregion 
+            #endregion
 
             xrt1.ShowHeader = false;
-            //xrt2.ShowHeader = false;
             xrt3.ShowHeader = false;
             xrt4.ShowHeader = false;
 
@@ -287,12 +359,11 @@ order by tmpData2.OrderID";
             xrt4.BoAutoFitColumn = true;
 
             sxrc.DicDatas.Add("##detail", xrt1);
-            //sxrc.dicDatas.Add("##detailAll", xrt2);
             sxrc.DicDatas.Add("##StyleDetail", xrt3);
             sxrc.DicDatas.Add("##OrderDetail", xrt4);
             sxrc.DicDatas.Add("##title", title);
-            sxrc.DicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
-            
+            sxrc.DicDatas.Add("##Fty Code", this.txtSeason.Text + "_historical data");
+
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Planning_R12.Matrix");
             sxrc.Save(strExcelName);
             return Result.True;
@@ -302,12 +373,13 @@ order by tmpData2.OrderID";
         {
             DualResult result;
             Helper ghelper = new Helper();
-            if (!(result = ghelper.GetProductionSystem(out dtData)))
+            if (!(result = ghelper.GetProductionSystem(out this.dtData)))
             {
-                ShowErr("Get StandardTms Fail!!");
+                this.ShowErr("Get StandardTms Fail!!");
                 return;
             }
-            StandardTms = decimal.Parse(dtData.Rows[0]["StdTMS"].ToString());
+
+            this.StandardTms = decimal.Parse(this.dtData.Rows[0]["StdTMS"].ToString());
         }
     }
 }
