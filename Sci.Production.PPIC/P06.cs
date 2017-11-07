@@ -13,32 +13,41 @@ using System.Linq;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P06
+    /// </summary>
     public partial class P06 : Sci.Win.Tems.QueryForm
     {
-        DataTable gridData;
-        Ict.Win.DataGridViewGeneratorDateColumnSettings cutoffDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
-        DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
+        private DataTable gridData;
+        private Ict.Win.DataGridViewGeneratorDateColumnSettings cutoffDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
+
+        /// <summary>
+        /// P06
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            //Exp P/out date預設帶出下個月的最後一天
-            dateExpPoutDate.Value = (DateTime.Today.AddMonths(2)).AddDays(1 - (DateTime.Today.AddMonths(2)).Day - 1);
-            comboDropDownListCategory.SelectedIndex = 0;
+            this.InitializeComponent();
+
+            // Exp P/out date預設帶出下個月的最後一天
+            this.dateExpPoutDate.Value = DateTime.Today.AddMonths(2).AddDays(1 - DateTime.Today.AddMonths(2).Day - 1);
+            this.comboDropDownListCategory.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            cutoffDate.CellValidating += (s, e) =>
+            this.cutoffDate.CellValidating += (s, e) =>
             {
-
                 DataRow dr = this.gridShipmentSchedule.GetDataRow<DataRow>(e.RowIndex);
                 if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["SDPDate"]))
                 {
                     if (!MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
+                        if (MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1))
                         {
                             dr["SDPDate"] = DBNull.Value;
                             e.Cancel = true;
@@ -49,14 +58,14 @@ namespace Sci.Production.PPIC
                 }
             };
 
-            //Grid設定
+            // Grid設定
             this.gridShipmentSchedule.IsEditingReadOnly = false;
-            this.gridShipmentSchedule.DataSource = listControlBindingSource1;
+            this.gridShipmentSchedule.DataSource = this.listControlBindingSource1;
 
-            //當欄位值為0時，顯示空白
-            clogctn.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
+            // 當欄位值為0時，顯示空白
+            this.clogctn.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.gridShipmentSchedule)
+            this.Helper.Controls.Grid.Generator(this.gridShipmentSchedule)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SewLine", header: "Sewing Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -70,7 +79,7 @@ namespace Sci.Production.PPIC
                 .Text("Alias", header: "Dest.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("SewOffLine", header: "Offline", iseditingreadonly: true)
                 .Date("InspDate", header: "F-Insp", iseditingreadonly: true)
-                .Date("SDPDate", header: "Cut-off Date", settings: cutoffDate)
+                .Date("SDPDate", header: "Cut-off Date", settings: this.cutoffDate)
                 .Date("EstPulloutDate", header: "Est. Pullout", iseditingreadonly: true)
                 .Text("Seq", header: "Ship Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("ShipmodeID", header: "Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -86,40 +95,42 @@ namespace Sci.Production.PPIC
                 .Text("ProdRemark", header: "Production Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ShipRemark", header: "Remark", width: Widths.AnsiChars(20))
                 .Text("MtlFormA", header: "Mtl. FormA", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Numeric("InClogCTN", header: "% in CLOG", iseditingreadonly: true, settings: clogctn)
+                .Numeric("InClogCTN", header: "% in CLOG", iseditingreadonly: true, settings: this.clogctn)
                 .Numeric("CBM", header: "Ttl CBM", decimal_places: 3, iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Bin Location", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
-            gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.ForeColor = Color.Red;
-            gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.ForeColor = Color.Red;
-            gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.BackColor = Color.Pink;
-            gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        //Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Query
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             #region 檢核
             DualResult result;
-            if (MyUtility.Check.Empty(dateExpPoutDate.Value))
+            if (MyUtility.Check.Empty(this.dateExpPoutDate.Value))
             {
                 MyUtility.Msg.WarningBox("Exp P/out Date can't be empty!");
-                dateExpPoutDate.Focus();
+                this.dateExpPoutDate.Focus();
                 return;
             }
-            if (comboDropDownListCategory.SelectedIndex == -1)
+
+            if (this.comboDropDownListCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't be empty!");
-                comboDropDownListCategory.Focus();
+                this.comboDropDownListCategory.Focus();
                 return;
             }
             #endregion
 
             this.ShowWaitMessage("Data processing, please wait...");
             StringBuilder sqlCmd = new StringBuilder();
-            string category = comboDropDownListCategory.SelectedValue.ToString();
-            # region 組SQL
-            sqlCmd.Append(string.Format(@"
+            string category = this.comboDropDownListCategory.SelectedValue.ToString();
+            #region 組SQL
+            sqlCmd.Append(string.Format(
+                @"
 select distinct oq.Id, oq.Seq , pd.ClogLocationId
 into #tmpClocationids
 from Orders o WITH (NOLOCK) 
@@ -131,9 +142,10 @@ and o.PulloutComplete = 0
 and o.Finished = 0
 and o.Qty > 0
 and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}')
-and o.Category in ({2})
-",
-            Sci.Env.User.Keyword, Convert.ToDateTime(dateExpPoutDate.Value).ToString("d"), category));
+and o.Category in ({2})",
+            Sci.Env.User.Keyword,
+            Convert.ToDateTime(this.dateExpPoutDate.Value).ToString("d"),
+            category));
 
             sqlCmd.Append(@"
 select distinct id,seq into #tmpIDSeq from  #tmpClocationids
@@ -222,75 +234,94 @@ order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
 
 drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
 ");
-            # endregion
+            #endregion
 
-            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData))
             {
-                if (gridData.Rows.Count == 0)
+                if (this.gridData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
-            listControlBindingSource1.DataSource = gridData;
+
+            this.listControlBindingSource1.DataSource = this.gridData;
 
             this.HideWaitMessage();
         }
 
-        //Find Now
-        private void btnFindNow_Click(object sender, EventArgs e)
+        // Find Now
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("ID", txtLocateForSP.Text.ToString());
+            if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
+            {
+                return;
+            }
+
+            int index = this.listControlBindingSource1.Find("ID", this.txtLocateForSP.Text.ToString());
             if (index == -1)
-            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+            }
             else
-            { listControlBindingSource1.Position = index; }
+            {
+                this.listControlBindingSource1.Position = index;
+            }
         }
 
-        //Quit without Save
-        private void btnQuitWithoutSave_Click(object sender, EventArgs e)
+        // Quit without Save
+        private void BtnQuitWithoutSave_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //Save and Quit
-        private void btnSaveAndQuit_Click(object sender, EventArgs e)
+        // Save and Quit
+        private void BtnSaveAndQuit_Click(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
+            if (!MyUtility.Check.Empty((DataTable)this.listControlBindingSource1.DataSource))
             {
                 IList<string> updateCmds = new List<string>();
                 this.gridShipmentSchedule.ValidateControl();
-                listControlBindingSource1.EndEdit();
+                this.listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
-                foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
                 {
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        updateCmds.Add(string.Format(@"update Order_QtyShip set SDPDate = {0}, ShipRemark = '{1}', EditName = '{2}', EditDate = GETDATE() where ID = '{3}' and Seq = '{4}'",
+                        updateCmds.Add(string.Format(
+                            @"update Order_QtyShip set SDPDate = {0}, ShipRemark = '{1}', EditName = '{2}', EditDate = GETDATE() where ID = '{3}' and Seq = '{4}'",
                             MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'",
-                            dr["ShipRemark"].ToString(), Sci.Env.User.UserID, dr["ID"].ToString(), dr["Seq"].ToString()));
+                            dr["ShipRemark"].ToString(),
+                            Sci.Env.User.UserID,
+                            dr["ID"].ToString(),
+                            dr["Seq"].ToString()));
+
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
                     }
                 }
+
                 if (allSP.Length != 0)
                 {
-                    DataTable GroupData;
+                    DataTable groupData;
                     try
                     {
-                        MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Id,SDPDate",
+                        MyUtility.Tool.ProcessWithDatatable(
+                            (DataTable)this.listControlBindingSource1.DataSource,
+                            "Id,SDPDate",
                             string.Format("select id,min(SDPDate) as SDPDate from #tmp where Id in ({0}) group by Id", allSP.ToString().Substring(0, allSP.ToString().Length - 1)),
-                            out GroupData);
+                            out groupData);
                     }
                     catch (Exception ex)
                     {
-                        ShowErr("Save error.", ex);
+                        this.ShowErr("Save error.", ex);
                         return;
                     }
 
-                    foreach (DataRow dr in GroupData.Rows)
+                    foreach (DataRow dr in groupData.Rows)
                     {
-                        updateCmds.Add(string.Format("update Orders set SDPDate = {0} where ID = '{1}'",
-                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'", dr["Id"].ToString()));
+                        updateCmds.Add(string.Format(
+                            "update Orders set SDPDate = {0} where ID = '{1}'",
+                            MyUtility.Check.Empty(dr["SDPDate"]) ? "null" : "'" + Convert.ToDateTime(dr["SDPDate"]).ToString("d") + "'",
+                            dr["Id"].ToString()));
                     }
                 }
 
@@ -303,19 +334,21 @@ drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
                         return;
                     }
                 }
+
                 this.Close();
             }
         }
 
-        //To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        // To Excel
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
+            if ((DataTable)this.listControlBindingSource1.DataSource == null || ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
-            Sci.Production.PPIC.P06_Print callNextForm = new Sci.Production.PPIC.P06_Print((DataTable)listControlBindingSource1.DataSource);
+
+            Sci.Production.PPIC.P06_Print callNextForm = new Sci.Production.PPIC.P06_Print((DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
     }

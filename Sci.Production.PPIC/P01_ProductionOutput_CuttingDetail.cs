@@ -11,35 +11,52 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_ProductionOutput_CuttingDetail
+    /// </summary>
     public partial class P01_ProductionOutput_CuttingDetail : Sci.Win.Subs.Base
     {
-        string workType, id, type, article, sizeCode;
-        public P01_ProductionOutput_CuttingDetail(string WorkType, string ID, string Type, string Article,string SizeCode)
+        private string workType;
+        private string id;
+        private string type;
+        private string article;
+        private string sizeCode;
+
+        /// <summary>
+        /// P01_ProductionOutput_CuttingDetail
+        /// </summary>
+        /// <param name="workType">string WorkType</param>
+        /// <param name="id">string ID</param>
+        /// <param name="type">string Type</param>
+        /// <param name="article">string Article</param>
+        /// <param name="sizeCode">string SizeCode</param>
+        public P01_ProductionOutput_CuttingDetail(string workType, string id, string type, string article, string sizeCode)
         {
-            InitializeComponent();
-            workType = WorkType;
-            id = ID;
-            type = Type;
-            article = Article;
-            sizeCode = SizeCode;
-            if (type == "A")
+            this.InitializeComponent();
+            this.workType = workType;
+            this.id = id;
+            this.type = type;
+            this.article = article;
+            this.sizeCode = sizeCode;
+            if (this.type == "A")
             {
-                Text = "Cutting Daily Output - " + id;
+                this.Text = "Cutting Daily Output - " + this.id;
             }
             else
             {
-                Text = "Cutting Daily Output - " + id + "(" + article + "-" + sizeCode + ")";
+                this.Text = "Cutting Daily Output - " + this.id + "(" + this.article + "-" + this.sizeCode + ")";
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridCuttingDailyOutput.IsEditingReadOnly = true;
-            this.gridCuttingDailyOutput.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
+            this.gridCuttingDailyOutput.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
                  .Date("CDate", header: "Date", width: Widths.AnsiChars(12))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
@@ -47,16 +64,17 @@ namespace Sci.Production.PPIC
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
                  .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
                  .Text("Status", header: "Status", width: Widths.AnsiChars(8));
-            gridCuttingDailyOutput.Columns[1].Visible = type != "A";
-            gridCuttingDailyOutput.Columns[2].Visible = type != "A";
-            gridCuttingDailyOutput.Columns[3].Visible = type != "A";
-            gridCuttingDailyOutput.Columns[4].Visible = type != "A";
-            gridCuttingDailyOutput.Columns[6].Visible = type != "A";
+            this.gridCuttingDailyOutput.Columns[1].Visible = this.type != "A";
+            this.gridCuttingDailyOutput.Columns[2].Visible = this.type != "A";
+            this.gridCuttingDailyOutput.Columns[3].Visible = this.type != "A";
+            this.gridCuttingDailyOutput.Columns[4].Visible = this.type != "A";
+            this.gridCuttingDailyOutput.Columns[6].Visible = this.type != "A";
 
             string sqlCmd;
-            if (type == "A")
+            if (this.type == "A")
             {
-                sqlCmd = string.Format(@"with AllPattern
+                sqlCmd = string.Format(
+                    @"with AllPattern
 as (
 select distinct oq.Article,oq.SizeCode,oc.ColorID,oc.PatternPanel
 from Orders o WITH (NOLOCK) 
@@ -93,11 +111,12 @@ from (select Article,SizeCode,cDate,MIN(CutQty) as CutQty
           from tmpCutput
           group by Article,SizeCode,cDate) a
 where cDate != ''
-group by cDate", string.Format("o.ID = '{0}'", id));
+group by cDate", string.Format("o.ID = '{0}'", this.id));
             }
             else
             {
-                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
+                sqlCmd = string.Format(
+                    @"select c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
 from Orders o WITH (NOLOCK) 
 inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
 inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
@@ -105,13 +124,15 @@ inner join WorkOrder w WITH (NOLOCK) on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
 inner join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
 inner join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
 where {0}
-group by c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,Status"
-                    , string.Format("o.ID = '{0}'", id)
-                    ,article,sizeCode);
+group by c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,Status",
+                    string.Format("o.ID = '{0}'", this.id),
+                    this.article,
+                    this.sizeCode);
             }
+
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
         }
     }
 }

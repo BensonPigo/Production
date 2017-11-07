@@ -147,7 +147,7 @@
             this.radioOriQty.TabIndex = 2;
             this.radioOriQty.Text = "Ori. Qty";
             this.radioOriQty.UseVisualStyleBackColor = true;
-            this.radioOriQty.CheckedChanged += new System.EventHandler(this.radioOriQty_CheckedChanged);
+            this.radioOriQty.CheckedChanged += new System.EventHandler(this.RadioOriQty_CheckedChanged);
             // 
             // radioQty
             // 
@@ -161,7 +161,7 @@
             this.radioQty.TabStop = true;
             this.radioQty.Text = "Qty";
             this.radioQty.UseVisualStyleBackColor = true;
-            this.radioQty.CheckedChanged += new System.EventHandler(this.radioOriQty_CheckedChanged);
+            this.radioQty.CheckedChanged += new System.EventHandler(this.RadioOriQty_CheckedChanged);
             // 
             // btnClose
             // 

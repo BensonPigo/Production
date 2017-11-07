@@ -168,7 +168,6 @@ where 1=1"));
                 cmds.Add(sp_style);
                 condition.Append(string.Format(@"Style : {0};   ", style));
             }
-            sqlCmd.Append(" and a.Status!='Closed'");
 
             if (!MyUtility.Check.Empty(orderby))
             {

@@ -187,7 +187,7 @@
             this.txtSEQ.Name = "txtSEQ";
             this.txtSEQ.Size = new System.Drawing.Size(50, 23);
             this.txtSEQ.TabIndex = 0;
-            this.txtSEQ.Validating += new System.ComponentModel.CancelEventHandler(this.txtSEQ_Validating);
+            this.txtSEQ.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSEQ_Validating);
             // 
             // editDescription
             // 
@@ -690,7 +690,7 @@
             this.editReason.ReadOnly = true;
             this.editReason.Size = new System.Drawing.Size(234, 36);
             this.editReason.TabIndex = 11;
-            this.editReason.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editReason_PopUp);
+            this.editReason.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditReason_PopUp);
             // 
             // labelReplacementRequestYds
             // 
@@ -778,7 +778,7 @@
             0,
             0,
             0});
-            this.numReplacementRequestYds.Validated += new System.EventHandler(this.numReplacementRequestYds_Validated);
+            this.numReplacementRequestYds.Validated += new System.EventHandler(this.NumReplacementRequestYds_Validated);
             // 
             // num100ReplacementYds
             // 
@@ -810,7 +810,7 @@
             0,
             0,
             0});
-            this.num100ReplacementYds.Validated += new System.EventHandler(this.num100ReplacementYds_Validated);
+            this.num100ReplacementYds.Validated += new System.EventHandler(this.Num100ReplacementYds_Validated);
             // 
             // numNarrowReplacementRequestYds
             // 
@@ -842,7 +842,7 @@
             0,
             0,
             0});
-            this.numNarrowReplacementRequestYds.Validated += new System.EventHandler(this.numNarrowReplacementRequestYds_Validated);
+            this.numNarrowReplacementRequestYds.Validated += new System.EventHandler(this.NumNarrowReplacementRequestYds_Validated);
             // 
             // numOtherReplacementRequestYds
             // 
@@ -874,7 +874,7 @@
             0,
             0,
             0});
-            this.numOtherReplacementRequestYds.Validated += new System.EventHandler(this.numOtherReplacementRequestYds_Validated);
+            this.numOtherReplacementRequestYds.Validated += new System.EventHandler(this.NumOtherReplacementRequestYds_Validated);
             // 
             // labelTotalReplacementQty
             // 
@@ -966,7 +966,7 @@
             this.txtReplacementReason.ReadOnly = true;
             this.txtReplacementReason.Size = new System.Drawing.Size(591, 23);
             this.txtReplacementReason.TabIndex = 16;
-            this.txtReplacementReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtReplacementReason_PopUp);
+            this.txtReplacementReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReplacementReason_PopUp);
             // 
             // numTotalReplacementRequestYds
             // 
@@ -1200,7 +1200,7 @@
             this.txtInvoice.ReadOnly = true;
             this.txtInvoice.Size = new System.Drawing.Size(200, 23);
             this.txtInvoice.TabIndex = 2;
-            this.txtInvoice.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtInvoice_PopUp);
+            this.txtInvoice.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtInvoice_PopUp);
             // 
             // txtTotalDefectPoints
             // 
@@ -1211,7 +1211,7 @@
             this.txtTotalDefectPoints.Name = "txtTotalDefectPoints";
             this.txtTotalDefectPoints.Size = new System.Drawing.Size(170, 23);
             this.txtTotalDefectPoints.TabIndex = 8;
-            this.txtTotalDefectPoints.Validated += new System.EventHandler(this.txtTotalDefectPoints_Validated);
+            this.txtTotalDefectPoints.Validated += new System.EventHandler(this.TxtTotalDefectPoints_Validated);
             // 
             // txtNoOfRollsOver50
             // 

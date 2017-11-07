@@ -11,21 +11,33 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_QtySewingSchedule
+    /// </summary>
     public partial class P01_QtySewingSchedule : Sci.Win.Subs.Base
     {
-        private string orderID, styleUkey;
-        public P01_QtySewingSchedule(string OrderID, string StyleUkey)
+        private string orderID;
+        private string styleUkey;
+
+        /// <summary>
+        /// P01_QtySewingSchedule
+        /// </summary>
+        /// <param name="orderID">string OrderID</param>
+        /// <param name="styleUkey">string StyleUkey</param>
+        public P01_QtySewingSchedule(string orderID, string styleUkey)
         {
-            InitializeComponent();
-            orderID = OrderID;
-            styleUkey = StyleUkey;
+            this.InitializeComponent();
+            this.orderID = orderID;
+            this.styleUkey = styleUkey;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable GridData,LocationData;
-            string sqlCmd = string.Format(@"with SewingData as
+            DataTable gridData, locationData;
+            string sqlCmd = string.Format(
+                @"with SewingData as
 (
 	select sd.ComboType,sd.Article,sd.SizeCode,isnull(sum(sd.AlloQty),0) as AlloQty,isnull(oq.Qty,0) as Qty,oa.Seq as ArticleSeq,os.Seq as SizeCoseSeq
 	,Line = (select DISTINCT SewingLineID + ',' from SewingSchedule_Detail WITH (NOLOCK) where OrderID = sd.OrderID and Article = sd.Article and SizeCode = sd.SizeCode for xml path('')	) 
@@ -40,23 +52,24 @@ namespace Sci.Production.PPIC
 select *
 from (select ComboType,Article,SizeCode,Qty,AlloQty,LEFT(Line,LEN(Line)-1) as Line,ArticleSeq,SizeCoseSeq from SewingData) b
 pivot (sum(AlloQty) for combotype in ([T],[B],[I],[O])) a
-order by ArticleSeq,SizeCoseSeq", orderID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out GridData);
+order by ArticleSeq,SizeCoseSeq", this.orderID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query data fail!!"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
             }
-            listControlBindingSource1.DataSource = GridData;
+
+            this.listControlBindingSource1.DataSource = gridData;
 
             Ict.Win.UI.DataGridViewNumericBoxColumn col_t;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_b;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_i;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_o;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridSewingSchedule.IsEditingReadOnly = true;
-            this.gridSewingSchedule.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridSewingSchedule)
+            this.gridSewingSchedule.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridSewingSchedule)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Order Q'ty", width: Widths.AnsiChars(6))
@@ -66,8 +79,8 @@ order by ArticleSeq,SizeCoseSeq", orderID);
                 .Numeric("O", header: "Schedule Q'ty (O)", width: Widths.AnsiChars(6)).Get(out col_o)
                 .Text("Line", header: "Sewing Line", width: Widths.AnsiChars(20));
 
-            sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", styleUkey);
-            result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
+            sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", this.styleUkey);
+            result = DBProxy.Current.Select(null, sqlCmd, out locationData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query location fail!!" + result.ToString());
@@ -77,7 +90,7 @@ order by ArticleSeq,SizeCoseSeq", orderID);
             col_b.Visible = false;
             col_i.Visible = false;
             col_o.Visible = false;
-            foreach (DataRow dr in LocationData.Rows)
+            foreach (DataRow dr in locationData.Rows)
             {
                 switch (dr["Location"].ToString())
                 {

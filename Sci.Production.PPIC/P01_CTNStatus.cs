@@ -12,52 +12,72 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_CTNStatus
+    /// </summary>
     public partial class P01_CTNStatus : Sci.Win.Subs.Base
     {
-        string orderID;
-        bool canRecompute;
-        public P01_CTNStatus(string OrderID, bool CanRecompute)
+        private string orderID;
+        private bool canRecompute;
+
+        /// <summary>
+        /// P01_CTNStatus
+        /// </summary>
+        /// <param name="orderID">string orderID</param>
+        /// <param name="canRecompute">bool canRecompute</param>
+        public P01_CTNStatus(string orderID, bool canRecompute)
         {
-            InitializeComponent();
-            orderID = OrderID;
-            canRecompute = CanRecompute;
-            setCombo1Source();
-            setCombo2Source();
-            MyUtility.Tool.SetupCombox(comboSortby, 1, 1, ",Location,Ctn#,Packing List ID,Rec. Date");
-            comboPackingListID.SelectedIndex = -1;
-            comboCTN.SelectedIndex = -1;
-            comboSortby.Text = "";
-            labelSortby.Visible = false;
-            comboSortby.Visible = false;
-            btnRecompute.Enabled = CanRecompute;
+            this.InitializeComponent();
+            this.orderID = orderID;
+            this.canRecompute = canRecompute;
+            this.SetCombo1Source();
+            this.SetCombo2Source();
+            MyUtility.Tool.SetupCombox(this.comboSortby, 1, 1, ",Location,Ctn#,Packing List ID,Rec. Date");
+            this.comboPackingListID.SelectedIndex = -1;
+            this.comboCTN.SelectedIndex = -1;
+            this.comboSortby.Text = string.Empty;
+            this.labelSortby.Visible = false;
+            this.comboSortby.Visible = false;
+            this.btnRecompute.Enabled = canRecompute;
         }
 
-        private void setCombo1Source()
+        private void SetCombo1Source()
         {
-            DataTable PackingID;
-            string sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0", orderID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out PackingID);
-            if (!result) { MyUtility.Msg.ErrorBox("Query Packing ID fail !!"); }
-            MyUtility.Tool.SetupCombox(comboPackingListID, 1, PackingID);
+            DataTable packingID;
+            string sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0", this.orderID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingID);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query Packing ID fail !!");
+            }
+
+            MyUtility.Tool.SetupCombox(this.comboPackingListID, 1, packingID);
         }
 
-        private void setCombo2Source()
+        private void SetCombo2Source()
         {
-            DataTable CTN;
-            string sqlCmd = string.Format(@"select CTNStartNo 
+            DataTable ctnDt;
+            string sqlCmd = string.Format(
+                @"select CTNStartNo 
 from (select CTNStartNo, MIN(Seq) as Seq from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0 group by CTNStartNo) a
-order by Seq", orderID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTN);
-            if (!result) { MyUtility.Msg.ErrorBox("Query CTNStartNo fail !!"); }
-            MyUtility.Tool.SetupCombox(comboCTN, 1, CTN);
+order by Seq", this.orderID);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ctnDt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query CTNStartNo fail !!");
+            }
+
+            MyUtility.Tool.SetupCombox(this.comboCTN, 1, ctnDt);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable TransferDetail, CTNLastStatus;
+            DataTable transferDetail, ctnLastStatus;
             #region 組撈Transaction Detail的Sql
-            string sqlCmd = string.Format(@"with Transferclog
+            string sqlCmd = string.Format(
+                @"with Transferclog
 as(
 select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.ID,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from TransferToClog t WITH (NOLOCK) 
@@ -85,36 +105,44 @@ union all
 select * from CReceive
 union all
 select * from CReturn
-order by PackingListID,Seq,UpdateDate", orderID);
+order by PackingListID,Seq,UpdateDate", this.orderID);
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out TransferDetail);
-            if (!result) { MyUtility.Msg.ErrorBox("Query transfer detail fail!!" + result.ToString()); }
-            listControlBindingSource1.DataSource = TransferDetail;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query transfer detail fail!!" + result.ToString());
+            }
 
-            sqlCmd = string.Format(@"select p.ID as PackingListID,pd.CTNStartNo,pd.TransferDate,pd.ReceiveDate,p.PulloutDate,pd.ClogLocationId,pd.Remark,pd.Seq
+            this.listControlBindingSource1.DataSource = transferDetail;
+
+            sqlCmd = string.Format(
+                @"select p.ID as PackingListID,pd.CTNStartNo,pd.TransferDate,pd.ReceiveDate,p.PulloutDate,pd.ClogLocationId,pd.Remark,pd.Seq
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 where pd.OrderID = '{0}' and pd.CTNStartNo <> '' and pd.CTNQty > 0 and p.ID = pd.ID
-order by p.ID,pd.Seq", orderID);
-            result = DBProxy.Current.Select(null, sqlCmd, out CTNLastStatus);
-            if (!result) { MyUtility.Msg.ErrorBox("Query last status fail!!" + result.ToString()); }
+order by p.ID,pd.Seq", this.orderID);
+            result = DBProxy.Current.Select(null, sqlCmd, out ctnLastStatus);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query last status fail!!" + result.ToString());
+            }
 
-            listControlBindingSource2.DataSource = CTNLastStatus;
+            this.listControlBindingSource2.DataSource = ctnLastStatus;
 
-            //設定Grid1的顯示欄位
+            // 設定Grid1的顯示欄位
             this.gridTransactionDetali.IsEditingReadOnly = true;
-            this.gridTransactionDetali.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridTransactionDetali)
+            this.gridTransactionDetali.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridTransactionDetali)
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
-                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))                
+                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))
                 .Date("TypeDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                 .DateTime("UpdateDate", header: "Last update datetime", width: Widths.AnsiChars(20));
 
-            //設定Grid2的顯示欄位
+            // 設定Grid2的顯示欄位
             this.gridLastStatus.IsEditingReadOnly = true;
-            this.gridLastStatus.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.gridLastStatus)
+            this.gridLastStatus.DataSource = this.listControlBindingSource2;
+            this.Helper.Controls.Grid.Generator(this.gridLastStatus)
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
@@ -124,88 +152,89 @@ order by p.ID,pd.Seq", orderID);
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
 
-        private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        private void TabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            labelSortby.Visible = e.TabPageIndex == 1;
-            comboSortby.Visible = e.TabPageIndex == 1;
+            this.labelSortby.Visible = e.TabPageIndex == 1;
+            this.comboSortby.Visible = e.TabPageIndex == 1;
         }
 
-        //Packing List ID
-        private void comboPackingListID_SelectedIndexChanged(object sender, EventArgs e)
+        // Packing List ID
+        private void ComboPackingListID_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetFilter();
+            this.SetFilter();
         }
 
-        //CTN#
-        private void comboCTN_SelectedIndexChanged(object sender, EventArgs e)
+        // CTN#
+        private void ComboCTN_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetFilter();
+            this.SetFilter();
         }
 
-        //Sort by
-        private void comboSortby_SelectedIndexChanged(object sender, EventArgs e)
+        // Sort by
+        private void ComboSortby_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SortBy();
+            this.SortBy();
         }
 
         private void SetFilter()
         {
             StringBuilder filterString = new StringBuilder();
             filterString.Append("1=1");
-            if (comboPackingListID.SelectedIndex != -1)
+            if (this.comboPackingListID.SelectedIndex != -1)
             {
-                filterString.Append(string.Format(" and PackingListID = '{0}'", comboPackingListID.SelectedValue.ToString()));
-                
-            }
-            if (comboCTN.SelectedIndex != -1)
-            {
-                filterString.Append(string.Format(" and CTNStartNo = '{0}'", comboCTN.SelectedValue.ToString()));
+                filterString.Append(string.Format(" and PackingListID = '{0}'", this.comboPackingListID.SelectedValue.ToString()));
             }
 
-            if (((DataTable)listControlBindingSource1.DataSource) != null)
+            if (this.comboCTN.SelectedIndex != -1)
             {
-                ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filterString.ToString();
+                filterString.Append(string.Format(" and CTNStartNo = '{0}'", this.comboCTN.SelectedValue.ToString()));
             }
-            if (((DataTable)listControlBindingSource2.DataSource) != null)
+
+            if (((DataTable)this.listControlBindingSource1.DataSource) != null)
             {
-                ((DataTable)listControlBindingSource2.DataSource).DefaultView.RowFilter = filterString.ToString();
+                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filterString.ToString();
             }
-                    
+
+            if (((DataTable)this.listControlBindingSource2.DataSource) != null)
+            {
+                ((DataTable)this.listControlBindingSource2.DataSource).DefaultView.RowFilter = filterString.ToString();
+            }
         }
 
         private void SortBy()
         {
-            if (comboSortby.SelectedIndex != -1)
+            if (this.comboSortby.SelectedIndex != -1)
             {
-                DataTable Grid2 = (DataTable)listControlBindingSource2.DataSource;
-                switch (comboSortby.SelectedValue.ToString())
+                DataTable grid2 = (DataTable)this.listControlBindingSource2.DataSource;
+                switch (this.comboSortby.SelectedValue.ToString())
                 {
                     case "Location":
-                        Grid2.DefaultView.Sort = "ClogLocationId";
+                        grid2.DefaultView.Sort = "ClogLocationId";
                         break;
                     case "Ctn#":
-                        Grid2.DefaultView.Sort = "CTNStartNo";
+                        grid2.DefaultView.Sort = "CTNStartNo";
                         break;
                     case "Packing List ID":
-                        Grid2.DefaultView.Sort = "PackingListID";
+                        grid2.DefaultView.Sort = "PackingListID";
                         break;
                     case "Rec. Date":
-                        Grid2.DefaultView.Sort = "ReceiveDate";
+                        grid2.DefaultView.Sort = "ReceiveDate";
                         break;
                     default:
-                        if (Grid2 != null)
+                        if (grid2 != null)
                         {
-                            Grid2.DefaultView.Sort = "PackingListID,Seq";
+                            grid2.DefaultView.Sort = "PackingListID,Seq";
                         }
+
                         break;
                 }
             }
         }
 
-        //Recompute
-        private void btnRecompute_Click(object sender, EventArgs e)
+        // Recompute
+        private void BtnRecompute_Click(object sender, EventArgs e)
         {
-            bool prgResult = Prgs.UpdateOrdersCTN(orderID);
+            bool prgResult = Prgs.UpdateOrdersCTN(this.orderID);
             if (!prgResult)
             {
                 MyUtility.Msg.WarningBox("Recompute fail, pls try again!!");

@@ -11,38 +11,48 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P04_HSCode
+    /// </summary>
     public partial class P04_HSCode : Sci.Win.Subs.Base
     {
         private string styleUkey;
-        public P04_HSCode(string StyleUkey)
+
+        /// <summary>
+        /// P04_HSCode
+        /// </summary>
+        /// <param name="styleUkey">string styleUkey</param>
+        public P04_HSCode(string styleUkey)
         {
-            InitializeComponent();
-            styleUkey = StyleUkey;
+            this.InitializeComponent();
+            this.styleUkey = styleUkey;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            //撈Grid資料
-            string sqlCmd = string.Format(@"select sh.*,sh.CountryID + '-' + isnull(c.Alias,'') as Country, '' as CreateBy,'' as EditBy
+            // 撈Grid資料
+            string sqlCmd = string.Format(
+                @"select sh.*,sh.CountryID + '-' + isnull(c.Alias,'') as Country, '' as CreateBy,'' as EditBy
 from Style_HSCode sh WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on sh.CountryID = c.ID
 where sh.StyleUkey = {0}
-order by sh.Continent,sh.CountryID,sh.Article", styleUkey);
+order by sh.Continent,sh.CountryID,sh.Article", this.styleUkey);
 
             DataTable selectDataTable;
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
             foreach (DataRow gridData in selectDataTable.Rows)
             {
-                gridData["CreateBy"] = gridData["AddName"].ToString() + " " + (MyUtility.Check.Empty(gridData["AddDate"]) ? "" : ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
-                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? "" : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
+                gridData["CreateBy"] = gridData["AddName"].ToString() + " " + (MyUtility.Check.Empty(gridData["AddDate"]) ? string.Empty : ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
+                gridData["EditBy"] = gridData["EditName"].ToString() + "  " + (MyUtility.Check.Empty(gridData["EditDate"]) ? string.Empty : ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)));
             }
-            
-            listControlBindingSource1.DataSource = selectDataTable;
 
-            //設定Grid1的顯示欄位
+            this.listControlBindingSource1.DataSource = selectDataTable;
+
+            // 設定Grid1的顯示欄位
             this.gridHSCode.IsEditingReadOnly = true;
-            this.gridHSCode.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridHSCode)
+            this.gridHSCode.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridHSCode)
                  .Text("Continent", header: "Continent", width: Widths.AnsiChars(2))
                  .Text("Country", header: "Country", width: Widths.AnsiChars(15))
                  .Text("Article", header: "Article", width: Widths.AnsiChars(8))

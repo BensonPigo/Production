@@ -11,40 +11,71 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_ProductionKit
+    /// </summary>
     public partial class P01_ProductionKit : Sci.Win.Subs.Input4
     {
-        protected string dataFilter = "";
+        private string dataFilter1 = string.Empty;
+
+        /// <summary>
+        /// DataFilter1
+        /// </summary>
+        protected string DataFilter1
+        {
+            get
+            {
+                return this.dataFilter1;
+            }
+
+            set
+            {
+                this.dataFilter1 = value;
+            }
+        }
+
+        /// <summary>
+        /// P01_ProductionKit
+        /// </summary>
+        /// <param name="canedit">bool canedit</param>
+        /// <param name="keyvalue1">string keyvalue1</param>
+        /// <param name="keyvalue2">string keyvalue2</param>
+        /// <param name="keyvalue3">string keyvalue3</param>
+        /// <param name="styleid">string styleid</param>
         public P01_ProductionKit(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string styleid)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = "Production Kit: " + styleid;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable FactoryData, MRData, SMRData;
-            string sqlcmd = string.Format("select FactoryID,left(FactoryID+'        ',8) + cast(Count(FactoryID) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by FactoryID", KeyValue1);
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out FactoryData);
-            MyUtility.Tool.SetupCombox(comboFactory, 2, FactoryData);
+            DataTable factoryData, mrData, smrData;
+            string sqlcmd = string.Format("select FactoryID,left(FactoryID+'        ',8) + cast(Count(FactoryID) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by FactoryID", this.KeyValue1);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out factoryData);
+            MyUtility.Tool.SetupCombox(this.comboFactory, 2, factoryData);
 
-            sqlcmd = string.Format("select MRHandle,left(MRHandle+'          ',10) + cast(Count(MRHandle) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by MRHandle", KeyValue1);
-            result = DBProxy.Current.Select(null, sqlcmd, out MRData);
-            MyUtility.Tool.SetupCombox(comboMR, 2, MRData);
+            sqlcmd = string.Format("select MRHandle,left(MRHandle+'          ',10) + cast(Count(MRHandle) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by MRHandle", this.KeyValue1);
+            result = DBProxy.Current.Select(null, sqlcmd, out mrData);
+            MyUtility.Tool.SetupCombox(this.comboMR, 2, mrData);
 
-            sqlcmd = string.Format("select SMR,left(SMR+'          ',10) + cast(Count(SMR) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by SMR", KeyValue1);
-            result = DBProxy.Current.Select(null, sqlcmd, out SMRData);
-            MyUtility.Tool.SetupCombox(comboSMR, 2, SMRData);
+            sqlcmd = string.Format("select SMR,left(SMR+'          ',10) + cast(Count(SMR) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by SMR", this.KeyValue1);
+            result = DBProxy.Current.Select(null, sqlcmd, out smrData);
+            MyUtility.Tool.SetupCombox(this.comboSMR, 2, smrData);
 
-            comboFactory.SelectedValue = "";
-            comboMR.SelectedValue = "";
-            comboSMR.SelectedValue = "";
+            this.comboFactory.SelectedValue = string.Empty;
+            this.comboMR.SelectedValue = string.Empty;
+            this.comboSMR.SelectedValue = string.Empty;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
-            string selectCommand = string.Format(@"select sp.*, iif(sp.IsPF = 1,'Y','N') as CPF, iif(sp.ReasonID = '','N','Y') as Reason, r.Name as ReasonName,
+            string selectCommand = string.Format(
+                @"select sp.*, iif(sp.IsPF = 1,'Y','N') as CPF, iif(sp.ReasonID = '','N','Y') as Reason, r.Name as ReasonName,
 isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle)),sp.MRHandle) as MRName,
 isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHName,
 isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.SMR)),sp.SMR) as SMRName,
@@ -55,20 +86,22 @@ left join Reason r WITH (NOLOCK) on r.ID = sp.DOC and r.ReasonTypeID = 'Producti
 left join Style s WITH (NOLOCK) on sp.StyleUkey = s.Ukey
 where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
             Ict.DualResult returnResult;
-            DataTable ArtworkTable = new DataTable();
-            returnResult = DBProxy.Current.Select(null, selectCommand, out ArtworkTable);
+            DataTable artworkTable = new DataTable();
+            returnResult = DBProxy.Current.Select(null, selectCommand, out artworkTable);
             if (!returnResult)
             {
                 return returnResult;
             }
-            SetGrid(ArtworkTable);
-            DataFilter();
+
+            this.SetGrid(artworkTable);
+            this.DataFilter();
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .EditText("Article", header: "ColorWay", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .EditText("ReasonName", header: "DOC", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -87,92 +120,94 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
                 .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Reason", header: "Unnecessary to send", width: Widths.AnsiChars(1), iseditingreadonly: true);
 
-            grid.Columns["SendToQA"].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns["QAReceived"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["SendToQA"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["QAReceived"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnUIConvertToMaintain()
         {
             base.OnUIConvertToMaintain();
-            append.Visible = false;
-            revise.Visible = false;
-            delete.Visible = false;
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
         }
 
-        //Factory
-        private void comboFactory_SelectedIndexChanged(object sender, EventArgs e)
+        // Factory
+        private void ComboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataFilter();
+            this.DataFilter();
         }
 
-        //MR
-        private void comboMR_SelectedIndexChanged(object sender, EventArgs e)
+        // MR
+        private void ComboMR_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataFilter();
+            this.DataFilter();
         }
 
-        //SMR
-        private void comboSMR_SelectedIndexChanged(object sender, EventArgs e)
+        // SMR
+        private void ComboSMR_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataFilter();
+            this.DataFilter();
         }
 
-        //MR not send yet
-        private void checkMRnotSendYet_CheckedChanged(object sender, EventArgs e)
+        // MR not send yet
+        private void CheckMRnotSendYet_CheckedChanged(object sender, EventArgs e)
         {
-            DataFilter();
+            this.DataFilter();
         }
 
-        //Factory not received
-        private void checkFactorynotReceived_CheckedChanged(object sender, EventArgs e)
+        // Factory not received
+        private void CheckFactorynotReceived_CheckedChanged(object sender, EventArgs e)
         {
-            DataFilter();
+            this.DataFilter();
         }
 
-        //組Filter
+        // 組Filter
         private void DataFilter()
         {
-            dataFilter = "";
+            this.DataFilter1 = string.Empty;
             StringBuilder filter = new StringBuilder();
-            if (!MyUtility.Check.Empty(comboFactory.SelectedValue))
+            if (!MyUtility.Check.Empty(this.comboFactory.SelectedValue))
             {
-                filter.Append(string.Format(" FactoryID = '{0}' and", comboFactory.SelectedValue.ToString()));
-            }
-            if (!MyUtility.Check.Empty(comboMR.SelectedValue))
-            {
-                filter.Append(string.Format(" MRHandle = '{0}' and", comboMR.SelectedValue.ToString()));
-            }
-            if (!MyUtility.Check.Empty(comboSMR.SelectedValue))
-            {
-                filter.Append(string.Format(" SMR = '{0}' and", comboSMR.SelectedValue.ToString()));
+                filter.Append(string.Format(" FactoryID = '{0}' and", this.comboFactory.SelectedValue.ToString()));
             }
 
-            if (checkMRnotSendYet.Checked)
+            if (!MyUtility.Check.Empty(this.comboMR.SelectedValue))
+            {
+                filter.Append(string.Format(" MRHandle = '{0}' and", this.comboMR.SelectedValue.ToString()));
+            }
+
+            if (!MyUtility.Check.Empty(this.comboSMR.SelectedValue))
+            {
+                filter.Append(string.Format(" SMR = '{0}' and", this.comboSMR.SelectedValue.ToString()));
+            }
+
+            if (this.checkMRnotSendYet.Checked)
             {
                 filter.Append(" SendDate is null and");
             }
 
-            if (checkFactorynotReceived.Checked)
+            if (this.checkFactorynotReceived.Checked)
             {
                 filter.Append(" SendDate is not null and ReceiveDate is null and");
             }
 
             if (filter.Length > 0)
             {
-                dataFilter = filter.ToString().Substring(0, filter.Length - 3);
+                this.DataFilter1 = filter.ToString().Substring(0, filter.Length - 3);
             }
 
-            ((DataTable)gridbs.DataSource).DefaultView.RowFilter = dataFilter;
+            ((DataTable)this.gridbs.DataSource).DefaultView.RowFilter = this.DataFilter1;
         }
 
-        //View Detail
-        private void btnViewDetail_Click(object sender, EventArgs e)
+        // View Detail
+        private void BtnViewDetail_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
-            DoForm.Set(false, new List<DataRow>(((DataTable)gridbs.DataSource).Select(dataFilter)), grid.GetDataRow(grid.GetSelectedRowIndex())); DoForm.ShowDialog(this);
+            Sci.Production.PPIC.P03_Detail doForm = new Sci.Production.PPIC.P03_Detail();
+            doForm.Set(false, new List<DataRow>(((DataTable)this.gridbs.DataSource).Select(this.DataFilter1)), this.grid.GetDataRow(this.grid.GetSelectedRowIndex()));
+            doForm.ShowDialog(this);
         }
-
-        
     }
 }

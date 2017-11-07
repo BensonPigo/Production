@@ -31,15 +31,17 @@ namespace Sci.Production.Class.Commons
         public enum SMNoticeCategoryEnum
         {
             /// <summary>
-            /// 
+            /// GarmentMarker
             /// </summary>
             GarmentMarker,
+
             /// <summary>
-            /// 
+            /// IE
             /// </summary>
             IE,
+
             /// <summary>
-            /// 
+            /// Main
             /// </summary>
             Main,
         }
@@ -47,24 +49,26 @@ namespace Sci.Production.Class.Commons
         /// <summary>
         /// (Pattern/Marker/IE/SMNotice)建立畫面上的UseFor下拉選單，並且處理他的SelectIndexChanged
         /// </summary>
-        /// <param name="SMNoticeCategory"></param>
-        /// <param name="form"></param>
-        /// <param name="queryfors"></param>
-        /// <param name="showErr"></param>
-        /// <param name="reloadDatas"></param>
-        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum SMNoticeCategory, Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
+        /// <param name="sMNoticeCategory">SMNoticeCategoryEnum</param>
+        /// <param name="form">Input1</param>
+        /// <param name="queryfors">ComboBox</param>
+        /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
+        /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
+        public static void SetupQueryFors_SMNoticeStatus(SMNoticeCategoryEnum sMNoticeCategory, Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
             {
                 var creteria = new List<string>();
                 var statusFieldName = string.Empty;
-                switch (SMNoticeCategory)
+                switch (sMNoticeCategory)
                 {
                     case SMNoticeCategoryEnum.GarmentMarker:
                         statusFieldName = "StatusPattern";
-                        //如果不是Admin，就要拿國別來篩選目前使用者能不能看到(申請單的細項的指派工廠SMNotice_Detail.Factory)
+
+                        // 如果不是Admin，就要拿國別來篩選目前使用者能不能看到(申請單的細項的指派工廠SMNotice_Detail.Factory)
                         if (Env.User.IsAdmin == false)
-                            //creteria.Add("CHARINDEX((Select CountryID From Factory Where ID in (Select d.Factory From SMNotice_Detail d Where ID = SMNotice.ID and d.Type in ('P', 'M'))), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                        {
+                            // creteria.Add("CHARINDEX((Select CountryID From Factory Where ID in (Select d.Factory From SMNotice_Detail d Where ID = SMNotice.ID and d.Type in ('P', 'M'))), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
                             creteria.Add(@"
 Exists (
 	Select 1 
@@ -73,11 +77,15 @@ Exists (
 	Inner Join SMNotice_Detail smd WITH (NOLOCK)  on smd.ID = SMNotice.ID and smd.Type in ('P', 'M') and smd.Factory = f.ID
 )
 ");
+                        }
+
                         break;
                     case SMNoticeCategoryEnum.IE:
                         statusFieldName = "StatusIE";
-                        //如果不是Admin，就要拿國別來篩選目前使用者能不能看到
+
+                        // 如果不是Admin，就要拿國別來篩選目前使用者能不能看到
                         if (Env.User.IsAdmin == false)
+                        {
                             creteria.Add(@"
 Exists (
 	Select 1 
@@ -86,31 +94,39 @@ Exists (
 	Inner Join SMNotice_Detail smd WITH (NOLOCK)  on smd.ID = SMNotice.ID and smd.Type in ('I') and smd.Factory = f.ID
 )
 ");
+                        }
+
                         break;
                     case SMNoticeCategoryEnum.Main:
                         statusFieldName = "Status";
-                        //如果不是Admin，就要拿BrandID來篩選目前使用者能不能看到
-                        //if (Env.User.IsAdmin == false)
-                        //{
+
+                        // 如果不是Admin，就要拿BrandID來篩選目前使用者能不能看到
+                        // if (Env.User.IsAdmin == false)
+                        // {
                         //    //有特殊權限(AllCustomer)不用檢查BrandID
                         //    bool IsAllCustomer = AuthPrg.hasSpecialAuth("CUST");
                         //    if (IsAllCustomer == false)
                         //        creteria.Add("SMNotice.BrandID In (Select BrandID From PASS_AuthBrand Where ID = '" + Env.User.UserID + "')");
-                        //}
+                        // }
                         break;
                     default:
                         throw new NotImplementedException();
                 }
 
-                //如果下拉選單選ALL，就不做特別篩選，狀態不為空就好，如果不是選ALL，就依照下拉選單所選來篩選
+                // 如果下拉選單選ALL，就不做特別篩選，狀態不為空就好，如果不是選ALL，就依照下拉選單所選來篩選
                 if (queryfors.SelectedIndex == 0)
+                {
                     creteria.Add("SMNotice." + statusFieldName + " <> ''");
+                }
                 else
-                    creteria.Add("SMNotice." + statusFieldName + " = '" + queryfors.SelectedValue as string + "'");
+                {
+                    creteria.Add(("SMNotice." + statusFieldName + " = '" + queryfors.SelectedValue as string) + "'");
+                }
 
                 form.DefaultWhere = string.Join(" and ", creteria.ToArray());
-                //每次下拉選單有變動，都會清除當前已經設定的Express
-                form.QueryExpress = "";
+
+                // 每次下拉選單有變動，都會清除當前已經設定的Express
+                form.QueryExpress = string.Empty;
             });
             SharedQueryForsSetup("SMNoticeStatus", queryfors, showErr, reloadDatas, resetDefaultWhere);
         }
@@ -118,10 +134,10 @@ Exists (
         /// <summary>
         /// (Pattern.P02 - Pattern List)建立畫面上的UseFor下拉選單，並且處理他的SelectIndexChanged
         /// </summary>
-        /// <param name="form"></param>
-        /// <param name="queryfors"></param>
-        /// <param name="showErr"></param>
-        /// <param name="reloadDatas"></param>
+        /// <param name="form">Input1</param>
+        /// <param name="queryfors">ComboBox</param>
+        /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
+        /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
         public static void SetupQueryFors_Pattern(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
@@ -129,24 +145,36 @@ Exists (
                 var statusFieldName = (string)queryfors.SelectedValue;
                 var creteria = new List<string>();
 
-                //如果不是Admin，就要拿國別來篩選目前使用者能不能看到
+                // 如果不是Admin，就要拿國別來篩選目前使用者能不能看到
                 if (Env.User.IsAdmin == false)
+                {
                     creteria.Add("CHARINDEX((Select CountryID From Factory Where ID = Pattern.ActFtyPattern), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                }
 
-                if (statusFieldName == "")
+                if (statusFieldName == string.Empty)
+                {
                     creteria.Add("pattern.Status <> ''");
+                }
                 else if (statusFieldName == "Completed/History")
+                {
                     creteria.Add("pattern.Status in ('Completed', 'History')");
+                }
                 else
+                {
                     creteria.Add("pattern.Status = '" + statusFieldName + "'");
+                }
 
                 if (creteria.Any())
+                {
                     form.DefaultWhere = string.Join(" and ", creteria.ToArray());
+                }
                 else
-                    form.DefaultWhere = "";
+                {
+                    form.DefaultWhere = string.Empty;
+                }
 
-                //每次下拉選單有變動，都會清除當前已經設定的Express
-                form.QueryExpress = "";
+                // 每次下拉選單有變動，都會清除當前已經設定的Express
+                form.QueryExpress = string.Empty;
             });
             SharedQueryForsSetup("PatternStatus", queryfors, showErr, reloadDatas, resetDefaultWhere);
         }
@@ -154,10 +182,10 @@ Exists (
         /// <summary>
         /// (Pattern.P03 - Pattern List)建立畫面上的UseFor下拉選單，並且處理他的SelectIndexChanged
         /// </summary>
-        /// <param name="form"></param>
-        /// <param name="queryfors"></param>
-        /// <param name="showErr"></param>
-        /// <param name="reloadDatas"></param>
+        /// <param name="form">Input1</param>
+        /// <param name="queryfors">ComboBox</param>
+        /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
+        /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
         public static void SetupQueryFors_Marker(Sci.Win.Tems.Input1 form, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas)
         {
             var resetDefaultWhere = new Action(() =>
@@ -165,24 +193,36 @@ Exists (
                 var statusFieldName = (string)queryfors.SelectedValue;
                 var creteria = new List<string>();
 
-                //如果不是Admin，就要拿國別來篩選目前使用者能不能看到
+                // 如果不是Admin，就要拿國別來篩選目前使用者能不能看到
                 if (Env.User.IsAdmin == false)
+                {
                     creteria.Add("CHARINDEX((Select CountryID From Factory Where ID = Marker.ActFtyMarker), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                }
 
-                if (statusFieldName == "")
+                if (statusFieldName == string.Empty)
+                {
                     creteria.Add("Marker.Status <> ''");
+                }
                 else if (statusFieldName == "Completed/History")
+                {
                     creteria.Add("Marker.Status in ('Completed', 'History')");
+                }
                 else
+                {
                     creteria.Add("Marker.Status = '" + statusFieldName + "'");
+                }
 
                 if (creteria.Any())
+                {
                     form.DefaultWhere = string.Join(" and ", creteria.ToArray());
+                }
                 else
-                    form.DefaultWhere = "";
+                {
+                    form.DefaultWhere = string.Empty;
+                }
 
-                //每次下拉選單有變動，都會清除當前已經設定的Express
-                form.QueryExpress = "";
+                // 每次下拉選單有變動，都會清除當前已經設定的Express
+                form.QueryExpress = string.Empty;
             });
             SharedQueryForsSetup("PatternStatus", queryfors, showErr, reloadDatas, resetDefaultWhere);
         }
@@ -191,10 +231,10 @@ Exists (
         /// 共用部分，主要是抓DropDownList裡面的東西來給QueryFors下拉選單使用
         /// </summary>
         /// <param name="dropdownType">DropDownList.Type</param>
-        /// <param name="queryfors"></param>
-        /// <param name="showErr"></param>
-        /// <param name="reloadDatas"></param>
-        /// <param name="resetDefaultWhere"></param>
+        /// <param name="queryfors">ComboBox</param>
+        /// <param name="showErr"><![CDATA[Func<Ict.DualResult, bool>]]></param>
+        /// <param name="reloadDatas"><![CDATA[Func<Ict.DualResult>]]></param>
+        /// <param name="resetDefaultWhere">Action</param>
         private static void SharedQueryForsSetup(string dropdownType, Win.UI.ComboBox queryfors, Func<Ict.DualResult, bool> showErr, Func<Ict.DualResult> reloadDatas, Action resetDefaultWhere)
         {
             using (var drQueryFor = DBProxy.Current.SelectEx("SELECT ID, Name FROM DropDownList Where Type = '" + dropdownType + "' ORDER BY ID"))
@@ -204,12 +244,13 @@ Exists (
                     showErr(drQueryFor.InnerResult);
                     return;
                 }
+
                 drQueryFor.DisposeExtendedData = false;
                 var dtStatus = drQueryFor.ExtendedData;
                 var dr = dtStatus.NewRow();
                 dr["Name"] = "All";
-                dr["ID"] = "";
-                dtStatus.Rows.InsertAt(dr, 0); //固定放0位置，方便resetDefaultWhere裡面的步驟三判斷
+                dr["ID"] = string.Empty;
+                dtStatus.Rows.InsertAt(dr, 0); // 固定放0位置，方便resetDefaultWhere裡面的步驟三判斷
 
                 queryfors.DataSource = dtStatus;
                 queryfors.DisplayMember = "Name";
@@ -241,19 +282,22 @@ Exists (
         public enum ChangeFactoryEnum
         {
             /// <summary>
-            /// 
+            /// SampleP01
             /// </summary>
             SampleP01,
+
             /// <summary>
-            /// 
+            /// IeP01
             /// </summary>
             IeP01,
+
             /// <summary>
-            /// 
+            /// IeP02
             /// </summary>
             IeP02,
+
             /// <summary>
-            /// 
+            /// IeP03
             /// </summary>
             IeP03,
         }
@@ -267,10 +311,12 @@ Exists (
             /// 更新了Pattern or Marker or IETMS
             /// </summary>
             UpdateActFactory,
+
             /// <summary>
             /// 更新了SMNotice_Detial
             /// </summary>
             UpdateAssignFactory,
+
             /// <summary>
             /// 更新失敗
             /// </summary>
@@ -280,9 +326,10 @@ Exists (
         /// <summary>
         /// 負責樣品生產任務的工廠變更(Sample.P01, Ie.P01, Ie.P02, Ie.P03 共用)
         /// </summary>
-        /// <param name="callerType"></param>
-        /// <param name="callerRow"></param>
-        /// <param name="newFactoryId"></param>
+        /// <param name="callerType">ChangeFactoryEnum</param>
+        /// <param name="callerRow">DataRow</param>
+        /// <param name="newFactoryId">string</param>
+        /// <returns>ChangeFactoryResultEnum</returns>
         public static ChangeFactoryResultEnum ChangeFactory(ChangeFactoryEnum callerType, DataRow callerRow, string newFactoryId)
         {
             var id = callerRow.Field<string>("ID");
@@ -302,7 +349,7 @@ Exists (
 
                 switch (callerType)
                 {
-                    case ChangeFactoryEnum.SampleP01: //從Sample.P01呼叫，有可能已經Confirm=>(Update Pattern/Marker)，有可能還沒有Confirm=>(Update SMNotice_Detail Type in P, M)
+                    case ChangeFactoryEnum.SampleP01: // 從Sample.P01呼叫，有可能已經Confirm=>(Update Pattern/Marker)，有可能還沒有Confirm=>(Update SMNotice_Detail Type in P, M)
                         {
                             var isApproved = rowSMNotice.Field<string>("StatusPattern") == "Approved";
                             if (isApproved)
@@ -311,9 +358,13 @@ Exists (
                                 var dtMarker = helper.LoadTable("Select ID, Version, ActFtyMarker, EditName, EditDate From Marker Where ID = @ID And Version = (Select max(Version) From Marker Where ID = @ID)", "ID", id);
 
                                 if (dtPattern.Rows.Count != 0)
+                                {
                                     originalFactoryId = dtPattern.Rows[0].Field<string>("ActFtyPattern");
+                                }
                                 else if (dtMarker.Rows.Count != 0)
+                                {
                                     originalFactoryId = dtMarker.Rows[0].Field<string>("ActFtyMarker");
+                                }
                                 else
                                 {
                                     MyUtility.Msg.ErrorBox("can't find Pattern/Marker data.(" + id + ")");
@@ -350,8 +401,9 @@ Exists (
                                 updateType = ChangeFactoryResultEnum.UpdateAssignFactory;
                             }
                         }
+
                         break;
-                    case ChangeFactoryEnum.IeP01: //從Ie.P01呼叫，有可能已經Confirm=>(Update IETMS)，有可能還沒有Confirm=>(Update SMNotice_Detail Type=I)
+                    case ChangeFactoryEnum.IeP01: // 從Ie.P01呼叫，有可能已經Confirm=>(Update IETMS)，有可能還沒有Confirm=>(Update SMNotice_Detail Type=I)
                         {
                             var isApproved = rowSMNotice.Field<string>("StatusIE") == "Approved";
                             if (isApproved)
@@ -359,7 +411,9 @@ Exists (
                                 var dt = helper.LoadTable("Select ID, Version, ActFtyIe, EditName, EditDate From IETMS Where ID = @ID And Version = (Select max(Version) From IETMS Where ID = @ID)", "ID", id);
 
                                 if (dt.Rows.Count != 0)
+                                {
                                     originalFactoryId = dt.Rows[0].Field<string>("ActFtyIe");
+                                }
                                 else
                                 {
                                     MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
@@ -391,9 +445,10 @@ Exists (
                                 updateType = ChangeFactoryResultEnum.UpdateAssignFactory;
                             }
                         }
+
                         break;
                     case ChangeFactoryEnum.IeP02:
-                    case ChangeFactoryEnum.IeP03:   //Update IETMS
+                    case ChangeFactoryEnum.IeP03: // Update IETMS
                         {
                             var version = callerRow.Field<string>("Version");
                             var dt = helper.LoadTable("Select ID, Version, ActFtyIE, EditName, EditDate From IETMS Where ID = @ID And Version = @Version", "ID", id, "Version", version);
@@ -402,16 +457,19 @@ Exists (
                                 MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
                                 return ChangeFactoryResultEnum.Fail;
                             }
+
                             var row = dt.Rows[0];
                             originalFactoryId = row.Field<string>("ActFtyIE");
                             row["ActFtyIE"] = newFactoryId;
                             UIClassPrg.ModifyRecords(row);
                             updateType = ChangeFactoryResultEnum.UpdateActFactory;
                         }
+
                         break;
                     default:
                         throw new NotImplementedException();
                 }
+
                 try
                 {
                     helper.UpdateAllTable();
@@ -431,30 +489,29 @@ Exists (
         #region Print SMNotice
 
         /// <summary>
-        /// 
+        /// EnuPrintSMType
         /// </summary>
         public enum EnuPrintSMType
         {
             /// <summary>
-            /// 
+            /// SMNotice
             /// </summary>
             SMNotice,
+
             /// <summary>
-            /// 
+            /// Order
             /// </summary>
             Order
         }
 
-
-        /// 列印SMNotice報表
         /// <summary>
         /// 列印SMNotice報表
         /// </summary>
-        /// <param name="enuType"></param>
-        /// <param name="ID"></param>
-        public static void PrintSMNotice(string ID, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="iD">string</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        public static void PrintSMNotice(string iD, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            //var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+            // var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
             var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
 
@@ -463,6 +520,7 @@ Exists (
                 MyUtility.Msg.WarningBox("can't find template file (" + xltPath + ")");
                 return;
             }
+
             var tmpFileName = System.IO.Path.GetTempFileName();
             tmpFileName = System.IO.Path.ChangeExtension(tmpFileName, ".xlt");
             System.IO.File.Copy(xltPath, tmpFileName, true);
@@ -477,9 +535,9 @@ Exists (
 #endif
                 var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
 
-                var pageHBreakList = new List<int>(); //換頁符號的水平插入點，基本上P2的時候換一次，之後的TrimCard每頁換一次
+                var pageHBreakList = new List<int>(); // 換頁符號的水平插入點，基本上P2的時候換一次，之後的TrimCard每頁換一次
 
-                //依照Type移除Title共用的部分
+                // 依照Type移除Title共用的部分
                 if (enuType == EnuPrintSMType.SMNotice)
                 {
                     mainSheet.get_Range("A9:AC13").Delete();
@@ -489,31 +547,30 @@ Exists (
                     mainSheet.get_Range("A3:AC9").Delete();
                 }
 
-
-                int rowPosition = 1; //各責任區域輪流使用
-                PrintSMNoticeBlock1(mainSheet, ID, ref rowPosition, enuType); //Block1: SMNotice/Style
-                PrintSMNoticeBlock2(mainSheet, ID, ref rowPosition, enuType); //Block2: BOF-ColorCombo
-                PrintSMNoticeBlock3(mainSheet, ID, ref rowPosition, enuType); //Block3: BOF/Fabric
-                PrintSMNoticeBlock4(mainSheet, ID, ref rowPosition, enuType); //Block4: BOa-ColorCombo
-                PrintSMNoticeBlock5(mainSheet, ID, ref rowPosition, enuType); //Block5: MixColor table
-                PrintSMNoticeBlock6(mainSheet, ID, ref rowPosition, enuType); //Block6: Tape
-                PrintSMNoticeBlock7(mainSheet, ID, ref rowPosition, enuType); //Block7: BOA/Accessory
-                PrintSMNoticeBlock8(mainSheet, ID, ref rowPosition, enuType); //Block8: Order Qty BreakDown
-                PrintSMNoticeBlock9(mainSheet, ID, ref rowPosition, enuType); //Block9: MR/SMR info
+                int rowPosition = 1; // 各責任區域輪流使用
+                PrintSMNoticeBlock1(mainSheet, iD, ref rowPosition, enuType); // Block1: SMNotice/Style
+                PrintSMNoticeBlock2(mainSheet, iD, ref rowPosition, enuType); // Block2: BOF-ColorCombo
+                PrintSMNoticeBlock3(mainSheet, iD, ref rowPosition, enuType); // Block3: BOF/Fabric
+                PrintSMNoticeBlock4(mainSheet, iD, ref rowPosition, enuType); // Block4: BOa-ColorCombo
+                PrintSMNoticeBlock5(mainSheet, iD, ref rowPosition, enuType); // Block5: MixColor table
+                PrintSMNoticeBlock6(mainSheet, iD, ref rowPosition, enuType); // Block6: Tape
+                PrintSMNoticeBlock7(mainSheet, iD, ref rowPosition, enuType); // Block7: BOA/Accessory
+                PrintSMNoticeBlock8(mainSheet, iD, ref rowPosition, enuType); // Block8: Order Qty BreakDown
+                PrintSMNoticeBlock9(mainSheet, iD, ref rowPosition, enuType); // Block9: MR/SMR info
                 pageHBreakList.Add(rowPosition);
-                PrintSMNoticeBlock10(mainSheet, ID, ref rowPosition, enuType); //Block10: formal table for sign
-                PrintSMNoticeBlock11(mainSheet, ID, ref rowPosition, pageHBreakList, enuType); //Block11: FabricColor TrimCard
-                //把分業符號整理好，自動產生的移除，加入指定位置的分頁設定
-                //mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
-                //while (mainSheet.VPageBreaks.Count > 0)
-                //{
+                PrintSMNoticeBlock10(mainSheet, iD, ref rowPosition, enuType); // Block10: formal table for sign
+                PrintSMNoticeBlock11(mainSheet, iD, ref rowPosition, pageHBreakList, enuType); // Block11: FabricColor TrimCard
+                // 把分業符號整理好，自動產生的移除，加入指定位置的分頁設定
+                // mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
+                // while (mainSheet.VPageBreaks.Count > 0)
+                // {
                 //    mainSheet.VPageBreaks[1].Delete();
-                //}
-                //while (mainSheet.HPageBreaks.Count > 1)
-                //{
+                // }
+                // while (mainSheet.HPageBreaks.Count > 1)
+                // {
                 //    mainSheet.HPageBreaks[1].Delete();
-                //}
-                //mainSheet.VPageBreaks.Add(mainSheet.Range["AA1"]);
+                // }
+                // mainSheet.VPageBreaks.Add(mainSheet.Range["AA1"]);
                 pageHBreakList.ForEach(hBreakIndex => mainSheet.HPageBreaks.Add(mainSheet.Range["A" + hBreakIndex]));
 
                 mainSheet.Cells[1, 1].Select();
@@ -529,7 +586,7 @@ Exists (
                 Marshal.ReleaseComObject(mainSheet);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
             finally
             {
@@ -542,19 +599,18 @@ Exists (
                 System.GC.Collect();
             }
 
-            //    MyUtility.Msg.InfoBox("print complete");
+            // MyUtility.Msg.InfoBox("print complete");
         }
 
-        /// Block1: SMNotice/Style
         /// <summary>
         /// Block1: SMNotice/Style
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock1(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock1(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
             if (enuType == EnuPrintSMType.SMNotice)
             {
@@ -576,7 +632,7 @@ outer apply (Select Stuff((select ',' + Remark1 from SMNotice_Detail smd where s
 outer apply (Select Stuff((select ',' + Remark2 from SMNotice_Detail smd where smd.ID = sm.ID and IsNull(Remark2, '') <> '' for xml path('')), 1, 1, '') as Remark2) nf
 where sm.ID = @ID
 ";
-                using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+                using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
                 {
                     if (dr == false)
                     {
@@ -585,39 +641,40 @@ where sm.ID = @ID
                     }
 
                     var row = dr.ExtendedData.Rows[0];
-                    //line1
+
+                    // line1
                     sheet.GetRange("Block1ApplyNo").SetValue(row.Field<string>("ID"));
                     sheet.GetRange("Block1BrandID").SetValue(row.Field<string>("BrandID"));
                     sheet.GetRange("Block1PatternNo").SetValue(row.Field<string>("PatternNo"));
                     sheet.GetRange("Block1SampleSize").SetValue(row.Field<string>("SizeCode"));
                     sheet.GetRange("Block1ApplyDate").SetValue(row.Field<string>("AddDate"));
 
-                    //line2
+                    // line2
                     sheet.GetRange("Block1StyleID").SetValue(row.Field<string>("StyleID"));
                     sheet.GetRange("Block1SeasonID").SetValue(row.Field<string>("SeasonID"));
                     sheet.GetRange("Block1PhaseID").SetValue(row.Field<string>("PhaseID"));
                     sheet.GetRange("Block1OrderID").SetValue(row.Field<string>("OrderID"));
                     sheet.GetRange("Block1RequireFinish").SetValue(row.Field<string>("RequireDate"));
 
-                    //line3
+                    // line3
                     sheet.GetRange("Block1BasicPattern").SetValue(row.Field<string>("BasicPattern"));
                     sheet.GetRange("Block1CDCodeID").SetValue(row.Field<string>("CdCodeID"));
                     sheet.GetRange("Block1ProgramID").SetValue(row.Field<string>("ProgramID"));
 
-                    //line4
+                    // line4
                     sheet.GetRange("Block1Description").SetValue(row.Field<string>("Description"));
                     sheet.GetRange("Block1PatternMaker").SetValue(row.Field<string>("PatternMaker"));
 
-                    //line5
+                    // line5
                     sheet.GetRange("Block1Remark1").SetValue(row.Field<string>("Remark1"));
                     sheet.GetRange("Block1MarkerMaker").SetValue(row.Field<string>("MarkerMaker"));
 
-                    //line6
+                    // line6
                     sheet.GetRange("Block1Remark2").SetValue(row.Field<string>("Remark2"));
                     sheet.GetRange("Block1ProductionFactory").SetValue(row.Field<string>("ProductionFactory"));
                 }
-                rowPosition += 9;
 
+                rowPosition += 9;
             }
             else
             {
@@ -631,7 +688,7 @@ inner join Style s on o.StyleUkey = s.Ukey
 left join Order_POComboList op on o.POID = op.ID
 where o.POID = @ID
 ";
-                using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+                using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
                 {
                     if (dr == false)
                     {
@@ -640,47 +697,46 @@ where o.POID = @ID
                     }
 
                     var row = dr.ExtendedData.Rows[0];
-                    //line1
+
+                    // line1
                     sheet.GetRange("Block1BrandID_O").SetValue(row.Field<string>("BrandID"));
                     sheet.GetRange("Block1OrderType_O").SetValue(row.Field<string>("OrderTypeID"));
                     sheet.GetRange("Block1ProgramID_O").SetValue(row.Field<string>("ProgramID"));
 
-                    //line2
+                    // line2
                     sheet.GetRange("Block1StyleID_O").SetValue(row.Field<string>("StyleID"));
                     sheet.GetRange("Block1SeasonID_O").SetValue(row.Field<string>("SeasonID"));
                     sheet.GetRange("Block1Factory_O").SetValue(row.Field<string>("FactoryID"));
                     sheet.GetRange("Block1Delivery_O").SetValue(row.Field<string>("BuyerDelivery"));
 
-                    //line3
+                    // line3
                     sheet.GetRange("Block1Description_O").SetValue(row.Field<string>("Description"));
                     sheet.GetRange("Block1CDCodeID_O").SetValue(row.Field<string>("CdCodeID"));
                     sheet.GetRange("Block1SCIDelivery_O").SetValue(row.Field<string>("SciDelivery"));
 
-                    //line4
+                    // line4
                     sheet.GetRange("Block1SPNo_O").SetValue(row.Field<string>("spno"));
-
                 }
-                rowPosition += 7;
 
+                rowPosition += 7;
             }
 
             return true;
         }
 
-        /// Block2: BOF-ColorCombo
         /// <summary>
         /// Block2: BOF-ColorCombo
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock2(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock2(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sqlX = "";
-            var sqlY = "";
-            var sqlZ = "";
+            var sqlX = string.Empty;
+            var sqlY = string.Empty;
+            var sqlZ = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlX = @"
@@ -766,20 +822,22 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
 ";
             }
 
-            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", ID)) //抓X軸
-            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", ID)) //抓Y軸
-            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", ID)) //抓Z軸
+            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", iD)) // 抓X軸
+            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", iD)) // 抓Y軸
+            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", iD)) // 抓Z軸
             {
                 if (drX == false)
                 {
                     MyUtility.Msg.WarningBox(drX.ToSimpleString());
                     return false;
                 }
+
                 if (drY == false)
                 {
                     MyUtility.Msg.WarningBox(drY.ToSimpleString());
                     return false;
                 }
+
                 if (drZ == false)
                 {
                     MyUtility.Msg.WarningBox(drZ.ToSimpleString());
@@ -791,6 +849,7 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                     MyUtility.Msg.WarningBox("Pattern panel not key in");
                     return true;
                 }
+
                 var dataX = drX.ExtendedData
                     .AsEnumerable()
                     .Select(row => new
@@ -817,49 +876,51 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         item => new Tuple<string, string>(item.Article, item.FabricPanelCode),
                         item => item.ColorID);
 
-                //找出需要改為灰底的欄位
+                // 找出需要改為灰底的欄位
                 var vividColors = drZ.ExtendedData.AsEnumerable().Where(row => row.Field<bool>("VIVID") == true).Select(row => row.Field<string>("ColorID")).ToList();
 
                 #region ColorCombo-Fabric
                 {
                     var linesOfExcel = new List<IEnumerable<object>>();
-                    linesOfExcel.Add(
-                        //第一行要印Art# 和有使用到的FabricPanelCode
-                        new[] { (object)"Art#" }.Concat(dataX.Select(pair => pair.Key))
-                    );
-                    linesOfExcel.Add(
-                        //第二行要印PatternPanel
-                        new[] { (object)"Pattern Panel" }.Concat(dataX.Select(pair => pair.Value.PatternPanel))
-                    );
 
-                    //接著把Article，串上屬於他的Color
+                    // 第一行要印Art# 和有使用到的FabricPanelCode
+                    linesOfExcel.Add(
+                        new[] { (object)"Art#" }.Concat(dataX.Select(pair => pair.Key)));
+
+                    // 第二行要印PatternPanel
+                    linesOfExcel.Add(
+                        new[] { (object)"Pattern Panel" }.Concat(dataX.Select(pair => pair.Value.PatternPanel)));
+
+                    // 接著把Article，串上屬於他的Color
                     dataY.ToList().ForEach(article =>
                     {
                         var colorsOfThisArticle = dataX.Select(pair =>
                         {
                             var key = new Tuple<string, string>(article, pair.Key);
                             if (dataZ.ContainsKey(key))
+                            {
                                 return dataZ[key];
+                            }
                             else
+                            {
                                 return string.Empty;
+                            }
                         }).ToList();
                         linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
                     });
 
+                    // 倒數第二行要印FabricCode
                     linesOfExcel.Add(
-                        //倒數第二行要印FabricCode
-                        new[] { (object)"FabricCode" }.Concat(dataX.Select(pair => pair.Value.FabricCode))
-                    );
+                        new[] { (object)"FabricCode" }.Concat(dataX.Select(pair => pair.Value.FabricCode)));
 
+                    // 倒數第一行要印QTWith
                     linesOfExcel.Add(
-                        //倒數第一行要印QTWith
-                        new[] { (object)"QT with" }.Concat(dataX.Select(pair => pair.Value.QTWith))
-                    );
+                        new[] { (object)"QT with" }.Concat(dataX.Select(pair => pair.Value.QTWith)));
 
-                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    // 最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
                     var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
 
-                    //尋找要改變顏色的欄位的座標
+                    // 尋找要改變顏色的欄位的座標
                     var cellLocationsForVividColor = new List<Point>();
                     for (int y = 0; y < rangeValue2.GetLength(0); y++)
                     {
@@ -874,45 +935,46 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         }
                     }
 
-                    //關於第二區塊的WorkSheet
+                    // 關於第二區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B2") as MsExcel.Worksheet;
 
                     try
                     {
-                        //======Excel動態生成區塊開始=======
-                        //column的動態新增:
+                        // ======Excel動態生成區塊開始=======
+                        // column的動態新增:
                         var columnNeeded = rangeValue2.GetLength(1);
                         if (columnNeeded > 26)
                         {
                             thisSheet.GetRange(2, 2, 2, 4).Copy();
                             thisSheet.GetRange(28, 2, 28 + columnNeeded - 28, 4).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                         }
-                        //row的動態新增:
+
+                        // row的動態新增:
                         if (dataY.Count > 1)
                         {
-                            //將動態的行空間製造出來(第四行是TemplateRow，所以從第5行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                            // 將動態的行空間製造出來(第四行是TemplateRow，所以從第5行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                             thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].Insert();
 
-                            //把Template行複製給剛剛製作出來的空間
+                            // 把Template行複製給剛剛製作出來的空間
                             thisSheet.Rows[4].Copy();
                             thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                         }
 
-                        //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                        // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                         var leftTopCell = thisSheet.Cells[2, 1];
                         var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
                         thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
 
-                        //開始把VIVID的格子變色
+                        // 開始把VIVID的格子變色
                         cellLocationsForVividColor.ToList().ForEach(point =>
                         {
                             thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
                         });
 
-                        //VIVID顏色設定灰底
-                        //======Excel動態生成區塊結束=======
+                        // VIVID顏色設定灰底
+                        // ======Excel動態生成區塊結束=======
 
-                        //搬回去給主WorkSheet
+                        // 搬回去給主WorkSheet
                         MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
                     }
                     finally
@@ -927,29 +989,33 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                 #region Washing Fabric Swatch
                 {
                     var linesOfExcel = new List<IEnumerable<object>>();
-                    linesOfExcel.Add(
-                        //第一行要印Art# 和有使用到的SizeCode (Washing Fabric Swatch只需要印第一個SizeCode)
-                        new[] { (object)"Art#" }.Concat(dataX.Take(1).Select(pair => pair.Key))
-                    );
 
-                    //接著把Article，串上屬於他的Color (Washing Fabric Swatch只需要印第一個SizeCode)
+                    // 第一行要印Art# 和有使用到的SizeCode (Washing Fabric Swatch只需要印第一個SizeCode)
+                    linesOfExcel.Add(
+                        new[] { (object)"Art#" }.Concat(dataX.Take(1).Select(pair => pair.Key)));
+
+                    // 接著把Article，串上屬於他的Color (Washing Fabric Swatch只需要印第一個SizeCode)
                     dataY.ToList().ForEach(article =>
                     {
                         var colorsOfThisArticle = dataX.Take(1).Select(pair =>
                         {
                             var key = new Tuple<string, string>(article, pair.Key);
                             if (dataZ.ContainsKey(key))
+                            {
                                 return dataZ[key];
+                            }
                             else
+                            {
                                 return string.Empty;
+                            }
                         }).ToList();
                         linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
                     });
 
-                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    // 最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
                     var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
 
-                    //尋找要改變顏色的欄位的座標
+                    // 尋找要改變顏色的欄位的座標
                     var cellLocationsForVividColor = new List<Point>();
                     for (int y = 0; y < rangeValue2.GetLength(0); y++)
                     {
@@ -964,36 +1030,36 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         }
                     }
 
-                    //關於第Washing Fabric Swatch的WorkSheet(這個區塊不用複製去MainSheet)
+                    // 關於第Washing Fabric Swatch的WorkSheet(這個區塊不用複製去MainSheet)
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("washing fabric swatch") as MsExcel.Worksheet;
 
                     try
                     {
-                        //======Excel動態生成區塊開始=======
-                        //row的動態新增:
+                        // ======Excel動態生成區塊開始=======
+                        // row的動態新增:
                         if (dataY.Count > 1)
                         {
-                            //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                            // 將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                             thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + dataY.Count - 2]].Insert();
 
-                            //把Template行複製給剛剛製作出來的空間
+                            // 把Template行複製給剛剛製作出來的空間
                             thisSheet.Rows[3].Copy();
                             thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                         }
 
-                        //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                        // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                         var leftTopCell = thisSheet.Cells[2, 1];
                         var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
                         thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
 
-                        //開始把VIVID的格子變色
+                        // 開始把VIVID的格子變色
                         cellLocationsForVividColor.ToList().ForEach(point =>
                         {
                             thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
                         });
 
-                        //VIVID顏色設定灰底
-                        //======Excel動態生成區塊結束=======
+                        // VIVID顏色設定灰底
+                        // ======Excel動態生成區塊結束=======
                     }
                     finally
                     {
@@ -1003,23 +1069,21 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                 }
                 #endregion
 
-
                 return true;
             }
         }
 
-        /// Block3: BOF/Fabric
         /// <summary>
         /// Block3: BOF/Fabric
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock3(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock3(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sql = "";
+            var sql = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -1066,7 +1130,7 @@ Order by fc.FabricPanelCode
 ";
             }
 
-            using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+            using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
             {
                 if (dr == false)
                 {
@@ -1075,34 +1139,34 @@ Order by fc.FabricPanelCode
                 }
                 else
                 {
-
-                    //關於第三區塊的WorkSheet
+                    // 關於第三區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B3") as MsExcel.Worksheet;
                     try
                     {
                         var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("FabricPanelCode"), string.Empty, row.Field<string>("MixInfo") }).DoubleArrayConvert2DArray();
 
-                        //一共有多少筆資料要被放入Block3
+                        // 一共有多少筆資料要被放入Block3
                         var recordCount = dr.ExtendedData.Rows.Count;
 
-                        //======Excel動態生成區塊開始=======
+                        // ======Excel動態生成區塊開始=======
                         if (recordCount > 1)
                         {
-                            //將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                            // 將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                             thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].Insert();
 
-                            //把Template行複製給剛剛製作出來的空間
+                            // 把Template行複製給剛剛製作出來的空間
                             thisSheet.Rows[2].Copy();
                             thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                         }
 
-                        //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                        // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                         var leftTopCell = thisSheet.Cells[2, 1];
                         var rightBottomCell = thisSheet.Cells[2 + rangeValue.GetLength(0) - 1, 1 + rangeValue.GetLength(1) - 1];
                         thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue;
-                        //======Excel動態生成區塊結束=======
 
-                        //搬回去給主WorkSheet
+                        // ======Excel動態生成區塊結束=======
+
+                        // 搬回去給主WorkSheet
                         MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
 
                         return true;
@@ -1117,20 +1181,19 @@ Order by fc.FabricPanelCode
             }
         }
 
-        /// Block4: BOa-ColorCombo
         /// <summary>
         /// Block4: BOa-ColorCombo
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock4(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock4(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sqlX = "";
-            var sqlY = "";
-            var sqlZ = "";
+            var sqlX = string.Empty;
+            var sqlY = string.Empty;
+            var sqlZ = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlX = @"
@@ -1203,13 +1266,13 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
 	    where cm.ColorUkey = c.Ukey) xc
 	where o.ID = @ID
 ";
-
             }
-            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", ID)) //抓X軸
-            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", ID)) //抓Y軸
-            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", ID)) //抓Z軸
+
+            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", iD)) // 抓X軸
+            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", iD)) // 抓Y軸
+            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", iD)) // 抓Z軸
             {
-                //關於本區塊的WorkSheet
+                // 關於本區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B4") as MsExcel.Worksheet;
 
                 try
@@ -1219,18 +1282,20 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         MyUtility.Msg.WarningBox(drX.ToSimpleString());
                         return false;
                     }
+
                     if (drY == false)
                     {
                         MyUtility.Msg.WarningBox(drY.ToSimpleString());
                         return false;
                     }
+
                     if (drZ == false)
                     {
                         MyUtility.Msg.WarningBox(drZ.ToSimpleString());
                         return false;
                     }
 
-                    //換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
+                    // 換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
                         .AsEnumerable()
                         .Select(row => new
@@ -1257,32 +1322,36 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         .ToList();
 
                     var linesOfExcel = new List<IEnumerable<object>>();
-                    linesOfExcel.Add(
-                        //第一行要印Art# 和有使用到的FabricPanelCode
-                        new[] { (object)"Art#" }.Concat(dataX.ToArray())
-                    );
 
-                    //找出需要改為灰底的欄位
+                    // 第一行要印Art# 和有使用到的FabricPanelCode
+                    linesOfExcel.Add(
+                        new[] { (object)"Art#" }.Concat(dataX.ToArray()));
+
+                    // 找出需要改為灰底的欄位
                     var vividColors = drZ.ExtendedData.AsEnumerable().Where(row => row.Field<bool>("VIVID") == true).Select(row => row.Field<string>("ColorID")).ToList();
 
-                    //接著把Article，串上屬於他的Color
+                    // 接著把Article，串上屬於他的Color
                     dataY.ToList().ForEach(article =>
                     {
                         var colorsOfThisArticle = dataX.Select(fabricPanelCode =>
                         {
                             var key = new Tuple<string, string>(article, fabricPanelCode);
                             if (dataZ.ContainsKey(key))
+                            {
                                 return dataZ[key];
+                            }
                             else
+                            {
                                 return string.Empty;
+                            }
                         }).ToList();
                         linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
                     });
 
-                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    // 最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
                     var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
 
-                    //尋找要改變顏色的欄位的座標
+                    // 尋找要改變顏色的欄位的座標
                     var cellLocationsForVividColor = new List<Point>();
                     for (int y = 0; y < rangeValue2.GetLength(0); y++)
                     {
@@ -1297,36 +1366,38 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         }
                     }
 
-                    //======Excel動態生成區塊開始=======
+                    // ======Excel動態生成區塊開始=======
                     var columnNeeded = rangeValue2.GetLength(1);
                     if (columnNeeded > 26)
                     {
                         thisSheet.GetRange(2, 2, 2, 4).Copy();
                         thisSheet.GetRange(28, 2, 28 + columnNeeded - 28, 4).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
+
                     if (dataY.Count > 1)
                     {
-                        //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + dataY.Count - 2]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[3].Copy();
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                    // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                     var leftTopCell = thisSheet.Cells[2, 1];
                     var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
                     thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
 
-                    //開始把VIVID的格子變色
+                    // 開始把VIVID的格子變色
                     cellLocationsForVividColor.ToList().ForEach(point =>
                     {
                         thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
                     });
-                    //======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // ======Excel動態生成區塊結束=======
+
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
 
                     return true;
@@ -1340,18 +1411,17 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
             }
         }
 
-        /// Block5: MixColor table
         /// <summary>
         /// Block5: MixColor table
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock5(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock5(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            string sql = "", sql2 = "";
+            string sql = string.Empty, sql2 = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -1412,8 +1482,9 @@ Inner Join Color c on c.BrandID = s.BrandID and c.VIVID = 1
 where sm.ID = @ID
 ";
             }
-            using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
-            using (var dr2 = DBProxy.Current.SelectEx(sql2, "ID", ID))
+
+            using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
+            using (var dr2 = DBProxy.Current.SelectEx(sql2, "ID", iD))
             {
                 var allVividColors = dr2.ExtendedData.AsEnumerable().Select(row => row.Field<string>("ID")).ToList();
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B5") as MsExcel.Worksheet;
@@ -1425,10 +1496,13 @@ where sm.ID = @ID
                         return false;
                     }
                     else if (dr.ExtendedData.Rows.Count == 0)
+                    {
                         return true;
+                    }
+
                     var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("Caption"), string.Empty, row.Field<string>("ColorID") }.Concat(row.Field<string>("ColorList").Split('|'))).DoubleArrayConvert2DArray();
 
-                    //尋找要改變顏色的欄位的座標
+                    // 尋找要改變顏色的欄位的座標
                     var cellLocationsForVividColor = new List<Point>();
                     for (int y = 0; y < rangeValue.GetLength(0); y++)
                     {
@@ -1443,40 +1517,42 @@ where sm.ID = @ID
                         }
                     }
 
-                    //一共有多少筆資料要被放入
+                    // 一共有多少筆資料要被放入
                     var recordCount = dr.ExtendedData.Rows.Count;
 
-                    //======Excel動態生成區塊開始=======
+                    // ======Excel動態生成區塊開始=======
                     var columnNeeded = rangeValue.GetLength(1);
                     if (columnNeeded > 3)
                     {
                         thisSheet.Range["D1"].Copy();
                         thisSheet.GetRange(5, 1, 5 + columnNeeded - 5, 1).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
+
                     var rowNeeded = rangeValue.GetLength(0);
                     if (recordCount > 1)
                     {
-                        //將動態的行空間製造出來(第1行是TemplateRow，所以從第2行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第1行是TemplateRow，所以從第2行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[2], thisSheet.Rows[2 + recordCount - 2]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[1].Copy();
                         thisSheet.Range[thisSheet.Rows[2], thisSheet.Rows[2 + recordCount - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row1開始放值)
+                    // 把值放給剛剛動態製作出來的空間 (從Row1開始放值)
                     var areaLeft = 1;
                     var areaTop = 1;
                     thisSheet.GetRange(areaLeft, areaTop, areaLeft + columnNeeded - 1, areaTop + rowNeeded - 1).Value2 = rangeValue;
 
-                    //開始把VIVID的格子變色
+                    // 開始把VIVID的格子變色
                     cellLocationsForVividColor.ToList().ForEach(point =>
                     {
                         thisSheet.Cells[point.Y + 1, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
                     });
-                    //======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // ======Excel動態生成區塊結束=======
+
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet, 1);
                     return true;
                 }
@@ -1489,18 +1565,17 @@ where sm.ID = @ID
             }
         }
 
-        /// Block6: BOA/Accessory
         /// <summary>
         /// Block6: BOA/Accessory
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock6(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock6(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sql = "";
+            var sql = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -1534,7 +1609,7 @@ Order by boa.PatternPanel
 ";
             }
 
-            using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+            using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
             {
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B6") as MsExcel.Worksheet;
                 try
@@ -1545,32 +1620,34 @@ Order by boa.PatternPanel
                         return false;
                     }
                     else if (dr.ExtendedData.Rows.Count == 0)
+                    {
                         return true;
+                    }
 
                     var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("Mix1"), string.Empty, row.Field<string>("Mix2") }).DoubleArrayConvert2DArray();
 
-
-                    //一共有多少筆資料要被放入
+                    // 一共有多少筆資料要被放入
                     var recordCount = dr.ExtendedData.Rows.Count;
 
-                    //======Excel動態生成區塊開始=======
+                    // ======Excel動態生成區塊開始=======
                     if (recordCount > 1)
                     {
-                        //將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[2].Copy();
                         thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                    // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                     var leftTopCell = thisSheet.Cells[2, 1];
                     var rightBottomCell = thisSheet.Cells[2 + rangeValue.GetLength(0) - 1, 1 + rangeValue.GetLength(1) - 1];
                     thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue;
-                    //======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // ======Excel動態生成區塊結束=======
+
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
                     return true;
                 }
@@ -1583,18 +1660,17 @@ Order by boa.PatternPanel
             }
         }
 
-        /// Block7: BOA/Accessory
         /// <summary>
         /// Block7: BOA/Accessory
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock7(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock7(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sql = "";
+            var sql = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -1626,9 +1702,9 @@ Order by boa.PatternPanel
 ";
             }
 
-            using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+            using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
             {
-                //關於第三區塊的WorkSheet
+                // 關於第三區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B7") as MsExcel.Worksheet;
                 try
                 {
@@ -1638,30 +1714,34 @@ Order by boa.PatternPanel
                         return false;
                     }
                     else if (dr.ExtendedData.Rows.Count == 0)
+                    {
                         return true;
+                    }
+
                     var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("PatternPanel"), string.Empty, row.Field<string>("MixInfo") }).DoubleArrayConvert2DArray();
 
-                    //一共有多少筆資料要被放入Block6
+                    // 一共有多少筆資料要被放入Block6
                     var recordCount = dr.ExtendedData.Rows.Count;
 
-                    //======Excel動態生成區塊開始=======
+                    // ======Excel動態生成區塊開始=======
                     if (recordCount > 1)
                     {
-                        //將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第2行是TemplateRow，所以從第3行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[2].Copy();
                         thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + recordCount - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                    // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                     var leftTopCell = thisSheet.Cells[2, 1];
                     var rightBottomCell = thisSheet.Cells[2 + rangeValue.GetLength(0) - 1, 1 + rangeValue.GetLength(1) - 1];
                     thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue;
-                    //======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // ======Excel動態生成區塊結束=======
+
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet, 1);
 
                     return true;
@@ -1675,20 +1755,19 @@ Order by boa.PatternPanel
             }
         }
 
-        /// Block8: Order Qty BreakDown
         /// <summary>
         /// Block8: Order Qty BreakDown
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock8(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock8(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sqlX = "";
-            var sqlY = "";
-            var sqlZ = "";
+            var sqlX = string.Empty;
+            var sqlY = string.Empty;
+            var sqlZ = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlX = @"
@@ -1746,11 +1825,12 @@ group by q.Article, q.SizeCode
 order by q.Article, q.SizeCode
 ";
             }
-            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", ID)) //抓X軸
-            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", ID)) //抓Y軸
-            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", ID)) //抓Z軸
+
+            using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", iD)) // 抓X軸
+            using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", iD)) // 抓Y軸
+            using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", iD)) // 抓Z軸
             {
-                //關於本區塊的WorkSheet
+                // 關於本區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B8") as MsExcel.Worksheet;
 
                 try
@@ -1760,16 +1840,19 @@ order by q.Article, q.SizeCode
                         MyUtility.Msg.WarningBox(drX.ToSimpleString());
                         return false;
                     }
+
                     if (drY == false)
                     {
                         MyUtility.Msg.WarningBox(drY.ToSimpleString());
                         return false;
                     }
+
                     if (drZ == false)
                     {
                         MyUtility.Msg.WarningBox(drZ.ToSimpleString());
                         return false;
                     }
+
                     if (drZ.ExtendedData.Rows.Count == 0)
                     {
                         return true;
@@ -1785,7 +1868,7 @@ order by q.Article, q.SizeCode
                         .Select(row => row.Field<string>("Article"))
                         .ToList();
 
-                    //換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
+                    // 換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
                         .AsEnumerable()
                         .Select(row => new
@@ -1799,63 +1882,70 @@ order by q.Article, q.SizeCode
                             item => item.Qty);
 
                     var linesOfExcel = new List<IEnumerable<object>>();
-                    linesOfExcel.Add(
-                        //第一行要印Article 和有使用到的SizeCode
-                        new[] { (object)"Article" }.Concat(dataX)
-                    );
 
-                    //接著把Article，串上屬於他的Qty
+                    // 第一行要印Article 和有使用到的SizeCode
+                    linesOfExcel.Add(
+                        new[] { (object)"Article" }.Concat(dataX));
+
+                    // 接著把Article，串上屬於他的Qty
                     dataY.ToList().ForEach(article =>
                     {
                         var qtyOfThisArticle = dataX.Select(sizeCode =>
                         {
                             var key = new Tuple<string, string>(article, sizeCode);
                             if (dataZ.ContainsKey(key))
+                            {
                                 return (object)dataZ[key];
+                            }
                             else
+                            {
                                 return null;
+                            }
                         }).ToList();
                         if (qtyOfThisArticle.Any(item => item != null))
+                        {
                             linesOfExcel.Add(new[] { (object)article }.Concat(qtyOfThisArticle));
+                        }
                     });
 
-                    //最後一行Total小計
+                    // 最後一行Total小計
                     var summaryData = dataX
                         .Select(sizeCode => (object)dataZ.Where(pair => pair.Key.Item2 == sizeCode).Sum(pair => pair.Value).GetValueOrDefault(0));
                     linesOfExcel.Add(
-                        new[] { (object)"Total" }.Concat(summaryData)
-                    );
+                        new[] { (object)"Total" }.Concat(summaryData));
 
-                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    // 最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
                     var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
-                    //======Excel動態生成區塊開始=======
-                    //column的動態新增:
+
+                    // ======Excel動態生成區塊開始=======
+                    // column的動態新增:
                     var columnNeeded = rangeValue2.GetLength(1);
                     if (columnNeeded > 26)
                     {
                         thisSheet.GetRange(2, 2, 2, 4).Copy();
                         thisSheet.GetRange(28, 2, 28 + columnNeeded - 28, 4).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
-                    //row的動態新增:
+
+                    // row的動態新增:
                     var rowNeeded = rangeValue2.GetLength(0);
                     if (rowNeeded > 3)
                     {
-                        //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + rowNeeded - 4]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[3].Copy();
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + rowNeeded - 4]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                    // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                     var areaLeft = 1;
                     var areaTop = 2;
                     thisSheet.GetRange(areaLeft, areaTop, areaLeft + rangeValue2.GetLength(1) - 1, areaTop + rangeValue2.GetLength(0) - 1).Value2 = rangeValue2;
-                    //======Excel動態生成區塊結束=======
 
+                    // ======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
                     return true;
                 }
@@ -1868,18 +1958,17 @@ order by q.Article, q.SizeCode
             }
         }
 
-        /// Block9: MR/SMR info
         /// <summary>
         /// Block9: MR/SMR info
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock9(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock9(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sqlHandle = "";
+            var sqlHandle = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlHandle = @"
@@ -1901,7 +1990,7 @@ Where o.ID = @ID
 ";
             }
 
-            using (var drHandle = DBProxy.Current.SelectEx(sqlHandle, "ID", ID))
+            using (var drHandle = DBProxy.Current.SelectEx(sqlHandle, "ID", iD))
             {
                 if (drHandle == false)
                 {
@@ -1909,7 +1998,7 @@ Where o.ID = @ID
                     return false;
                 }
 
-                //關於本區塊的WorkSheet
+                // 關於本區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B9") as MsExcel.Worksheet;
 
                 try
@@ -1918,7 +2007,7 @@ Where o.ID = @ID
                     thisSheet.Range["Block6CreateBy"].Value = rowHandle.Field<string>("MRInfo");
                     thisSheet.Range["Block6Auditor"].Value = rowHandle.Field<string>("SMRInfo");
 
-                    //搬回去給主WorkSheet
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet, 1);
 
                     return true;
@@ -1932,23 +2021,22 @@ Where o.ID = @ID
             }
         }
 
-        /// Block10: formal table for sign
         /// <summary>
         /// Block10: formal table for sign
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock10(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock10(MsExcel.Worksheet sheet, string iD, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            //關於本區塊的WorkSheet
+            // 關於本區塊的WorkSheet
             var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P2") as MsExcel.Worksheet;
 
             try
             {
-                //搬回去給主WorkSheet
+                // 搬回去給主WorkSheet
                 MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
 
                 return true;
@@ -1961,20 +2049,19 @@ Where o.ID = @ID
             }
         }
 
-        /// Block11: FabricColor TrimCard
         /// <summary>
         /// Block11: FabricColor TrimCard
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="ID"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="pageHBreakList"></param>
-        /// <param name="enuType"></param>
-        /// <returns></returns>
-        private static bool PrintSMNoticeBlock11(MsExcel.Worksheet sheet, string ID, ref int rowPosition, List<int> pageHBreakList, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="iD">string</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="pageHBreakList"><![CDATA[List<int>]]></param>
+        /// <param name="enuType">EnuPrintSMType</param>
+        /// <returns>bool</returns>
+        private static bool PrintSMNoticeBlock11(MsExcel.Worksheet sheet, string iD, ref int rowPosition, List<int> pageHBreakList, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sql = "";
-            var sqlStyleInfo = "";
+            var sql = string.Empty;
+            var sqlStyleInfo = string.Empty;
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -2013,8 +2100,8 @@ Where o.ID = @ID
 ";
             }
 
-            using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
-            using (var drStyleInfo = DBProxy.Current.SelectEx(sqlStyleInfo, "ID", ID))
+            using (var dr = DBProxy.Current.SelectEx(sql, "ID", iD))
+            using (var drStyleInfo = DBProxy.Current.SelectEx(sqlStyleInfo, "ID", iD))
             {
                 if (dr == false)
                 {
@@ -2028,11 +2115,10 @@ Where o.ID = @ID
                 }
                 else
                 {
-                    //關於本區塊的WorkSheet
+                    // 關於本區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P3") as MsExcel.Worksheet;
                     try
                     {
-
                         thisSheet.GetRange("P3Style").Value = drStyleInfo.ExtendedData.Rows[0].Field<string>("StyleInfo");
                         thisSheet.GetRange("P3Date").Value = DateTime.Now.ToString("yyyy/MM/dd");
 
@@ -2043,12 +2129,14 @@ Where o.ID = @ID
                             ColorID = row.Field<string>("ColorID"),
                             Refno = row.Field<string>("Refno"),
                         })
-                            //第一層先用Article做GroupBy
+
+                            // 第一層先用Ar.ticle做GroupBy
                         .GroupBy(item => item.Article)
-                            //第二層，同一個Article內，怕會有超過7個FabricPanelCode (雖然很少但可能有)
-                            //所以把GroupItem用7切分，逢7換行
-                            //這邊會把本來Article -> FabricPanelCode[]變成 Article -> LineX -> FabricPanelCode
-                            //保證每一個Line都只會最多有7個FabricPanelCode要印
+
+                            // 第二層，同一個Article內，怕會有超過7個FabricPanelCode (雖然很少但可能有)
+                            // 所以把GroupItem用7切分，逢7換行
+                            // 這邊會把本來Article -> FabricPanelCode[]變成 Article -> LineX -> FabricPanelCode
+                            // 保證每一個Line都只會最多有7個FabricPanelCode要印
                         .SelectMany(group =>
                         {
                             var subData = group
@@ -2073,10 +2161,10 @@ Where o.ID = @ID
                         })
                         .ToArray();
 
-                        //這邊會把7x4的表格一組一組的填值
-                        //每一組填完值就複製去給主Sheet，然後才填下一組的值
-                        //每次填值因為都是用Value2整片蓋過，所以不會有資料殘留的問題
-                        //這樣做可以省略複製的計算，也可以讓整體區域更完整
+                        // 這邊會把7x4的表格一組一組的填值
+                        // 每一組填完值就複製去給主Sheet，然後才填下一組的值
+                        // 每次填值因為都是用Value2整片蓋過，所以不會有資料殘留的問題
+                        // 這樣做可以省略複製的計算，也可以讓整體區域更完整
                         while (data.Any())
                         {
                             pageHBreakList.Add(rowPosition);
@@ -2100,7 +2188,7 @@ Where o.ID = @ID
                                 rangeValue[lineArticle, 0] = lineData.Article;
                                 lineData.LineItems.Select((lineItem, lineItemIndex) =>
                                 {
-                                    var columnIndex = 1 + lineItemIndex * 3;
+                                    var columnIndex = 1 + (lineItemIndex * 3);
                                     rangeValue[lineFabricPanelCode, columnIndex] = lineItem.FabricPanelCode;
                                     rangeValue[lineColor, columnIndex] = lineItem.ColorID;
                                     rangeValue[lineRefno, columnIndex] = lineItem.Refno;
@@ -2111,14 +2199,15 @@ Where o.ID = @ID
                             })
                             .ToList();
 
-                            //把二微陣列蓋進去Excel內
+                            // 把二微陣列蓋進去Excel內
                             var areaTop = 2;
                             var areaLeft = 1;
                             thisSheet.GetRange(areaLeft, areaTop, areaLeft + rangeValue.GetLength(1), areaTop + rangeValue.GetLength(0)).Value2 = rangeValue;
 
-                            //搬回去給主WorkSheet
+                            // 搬回去給主WorkSheet
                             MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet, 1);
                         }
+
                         return true;
                     }
                     finally
@@ -2138,7 +2227,7 @@ Where o.ID = @ID
         /// <summary>
         /// 列印Dev TrimCard
         /// </summary>
-        /// <param name="smID"></param>
+        /// <param name="smID">string</param>
         public static void PrintSMNoticeDevTrimCard(string smID)
         {
             var xltFolder = Sci.Env.Cfg.XltPathDir;
@@ -2148,6 +2237,7 @@ Where o.ID = @ID
                 MyUtility.Msg.WarningBox("can't find template file (" + xltPath + ")");
                 return;
             }
+
             var tmpFileName = System.IO.Path.GetTempFileName();
             tmpFileName = System.IO.Path.ChangeExtension(tmpFileName, ".xlt");
             System.IO.File.Copy(xltPath, tmpFileName, true);
@@ -2161,9 +2251,17 @@ Where o.ID = @ID
                 app.Visible = true;
 #endif
                 var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
-                int rowPosition = 1; //各責任區域輪流使用
-                if (PrintSMNoticeDevTrimCardBlock1(mainSheet, smID, ref rowPosition) == false) return; //Block1: SMNotice/Style
-                if (PrintSMNoticeDevTrimCardBlock2(mainSheet, smID, ref rowPosition) == false) return; //Block2: FabricPanelCode - Article (repeatly)
+                int rowPosition = 1; // 各責任區域輪流使用
+                if (PrintSMNoticeDevTrimCardBlock1(mainSheet, smID, ref rowPosition) == false)
+                {
+                    return; // Block1: SMNotice/Style
+                }
+
+                if (PrintSMNoticeDevTrimCardBlock2(mainSheet, smID, ref rowPosition) == false)
+                {
+                    return; // Block2: FabricPanelCode - Article (repeatly)
+                }
+
                 mainSheet.Cells[1, 1].Select();
                 app.DisplayAlerts = true;
 
@@ -2205,6 +2303,7 @@ Where sm.ID = @ID
                 mainSheet.GetRange("fWorkingNumber").SetValue(row.Field<string>("WorkingNumber"));
                 mainSheet.GetRange("fSeason").SetValue(row.Field<string>("SeasonID"));
             }
+
             rowPosition += 6;
             return true;
         }
@@ -2243,14 +2342,17 @@ order by x.tp, x.PNO
                     return false;
                 }
                 else if (dr.ExtendedData.Rows.Count == 0)
+                {
                     return true;
+                }
                 else
                 {
                     var thisSheet = (mainSheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P2") as MsExcel.Worksheet;
                     try
                     {
                         var data = dr.ExtendedData.AsEnumerable()
-                            //先把DataRow裡面的值取出來
+
+                            // 先把DataRow裡面的值取出來
                             .Select(row => new
                             {
                                 PNO = row.Field<string>("PNO"),
@@ -2259,7 +2361,8 @@ order by x.tp, x.PNO
                                 Article = row.Field<string>("Article"),
                                 ColorName = row.Field<string>("ColorName"),
                             })
-                            //用PNO + REF + Description + Article群組
+
+                            // 用PNO + REF + Description + Article群組
                             .GroupBy(
                                 item => new
                                 {
@@ -2269,7 +2372,8 @@ order by x.tp, x.PNO
                                     Article = item.Article,
                                 },
                                 item => item.ColorName)
-                            //將顏色之間用換行符號串起來
+
+                            // 將顏色之間用換行符號串起來
                             .Select(item => new
                             {
                                 PNO = item.Key.PNO,
@@ -2278,7 +2382,8 @@ order by x.tp, x.PNO
                                 Article = item.Key.Article,
                                 Color = item.AsEnumerable().JoinToString("\r\n"),
                             })
-                            //第二階段是用 PNO + REF + Description 群組
+
+                            // 第二階段是用 PNO + REF + Description 群組
                             .GroupBy(
                                 item => new
                                 {
@@ -2291,7 +2396,8 @@ order by x.tp, x.PNO
                                     Article = item.Article,
                                     Color = item.Color,
                                 })
-                            //把Article 和 ColorName組合成一對一對的資料，並且以長度2做切分
+
+                            // 把Article 和 ColorName組合成一對一對的資料，並且以長度2做切分
                             .SelectMany(item => item.AsEnumerable().Select((item2, idx) => new
                             {
                                 LineIndex = Convert.ToInt32(idx / 2),
@@ -2308,8 +2414,8 @@ order by x.tp, x.PNO
                                 .ToArray())
                             .ToList();
 
-                        //因為要使用ref rowPosition這個傳址變數，所以不能包在Linq裡面
-                        //上面組裝好的每一個item，都代表一組PNO + REF + DESCRIPTION，以及這個組合的1或2個Article-Color Pair
+                        // 因為要使用ref rowPosition這個傳址變數，所以不能包在Linq裡面
+                        // 上面組裝好的每一個item，都代表一組PNO + REF + DESCRIPTION，以及這個組合的1或2個Article-Color Pair
                         foreach (var item in data)
                         {
                             var rangeValue = new object[4, 6];
@@ -2333,9 +2439,10 @@ order by x.tp, x.PNO
                             var areaTop = 1;
                             thisSheet.GetRange(areaLeft, areaTop, areaLeft + rangeValue.GetLength(1) - 1, areaTop + rangeValue.GetLength(0) - 1).Value2 = rangeValue;
 
-                            //搬回去給主WorkSheet
+                            // 搬回去給主WorkSheet
                             MoveSubBlockIntoMainSheet(mainSheet, ref rowPosition, thisSheet);
                         }
+
                         return true;
                     }
                     finally
@@ -2355,11 +2462,11 @@ order by x.tp, x.PNO
         /// <summary>
         /// 列印SMNotice報表
         /// </summary>
-        /// <param name="uKey"></param>
-        /// <param name="savePath"></param>
+        /// <param name="uKey">long</param>
+        /// <param name="savePath">string</param>
         public static void PrintGarmentList(long uKey, string savePath = null)
         {
-            var directlyOpenExportReport = (savePath == null);
+            var directlyOpenExportReport = savePath == null;
             var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
@@ -2368,6 +2475,7 @@ order by x.tp, x.PNO
                 MyUtility.Msg.WarningBox("can't find template file (" + xltPath + ")");
                 return;
             }
+
             var tmpFileName = System.IO.Path.GetTempFileName();
             tmpFileName = System.IO.Path.ChangeExtension(tmpFileName, ".xlt");
             System.IO.File.Copy(xltPath, tmpFileName, true);
@@ -2378,19 +2486,20 @@ order by x.tp, x.PNO
             {
                 app.DisplayAlerts = false;
                 book = app.Workbooks.Add(tmpFileName);
-                //book = app.Workbooks.Open(tmpFileName);
+
+                // book = app.Workbooks.Open(tmpFileName);
 #if DEBUG
                 app.Visible = true;
 #endif
                 mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
 
-                int rowPosition = 1; //各責任區域輪流使用
-                PrintGarmentListBlock1(mainSheet, uKey, ref rowPosition); //Block1: Header - Pattern
+                int rowPosition = 1; // 各責任區域輪流使用
+                PrintGarmentListBlock1(mainSheet, uKey, ref rowPosition); // Block1: Header - Pattern
                 var articleCount = 0;
-                PrintGarmentListBlock2(mainSheet, uKey, ref rowPosition, out articleCount); //Block2: Garment List
-                PrintGarmentListBlock3(mainSheet, uKey, ref rowPosition, articleCount, bmpFolder); //Block3: Cutting Piece
-                PrintGarmentListBlock4(mainSheet, uKey, ref rowPosition, articleCount); //Block4: Remark
-                //mainSheet.UsedRange.Rows.AutoFit();
+                PrintGarmentListBlock2(mainSheet, uKey, ref rowPosition, out articleCount); // Block2: Garment List
+                PrintGarmentListBlock3(mainSheet, uKey, ref rowPosition, articleCount, bmpFolder); // Block3: Cutting Piece
+                PrintGarmentListBlock4(mainSheet, uKey, ref rowPosition, articleCount); // Block4: Remark
+                // mainSheet.UsedRange.Rows.AutoFit();
                 mainSheet.Cells[1, 1].Select();
                 mainSheet.Protect(Env.User.UserPassword);
                 var saveDir = new System.IO.DirectoryInfo(Env.Cfg.ReportTempDir).FullName;
@@ -2398,7 +2507,10 @@ order by x.tp, x.PNO
                 {
                     var row = dr.ExtendedData.Rows[0];
                     if (savePath == null)
+                    {
                         savePath = System.IO.Path.Combine(saveDir, string.Format("{0}-{1}-{2}-GL_{3}.xlsx", row["StyleID"], row["SeasonID"], row["PatternNo"], DateTime.Now.ToString("yyyyMMdd_HHmmss")));
+                    }
+
                     if (System.IO.File.Exists(savePath))
                     {
                         while (true)
@@ -2411,10 +2523,13 @@ order by x.tp, x.PNO
                             catch (Exception)
                             {
                                 if (MyUtility.Msg.QuestionBox("file already exists and was opend, do yo want to retry?") == System.Windows.Forms.DialogResult.No)
+                                {
                                     return;
+                                }
                             }
                         }
                     }
+
                     book.SaveAs(Filename: savePath);
                 }
             }
@@ -2442,13 +2557,13 @@ order by x.tp, x.PNO
         /// <summary>
         /// Block1: Header - Pattern
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="uKey"></param>
-        /// <param name="rowPosition"></param>
-        /// <returns></returns>
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="uKey">long</param>
+        /// <param name="rowPosition">int</param>
+        /// <returns>bool</returns>
         private static bool PrintGarmentListBlock1(MsExcel.Worksheet sheet, long uKey, ref int rowPosition)
         {
-            using (var dr = DBProxy.Current.SelectEx(@"
+            string strSelect = @"
 With theSizeSets as (
 	Select sl.ID
 	From Pattern p
@@ -2483,7 +2598,8 @@ Left Join SMNotice_Detail smd on smd.ID = sm.iD and smd.Type = 'P'
 Left Join Style s on s.UKey = sm.StyleUKey
 Left Join GetName uMR on uMR.ID = sm.Mr
 Left Join GetName uPtn on uPtn.ID = p.CFMName
-Where p.UKey = @UKey", "UKey", uKey))
+Where p.UKey = @UKey";
+            using (var dr = DBProxy.Current.SelectEx(strSelect, "UKey", uKey))
             {
                 if (dr == false)
                 {
@@ -2493,24 +2609,24 @@ Where p.UKey = @UKey", "UKey", uKey))
 
                 var row = dr.ExtendedData.Rows[0];
 
-                //line2
+                // line2
                 sheet.GetRange("A2").SetValue(string.Format("Apply No#: {0}", row.Field<string>("ID")));
 
-                //line3
+                // line3
                 sheet.GetRange("A3").SetValue(string.Format("Unify Brand: {0}", row.Field<string>("BrandID")));
                 sheet.GetRange("D3").SetValue(string.Format("Season: {0}", row.Field<string>("SeasonID")));
 
-                //line4
+                // line4
                 sheet.GetRange("A4").SetValue(string.Format("Style: {0}", row.Field<string>("StyleID")));
                 sheet.GetRange("D4").SetValue(string.Format("CD Code: {0}", row.Field<string>("CdCodeID")));
                 sheet.GetRange("I4").SetValue(string.Format("Phase: {0}", row.Field<string>("PhaseID")));
 
-                //line5
+                // line5
                 sheet.GetRange("A5").SetValue(string.Format("Ptn No: {0}", row.Field<string>("PatternNo")));
                 sheet.GetRange("D5").SetValue(string.Format("Description: {0}", row.Field<string>("Description")));
                 sheet.GetRange("I5").SetValue(string.Format("Sample Making: {0}", row.Field<string>("ProductionFactory")));
 
-                //line6
+                // line6
                 var sizeRoundText = string.Format("Size Round#: {0}", row.Field<string>("SizeRound"));
                 using (var img = new System.Drawing.Bitmap(1000, 1000))
                 using (var gra = System.Drawing.Graphics.FromImage(img))
@@ -2522,17 +2638,17 @@ Where p.UKey = @UKey", "UKey", uKey))
                     sheet.GetRange("A6").RowHeight = gra.MeasureString(sizeRoundText, fnt, width).Height / 1.2;
                 }
 
-
-                //line7
+                // line7
                 sheet.GetRange("A7").SetValue(string.Format("Style Remark: {0}", row.Field<string>("StyleRemark")));
 
-                //line8
+                // line8
                 sheet.GetRange("A8").SetValue(string.Format("Mr by: {0}", row.Field<string>("MRBy")));
                 sheet.GetRange("D8").SetValue(string.Format("Pattern by: {0}", row.Field<string>("PtnBy")));
                 sheet.GetRange("I8").SetValue(string.Format("Provide By: {0}", row.Field<string>("ActFtyPattern")));
 
                 sheet.Name = string.Format("{0}-{1}", row.Field<string>("StyleID"), row.Field<string>("PatternNo"));
             }
+
             rowPosition += 10;
             return true;
         }
@@ -2540,20 +2656,21 @@ Where p.UKey = @UKey", "UKey", uKey))
         /// <summary>
         /// Block2: Garment List
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="uKey"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="articleCount"></param>
-        /// <returns></returns>
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="uKey">long</param>
+        /// <param name="rowPosition">int rowPosition</param>
+        /// <param name="articleCount">int articleCount</param>
+        /// <returns>bool</returns>
         private static bool PrintGarmentListBlock2(MsExcel.Worksheet sheet, long uKey, ref int rowPosition, out int articleCount)
         {
             List<string> articleGroupList;
-            using (var dr = DBProxy.Current.SelectEx(@"
+            string strSelect = @"
 Select ArticleGroup 
 From Pattern_GL_Article 
 Where PatternUKey = @PatternUKey
 And ArticleGroup <> 'F_CODE'
-Order by SEQ", "PatternUKey", uKey))
+Order by SEQ";
+            using (var dr = DBProxy.Current.SelectEx(strSelect, "PatternUKey", uKey))
             {
                 if (dr == false)
                 {
@@ -2561,6 +2678,7 @@ Order by SEQ", "PatternUKey", uKey))
                     articleCount = -1;
                     return false;
                 }
+
                 articleGroupList = dr.ExtendedData.AsEnumerable().Select(row => row.Field<string>("ArticleGroup")).Distinct().ToList();
                 articleCount = articleGroupList.Count;
             }
@@ -2600,12 +2718,12 @@ Order by pg.SEQ
                             code.ToUpper())
                         .Cast<object>(), 1).DoubleArrayConvert2DArray();
 
-                //關於第二區塊的WorkSheet
+                // 關於第二區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B2") as MsExcel.Worksheet;
                 try
                 {
-                    //======Excel動態生成區塊開始=======
-                    //column的動態新增:
+                    // ======Excel動態生成區塊開始=======
+                    // column的動態新增:
                     var columnNeeded = dynamicCodeHeader.GetLength(1);
                     if (columnNeeded == 0)
                     {
@@ -2616,24 +2734,27 @@ Order by pg.SEQ
                         thisSheet.GetRange(10, 1, 10, 3).Copy();
                         thisSheet.GetRange(11, 1, 11 + columnNeeded - 2, 3).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
+
                     thisSheet.GetRange(10, 2, 10 + dynamicCodeHeader.GetLength(1) - 1, 2 + dynamicCodeHeader.GetLength(0) - 1).Value2 = dynamicCodeHeader;
 
-                    //row的動態新增:
+                    // row的動態新增:
                     var rowNeeded = rangeValue.GetLength(0);
                     if (rowNeeded > 1)
                     {
-                        //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                        // 將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + rowNeeded - 2]].Insert();
 
-                        //把Template行複製給剛剛製作出來的空間
+                        // 把Template行複製給剛剛製作出來的空間
                         thisSheet.Rows[3].Copy();
                         thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + rowNeeded - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
+
                     thisSheet.GetRange(1, 3, 1 + rangeValue.GetLength(1) - 1, 3 + rangeValue.GetLength(0) - 1).Value2 = rangeValue;
                     thisSheet.GetRange(1, 3, 1 + rangeValue.GetLength(1) - 1, 3 + rangeValue.GetLength(0) - 1).Rows.AutoFit();
-                    //======Excel動態生成區塊結束=======
 
-                    //搬回去給主WorkSheet
+                    // ======Excel動態生成區塊結束=======
+
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet, 1);
 
                     return true;
@@ -2650,12 +2771,12 @@ Order by pg.SEQ
         /// <summary>
         /// Block3: BOF/Fabric
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="uKey"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="articleCount"></param>
-        /// <param name="bmpFolder"></param>
-        /// <returns></returns>
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="uKey">long</param>
+        /// <param name="rowPosition">int rowPosition</param>
+        /// <param name="articleCount">int articleCount</param>
+        /// <param name="bmpFolder">string</param>
+        /// <returns>bool</returns>
         private static bool PrintGarmentListBlock3(MsExcel.Worksheet sheet, long uKey, ref int rowPosition, int articleCount, string bmpFolder)
         {
             var sql = @"
@@ -2725,7 +2846,8 @@ Order by (
                             Detail = row.Field<string>("Detail"),
                         })
                     .ToList();
-                    //關於第三區塊的WorkSheet
+
+                    // 關於第三區塊的WorkSheet
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B3") as MsExcel.Worksheet;
                     var articleCellWidth = Convert.ToInt32(Math.Floor((double)thisSheet.GetRange(3, 2, 9, 2).Width * 1.3333));
                     using (var img = new System.Drawing.Bitmap(1000, 1000))
@@ -2747,13 +2869,15 @@ Order by (
 
                                 var groupKey = groupItem.Key;
                                 var rangeValue = new object[3 + groupItem.Count(), 9];
-                                //第一行
+
+                                // 第一行
                                 rangeValue[0, 0] = groupKey.PieceName;
                                 rangeValue[0, 2] = groupKey.PieceDesc;
                                 rangeValue[0, 4] = groupKey.CuttingWidth;
                                 rangeValue[0, 7] = groupKey.FabricPanelCode;
                                 rangeValue[0, 8] = groupKey.DirectionEN;
-                                //第二行
+
+                                // 第二行
                                 rangeValue[1, 0] = "Art No";
                                 rangeValue[1, 2] = groupKey.Article;
 
@@ -2764,33 +2888,36 @@ Order by (
                                     return true;
                                 }).ToList();
 
-                                //======Excel動態生成區塊開始=======
+                                // ======Excel動態生成區塊開始=======
                                 var rowsNeeded = rangeValue.GetLength(0);
                                 if (rowsNeeded > 4)
                                 {
-                                    //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                                    // 將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
                                     blankSheet.Range[blankSheet.Rows[4], blankSheet.Rows[4 + rowsNeeded - 5]].Insert();
 
-                                    //把Template行複製給剛剛製作出來的空間
+                                    // 把Template行複製給剛剛製作出來的空間
                                     blankSheet.Rows[3].Copy();
                                     blankSheet.Range[blankSheet.Rows[4], blankSheet.Rows[4 + rowsNeeded - 5]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                                 }
 
-                                //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                                // 把值放給剛剛動態製作出來的空間 (從Row2開始放值)
                                 blankSheet.GetRange(1, 1, 1 + rangeValue.GetLength(1) - 1, 1 + rangeValue.GetLength(0) - 1).Value2 = rangeValue;
                                 if (string.IsNullOrWhiteSpace(groupKey.Article))
+                                {
                                     (blankSheet.Rows[2] as MsExcel.Range).Delete();
+                                }
                                 else
                                 {
                                     (blankSheet.Rows[2] as MsExcel.Range).WrapText = true;
                                     (blankSheet.Rows[2] as MsExcel.Range).RowHeight = gra.MeasureString(groupKey.Article, fnt, articleCellWidth).Height / 1.2;
                                 }
-                                //======Excel動態生成區塊結束=======
 
-                                //搬回去給主WorkSheet
+                                // ======Excel動態生成區塊結束=======
+
+                                // 搬回去給主WorkSheet
                                 MoveSubBlockIntoMainSheet(sheet, ref rowPosition, blankSheet);
 
-                                //圖片
+                                // 圖片
                                 if (string.IsNullOrWhiteSpace(groupKey.JPGPath) == false)
                                 {
                                     var imgpath = System.IO.Path.Combine(bmpFolder, groupKey.JPGPath);
@@ -2798,18 +2925,21 @@ Order by (
                                     {
                                         var cell = sheet.Cells[rowPosition - rangeValue.GetLength(0), 9];
                                         var iPosition = groupKey.DirectionEN.Length * 5d;
-                                        sheet.Shapes.AddPicture(imgpath
-                                            , Microsoft.Office.Core.MsoTriState.msoFalse
-                                            , Microsoft.Office.Core.MsoTriState.msoTrue
-                                            , cell.Left + iPosition
-                                            , cell.Top
-                                            , 50, 17);
+                                        sheet.Shapes.AddPicture(
+                                            imgpath,
+                                            Microsoft.Office.Core.MsoTriState.msoFalse,
+                                            Microsoft.Office.Core.MsoTriState.msoTrue,
+                                            cell.Left + iPosition,
+                                            cell.Top,
+                                            50,
+                                            17);
                                     }
                                 }
 
                                 blankSheet.Delete();
                                 Marshal.ReleaseComObject(blankSheet);
                             }
+
                             return true;
                         }
                         finally
@@ -2826,11 +2956,11 @@ Order by (
         /// <summary>
         /// Block4: BOa-ColorCombo
         /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="uKey"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="articleCount"></param>
-        /// <returns></returns>
+        /// <param name="sheet">Worksheet</param>
+        /// <param name="uKey">long</param>
+        /// <param name="rowPosition">int rowPosition</param>
+        /// <param name="articleCount">int articleCount</param>
+        /// <returns>bool</returns>
         private static bool PrintGarmentListBlock4(MsExcel.Worksheet sheet, long uKey, ref int rowPosition, int articleCount)
         {
             var sql = @"
@@ -2839,7 +2969,7 @@ From Pattern p
 Left Join GetName u on u.ID = p.CFMName
 Where p.UKey = @UKey
 ";
-            using (var dr = DBProxy.Current.SelectEx(sql, "UKey", uKey)) //抓X軸
+            using (var dr = DBProxy.Current.SelectEx(sql, "UKey", uKey)) // 抓X軸
             {
                 if (dr == false)
                 {
@@ -2847,7 +2977,7 @@ Where p.UKey = @UKey
                     return false;
                 }
 
-                //關於本區塊的WorkSheet
+                // 關於本區塊的WorkSheet
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("B4") as MsExcel.Worksheet;
                 thisSheet.Range[thisSheet.Cells[1, 1], thisSheet.Cells[1, 9 + articleCount]].Merge();
                 thisSheet.Range[thisSheet.Cells[2, 1], thisSheet.Cells[2, 9 + articleCount]].Merge();
@@ -2862,13 +2992,17 @@ Where p.UKey = @UKey
                         thisSheet.GetRange("A2").Value = row.Field<string>("HisRemark");
                         var heightOfRemark = gra.MeasureString(row.Field<string>("HisRemark") ?? string.Empty, fnt, remarkCellWidth).Height / 1.2;
                         if (heightOfRemark < 20)
+                        {
                             heightOfRemark = 20;
+                        }
+
                         thisSheet.GetRange("A2").RowHeight = heightOfRemark;
                     }
+
                     thisSheet.GetRange("A3").Value = string.Format("Approval#:{0}", row.Field<string>("CFMName"));
                     thisSheet.GetRange("H3").Value = row.Field<DateTime?>("CheckerDate").ToStringEx("MM/dd");
 
-                    //搬回去給主WorkSheet
+                    // 搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
 
                     return true;
@@ -2889,148 +3023,34 @@ Where p.UKey = @UKey
         /// <summary>
         /// 把子區塊的資料，搬移到主WorkSheet內，直接使用UsedRange來做搬移範圍
         /// </summary>
-        /// <param name="mainSheet"></param>
-        /// <param name="rowPosition"></param>
-        /// <param name="subBlockSheet"></param>
-        /// <param name="blankRowsAfterThisBlock"></param>
+        /// <param name="mainSheet">main Worksheet</param>
+        /// <param name="rowPosition">int</param>
+        /// <param name="subBlockSheet">subBlock Worksheet</param>
+        /// <param name="blankRowsAfterThisBlock">int?</param>
         private static void MoveSubBlockIntoMainSheet(MsExcel.Worksheet mainSheet, ref int rowPosition, MsExcel.Worksheet subBlockSheet, int? blankRowsAfterThisBlock = null)
         {
-            //把這個Block3完整複製過去主Sheet(參考rowPosition)
+            // 把這個Block3完整複製過去主Sheet(參考rowPosition)
             var thisSheetUsedRange = subBlockSheet.UsedRange;
             (mainSheet.Rows[rowPosition] as MsExcel.Range).EntireRow.InsertIndent(thisSheetUsedRange.Rows.Count);
 
             var rowStart = thisSheetUsedRange.Rows[1].Row;
             var rowEnd = rowStart + thisSheetUsedRange.Rows.Count;
-            //Full Row Copy for row height copy purpose
+
+            // Full Row Copy for row height copy purpose
             subBlockSheet.Range[subBlockSheet.Rows[rowStart], subBlockSheet.Rows[rowEnd]].Copy();
             mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
             ////Range Copy for content & cell format  <-- because Range Copy ignore Row height copy, so I have to copy full rows before here
-            //thisSheetUsedRange.Copy();
-            //mainSheet.Cells[rowPosition, 1].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            // thisSheetUsedRange.Copy();
+            // mainSheet.Cells[rowPosition, 1].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
-            //rowPosition遞移，給下一個區塊使用
-            rowPosition += (thisSheetUsedRange.Rows.Count + blankRowsAfterThisBlock.GetValueOrDefault(0)); //與下個Block空一行
+            // rowPosition遞移，給下一個區塊使用
+            rowPosition += thisSheetUsedRange.Rows.Count + blankRowsAfterThisBlock.GetValueOrDefault(0); // 與下個Block空一行
 
             Marshal.ReleaseComObject(thisSheetUsedRange);
             thisSheetUsedRange = null;
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public static class extension
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="rangeName"></param>
-        /// <returns></returns>
-        public static MsExcel.Range GetRange(this MsExcel.Worksheet sheet, string rangeName)
-        {
-            return sheet.get_Range(rangeName) as MsExcel.Range;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="range"></param>
-        /// <returns></returns>
-        public static T GetValue<T>(this MsExcel.Range range)
-        {
-            return (T)range.get_Value();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="range"></param>
-        /// <param name="value"></param>
-        public static void SetValue(this MsExcel.Range range, object value)
-        {
-            range.Value = value;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="cellA_X"></param>
-        /// <param name="cellA_Y"></param>
-        /// <param name="cellB_X"></param>
-        /// <param name="cellB_Y"></param>
-        /// <returns></returns>
-        public static MsExcel.Range GetRange(this MsExcel.Worksheet sheet, int cellA_X, int cellA_Y, int cellB_X, int cellB_Y)
-        {
-            return sheet.Range[sheet.Cells[cellA_Y, cellA_X], sheet.Cells[cellB_Y, cellB_X]];
-        }
-
-        /// <summary>
-        /// 把二層的物件陣列，轉為單層二維物件陣列
-        /// </summary>
-        /// <param name="rowData"></param>
-        /// <returns></returns>
-        public static object[,] DoubleArrayConvert2DArray(this IEnumerable<IEnumerable<object>> rowData)
-        {
-            var d1Length = rowData.Count();
-            if (d1Length == 0)
-                return new object[0, 0];
-            var d2Length = rowData.Max(item => item.Count());
-            if (d2Length == 0)
-                return new object[d1Length, 0];
-            var value2 = new object[d1Length, d2Length];
-
-            rowData.Select((item1, index1) =>
-            {
-                var valueLevel2 = Enumerable.Range(0, d2Length)
-                    .Select(index2 =>
-                    {
-                        if (item1.Count() > index2)
-                            value2[index1, index2] = item1.Skip(index2).Take(1).First();
-                        return true;
-                    })
-                    .ToList();
-                return true;
-            })
-            .ToList();
-            return value2;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="firstRow"></param>
-        /// <param name="rowNumberToInsert"></param>
-        public static void InsertMutipleRows(this MsExcel.Worksheet sheet, MsExcel.Range firstRow, int rowNumberToInsert)
-        {
-            var insertPos = sheet.Cells[1, firstRow.Row + 1].EntireRow;
-            int i = 1;
-            int step = 1;
-            while (i < rowNumberToInsert)
-            {
-                // copy the existing row(s)
-                sheet.get_Range(
-                    "$" + (firstRow.Row) + ":$" + (firstRow.Row + step - 1),
-                    Type.Missing
-                ).Copy(Type.Missing);
-
-                // insert copied rows
-                insertPos.Insert(MsExcel.XlInsertShiftDirection.xlShiftDown, Type.Missing);
-
-                i += step;
-
-                int diff = (rowNumberToInsert - i);
-                if (diff > (step * 2))
-                    step *= 2;
-                else
-                    step = diff;
-            }
-        }
     }
 }

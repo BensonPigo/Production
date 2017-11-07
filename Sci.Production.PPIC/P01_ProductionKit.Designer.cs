@@ -109,7 +109,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(57, 24);
             this.comboFactory.TabIndex = 0;
-            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboFactory_SelectedIndexChanged);
+            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.ComboFactory_SelectedIndexChanged);
             // 
             // labelMR
             // 
@@ -131,7 +131,7 @@
             this.comboMR.Name = "comboMR";
             this.comboMR.Size = new System.Drawing.Size(80, 24);
             this.comboMR.TabIndex = 1;
-            this.comboMR.SelectedIndexChanged += new System.EventHandler(this.comboMR_SelectedIndexChanged);
+            this.comboMR.SelectedIndexChanged += new System.EventHandler(this.ComboMR_SelectedIndexChanged);
             // 
             // labelSMR
             // 
@@ -153,7 +153,7 @@
             this.comboSMR.Name = "comboSMR";
             this.comboSMR.Size = new System.Drawing.Size(80, 24);
             this.comboSMR.TabIndex = 2;
-            this.comboSMR.SelectedIndexChanged += new System.EventHandler(this.comboSMR_SelectedIndexChanged);
+            this.comboSMR.SelectedIndexChanged += new System.EventHandler(this.ComboSMR_SelectedIndexChanged);
             // 
             // checkMRnotSendYet
             // 
@@ -166,7 +166,7 @@
             this.checkMRnotSendYet.TabIndex = 3;
             this.checkMRnotSendYet.Text = "MR not send yet";
             this.checkMRnotSendYet.UseVisualStyleBackColor = true;
-            this.checkMRnotSendYet.CheckedChanged += new System.EventHandler(this.checkMRnotSendYet_CheckedChanged);
+            this.checkMRnotSendYet.CheckedChanged += new System.EventHandler(this.CheckMRnotSendYet_CheckedChanged);
             // 
             // checkFactorynotReceived
             // 
@@ -179,7 +179,7 @@
             this.checkFactorynotReceived.TabIndex = 4;
             this.checkFactorynotReceived.Text = "Factory not received";
             this.checkFactorynotReceived.UseVisualStyleBackColor = true;
-            this.checkFactorynotReceived.CheckedChanged += new System.EventHandler(this.checkFactorynotReceived_CheckedChanged);
+            this.checkFactorynotReceived.CheckedChanged += new System.EventHandler(this.CheckFactorynotReceived_CheckedChanged);
             // 
             // btnViewDetail
             // 
@@ -191,7 +191,7 @@
             this.btnViewDetail.TabIndex = 3;
             this.btnViewDetail.Text = "View Detail";
             this.btnViewDetail.UseVisualStyleBackColor = true;
-            this.btnViewDetail.Click += new System.EventHandler(this.btnViewDetail_Click);
+            this.btnViewDetail.Click += new System.EventHandler(this.BtnViewDetail_Click);
             // 
             // P01_ProductionKit
             // 

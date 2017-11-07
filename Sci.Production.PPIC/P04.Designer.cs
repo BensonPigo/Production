@@ -288,7 +288,7 @@
             this.btnPicture2Delete.TabIndex = 6;
             this.btnPicture2Delete.Text = "Delete";
             this.btnPicture2Delete.UseVisualStyleBackColor = true;
-            this.btnPicture2Delete.Click += new System.EventHandler(this.btnPicture2Delete_Click);
+            this.btnPicture2Delete.Click += new System.EventHandler(this.BtnPicture2Delete_Click);
             // 
             // btnPicture2Attach
             // 
@@ -298,7 +298,7 @@
             this.btnPicture2Attach.TabIndex = 5;
             this.btnPicture2Attach.Text = "Attach";
             this.btnPicture2Attach.UseVisualStyleBackColor = true;
-            this.btnPicture2Attach.Click += new System.EventHandler(this.btnPicture2Attach_Click);
+            this.btnPicture2Attach.Click += new System.EventHandler(this.BtnPicture2Attach_Click);
             // 
             // pictureBox1
             // 
@@ -336,7 +336,7 @@
             this.btnPicture1Delete.TabIndex = 1;
             this.btnPicture1Delete.Text = "Delete";
             this.btnPicture1Delete.UseVisualStyleBackColor = true;
-            this.btnPicture1Delete.Click += new System.EventHandler(this.btnPicture1Delete_Click);
+            this.btnPicture1Delete.Click += new System.EventHandler(this.BtnPicture1Delete_Click);
             // 
             // btnPicture1Attach
             // 
@@ -346,7 +346,7 @@
             this.btnPicture1Attach.TabIndex = 0;
             this.btnPicture1Attach.Text = "Attach";
             this.btnPicture1Attach.UseVisualStyleBackColor = true;
-            this.btnPicture1Attach.Click += new System.EventHandler(this.btnPicture1Attach_Click);
+            this.btnPicture1Attach.Click += new System.EventHandler(this.BtnPicture1Attach_Click);
             // 
             // labelStyleNo
             // 
@@ -485,7 +485,7 @@
             this.txtStyleNo.Name = "txtStyleNo";
             this.txtStyleNo.Size = new System.Drawing.Size(140, 23);
             this.txtStyleNo.TabIndex = 0;
-            this.txtStyleNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyleNo_Validating);
+            this.txtStyleNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyleNo_Validating);
             // 
             // txtBrand
             // 
@@ -496,7 +496,7 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(75, 23);
             this.txtBrand.TabIndex = 3;
-            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.txtBrand_Validating);
+            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
             // 
             // txtProgram
             // 
@@ -507,8 +507,8 @@
             this.txtProgram.Name = "txtProgram";
             this.txtProgram.Size = new System.Drawing.Size(110, 23);
             this.txtProgram.TabIndex = 5;
-            this.txtProgram.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProgram_PopUp);
-            this.txtProgram.Validating += new System.ComponentModel.CancelEventHandler(this.txtProgram_Validating);
+            this.txtProgram.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtProgram_PopUp);
+            this.txtProgram.Validating += new System.ComponentModel.CancelEventHandler(this.TxtProgram_Validating);
             // 
             // txtDescription
             // 
@@ -672,8 +672,8 @@
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(90, 23);
             this.txtSeason.TabIndex = 1;
-            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeason_PopUp);
-            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeason_Validating);
+            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeason_PopUp);
+            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeason_Validating);
             // 
             // checkLocalstyle
             // 
@@ -816,7 +816,7 @@
             this.checkNoneedPPMeeting.TabIndex = 28;
             this.checkNoneedPPMeeting.Text = "No need PP Meeting";
             this.checkNoneedPPMeeting.UseVisualStyleBackColor = true;
-            this.checkNoneedPPMeeting.CheckedChanged += new System.EventHandler(this.checkNoneedPPMeeting_CheckedChanged);
+            this.checkNoneedPPMeeting.CheckedChanged += new System.EventHandler(this.CheckNoneedPPMeeting_CheckedChanged);
             // 
             // checkRainwearTestRequest
             // 
@@ -847,7 +847,7 @@
             this.btnTMSCost.TabIndex = 33;
             this.btnTMSCost.Text = "TMS && Cost";
             this.btnTMSCost.UseVisualStyleBackColor = true;
-            this.btnTMSCost.Click += new System.EventHandler(this.btnTMSCost_Click);
+            this.btnTMSCost.Click += new System.EventHandler(this.BtnTMSCost_Click);
             // 
             // btnStdGSD
             // 
@@ -858,7 +858,7 @@
             this.btnStdGSD.TabIndex = 34;
             this.btnStdGSD.Text = "Std. GSD";
             this.btnStdGSD.UseVisualStyleBackColor = true;
-            this.btnStdGSD.Click += new System.EventHandler(this.btnStdGSD_Click);
+            this.btnStdGSD.Click += new System.EventHandler(this.BtnStdGSD_Click);
             // 
             // btnFTYGSD
             // 
@@ -869,7 +869,7 @@
             this.btnFTYGSD.TabIndex = 35;
             this.btnFTYGSD.Text = "FTY GSD";
             this.btnFTYGSD.UseVisualStyleBackColor = true;
-            this.btnFTYGSD.Click += new System.EventHandler(this.btnFTYGSD_Click);
+            this.btnFTYGSD.Click += new System.EventHandler(this.BtnFTYGSD_Click);
             // 
             // btnProductionKits
             // 
@@ -880,7 +880,7 @@
             this.btnProductionKits.TabIndex = 36;
             this.btnProductionKits.Text = "Production Kits";
             this.btnProductionKits.UseVisualStyleBackColor = true;
-            this.btnProductionKits.Click += new System.EventHandler(this.btnProductionKits_Click);
+            this.btnProductionKits.Click += new System.EventHandler(this.BtnProductionKits_Click);
             // 
             // btnArtwork
             // 
@@ -891,7 +891,7 @@
             this.btnArtwork.TabIndex = 37;
             this.btnArtwork.Text = "Artwork";
             this.btnArtwork.UseVisualStyleBackColor = true;
-            this.btnArtwork.Click += new System.EventHandler(this.btnArtwork_Click);
+            this.btnArtwork.Click += new System.EventHandler(this.BtnArtwork_Click);
             // 
             // btnQtyCartonbyCustCD
             // 
@@ -902,7 +902,7 @@
             this.btnQtyCartonbyCustCD.TabIndex = 38;
             this.btnQtyCartonbyCustCD.Text = "Q\'ty/Carton by CustCD";
             this.btnQtyCartonbyCustCD.UseVisualStyleBackColor = true;
-            this.btnQtyCartonbyCustCD.Click += new System.EventHandler(this.btnQtyCartonbyCustCD_Click);
+            this.btnQtyCartonbyCustCD.Click += new System.EventHandler(this.BtnQtyCartonbyCustCD_Click);
             // 
             // btnWeightdata
             // 
@@ -913,7 +913,7 @@
             this.btnWeightdata.TabIndex = 39;
             this.btnWeightdata.Text = "Weight data";
             this.btnWeightdata.UseVisualStyleBackColor = true;
-            this.btnWeightdata.Click += new System.EventHandler(this.btnWeightdata_Click);
+            this.btnWeightdata.Click += new System.EventHandler(this.BtnWeightdata_Click);
             // 
             // btnGarmentList
             // 
@@ -924,7 +924,7 @@
             this.btnGarmentList.TabIndex = 40;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
             // 
             // btnSimilarStyle
             // 
@@ -935,7 +935,7 @@
             this.btnSimilarStyle.TabIndex = 41;
             this.btnSimilarStyle.Text = "Similar Style";
             this.btnSimilarStyle.UseVisualStyleBackColor = true;
-            this.btnSimilarStyle.Click += new System.EventHandler(this.btnSimilarStyle_Click);
+            this.btnSimilarStyle.Click += new System.EventHandler(this.BtnSimilarStyle_Click);
             // 
             // btnHSCode
             // 
@@ -946,7 +946,7 @@
             this.btnHSCode.TabIndex = 42;
             this.btnHSCode.Text = "HS Code";
             this.btnHSCode.UseVisualStyleBackColor = true;
-            this.btnHSCode.Click += new System.EventHandler(this.btnHSCode_Click);
+            this.btnHSCode.Click += new System.EventHandler(this.BtnHSCode_Click);
             // 
             // displaySpecialMark
             // 
@@ -989,7 +989,7 @@
             this.btnFtyLT.TabIndex = 14;
             this.btnFtyLT.Text = "Fty L/T";
             this.btnFtyLT.UseVisualStyleBackColor = true;
-            this.btnFtyLT.Click += new System.EventHandler(this.btnFtyLT_Click);
+            this.btnFtyLT.Click += new System.EventHandler(this.BtnFtyLT_Click);
             // 
             // labelUnit
             // 
@@ -1018,7 +1018,7 @@
             this.btnComboType.TabIndex = 43;
             this.btnComboType.Text = "Combo Type";
             this.btnComboType.UseVisualStyleBackColor = true;
-            this.btnComboType.Click += new System.EventHandler(this.btnComboType_Click);
+            this.btnComboType.Click += new System.EventHandler(this.BtnComboType_Click);
             // 
             // displayStyleApprove2
             // 
@@ -1079,7 +1079,7 @@
             this.txtcdcode.Name = "txtcdcode";
             this.txtcdcode.Size = new System.Drawing.Size(54, 23);
             this.txtcdcode.TabIndex = 9;
-            this.txtcdcode.Validated += new System.EventHandler(this.txtcdcode_Validated);
+            this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
             // P04
             // 

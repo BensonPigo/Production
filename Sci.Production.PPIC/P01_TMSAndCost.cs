@@ -11,15 +11,26 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_TMSAndCost
+    /// </summary>
     public partial class P01_TMSAndCost : Sci.Win.Subs.Input4
     {
+        /// <summary>
+        /// P01_TMSAndCost
+        /// </summary>
+        /// <param name="canedit">bool canedit</param>
+        /// <param name="keyvalue1">string keyvalue1</param>
+        /// <param name="keyvalue2">string keyvalue2</param>
+        /// <param name="keyvalue3">string keyvalue3</param>
         public P01_TMSAndCost(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = "TMS & Cost (" + keyvalue1 + ")";
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
@@ -29,7 +40,7 @@ namespace Sci.Production.PPIC
             tms.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             price.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("Seq", header: "Seq#", width: Widths.AnsiChars(4))
                 .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), settings: qty)
@@ -41,12 +52,13 @@ namespace Sci.Production.PPIC
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
             string sqlCmd = "select ID,IsTMS,IsPrice,IsTtlTMS,Classify from ArtworkType WITH (NOLOCK) ";
-            DataTable ArtworkType;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkType);
+            DataTable artworkType;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
 
             if (!result)
             {
@@ -60,7 +72,7 @@ namespace Sci.Production.PPIC
             datas.Columns.Add("NewData");
             foreach (DataRow gridData in datas.Rows)
             {
-                DataRow[] findrow = ArtworkType.Select(string.Format("ID = '{0}'", gridData["ArtworkTypeID"].ToString()));
+                DataRow[] findrow = artworkType.Select(string.Format("ID = '{0}'", gridData["ArtworkTypeID"].ToString()));
                 if (findrow.Length > 0)
                 {
                     gridData["isTms"] = findrow[0]["isTms"].ToString();
@@ -69,24 +81,27 @@ namespace Sci.Production.PPIC
                     gridData["Classify"] = findrow[0]["Classify"].ToString();
                     gridData["NewData"] = 0;
                 }
+
                 gridData.AcceptChanges();
             }
 
             #region 計算Ttl TMS
-            sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Order_TmsCost ot WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
+            sqlCmd = string.Format(
+                @"select isnull(sum(TMS),0) as TtlTMS from Order_TmsCost ot WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
 where ot.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
-and ot.ID = '{0}'",KeyValue1);
-            numTTLTMS.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
+and ot.ID = '{0}'", this.KeyValue1);
+            this.numTTLTMS.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
             #endregion
 
             #region 撈新增的ArtworkType
-            sqlCmd = string.Format(@"select a.* from (
+            sqlCmd = string.Format(
+                @"select a.* from (
 select a.ID,a.Classify,a.Seq,a.ArtworkUnit,a.IsTMS,a.IsPrice,a.IsTtlTMS,isnull(ot.ID,'') as OrderID
 from ArtworkType a WITH (NOLOCK) 
 left join Order_TmsCost ot WITH (NOLOCK) on a.ID = ot.ArtworkTypeID and ot.ID = '{0}'
 where a.SystemType = 'T' and a.Junk = 0) a
-where a.OrderID = ''", KeyValue1);
+where a.OrderID = ''", this.KeyValue1);
 
             DataTable tmpArtworkType;
             result = DBProxy.Current.Select(null, sqlCmd, out tmpArtworkType);
@@ -99,7 +114,7 @@ where a.OrderID = ''", KeyValue1);
             foreach (DataRow dr in tmpArtworkType.Rows)
             {
                 newdr = datas.NewRow();
-                newdr["ID"] = KeyValue1;
+                newdr["ID"] = this.KeyValue1;
                 newdr["ArtworkTypeID"] = dr["ID"].ToString();
                 newdr["Seq"] = dr["Seq"].ToString();
                 newdr["Qty"] = 0;
@@ -116,7 +131,7 @@ where a.OrderID = ''", KeyValue1);
                 datas.Rows.Add(newdr);
             }
             #endregion
-            
+
             datas.DefaultView.Sort = "Seq";
         }
     }
