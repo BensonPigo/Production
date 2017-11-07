@@ -104,6 +104,7 @@
             // 
             // comboStockType
             // 
+            this.comboStockType.ForeColor = System.Drawing.Color.Red;
             this.comboStockType.FormattingEnabled = true;
             this.comboStockType.Location = new System.Drawing.Point(115, 47);
             this.comboStockType.Name = "comboStockType";
