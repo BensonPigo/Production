@@ -120,7 +120,7 @@ FOCData as (
                 , isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
         from DistOrderData dod
         left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = dod.ID and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = dod.ID and ou1.Article = dod.Article and ou1.SizeCode = dod.SizeCode and ou2.POPrice >= 0) a
+        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = dod.ID and ou2.Article = dod.Article and ou2.SizeCode = dod.SizeCode and ou2.POPrice >= 0) a
     where a.Price = 0
 ),
 PulloutData as (
