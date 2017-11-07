@@ -589,7 +589,7 @@ order by a.Seq", packingListID);
             ctnDim = null;
             qtyBDown = null;
             string sqlCmd = string.Format(@"
-with tmpGroup as (
+
     select  OrderID
             , OrderShipmodeSeq
             , Article
@@ -603,11 +603,12 @@ with tmpGroup as (
             , min(Seq) as MinSeq
             , max(Seq) as MaxSeq 
             , count(*) as Ctns
+    into #temp
     from PackingList_Detail WITH (NOLOCK) 
     where ID = '{0}'
     group by OrderID, OrderShipmodeSeq, Article, Color, SizeCode, QtyPerCTN
              , NW, GW, NNW, NWPerPcs
-)
+
 select  t.*
         , o.StyleID
         , o.Customize1
@@ -632,7 +633,7 @@ select  t.*
                       where  ID = '{0}' 
                              and Seq = t.MaxSeq) 
         , SciDelivery = iif(o.SciDelivery = '', null, o.SciDelivery)
-from tmpGroup t
+from #temp t
 left join Orders o WITH (NOLOCK) on  o.ID = t.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = t.OrderID 
                                              and oq.Seq = t.OrderShipmodeSeq
@@ -640,7 +641,9 @@ left join Country c WITH (NOLOCK) on  c.ID = o.Dest
 left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
                                               and SizeItem = 'S01' 
                                               and os.SizeCode = t.SizeCode
-order by MinSeq", PackingListID);
+order by MinSeq
+drop table #temp
+", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
             {
