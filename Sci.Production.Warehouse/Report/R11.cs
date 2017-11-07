@@ -159,6 +159,10 @@ where s.Status = 'Confirmed'
             {
                 sqlCmd.Append(string.Format(" and s.type = '{0}' ", stocktype));
             }
+            else
+            {
+                sqlCmd.Append(" and s.type in ('D','E') ");
+            }
 
             if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
             {

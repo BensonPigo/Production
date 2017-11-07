@@ -102,6 +102,10 @@ Where a.Status = 'Confirmed' ");
             {
                 sqlCmd.Append(string.Format(@" and a.type='{0}' ", stocktype));
             }
+            else
+            {
+                sqlCmd.Append(@" and a.type in ('A','B','O','R') ");
+            }
            
             if (!MyUtility.Check.Empty(issueDate1))
                 sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
