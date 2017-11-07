@@ -276,8 +276,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.txtSPNo_Validated);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
             // displayStyle
             // 
@@ -350,7 +350,7 @@
             this.txtSeq.ReadOnly = true;
             this.txtSeq.Size = new System.Drawing.Size(28, 23);
             this.txtSeq.TabIndex = 1;
-            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq_PopUp);
+            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // labelPONo
             // 
@@ -418,7 +418,7 @@
             this.comboPackingMethod.ReadOnly = true;
             this.comboPackingMethod.Size = new System.Drawing.Size(216, 24);
             this.comboPackingMethod.TabIndex = 22;
-            this.comboPackingMethod.SelectionChangeCommitted += new System.EventHandler(this.comboPackingMethod_SelectionChangeCommitted);
+            this.comboPackingMethod.SelectionChangeCommitted += new System.EventHandler(this.ComboPackingMethod_SelectionChangeCommitted);
             // 
             // numStartCtn
             // 
@@ -501,7 +501,7 @@
             this.btnSpecialInstruction.TabIndex = 5;
             this.btnSpecialInstruction.Text = "Special Instruction";
             this.btnSpecialInstruction.UseVisualStyleBackColor = true;
-            this.btnSpecialInstruction.Click += new System.EventHandler(this.btnSpecialInstruction_Click);
+            this.btnSpecialInstruction.Click += new System.EventHandler(this.BtnSpecialInstruction_Click);
             // 
             // btnCartonDimension
             // 
@@ -512,7 +512,7 @@
             this.btnCartonDimension.TabIndex = 6;
             this.btnCartonDimension.Text = "Carton Dimension";
             this.btnCartonDimension.UseVisualStyleBackColor = true;
-            this.btnCartonDimension.Click += new System.EventHandler(this.btnCartonDimension_Click);
+            this.btnCartonDimension.Click += new System.EventHandler(this.BtnCartonDimension_Click);
             // 
             // btnSwitchToPackingList
             // 
@@ -523,7 +523,7 @@
             this.btnSwitchToPackingList.TabIndex = 7;
             this.btnSwitchToPackingList.Text = "Switch to Packing list";
             this.btnSwitchToPackingList.UseVisualStyleBackColor = true;
-            this.btnSwitchToPackingList.Click += new System.EventHandler(this.btnSwitchToPackingList_Click);
+            this.btnSwitchToPackingList.Click += new System.EventHandler(this.BtnSwitchToPackingList_Click);
             // 
             // txtshipmode
             // 
@@ -537,7 +537,7 @@
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 2;
             this.txtshipmode.UseFunction = "ORDER";
-            this.txtshipmode.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode_SelectionChangeCommitted);
+            this.txtshipmode.SelectionChangeCommitted += new System.EventHandler(this.Txtshipmode_SelectionChangeCommitted);
             // 
             // labelFactory
             // 
