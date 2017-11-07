@@ -330,7 +330,52 @@ namespace Sci.Production.Warehouse
                 DataRow dr = gridMaterialStatus.GetDataRow(index);
                 if (gridMaterialStatus.Rows.Count <= index || index < 0) return;
 
+
                 int i = index;
+
+                #region 處理orderlist欄位顯示
+                //處理orderlist欄位
+                //若前10碼相同，例如資料為18010301GG004,18010301GG005時, 呈現GG004/GG005
+                //若不相同資料為17090101PP002,17090101PP003, 呈現17090101PP002/PP003
+                string new_orderidlist = "";
+                string before_orderid = dr["id"].ToString();
+                if (!dr["OrderIdList"].ToString().Equals(string.Empty))
+                {
+                    foreach (string order_id in dr["OrderIdList"].ToString().Split('/'))
+                    {
+
+                        if (order_id.Equals(dr["id"].ToString())) {
+                            before_orderid = order_id;
+                            continue;
+                        }
+
+                        if (order_id.Length < 10 ) {
+                            new_orderidlist += "/" + order_id;
+                        }
+                        else if (order_id.Contains(dr["id"].ToString()))
+                        {
+                            new_orderidlist += "/" + order_id.Substring(8);
+                        }
+                        else if (!order_id.Contains(before_orderid.Substring(0, 10)))
+                        {
+                            new_orderidlist += "/" + order_id;
+                        }
+                        else
+                        {
+                            new_orderidlist += "/" + order_id.Substring(8);
+                        }
+
+                        before_orderid = order_id;
+                    }
+                    if (!new_orderidlist.Equals(string.Empty))
+                    {
+                        dr["OrderIdList"] = new_orderidlist.Substring(1);
+
+                    }
+                }
+                #endregion
+
+
                 if (dr["junk"].ToString() == "True")
                 {
                     gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
@@ -537,7 +582,7 @@ from(
 	                       ) tmp 
                       for XML PATH('')
                      ) as  Remark
-                    , [OrderIdList] = stuff((select concat('/', SubString(tmp.OrderID, 9, 5)) 
+                    , [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
 		                                    from (
 			                                    select orderID from po_supp_Detail_orderList e
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
@@ -614,7 +659,7 @@ from(
 		                    ) tmp 
                        for XML PATH('')
                      ) as  Remark
-                    , [OrderIdList] = stuff((select concat('/', SubString(tmp.OrderID, 9, 5))
+                    , [OrderIdList] = stuff((select concat('/',tmp.OrderID)
 		                                     from (
 			                                    select orderID from po_supp_Detail_orderList e
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
