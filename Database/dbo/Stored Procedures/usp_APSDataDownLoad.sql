@@ -176,7 +176,9 @@ BEGIN
 	--DECLARE @tmpFtyTemplate table (NAME,TEMPLATEID,ENABLEDATE)
 	CREATE TABLE #tmpFtyTemplate (NAME varchar(50),TEMPLATEID int,ENABLEDATE datetime);
 	SET @cmd = 'insert into #tmpFtyTemplate select fa.NAME,w.TEMPLATEID,w.ENABLEDATE
-	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WorkCalendarApply w, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
+	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.WorkCalendarApply w
+	      , ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f
+	      , ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
 	where f.ID = w.TargetID
 	and w.TargetType = 0
 	and fa.FactoryID = f.ID
@@ -242,6 +244,8 @@ BEGIN
 					IF @foundworkhour is not null
 						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 				END
+				
+			UPDATE WorkHour set Hours = 0 WHERE  SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate AND HOLIDAY = 1
 			set @_i = @_i+1
 		END
 
@@ -303,6 +307,8 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 						IF @foundworkhour is not null
 							update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 					END
+					
+			UPDATE WorkHour set Hours = 0 WHERE  SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate AND HOLIDAY = 1
 			set @_i = @_i+1
 		END
 
@@ -345,10 +351,10 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 				IF @specialtype = 1
 					update WorkHour set Hours = isnull(@apsworkhour,0), EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 				ELSE
-					BEGIN
-						IF @foundworkhour > 0
-							update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
-					END
+				BEGIN
+					IF @foundworkhour > 0
+						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+				END
 			END
 		FETCH NEXT FROM cursor_apsspecialtime INTO @sewinglineid,@specialtype,@workdate,@apsworkhour
 	END
