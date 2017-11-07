@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             txtMdivision.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             comboFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboStockType,2,1, "D,Bulk,E,Inventory");
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, ",ALL,D,Bulk,E,Inventory");
             comboStockType.SelectedIndex = 0;
         }
 
@@ -95,7 +95,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(@"
 with cte as (
     select  orderid = sd.FromPOID
             ,seq1 = sd.FromSeq1
@@ -151,10 +151,19 @@ inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
 left join dbo.FtyInventory Fi on sd.FromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
-where s.Status = 'Confirmed' and s.type = '{0}'
-", stocktype,fabrictype));
+where s.Status = 'Confirmed' 
+" );
 
             #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(stocktype))
+            {
+                sqlCmd.Append(string.Format(" and s.type = '{0}' ", stocktype));
+            }
+            else
+            {
+                sqlCmd.Append(" and s.type in ('D','E') ");
+            }
+
             if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
             {
                 if (!MyUtility.Check.Empty(buyerDelivery1))
@@ -162,25 +171,27 @@ where s.Status = 'Confirmed' and s.type = '{0}'
                 if (!MyUtility.Check.Empty(buyerDelivery2))
                     sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
+
             if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
-                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
                 sqlCmd.Append(" and sd.FromPoid >= @spno1 and sd.FromPoid <= @spno2");
                 sp_spno1.Value = spno1.PadRight(10, '0');
                 sp_spno2.Value = spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
+
             else if (!MyUtility.Check.Empty(spno1))
             {
-                //只有 sp1 輸入資料
+                // 只有 sp1 輸入資料
                 sqlCmd.Append(" and sd.FromPoid like @spno1 ");
                 sp_spno1.Value = spno1 + "%";
                 cmds.Add(sp_spno1);
             }
             else if (!MyUtility.Check.Empty(spno2))
             {
-                //只有 sp2 輸入資料
+                // 只有 sp2 輸入資料
                 sqlCmd.Append(" and sd.FromPoid like @spno2 ");
                 sp_spno2.Value = spno2 + "%";
                 cmds.Add(sp_spno2);

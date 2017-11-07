@@ -235,6 +235,7 @@
             // 
             // comboStockType
             // 
+            this.comboStockType.ForeColor = System.Drawing.Color.Red;
             this.comboStockType.FormattingEnabled = true;
             this.comboStockType.Location = new System.Drawing.Point(114, 294);
             this.comboStockType.Name = "comboStockType";
@@ -279,6 +280,7 @@
             // 
             // comboFabricType
             // 
+            this.comboFabricType.ForeColor = System.Drawing.Color.Red;
             this.comboFabricType.FormattingEnabled = true;
             this.comboFabricType.Location = new System.Drawing.Point(114, 259);
             this.comboFabricType.Name = "comboFabricType";
