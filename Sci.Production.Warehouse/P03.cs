@@ -345,7 +345,7 @@ namespace Sci.Production.Warehouse
                     {
 
                         if (order_id.Equals(dr["id"].ToString())) {
-                            before_orderid = order_id;
+                            before_orderid = order_id.Length < 10 ? order_id : order_id.Substring(0, 10);
                             continue;
                         }
 
@@ -356,7 +356,7 @@ namespace Sci.Production.Warehouse
                         {
                             new_orderidlist += "/" + order_id.Substring(8);
                         }
-                        else if (!order_id.Contains(before_orderid.Substring(0, 10)))
+                        else if (!order_id.Contains(before_orderid))
                         {
                             new_orderidlist += "/" + order_id;
                         }
@@ -365,7 +365,7 @@ namespace Sci.Production.Warehouse
                             new_orderidlist += "/" + order_id.Substring(8);
                         }
 
-                        before_orderid = order_id;
+                        before_orderid = order_id.Length < 10 ? order_id : order_id.Substring(0, 10);
                     }
                     if (!new_orderidlist.Equals(string.Empty))
                     {
