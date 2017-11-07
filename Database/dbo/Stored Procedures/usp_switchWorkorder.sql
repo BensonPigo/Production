@@ -26,43 +26,43 @@ BEGIN
 	-- 撈出所有Cuttingid 的SP#
 	--Declare @sptable Table(id varchar(13))
 	Select id into #spTable 
-	from Orders where cuttingsp = @Cuttingid
+	from Orders WITH (NOLOCK) where cuttingsp = @Cuttingid
 	--撈取最細EachCons_Color_Article
 	Select a.ConsPC,a.CuttingWidth,a.FabricCode,a.FabricCombo,a.Id,a.FabricPanelCode,a.MarkerDownloadID,
 			a.MarkerLength,a.MarkerName,a.MarkerNo,a.MarkerVersion,a.Ukey,a.Width,
 			b.ColorID,b.CutQty as TotalCutQty,b.Layer as TotalLayer,b.YDS,
 			c.CutQty,c.SizeCode,c.Layer,c.Article, b.Order_EachConsUkey, b.Ukey as Order_EachCons_ColorUkey
 	InTo #Order_EachCons_Color_Article
-	From Order_EachCons a, Order_EachCons_Color b, Order_EachCons_Color_Article c 
+	From Order_EachCons a  WITH (NOLOCK) , Order_EachCons_Color b  WITH (NOLOCK) , Order_EachCons_Color_Article c  WITH (NOLOCK) 
 	Where a.ukey = b.Order_EachConsUkey and b.Ukey = c.Order_EachCons_ColorUkey and a.id = b.id and a.id = c.id and b.id = c.id
 			and a.id = @Cuttingid and a.CuttingPiece = 0
 	--and b.id = c.id 應該是沒必要寫，已經有and a.id = b.id and a.id = c.id 
 	--撈Each Cons
 	Select * into #Order_EachCons 
-	from Order_EachCons Where id = @Cuttingid
+	from Order_EachCons  WITH (NOLOCK)  Where id = @Cuttingid
 	--撈出展開Marker OrderEachCons 且非外裁
 	Select a.*,b.ColorID,b.CutQty as TotalCutQty,b.Layer as TotalLayer,b.Order_EachConsUkey,b.Orderqty,b.Ukey as Order_EachCons_ColorUkey,b.Variance,b.YDS
 	into #marker1
-	From #Order_EachCons a,Order_Eachcons_Color b 
+	From #Order_EachCons a,Order_Eachcons_Color b  WITH (NOLOCK)  
 	Where a.id = @Cuttingid and a.Ukey = b.Order_EachConsUkey and a.CuttingPiece = 0
 	--撈BOF
 	Select a.ukey as Order_EachConsUkey,b.SCIRefno,b.Seq1,b.SuppID,b.Ukey as order_BofUkey ,
 	c.ConstructionID,c.Width as fabricwidth,c.Refno
 	Into #Order_EachCons_BOF 
-	From #Order_EachCons a, Order_BoF b
-	Left Join Fabric c on c.SCIRefno = b.SCIRefno
+	From #Order_EachCons a, Order_BoF b  WITH (NOLOCK) 
+	Left Join Fabric c  WITH (NOLOCK)  on c.SCIRefno = b.SCIRefno
 	Where a.id = b.id and a.FabricCode = b.FabricCode
 	--撈EachCon_Color_Article 找出Article對應的層數與最大層數
 	Select a.* ,
-	iif(isnull((Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c where c.id = b.ConstructionID),0)=0,100,
-	(Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c where c.id = b.ConstructionID)) as MaxLayer
+	iif(isnull((Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c  WITH (NOLOCK)  where c.id = b.ConstructionID),0)=0,100,
+	(Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c  WITH (NOLOCK)  where c.id = b.ConstructionID)) as MaxLayer
 	Into #Order_EachCons_Color_Layer
 	From #marker1 a,#Order_EachCons_BOF b 
 	Where a.Ukey = b.Order_EachConsUkey
 	---------
 	select distinct oeca.ColorID,oeca.Article,oeca.Layer
 	into #Articlelayer
-	from Order_EachCons_Color_Article oeca
+	from Order_EachCons_Color_Article oeca  WITH (NOLOCK) 
 	where oeca.id = @Cuttingid
 	/*
 	找CuttingID 的POID
@@ -70,18 +70,18 @@ BEGIN
 	Declare @POID varchar(13)
 	SET @POID = 'Im default'
 	Select distinct @POID = POID
-	From Orders
+	From Orders  WITH (NOLOCK) 
 	Where Cuttingsp = @Cuttingid
 
 	---------組每個SP#的Article,Size,Qty,PatternPanel,inline
 	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline
 	Into #_tmpdisQty
-	from Order_ColorCombo a ,Order_EachCons b ,
-	(Select d.*,cuttingsp from Order_Qty d,(Select id,cuttingsp from Orders where cuttingsp = @Cuttingid) c Where c.id = d.id) e
+	from Order_ColorCombo a  WITH (NOLOCK) ,Order_EachCons b  WITH (NOLOCK) ,
+	(Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid) c Where c.id = d.id) e
 	left join 
 	(Select a.inline,b.Article,b.SizeCode,a.OrderID 
-	from SewingSchedule a ,SewingSchedule_Detail b ,
-		(Select id from Orders where cuttingsp = @Cuttingid) c 
+	from SewingSchedule a  WITH (NOLOCK) ,SewingSchedule_Detail b  WITH (NOLOCK) ,
+		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid) c 
 		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f 
 	on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
@@ -93,14 +93,14 @@ BEGIN
 	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid order by inline
 	----------------------------------------------------------------------------------
 	--New WorkOrder
-	Select a.*,0 as newKey InTo #NewWorkorder From Workorder a Where 1 =0
-	Select a.*,0 as newKey InTo #NewWorkOrder_Distribute From WorkOrder_Distribute a Where 1 = 0
-	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatio From WorkOrder_SizeRatio a Where 1 = 0
-	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPanel From WorkOrder_PatternPanel a Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkorder From Workorder a  WITH (NOLOCK)  Where 1 =0
+	Select a.*,0 as newKey InTo #NewWorkOrder_Distribute From WorkOrder_Distribute a  WITH (NOLOCK)  Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatio From WorkOrder_SizeRatio a  WITH (NOLOCK)  Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPanel From WorkOrder_PatternPanel a  WITH (NOLOCK)  Where 1 = 0
 						
-	Select a.*,0 as newKey InTo #NewWorkOrder_Distributetmp From WorkOrder_Distribute a Where 1 = 0
-	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatiotmp From WorkOrder_SizeRatio a Where 1 = 0
-	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPaneltmp From WorkOrder_PatternPanel a Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkOrder_Distributetmp From WorkOrder_Distribute a  WITH (NOLOCK)  Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatiotmp From WorkOrder_SizeRatio a  WITH (NOLOCK)  Where 1 = 0
+	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPaneltmp From WorkOrder_PatternPanel a  WITH (NOLOCK)  Where 1 = 0
 	--產生給WorkOrder的變數
 	Declare @maxLayer int
 	Declare @Layer int
@@ -189,7 +189,7 @@ BEGIN
 		InTo #WorkOrderMix 
 		From #Order_EachCons_Color_Layer a order by MixedSizeMarker desc,MarkerName
 		--------------------Factory-------------------------------------
-		Select @Factoryid = Factoryid From Orders Where ID = @Cuttingid
+		Select @Factoryid = Factoryid From Orders  WITH (NOLOCK)  Where ID = @Cuttingid
 		--------------------Loop Start @CuttingCombo--------------------
 		Set @WorkOrderMixRowID = 1
 		SET @NewKey = 1
@@ -218,7 +218,7 @@ BEGIN
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
 
-			select distinct Article into #LongArticle from Order_EachCons_Article where Order_EachConsUkey=@Order_EachConsUkey
+			select distinct Article into #LongArticle from Order_EachCons_Article  WITH (NOLOCK)  where Order_EachConsUkey=@Order_EachConsUkey
 			select @LongArticleCount = count(*) from #LongArticle;
 
 			SET @SCIRefno = ''
@@ -234,7 +234,7 @@ BEGIN
 			------------SEQ1,SEQ2----------------
 			Set @Seq2 =''
 			Select @Seq2 = isnull(seq2,'') --先找相同SEQ1,SCIRefno
-			From PO_Supp_Detail b 
+			From PO_Supp_Detail b  WITH (NOLOCK) 
 			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
 			and Junk = 0
 
@@ -249,7 +249,7 @@ BEGIN
 				--若SEQ2 為空就找70大項
 				Select *
 				into #SEQ2tmp
-				From PO_Supp_Detail b 
+				From PO_Supp_Detail b  WITH (NOLOCK) 
 				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
 				SET @Rowno = @@Rowcount
 				set @seq1 = ''
@@ -389,7 +389,7 @@ BEGIN
 						--準備Cons
 						SET @SizeRatioQty = 0
 						Select @SizeRatioQty = sum(Qty)
-						From Order_EachCons_SizeQty
+						From Order_EachCons_SizeQty  WITH (NOLOCK) 
 						Where Order_EachConsUkey = @ukey
 						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 						if(@oldWorkerordernum != @newWorkerordernum)
@@ -412,7 +412,7 @@ BEGIN
 						--準備SizeQty,要用來乘上Layer
 						Select a.*,IDENTITY(int,1,1) as Rowid 
 						into #distriqty_modlayer 
-						From Order_EachCons_SizeQty a,Order_SizeCode b 
+						From Order_EachCons_SizeQty a  WITH (NOLOCK) ,Order_SizeCode b  WITH (NOLOCK) 
 						Where a.id = b.id and a.SizeCode = b.SizeCode and a.Order_EachConsUkey = @ukey 
 						order by seq
 
@@ -489,7 +489,7 @@ BEGIN
 						Begin						
 							Select * ,IDENTITY(int,1,1) as Rowid  
 							into #SizeRatio_modlayer 
-							From Order_EachCons_SizeQty
+							From Order_EachCons_SizeQty  WITH (NOLOCK) 
 							Where Order_EachConsUkey = @ukey
 							set @WorkOrder_SizeRatioRowid = 1
 							Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID)
@@ -511,7 +511,7 @@ BEGIN
 						Begin							
 							Select * ,IDENTITY(int,1,1) as Rowid 
 							into #PatternPanel_modlayer 
-							From Order_EachCons_PatternPanel
+							From Order_EachCons_PatternPanel  WITH (NOLOCK) 
 							Where Order_EachConsUkey = @ukey
 							set @WorkOrder_SizeRatioRowid = 1
 							Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID) From #PatternPanel_modlayer
@@ -547,7 +547,7 @@ BEGIN
 				
 				Select *,IDENTITY(int,1,1) as Rowid 
 				into #SizeQty
-				From Order_EachCons_SizeQty Where Order_EachConsUkey = @ukey 
+				From Order_EachCons_SizeQty  WITH (NOLOCK)  Where Order_EachConsUkey = @ukey 
 				order by Qty
 				Set @sizeQtyRowid = 1
 				Select @sizeQtyRowid = Min(Rowid),@sizeQtyRowCount = Max(Rowid)
@@ -687,12 +687,12 @@ BEGIN
 							----------------計算WorkOrder_SizeRatio Qty----------------------
 								SET @SizeRatioQty = 0
 								Select @SizeRatioQty = sum(Qty)
-								From Order_EachCons_SizeQty
+								From Order_EachCons_SizeQty  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								----------------新增WorkOrder_SizeRatio----------------------
 								Select * ,IDENTITY(int,1,1) as Rowid  
 								into #SizeRatio_bysp
-								From Order_EachCons_SizeQty
+								From Order_EachCons_SizeQty  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								set @WorkOrder_SizeRatioRowid = 1
 								Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID)
@@ -713,7 +713,7 @@ BEGIN
 								----------------新增WorkOrder_PatternPanel----------------------
 								Select * ,IDENTITY(int,1,1) as Rowid 
 								into #PatternPanel_bysp
-								From Order_EachCons_PatternPanel
+								From Order_EachCons_PatternPanel  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								set @WorkOrder_SizeRatioRowid = 1
 								Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID) 
@@ -836,12 +836,12 @@ BEGIN
 							----------------計算WorkOrder_SizeRatio Qty----------------------
 								SET @SizeRatioQty = 0
 								Select @SizeRatioQty = sum(Qty)
-								From Order_EachCons_SizeQty
+								From Order_EachCons_SizeQty  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								----------------新增WorkOrder_SizeRatio----------------------
 								Select * ,IDENTITY(int,1,1) as Rowid  
 								into #SizeRatio_byspmod
-								From Order_EachCons_SizeQty
+								From Order_EachCons_SizeQty  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								set @WorkOrder_SizeRatioRowid = 1
 								Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID)
@@ -861,7 +861,7 @@ BEGIN
 								----------------新增WorkOrder_PatternPanel----------------------
 								Select * ,IDENTITY(int,1,1) as Rowid 
 								into #PatternPanel_byspmod
-								From Order_EachCons_PatternPanel
+								From Order_EachCons_PatternPanel  WITH (NOLOCK) 
 								Where Order_EachConsUkey = @ukey
 								set @WorkOrder_SizeRatioRowid = 1
 								Select @WorkOrder_SizeRatioRowid = Min(Rowid),@WorkOrder_SizeRatioRowCount = Max(RowID) 
