@@ -1112,9 +1112,9 @@ DECLARE @tempPackingList TABLE (
    SizeCode VARCHAR(8),
    QtyPerCTN SMALLINT,
    ShipQty INT,
-   NW NUMERIC(6,3),
-   GW NUMERIC(6,3),
-   NNW NUMERIC(6,3),
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
    NWPerPcs NUMERIC(5,3),
    CtnNo INT,
    SizeSeq INT
@@ -1130,9 +1130,9 @@ DECLARE @tempRemainder TABLE (
    SizeCode VARCHAR(8),
    QtyPerCTN SMALLINT,
    ShipQty INT,
-   NW NUMERIC(6,3),
-   GW NUMERIC(6,3),
-   NNW NUMERIC(6,3),
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
    NWPerPcs NUMERIC(5,3),
    SizeSeq INT
 )
@@ -1148,8 +1148,8 @@ DECLARE @refno VARCHAR(21),
 		@sizecode VARCHAR(8),
 		@qtyperctn SMALLINT,
 		@shipqty INT,
-		@nw NUMERIC(6,3),
-		@gw NUMERIC(6,3),
+		@nw NUMERIC(7,3),
+		@gw NUMERIC(7,3),
 		@nnw NUMERIC(5,3)
 
 --宣告變數: 記錄程式中的資料
@@ -1426,9 +1426,9 @@ DECLARE @tempPackingList TABLE (
    SizeCode VARCHAR(8),
    QtyPerCTN SMALLINT,
    ShipQty INT,
-   NW NUMERIC(6,3),
-   GW NUMERIC(6,3),
-   NNW NUMERIC(6,3),
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
    NWPerPcs NUMERIC(5,3)
 )
 
@@ -1442,9 +1442,9 @@ DECLARE @tempRemainder TABLE (
    SizeCode VARCHAR(8),
    QtyPerCTN SMALLINT,
    ShipQty INT,
-   NW NUMERIC(6,3),
-   GW NUMERIC(6,3),
-   NNW NUMERIC(6,3),
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
    NWPerPcs NUMERIC(5,3)
 )
 
@@ -1464,8 +1464,8 @@ DECLARE @refno VARCHAR(21),
 		@sizecode VARCHAR(8),
 		@qtyperctn SMALLINT,
 		@shipqty INT,
-		@nw NUMERIC(6,3),
-		@gw NUMERIC(6,3),
+		@nw NUMERIC(7,3),
+		@gw NUMERIC(7,3),
 		@nnw NUMERIC(5,3)
 
 --宣告變數: 記錄程式中的資料
