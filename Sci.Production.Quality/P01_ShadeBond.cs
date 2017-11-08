@@ -108,7 +108,7 @@ namespace Sci.Production.Quality
             displayApprover.Text = maindr["ApproveDate"].ToString();
             displayArriveQty.Text = maindr["arriveQty"].ToString();
             dateArriveWHDate.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
-            dateLastInspectionDate.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
+            dateLastInspectionDate.Value = MyUtility.Convert.GetDate(maindr["ShadeBondDate"]);
             displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             displaySCIRefno.Text = maindr["SciRefno"].ToString();
             displaySEQ.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
