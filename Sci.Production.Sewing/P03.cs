@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Data;
 using Ict;
-using System.Linq;
 using System.Transactions;
 
 namespace Sci.Production.Sewing

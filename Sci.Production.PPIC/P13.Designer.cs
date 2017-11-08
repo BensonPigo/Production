@@ -136,7 +136,7 @@
             this.btnToExcel.TabIndex = 11;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnQuery
             // 
@@ -147,7 +147,7 @@
             this.btnQuery.TabIndex = 10;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // displayMR
             // 
@@ -166,8 +166,8 @@
             this.txtMR.Name = "txtMR";
             this.txtMR.Size = new System.Drawing.Size(90, 23);
             this.txtMR.TabIndex = 8;
-            this.txtMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtMR_PopUp);
-            this.txtMR.Validating += new System.ComponentModel.CancelEventHandler(this.txtMR_Validating);
+            this.txtMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtMR_PopUp);
+            this.txtMR.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMR_Validating);
             // 
             // displaySMR
             // 
@@ -186,8 +186,8 @@
             this.txtSMR.Name = "txtSMR";
             this.txtSMR.Size = new System.Drawing.Size(90, 23);
             this.txtSMR.TabIndex = 5;
-            this.txtSMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSMR_PopUp);
-            this.txtSMR.Validating += new System.ComponentModel.CancelEventHandler(this.txtSMR_Validating);
+            this.txtSMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSMR_PopUp);
+            this.txtSMR.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSMR_Validating);
             // 
             // txtbrand
             // 
@@ -321,7 +321,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -332,7 +332,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // panel5
             // 

@@ -256,7 +256,7 @@
             0,
             0,
             0});
-            this.numSewingQty.DoubleClick += new System.EventHandler(this.numSewingQty_DoubleClick);
+            this.numSewingQty.DoubleClick += new System.EventHandler(this.NumSewingQty_DoubleClick);
             // 
             // numSewingOrderQty
             // 
@@ -536,7 +536,7 @@
             0,
             0,
             0});
-            this.numLoadingQty.DoubleClick += new System.EventHandler(this.numLoadingQty_DoubleClick);
+            this.numLoadingQty.DoubleClick += new System.EventHandler(this.NumLoadingQty_DoubleClick);
             // 
             // numOrderQty_L
             // 

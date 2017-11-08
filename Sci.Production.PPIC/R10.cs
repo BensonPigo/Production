@@ -15,104 +15,120 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// R10
+    /// </summary>
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        string strSPStart, strSPEnd, strM, strFactory;
-        string dateBuyerDeliveryStart, dateBuyerDeliveryEnd, dateSewingOutput;
-        DataTable resultDt;
+        private string strSPStart;
+        private string strSPEnd;
+        private string strM;
+        private string strFactory;
+        private string dateBuyerDeliveryStart;
+        private string dateBuyerDeliveryEnd;
+        private string dateSewingOutput;
+        private DataTable resultDt;
 
+        /// <summary>
+        /// R10
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R10(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.txtfactory.Text = Sci.Env.User.Factory;
             this.txtMdivision.Text = Sci.Env.User.Keyword;
-            this.dateBoxSewingOutput.Value = DateTime.Today.AddDays (-1);
+            this.dateBoxSewingOutput.Value = DateTime.Today.AddDays(-1);
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             #region get input data
-            strSPStart = this.textSPStart.Text;
-            strSPEnd = this.textSPEnd.Text;
-            strM = this.txtMdivision.Text;
-            strFactory = this.txtfactory.Text;
-            dateBuyerDeliveryStart = (this.dateRangeBuyerDelivery.Value1 == null) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd");
-            dateBuyerDeliveryEnd = (this.dateRangeBuyerDelivery.Value2 == null) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd");
-            dateSewingOutput = (this.dateBoxSewingOutput.Value == null) ? "" : ((DateTime)this.dateBoxSewingOutput.Value).ToString("yyyy/MM/dd");
-            #endregion 
+            this.strSPStart = this.textSPStart.Text;
+            this.strSPEnd = this.textSPEnd.Text;
+            this.strM = this.txtMdivision.Text;
+            this.strFactory = this.txtfactory.Text;
+            this.dateBuyerDeliveryStart = (this.dateRangeBuyerDelivery.Value1 == null) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd");
+            this.dateBuyerDeliveryEnd = (this.dateRangeBuyerDelivery.Value2 == null) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd");
+            this.dateSewingOutput = (this.dateBoxSewingOutput.Value == null) ? string.Empty : ((DateTime)this.dateBoxSewingOutput.Value).ToString("yyyy/MM/dd");
+            #endregion
             #region check input data
-            if (dateBuyerDeliveryStart.Empty() && dateBuyerDeliveryEnd.Empty() && strSPStart.Empty() && strSPEnd.Empty())
+            if (this.dateBuyerDeliveryStart.Empty() && this.dateBuyerDeliveryEnd.Empty() && this.strSPStart.Empty() && this.strSPEnd.Empty())
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery Date and SP# can't all be empty.");
                 return false;
             }
-            if (dateSewingOutput.Empty())
+
+            if (this.dateSewingOutput.Empty())
             {
                 MyUtility.Msg.WarningBox("Sewing Output Date can't be empty.");
                 return false;
             }
-            #endregion 
+            #endregion
             return true;
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
-            listSqlParameter.Add(new SqlParameter("@SPStart", strSPStart));
-            listSqlParameter.Add(new SqlParameter("@SPEnd", strSPEnd));
-            listSqlParameter.Add(new SqlParameter("@MDivision", strM));
-            listSqlParameter.Add(new SqlParameter("@Factory", strFactory));
-            listSqlParameter.Add(new SqlParameter("@BDDateStart", dateBuyerDeliveryStart));
-            listSqlParameter.Add(new SqlParameter("@BDDateEnd", dateBuyerDeliveryEnd));
-            listSqlParameter.Add(new SqlParameter("@SODate", dateSewingOutput));
-            #endregion 
+            listSqlParameter.Add(new SqlParameter("@SPStart", this.strSPStart));
+            listSqlParameter.Add(new SqlParameter("@SPEnd", this.strSPEnd));
+            listSqlParameter.Add(new SqlParameter("@MDivision", this.strM));
+            listSqlParameter.Add(new SqlParameter("@Factory", this.strFactory));
+            listSqlParameter.Add(new SqlParameter("@BDDateStart", this.dateBuyerDeliveryStart));
+            listSqlParameter.Add(new SqlParameter("@BDDateEnd", this.dateBuyerDeliveryEnd));
+            listSqlParameter.Add(new SqlParameter("@SODate", this.dateSewingOutput));
+            #endregion
             #region SQL where filte
             /*
-             * Buyer Delivery 
+             * Buyer Delivery
              */
-            string  str_BuyerDelivery = "";
-            if (!dateBuyerDeliveryStart.Empty() && !dateBuyerDeliveryEnd.Empty())
+            string str_BuyerDelivery = string.Empty;
+            if (!this.dateBuyerDeliveryStart.Empty() && !this.dateBuyerDeliveryEnd.Empty())
             {
                 str_BuyerDelivery = "and O.BuyerDelivery between @BDDateStart and @BDDateEnd";
             }
-            else if (!dateBuyerDeliveryStart.Empty() && dateBuyerDeliveryEnd.Empty())
+            else if (!this.dateBuyerDeliveryStart.Empty() && this.dateBuyerDeliveryEnd.Empty())
             {
                 str_BuyerDelivery = "and @BDDateStart <= O.BuyerDelivery";
             }
-            else if (dateBuyerDeliveryStart.Empty() && !dateBuyerDeliveryEnd.Empty())
+            else if (this.dateBuyerDeliveryStart.Empty() && !this.dateBuyerDeliveryEnd.Empty())
             {
                 str_BuyerDelivery = "and O.BuyerDelivery <= @BDDateStart";
             }
 
             /*
              * SP#
-             */ 
-            string str_SPnum = "";
-            if (!strSPStart.Empty() && !strSPEnd.Empty())
+             */
+            string str_SPnum = string.Empty;
+            if (!this.strSPStart.Empty() && !this.strSPEnd.Empty())
             {
                 str_SPnum = "and O.ID between @SPStart and @SPEnd";
             }
-            else if (!strSPStart.Empty() && strSPEnd.Empty())
+            else if (!this.strSPStart.Empty() && this.strSPEnd.Empty())
             {
                 str_SPnum = "and @SPStart <= O.ID";
             }
-            else if (strSPStart.Empty() && !strSPEnd.Empty())
+            else if (this.strSPStart.Empty() && !this.strSPEnd.Empty())
             {
                 str_SPnum = "and O.ID <= @SPEnd";
             }
 
             Dictionary<string, string> sqlFilte = new Dictionary<string, string>();
-            sqlFilte.Add("DaysSinceInline_Factory", (strFactory.Empty()) ? "" : "and _WH.FactoryID = @Factory");
-            sqlFilte.Add("DaysToDelivery_Factory", (strFactory.Empty()) ? "" : "and _H.FactoryID = @Factory");
+            sqlFilte.Add("DaysSinceInline_Factory", this.strFactory.Empty() ? string.Empty : "and _WH.FactoryID = @Factory");
+            sqlFilte.Add("DaysToDelivery_Factory", this.strFactory.Empty() ? string.Empty : "and _H.FactoryID = @Factory");
             sqlFilte.Add("_BuyerDelivery", str_BuyerDelivery);
             sqlFilte.Add("_SPnum", str_SPnum);
-            sqlFilte.Add("_M", (strM.Empty()) ? "" : "and O.MDivisionID = @MDivision");
-            sqlFilte.Add("_Factory", (strFactory.Empty()) ? "" : "and O.FactoryID = @Factory");
-            #endregion 
+            sqlFilte.Add("_M", this.strM.Empty() ? string.Empty : "and O.MDivisionID = @MDivision");
+            sqlFilte.Add("_Factory", this.strFactory.Empty() ? string.Empty : "and O.FactoryID = @Factory");
+            #endregion
             #region SQL Command
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 select	O.ID
 		, Category = case O.Category 
 						when 'B' then 'Bulk'
@@ -276,37 +292,38 @@ where	O.Category in ('B','S')
 		{4}--and O.MDivisionID = @MDivision  
 		--Factory
 		{5}--and O.FactoryID = @Factory  
-ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"]
-                , sqlFilte["DaysToDelivery_Factory"]
-                , sqlFilte["_BuyerDelivery"]
-                , sqlFilte["_SPnum"]
-                , sqlFilte["_M"]
-                , sqlFilte["_Factory"]);
-            #endregion 
+ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"],
+                sqlFilte["DaysToDelivery_Factory"],
+                sqlFilte["_BuyerDelivery"],
+                sqlFilte["_SPnum"],
+                sqlFilte["_M"],
+                sqlFilte["_Factory"]);
+            #endregion
             #region SQL get DataTable
             DualResult result;
-            result = DBProxy.Current.Select(null, sqlCmd, listSqlParameter, out resultDt);
+            result = DBProxy.Current.Select(null, sqlCmd, listSqlParameter, out this.resultDt);
             if (!result)
             {
                 return result;
             }
-            #endregion 
+            #endregion
             return new Ict.DualResult(true);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check resultDT
-            if (resultDt == null || resultDt.Rows.Count == 0)
+            if (this.resultDt == null || this.resultDt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not Found.");
                 return false;
             }
-            #endregion 
+            #endregion
 
             this.ShowWaitMessage("Data computing...");
             #region compute 【StdOutput, VarianceDays ,DaysNeedForProd, Variance, PotentialDelayRisk】
-            foreach (DataRow resultDr in resultDt.Rows)
+            foreach (DataRow resultDr in this.resultDt.Rows)
             {
                 #region VarianceDays ,DaysNeedForProd
                 if (resultDr["SewingComplete"].ToString().EqualString("Y"))
@@ -323,57 +340,58 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"]
                     #endregion
                     #region VarianceDays
                     decimal dec_VarianceQty, dec_VarianceDay;
-                    Decimal.TryParse(resultDr["VarianceQty"].ToString(), out dec_VarianceQty);
+                    decimal.TryParse(resultDr["VarianceQty"].ToString(), out dec_VarianceQty);
                     dec_VarianceDay = (dec_StdOutput == 0) ? 0 : dec_VarianceQty / dec_StdOutput;
                     resultDr["VarianceDays"] = (dec_VarianceDay > 0) ? Math.Ceiling(dec_VarianceDay) : Math.Floor(dec_VarianceDay);
-                    #endregion 
+                    #endregion
                     #region DaysNeedForProd
                     decimal dec_nTtlSewDays, dec_nTtlOutPut, dec_nAvgActOut, dec_Qty, dec_AccuActOutput;
-                    Decimal.TryParse(resultDr["nTtlSewDays"].ToString(), out dec_nTtlSewDays);
-                    Decimal.TryParse(resultDr["nTtlOutPut"].ToString(), out dec_nTtlOutPut);
-                    Decimal.TryParse(resultDr["Qty"].ToString(), out dec_Qty);
-                    Decimal.TryParse(resultDr["AccuActOutput"].ToString(), out dec_AccuActOutput);
-                    dec_nAvgActOut = (dec_nTtlSewDays > 0) ? (dec_nTtlOutPut / dec_nTtlSewDays) : dec_StdOutput;                    
+                    decimal.TryParse(resultDr["nTtlSewDays"].ToString(), out dec_nTtlSewDays);
+                    decimal.TryParse(resultDr["nTtlOutPut"].ToString(), out dec_nTtlOutPut);
+                    decimal.TryParse(resultDr["Qty"].ToString(), out dec_Qty);
+                    decimal.TryParse(resultDr["AccuActOutput"].ToString(), out dec_AccuActOutput);
+                    dec_nAvgActOut = (dec_nTtlSewDays > 0) ? (dec_nTtlOutPut / dec_nTtlSewDays) : dec_StdOutput;
                     resultDr["DaysNeedForProd"] = (dec_nAvgActOut > 0) ? Math.Ceiling((dec_Qty - dec_AccuActOutput) / dec_nAvgActOut) : resultDr["PdnDays"];
-                    #endregion 
+                    #endregion
                 }
-                #endregion 
+                #endregion
                 decimal dec_Variance;
                 #region Variance
                 decimal dec_DaysToDelivery, dec_DaysNeedForProd, dec_PostSewingDays;
-                Decimal.TryParse(resultDr["DaysToDelivery"].ToString(), out dec_DaysToDelivery);
-                Decimal.TryParse(resultDr["DaysNeedForProd"].ToString(), out dec_DaysNeedForProd);
-                Decimal.TryParse(resultDr["PostSewingDays"].ToString(), out dec_PostSewingDays);
+                decimal.TryParse(resultDr["DaysToDelivery"].ToString(), out dec_DaysToDelivery);
+                decimal.TryParse(resultDr["DaysNeedForProd"].ToString(), out dec_DaysNeedForProd);
+                decimal.TryParse(resultDr["PostSewingDays"].ToString(), out dec_PostSewingDays);
                 dec_Variance = dec_DaysToDelivery - dec_DaysNeedForProd - dec_PostSewingDays;
                 resultDr["Variance"] = dec_Variance;
-                #endregion 
+                #endregion
                 #region PotentialDelayRisk
-                if (resultDr["PotentialDelayRisk"].ToString().Empty()){
-                    resultDr["PotentialDelayRisk"] = (dec_Variance < 0) ? "Y": "N";
+                if (resultDr["PotentialDelayRisk"].ToString().Empty())
+                {
+                    resultDr["PotentialDelayRisk"] = (dec_Variance < 0) ? "Y" : "N";
                 }
-                #endregion 
+                #endregion
             }
-            #endregion          
+            #endregion
             #region remove columns 【nTtlOutPut, nTtlSewDays】
-            resultDt.Columns.Remove("nTtlOutPut");
-            resultDt.Columns.Remove("nTtlSewDays");
-            #endregion 
+            this.resultDt.Columns.Remove("nTtlOutPut");
+            this.resultDt.Columns.Remove("nTtlSewDays");
+            #endregion
 
             this.ShowWaitMessage("Excel Processing...");
             #region Excel Process
             Excel.Application objApp = null;
             Excel.Worksheet worksheet = null;
             objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R10.xltx");
-            MyUtility.Excel.CopyToXls(resultDt, "", "PPIC_R10.xltx", 3, showExcel: false, excelApp: objApp);
+            MyUtility.Excel.CopyToXls(this.resultDt, string.Empty, "PPIC_R10.xltx", 3, showExcel: false, excelApp: objApp);
             worksheet = objApp.Sheets[1];
-            
+
             /*
              * Set Title
              */
-            worksheet.Cells[2, 2] = dateBuyerDeliveryStart + " ~ " + dateBuyerDeliveryEnd;
-            worksheet.Cells[2, 7] = strSPStart + " ~ " + strSPEnd;
-            worksheet.Cells[2, 11] = strFactory;
-            worksheet.Cells[2, 14] = dateSewingOutput;
+            worksheet.Cells[2, 2] = this.dateBuyerDeliveryStart + " ~ " + this.dateBuyerDeliveryEnd;
+            worksheet.Cells[2, 7] = this.strSPStart + " ~ " + this.strSPEnd;
+            worksheet.Cells[2, 11] = this.strFactory;
+            worksheet.Cells[2, 14] = this.dateSewingOutput;
 
             worksheet.Rows.AutoFit();
 
@@ -388,7 +406,7 @@ ORDER BY O.ID", sqlFilte["DaysSinceInline_Factory"]
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             #endregion
             this.HideWaitMessage();
             return true;

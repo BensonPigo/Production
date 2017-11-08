@@ -275,7 +275,7 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 0;
-            this.comboType.Validated += new System.EventHandler(this.comboType_Validated);
+            this.comboType.Validated += new System.EventHandler(this.ComboType_Validated);
             // 
             // comboShift
             // 
@@ -350,7 +350,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 3;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
             // 
             // displayMasterSP
             // 
@@ -488,7 +488,7 @@
             this.btnImport.TabIndex = 41;
             this.btnImport.Text = "Batch Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // P11
             // 

@@ -11,14 +11,28 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P04_Artwork
+    /// </summary>
     public partial class P04_Artwork : Sci.Win.Subs.Input4
     {
+        /// <summary>
+        /// P04_Artwork
+        /// </summary>
+        /// <param name="canedit">bool canedit</param>
+        /// <param name="keyvalue1">string keyvalue1</param>
+        /// <param name="keyvalue2">string keyvalue2</param>
+        /// <param name="keyvalue3">string keyvalue3</param>
+        /// <param name="styleid">string styleid</param>
+        /// <param name="seasonid">string seasonid</param>
         public P04_Artwork(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string styleid, string seasonid)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Text = "Artwork <" + styleid + "-" + seasonid + ">";
         }
+
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             Ict.Win.DataGridViewGeneratorTextColumnSettings artworktype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -40,7 +54,11 @@ namespace Sci.Production.PPIC
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) { return; }
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
                             IList<DataRow> list = item.GetSelecteds();
                             dr["ArtworkTypeID"] = item.GetSelectedString();
                             dr["UnitID"] = list[0]["ArtworkUnit"].ToString();
@@ -58,7 +76,7 @@ namespace Sci.Production.PPIC
                     DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                     if (!string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
                     {
-                        //sql參數
+                        // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@artworktype", e.FormattedValue.ToString());
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -71,14 +89,15 @@ namespace Sci.Production.PPIC
                         {
                             if (!result)
                             {
-                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             }
                             else
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< Artwork Type: {0} > not found!!!", e.FormattedValue.ToString()));
                             }
-                            dr["ArtworkTypeID"] = "";
-                            dr["UnitID"] = "";
+
+                            dr["ArtworkTypeID"] = string.Empty;
+                            dr["UnitID"] = string.Empty;
                             e.Cancel = true;
                             dr.EndEdit();
                             return;
@@ -95,15 +114,14 @@ namespace Sci.Production.PPIC
             };
             #endregion
 
-
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20), settings: artworktype)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternCode", header: "Cut Part", width: Widths.AnsiChars(10))
                 .Text("PatternDesc", header: "Description", width: Widths.AnsiChars(20), settings: cutpartdesc)
                 .Text("ArtworkID", header: "Pattern#", width: Widths.AnsiChars(15))
                 .Text("ArtworkName", header: "Pattern Description", width: Widths.AnsiChars(30), settings: patterndesc)
-                .Numeric("Qty", header: "", width: Widths.AnsiChars(5))
+                .Numeric("Qty", header: string.Empty, width: Widths.AnsiChars(5))
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5))
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, integer_places: 4, maximum: 9999.9999m, minimum: 0m)
@@ -115,19 +133,21 @@ namespace Sci.Production.PPIC
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-            string sqlCmd = string.Format(@"select sa.ArtworkTypeID,a.ArtworkUnit 
+            string sqlCmd = string.Format(
+                @"select sa.ArtworkTypeID,a.ArtworkUnit 
 from Style_Artwork sa WITH (NOLOCK) 
 left join ArtworkType a WITH (NOLOCK) on sa.ArtworkTypeID = a.ID
-where StyleUkey = {0}", KeyValue1);
-            DataTable ArtworkUnit;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkUnit);
+where StyleUkey = {0}", this.KeyValue1);
+            DataTable artworkUnit;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkUnit);
 
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query unit fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query unit fail!!\r\n" + result.ToString());
             }
 
             datas.Columns.Add("UnitID");
@@ -140,7 +160,8 @@ where StyleUkey = {0}", KeyValue1);
                 {
                     gridData["EditBy"] = gridData["EditName"].ToString() + "   " + ((DateTime)gridData["EditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 }
-                DataRow[] findrow = ArtworkUnit.Select(string.Format("ArtworkTypeID = '{0}'", gridData["ArtworkTypeID"].ToString()));
+
+                DataRow[] findrow = artworkUnit.Select(string.Format("ArtworkTypeID = '{0}'", gridData["ArtworkTypeID"].ToString()));
                 if (findrow.Length > 0)
                 {
                     gridData["UnitID"] = findrow[0]["ArtworkUnit"].ToString();
@@ -150,23 +171,27 @@ where StyleUkey = {0}", KeyValue1);
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
-            grid.ValidateControl();
-            gridbs.EndEdit();
-            DataRow[] findData = ((DataTable)gridbs.DataSource).Select("ArtworkTypeID = '' or PatternCode = '' or ArtworkID = ''");
+            this.grid.ValidateControl();
+            this.gridbs.EndEdit();
+            DataRow[] findData = ((DataTable)this.gridbs.DataSource).Select("ArtworkTypeID = '' or PatternCode = '' or ArtworkID = ''");
             if (findData.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > and < Cut Part > and < Pattern# > can't empty!!");
                 return false;
             }
+
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
             #region 更新Order_Artwork，已經有Sewing Daily Output的Order就不更新
-            string sqlCmd = string.Format(@"declare @styleukey bigint;
+            string sqlCmd = string.Format(
+                @"declare @styleukey bigint;
 set @styleukey = {0};
 
 --撈出屬於此Style的沒有Sewing Daily Output的訂單
@@ -211,9 +236,9 @@ select * from InsertData
 union all
 select * from DeleteData
 union all
-select * from UpdateData", KeyValue1);
-            DataTable OrderArtwork;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrderArtwork);
+select * from UpdateData", this.KeyValue1);
+            DataTable orderArtwork;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out orderArtwork);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query Order_Artwork fail!!\r\n" + result.ToString());
@@ -221,22 +246,45 @@ select * from UpdateData", KeyValue1);
             }
 
             IList<string> cmds = new List<string>();
-            foreach (DataRow dr in OrderArtwork.Rows)
+            foreach (DataRow dr in orderArtwork.Rows)
             {
                 if (dr["Status"].ToString() == "I")
                 {
                     if (!MyUtility.Check.Empty(dr["ID"]))
                     {
-                        cmds.Add(string.Format("insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,Qty,Tms,Price,Cost,Remark,AddName,AddDate,Ukey) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},{8},{9},{10},'{11}','{12}',GETDATE(),{13});",
-                            dr["ID"].ToString(), dr["ArtworkTypeID"].ToString(), dr["Article"].ToString(), dr["PatternCode"].ToString(), dr["PatternDesc"].ToString(), dr["ArtworkID"].ToString(), dr["ArtworkName"].ToString(), dr["Qty"].ToString(), dr["Tms"].ToString(), dr["Price"].ToString(), dr["Cost"].ToString(), dr["Remark"].ToString(), Sci.Env.User.UserID, "(select min(Ukey)-1 from Order_Artwork)"));
+                        cmds.Add(string.Format(
+                            "insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,Qty,Tms,Price,Cost,Remark,AddName,AddDate,Ukey) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},{8},{9},{10},'{11}','{12}',GETDATE(),{13});",
+                            dr["ID"].ToString(),
+                            dr["ArtworkTypeID"].ToString(),
+                            dr["Article"].ToString(),
+                            dr["PatternCode"].ToString(),
+                            dr["PatternDesc"].ToString(),
+                            dr["ArtworkID"].ToString(),
+                            dr["ArtworkName"].ToString(),
+                            dr["Qty"].ToString(),
+                            dr["Tms"].ToString(),
+                            dr["Price"].ToString(),
+                            dr["Cost"].ToString(),
+                            dr["Remark"].ToString(),
+                            Sci.Env.User.UserID,
+                            "(select min(Ukey)-1 from Order_Artwork)"));
                     }
                 }
                 else
                 {
                     if (dr["Status"].ToString() == "U")
                     {
-                        cmds.Add(string.Format("update Order_Artwork set PatternDesc = '{0}',ArtworkName = '{1}', Qty = {2}, Tms = {3}, Price = {4}, Cost = {5}, Remark = '{6}', EditName = '{7}', EditDate = GETDATE() where Ukey = {8};",
-                            dr["PatternDesc"].ToString(), dr["ArtworkName"].ToString(), dr["Qty"].ToString(), dr["Tms"].ToString(), dr["Price"].ToString(), dr["Cost"].ToString(), dr["Remark"].ToString(), Sci.Env.User.UserID, dr["Ukey"].ToString()));
+                        cmds.Add(string.Format(
+                            "update Order_Artwork set PatternDesc = '{0}',ArtworkName = '{1}', Qty = {2}, Tms = {3}, Price = {4}, Cost = {5}, Remark = '{6}', EditName = '{7}', EditDate = GETDATE() where Ukey = {8};",
+                            dr["PatternDesc"].ToString(),
+                            dr["ArtworkName"].ToString(),
+                            dr["Qty"].ToString(),
+                            dr["Tms"].ToString(),
+                            dr["Price"].ToString(),
+                            dr["Cost"].ToString(),
+                            dr["Remark"].ToString(),
+                            Sci.Env.User.UserID,
+                            dr["Ukey"].ToString()));
                     }
                     else
                     {
@@ -244,6 +292,7 @@ select * from UpdateData", KeyValue1);
                     }
                 }
             }
+
             if (cmds.Count > 0)
             {
                 result = DBProxy.Current.Executes(null, cmds);
@@ -256,7 +305,8 @@ select * from UpdateData", KeyValue1);
             #endregion
 
             #region 更新Order_TMSCost(已經有Sewing Daily Output的Order就不更新)與Style_TMSCost
-            sqlCmd = string.Format(@"declare @styleukey bigint;
+            sqlCmd = string.Format(
+                @"declare @styleukey bigint;
 set @styleukey = {0};
 --先將要更新的Style的TMS,Qty,Cost做加總
 with TMSCost
@@ -297,10 +347,10 @@ left join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID
 
 select * from OrderTMSCost
 union all
-select * from StyleTMSCost", KeyValue1);
+select * from StyleTMSCost", this.KeyValue1);
 
-            DataTable AllTMSCost;
-            result = DBProxy.Current.Select(null, sqlCmd, out AllTMSCost);
+            DataTable allTMSCost;
+            result = DBProxy.Current.Select(null, sqlCmd, out allTMSCost);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query TMSCost fail!!\r\n" + result.ToString());
@@ -308,35 +358,64 @@ select * from StyleTMSCost", KeyValue1);
             }
 
             IList<string> updateCmds = new List<string>();
-            foreach (DataRow dr in AllTMSCost.Rows)
+            foreach (DataRow dr in allTMSCost.Rows)
             {
                 if (dr["TableName"].ToString() == "ORDER")
                 {
-                    if (dr["OrderArtWork"].ToString() == "")
+                    if (dr["OrderArtWork"].ToString() == string.Empty)
                     {
-                        updateCmds.Add(string.Format("insert into Order_TmsCost (ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate) values ('{0}','{1}','{2}',{3},'{4}',{5},{6},'{7}',GETDATE());",
-                            dr["OrderID"].ToString(), dr["ArtworkTypeID"].ToString(), dr["Seq"].ToString(), dr["Stitch"].ToString(), dr["ArtworkUnit"].ToString(), dr["TMS"].ToString(), dr["Cost"].ToString(), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format(
+                            "insert into Order_TmsCost (ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate) values ('{0}','{1}','{2}',{3},'{4}',{5},{6},'{7}',GETDATE());",
+                            dr["OrderID"].ToString(),
+                            dr["ArtworkTypeID"].ToString(),
+                            dr["Seq"].ToString(),
+                            dr["Stitch"].ToString(),
+                            dr["ArtworkUnit"].ToString(),
+                            dr["TMS"].ToString(),
+                            dr["Cost"].ToString(),
+                            Sci.Env.User.UserID));
                     }
                     else
                     {
-                        updateCmds.Add(string.Format("update Order_TmsCost set Qty = {0}, TMS = {1}, Price = {2}, EditName = '{3}', EditDate = GETDATE() where ID = '{4}' and ArtworkTypeID = '{5}';",
-                            dr["Stitch"].ToString(), dr["TMS"].ToString(), dr["Cost"].ToString(), Sci.Env.User.UserID, dr["OrderID"].ToString(), dr["ArtworkTypeID"].ToString()));
+                        updateCmds.Add(string.Format(
+                            "update Order_TmsCost set Qty = {0}, TMS = {1}, Price = {2}, EditName = '{3}', EditDate = GETDATE() where ID = '{4}' and ArtworkTypeID = '{5}';",
+                            dr["Stitch"].ToString(),
+                            dr["TMS"].ToString(),
+                            dr["Cost"].ToString(),
+                            Sci.Env.User.UserID,
+                            dr["OrderID"].ToString(),
+                            dr["ArtworkTypeID"].ToString()));
                     }
                 }
                 else
                 {
-                    if (dr["OrderArtWork"].ToString() == "")
+                    if (dr["OrderArtWork"].ToString() == string.Empty)
                     {
-                        updateCmds.Add(string.Format("insert into Style_TmsCost (StyleUkey,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate) values ({0},'{1}','{2}',{3},'{4}',{5},{6},'{7}',GETDATE());",
-                            KeyValue1, dr["ArtworkTypeID"].ToString(), dr["Seq"].ToString(), dr["Stitch"].ToString(), dr["ArtworkUnit"].ToString(), dr["TMS"].ToString(), dr["Cost"].ToString(), Sci.Env.User.UserID));
+                        updateCmds.Add(string.Format(
+                            "insert into Style_TmsCost (StyleUkey,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,AddName,AddDate) values ({0},'{1}','{2}',{3},'{4}',{5},{6},'{7}',GETDATE());",
+                            this.KeyValue1,
+                            dr["ArtworkTypeID"].ToString(),
+                            dr["Seq"].ToString(),
+                            dr["Stitch"].ToString(),
+                            dr["ArtworkUnit"].ToString(),
+                            dr["TMS"].ToString(),
+                            dr["Cost"].ToString(),
+                            Sci.Env.User.UserID));
                     }
                     else
                     {
-                        updateCmds.Add(string.Format("update Style_TmsCost set Qty = {0}, TMS = {1}, Price = {2}, EditName = '{3}', EditDate = GETDATE() where StyleUkey = {4} and ArtworkTypeID = '{5}';",
-                            dr["Stitch"].ToString(), dr["TMS"].ToString(), dr["Cost"].ToString(), Sci.Env.User.UserID, KeyValue1, dr["ArtworkTypeID"].ToString()));
+                        updateCmds.Add(string.Format(
+                            "update Style_TmsCost set Qty = {0}, TMS = {1}, Price = {2}, EditName = '{3}', EditDate = GETDATE() where StyleUkey = {4} and ArtworkTypeID = '{5}';",
+                            dr["Stitch"].ToString(),
+                            dr["TMS"].ToString(),
+                            dr["Cost"].ToString(),
+                            Sci.Env.User.UserID,
+                            this.KeyValue1,
+                            dr["ArtworkTypeID"].ToString()));
                     }
                 }
             }
+
             if (updateCmds.Count > 0)
             {
                 result = DBProxy.Current.Executes(null, updateCmds);

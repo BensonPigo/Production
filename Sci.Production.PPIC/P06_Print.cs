@@ -10,71 +10,84 @@ using Ict;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P06_Print
+    /// </summary>
     public partial class P06_Print : Sci.Win.Tems.PrintForm
     {
         private DataTable gridData;
-        private string delDate1, delDate2, sciDate1, sciDate2, brand;
+        private string delDate1;
+        private string delDate2;
+        private string sciDate1;
+        private string sciDate2;
+        private string brand;
         private DataRow[] printData;
-        
-        public P06_Print(DataTable GridData)
+
+        /// <summary>
+        /// P06_Print
+        /// </summary>
+        /// <param name="gridData">DataTable GridData</param>
+        public P06_Print(DataTable gridData)
         {
-            InitializeComponent();
-            gridData = GridData;
+            this.InitializeComponent();
+            this.gridData = gridData;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateDelivery.Value1) && MyUtility.Check.Empty(dateDelivery.Value2) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))
+            if (MyUtility.Check.Empty(this.dateDelivery.Value1) && MyUtility.Check.Empty(this.dateDelivery.Value2) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
                 MyUtility.Msg.WarningBox("Delivery can't empty!!");
                 return false;
             }
-            delDate1 = MyUtility.Check.Empty(dateDelivery.Value1) ? "" : Convert.ToDateTime(dateDelivery.Value1).ToString("d");
-            delDate2 = MyUtility.Check.Empty(dateDelivery.Value2) ? "" : Convert.ToDateTime(dateDelivery.Value2).ToString("d");
-            sciDate1 = MyUtility.Check.Empty(dateSCIDelivery.Value1) ? "" : Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d");
-            sciDate2 = MyUtility.Check.Empty(dateSCIDelivery.Value2) ? "" : Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d");
-            brand = txtbrand.Text;
+
+            this.delDate1 = MyUtility.Check.Empty(this.dateDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("d");
+            this.delDate2 = MyUtility.Check.Empty(this.dateDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("d");
+            this.sciDate1 = MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d");
+            this.sciDate2 = MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d");
+            this.brand = this.txtbrand.Text;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder filter = new StringBuilder();
 
-            if (!MyUtility.Check.Empty(delDate1))
+            if (!MyUtility.Check.Empty(this.delDate1))
             {
-                filter.Append(string.Format("BuyerDelivery >= '{0}' and ", Convert.ToDateTime(delDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(delDate2))
-            {
-                filter.Append(string.Format("BuyerDelivery <= '{0}' and ", Convert.ToDateTime(delDate2).ToString("d")));
+                filter.Append(string.Format("BuyerDelivery >= '{0}' and ", Convert.ToDateTime(this.delDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDate1))
+            if (!MyUtility.Check.Empty(this.delDate2))
             {
-                filter.Append(string.Format("SciDelivery >= '{0}' and ", Convert.ToDateTime(sciDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(sciDate2))
-            {
-                filter.Append(string.Format("SciDelivery <= '{0}' and ", Convert.ToDateTime(sciDate2).ToString("d")));
+                filter.Append(string.Format("BuyerDelivery <= '{0}' and ", Convert.ToDateTime(this.delDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.sciDate1))
             {
-
-                filter.Append(string.Format("BrandID = '{0}' and ", brand));
+                filter.Append(string.Format("SciDelivery >= '{0}' and ", Convert.ToDateTime(this.sciDate1).ToString("d")));
             }
 
-            printData = gridData.Select(string.Format("{0}", filter.ToString().Substring(0, filter.ToString().Length-5)));
+            if (!MyUtility.Check.Empty(this.sciDate2))
+            {
+                filter.Append(string.Format("SciDelivery <= '{0}' and ", Convert.ToDateTime(this.sciDate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                filter.Append(string.Format("BrandID = '{0}' and ", this.brand));
+            }
+
+            this.printData = this.gridData.Select(string.Format("{0}", filter.ToString().Substring(0, filter.ToString().Length - 5)));
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (printData.Length <= 0)
+            if (this.printData.Length <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -82,12 +95,16 @@ namespace Sci.Production.PPIC
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P06_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             int rownum = 0, counter = 0;
             object[,] objArray = new object[1, 32];
-            foreach (DataRow dr in printData)
+            foreach (DataRow dr in this.printData)
             {
                 rownum = intRowsStart + counter;
                 objArray[0, 0] = dr["FactoryID"];
@@ -122,7 +139,7 @@ namespace Sci.Production.PPIC
                 objArray[0, 29] = dr["InClogCTN"];
                 objArray[0, 30] = dr["CBM"];
                 objArray[0, 31] = dr["ClogLocationId"];
-                worksheet.Range[String.Format("A{0}:AF{0}", rownum)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:AF{0}", rownum)].Value2 = objArray;
                 counter++;
             }
 
@@ -137,7 +154,7 @@ namespace Sci.Production.PPIC
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

@@ -293,8 +293,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.txtSPNo_Validated);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
             // displayTPELasteditDate
             // 
@@ -437,7 +437,7 @@
             this.btnMailto.TabIndex = 18;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
-            this.btnMailto.Click += new System.EventHandler(this.btnMailto_Click);
+            this.btnMailto.Click += new System.EventHandler(this.BtnMailto_Click);
             // 
             // txttpeuserPCHandle
             // 

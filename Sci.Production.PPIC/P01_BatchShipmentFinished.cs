@@ -16,20 +16,47 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P01_BatchShipmentFinished
+    /// </summary>
     public partial class P01_BatchShipmentFinished : Sci.Win.Subs.Base
     {
-        public bool haveupdate = false;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P01_BatchShipmentFinished()
+        private bool haveupdate = false;
+
+        /// <summary>
+        /// Haveupdate
+        /// </summary>
+        public bool Haveupdate
         {
-            InitializeComponent();
+            get
+            {
+                return this.haveupdate;
+            }
+
+            set
+            {
+                this.haveupdate = value;
+            }
         }
 
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <summary>
+        /// P01_BatchShipmentFinished
+        /// </summary>
+        public P01_BatchShipmentFinished()
+        {
+            this.InitializeComponent();
+        }
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable GridData;
-            string sqlCmd = string.Format(@"with wantToClose
+            DataTable gridData;
+            string sqlCmd = string.Format(
+                @"
+with wantToClose
 as
 (
 select distinct POID
@@ -57,18 +84,19 @@ from (select * from wantToClose
 left join Orders o WITH (NOLOCK) on a.POID = o.ID
 left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
 left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out GridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
             }
-            listControlBindingSource1.DataSource = GridData;
 
-            //設定Grid1的顯示欄位
+            this.listControlBindingSource1.DataSource = gridData;
+
+            // 設定Grid1的顯示欄位
             this.gridBatchShipmentFinished.IsEditingReadOnly = false;
-            this.gridBatchShipmentFinished.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridBatchShipmentFinished)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridBatchShipmentFinished.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridBatchShipmentFinished)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -76,124 +104,138 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true);
         }
 
-        private void setFilter()
+        private void SetFilter()
         {
             StringBuilder stringFilter = new StringBuilder();
             stringFilter.Append("1=1");
-            if (!MyUtility.Check.Empty(txtStyle.Text))
+            if (!MyUtility.Check.Empty(this.txtStyle.Text))
             {
-                stringFilter.Append(string.Format(" and StyleID = '{0}'", txtStyle.Text));
-            }
-            if (!MyUtility.Check.Empty(txtBuyer.Text))
-            {
-                stringFilter.Append(string.Format(" and BuyerID = '{0}'", txtBuyer.Text));
+                stringFilter.Append(string.Format(" and StyleID = '{0}'", this.txtStyle.Text));
             }
 
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
+            if (!MyUtility.Check.Empty(this.txtBuyer.Text))
             {
-                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", dateBuyerDelivery.Value1));
+                stringFilter.Append(string.Format(" and BuyerID = '{0}'", this.txtBuyer.Text));
             }
 
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", dateBuyerDelivery.Value2));
+                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", this.dateBuyerDelivery.Value1));
             }
 
-            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            {
+                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", this.dateBuyerDelivery.Value2));
+            }
+
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
         }
 
-        //Style#
-        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Style#
+        private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
             string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtStyle.Text = item.GetSelectedString();
-            setFilter();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStyle.Text = item.GetSelectedString();
+            this.SetFilter();
         }
 
-        //Buyer
-        private void txtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Buyer
+        private void TxtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtBuyer.Text = item.GetSelectedString();
-            setFilter();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtBuyer.Text = item.GetSelectedString();
+            this.SetFilter();
         }
 
-        //Style#
-        private void txtStyle_Validated(object sender, EventArgs e)
+        // Style#
+        private void TxtStyle_Validated(object sender, EventArgs e)
         {
-            if (txtStyle.OldValue != txtStyle.Text)
+            if (this.txtStyle.OldValue != this.txtStyle.Text)
             {
-                if (txtStyle.Text != "")
+                if (this.txtStyle.Text != string.Empty)
                 {
-                    if (txtStyle.Text.IndexOf("'") != -1)
+                    if (this.txtStyle.Text.IndexOf("'") != -1)
                     {
-                        txtStyle.Text = "";
+                        this.txtStyle.Text = string.Empty;
                         MyUtility.Msg.WarningBox("Input errror!!");
                         return;
                     }
-                    if (!MyUtility.Check.Seek(string.Format("select ID from Style WITH (NOLOCK) where Junk = 0 and ID = '{0}'", txtStyle.Text)))
+
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Style WITH (NOLOCK) where Junk = 0 and ID = '{0}'", this.txtStyle.Text)))
                     {
-                        txtStyle.Text = "";
+                        this.txtStyle.Text = string.Empty;
                         MyUtility.Msg.WarningBox("Style not found!!");
                         return;
                     }
                 }
-                setFilter();
+
+                this.SetFilter();
             }
         }
 
-        //Buyer
-        private void txtBuyer_Validated(object sender, EventArgs e)
+        // Buyer
+        private void TxtBuyer_Validated(object sender, EventArgs e)
         {
-            if (txtBuyer.OldValue != txtBuyer.Text)
+            if (this.txtBuyer.OldValue != this.txtBuyer.Text)
             {
-                if (txtBuyer.Text != "")
+                if (this.txtBuyer.Text != string.Empty)
                 {
-                    if (txtBuyer.Text.IndexOf("'") != -1)
+                    if (this.txtBuyer.Text.IndexOf("'") != -1)
                     {
-                        txtBuyer.Text = "";
+                        this.txtBuyer.Text = string.Empty;
                         MyUtility.Msg.WarningBox("Input errror!!");
                         return;
                     }
-                    if (!MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where Junk = 0 and ID = '{0}'", txtBuyer.Text)))
+
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where Junk = 0 and ID = '{0}'", this.txtBuyer.Text)))
                     {
-                        txtBuyer.Text = "";
+                        this.txtBuyer.Text = string.Empty;
                         MyUtility.Msg.WarningBox("Brand not found!!");
                         return;
                     }
                 }
-                setFilter();
+
+                this.SetFilter();
             }
         }
 
-        //Buyer Delivery
-        private void dateBuyerDelivery_Validated(object sender, EventArgs e)
+        // Buyer Delivery
+        private void DateBuyerDelivery_Validated(object sender, EventArgs e)
         {
-            if (dateBuyerDelivery.Value1 != dateBuyerDelivery.OldValue1)
+            if (this.dateBuyerDelivery.Value1 != this.dateBuyerDelivery.OldValue1)
             {
-                setFilter();
+                this.SetFilter();
             }
-            if (dateBuyerDelivery.Value2 != dateBuyerDelivery.OldValue2)
+
+            if (this.dateBuyerDelivery.Value2 != this.dateBuyerDelivery.OldValue2)
             {
-                setFilter();
+                this.SetFilter();
             }
         }
 
-        //update
-        private void btnUpdate_Click(object sender, EventArgs e)
+        // update
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.gridBatchShipmentFinished.ValidateControl();
             this.gridBatchShipmentFinished.EndEdit();
-            listControlBindingSource1.EndEdit();
-            DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            DataTable detailData = (DataTable)this.listControlBindingSource1.DataSource;
             DataRow[] dr = detailData.Select("Selected = 1");
             if (dr.Length <= 0)
             {
@@ -203,7 +245,8 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
 
             #region 更新Orders, Chgover資料
             IList<string> updateCmds = new List<string>();
-            //只存畫面上看到的那幾筆資料
+
+            // 只存畫面上看到的那幾筆資料
             foreach (DataRowView currentRowView in detailData.DefaultView)
             {
                 DataRow currentRow = currentRowView.Row;
@@ -223,26 +266,28 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                     {
                         transactionScope.Complete();
                         transactionScope.Dispose();
-                        haveupdate = true;
-                        MyUtility.Msg.InfoBox("Update completed!");                      
+                        this.Haveupdate = true;
+                        MyUtility.Msg.InfoBox("Update completed!");
                     }
                     else
                     {
                         transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Update failed, Pleaes re-try"+result.ToString());
+                        MyUtility.Msg.WarningBox("Update failed, Pleaes re-try" + result.ToString());
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
             #endregion
-            DataTable GridData;
-            string sqlCmd = string.Format(@"with wantToClose
+            DataTable gridData;
+            string sqlCmd = string.Format(
+                @"
+with wantToClose
 as
 (
 select distinct POID
@@ -270,20 +315,21 @@ from (select * from wantToClose
 left join Orders o WITH (NOLOCK) on a.POID = o.ID
 left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
 left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
-            DualResult Renewresult = DBProxy.Current.Select(null, sqlCmd, out GridData);
-            if (!Renewresult)
+            DualResult renewresult = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!renewresult)
             {
-                MyUtility.Msg.ErrorBox("Query data fail!!" + Renewresult.ToString());
+                MyUtility.Msg.ErrorBox("Query data fail!!" + renewresult.ToString());
             }
-            listControlBindingSource1.DataSource = GridData;
-            setFilter();
+
+            this.listControlBindingSource1.DataSource = gridData;
+            this.SetFilter();
         }
 
-        //To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        // To Excel
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
-            if (GridData.DefaultView.Count <= 0)
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
+            if (gridData.DefaultView.Count <= 0)
             {
                 MyUtility.Check.Empty("No data!!");
                 return;
@@ -291,13 +337,17 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_BatchShipmentFinished.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
-            int dataRowCount = GridData.DefaultView.Count;
+            int dataRowCount = gridData.DefaultView.Count;
             int rownum = 0;
             object[,] objArray = new object[1, 6];
-            foreach (DataRowView dr in GridData.DefaultView)
+            foreach (DataRowView dr in gridData.DefaultView)
             {
                 objArray[0, 0] = dr["POID"];
                 objArray[0, 1] = dr["StyleID"];
@@ -306,11 +356,11 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 objArray[0, 4] = dr["POCombo"];
                 objArray[0, 5] = dr["MCHandle"];
 
-                worksheet.Range[String.Format("A{0}:F{0}", intRowsStart+rownum)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:F{0}", intRowsStart + rownum)].Value2 = objArray;
                 rownum++;
             }
 
-            #region Save & Show Excel 
+            #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_BatchShipmentFinished");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
@@ -321,7 +371,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
     }
 }

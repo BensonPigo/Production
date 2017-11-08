@@ -14,63 +14,72 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P02
+    /// </summary>
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
-        DataGridViewGeneratorNumericColumnSettings oriqty = new DataGridViewGeneratorNumericColumnSettings();
-        DataGridViewGeneratorNumericColumnSettings newqty = new DataGridViewGeneratorNumericColumnSettings();
-        DataTable gridData;
+        private DataGridViewGeneratorNumericColumnSettings oriqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings newqty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataTable gridData;
+
+        /// <summary>
+        /// P02
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable dtFactory;
             DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Sci.Env.User.Keyword), out dtFactory))
             {
-
-                MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
-
+                MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
             }
-            dtFactory.Rows.Add(new string[] { "" });
-            comboFactory.SelectedValue= Sci.Env.User.Keyword;
+
+            dtFactory.Rows.Add(new string[] { string.Empty });
+            this.comboFactory.SelectedValue = Sci.Env.User.Keyword;
 
             DataRow drOC;
-            if (MyUtility.Check.Seek(string.Format(@"select top 1 UpdateDate 
+            if (MyUtility.Check.Seek(
+                string.Format(
+                @"select top 1 UpdateDate 
 from OrderComparisonList WITH (NOLOCK) 
 where MDivisionID = '{0}' 
 and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
             {
-                dateUpdatedDate.Value = Convert.ToDateTime(drOC["UpdateDate"]);
+                this.dateUpdatedDate.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
 
-            //Grid設定
+            // Grid設定
             this.gridUpdateOrder.IsEditingReadOnly = true;
             this.gridUpdateOrder.RowHeadersVisible = true;
-            this.gridUpdateOrder.DataSource = listControlBindingSource1;
+            this.gridUpdateOrder.DataSource = this.listControlBindingSource1;
             this.gridUpdateOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 
-            //當欄位值為0時，顯示空白
-            oriqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            newqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
+            // 當欄位值為0時，顯示空白
+            this.oriqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
+            this.newqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.gridUpdateOrder)
+            this.Helper.Controls.Grid.Generator(this.gridUpdateOrder)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
                 .Text("OriginalStyleID", header: "Style", width: Widths.AnsiChars(14))
-                .Numeric("OriginalQty", header: "Order\r\nQty", settings: oriqty, width: Widths.AnsiChars(5))
+                .Numeric("OriginalQty", header: "Order\r\nQty", settings: this.oriqty, width: Widths.AnsiChars(5))
                 .Text("OriginalBuyerDelivery", header: "Buyer\r\nDel", width: Widths.AnsiChars(5))
                 .Text("OriginalSCIDelivery", header: "SCI\r\nDel", width: Widths.AnsiChars(5))
                 .Text("OriginalLETA", header: "SCHD L/ETA\r\n(Master SP)")
                 .Text("KPILETA", header: "KPI\r\nL/ETA", width: Widths.AnsiChars(5))
-                .Text("", header: "", width: Widths.AnsiChars(0))
+                .Text(string.Empty, header: string.Empty, width: Widths.AnsiChars(0))
                 .Text("TransferToFactory", header: "Transfer to", width: Widths.AnsiChars(8))
-                .Numeric("NewQty", header: "Order\r\nQty", settings: newqty, width: Widths.AnsiChars(5))
+                .Numeric("NewQty", header: "Order\r\nQty", settings: this.newqty, width: Widths.AnsiChars(5))
                 .Text("NewBuyerDelivery", header: "Buyer\r\nDel", width: Widths.AnsiChars(5))
                 .Text("NewSCIDelivery", header: "SCI\r\nDel", width: Widths.AnsiChars(5))
                 .Text("NewLETA", header: "SCHD L/ETA\r\n(Master SP)")
@@ -82,30 +91,32 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 .Text("NewMnorder", header: "M/Notice", width: Widths.AnsiChars(1))
                 .Text("NewSMnorder", header: "S/M.Notice", width: Widths.AnsiChars(1))
                 .Text("MnorderApv2", header: "VAS/SHAS", width: Widths.AnsiChars(1));
-            //因為資料會有變色，所以按Grid Header不可以做排序
+
+            // 因為資料會有變色，所以按Grid Header不可以做排序
             for (int i = 0; i < this.gridUpdateOrder.ColumnCount; i++)
             {
                 this.gridUpdateOrder.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);
+            this.QueryDate((string)this.comboFactory.SelectedValue, this.dateUpdatedDate.Value);
 
-            for (int i = 0; i < gridData.Rows.Count; i++)
+            for (int i = 0; i < this.gridData.Rows.Count; i++)
             {
-                if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
-                    gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
-                    gridData.Rows[i]["DeleteOrder"].ToString() == "V")
+                if ((this.gridData.Rows[i]["OriginalQty"].ToString() != this.gridData.Rows[i]["NewQty"].ToString() && this.gridData.Rows[i]["NewQty"].ToString() == "0") ||
+                    this.gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
+                    this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
-            } 
+            }
         }
 
-        //Query Data
+        // Query Data
         private void QueryDate(string factoryID, DateTime? updateDate)
         {
-            string sqlCmd = string.Format(@"
+            string sqlCmd = string.Format(
+                @"
 select FactoryID
 	   , OrderId
 	   , OriginalStyleID
@@ -131,64 +142,69 @@ select FactoryID
 from OrderComparisonList WITH (NOLOCK) 
 where {0} 
 	  and UpdateDate {1}
-order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID), MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+order by FactoryID,OrderId",
+                MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID),
+                MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query fail!\r\n"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
             }
-            listControlBindingSource1.DataSource = gridData;
-            if (gridData != null && gridData.Rows.Count == 0)
+
+            this.listControlBindingSource1.DataSource = this.gridData;
+            if (this.gridData != null && this.gridData.Rows.Count == 0)
             {
-                dateLastDate.Value = null;
+                this.dateLastDate.Value = null;
             }
             else
             {
-                dateLastDate.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
+                this.dateLastDate.Value = Convert.ToDateTime(this.gridData.Rows[0]["TransferDate"]);
             }
         }
 
-        private void changcolor()
+        private void Changcolor()
         {
-            for (int i = 0; i < gridUpdateOrder.Rows.Count; i++)
+            for (int i = 0; i < this.gridUpdateOrder.Rows.Count; i++)
             {
-                if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
-                    gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
-                    gridData.Rows[i]["DeleteOrder"].ToString() == "V")
+                if ((this.gridData.Rows[i]["OriginalQty"].ToString() != this.gridData.Rows[i]["NewQty"].ToString() && this.gridData.Rows[i]["NewQty"].ToString() == "0") ||
+                    this.gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
+                    this.gridData.Rows[i]["DeleteOrder"].ToString() == "V")
                 {
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
+                    this.gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
-            }    
+            }
         }
 
-        //Close
-        private void btnClose_Click(object sender, EventArgs e)
+        // Close
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        
-        //Factory
-        private void comboFactory_SelectedValueChanged(object sender, EventArgs e)
+
+        // Factory
+        private void ComboFactory_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (comboFactory.SelectedIndex < 0)
+            if (this.comboFactory.SelectedIndex < 0)
             {
-                QueryDate("", (DateTime?)dateUpdatedDate.Value);
+                this.QueryDate(string.Empty, (DateTime?)this.dateUpdatedDate.Value);
             }
             else
             {
-                QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);//
+                this.QueryDate((string)this.comboFactory.SelectedValue, (DateTime?)this.dateUpdatedDate.Value);
             }
-            changcolor();
+
+            this.Changcolor();
         }
 
-        //Excel
-        private void btnExcel_Click(object sender, EventArgs e)
+        // Excel
+        private void BtnExcel_Click(object sender, EventArgs e)
         {
-            DataTable ExcelTable;
+            DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,KPILETA,TransferToFactory,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out ExcelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "FactoryID,OrderId,OriginalStyleID,OriginalQty,OriginalBuyerDelivery,OriginalSCIDelivery,OriginalLETA,KPILETA,TransferToFactory,NewQty,NewBuyerDelivery,NewSCIDelivery,NewLETA,NewOrder,DeleteOrder,JunkOrder,CMPQDate,EachConsApv,NewMnorder,NewSMnorderApv,MnorderApv2", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {
@@ -196,49 +212,50 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 return;
             }
 
-            if (ExcelTable.Rows.Count==0)
+            if (excelTable.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("No data.");
                 return;
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
-            MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, false, "", objApp);
-            objApp.Cells[2, 3] = "Last Date " + dateLastDate.Value.Value.ToShortDateString();
-            objApp.Cells[2, 9] = "Update Date " + dateUpdatedDate.Value.Value.ToShortDateString();
-            int Number = 3;
-            for (int j = 0; j < ExcelTable.Rows.Count; j++)
+            MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P02.xltx", 3, false, string.Empty, objApp);
+            objApp.Cells[2, 3] = "Last Date " + this.dateLastDate.Value.Value.ToShortDateString();
+            objApp.Cells[2, 9] = "Update Date " + this.dateUpdatedDate.Value.Value.ToShortDateString();
+            int number = 3;
+            for (int j = 0; j < excelTable.Rows.Count; j++)
             {
-                Number++;
+                number++;
             }
-            objApp.get_Range("A" + 4, "A" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + 4, "A" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].Weight = 2;
-            objApp.get_Range("A" + 4, "A" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + 4, "A" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("B" + 4, "B" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("B" + 4, "B" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("H" + 4, "H" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("H" + 4, "H" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("M" + 4, "M" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("M" + 4, "M" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("N" + 4, "N" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("N" + 4, "N" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("O" + 4, "O" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("O" + 4, "O" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("P" + 4, "P" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("P" + 4, "P" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("Q" + 4, "Q" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("Q" + 4, "Q" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("R" + 4, "R" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("R" + 4, "R" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("S" + 4, "S" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("S" + 4, "S" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("T" + 4, "T" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("T" + 4, "T" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("U" + 4, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("U" + 4, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
-            objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-            objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
+
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].Weight = 2;
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + 4, "A" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("B" + 4, "B" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("H" + 4, "H" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("H" + 4, "H" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("M" + 4, "M" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("N" + 4, "N" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("N" + 4, "N" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("O" + 4, "O" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("O" + 4, "O" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("P" + 4, "P" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("P" + 4, "P" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("Q" + 4, "Q" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("Q" + 4, "Q" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("R" + 4, "R" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("R" + 4, "R" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("S" + 4, "S" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("T" + 4, "T" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("U" + 4, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("U" + 4, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].Weight = 2;
+            objApp.get_Range("A" + number, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
+            objApp.get_Range("A" + number, "U" + number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P02");
@@ -250,13 +267,13 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
         }
 
-        private void dateUpdatedDate_ValueChanged(object sender, EventArgs e)
+        private void DateUpdatedDate_ValueChanged(object sender, EventArgs e)
         {
-            QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
-            changcolor();
+            this.QueryDate((string)this.comboFactory.SelectedValue, (DateTime?)this.dateUpdatedDate.Value);
+            this.Changcolor();
         }
     }
 }

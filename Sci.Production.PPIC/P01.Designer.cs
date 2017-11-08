@@ -601,7 +601,7 @@
             this.btnMeterialStatus_Local.TabIndex = 189;
             this.btnMeterialStatus_Local.Text = "Material Status (Local)";
             this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
+            this.btnMeterialStatus_Local.Click += new System.EventHandler(this.BtnMeterialStatus_Local_Click);
             // 
             // btnMeterialStatus
             // 
@@ -612,7 +612,7 @@
             this.btnMeterialStatus.TabIndex = 188;
             this.btnMeterialStatus.Text = "Material Status";
             this.btnMeterialStatus.UseVisualStyleBackColor = true;
-            this.btnMeterialStatus.Click += new System.EventHandler(this.btnMeterialStatus_Click);
+            this.btnMeterialStatus.Click += new System.EventHandler(this.BtnMeterialStatus_Click);
             // 
             // btnEachCons
             // 
@@ -623,7 +623,7 @@
             this.btnEachCons.TabIndex = 111;
             this.btnEachCons.Text = "Each Cons.";
             this.btnEachCons.UseVisualStyleBackColor = true;
-            this.btnEachCons.Click += new System.EventHandler(this.btnEachCons_Click);
+            this.btnEachCons.Click += new System.EventHandler(this.BtnEachCons_Click);
             // 
             // btneachconsprint
             // 
@@ -633,7 +633,7 @@
             this.btneachconsprint.TabIndex = 110;
             this.btneachconsprint.Text = "Each Cons. Print";
             this.btneachconsprint.UseVisualStyleBackColor = true;
-            this.btneachconsprint.Click += new System.EventHandler(this.btneachconsprint_Click);
+            this.btneachconsprint.Click += new System.EventHandler(this.Btneachconsprint_Click);
             // 
             // btnBacktoPPICMasterList
             // 
@@ -643,7 +643,7 @@
             this.btnBacktoPPICMasterList.TabIndex = 110;
             this.btnBacktoPPICMasterList.Text = "Back to P01. PPIC Master List";
             this.btnBacktoPPICMasterList.UseVisualStyleBackColor = true;
-            this.btnBacktoPPICMasterList.Click += new System.EventHandler(this.btnBacktoPPICMasterList_Click);
+            this.btnBacktoPPICMasterList.Click += new System.EventHandler(this.BtnBacktoPPICMasterList_Click);
             // 
             // btnShipmentFinished
             // 
@@ -654,7 +654,7 @@
             this.btnShipmentFinished.TabIndex = 109;
             this.btnShipmentFinished.Text = "Shipment Finished";
             this.btnShipmentFinished.UseVisualStyleBackColor = true;
-            this.btnShipmentFinished.Click += new System.EventHandler(this.btnShipmentFinished_Click);
+            this.btnShipmentFinished.Click += new System.EventHandler(this.BtnShipmentFinished_Click);
             // 
             // btnVASSHASInstruction
             // 
@@ -665,7 +665,7 @@
             this.btnVASSHASInstruction.TabIndex = 108;
             this.btnVASSHASInstruction.Text = "VAS/SHAS Instruction";
             this.btnVASSHASInstruction.UseVisualStyleBackColor = true;
-            this.btnVASSHASInstruction.Click += new System.EventHandler(this.btnVASSHASInstruction_Click);
+            this.btnVASSHASInstruction.Click += new System.EventHandler(this.BtnVASSHASInstruction_Click);
             // 
             // btnCartonStatus
             // 
@@ -676,7 +676,7 @@
             this.btnCartonStatus.TabIndex = 107;
             this.btnCartonStatus.Text = "Carton Status";
             this.btnCartonStatus.UseVisualStyleBackColor = true;
-            this.btnCartonStatus.Click += new System.EventHandler(this.btnCartonStatus_Click);
+            this.btnCartonStatus.Click += new System.EventHandler(this.BtnCartonStatus_Click);
             // 
             // btnPackingMethod
             // 
@@ -687,7 +687,7 @@
             this.btnPackingMethod.TabIndex = 106;
             this.btnPackingMethod.Text = "Packing Method";
             this.btnPackingMethod.UseVisualStyleBackColor = true;
-            this.btnPackingMethod.Click += new System.EventHandler(this.btnPackingMethod_Click);
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // btnPullForwardRemark
             // 
@@ -698,7 +698,7 @@
             this.btnPullForwardRemark.TabIndex = 105;
             this.btnPullForwardRemark.Text = "Pull forward remark";
             this.btnPullForwardRemark.UseVisualStyleBackColor = true;
-            this.btnPullForwardRemark.Click += new System.EventHandler(this.btnPullForwardRemark_Click);
+            this.btnPullForwardRemark.Click += new System.EventHandler(this.BtnPullForwardRemark_Click);
             // 
             // btnProductionKits
             // 
@@ -709,7 +709,7 @@
             this.btnProductionKits.TabIndex = 104;
             this.btnProductionKits.Text = "Production Kits";
             this.btnProductionKits.UseVisualStyleBackColor = true;
-            this.btnProductionKits.Click += new System.EventHandler(this.btnProductionKits_Click);
+            this.btnProductionKits.Click += new System.EventHandler(this.BtnProductionKits_Click);
             // 
             // btnMNoticeSheet
             // 
@@ -719,7 +719,7 @@
             this.btnMNoticeSheet.TabIndex = 103;
             this.btnMNoticeSheet.Text = "M/Notice Sheet";
             this.btnMNoticeSheet.UseVisualStyleBackColor = true;
-            this.btnMNoticeSheet.Click += new System.EventHandler(this.btnMNoticeSheet_Click);
+            this.btnMNoticeSheet.Click += new System.EventHandler(this.BtnMNoticeSheet_Click);
             // 
             // btnQtyBdownbySchedule
             // 
@@ -730,7 +730,7 @@
             this.btnQtyBdownbySchedule.TabIndex = 102;
             this.btnQtyBdownbySchedule.Text = "Q\'ty b\'down by schedule";
             this.btnQtyBdownbySchedule.UseVisualStyleBackColor = true;
-            this.btnQtyBdownbySchedule.Click += new System.EventHandler(this.btnQtyBdownbySchedule_Click);
+            this.btnQtyBdownbySchedule.Click += new System.EventHandler(this.BtnQtyBdownbySchedule_Click);
             // 
             // btnArtworkTransactionList
             // 
@@ -741,7 +741,7 @@
             this.btnArtworkTransactionList.TabIndex = 99;
             this.btnArtworkTransactionList.Text = "Artwork Transaction List";
             this.btnArtworkTransactionList.UseVisualStyleBackColor = true;
-            this.btnArtworkTransactionList.Click += new System.EventHandler(this.btnArtworkTransactionList_Click);
+            this.btnArtworkTransactionList.Click += new System.EventHandler(this.BtnArtworkTransactionList_Click);
             // 
             // btnAccessoryInspectionList
             // 
@@ -751,7 +751,7 @@
             this.btnAccessoryInspectionList.TabIndex = 98;
             this.btnAccessoryInspectionList.Text = "Accessory inspection list";
             this.btnAccessoryInspectionList.UseVisualStyleBackColor = true;
-            this.btnAccessoryInspectionList.Click += new System.EventHandler(this.btnAccessoryInspectionList_Click);
+            this.btnAccessoryInspectionList.Click += new System.EventHandler(this.BtnAccessoryInspectionList_Click);
             // 
             // btnFabricInspectionList
             // 
@@ -761,7 +761,7 @@
             this.btnFabricInspectionList.TabIndex = 97;
             this.btnFabricInspectionList.Text = "Fabric inspection list";
             this.btnFabricInspectionList.UseVisualStyleBackColor = true;
-            this.btnFabricInspectionList.Click += new System.EventHandler(this.btnFabricInspectionList_Click);
+            this.btnFabricInspectionList.Click += new System.EventHandler(this.BtnFabricInspectionList_Click);
             // 
             // btnMaterialImport
             // 
@@ -772,7 +772,7 @@
             this.btnMaterialImport.TabIndex = 96;
             this.btnMaterialImport.Text = "Material Import";
             this.btnMaterialImport.UseVisualStyleBackColor = true;
-            this.btnMaterialImport.Click += new System.EventHandler(this.btnMaterialImport_Click);
+            this.btnMaterialImport.Click += new System.EventHandler(this.BtnMaterialImport_Click);
             // 
             // btnbdown
             // 
@@ -782,7 +782,7 @@
             this.btnbdown.TabIndex = 95;
             this.btnbdown.Text = "b\'down";
             this.btnbdown.UseVisualStyleBackColor = true;
-            this.btnbdown.Click += new System.EventHandler(this.btnbdown_Click);
+            this.btnbdown.Click += new System.EventHandler(this.Btnbdown_Click);
             // 
             // numQtyCarton
             // 
@@ -1363,7 +1363,7 @@
             this.btnH.TabIndex = 34;
             this.btnH.Text = "H";
             this.btnH.UseVisualStyleBackColor = true;
-            this.btnH.Click += new System.EventHandler(this.btnH_Click);
+            this.btnH.Click += new System.EventHandler(this.BtnH_Click);
             // 
             // displaySewingLine
             // 
@@ -1843,8 +1843,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(140, 21);
             this.txtStyle.TabIndex = 2;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
-            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyle_Validating);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyle_Validating);
             // 
             // checkLocalOrder
             // 
@@ -1897,7 +1897,7 @@
             this.checkCancelledOrder.TabIndex = 6;
             this.checkCancelledOrder.Text = "Cancelled order";
             this.checkCancelledOrder.UseVisualStyleBackColor = true;
-            this.checkCancelledOrder.CheckedChanged += new System.EventHandler(this.checkCancelledOrder_CheckedChanged);
+            this.checkCancelledOrder.CheckedChanged += new System.EventHandler(this.CheckCancelledOrder_CheckedChanged);
             // 
             // checkPullForwardOrder
             // 
@@ -2093,7 +2093,7 @@
             this.btnMCHandleCFM.TabStop = false;
             this.btnMCHandleCFM.Text = "CFM";
             this.btnMCHandleCFM.UseVisualStyleBackColor = true;
-            this.btnMCHandleCFM.Click += new System.EventHandler(this.btnMCHandleCFM_Click);
+            this.btnMCHandleCFM.Click += new System.EventHandler(this.BtnMCHandleCFM_Click);
             // 
             // btnLocalMRCFM
             // 
@@ -2104,7 +2104,7 @@
             this.btnLocalMRCFM.TabStop = false;
             this.btnLocalMRCFM.Text = "CFM";
             this.btnLocalMRCFM.UseVisualStyleBackColor = true;
-            this.btnLocalMRCFM.Click += new System.EventHandler(this.btnLocalMRCFM_Click);
+            this.btnLocalMRCFM.Click += new System.EventHandler(this.BtnLocalMRCFM_Click);
             // 
             // shapeContainer1
             // 
@@ -2335,7 +2335,7 @@
             this.editShipMode.Size = new System.Drawing.Size(232, 50);
             this.editShipMode.TabIndex = 35;
             this.editShipMode.TabStop = false;
-            this.editShipMode.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editShipMode_PopUp);
+            this.editShipMode.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditShipMode_PopUp);
             // 
             // labelSpecialId1
             // 
@@ -2471,7 +2471,7 @@
             this.checkFOC.TabIndex = 22;
             this.checkFOC.Text = "F.O.C.";
             this.checkFOC.UseVisualStyleBackColor = true;
-            this.checkFOC.CheckedChanged += new System.EventHandler(this.checkFOC_CheckedChanged);
+            this.checkFOC.CheckedChanged += new System.EventHandler(this.CheckFOC_CheckedChanged);
             // 
             // labelCDCode
             // 
@@ -2764,7 +2764,7 @@
             this.btnProductionOutput.TabIndex = 30;
             this.btnProductionOutput.Text = "Production output";
             this.btnProductionOutput.UseVisualStyleBackColor = true;
-            this.btnProductionOutput.Click += new System.EventHandler(this.btnProductionOutput_Click);
+            this.btnProductionOutput.Click += new System.EventHandler(this.BtnProductionOutput_Click);
             // 
             // btnOrderRemark
             // 
@@ -2775,7 +2775,7 @@
             this.btnOrderRemark.TabIndex = 31;
             this.btnOrderRemark.Text = "Order remark";
             this.btnOrderRemark.UseVisualStyleBackColor = true;
-            this.btnOrderRemark.Click += new System.EventHandler(this.btnOrderRemark_Click);
+            this.btnOrderRemark.Click += new System.EventHandler(this.BtnOrderRemark_Click);
             // 
             // btnFactoryCMT
             // 
@@ -2786,7 +2786,7 @@
             this.btnFactoryCMT.TabIndex = 32;
             this.btnFactoryCMT.Text = "Factory CMT";
             this.btnFactoryCMT.UseVisualStyleBackColor = true;
-            this.btnFactoryCMT.Click += new System.EventHandler(this.btnFactoryCMT_Click);
+            this.btnFactoryCMT.Click += new System.EventHandler(this.BtnFactoryCMT_Click);
             // 
             // btnLabelHangtag
             // 
@@ -2797,7 +2797,7 @@
             this.btnLabelHangtag.TabIndex = 35;
             this.btnLabelHangtag.Text = "Label && Hangtag";
             this.btnLabelHangtag.UseVisualStyleBackColor = true;
-            this.btnLabelHangtag.Click += new System.EventHandler(this.btnLabelHangtag_Click);
+            this.btnLabelHangtag.Click += new System.EventHandler(this.BtnLabelHangtag_Click);
             // 
             // btnQtyBdownByShipmode
             // 
@@ -2807,7 +2807,7 @@
             this.btnQtyBdownByShipmode.TabIndex = 34;
             this.btnQtyBdownByShipmode.Text = "Q\'ty b\'down by shipmode";
             this.btnQtyBdownByShipmode.UseVisualStyleBackColor = true;
-            this.btnQtyBdownByShipmode.Click += new System.EventHandler(this.btnQtyBdownByShipmode_Click);
+            this.btnQtyBdownByShipmode.Click += new System.EventHandler(this.BtnQtyBdownByShipmode_Click);
             // 
             // btnQuantityBreakdown
             // 
@@ -2817,7 +2817,7 @@
             this.btnQuantityBreakdown.TabIndex = 33;
             this.btnQuantityBreakdown.Text = "Quantity breakdown";
             this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
-            this.btnQuantityBreakdown.Click += new System.EventHandler(this.btnQuantityBreakdown_Click);
+            this.btnQuantityBreakdown.Click += new System.EventHandler(this.BtnQuantityBreakdown_Click);
             // 
             // btnShippingMark
             // 
@@ -2828,7 +2828,7 @@
             this.btnShippingMark.TabIndex = 38;
             this.btnShippingMark.Text = "Shipping mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.BtnShippingMark_Click);
             // 
             // btnTMSCost
             // 
@@ -2839,7 +2839,7 @@
             this.btnTMSCost.TabIndex = 37;
             this.btnTMSCost.Text = "TMS && Cost";
             this.btnTMSCost.UseVisualStyleBackColor = true;
-            this.btnTMSCost.Click += new System.EventHandler(this.btnTMSCost_Click);
+            this.btnTMSCost.Click += new System.EventHandler(this.BtnTMSCost_Click);
             // 
             // btnStdGSDList
             // 
@@ -2850,7 +2850,7 @@
             this.btnStdGSDList.TabIndex = 36;
             this.btnStdGSDList.Text = "Std.GSD List";
             this.btnStdGSDList.UseVisualStyleBackColor = true;
-            this.btnStdGSDList.Click += new System.EventHandler(this.btnStdGSDList_Click);
+            this.btnStdGSDList.Click += new System.EventHandler(this.BtnStdGSDList_Click);
             // 
             // btnCMPQRemark
             // 
@@ -2861,7 +2861,7 @@
             this.btnCMPQRemark.TabIndex = 41;
             this.btnCMPQRemark.Text = "CMPQ remark";
             this.btnCMPQRemark.UseVisualStyleBackColor = true;
-            this.btnCMPQRemark.Click += new System.EventHandler(this.btnCMPQRemark_Click);
+            this.btnCMPQRemark.Click += new System.EventHandler(this.BtnCMPQRemark_Click);
             // 
             // btnCMPQSheet
             // 
@@ -2871,7 +2871,7 @@
             this.btnCMPQSheet.TabIndex = 39;
             this.btnCMPQSheet.Text = "CMPQ Sheet";
             this.btnCMPQSheet.UseVisualStyleBackColor = true;
-            this.btnCMPQSheet.Click += new System.EventHandler(this.btnCMPQSheet_Click);
+            this.btnCMPQSheet.Click += new System.EventHandler(this.BtnCMPQSheet_Click);
             // 
             // btnArtwork
             // 
@@ -2882,7 +2882,7 @@
             this.btnArtwork.TabIndex = 44;
             this.btnArtwork.Text = "Artwork";
             this.btnArtwork.UseVisualStyleBackColor = true;
-            this.btnArtwork.Click += new System.EventHandler(this.btnArtwork_Click);
+            this.btnArtwork.Click += new System.EventHandler(this.BtnArtwork_Click);
             // 
             // btnGarmentExport
             // 
@@ -2893,7 +2893,7 @@
             this.btnGarmentExport.TabIndex = 43;
             this.btnGarmentExport.Text = "Garment export";
             this.btnGarmentExport.UseVisualStyleBackColor = true;
-            this.btnGarmentExport.Click += new System.EventHandler(this.btnGarmentExport_Click);
+            this.btnGarmentExport.Click += new System.EventHandler(this.BtnGarmentExport_Click);
             // 
             // labelShipmentTerm
             // 
@@ -3010,7 +3010,7 @@
             this.btnCuttingCombo.TabIndex = 42;
             this.btnCuttingCombo.Text = "Cutting Combo";
             this.btnCuttingCombo.UseVisualStyleBackColor = true;
-            this.btnCuttingCombo.Click += new System.EventHandler(this.btnCuttingCombo_Click);
+            this.btnCuttingCombo.Click += new System.EventHandler(this.BtnCuttingCombo_Click);
             // 
             // checkIsMixMarker
             // 
@@ -3047,7 +3047,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
-            this.txtmfactory.Validated += new System.EventHandler(this.txtmfactory_Validated);
+            this.txtmfactory.Validated += new System.EventHandler(this.Txtmfactory_Validated);
             // 
             // txtdropdownlistCategory
             // 
@@ -3183,7 +3183,7 @@
             this.disCustCD.Name = "disCustCD";
             this.disCustCD.Size = new System.Drawing.Size(84, 21);
             this.disCustCD.TabIndex = 130;
-            this.disCustCD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.disCustCD_MouseDown);
+            this.disCustCD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DisCustCD_MouseDown);
             // 
             // P01
             // 

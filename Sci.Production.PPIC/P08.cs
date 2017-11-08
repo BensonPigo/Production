@@ -15,39 +15,51 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P08
+    /// </summary>
     public partial class P08 : Sci.Win.Tems.Input6
     {
-        string excelFile;
+        private string excelFile;
+
+        /// <summary>
+        /// P08
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            DefaultFilter = string.Format("Type = 'F' and MDivisionID = '{0}'",Sci.Env.User.Keyword);
-            InsertDetailGridOnDoubleClick = false;
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("Type = 'F' and MDivisionID = '{0}'", Env.User.Keyword);
+            this.InsertDetailGridOnDoubleClick = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            queryfors.SelectedIndexChanged += (s, e) =>
+            this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.SelectedIndex)
+                switch (this.queryfors.SelectedIndex)
                 {
                     case 0:
-                        this.DefaultWhere = "";
+                        this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", this.queryfors.SelectedValue);
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = string.Format(
+                @"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
 isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
 CASE rd.Responsibility
 WHEN 'M' THEN N'Mill'
@@ -66,44 +78,47 @@ order by rd.Seq1,rd.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
-            toolbar.cmdJunk.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? true : false;
-            toolbar.cmdCheck.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) ? true : false;
-            toolbar.cmdUncheck.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])) ? true : false;
-            toolbar.cmdConfirm.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApvName"])) ? true : false;
-            toolbar.cmdUnconfirm.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? true : false;
+            this.toolbar.cmdJunk.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? true : false;
+            this.toolbar.cmdCheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
+            this.toolbar.cmdUncheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
+            this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) ? true : false;
+            this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? true : false;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            btnMailto.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
-            label15.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked";
-            displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
-            displayPreparedby.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayPPICFactorymgr.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayConfirmby.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayTPELasteditDate.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            DataRow POData;
-            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+            this.btnMailto.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? true : false;
+            this.label15.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked";
+            this.displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), "Orders", "ID");
+            this.displayPreparedby.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            this.displayPPICFactorymgr.Value = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            this.displayConfirmby.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            this.displayTPELasteditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            DataRow pOData;
+            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"])), out pOData))
             {
-                txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
-                txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
-                txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                this.txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
+                this.txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
+                this.txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCSMR"]);
+                this.txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCHandle"]);
             }
             else
             {
-                txttpeuserPOSMR.DisplayBox1Binding = "";
-                txttpeuserPOHandle.DisplayBox1Binding = "";
-                txttpeuserPCSMR.DisplayBox1Binding = "";
-                txttpeuserPCHandle.DisplayBox1Binding = "";
+                this.txttpeuserPOSMR.DisplayBox1Binding = string.Empty;
+                this.txttpeuserPOHandle.DisplayBox1Binding = string.Empty;
+                this.txttpeuserPCSMR.DisplayBox1Binding = string.Empty;
+                this.txttpeuserPCHandle.DisplayBox1Binding = string.Empty;
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings estinqty = new DataGridViewGeneratorNumericColumnSettings();
@@ -111,9 +126,9 @@ order by rd.Seq1,rd.Seq2", masterID);
             DataGridViewGeneratorNumericColumnSettings ttlrequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cturequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings occurcost = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Desc = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings desc = new DataGridViewGeneratorTextColumnSettings();
 
-            Desc.CharacterCasing = CharacterCasing.Normal;
+            desc.CharacterCasing = CharacterCasing.Normal;
             estinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             actinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             ttlrequest.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
@@ -121,97 +136,100 @@ order by rd.Seq1,rd.Seq2", masterID);
             occurcost.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: Desc)
-            .Text("INVNo", header: "Invoice#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Date("ETA", header: "ETA", iseditingreadonly: true)
-            .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("EstInQty", header: "Est. Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: estinqty, iseditingreadonly: true)
-            .Numeric("ActInQty", header: "Actual Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: actinqty, iseditingreadonly: true)
-            .Numeric("TotalRequest", header: "Inspection Total\r\nReplacement Request\r\nQty", decimal_places: 2, width: Widths.AnsiChars(7), settings: ttlrequest, iseditingreadonly: true)
-            .Numeric("AfterCuttingRequest", header: "After Cutting\r\nReplacement\r\nRequest Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: cturequest, iseditingreadonly: true)
-            .Date("DamageSendDate", header: "Damage\r\nSample Sent\r\nDate", iseditingreadonly: true)
-            .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
-            .Numeric("OccurCost", header: "Cost Occurred", decimal_places: 3, width: Widths.AnsiChars(7), settings: occurcost, iseditingreadonly: true)
-            .Text("Responsibility", header: "Defect\r\nResponsibility", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .EditText("ResponsibilityReason", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            .EditText("Suggested", header: "Factory Suggested Solution", width: Widths.AnsiChars(30), iseditingreadonly: true);
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: desc)
+                .Text("INVNo", header: "Invoice#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("ETA", header: "ETA", iseditingreadonly: true)
+                .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("EstInQty", header: "Est. Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: estinqty, iseditingreadonly: true)
+                .Numeric("ActInQty", header: "Actual Rced\r\nQ'ty", decimal_places: 2, width: Widths.AnsiChars(7), settings: actinqty, iseditingreadonly: true)
+                .Numeric("TotalRequest", header: "Inspection Total\r\nReplacement Request\r\nQty", decimal_places: 2, width: Widths.AnsiChars(7), settings: ttlrequest, iseditingreadonly: true)
+                .Numeric("AfterCuttingRequest", header: "After Cutting\r\nReplacement\r\nRequest Qty", decimal_places: 2, width: Widths.AnsiChars(7), settings: cturequest, iseditingreadonly: true)
+                .Date("DamageSendDate", header: "Damage\r\nSample Sent\r\nDate", iseditingreadonly: true)
+                .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
+                .Numeric("OccurCost", header: "Cost Occurred", decimal_places: 3, width: Widths.AnsiChars(7), settings: occurcost, iseditingreadonly: true)
+                .Text("Responsibility", header: "Defect\r\nResponsibility", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .EditText("ResponsibilityReason", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("Suggested", header: "Factory Suggested Solution", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
-            detailgrid.CellDoubleClick += (s, e) =>
+            this.detailgrid.CellDoubleClick += (s, e) =>
             {
                 if (e.ColumnIndex == 0)
                 {
-                    Sci.Production.PPIC.P08_InputData callInputDataForm = new Sci.Production.PPIC.P08_InputData(CurrentMaintain);
+                    Sci.Production.PPIC.P08_InputData callInputDataForm = new Sci.Production.PPIC.P08_InputData(this.CurrentMaintain);
                     callInputDataForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     callInputDataForm.ShowDialog(this);
                 }
             };
-
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Type"] = "F";
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["CDate"] = DateTime.Today;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Type"] = "F";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!MyUtility.Check.Empty(CurrentMaintain["ApvDate"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
             {
                 MyUtility.Msg.WarningBox("This record is approved, can't be modified!!");
                 return false;
             }
 
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked")
             {
                 MyUtility.Msg.WarningBox("This record is junked, can't be modified!!");
                 return false;
             }
-            
+
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
             {
                 MyUtility.Msg.WarningBox("SP No. can't empty");
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["ApplyName"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ApplyName"]))
             {
                 MyUtility.Msg.WarningBox("Prepared by can't empty");
-                txtuserPreparedby.TextBox1.Focus();
+                this.txtuserPreparedby.TextBox1.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["ApvName"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ApvName"]))
             {
                 MyUtility.Msg.WarningBox("PPIC/Factory mgr can't empty");
-                txtuserPPICFactorymgr.TextBox1.Focus();
+                this.txtuserPPICFactorymgr.TextBox1.Focus();
                 return false;
             }
 
             #endregion
-            int count = 0; //紀錄表身筆數
-            //刪除表身Grid的Seq為空資料
-            foreach (DataRow dr in DetailDatas)
+            int count = 0; // 紀錄表身筆數
+            // 刪除表身Grid的Seq為空資料
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["Seq"]))
                 {
                     dr.Delete();
                     continue;
                 }
+
                 count++;
             }
 
@@ -221,45 +239,50 @@ order by rd.Seq1,rd.Seq2", masterID);
                 return false;
             }
 
-            //GetID
-            if (IsDetailInserting)
+            // GetID
+            if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Sci.Env.User.Factory + MyUtility.Convert.GetString(CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Factory + MyUtility.Convert.GetString(this.CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
-                CurrentMaintain["ID"] = id;
+
+                this.CurrentMaintain["ID"] = id;
             }
+
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             List<SqlParameter> cmds = new List<SqlParameter>();
-            cmds.Add(new SqlParameter("@ID",CurrentMaintain["ID"].ToString()));
+            cmds.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()));
             string sqlcmd = "Select r.ApvDate From ReplacementReport r WITH (NOLOCK) where r.ID = @ID";
-            DataTable ApvDate;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out ApvDate);
-            if (!result) 
+            DataTable apvDate;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out apvDate);
+            if (!result)
             {
-                ShowErr(result);
+                this.ShowErr(result);
                 return false;
             }
-            if( MyUtility.Check.Empty(ApvDate.Rows[0][0]))
+
+            if (MyUtility.Check.Empty(apvDate.Rows[0][0]))
             {
                 MyUtility.Msg.WarningBox("It dosen't approve.");
                 return false;
             }
-            ToExcel(false);
+
+            this.ToExcel(false);
 
             return base.ClickPrint();
         }
 
         private bool ToExcel(bool isSendMail)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return false;
@@ -267,48 +290,55 @@ order by rd.Seq1,rd.Seq2", masterID);
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_P08.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            DataTable gridData = (DataTable)detailgridbs.DataSource;
-            //計算總輸出頁數
+            DataTable gridData = (DataTable)this.detailgridbs.DataSource;
+
+            // 計算總輸出頁數
             int totalPage = (int)Math.Ceiling(MyUtility.Convert.GetDecimal(gridData.Rows.Count) / 2);
 
             if (totalPage > 1)
             {
-                //選取要被複製的資料
+                // 選取要被複製的資料
                 Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A1:A35").EntireRow;
                 for (int i = 2; i <= totalPage; i++)
                 {
-                    //選擇要被貼上的位置
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(35 * (i - 1) + 1)), Type.Missing).EntireRow;
-                    //貼上
+                    // 選擇要被貼上的位置
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString((35 * (i - 1)) + 1)), Type.Missing).EntireRow;
+
+                    // 貼上
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                 }
             }
 
             string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", this.txttpeuserPCHandle.DisplayBox1Binding));
-            string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
-            string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
-            string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders WITH (NOLOCK) where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
-            string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["TPECFMName"])));
-            int j = 0; int n = 0;
+            string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])));
+            string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])));
+            string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders WITH (NOLOCK) where POID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"])));
+            string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["TPECFMName"])));
+            int j = 0;
+            int n = 0;
             foreach (DataRow dr in gridData.Rows)
             {
                 j++;
                 int row = 35 * ((int)Math.Ceiling(MyUtility.Convert.GetDecimal(j) / 2) - 1);
                 int column = 7;
 
-                //填表頭資料
+                // 填表頭資料
                 if (j % 2 == 1)
                 {
-                    n++; 
-                    worksheet.Cells[row + 3, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]) + " - " + n + "/" + MyUtility.Convert.GetString(totalPage);
-                    worksheet.Cells[row + 4, 2] = MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]);
-                    worksheet.Cells[row + 4, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd");
-                    worksheet.Cells[row + 4, 8] = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString("yyyy/MM/dd");
-                    worksheet.Cells[row + 5, 2] = MyUtility.Convert.GetString(CurrentMaintain["POID"]);
-                    worksheet.Cells[row + 5, 6] = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString("yyyy/MM/dd");
+                    n++;
+                    worksheet.Cells[row + 3, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + " - " + n + "/" + MyUtility.Convert.GetString(totalPage);
+                    worksheet.Cells[row + 4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]);
+                    worksheet.Cells[row + 4, 6] = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd");
+                    worksheet.Cells[row + 4, 8] = MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApplyDate"]).ToString("yyyy/MM/dd");
+                    worksheet.Cells[row + 5, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["POID"]);
+                    worksheet.Cells[row + 5, 6] = MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPECFMDate"]).ToString("yyyy/MM/dd");
                     worksheet.Cells[row + 5, 8] = attention;
                     worksheet.Cells[row + 6, 2] = apply + "/" + approve;
                     worksheet.Cells[row + 6, 8] = style;
@@ -316,7 +346,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                 }
 
                 worksheet.Cells[row + 7, column] = "#" + MyUtility.Convert.GetString(dr["RefNo"]) + " " + MyUtility.Convert.GetString(dr["Description"]) + "(" + MyUtility.Convert.GetString(dr["Seq1"]) + " -" + MyUtility.Convert.GetString(dr["Seq2"]) + ")";
-                worksheet.Cells[row + 8, column] = MyUtility.Convert.GetString(dr["INVNo"]) + ", " + (MyUtility.Check.Empty(dr["ETA"]) ? "" : "ETA" + Convert.ToDateTime(dr["ETA"]).ToString("d"));
+                worksheet.Cells[row + 8, column] = MyUtility.Convert.GetString(dr["INVNo"]) + ", " + (MyUtility.Check.Empty(dr["ETA"]) ? string.Empty : "ETA" + Convert.ToDateTime(dr["ETA"]).ToString("d"));
                 worksheet.Cells[row + 9, column] = MyUtility.Convert.GetString(dr["ColorID"]);
                 worksheet.Cells[row + 10, column] = MyUtility.Convert.GetString(dr["EstInQty"]) + "/" + MyUtility.Convert.GetString(dr["ActInQty"]);
                 worksheet.Cells[row + 12, column] = MyUtility.Convert.GetString(dr["AGradeDefect"]);
@@ -330,17 +360,17 @@ order by rd.Seq1,rd.Seq2", masterID);
                 worksheet.Cells[row + 18, column] = MyUtility.Convert.GetString(dr["TotalRequest"]);
                 worksheet.Cells[row + 19, column] = MyUtility.Check.Empty(dr["AfterCutting"]) ? MyUtility.Convert.GetString(dr["AfterCuttingReason"]) : MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and ID = '{0}'", MyUtility.Convert.GetString(dr["AfterCutting"])));
                 worksheet.Cells[row + 20, column] = MyUtility.Convert.GetString(dr["AfterCuttingRequest"]);
-                worksheet.Cells[row + 21, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? "" : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
+                worksheet.Cells[row + 21, column] = MyUtility.Check.Empty(dr["DamageSendDate"]) ? string.Empty : Convert.ToDateTime(dr["DamageSendDate"]).ToString("d");
                 worksheet.Cells[row + 22, column] = MyUtility.Convert.GetString(dr["AWBNo"]);
-                worksheet.Cells[row + 23, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? "" : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");
-                worksheet.Cells[row + 24, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? "V" : "";
-                worksheet.Cells[row + 24, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
-                worksheet.Cells[row + 25, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? "V" : "";
-                worksheet.Cells[row + 25, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
-                worksheet.Cells[row + 26, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? "V" : "";
-                worksheet.Cells[row + 26, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
-                worksheet.Cells[row + 27, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? "V" : "";
-                worksheet.Cells[row + 27, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : "";
+                worksheet.Cells[row + 23, column] = MyUtility.Check.Empty(dr["ReplacementETA"]) ? string.Empty : Convert.ToDateTime(dr["ReplacementETA"]).ToString("d");
+                worksheet.Cells[row + 24, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? "V" : string.Empty;
+                worksheet.Cells[row + 24, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "M" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 25, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? "V" : string.Empty;
+                worksheet.Cells[row + 25, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "T" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 26, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? "V" : string.Empty;
+                worksheet.Cells[row + 26, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "F" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
+                worksheet.Cells[row + 27, 3] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? "V" : string.Empty;
+                worksheet.Cells[row + 27, column] = MyUtility.Convert.GetString(dr["Responsibility"]) == "S" ? MyUtility.Convert.GetString(dr["ResponsibilityReason"]) : string.Empty;
                 worksheet.Cells[row + 28, column] = MyUtility.Convert.GetString(dr["Suggested"]);
                 worksheet.Cells[row + 29, column] = apply;
                 worksheet.Cells[row + 29, column + 1] = approve;
@@ -359,44 +389,47 @@ order by rd.Seq1,rd.Seq2", masterID);
             Marshal.ReleaseComObject(excel);
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(workbook);
-            #endregion 
+            #endregion
             if (!isSendMail)
             {
                 this.excelFile.OpenFile();
             }
+
             return true;
         }
 
-        //SP No.
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        // SP No.
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
                 {
-                    //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSPNo.Text);
-                    //用登入的Factory 抓取對應的FtyGroup
-                     DataTable FtyGroupData;
-                     DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out FtyGroupData);
-                    if (FtyGroupData.Rows.Count ==0)
+                    // sql參數
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
+
+                    // 用登入的Factory 抓取對應的FtyGroup
+                     DataTable ftyGroupData;
+                     DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}' and IsProduceFty = 1", Sci.Env.User.Factory), out ftyGroupData);
+                    if (ftyGroupData.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("SP No. not found!!");
-                        CurrentMaintain["POID"] = "";
-                        CurrentMaintain["FactoryID"] = "";
+                        this.CurrentMaintain["POID"] = string.Empty;
+                        this.CurrentMaintain["FactoryID"] = string.Empty;
                         e.Cancel = true;
                         return;
                     }
-                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", FtyGroupData.Rows[0]["FTYGroup"].ToString());
+
+                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", ftyGroupData.Rows[0]["FTYGroup"].ToString());
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid";
-                    DataTable OrdersData;
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
+                    DataTable ordersData;
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
 
-                    if (!result || OrdersData.Rows.Count <= 0)
+                    if (!result || ordersData.Rows.Count <= 0)
                     {
                         if (!result)
                         {
@@ -406,33 +439,34 @@ order by rd.Seq1,rd.Seq2", masterID);
                         {
                             MyUtility.Msg.WarningBox("SP No. not found!!");
                         }
-                        CurrentMaintain["POID"] = "";
-                        CurrentMaintain["FactoryID"] = "";
+
+                        this.CurrentMaintain["POID"] = string.Empty;
+                        this.CurrentMaintain["FactoryID"] = string.Empty;
                         e.Cancel = true;
                         return;
                     }
                     else
                     {
-                        CurrentMaintain["POID"] = txtSPNo.Text;
-                        CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"];
+                        this.CurrentMaintain["POID"] = this.txtSPNo.Text;
+                        this.CurrentMaintain["FactoryID"] = ordersData.Rows[0]["FtyGroup"];
                     }
                 }
             }
         }
 
-        //SP No.
-        private void txtSPNo_Validated(object sender, EventArgs e)
+        // SP No.
+        private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            
-            if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
-                //清空表身Grid資料
-                foreach (DataRow dr in DetailDatas)
+                // 清空表身Grid資料
+                foreach (DataRow dr in this.DetailDatas)
                 {
                     dr.Delete();
                 }
 
-                string sqlCmd = string.Format(@"select f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2 as Seq,f.Refno,
+                string sqlCmd = string.Format(
+                    @"select f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2 as Seq,f.Refno,
 [dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0) as Description,
 isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(sum(fp.TicketYds),0) as EstInQty, isnull(sum(fp.ActualYds),0) as ActInQty
@@ -442,82 +476,89 @@ left join PO_Supp_Detail psd WITH (NOLOCK) on f.POID = psd.ID and f.Seq1 = psd.S
 left join Receiving r WITH (NOLOCK) on f.ReceivingID = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 where f.POID = '{0}' and f.Result = 'F'
-group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", txtSPNo.Text);
-                DataTable FIRData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out FIRData);
+group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", this.txtSPNo.Text);
+                DataTable firData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out firData);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Query FIR fail!\r\n" + result.ToString());
                 }
                 else
                 {
-                    foreach (DataRow dr in FIRData.Rows)
+                    foreach (DataRow dr in firData.Rows)
                     {
                         dr.AcceptChanges();
                         dr.SetAdded();
-                        ((DataTable)detailgridbs.DataSource).ImportRow(dr);
+                        ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
                     }
                 }
-                displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
-                DataRow POData;
-                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+
+                this.displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), "Orders", "ID");
+                DataRow poData;
+                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"])), out poData))
                 {
-                    txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                    txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
-                    txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
-                    txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                    this.txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(poData["POSMR"]);
+                    this.txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(poData["POHandle"]);
+                    this.txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(poData["PCSMR"]);
+                    this.txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(poData["PCHandle"]);
                 }
                 else
                 {
-                    txttpeuserPOSMR.DisplayBox1Binding = "";
-                    txttpeuserPOHandle.DisplayBox1Binding = "";
-                    txttpeuserPCSMR.DisplayBox1Binding = "";
-                    txttpeuserPCHandle.DisplayBox1Binding = "";
+                    this.txttpeuserPOSMR.DisplayBox1Binding = string.Empty;
+                    this.txttpeuserPOHandle.DisplayBox1Binding = string.Empty;
+                    this.txttpeuserPCSMR.DisplayBox1Binding = string.Empty;
+                    this.txttpeuserPCHandle.DisplayBox1Binding = string.Empty;
                 }
             }
         }
 
-        //Junk
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Junk fail!\r\n" + result.ToString());
                 return;
             }
-           
         }
 
-        //Check
+        /// <inheritdoc/>
         protected override void ClickCheck()
         {
             base.ClickCheck();
             StringBuilder check = new StringBuilder();
             IList<string> updateCmds = new List<string>();
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (MyUtility.Check.Empty(dr["Responsibility"]) || MyUtility.Check.Empty(dr["ResponsibilityReason"]) || MyUtility.Check.Empty(dr["Suggested"]))
                 {
-                    check.Append(string.Format("SEQ# {0}\r\n",MyUtility.Convert.GetString(dr["Seq"])));
+                    check.Append(string.Format("SEQ# {0}\r\n", MyUtility.Convert.GetString(dr["Seq"])));
                 }
-                updateCmds.Add(string.Format(@"update FIR set ReplacementReportID = '{0}' where ReceivingID in (select distinct r.Id
+
+                updateCmds.Add(string.Format(
+                    @"update FIR set ReplacementReportID = '{0}' where ReceivingID in (select distinct r.Id
 from ReplacementReport rr 
 inner join ReplacementReport_Detail rrd on rr.ID = rrd.ID
 inner join Receiving r on rrd.INVNo = r.InvNo
 inner join Receiving_Detail rd on rd.Id = r.Id and rr.POID = rd.PoId and rrd.Seq1 = rd.Seq1 and rrd.Seq2 = rd.Seq2
-where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and ReplacementReportID = '';",MyUtility.Convert.GetString(CurrentMaintain["ID"]),MyUtility.Convert.GetString(CurrentMaintain["POID"]),MyUtility.Convert.GetString(dr["Seq1"]),MyUtility.Convert.GetString(dr["Seq2"])));
+where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and ReplacementReportID = '';",
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["POID"]),
+                    MyUtility.Convert.GetString(dr["Seq1"]),
+                    MyUtility.Convert.GetString(dr["Seq2"])));
             }
+
             if (check.Length > 0)
             {
                 MyUtility.Msg.WarningBox(check.ToString() + "<Defect Responsibility> and <Reason> and <Factory Suggested Solution> can't empty!!");
                 return;
             }
 
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'Checked', ApplyDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -525,10 +566,9 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 MyUtility.Msg.ErrorBox("Check fail!\r\n" + result.ToString());
                 return;
             }
-           
         }
 
-        //Uncheck
+        /// <inheritdoc/>
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
@@ -538,9 +578,11 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
             {
                 return;
             }
+
             IList<string> updateCmds = new List<string>();
-            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            updateCmds.Add(string.Format(@"update FIR 
+            updateCmds.Add(string.Format("update ReplacementReport set Status = 'New', ApplyDate = Null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            updateCmds.Add(string.Format(
+                @"update FIR 
 set ReplacementReportID = isnull((select top(1) rr.ID
 						   from ReplacementReport rr
 						   inner join ReplacementReport_Detail rrd on rr.ID = rrd.ID
@@ -550,7 +592,7 @@ set ReplacementReportID = isnull((select top(1) rr.ID
 											 inner join Receiving rc on rd.INVNo = rc.InvNo
 											 where r.ID != '{0}' and r.ApplyDate is not null and r.POID = FIR.POID and rd.Seq1 = FIR.Seq1 and rd.Seq2 = FIR.Seq2 and rc.Id = FIR.ReceivingID)
 						   and rr.ID != '{0}' and rr.ApplyDate is not null and rr.POID = FIR.POID and rrd.Seq1 = FIR.Seq1 and rrd.Seq2 = FIR.Seq2),'') 
-where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             DualResult result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -558,26 +600,26 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 MyUtility.Msg.ErrorBox("Uncheck fail!\r\n" + result.ToString());
                 return;
             }
-          
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
             }
-            RenewData();
-            SendMail();
+
+            this.RenewData();
+            this.SendMail();
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -589,27 +631,27 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
             }
 
             DualResult result;
-            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmd = string.Format("update ReplacementReport set Status = 'Checked', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
                 return;
             }
-            
         }
 
-        //Mail to
-        private void btnMailto_Click(object sender, EventArgs e)
+        // Mail to
+        private void BtnMailto_Click(object sender, EventArgs e)
         {
-            SendMail();
+            this.SendMail();
         }
 
         // Mail to
         private void SendMail()
         {
                 DataTable allMail;
-                string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = r.ApplyName),'') as ApplyName,
+                string sqlCmd = string.Format(
+                    @"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = r.ApplyName),'') as ApplyName,
 isnull((select Name from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as ApvName,
 isnull((select Email from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as CCMAIL,
 isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandle,
@@ -621,7 +663,7 @@ isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.PCSMR),'') as PCSM
 from ReplacementReport r WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = r.POID
 left join PO p WITH (NOLOCK) on p.ID = o.POID
-where r.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+where r.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
                 if (!result)
                 {
@@ -631,7 +673,7 @@ where r.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandle"]) + ";";
                 string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["CCMAIL"]) + ";";
-                string subject = string.Format("{0} - Fabric Replacement report",MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                string subject = string.Format("{0} - Fabric Replacement report", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(@"Hi PO Handle,
@@ -642,11 +684,11 @@ If the replacement report can be accept and cfm to proceed, please approve it th
 ");
                 #endregion
 
-                //產生Excel
-                ToExcel(true);
+                // 產生Excel
+                this.ToExcel(true);
 
-                //帶出夾檔的檔案
-                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip WITH (NOLOCK) where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                // 帶出夾檔的檔案
+                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip WITH (NOLOCK) where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DataTable clipData;
                 double totalSize = 0;
                 string totalFile;
@@ -656,18 +698,19 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                 {
                     foreach (DataRow dr in clipData.Rows)
                     {
-                        //var dataFile = dr;
-                        //string targetFile;
-                        //Sci.Win.PrivUtils.GetClipFileName(dataFile, out targetFile);
+                        // var dataFile = dr;
+                        // string targetFile;
+                        // Sci.Win.PrivUtils.GetClipFileName(dataFile, out targetFile);
                         string targetFile = Env.Cfg.ClipDir + "\\" + MyUtility.Convert.GetString(dr["Year"]) + Convert.ToString(dr["Month"]).PadLeft(2, '0') + "\\" + MyUtility.Convert.GetString(dr["TableName"]) + MyUtility.Convert.GetString(dr["PKey"]) + MyUtility.Convert.GetString(dr["SourceFile"]).Substring(MyUtility.Convert.GetString(dr["SourceFile"]).LastIndexOf('.'));
                         allFile.Append(string.Format(",{0}", targetFile));
                         System.IO.FileInfo fi = new System.IO.FileInfo(targetFile);
-                        totalSize += (double)fi.Length; 
+                        totalSize += (double)fi.Length;
                     }
                 }
+
                 if (totalSize > 10485760)
                 {
-                    //當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
+                    // 當To Excel的檔案與迴紋針裡的檔案加起來超過10MB的話，就在信件中顯示下面訊息，附件只夾To Excel的檔案
                     content.Append("Due to the attach files is more than 10MB, please ask factory's related person to provide the attach file.");
                     totalFile = this.excelFile;
                 }
@@ -679,7 +722,7 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
 
-                //刪除Excel File
+                // 刪除Excel File
                 if (System.IO.File.Exists(this.excelFile))
                 {
                     try
@@ -696,7 +739,8 @@ If the replacement report can be accept and cfm to proceed, please approve it th
         private void P08_FormLoaded(object sender, EventArgs e)
         {
             DataTable queryDT;
-            string querySql = string.Format(@"
+            string querySql = string.Format(
+                @"
 select '' FTYGroup
 
 union 
@@ -704,9 +748,8 @@ select distinct FTYGroup
 from Factory 
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
-            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
+            this.queryfors.SelectedIndex = 0;
         }
     }
 }
-

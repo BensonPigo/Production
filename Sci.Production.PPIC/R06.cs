@@ -12,67 +12,83 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// R06
+    /// </summary>
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
-        DataTable _printData;
-        DateTime? _sciDate1, _sciDate2;
-        string _mDivision, _orderType, _factory, _category, _SPStart, _SPEnd;
-        
-        int _excludeReplacement, _complection;
-        
+        private DataTable _printData;
+        private DateTime? _sciDate1;
+        private DateTime? _sciDate2;
+        private string _mDivision;
+        private string _orderType;
+        private string _factory;
+        private string _category;
+        private string _SPStart;
+        private string _SPEnd;
+        private int _excludeReplacement;
+        private int _complection;
+
+        /// <summary>
+        /// R06
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            comboM.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
-            comboOrderType.Text = "Bulk+Sample";
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboOrderType, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
+            this.comboOrderType.Text = "Bulk+Sample";
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory; 
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(textSPStart.Text.Trim()) && MyUtility.Check.Empty(textSPEnd.Text.Trim()))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) && MyUtility.Check.Empty(this.textSPStart.Text.Trim()) && MyUtility.Check.Empty(this.textSPEnd.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("[SP#] and [SCI Delivery] can't all empty!!");
                 return false;
             }
-            if (!MyUtility.Check.Empty(textSPStart.Text.Trim()) && MyUtility.Check.Empty(textSPEnd.Text.Trim()))
+
+            if (!MyUtility.Check.Empty(this.textSPStart.Text.Trim()) && MyUtility.Check.Empty(this.textSPEnd.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("SP# need between two values!");
-                textSPEnd.Focus();
+                this.textSPEnd.Focus();
                 return false;
             }
-            else if (MyUtility.Check.Empty(textSPStart.Text.Trim()) && !MyUtility.Check.Empty(textSPEnd.Text.Trim()))
+            else if (MyUtility.Check.Empty(this.textSPStart.Text.Trim()) && !MyUtility.Check.Empty(this.textSPEnd.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("SP# need between two values!");
-                textSPStart.Focus();
+                this.textSPStart.Focus();
                 return false;
             }
-            _SPStart = textSPStart.Text;
-            _SPEnd = textSPEnd.Text;
-            _sciDate1 = dateSCIDelivery.Value1;
-            _sciDate2 = dateSCIDelivery.Value2;
-            _mDivision = comboM.Text;
-            _orderType = comboOrderType.SelectedIndex == -1 ? "" : comboOrderType.SelectedIndex == 0 ? "B" : comboOrderType.SelectedIndex == 1 ? "S" : comboOrderType.SelectedIndex == 2 ? "BS" : "M";
-            _excludeReplacement = checkExcludedReplacementItem.Checked ? 1 : 0;
-            _complection = checkPOMaterialCompletion.Checked ? 1 : 0;
-            _factory = comboFactory.Text;
-            _category = comboOrderType.Text;
+
+            this._SPStart = this.textSPStart.Text;
+            this._SPEnd = this.textSPEnd.Text;
+            this._sciDate1 = this.dateSCIDelivery.Value1;
+            this._sciDate2 = this.dateSCIDelivery.Value2;
+            this._mDivision = this.comboM.Text;
+            this._orderType = this.comboOrderType.SelectedIndex == -1 ? string.Empty : this.comboOrderType.SelectedIndex == 0 ? "B" : this.comboOrderType.SelectedIndex == 1 ? "S" : this.comboOrderType.SelectedIndex == 2 ? "BS" : "M";
+            this._excludeReplacement = this.checkExcludedReplacementItem.Checked ? 1 : 0;
+            this._complection = this.checkPOMaterialCompletion.Checked ? 1 : 0;
+            this._factory = this.comboFactory.Text;
+            this._category = this.comboOrderType.Text;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 with tmpPO as (
     select ps.ID,ps.SEQ1,Qty,psd.ETA,s.ThirdCountry,isnull(s.AbbEN,'') as SuppAbb
     from PO_Supp ps WITH (NOLOCK) 
@@ -117,42 +133,44 @@ Category =
     , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
-where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""));
+where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '69'" : string.Empty));
 
-            if (!MyUtility.Check.Empty(_sciDate1))
+            if (!MyUtility.Check.Empty(this._sciDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(_sciDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(_sciDate2))
-            {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(_sciDate2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(_mDivision))
-            {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", _mDivision));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this._sciDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(_SPStart))
+            if (!MyUtility.Check.Empty(this._sciDate2))
             {
-                sqlCmd.Append(string.Format(" and o.id between '{0}' and '{1}'", _SPStart, _SPEnd));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this._sciDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(_factory))
+            if (!MyUtility.Check.Empty(this._mDivision))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", _factory));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this._mDivision));
             }
 
-            if (!MyUtility.Check.Empty(_orderType))
+            if (!MyUtility.Check.Empty(this._SPStart))
             {
-                if (_orderType == "B")
+                sqlCmd.Append(string.Format(" and o.id between '{0}' and '{1}'", this._SPStart, this._SPEnd));
+            }
+
+            if (!MyUtility.Check.Empty(this._factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this._factory));
+            }
+
+            if (!MyUtility.Check.Empty(this._orderType))
+            {
+                if (this._orderType == "B")
                 {
                     sqlCmd.Append(" and o.Category = 'B'");
                 }
-                else if (_orderType == "S")
+                else if (this._orderType == "S")
                 {
                     sqlCmd.Append(" and o.Category = 'S'");
                 }
-                else if (_orderType == "M")
+                else if (this._orderType == "M")
                 {
                     sqlCmd.Append(" and o.Category = 'M'");
                 }
@@ -164,22 +182,23 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
 
             sqlCmd.Append(" order by o.ID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this._printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(_printData.Rows.Count);
+            this.SetCount(this._printData.Rows.Count);
 
-            if (_printData.Rows.Count <= 0)
+            if (this._printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -188,20 +207,24 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R06_MonthlyMaterialCompletion.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(_sciDate1) ? "" : Convert.ToDateTime(_sciDate1).ToString("d"), MyUtility.Check.Empty(_sciDate2) ? "" : Convert.ToDateTime(_sciDate2).ToString("d"));
-            
-            worksheet.Cells[2, 6] = _mDivision;
-            worksheet.Cells[2, 8] = _factory;
-            worksheet.Cells[2, 10] = _category;
-            worksheet.Cells[2, 13] = _excludeReplacement == 1 ? "True" : "False";
-            worksheet.Cells[2, 15] = _complection == 1 ? "True" : "False";
+            if (excel == null)
+            {
+                return false;
+            }
 
-            //填內容值
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._sciDate1) ? string.Empty : Convert.ToDateTime(this._sciDate1).ToString("d"), MyUtility.Check.Empty(this._sciDate2) ? string.Empty : Convert.ToDateTime(this._sciDate2).ToString("d"));
+
+            worksheet.Cells[2, 6] = this._mDivision;
+            worksheet.Cells[2, 8] = this._factory;
+            worksheet.Cells[2, 10] = this._category;
+            worksheet.Cells[2, 13] = this._excludeReplacement == 1 ? "True" : "False";
+            worksheet.Cells[2, 15] = this._complection == 1 ? "True" : "False";
+
+            // 填內容值
             int intRowsStart = 4;
             object[,] objArray = new object[1, 29];
-            foreach (DataRow dr in _printData.Rows)
+            foreach (DataRow dr in this._printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
                 objArray[0, 1] = dr["StyleID"];
@@ -230,9 +253,9 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
                 objArray[0, 24] = dr["POSMR"];
                 objArray[0, 25] = dr["Qty"];
                 objArray[0, 26] = dr["tCPU"];
-                objArray[0, 27] = _complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
-                objArray[0, 28] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? "" : "Y"; ;
-                worksheet.Range[String.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 27] = this._complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
+                objArray[0, 28] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? string.Empty : "Y";
+                worksheet.Range[string.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -251,7 +274,7 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

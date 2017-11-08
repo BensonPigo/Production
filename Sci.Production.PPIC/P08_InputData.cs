@@ -11,59 +11,72 @@ using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// P08_InputData
+    /// </summary>
     public partial class P08_InputData : Sci.Win.Subs.Input6A
     {
         private DataRow masterData;
-        public P08_InputData(DataRow MasterData)
+
+        /// <summary>
+        /// P08_InputData
+        /// </summary>
+        /// <param name="masterData">DataRow MasterData</param>
+        public P08_InputData(DataRow masterData)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboDefectResponsibilityExplanation, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
-            masterData = MasterData;
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboDefectResponsibilityExplanation, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
+            this.masterData = masterData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            label10.Text = "Done 100% Fabric\r\nInspection\r\nReplacement\r\nRequest";
-            label11.Text = "Defect  Point Under\r\n50 Per 100y in a Roll\r\n(A grade)";
-            label12.Text = "Defect Point Over \r\n50 Per 100y in a Roll\r\n(B grade)";
-            labelNoOfRollsOver50.Text = "No. of Rolls over 50\r\npoints per 100y";
-            labelWidthNoOfRollsWith.Text = "Standard with / Rcvd\r\nwidth / No. of rolls with\r\nnarrow width";
-            label24.Text = "After Cutting\r\nReplacement\r\nRequest";
+            this.label10.Text = "Done 100% Fabric\r\nInspection\r\nReplacement\r\nRequest";
+            this.label11.Text = "Defect  Point Under\r\n50 Per 100y in a Roll\r\n(A grade)";
+            this.label12.Text = "Defect Point Over \r\n50 Per 100y in a Roll\r\n(B grade)";
+            this.labelNoOfRollsOver50.Text = "No. of Rolls over 50\r\npoints per 100y";
+            this.labelWidthNoOfRollsWith.Text = "Standard with / Rcvd\r\nwidth / No. of rolls with\r\nnarrow width";
+            this.label24.Text = "After Cutting\r\nReplacement\r\nRequest";
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
-            editReason.Text = MyUtility.Check.Empty(data["Other"]) ? MyUtility.Convert.GetString(data["OtherReason"]) : MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and ID = '{0}'", MyUtility.Convert.GetString(data["Other"])));
-            txtReplacementReason.Text = MyUtility.Check.Empty(data["AfterCutting"]) ? MyUtility.Convert.GetString(data["AfterCuttingReason"]) : MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and ID = '{0}'", MyUtility.Convert.GetString(data["AfterCutting"])));
+            this.editReason.Text = MyUtility.Check.Empty(data["Other"]) ? MyUtility.Convert.GetString(data["OtherReason"]) : MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and ID = '{0}'", MyUtility.Convert.GetString(data["Other"])));
+            this.txtReplacementReason.Text = MyUtility.Check.Empty(data["AfterCutting"]) ? MyUtility.Convert.GetString(data["AfterCuttingReason"]) : MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and ID = '{0}'", MyUtility.Convert.GetString(data["AfterCutting"])));
         }
 
+        /// <inheritdoc/>
         protected override bool DoSave()
         {
-            if (MyUtility.Check.Empty(CurrentData["Seq"]))
+            if (MyUtility.Check.Empty(this.CurrentData["Seq"]))
             {
                 MyUtility.Msg.WarningBox("SEQ can't empty!!");
-                txtSEQ.Focus();
+                this.txtSEQ.Focus();
                 return false;
             }
+
             return base.DoSave();
         }
 
-        //Seq
-        private void txtSEQ_Validating(object sender, CancelEventArgs e)
+        // Seq
+        private void TxtSEQ_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(txtSEQ.Text) && txtSEQ.OldValue != txtSEQ.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtSEQ.Text) && this.txtSEQ.OldValue != this.txtSEQ.Text)
             {
-                if (txtSEQ.Text.IndexOf("'") != -1)
+                if (this.txtSEQ.Text.IndexOf("'") != -1)
                 {
-                    txtSEQ.Text = "";
+                    this.txtSEQ.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     return;
                 }
 
                 DataRow firData;
-                string sqlCmd = string.Format(@"select f.Seq1,f.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
+                string sqlCmd = string.Format(
+                    @"select f.Seq1,f.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(fp.TicketYds),0) as EstInQty,isnull(sum(fp.ActualYds),0) as ActInQty,
 dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0) as Description
@@ -73,27 +86,31 @@ left join Receiving r WITH (NOLOCK) on f.ReceivingID = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on f.POID = psd.ID and f.Seq1 = psd.SEQ1 and f.Seq2 = psd.SEQ2
 where f.POID = '{0}' and f.Seq1 = '{1}' and f.Seq2 = '{2}' and fp.Result = 'F'
-group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0)
-", MyUtility.Convert.GetString(masterData["POID"]), txtSEQ.Text.Length < 3 ? txtSEQ.Text : txtSEQ.Text.Substring(0, 3), txtSEQ.Text.Length < 5 ? txtSEQ.Text.Length < 4 ? "" : txtSEQ.Text.ToString().Substring(3, 1) : txtSEQ.Text.ToString().Substring(3, 2));
+group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(f.POID,f.Seq1,f.Seq2,2,0)",
+                    MyUtility.Convert.GetString(this.masterData["POID"]),
+                    this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
+                    this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2));
+
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
-                    CurrentData["Seq"] = txtSEQ.Text;
-                    CurrentData["Seq1"] = firData["Seq1"];
-                    CurrentData["Seq2"] = firData["Seq2"];
-                    CurrentData["Refno"] = firData["Refno"];
-                    CurrentData["SCIRefno"] = firData["SCIRefno"];
-                    CurrentData["ColorID"] = firData["ColorID"];
-                    CurrentData["ETA"] = firData["ETA"];
-                    CurrentData["INVNo"] = firData["InvNo"];
-                    CurrentData["EstInQty"] = firData["EstInQty"];
-                    CurrentData["ActInQty"] = firData["ActInQty"];
-                    CurrentData["Description"] = firData["Description"];
-                    CurrentData["ExportID"] = firData["ExportId"];
+                    this.CurrentData["Seq"] = this.txtSEQ.Text;
+                    this.CurrentData["Seq1"] = firData["Seq1"];
+                    this.CurrentData["Seq2"] = firData["Seq2"];
+                    this.CurrentData["Refno"] = firData["Refno"];
+                    this.CurrentData["SCIRefno"] = firData["SCIRefno"];
+                    this.CurrentData["ColorID"] = firData["ColorID"];
+                    this.CurrentData["ETA"] = firData["ETA"];
+                    this.CurrentData["INVNo"] = firData["InvNo"];
+                    this.CurrentData["EstInQty"] = firData["EstInQty"];
+                    this.CurrentData["ActInQty"] = firData["ActInQty"];
+                    this.CurrentData["Description"] = firData["Description"];
+                    this.CurrentData["ExportID"] = firData["ExportId"];
                 }
                 else
                 {
                     DataRow poData;
-                    sqlCmd = string.Format(@"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
+                    sqlCmd = string.Format(
+                        @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
 dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.Factory f on psd.FactoryID=f.ID
@@ -105,77 +122,88 @@ and f.MDivisionID = '{3}'
 and mpd.POID = psd.ID
 and mpd.Seq1 = psd.SEQ1
 and mpd.Seq2 = psd.SEQ2
-and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), txtSEQ.Text.Length < 3 ? txtSEQ.Text : txtSEQ.Text.Substring(0, 3), txtSEQ.Text.Length < 5 ? txtSEQ.Text.Length < 4 ? "" : txtSEQ.Text.ToString().Substring(3, 1) : txtSEQ.Text.ToString().Substring(3, 2),Sci.Env.User.Keyword);
+and mpd.InQty > 0",
+                        MyUtility.Convert.GetString(this.masterData["POID"]),
+                        this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
+                        this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2),
+                        Env.User.Keyword);
+
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {
-                        CurrentData["Seq"] = "";
-                        CurrentData["Seq1"] = "";
-                        CurrentData["Seq2"] = "";
+                        this.CurrentData["Seq"] = string.Empty;
+                        this.CurrentData["Seq1"] = string.Empty;
+                        this.CurrentData["Seq2"] = string.Empty;
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", txtSEQ.Text));
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", this.txtSEQ.Text));
                         return;
                     }
+
                     if (MyUtility.Convert.GetString(poData["FabricType"]) != "F")
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > is not fabric material!!!", txtSEQ.Text));
-                        CurrentData["Seq"] = "";
-                        CurrentData["Seq1"] = "";
-                        CurrentData["Seq2"] = "";
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > is not fabric material!!!", this.txtSEQ.Text));
+                        this.CurrentData["Seq"] = string.Empty;
+                        this.CurrentData["Seq1"] = string.Empty;
+                        this.CurrentData["Seq2"] = string.Empty;
                         e.Cancel = true;
                         return;
                     }
 
-                    CurrentData["Seq"] = txtSEQ.Text;
-                    CurrentData["Seq1"] = poData["Seq1"];
-                    CurrentData["Seq2"] = poData["Seq2"];
-                    CurrentData["Refno"] = poData["Refno"];
-                    CurrentData["SCIRefno"] = poData["SCIRefno"];
-                    CurrentData["ColorID"] = poData["ColorID"];
-                    CurrentData["Description"] = poData["Description"];
+                    this.CurrentData["Seq"] = this.txtSEQ.Text;
+                    this.CurrentData["Seq1"] = poData["Seq1"];
+                    this.CurrentData["Seq2"] = poData["Seq2"];
+                    this.CurrentData["Refno"] = poData["Refno"];
+                    this.CurrentData["SCIRefno"] = poData["SCIRefno"];
+                    this.CurrentData["ColorID"] = poData["ColorID"];
+                    this.CurrentData["Description"] = poData["Description"];
 
-                    sqlCmd = string.Format(@"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
+                    sqlCmd = string.Format(
+                        @"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
 (select isnull(sum(ShipQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
 (select isnull(sum(ActualQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
 from Receiving_Detail rd WITH (NOLOCK) 
 left join Receiving r WITH (NOLOCK) on rd.Id = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
-where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Convert.GetString(CurrentData["Seq1"]), MyUtility.Convert.GetString(CurrentData["Seq2"]));
-                    DataTable ReceiveData;
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out ReceiveData);
+where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'",
+                        MyUtility.Convert.GetString(this.masterData["POID"]),
+                        MyUtility.Convert.GetString(this.CurrentData["Seq1"]),
+                        MyUtility.Convert.GetString(this.CurrentData["Seq2"]));
+
+                    DataTable receiveData;
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out receiveData);
                     if (result)
                     {
-                        if (ReceiveData.Rows.Count <= 0)
+                        if (receiveData.Rows.Count <= 0)
                         {
-                            ClearData();
+                            this.ClearData();
                         }
                         else
                         {
-                            if (ReceiveData.Rows.Count == 1)
+                            if (receiveData.Rows.Count == 1)
                             {
-                                //CurrentData["ETA"] = MyUtility.Check.Empty(ReceiveData.Rows[0]["ETA"])?(DateTime?)null:Convert.ToDateTime(ReceiveData.Rows[0]["ETA"]);
-                                CurrentData["ETA"] = ReceiveData.Rows[0]["ETA"];
-                                CurrentData["INVNo"] = ReceiveData.Rows[0]["InvNo"];
-                                CurrentData["EstInQty"] = ReceiveData.Rows[0]["ShipQty"];
-                                CurrentData["ActInQty"] = ReceiveData.Rows[0]["ActQty"];
-                                CurrentData["ExportID"] = ReceiveData.Rows[0]["ExportId"];
+                                // CurrentData["ETA"] = MyUtility.Check.Empty(ReceiveData.Rows[0]["ETA"])?(DateTime?)null:Convert.ToDateTime(ReceiveData.Rows[0]["ETA"]);
+                                this.CurrentData["ETA"] = receiveData.Rows[0]["ETA"];
+                                this.CurrentData["INVNo"] = receiveData.Rows[0]["InvNo"];
+                                this.CurrentData["EstInQty"] = receiveData.Rows[0]["ShipQty"];
+                                this.CurrentData["ActInQty"] = receiveData.Rows[0]["ActQty"];
+                                this.CurrentData["ExportID"] = receiveData.Rows[0]["ExportId"];
                             }
                             else
                             {
                                 IList<DataRow> selectedReceiveData;
-                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(ReceiveData, "INVNo","25", "", "Invoice No");
+                                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel)
                                 {
-                                    ClearData();
+                                    this.ClearData();
                                 }
                                 else
                                 {
                                     selectedReceiveData = item.GetSelecteds();
-                                    CurrentData["ETA"] = selectedReceiveData[0]["ETA"];
-                                    CurrentData["INVNo"] = selectedReceiveData[0]["InvNo"];
-                                    CurrentData["EstInQty"] = selectedReceiveData[0]["ShipQty"];
-                                    CurrentData["ActInQty"] = selectedReceiveData[0]["ActQty"];
-                                    CurrentData["ExportID"] = selectedReceiveData[0]["ExportId"];
+                                    this.CurrentData["ETA"] = selectedReceiveData[0]["ETA"];
+                                    this.CurrentData["INVNo"] = selectedReceiveData[0]["InvNo"];
+                                    this.CurrentData["EstInQty"] = selectedReceiveData[0]["ShipQty"];
+                                    this.CurrentData["ActInQty"] = selectedReceiveData[0]["ActQty"];
+                                    this.CurrentData["ExportID"] = selectedReceiveData[0]["ExportId"];
                                 }
                             }
                         }
@@ -183,49 +211,54 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                     else
                     {
                         MyUtility.Msg.ErrorBox("Query receive data fail!!\r\n" + result.ToString());
-                        ClearData();
+                        this.ClearData();
                     }
                 }
             }
         }
 
-        //清除與Receiving相關的欄位值
+        // 清除與Receiving相關的欄位值
         private void ClearData()
         {
-            CurrentData["ETA"] = DBNull.Value;
-            CurrentData["INVNo"] = "";
-            CurrentData["EstInQty"] = 0;
-            CurrentData["ActInQty"] = 0;
-            CurrentData["ExportID"] = "";
+            this.CurrentData["ETA"] = DBNull.Value;
+            this.CurrentData["INVNo"] = string.Empty;
+            this.CurrentData["EstInQty"] = 0;
+            this.CurrentData["ActInQty"] = 0;
+            this.CurrentData["ExportID"] = string.Empty;
         }
 
-        //Invoice#
-        private void txtInvoice_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Invoice#
+        private void TxtInvoice_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                string sqlCmd = string.Format(@"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
+                string sqlCmd = string.Format(
+                    @"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
 (select isnull(sum(ShipQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
 (select isnull(sum(ActualQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
 from Receiving_Detail rd WITH (NOLOCK) 
 left join Receiving r WITH (NOLOCK) on rd.Id = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
-where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Convert.GetString(CurrentData["Seq1"]), MyUtility.Convert.GetString(CurrentData["Seq2"]));
-                DataTable ReceiveData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out ReceiveData);
+where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'",
+                    MyUtility.Convert.GetString(this.masterData["POID"]),
+                    MyUtility.Convert.GetString(this.CurrentData["Seq1"]),
+                    MyUtility.Convert.GetString(this.CurrentData["Seq2"]));
+
+                DataTable receiveData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out receiveData);
                 if (result)
                 {
                     IList<DataRow> selectedReceiveData;
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(ReceiveData, "INVNo", "25", "", "Invoice No");
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(receiveData, "INVNo", "25", string.Empty, "Invoice No");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult != DialogResult.Cancel)
                     {
                         selectedReceiveData = item.GetSelecteds();
-                        CurrentData["ETA"] = selectedReceiveData[0]["ETA"];
-                        CurrentData["INVNo"] = selectedReceiveData[0]["InvNo"];
-                        CurrentData["EstInQty"] = selectedReceiveData[0]["ShipQty"];
-                        CurrentData["ActInQty"] = selectedReceiveData[0]["ActQty"];
-                        CurrentData["ExportID"] = selectedReceiveData[0]["ExportId"];
+                        this.CurrentData["ETA"] = selectedReceiveData[0]["ETA"];
+                        this.CurrentData["INVNo"] = selectedReceiveData[0]["InvNo"];
+                        this.CurrentData["EstInQty"] = selectedReceiveData[0]["ShipQty"];
+                        this.CurrentData["ActInQty"] = selectedReceiveData[0]["ActQty"];
+                        this.CurrentData["ExportID"] = selectedReceiveData[0]["ExportId"];
                     }
                 }
                 else
@@ -235,105 +268,110 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             }
         }
 
-        //Total defect points
-        private void txtTotalDefectPoints_Validated(object sender, EventArgs e)
+        // Total defect points
+        private void TxtTotalDefectPoints_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtTotalDefectPoints.OldValue != txtTotalDefectPoints.Text)
+            if (this.EditMode && this.txtTotalDefectPoints.OldValue != this.txtTotalDefectPoints.Text)
             {
-                CurrentData["AGradeDefect"] = txtTotalDefectPoints.Text;
-                if (MyUtility.Check.Empty(txtTotalDefectPoints.Text))
+                this.CurrentData["AGradeDefect"] = this.txtTotalDefectPoints.Text;
+                if (MyUtility.Check.Empty(this.txtTotalDefectPoints.Text))
                 {
-                    CurrentData["AGradeRequest"] = 0;
+                    this.CurrentData["AGradeRequest"] = 0;
                 }
                 else
                 {
-                    CurrentData["AGradeRequest"] = Convert.ToDecimal(CurrentData["AGradeDefect"])*0.125m;
+                    this.CurrentData["AGradeRequest"] = Convert.ToDecimal(this.CurrentData["AGradeDefect"]) * 0.125m;
                 }
-                //計算TotalRequest
-                CalculateTotalRequest();
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
 
-        //Replacement Request / Yds
-        private void numReplacementRequestYds_Validated(object sender, EventArgs e)
+        // Replacement Request / Yds
+        private void NumReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (EditMode && numReplacementRequestYds.OldValue != numReplacementRequestYds.Value)
+            if (this.EditMode && this.numReplacementRequestYds.OldValue != this.numReplacementRequestYds.Value)
             {
-                CurrentData["AGradeRequest"] = numReplacementRequestYds.Value;
-                //計算TotalRequest
-                CalculateTotalRequest();
+                this.CurrentData["AGradeRequest"] = this.numReplacementRequestYds.Value;
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
 
-        //100% replacement / Yds
-        private void num100ReplacementYds_Validated(object sender, EventArgs e)
+        // 100% replacement / Yds
+        private void Num100ReplacementYds_Validated(object sender, EventArgs e)
         {
-            if (EditMode && num100ReplacementYds.OldValue != num100ReplacementYds.Value)
+            if (this.EditMode && this.num100ReplacementYds.OldValue != this.num100ReplacementYds.Value)
             {
-                CurrentData["BGradeRequest"] = num100ReplacementYds.Value;
-                //計算TotalRequest
-                CalculateTotalRequest();
+                this.CurrentData["BGradeRequest"] = this.num100ReplacementYds.Value;
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
 
-        //Replacement Request / Yds
-        private void numNarrowReplacementRequestYds_Validated(object sender, EventArgs e)
+        // Replacement Request / Yds
+        private void NumNarrowReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (EditMode && numNarrowReplacementRequestYds.OldValue != numNarrowReplacementRequestYds.Value)
+            if (this.EditMode && this.numNarrowReplacementRequestYds.OldValue != this.numNarrowReplacementRequestYds.Value)
             {
-                CurrentData["NarrowRequest"] = numNarrowReplacementRequestYds.Value;
-                //計算TotalRequest
-                CalculateTotalRequest();
+                this.CurrentData["NarrowRequest"] = this.numNarrowReplacementRequestYds.Value;
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
 
-        //Replacement Request / Yds
-        private void numOtherReplacementRequestYds_Validated(object sender, EventArgs e)
+        // Replacement Request / Yds
+        private void NumOtherReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (EditMode && numOtherReplacementRequestYds.OldValue != numOtherReplacementRequestYds.Value)
+            if (this.EditMode && this.numOtherReplacementRequestYds.OldValue != this.numOtherReplacementRequestYds.Value)
             {
-                CurrentData["OtherRequest"] = numOtherReplacementRequestYds.Value;
-                //計算TotalRequest
-                CalculateTotalRequest();
+                this.CurrentData["OtherRequest"] = this.numOtherReplacementRequestYds.Value;
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
 
-        //計算TotalRequest
+        // 計算TotalRequest
         private void CalculateTotalRequest()
         {
-            CurrentData["TotalRequest"] = Convert.ToDecimal(CurrentData["AGradeRequest"]) + Convert.ToDecimal(CurrentData["BGradeRequest"]) + Convert.ToDecimal(CurrentData["NarrowRequest"]) + Convert.ToDecimal(CurrentData["OtherRequest"]);
+            this.CurrentData["TotalRequest"] = Convert.ToDecimal(this.CurrentData["AGradeRequest"]) + Convert.ToDecimal(this.CurrentData["BGradeRequest"]) + Convert.ToDecimal(this.CurrentData["NarrowRequest"]) + Convert.ToDecimal(this.CurrentData["OtherRequest"]);
         }
 
-        //Reason
-        private void editReason_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        // Reason
+        private void EditReason_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
                 IList<DataRow> selectedReasonData;
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(CurrentData["Other"]));
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["Other"]));
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult != DialogResult.Cancel)
                 {
                     selectedReasonData = item.GetSelecteds();
-                    CurrentData["Other"] = selectedReasonData[0]["ID"];
-                    editReason.Text = MyUtility.Convert.GetString(selectedReasonData[0]["Name"]);
+                    this.CurrentData["Other"] = selectedReasonData[0]["ID"];
+                    this.editReason.Text = MyUtility.Convert.GetString(selectedReasonData[0]["Name"]);
                 }
             }
         }
 
-        //Replacement Reason
-        private void txtReplacementReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Replacement Reason
+        private void TxtReplacementReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
                 IList<DataRow> selectedReasonData;
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(CurrentData["AfterCutting"]));
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Damage Reason' and Junk = 0", "5,50", MyUtility.Convert.GetString(this.CurrentData["AfterCutting"]));
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult != DialogResult.Cancel)
                 {
                     selectedReasonData = item.GetSelecteds();
-                    CurrentData["AfterCutting"] = selectedReasonData[0]["ID"];
-                    txtReplacementReason.Text = MyUtility.Convert.GetString(selectedReasonData[0]["Name"]);
+                    this.CurrentData["AfterCutting"] = selectedReasonData[0]["ID"];
+                    this.txtReplacementReason.Text = MyUtility.Convert.GetString(selectedReasonData[0]["Name"]);
                 }
             }
         }

@@ -12,45 +12,58 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
+    /// <summary>
+    /// R05
+    /// </summary>
     public partial class R05 : Sci.Win.Tems.PrintForm
     {
-        DataTable _printData;
-        DateTime? _apvDate1, _apvDate2;
-        string _reportType, _mDivision, _factory, _reportTypeName;
+        private DataTable _printData;
+        private DateTime? _apvDate1;
+        private DateTime? _apvDate2;
+        private string _reportType;
+        private string _mDivision;
+        private string _factory;
+        private string _reportTypeName;
+
+        /// <summary>
+        /// R05
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboReportType, 1, 1, "Fabric,Accessory");
-            comboReportType.SelectedIndex = 0;
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Fabric,Accessory");
+            this.comboReportType.SelectedIndex = 0;
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateApvDate.Value1))
+            if (MyUtility.Check.Empty(this.dateApvDate.Value1))
             {
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
-            _apvDate1 = dateApvDate.Value1;
-            _apvDate2 = dateApvDate.Value2;
-            _reportType = comboReportType.Text == "Fabric" ? "F" : comboReportType.Text == "Accessory" ? "A" : "";
-            _mDivision = comboM.Text;
-            _factory = comboFactory.Text;
-            _reportTypeName = comboReportType.Text;
+
+            this._apvDate1 = this.dateApvDate.Value1;
+            this._apvDate2 = this.dateApvDate.Value2;
+            this._reportType = this.comboReportType.Text == "Fabric" ? "F" : this.comboReportType.Text == "Accessory" ? "A" : string.Empty;
+            this._mDivision = this.comboM.Text;
+            this._factory = this.comboFactory.Text;
+            this._reportTypeName = this.comboReportType.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -109,28 +122,29 @@ outer apply(select RateValue c1 from View_Unitrate WITH (NOLOCK) where FROM_U = 
 outer apply(select RateValue c2 from View_Unitrate WITH (NOLOCK) where FROM_U = psd2.POUnit and TO_U = psd2.StockUnit) c2
 where l.Type = 'R'"));
 
-            if (!MyUtility.Check.Empty(_apvDate1))
+            if (!MyUtility.Check.Empty(this._apvDate1))
             {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(_apvDate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(_apvDate2))
-            {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(_apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(this._apvDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(_reportType))
+            if (!MyUtility.Check.Empty(this._apvDate2))
             {
-                sqlCmd.Append(string.Format(" and l.FabricType = '{0}'", _reportType));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(this._apvDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(_mDivision))
+            if (!MyUtility.Check.Empty(this._reportType))
             {
-                sqlCmd.Append(string.Format(" and l.MDivisionID = '{0}'", _mDivision));
+                sqlCmd.Append(string.Format(" and l.FabricType = '{0}'", this._reportType));
             }
 
-            if (!MyUtility.Check.Empty(_factory))
+            if (!MyUtility.Check.Empty(this._mDivision))
             {
-                sqlCmd.Append(string.Format(" and l.FactoryID = '{0}'", _factory));
+                sqlCmd.Append(string.Format(" and l.MDivisionID = '{0}'", this._mDivision));
+            }
+
+            if (!MyUtility.Check.Empty(this._factory))
+            {
+                sqlCmd.Append(string.Format(" and l.FactoryID = '{0}'", this._factory));
             }
 
             sqlCmd.Append(@" 
@@ -171,26 +185,25 @@ select
 	RequestQty
 from AllTMP
 order by MDivisionID,FactoryID,POID,Seq1,Seq2
-drop table #tmpData
-"
-                );
+drop table #tmpData");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this._printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(_printData.Rows.Count);
+            this.SetCount(this._printData.Rows.Count);
 
-            if (_printData.Rows.Count <= 0)
+            if (this._printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -199,18 +212,22 @@ drop table #tmpData
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R05_AllowanceConsumptionReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(_apvDate1) ? "" : Convert.ToDateTime(_apvDate1).ToString("d"), MyUtility.Check.Empty(_apvDate2) ? "" : Convert.ToDateTime(_apvDate2).ToString("d"));
-            worksheet.Cells[4, 3] = _reportTypeName;
-            worksheet.Cells[3, 8] = _mDivision;
-            worksheet.Cells[4, 8] = _factory;
+            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(this._apvDate1) ? string.Empty : Convert.ToDateTime(this._apvDate1).ToString("d"), MyUtility.Check.Empty(this._apvDate2) ? string.Empty : Convert.ToDateTime(this._apvDate2).ToString("d"));
+            worksheet.Cells[4, 3] = this._reportTypeName;
+            worksheet.Cells[3, 8] = this._mDivision;
+            worksheet.Cells[4, 8] = this._factory;
             worksheet.Cells[3, 12] = DateTime.Today.ToString("d");
 
-            //填內容值
+            // 填內容值
             int intRowsStart = 6;
             object[,] objArray = new object[1, 12];
-            foreach (DataRow dr in _printData.Rows)
+            foreach (DataRow dr in this._printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
@@ -224,9 +241,9 @@ drop table #tmpData
                 objArray[0, 9] = MyUtility.Convert.GetDecimal(dr["InQty"]) - MyUtility.Convert.GetDecimal(dr["NETQty"]) - MyUtility.Convert.GetDecimal(dr["StockQty"]);
                 objArray[0, 10] = dr["RequestQty"];
                 objArray[0, 11] = MyUtility.Convert.GetDecimal(dr["RequestQty"]) > MyUtility.Convert.GetDecimal(dr["InQty"]) - MyUtility.Convert.GetDecimal(dr["NETQty"]) - MyUtility.Convert.GetDecimal(dr["StockQty"]) ? "FAIL" : "PASS";
-                
-                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
-                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Borders.Weight = 2;//設定全框線
+
+                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Borders.Weight = 2; // 設定全框線
                 intRowsStart++;
             }
 
@@ -245,7 +262,7 @@ drop table #tmpData
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }
