@@ -968,6 +968,7 @@
             // 
             // btnPatternPanel
             // 
+            this.btnPatternPanel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnPatternPanel.Location = new System.Drawing.Point(204, 79);
             this.btnPatternPanel.Name = "btnPatternPanel";
             this.btnPatternPanel.Size = new System.Drawing.Size(110, 30);
@@ -1101,13 +1102,12 @@
             // 
             this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBoxMarkerNo.IsSupportEditMode = false;
             this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
             this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
-            this.txtBoxMarkerNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.txtBoxMarkerNo.ReadOnly = true;
             this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.txtBoxMarkerNo.TabIndex = 63;
+            this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBoxMarkerNo_PopUp);
+            this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxMarkerNo_Validating);
             // 
             // label1
             // 
@@ -1141,6 +1141,9 @@
             this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.Name = "P02";
+            this.SubDetailKeyField1 = "ukey";
+            this.SubDetailKeyField2 = "WorkOrderUkey";
+            this.SubGridAlias = "WorkOrder_PatternPanel";
             this.Text = "() () ";
             this.WorkAlias = "Cutting";
             this.Controls.SetChildIndex(this.tabs, 0);
