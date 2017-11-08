@@ -116,9 +116,9 @@ select  distinct
         ArrivedQty			= isnull(C.InQty, 0), 
         ReleasedQty			= isnull(C.OutQty, 0), 
         AdjustQty			= isnull(C.AdjustQty, 0),
-        StockInQty			= Round(isnull(B.InputQty, 0) * v.RateValue, 2),
-        StockAllocatedQty	= Round(isnull(B.OutputQty, 0) * v.RateValue, 2), 
-        StockBalanceQty		= Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * v.RateValue, 2),
+        StockInQty			= Round(isnull(a.InputQty, 0)  + isnull(InsQty14.qty,0) * v.RateValue, 2),
+        StockAllocatedQty	= Round(isnull(a.OutputQty, 0) + (isnull(InsQty25.qty,0) - + isnull(InsQty46.qty,0)) * v.RateValue, 2), 
+        StockBalanceQty		= Round((isnull(A.Qty, 0) * v.RateValue), 2),
         InQty				= isnull(x.InQty, 0), 
         OutQty				= isnull(x.OutQty, 0), 
         AdjustQty			= isnull(x.AdjustQty, 0),
@@ -128,12 +128,25 @@ inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
 inner join Orders orders on c.poid = orders.id
-inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-
-outer apply (
-    select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)
-) v
-
+outer apply (select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)) v
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 1 or(i.type = 4 and i.qty >0))
+)InsQty14
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 6 or(i.type = 4 and i.qty < 0))
+)InsQty46
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 2 or i.type = 5)
+)InsQty25
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
             , isnull(sum(m.OutQty),0.00) OutQty
@@ -163,9 +176,9 @@ select  distinct
         ArrivedQty			= isnull(C.InQty, 0), 
         ReleasedQty			= isnull(C.OutQty, 0), 
         AdjustQty			= isnull(C.AdjustQty, 0) ,
-        StockInQty			= Round(isnull(B.InputQty, 0) * v.RateValue, 2),
-        StockAllocatedQty	= Round(isnull(B.OutputQty, 0) * v.RateValue, 2), 
-        StockBalanceQty		= Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * v.RateValue, 2),
+        StockInQty			= Round(isnull(a.InputQty, 0)  + isnull(InsQty14.qty,0) * v.RateValue, 2),
+        StockAllocatedQty	= Round(isnull(a.OutputQty, 0) + (isnull(InsQty25.qty,0) - + isnull(InsQty46.qty,0)) * v.RateValue, 2), 
+        StockBalanceQty		= Round((isnull(A.Qty, 0) * v.RateValue), 2),
         InQty				= isnull(x.InQty, 0), 
         OutQty				= isnull(x.OutQty, 0), 
         AdjustQty			= isnull(x.AdjustQty, 0),
@@ -175,11 +188,25 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.se
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-
-outer apply (
-    select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)
-) v
-
+outer apply (select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)) v
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 1 or(i.type = 4 and i.qty >0))
+)InsQty14
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 6 or(i.type = 4 and i.qty < 0))
+)InsQty46
+outer apply(
+	select qty = sum(i.qty)
+	from Invtrans i WITH (NOLOCK) 
+	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
+	and (i.type = 2 or i.type = 5)
+)InsQty25
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
             , isnull(sum(m.OutQty),0.00) OutQty
