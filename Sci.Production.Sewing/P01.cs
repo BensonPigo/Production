@@ -1196,6 +1196,162 @@ where not exists (select 1
             {
                 MyUtility.Msg.WarningBox(result.Description);
             }
+
+            #region 更新 SewingOutputID 子單 WorkHour
+            List<SqlParameter> listSqlParmeter = new List<SqlParameter>();
+            listSqlParmeter.Add(new SqlParameter("@SewingID", CurrentMaintain["ID"]));
+
+            string strUpdateWorkHour = @"
+/*
+ * 紀錄所有須更新的子單
+ */
+select soddG.OrderId
+	   , soddG.ComboType
+	   , soddG.Article
+	   , soddG.OrderIDfrom
+	   , sod.TMS
+	   , QAQty = sum(soddG.QaQty)
+	   , soddG.SewingOutput_DetailUKey
+	   , AllAllot = AllAllot.value
+into #Child
+from SewingOutput_Detail_Detail_Garment soddG
+inner join SewingOutput_Detail sod on soddG.SewingOutput_DetailUKey = sod.UKey
+outer apply (
+	select value = sum (mSod.QAQty)
+	from SewingOutput_Detail mSod
+	where sod.ID = mSod.ID
+		  and soddG.OrderIDfrom = mSod.OrderId
+		  and soddG.ComboType = mSod.ComboType
+		  and soddG.Article = mSod.Article
+) motherTTL
+outer apply (
+	select value = sum (cSoddG.QAQty)
+	from SewingOutput_Detail_Detail_Garment cSoddG
+	where sod.ID = cSoddG.ID
+		  and soddG.OrderIDfrom = cSoddG.OrderIDfrom
+		  and soddG.ComboType = cSoddG.ComboType
+		  and soddG.Article = cSoddG.Article
+) childTTL
+outer apply (
+	select value = iif (motherTTL.value = childTTL.value, 1, 0)
+) AllAllot
+where soddG.id = @SewingID
+group by soddG.OrderId, soddG.ComboType, soddG.Article, soddG.OrderIDfrom, sod.TMS, soddG.SewingOutput_DetailUKey, AllAllot.value
+
+/*
+ * 重新計算子單 WorkHour
+ */
+select distinct #Child.OrderId
+	   , #Child.ComboType
+	   , #Child.Article
+	   , #Child.SewingOutput_DetailUKey
+	   , workHour = Convert (numeric(11, 3), 0)
+into #updateChild
+from #Child
+
+/*
+ * 根據 Sewing ID 取得所有母單的 OrderID, ComboType, Article
+ */
+declare ComputeCursor Cursor For
+select OrderID
+	   , ComboType
+	   , Article
+from SewingOutput_Detail
+where ID = @SewingID
+	  and AutoCreate = 0
+
+Open ComputeCursor
+declare @OrderID varchar (50);
+declare @ComboType varchar (2);
+declare @Article varchar (50);
+
+Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+while (@@FETCH_STATUS <> -1)
+begin
+	update upd
+		set upd.WorkHour = upd.WorkHour
+						   + case setWorkHour.AllAllot
+                                -- 母單數量已全部分配
+                                -- 子單 WorkHour 加總 = 母單 WorkHour
+								when 1 then 
+									case
+									    when setWorkHour.rowNum = setWorkHour.rowCounts then
+										    iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour > setWorkHour.soWorkHour, 0
+																														    , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+									    else
+										    iif (setWorkHour.AccuWorkHour > setWorkHour.soWorkHour, iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour >  setWorkHour.soWorkHour, 0
+											 																																	        , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+																							        , setWorkHour.newWorkHour)
+									end
+                                -- 母單數量尚未分配完畢
+								else
+									case 
+										when setWorkHour.AccuWorkHour > setWorkHour.soWorkHour then
+											iif (setWorkHour.soWorkHour < (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour), 0
+																															    , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+										else
+											setWorkHour.newWorkHour
+									end
+						     end
+	from #updateChild upd
+	inner join (
+		select	#Child.SewingOutput_DetailUKey
+				, soWorkHour = sod.WorkHour
+				, newWorkHour = ComputeWorkHour.value
+				, AccuWorkHour = sum(ComputeWorkHour.value) over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+	            , rowNum = row_number() over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+				, rowCounts = count(1) over (partition by #Child.OrderIDFrom)
+				, #Child.AllAllot
+		from SewingOutput_Detail sod
+		inner join #Child on sod.OrderId = #Child.OrderIDfrom
+							 and sod.ComboType = #Child.ComboType
+							 and sod.Article = #Child.Article
+		outer apply (
+			select value = isnull(sod.QaQty * sod.TMS, 0)
+		) TotalQaQty
+		outer apply (
+			select value = Round(1.0 * #Child.QaQty * #Child.TMS / TotalQaQty.value * sod.WorkHour, 3)
+		) ComputeWorkHour
+		where sod.ID = @SewingID
+			  and sod.OrderId = @OrderID
+			  and sod.ComboType = @ComboType
+			  and sod.Article = @Article
+			  and sod.AutoCreate = 0
+	) setWorkHour on upd.SewingOutput_DetailUKey = setWorkHour.SewingOutput_DetailUKey
+
+	Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+end
+
+close ComputeCursor
+Deallocate ComputeCursor
+
+/*
+ * End & Check
+ */
+update sod
+set sod.WorkHour = upd.workHour
+from SewingOutput_Detail sod
+inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
+
+drop table #Child, #updateChild";
+
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
+            {
+                DualResult dualResult = DBProxy.Current.Execute(null, strUpdateWorkHour, listSqlParmeter);
+
+                if (dualResult == false)
+                {
+                    transactionscope.Dispose();
+                    MyUtility.Msg.WarningBox(dualResult.ToString());
+                    return;
+                }
+                transactionscope.Complete();
+                transactionscope.Dispose();
+            }
+            #endregion
+            this.RenewData();
+            //this.OnDetailEntered();
         }
 
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
@@ -1399,15 +1555,7 @@ where Convert (bit, AutoCreate) != 1";
                     }
                     subSum = subSum + MyUtility.Convert.GetDecimal(dr["WorkHour"]);
                 }
-            }
-
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Select("AutoCreate = 1 or AutoCreate ='True'"))
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                        dr["WorkHour"] = 0;
-                }
-            }
+            }            
         }
 
         //Revised History
