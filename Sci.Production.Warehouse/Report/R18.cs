@@ -61,14 +61,14 @@ namespace Sci.Production.Warehouse
             Excel.Worksheet worksheet= objApp.Sheets[1];
             for (int i = 1; i <= dt.Rows.Count; i++)
             {
-                string str = worksheet.Cells[i + 1, 18].Value;
+                string str = worksheet.Cells[i + 1, 20].Value;
                 if(!MyUtility.Check.Empty(str))
-                    worksheet.Cells[i + 1, 18] = str.Trim();
+                    worksheet.Cells[i + 1, 20] = str.Trim();
             }
                         
             objApp.Columns.AutoFit();
             objApp.Rows.AutoFit();
-            worksheet.Columns[18].ColumnWidth = 88;
+            worksheet.Columns[20].ColumnWidth = 88;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R18_Material_Tracking");
@@ -87,13 +87,18 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            String spno = txtSPNo.Text.TrimEnd();
-            String style = txtStyle.Text;
-            String refno = txtRefno.Text;
-            String location = txtLocation.Text.TrimEnd();
-            String colorid = txtColor.Text;
-            String factoryid = txtfactory.Text;
-            String sizespec = txtSizeCode.Text;
+            string spno = txtSPNo.Text.TrimEnd();
+            string style = txtStyle.Text;
+            string refno = txtRefno.Text;
+            string location = txtLocation.Text.TrimEnd();
+            string buyerDeliveryStart = this.dateRangeBuyerDelivery.Value1.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd");
+            string buyerDeliveryEnd = this.dateRangeBuyerDelivery.Value2.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd");
+            string sciDeliveryStart = this.dateRangeSciDelivery.Value1.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeSciDelivery.Value1).ToString("yyyy/MM/dd");
+            string sciDeliveryEnd = this.dateRangeSciDelivery.Value2.ToString().EqualString(string.Empty) ? string.Empty : ((DateTime)this.dateRangeSciDelivery.Value2).ToString("yyyy/MM/dd");
+            string supplier = this.txtsupplier.TextBox1.Text;
+            string colorid = txtColor.Text;
+            string factoryid = txtfactory.Text;
+            string sizespec = txtSizeCode.Text;
 
             bool chkbalance = checkBalanceQty.Checked;
             
@@ -108,16 +113,17 @@ with cte as (
             , pd.seq1
             , pd.seq2
             , supplier = (select supp.id+'-'+supp.AbbEN 
-                         from dbo.supp WITH (NOLOCK) 
-                         inner join dbo.po_supp WITH (NOLOCK) on po_supp.suppid = supp.id 
-                         where po_supp.id = pd.id and seq1 = pd.seq1)
+                          from dbo.supp WITH (NOLOCK) 
+                          where po.suppid = supp.id)
             , styleid = isnull(x.StyleID,y.StyleID) 
             , SeasonID = ISNULL(x.SeasonID,y.SeasonID) 
             , brandid = ISNULL(x.BrandID,y.BrandID) 
             , x.Category
-            , x.SciDelivery
+            , [ExFactoryDate] = x.SciDelivery
             , pd.ETA
             , pd.FinalETA
+            , x.BuyerDelivery
+            , x.SciDelivery
             , pd.Complete
             , pd.Refno
             , pd.Width
@@ -151,16 +157,20 @@ with cte as (
                             where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
                       for xml path(''))
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-    inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 
-    and mpd.seq2= pd.SEQ2
+    inner join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID
+                                               and pd.Seq1 = po.Seq1
+    inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id 
+                                                          and mpd.seq1 = pd.seq1 
+                                                          and mpd.seq2= pd.SEQ2
     outer apply
     (
         select  o.FactoryID
-                ,o.StyleID
-                ,o.SeasonID
-                ,o.BrandID
-                ,o.Category
-                ,o.SciDelivery 
+                , o.StyleID
+                , o.SeasonID
+                , o.BrandID
+                , o.Category
+                , o.SciDelivery 
+                , o.BuyerDelivery
         from dbo.orders o WITH (NOLOCK) 
         inner join factory on o.FactoryID = factory.id
         where o.id = pd.id
@@ -168,12 +178,14 @@ with cte as (
     outer apply
     (
         select  i.FactoryID
-                ,i.StyleID
-                ,i.SeasonID
-                ,i.BrandID
-                ,deadline = max(i.Deadline)  
+                , i.StyleID
+                , i.SeasonID
+                , i.BrandID
+                , deadline = max(i.Deadline)  
         from dbo.Inventory i WITH (NOLOCK) 
-        where i.POID = pd.id and i.Seq1= pd.seq1 and i.seq2 = pd.SEQ2
+        where i.POID = pd.id 
+              and i.Seq1 = pd.seq1 
+              and i.seq2 = pd.SEQ2
         group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
     ) y", Env.User.Keyword));
             if (!MyUtility.Check.Empty(location))
@@ -187,16 +199,57 @@ with cte as (
                 from dbo.FtyInventory fi WITH (NOLOCK) 
                 inner join dbo.FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
                 where fid.MtlLocationid=''
-            ) q
-        on q.POID = pd.ID and q.seq1 = pd.seq1 and q.seq2 = pd.SEQ2");
+    ) q on q.POID = pd.ID 
+           and q.seq1 = pd.seq1 
+           and q.seq2 = pd.SEQ2");
             }
 
             sqlcmd.Append(string.Format(@" where 1=1 "));
 
-            if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" and pd.id='{0}'", spno));
-            if (!MyUtility.Check.Empty(refno)) sqlcmd.Append(string.Format(@" and pd.Refno ='{0}'", refno));
-            if (!MyUtility.Check.Empty(colorid)) sqlcmd.Append(string.Format(@" and pd.ColorID ='{0}'", colorid));
-            if (!MyUtility.Check.Empty(sizespec)) sqlcmd.Append(string.Format(@" and pd.SizeSpec = '{0}'", sizespec));
+            if (!MyUtility.Check.Empty(spno))
+            {
+                sqlcmd.Append(string.Format(@" and pd.id='{0}'", spno));
+            }
+
+            if (!MyUtility.Check.Empty(refno))
+            {
+                sqlcmd.Append(string.Format(@" and pd.Refno ='{0}'", refno));
+            }
+
+            if (MyUtility.Check.Empty(buyerDeliveryStart) == false)
+            {
+                sqlcmd.Append($" and '{buyerDeliveryStart}' <= x.BuyerDelivery");
+            }
+
+            if (MyUtility.Check.Empty(buyerDeliveryEnd) == false)
+            {
+                sqlcmd.Append($" and x.BuyerDelivery <= '{buyerDeliveryEnd}'");
+            }
+
+            if (MyUtility.Check.Empty(sciDeliveryStart) == false)
+            {
+                sqlcmd.Append($" and '{sciDeliveryStart}' <= x.SciDelivery");
+            }
+
+            if (MyUtility.Check.Empty(sciDeliveryEnd) == false)
+            {
+                sqlcmd.Append($" and x.SciDelivery <= '{sciDeliveryEnd}'");
+            }
+
+            if (MyUtility.Check.Empty(supplier) == false)
+            {
+                sqlcmd.Append($" and po.SuppID = '{supplier}'");
+            }
+
+            if (!MyUtility.Check.Empty(colorid))
+            {
+                sqlcmd.Append(string.Format(@" and pd.ColorID ='{0}'", colorid));
+            }
+
+            if (!MyUtility.Check.Empty(sizespec))
+            {
+                sqlcmd.Append(string.Format(@" and pd.SizeSpec = '{0}'", sizespec));
+            }
             
             sqlcmd.Append(@"
 ) select * from cte where 1= 1 ");
