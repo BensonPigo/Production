@@ -2,7 +2,7 @@
     [ID]            VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_ID] DEFAULT ('') NOT NULL,
     [Sewinglineid]  VARCHAR (2)    CONSTRAINT [DF_Cutplan_Detail_SewingInline] DEFAULT ('') NOT NULL,
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_CutRef] DEFAULT ('') NOT NULL,
-    [CutNo]         NUMERIC (3)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NOT NULL,
+    [CutNo]         NUMERIC (6)    CONSTRAINT [DF_Cutplan_Detail_CutNo] DEFAULT ((0)) NOT NULL,
     [OrderID]       VARCHAR (13)   CONSTRAINT [DF_Cutplan_Detail_OrderID] DEFAULT ('') NOT NULL,
     [StyleID]       VARCHAR (15)   CONSTRAINT [DF_Cutplan_Detail_StyleID] DEFAULT ('') NOT NULL,
     [Colorid]       VARCHAR (6)    CONSTRAINT [DF_Cutplan_Detail_Colorid] DEFAULT ('') NOT NULL,

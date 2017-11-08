@@ -6,7 +6,7 @@
     [Colorid]      VARCHAR (6)   CONSTRAINT [DF_Bundle_Colorid] DEFAULT ('') NOT NULL,
     [Article]      VARCHAR (8)   CONSTRAINT [DF_Bundle_Article] DEFAULT ('') NOT NULL,
     [PatternPanel] VARCHAR (2)   CONSTRAINT [DF_Bundle_FabricCombo] DEFAULT ('') NOT NULL,
-    [Cutno]        NUMERIC (3)   CONSTRAINT [DF_Bundle_Cutno] DEFAULT ((0)) NOT NULL,
+    [Cutno]        NUMERIC (6)   CONSTRAINT [DF_Bundle_Cutno] DEFAULT ((0)) NOT NULL,
     [Cdate]        DATE          NULL,
     [Orderid]      VARCHAR (13)  CONSTRAINT [DF_Bundle_Orderid] DEFAULT ('') NOT NULL,
     [Sewinglineid] VARCHAR (2)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NOT NULL,
