@@ -111,7 +111,7 @@ where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
 select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #wtmp
 from #tmpSewingGroup t
-inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate
+inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
 --
 select cumulate = IIF(Count(1)=0, 1, Count(1)),s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
 into #cl

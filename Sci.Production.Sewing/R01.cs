@@ -26,7 +26,6 @@ namespace Sci.Production.Sewing
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            //MyUtility.Tool.SetupCombox(comboBox2, 1, 1, ",A,B");
             MyUtility.Tool.SetupCombox(comboSubconIn, 1, 1, "Included,Excluded");
             dateDate.Value = DateTime.Today.AddDays(-1);
             comboFactory.Text = Sci.Env.User.Factory;
@@ -188,7 +187,7 @@ into #wtmp
 from #tmpSewingGroup t
 inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
 										and w.SewingLineID = t.SewingLineID 
-										and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate
+										and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate and isnull(w.Hours,0) != 0
 
 select cumulate = IIF(Count(1)=0, 1, Count(1))
 	   , s.style
