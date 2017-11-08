@@ -566,8 +566,24 @@ using (
 			, tmp.Article
 			, tmp.Color	
 			, takeQty = sum(takeQty)
+            , TMS = TMS.value
 	from #OrdersReceiveTmp tmp
-	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color			 
+    outer apply (
+	    select top 1 value = StdTMS
+	    from System WITH (NOLOCK)
+    ) StdTms
+    outer apply (
+	    select top 1 value = Round (o.CPU 
+							        * o.CPUFactor 
+							        * ([dbo].[GetStyleLocation_Rate](o.StyleUkey ,sl.Location) / 100) 
+							        * StdTms.value
+							       , 0)
+	    from Orders o WITH (NOLOCK) 
+	    inner join Style_Location SL on o.StyleUkey = SL.StyleUkey
+	    where   o.ID = tmp.POID
+			    and SL.Location = tmp.ComboType
+    ) TMS
+	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color, TMS.value 
 ) as s on t.ID = s.SewingOutputID
 		  and t.OrderID = s.ID
 		  and t.ComboType = s.ComboType
@@ -583,7 +599,7 @@ when not matched by target then
 		, InlineQty			, AutoCreate
 	) values (
 		s.SewingOutputID	, s.ID					, s.ComboType		, s.Article		, s.Color
-		, 0					, 0						, 0					, s.TakeQty		, 0
+		, s.TMS				, 0						, 0					, s.TakeQty		, 0
 		, s.TakeQty			, 1
 	);
 
@@ -650,6 +666,167 @@ when not matched by target then
 		s.SewingOutputID	, s.Ukey					, s.ID		, s.ComboType	, s.Article
 		, s.SizeCode		, s.POID 			        , s.TakeQty
 	);
+
+---- 重新計算 SewingOutputID 子單有新增 or 修改資料的 WorkHour ---------
+/*
+ * 所有須更新的 SewingOutputID
+ */
+select distinct ID = SewingOutputID
+into #SewingID
+from #OrdersReceiveTmp
+
+/*
+ * 紀錄所有須更新的子單
+ */
+select soddG.ID
+	   , soddG.OrderId
+	   , soddG.ComboType
+	   , soddG.Article
+	   , soddG.OrderIDfrom
+	   , sod.TMS
+	   , QAQty = sum(soddG.QaQty)
+	   , soddG.SewingOutput_DetailUKey
+       , AllAllot = AllAllot.value
+into #Child
+from SewingOutput_Detail_Detail_Garment soddG
+inner join SewingOutput_Detail sod on soddG.SewingOutput_DetailUKey = sod.UKey
+inner join #SewingID on soddG.ID = #SewingID.ID
+outer apply (
+	select value = sum (mSod.QAQty)
+	from SewingOutput_Detail mSod
+	where sod.ID = mSod.ID
+		  and soddG.OrderIDfrom = mSod.OrderId
+		  and soddG.ComboType = mSod.ComboType
+		  and soddG.Article = mSod.Article
+) motherTTL
+outer apply (
+	select value = sum (cSoddG.QAQty)
+	from SewingOutput_Detail_Detail_Garment cSoddG
+	where sod.ID = cSoddG.ID
+		  and soddG.OrderIDfrom = cSoddG.OrderIDfrom
+		  and soddG.ComboType = cSoddG.ComboType
+		  and soddG.Article = cSoddG.Article
+) childTTL
+outer apply (
+	select value = iif (motherTTL.value = childTTL.value, 1, 0)
+) AllAllot
+group by soddG.ID, soddG.OrderId, soddG.ComboType, soddG.Article, soddG.OrderIDfrom
+         , sod.TMS, soddG.SewingOutput_DetailUKey, AllAllot.value
+
+/*
+ * tmp 重新計算子單 WorkHour
+ */
+select distinct #Child.ID
+	   , #Child.OrderId
+	   , #Child.ComboType
+	   , #Child.Article
+	   , #Child.SewingOutput_DetailUKey
+	   , workHour = Convert (numeric(11, 3), 0)
+into #updateChild
+from #Child
+
+/*
+ * 迴圈更新每一個 SewingOutputID
+ */
+declare SewingOutputCursor Cursor For
+select ID
+from #SewingID
+
+Open SewingOutputCursor
+declare @SewingID varchar(50);
+
+Fetch Next From SewingOutputCursor Into @SewingID
+while (@@FETCH_STATUS = 0)
+begin
+	/*
+	 * 根據 Sewing ID 取得所有母單的 OrderID, ComboType, Article
+	 */
+	declare ComputeCursor Cursor For
+	select OrderID
+		   , ComboType
+		   , Article
+	from SewingOutput_Detail
+	where ID = @SewingID
+
+	Open ComputeCursor
+	declare @OrderID varchar (50);
+	declare @ComboType varchar (2);
+	declare @Article varchar (50);
+
+	Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+	while (@@FETCH_STATUS = 0)
+	begin
+		update upd
+			set upd.WorkHour = upd.WorkHour
+						       + case setWorkHour.AllAllot
+                                    -- 母單數量已全部分配
+                                    -- 子單 WorkHour 加總 = 母單 WorkHour
+								    when 1 then 
+									    case
+									        when setWorkHour.rowNum = setWorkHour.rowCounts then
+										        iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour > setWorkHour.soWorkHour, 0
+																														        , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+									        else
+										        iif (setWorkHour.AccuWorkHour > setWorkHour.soWorkHour, iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour >  setWorkHour.soWorkHour, 0
+											 																																	         , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+																							          , setWorkHour.newWorkHour)
+									    end
+                                    -- 母單數量尚未分配完畢
+								    else
+									    case 
+										    when setWorkHour.AccuWorkHour > setWorkHour.soWorkHour then
+											    iif (setWorkHour.soWorkHour < (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour), 0
+																															      , setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+										    else
+											    setWorkHour.newWorkHour
+									    end
+						         end
+		from #updateChild upd
+		inner join (
+			select	#Child.SewingOutput_DetailUKey
+					, soWorkHour = sod.WorkHour
+					, newWorkHour = ComputeWorkHour.value
+					, AccuWorkHour = sum(ComputeWorkHour.value) over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+					, rowNum = row_number() over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+					, rowCounts = count(1) over (partition by #Child.OrderIDFrom)
+				    , #Child.AllAllot
+			from SewingOutput_Detail sod
+			inner join #Child on sod.ID = #Child.ID
+								 and sod.OrderId = #Child.OrderIDfrom
+								 and sod.ComboType = #Child.ComboType
+								 and sod.Article = #Child.Article
+			outer apply (
+				select value = isnull(sod.QaQty * sod.TMS, 0)
+			) TotalQaQty
+			outer apply (
+				select value = Round(1.0 * #Child.QaQty * #Child.TMS / TotalQaQty.value * sod.WorkHour, 3)
+			) ComputeWorkHour
+			where sod.ID = @SewingID
+				  and sod.OrderId = @OrderID
+				  and sod.ComboType = @ComboType
+				  and sod.Article = @Article
+				  and sod.AutoCreate = 0
+		) setWorkHour on upd.SewingOutput_DetailUKey = setWorkHour.SewingOutput_DetailUKey
+
+		Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+	end
+
+	close ComputeCursor
+	Deallocate ComputeCursor
+
+	Fetch Next From SewingOutputCursor Into @SewingID
+end
+
+close SewingOutputCursor
+Deallocate SewingOutputCursor
+
+/*
+ * Update
+ */
+update sod
+set sod.WorkHour = upd.workHour
+from SewingOutput_Detail sod
+inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
 ---- 成功分配清單 ------------------------------------------------------
 select OrderID = ID
