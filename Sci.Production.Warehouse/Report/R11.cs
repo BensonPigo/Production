@@ -279,8 +279,7 @@ select  t.orderid
         ,t.unitprice*sum(t.scrapqty)
         ,t.IssueDate
 from cte t
-group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
-t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate"));
+group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec"));
                 #endregion
             }
             else
@@ -292,11 +291,11 @@ select  t.orderid
         ,t.seq2
         ,t.roll
         ,t.dyelot
-        ,t.ColorID
-        ,t.SizeSpec
         ,t.description
         ,t.Refno
         ,t.fabrictype
+        ,t.ColorID
+        ,t.SizeSpec
         ,t.MDivisionID
         ,t.FactoryID
         ,t.BrandID
