@@ -2021,8 +2021,21 @@ BEGIN
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
-
-		------------------Leo--------------------------------------
+----------------order_markerlist_Article-----------------
+	Merge Production.dbo.order_markerlist_Article as t
+	Using (select a.* from Trade_To_Pms.dbo.order_markerlist_Article a inner join #TOrder b on a.id = b.id) as s
+	on t.[Order_MarkerlistUkey] = s.[Order_MarkerlistUkey] and t.[Article] = s.[Article]
+	when matched then update set
+		t.[Id] = s.[Id]
+		,t.[AddName] = s.[AddName]
+		,t.[AddDate] = s.[AddDate]
+		,t.[EditName] = s.[EditName]
+		,t.[EditDate] = s.[EditDate]
+	when not matched by target then
+		insert([Id],[Order_MarkerlistUkey],[Article],[AddName],[AddDate],[EditName],[EditDate])
+		values(s.[Id],s.[Order_MarkerlistUkey],s.[Article],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+	when not matched by source and t.id in (select id from #TOrder)then
+			delete;
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
 
@@ -2134,10 +2147,10 @@ from Production.dbo.Order_History b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_MarkerList_Article
-Delete b
-from Production.dbo.Order_MarkerList_Article b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
+--Delete b
+--from Production.dbo.Order_MarkerList_Article b
+--where id in (select id from #tmpOrders as t 
+--where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_MarkerList_PatternPanel
 Delete b
 from Production.dbo.Order_MarkerList_PatternPanel b
