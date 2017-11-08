@@ -72,6 +72,7 @@ namespace Sci.Production.Subcon
 , b.ORDERID
 , c.styleid
 , b.patternDesc
+,a.ArtworkTypeID
 , b.artworkid
 , b.CostStitch
 , b.Stitch
