@@ -488,6 +488,7 @@
             this.DefaultControlForEdit = "checkByCombo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,id";
+            this.ExpressQuery = true;
             this.GridAlias = "Issue_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "POID,Seq1,Seq2,MDivisionID";
