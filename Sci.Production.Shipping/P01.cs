@@ -718,7 +718,21 @@ where oq.Id = b.Id
                             txttpeuserTask.DisplayBox1.Text = "";
                             txttpeuserTask.DisplayBox2.Text = "";
                             txtSpNo.Text = "";
-                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} The Air Pre-Paid is already created.", orderID));
+
+                            string strCheckOrderIDCanAirPP = $@"
+select Id
+       , Seq 
+from Order_QtyShip WITH (NOLOCK) 
+where Id = '{orderID}'
+        and 
+        ShipmodeID in (select ID 
+                        from ShipMode WITH (NOLOCK) 
+                        where UseFunction like '%AirPP%')";
+
+                            if (MyUtility.Check.Seek(strCheckOrderIDCanAirPP))
+                                MyUtility.Msg.InfoBox(string.Format("SP#:{0} The Air Pre-Paid is already created.", orderID));
+                            else
+                                MyUtility.Msg.InfoBox("< SP No. > not found!");
                             return;
                         }
                         if (orderQtyData.Rows.Count == 1)
