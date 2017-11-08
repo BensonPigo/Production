@@ -84,7 +84,7 @@ from (
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID, c.dest)
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
             ,brand=c.brandid
         ,b.item
     from dbo.Bundle_Detail a WITH (NOLOCK) 
@@ -121,7 +121,7 @@ from (
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID, c.dest)
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
             ,brand=c.brandid
         ,b.item
     from dbo.Bundle_Detail a WITH (NOLOCK) 
