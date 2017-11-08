@@ -109,7 +109,10 @@ namespace Sci.Production.PublicForm
                     }
 
                     string exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, cuttingid, keyWord, loginID);
-                    DualResult dResult = DBProxy.Current.Execute(null, exswitch);
+                    DBProxy sp_excute = new DBProxy();
+                    sp_excute.DefaultTimeout = 1200;//因為資料量多會執行較久所以設定timeout20分鐘
+                    //DualResult dResult = DBProxy.Current.Execute(null, exswitch);
+                    DualResult dResult = sp_excute.Execute(null, exswitch);
                     if (!dResult)
                     {
                         _transactionscope.Dispose();
