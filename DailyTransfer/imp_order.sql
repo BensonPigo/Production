@@ -824,6 +824,167 @@ BEGIN
 		) NewQaQty
 		where isnull (NewQaQty.value, 0) = 0
 
+		---- Update SewingOutput 有更新的 WorkHour -----------------------------------
+		/*
+		 * 所有須更新的 SewingOutputID
+		 */
+		select distinct ID
+		into #SewingID
+		from #tmpDeleteData
+
+		/*
+		 * 紀錄所有須更新的子單
+		 */
+		select soddG.ID
+			   , soddG.OrderId
+			   , soddG.ComboType
+			   , soddG.Article
+			   , soddG.OrderIDfrom
+			   , sod.TMS
+			   , QAQty = sum(soddG.QaQty)
+			   , soddG.SewingOutput_DetailUKey
+			   , AllAllot = AllAllot.value
+		into #Child
+		from SewingOutput_Detail_Detail_Garment soddG
+		inner join SewingOutput_Detail sod on soddG.SewingOutput_DetailUKey = sod.UKey
+		inner join #SewingID on soddG.ID = #SewingID.ID
+		outer apply (
+			select value = sum (mSod.QAQty)
+			from SewingOutput_Detail mSod
+			where sod.ID = mSod.ID
+				  and soddG.OrderIDfrom = mSod.OrderId
+				  and soddG.ComboType = mSod.ComboType
+				  and soddG.Article = mSod.Article
+		) motherTTL
+		outer apply (
+			select value = sum (cSoddG.QAQty)
+			from SewingOutput_Detail_Detail_Garment cSoddG
+			where sod.ID = cSoddG.ID
+				  and soddG.OrderIDfrom = cSoddG.OrderIDfrom
+				  and soddG.ComboType = cSoddG.ComboType
+				  and soddG.Article = cSoddG.Article
+		) childTTL
+		outer apply (
+			select value = iif (motherTTL.value = childTTL.value, 1, 0)
+		) AllAllot
+		group by soddG.ID, soddG.OrderId, soddG.ComboType, soddG.Article, soddG.OrderIDfrom, sod.TMS, soddG.SewingOutput_DetailUKey, AllAllot.value
+
+		/*
+		 * 重新計算子單 WorkHour
+		 */
+		select distinct #Child.ID
+			   , #Child.OrderId
+			   , #Child.ComboType
+			   , #Child.Article
+			   , #Child.SewingOutput_DetailUKey
+			   , workHour = Convert (numeric(11, 3), 0)
+		into #updateChild
+		from #Child
+
+		/*
+		 * 迴圈更新每一個 SewingOutputID
+		 */
+		declare SewingOutputCursor Cursor For
+		select ID
+		from #SewingID
+
+		Open SewingOutputCursor
+		declare @SewingID varchar(50);
+
+		Fetch Next From SewingOutputCursor Into @SewingID
+		while (@@FETCH_STATUS = 0)
+		begin
+			/*
+			 * 根據 Sewing ID 取得所有母單的 OrderID, ComboType, Article
+			 */
+			declare ComputeCursor Cursor For
+			select OrderID
+				   , ComboType
+				   , Article
+			from SewingOutput_Detail
+			where ID = @SewingID
+
+			Open ComputeCursor
+			declare @OrderID varchar (50);
+			declare @ComboType varchar (2);
+			declare @Article varchar (50);
+
+			Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+			while (@@FETCH_STATUS = 0)
+			begin
+				update upd
+					set upd.WorkHour = upd.WorkHour
+									   + case setWorkHour.AllAllot
+											-- 母單數量已全部分配
+											-- 子單 WorkHour 加總 = 母單 WorkHour
+											when 1 then 
+												case
+													when setWorkHour.rowNum = setWorkHour.rowCounts then
+														iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour > setWorkHour.soWorkHour, 0
+																																		, setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+													else
+														iif (setWorkHour.AccuWorkHour > setWorkHour.soWorkHour, iif (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour >  setWorkHour.soWorkHour, 0
+													 																																				, setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+																												, setWorkHour.newWorkHour)
+												end
+											-- 母單數量尚未分配完畢
+											else
+												case 
+													when setWorkHour.AccuWorkHour > setWorkHour.soWorkHour then
+														iif (setWorkHour.soWorkHour < (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour), 0
+																																			, setWorkHour.soWorkHour - (setWorkHour.AccuWorkHour - setWorkHour.newWorkHour))
+													else
+														setWorkHour.newWorkHour
+												end
+										 end
+				from #updateChild upd
+				inner join (
+					select	#Child.SewingOutput_DetailUKey
+							, soWorkHour = sod.WorkHour
+							, newWorkHour = ComputeWorkHour.value
+							, AccuWorkHour = sum(ComputeWorkHour.value) over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+							, rowNum = row_number() over (partition by #Child.OrderIDFrom order by #Child.OrderID)
+							, rowCounts = count(1) over (partition by #Child.OrderIDFrom)
+							, #Child.AllAllot
+					from SewingOutput_Detail sod
+					inner join #Child on sod.ID = #Child.ID
+										 and sod.OrderId = #Child.OrderIDfrom
+										 and sod.ComboType = #Child.ComboType
+										 and sod.Article = #Child.Article
+					outer apply (
+						select value = isnull(sod.QaQty * sod.TMS, 0)
+					) TotalQaQty
+					outer apply (
+						select value = isnull (Round(1.0 * #Child.QaQty * #Child.TMS / TotalQaQty.value * sod.WorkHour, 3), 0)
+					) ComputeWorkHour
+					where sod.ID = @SewingID
+						  and sod.OrderId = @OrderID
+						  and sod.ComboType = @ComboType
+						  and sod.Article = @Article
+						  and sod.AutoCreate = 0
+				) setWorkHour on upd.SewingOutput_DetailUKey = setWorkHour.SewingOutput_DetailUKey
+
+				Fetch Next From ComputeCursor Into @OrderID, @ComboType, @Article
+			end
+
+			close ComputeCursor
+			Deallocate ComputeCursor
+
+			Fetch Next From SewingOutputCursor Into @SewingID
+		end
+
+		close SewingOutputCursor
+		Deallocate SewingOutputCursor
+
+		/*
+		 * update
+		 */
+		update sod
+		set sod.WorkHour = upd.workHour
+		from SewingOutput_Detail sod
+		inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
+
+		drop table #SewingID, #Child, #updateChild
 		drop table #OverGarment, #PackingNotEnough, #tmpDeleteData;
 	----------Order_QtyShip--------------
 	Merge Production.dbo.Order_QtyShip as t
@@ -2021,8 +2182,21 @@ BEGIN
 			)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
-
-		------------------Leo--------------------------------------
+----------------order_markerlist_Article-----------------
+	Merge Production.dbo.order_markerlist_Article as t
+	Using (select a.* from Trade_To_Pms.dbo.order_markerlist_Article a inner join #TOrder b on a.id = b.id) as s
+	on t.[Order_MarkerlistUkey] = s.[Order_MarkerlistUkey] and t.[Article] = s.[Article]
+	when matched then update set
+		t.[Id] = s.[Id]
+		,t.[AddName] = s.[AddName]
+		,t.[AddDate] = s.[AddDate]
+		,t.[EditName] = s.[EditName]
+		,t.[EditDate] = s.[EditDate]
+	when not matched by target then
+		insert([Id],[Order_MarkerlistUkey],[Article],[AddName],[AddDate],[EditName],[EditDate])
+		values(s.[Id],s.[Order_MarkerlistUkey],s.[Article],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+	when not matched by source and t.id in (select id from #TOrder)then
+			delete;
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
 
@@ -2134,10 +2308,10 @@ from Production.dbo.Order_History b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_MarkerList_Article
-Delete b
-from Production.dbo.Order_MarkerList_Article b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
+--Delete b
+--from Production.dbo.Order_MarkerList_Article b
+--where id in (select id from #tmpOrders as t 
+--where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_MarkerList_PatternPanel
 Delete b
 from Production.dbo.Order_MarkerList_PatternPanel b

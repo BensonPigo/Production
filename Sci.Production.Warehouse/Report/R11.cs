@@ -111,6 +111,8 @@ with cte as (
                                                 ,(select fabric.mtltypeid 
                                                   from dbo.fabric WITH (NOLOCK) 
                                                   where fabric.scirefno = p.scirefno))
+            , ColorID = dbo.GetColorMultipleID(o.BrandID,p.ColorID) 
+            , p.SizeSpec
             ,s.MDivisionID
             ,o.FactoryID
             ,o.BrandID
@@ -258,8 +260,7 @@ where s.Status = 'Confirmed'
             }
             #endregion
 
-            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID
-  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey)");
+            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
@@ -273,6 +274,8 @@ select  t.orderid
         ,t.description
         ,t.fabrictype
         ,t.weaventype
+        ,t.ColorID
+        ,t.SizeSpec
         ,t.MDivisionID
         ,t.FactoryID
         ,t.BrandID
@@ -287,8 +290,7 @@ select  t.orderid
         ,t.unitprice*sum(t.scrapqty)
         ,t.IssueDate
 from cte t
-group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
-t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate"));
+group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec"));
                 #endregion
             }
             else
@@ -303,6 +305,8 @@ select  t.orderid
         ,t.description
         ,t.Refno
         ,t.fabrictype
+        ,t.ColorID
+        ,t.SizeSpec
         ,t.MDivisionID
         ,t.FactoryID
         ,t.BrandID

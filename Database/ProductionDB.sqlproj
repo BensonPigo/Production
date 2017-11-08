@@ -2231,6 +2231,7 @@
     <Build Include="dbo\Tables\SewingOutput_Detail_Detail_Garment.sql" />
     <Build Include="dbo\Functions\getWaste.sql" />
     <Build Include="dbo\Tables\ThreadAllowanceScale.sql" />
+    <Build Include="dbo\Functions\GetBOFExpend.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
