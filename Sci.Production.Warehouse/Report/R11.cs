@@ -111,6 +111,8 @@ with cte as (
                                                 ,(select fabric.mtltypeid 
                                                   from dbo.fabric WITH (NOLOCK) 
                                                   where fabric.scirefno = p.scirefno))
+            , ColorID = dbo.GetColorMultipleID(o.BrandID,p.ColorID) 
+            , p.SizeSpec
             ,s.MDivisionID
             ,o.FactoryID
             ,o.BrandID
@@ -247,8 +249,7 @@ where s.Status = 'Confirmed' and s.type = '{0}'
             }
             #endregion
 
-            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID
-  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey)");
+            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
@@ -262,6 +263,8 @@ select  t.orderid
         ,t.description
         ,t.fabrictype
         ,t.weaventype
+        ,t.ColorID
+        ,t.SizeSpec
         ,t.MDivisionID
         ,t.FactoryID
         ,t.BrandID
@@ -289,6 +292,8 @@ select  t.orderid
         ,t.seq2
         ,t.roll
         ,t.dyelot
+        ,t.ColorID
+        ,t.SizeSpec
         ,t.description
         ,t.Refno
         ,t.fabrictype
