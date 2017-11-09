@@ -46,6 +46,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings Linecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Cellcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Qtycell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cutOutputCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings QtySizecell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell2 = new DataGridViewGeneratorTextColumnSettings();
@@ -117,8 +118,37 @@ namespace Sci.Production.Cutting
                 int newcount = Convert.ToInt16(e.FormattedValue);
                 numNoOfBundle.Value = newcount;
                 distSizeQty(rowcount, newcount, dr);
-
             };
+
+            cutOutputCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
+                int oldCutOutput = Convert.ToInt32(dr["cutOutput"]);
+                int newCutOutput = Convert.ToInt32(e.FormattedValue);
+                dr["cutOutput"] = newCutOutput;
+                dr.EndEdit();
+
+                int newBalance = Convert.ToInt32(ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter));
+
+                if (newBalance > 0)
+                {
+                    MyUtility.Msg.InfoBox("Balance can not more than zero.");
+                    dr["cutOutput"] = oldCutOutput;
+                    dr.EndEdit();
+                    return;
+                }
+
+                if (oldCutOutput.EqualString(newCutOutput) == false)
+                {
+                    changeLabelTotalCutOutputValue();
+                    changeLabelBalanceValue();
+
+                    int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
+                    int newcount = MyUtility.Convert.GetInt(dr["Qty"]);
+                    distSizeQty(rowcount, newcount, dr);
+                }
+            };
+
             QtySizecell.CellValidating += (s, e) =>
             {
                 DataRow dr = gridQty.GetDataRow(e.RowIndex);
@@ -336,7 +366,7 @@ namespace Sci.Production.Cutting
            .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
            .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: Cellcell)
            .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
-           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: false, settings: cutOutputCell)
            .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
             gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -344,6 +374,7 @@ namespace Sci.Production.Cutting
             gridArticleSize.Columns["SewingLine"].DefaultCellStyle.BackColor = Color.Pink;
             gridArticleSize.Columns["SewingCell"].DefaultCellStyle.BackColor = Color.Pink;
             gridArticleSize.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.Columns["Cutoutput"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             #region 左下一Qty
             this.gridQty.IsEditingReadOnly = false;
@@ -468,7 +499,8 @@ Select  distinct 0 as sel
                             and Style.ukey = ord.styleukey 
                             and Style.ApparelType = Reason.id )
 	    , 1 as Qty
-        , isnull(sum(b.Qty),0) as cutoutput
+        , cutoutput = isnull(sum(b.Qty),0)
+        , RealCutOutput = isnull(sum(b.Qty),0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
@@ -861,7 +893,11 @@ order by ArticleGroup", patternukey);
         {
             DataRow selectDr_Cutref;
             DataRow selectDr_Artsize;
-            if (CutRefTb.Rows.Count == 0) return;
+            if (CutRefTb.Rows.Count == 0)
+            {
+                return;
+            }
+
             if (gridCutRef.GetSelectedRowIndex() == -1)
             {
                 selectDr_Cutref = CutRefTb.Rows[0];
@@ -870,9 +906,14 @@ order by ArticleGroup", patternukey);
             {
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
+
             ArticleSizeTb.DefaultView.RowFilter
                 = string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]);
-            if (ArticleSizeTb.Rows.Count == 0) return;
+            if (ArticleSizeTb.Rows.Count == 0)
+            {
+                return;
+            }
+
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
                 selectDr_Artsize = ArticleSizeTb.Rows[0];
@@ -882,7 +923,6 @@ order by ArticleGroup", patternukey);
                 selectDr_Artsize = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
 
-
             qtyTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             allpartTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             patternTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
@@ -890,6 +930,9 @@ order by ArticleGroup", patternukey);
             numNoOfBundle.Value = Convert.ToInt16(selectDr_Artsize["Qty"]);
             numTotalPart.Value = Convert.ToInt16(selectDr_Artsize["TotalParts"]);
             label_TotalQty.Text = qtyTb.Compute("Sum(Qty)", string.Format("iden={0}", selectDr_Artsize["iden"])).ToString();
+
+            changeLabelTotalCutOutputValue();
+            changeLabelBalanceValue();
         }
 
         public void distSizeQty(int rowcount, int newcount, DataRow dr)//計算Size Qty
@@ -935,8 +978,15 @@ order by ArticleGroup", patternukey);
                 {
                     if (eachqty != 0)
                     {
-                        if (modqty > 0) dr2["Qty"] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
-                        else dr2["Qty"] = eachqty;
+                        if (modqty > 0)
+                        {
+                            dr2["Qty"] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
+                        }
+                        else
+                        {
+                            dr2["Qty"] = eachqty;
+                        }
+
                         modqty--; //剩餘數一定小於rowcount所以會有筆數沒有拿到
                     }
                     else
@@ -947,7 +997,7 @@ order by ArticleGroup", patternukey);
                             modqty--;
                         }
                         else dr2.Delete();
-                    }
+                    }                    
                 }
             }
         }
@@ -1309,7 +1359,7 @@ order by ArticleGroup", patternukey);
             spStartnoTb.Columns.Add("orderid", typeof(string));
             spStartnoTb.Columns.Add("startno", typeof(string));
 
-            DataRow[] ArtAy = ArticleSizeTb.Select("Sel=1", "Orderid");
+            var ArtAy = ArticleSizeTb.Select("Sel=1", "Orderid").OrderBy(row => row["Fabriccombo"]).ThenBy(row => row["Cutno"]);
             foreach (DataRow artar in ArtAy)
             {
                 #region 填入SizeRatio
@@ -1383,15 +1433,39 @@ order by ArticleGroup", patternukey);
 
                 DataRow nBundle_dr = Insert_Bundle.NewRow();
                 nBundle_dr["Insert"] = string.Format(
-                @"Insert Into Bundle
-                (ID,POID,mDivisionid,SizeCode,Colorid,Article,PatternPanel,Cutno,
-                cDate,OrderID,SewingLineid,Item,SewingCell,
-                Ratio,Startno,Qty,AllPart,CutRef,AddName,AddDate,FabricPanelCode) values
-                ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
-                GetDate(),'{8}','{9}','{10}','{11}','{12}',
-                '{13}',{14},{15},'{16}','{17}',GetDate(),'{18}')",
-                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["Fabriccombo"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Length > 2 ? artar["SewingLine"].ToString().Substring(0, 2) : artar["SewingLine"].ToString()), artar["item"], artar["SewingCell"],
-                 artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID, artar["FabricPanelCode"]);
+                @"
+Insert Into Bundle
+(ID               , POID        , mDivisionid, SizeCode , Colorid
+ , Article        , PatternPanel, Cutno      , cDate    , OrderID
+ , SewingLineid   , Item        , SewingCell , Ratio    , Startno
+ , Qty            , AllPart     , CutRef     , AddName  , AddDate
+ , FabricPanelCode) 
+values
+('{0}'            , '{1}'       , '{2}'      , '{3}'    , '{4}'
+ , '{5}'          , '{6}'       , {7}        , GetDate(), '{8}'
+ , '{9}'          , '{10}'      , '{11}'     , '{12}'   , '{13}'
+ , {14}           , {15}        , '{16}'     , '{17}'   , GetDate()
+ , '{18}')",
+                id_list[idcount],
+                artar["POID"],
+                keyWord,
+                artar["SizeCode"],
+                artar["colorid"],
+                artar["Article"],
+                artar["Fabriccombo"],
+                artar["Cutno"],
+                artar["orderid"],
+                (artar["SewingLine"].Empty() ? string.Empty : artar["SewingLine"].ToString().Length > 2 ? artar["SewingLine"].ToString().Substring(0, 2) : artar["SewingLine"].ToString()),
+                artar["item"],
+                artar["SewingCell"],
+                artar["Ratio"],
+                startno,
+                artar["Qty"],
+                artar["TotalParts"],
+                artar["Cutref"],
+                loginID,
+                artar["FabricPanelCode"]);
+
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion
 
@@ -1542,5 +1616,14 @@ order by ArticleGroup", patternukey);
             gridAllPart.ValidateControl();
         }
 
+        private void changeLabelTotalCutOutputValue()
+        {
+            this.labelToalCutOutputValue.Text = ArticleSizeTb.Compute("sum(CutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
+
+        private void changeLabelBalanceValue()
+        {
+            this.labelBalanceValue.Text = ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
     }
 }
