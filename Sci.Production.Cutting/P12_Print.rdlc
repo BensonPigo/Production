@@ -1245,14 +1245,16 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!Season.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox3</rd:DefaultName>
-                              <Top>2.05339cm</Top>
+                              <Top>2.08cm</Top>
                               <Left>0.87cm</Left>
                               <Height>0.5cm</Height>
                               <Width>1.7cm</Width>
@@ -2401,14 +2403,16 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!Season2.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox3</rd:DefaultName>
-                              <Top>2.05339cm</Top>
+                              <Top>2.08cm</Top>
                               <Left>0.87cm</Left>
                               <Height>0.5cm</Height>
                               <Width>1.7cm</Width>
@@ -3560,14 +3564,16 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!Season3.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox3</rd:DefaultName>
-                              <Top>2.05339cm</Top>
+                              <Top>2.08cm</Top>
                               <Left>0.87cm</Left>
                               <Height>0.5cm</Height>
                               <Width>1.7cm</Width>
