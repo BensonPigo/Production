@@ -431,10 +431,10 @@ from #print p
 ---0006111以上全部都不動，直接組新的Table計算欄位(acc.QtyAll)Accu. Loading Qty of Garment
 ---再依[SP#]= p.SP and FactoryID = p.FactoryID做outer apply
 outer apply(
-	select FactoryID,[SP#],[Article],QtyAll=sum(QtySM)
+	select FactoryID,[SP#],QtyAll=sum(QtySM)
 	from
 	(
-		select FactoryID,[SP#],[Article],SizeCode,[Comb],QtySM = min(QtySum)
+		select FactoryID,[SP#],[Article],SizeCode,QtySM = min(QtySum)
 		from(
 			Select DISTINCT
 				 o.FactoryID,
@@ -473,10 +473,10 @@ outer apply(
 				Where a.ID = o.POID and bof.kind !=0
 			)
 		)aa
-		group by FactoryID,[SP#],[Article],SizeCode,[Comb]
+		group by FactoryID,[SP#],[Article],SizeCode
 	)bb
 	where [SP#]= p.SP and FactoryID = p.FactoryID
-	group by FactoryID,[SP#],[Article]
+	group by FactoryID,[SP#]
 )acc 
 outer apply (
 	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
