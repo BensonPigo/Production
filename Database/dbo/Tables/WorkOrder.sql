@@ -7,7 +7,7 @@
     [CutRef]             VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
     [OrderID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
     [CutplanID]          VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
-    [Cutno]              NUMERIC (3)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
+    [Cutno]              NUMERIC (6)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
     [Layer]              NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
     [Colorid]            VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
     [Markername]         VARCHAR (20)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
