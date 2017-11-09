@@ -581,6 +581,7 @@ order by x.[Bundle]");
                 // 開啟 report view
                 var frm = new Sci.Win.Subs.ReportView(report);
                 frm.MdiParent = MdiParent;
+                frm.DirectPrint = true;
                 frm.ShowDialog();
                 #endregion
             }
