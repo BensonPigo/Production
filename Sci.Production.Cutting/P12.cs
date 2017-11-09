@@ -551,8 +551,8 @@ outer apply
                SubProcess2 = row1["SubProcess"].ToString(),
                Qty2 = row1["Qty"].ToString(),
                Barcode2 = row1["Bundle"].ToString(),
-               Season = row1["Seasonid"].ToString(),
-               brand = row1["brand"].ToString()
+               Season2 = row1["Seasonid"].ToString(),
+               brand2 = row1["brand"].ToString()
            }).ToList());
 
              res.AddRange( dt3.AsEnumerable()
@@ -577,8 +577,8 @@ outer apply
                SubProcess3 = row1["SubProcess"].ToString(),
                Qty3 = row1["Qty"].ToString(),
                Barcode3 = row1["Bundle"].ToString(),
-               Season = row1["Seasonid"].ToString(),
-               brand = row1["brand"].ToString()
+               Season3 = row1["Seasonid"].ToString(),
+               brand3 = row1["brand"].ToString()
            }).ToList());
 
 
