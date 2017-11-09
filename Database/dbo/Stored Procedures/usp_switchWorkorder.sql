@@ -462,16 +462,26 @@ BEGIN
 				Begin
 
 					-------取得此部位同Size同顏色inline 較早的Orderid與Qty
-					DECLARE cur_disQty CURSOR FOR 
-						Select id,id,article,orderqty,orderqty - disQty,convert(bigint,identRowid) as identRowid
-						From #disQty
-						Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Article from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
-						order by inline
+					Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
+					into #distOrder 
+					From #disQty
+					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Article from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
+					order by inline
 
-					OPEN	cur_disQty
-					FETCH NEXT FROM cur_disQty INTO @OrderID,@WorkOrder_DisOrderID,@Article,@OrderQty,@BalQty,@WorkOrder_DisidenRow
-					While @@FETCH_STATUS = 0
+					Set @distOrderRowid = 1
+					Select @distOrderRowid = Min(Rowid),@distOrderRowCount = Max(Rowid)
+					From #distOrder
+					While @distOrderRowid <= @distOrderRowCount
 					Begin
+						Select @BalQty = OrderQty - disQty,
+							   @Article = Article,
+							   @OrderQty = Orderqty,
+							   @OrderID = id,
+							   @WorkOrder_DisOrderID = id,
+							   @WorkOrder_DisidenRow = identRowid
+						From #distOrder
+						Where Rowid = @distOrderRowid
+
 
 						Set @OrderLayer = ceiling(@BalQty / @SizeQty )----無條件進位，要把層數用完
 						--------------找出可被分配的TotalLay----------------
@@ -552,7 +562,10 @@ BEGIN
 										update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
 										where identRowid = @WorkOrder_DisidenRow
 
-									
+										--更新DistOrder暫存table中的Disqty (已分配數量)欄位，否則會有重覆問題
+										update #distOrder set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
+										where identRowid = @WorkOrder_DisidenRow
+
 										Set @linsert = 1 ---有新增要改變
 									end
 								FETCH NEXT FROM cur_disQty_again INTO @WorkOrder_DisOrderID,@Article,@OrderQty,@disQty_again,@WorkOrder_DisidenRow
@@ -686,6 +699,10 @@ BEGIN
 										update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
 										where identRowid = @WorkOrder_DisidenRow
 
+										--更新DistOrder暫存table中的Disqty (已分配數量)欄位，否則會有
+										update #distOrder set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
+										where identRowid = @WorkOrder_DisidenRow
+
 										Set @linsert = 1 ---有新增要改變
 									End
 
@@ -763,12 +780,9 @@ BEGIN
 							end						
 						End
 						Set @distOrderRowid += 1	
-
-					FETCH NEXT FROM cur_disQty INTO @OrderID,@WorkOrder_DisOrderID,@Article,@OrderQty,@BalQty,@WorkOrder_DisidenRow			
+	
 					End
-					CLOSE cur_disQty
-					DEALLOCATE cur_disQty
-
+					drop table #distOrder
 				FETCH NEXT FROM cur_SizeQty INTO @SizeCode,@SizeQty
 				EnD
 				CLOSE cur_SizeQty
