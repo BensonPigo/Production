@@ -243,27 +243,34 @@
             // 
             // labelSupplier
             // 
+            this.labelSupplier.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSupplier.Location = new System.Drawing.Point(10, 154);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(103, 23);
             this.labelSupplier.TabIndex = 104;
             this.labelSupplier.Text = "Supplier";
+            this.labelSupplier.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.labelSupplier.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelBuyerDelivery
             // 
+            this.labelBuyerDelivery.BackColor = System.Drawing.Color.SkyBlue;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(10, 84);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(103, 23);
             this.labelBuyerDelivery.TabIndex = 108;
             this.labelBuyerDelivery.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelSciDelivery
             // 
+            this.labelSciDelivery.BackColor = System.Drawing.Color.SkyBlue;
             this.labelSciDelivery.Location = new System.Drawing.Point(10, 118);
             this.labelSciDelivery.Name = "labelSciDelivery";
             this.labelSciDelivery.Size = new System.Drawing.Size(103, 23);
             this.labelSciDelivery.TabIndex = 110;
             this.labelSciDelivery.Text = "SCI Delivery";
+            this.labelSciDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtsupplier
             // 

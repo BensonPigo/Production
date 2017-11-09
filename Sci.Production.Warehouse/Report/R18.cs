@@ -31,11 +31,16 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text) &&
-                MyUtility.Check.Empty(txtRefno.Text) &&
-                MyUtility.Check.Empty(txtLocation.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text)
+                && MyUtility.Check.Empty(txtRefno.Text)
+                && MyUtility.Check.Empty(txtLocation.Text)
+                && MyUtility.Check.Empty(this.dateRangeBuyerDelivery.Value1)
+                && MyUtility.Check.Empty(this.dateRangeBuyerDelivery.Value2)
+                && MyUtility.Check.Empty(this.dateRangeSciDelivery.Value1)
+                && MyUtility.Check.Empty(this.dateRangeSciDelivery.Value2)
+                && MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
             {
-                MyUtility.Msg.WarningBox("SP#, Ref#, Location can't be empty!!");
+                MyUtility.Msg.WarningBox("SP#, Ref#, Location, Buyer Delivery, SCI Delivery, Supplier can't be empty!!");
                 return false;
             }
             selectindex = comboCategory.SelectedIndex;
