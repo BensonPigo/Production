@@ -100,7 +100,7 @@ Select  0 as Selected
         , '' as id
         , aaa.id as orderid
         , sum(bbb.qty) poqty 
-        , 0.0000 as unitprice
+        , unitprice = iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
         , 0.0000 as price
         , 1 as qtygarment
         , 0.0000 as pricegmt
@@ -112,9 +112,11 @@ Select  0 as Selected
         , Style = aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
-from    orders aaa WITH (NOLOCK) 
-        , order_qty bbb WITH (NOLOCK) 
-        , artworktype  ccc WITH (NOLOCK) 
+from orders aaa WITH (NOLOCK) 
+inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
+inner join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+,artworktype  ccc WITH (NOLOCK)
         , (Select   a.id orderid
                     , c.id as artworktypeid
                     , rtrim(c.id) as artwork
@@ -140,9 +142,7 @@ from    orders aaa WITH (NOLOCK)
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += @"
            ) as aa
-where   aaa.id = bbb.id
-        and aaa.ID = aa.orderid
-        and ccc.ID = aa.artworktypeid
+where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
 group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
 
 
