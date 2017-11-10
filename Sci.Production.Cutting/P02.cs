@@ -139,15 +139,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }               
                 this.ReloadDatas();
             };
-        }
-        
-        // 存第二層資料
-        //protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
-        //{
-
-        //    return Result.True;
-        //    //return base.OnSaveDetail(details, detailtableschema);
-        //}
+        }           
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -374,6 +366,7 @@ where w.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        // 撈第三層資料
         protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
@@ -2004,27 +1997,8 @@ where WorkOrderUkey={0}", masterID);
             //}
             #endregion
             flag = false;
-        }
+        }     
 
-        /// <summary>
-        /// 取得UserName and AddDate
-        /// </summary>
-        /// <param name="row"></param>
-        protected static void ModifyRecords(DataRow row)
-        {
-            if (row.RowState == DataRowState.Added)
-            {
-                row["AddName"] = Env.User.UserID;
-                row["AddDate"] = DateTime.Now;
-                row["EditName"] = string.Empty;
-                row["EditDate"] = DBNull.Value;
-            }
-            else if (row.RowState == DataRowState.Modified)
-            {
-                row["EditName"] = Env.User.UserID;
-                row["EditDate"] = DateTime.Now;
-            }
-        }
         protected override void OnDetailGridDelete()
         {
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
@@ -2471,7 +2445,7 @@ where b.poid = '{0}'
         private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode)
-            {
+            {              
                 if (!MyUtility.Check.Seek(string.Format(@"
 select 1 from Order_EachCons a
 inner join orders b on a.id = b.ID
@@ -2482,6 +2456,12 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
                     e.Cancel = true;
                     return;
                 } 
+            }
+            if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
+                e.Cancel = true;
+                return;
             }
         }
 
