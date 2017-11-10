@@ -70,7 +70,7 @@ with cte as
 		from dbo.Invtrans i WITH (NOLOCK) 
 		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
-	where f.MDivisionID ='{0}' and pd.id = @poid AND X.taipei_qty > 0
+	where f.MDivisionID ='{0}' and pd.id = @poid --AND X.taipei_qty > 0
 )
 select  m.ToFactoryID
         , m.poid
