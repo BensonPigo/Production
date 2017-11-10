@@ -185,9 +185,6 @@ namespace Sci.Production.Quality
                     def_locT = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
                     if (def_locF >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
                     {
-                        // dr.Delete();
-                        //Fir_physical_Defect.Rows.RemoveAt(i);
-
                         Fir_physical_Defect.Rows[i].Delete();
                     }
                     // }
@@ -196,6 +193,11 @@ namespace Sci.Production.Quality
                     if (def_locF == ActualYdsF && def_locT != ActualYdsT)
                     {
                         Fir_physical_Defect.Rows[i]["DefectLocation"] = ActualYdsF.ToString().PadLeft(3, '0') + "-" + ActualYdsT.ToString().PadLeft(3, '0');
+                    }
+
+                    if (def_locT < ActualYdsF && def_locT - def_locF != 4)
+                    {
+                        Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
                     }
                 }
             }
