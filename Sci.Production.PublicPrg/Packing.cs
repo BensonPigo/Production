@@ -615,7 +615,7 @@ select  t.*
         , o.CustPONo
         , c.Alias
         , oq.EstPulloutDate
-        , os.SizeSpec
+        , SizeSpec = iif(osso.SizeSpec is null, isnull(oss.SizeSpec,''),osso.SizeSpec)
         , MarkFront = isnull(o.MarkFront,'')
         , MarkBack = isnull(o.MarkBack,'')
         , MarkLeft = isnull(o.MarkLeft,'')
@@ -638,9 +638,12 @@ left join Orders o WITH (NOLOCK) on  o.ID = t.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = t.OrderID 
                                              and oq.Seq = t.OrderShipmodeSeq
 left join Country c WITH (NOLOCK) on  c.ID = o.Dest
-left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
-                                              and SizeItem = 'S01' 
-                                              and os.SizeCode = t.SizeCode
+outer apply(
+	select distinct oso.SizeSpec 
+	from Order_SizeSpec_OrderCombo oso WITH (NOLOCK) 
+	where oso.OrderComboID = o.OrderComboID and SizeItem = 'S01' and oso.SizeCode = t.SizeCode and oso.id = o.poid
+) osso
+outer apply(select os.SizeSpec from Order_SizeSpec os WITH (NOLOCK) where os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = t.SizeCode) oss
 order by MinSeq
 drop table #temp
 ", PackingListID);
@@ -1252,7 +1255,7 @@ select  pd.OrderID
         , pd.CTNQty
         , PackInstruction = isnull(o.Packing,'')
         , pd.Seq
-        , SizeSpec = isnull(os.SizeSpec,'')
+        , SizeSpec = iif(osso.SizeSpec is null, isnull(oss.SizeSpec,''),osso.SizeSpec)
         , TtlShipQty = (select sum(ShipQty) 
                         from PackingList_Detail WITH (NOLOCK) 
                         where   Id = p.ID 
@@ -1271,9 +1274,12 @@ from PackingList p WITH (NOLOCK)
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
-                                              and SizeItem = 'S01' 
-                                              and os.SizeCode = pd.SizeCode
+outer apply(
+	select distinct oso.SizeSpec 
+	from Order_SizeSpec_OrderCombo oso WITH (NOLOCK) 
+	where oso.OrderComboID = o.OrderComboID and SizeItem = 'S01' and oso.SizeCode = pd.SizeCode and oso.id = o.poid
+) osso
+outer apply(select os.SizeSpec from Order_SizeSpec os WITH (NOLOCK) where os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode) oss
 where p.ID = '{0}'
 order by pd.Seq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -1350,19 +1356,22 @@ from (
             , pd.Article
             , pd.Color
             , pd.SizeCode
-            , SizeSpec = isnull(os.SizeSpec,'')
+            , SizeSpec = iif(osso.SizeSpec is null, isnull(oss.SizeSpec,''),osso.SizeSpec)
             , pd.QtyPerCTN
             , pd.CTNQty
             , MinSeq = min(pd.Seq)
             , MaxSeq = max(pd.Seq)
     from PackingList_Detail pd WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-    left join Order_SizeSpec os WITH (NOLOCK) on  os.Id = o.POID 
-                                                  and SizeItem = 'S01' 
-                                                  and os.SizeCode = pd.SizeCode
+    outer apply(
+	    select distinct oso.SizeSpec 
+	    from Order_SizeSpec_OrderCombo oso WITH (NOLOCK) 
+	    where oso.OrderComboID = o.OrderComboID and SizeItem = 'S01' and oso.SizeCode = pd.SizeCode and oso.id = o.poid
+    ) osso
+    outer apply(select os.SizeSpec from Order_SizeSpec os WITH (NOLOCK) where os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode) oss
     where pd.ID = '{0}'
     group by pd.ID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.Color
-             , pd.SizeCode, isnull(os.SizeSpec,''), pd.QtyPerCTN, pd.CTNQty
+             , pd.SizeCode, iif(osso.SizeSpec is null, isnull(oss.SizeSpec,''),osso.SizeSpec), pd.QtyPerCTN, pd.CTNQty
 ) a
 order by a.MinSeq", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out printGroupData);
