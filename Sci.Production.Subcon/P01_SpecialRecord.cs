@@ -107,14 +107,14 @@ Select  0 as Selected
         , 0.0000 as amount 
         , ccc.id as artworktypeid
         , rtrim(ccc.id) as artworkid
-        , patterncode = (select PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
-        , patterndesc = (select PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterncode = (select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterndesc = (select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
         , Style = aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
 from orders aaa WITH (NOLOCK) 
 inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
-inner join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 ,artworktype  ccc WITH (NOLOCK)
         , (Select   a.id orderid
@@ -143,7 +143,7 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTyp
                  strSQLCmd += @"
            ) as aa
 where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
-group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
+group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,ot.Price";
 
 
                 Ict.DualResult result;
