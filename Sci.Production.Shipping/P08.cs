@@ -650,7 +650,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                
                 for (int i = 0; i < detailgrid.ColumnCount; i++)
                 {
-                    if (i == 0 || i == 2 || i == 7)
+                    if (i == 0 || i == 2 || i == 8)
                     {
                         detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
                     }
