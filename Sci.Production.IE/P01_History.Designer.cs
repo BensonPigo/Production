@@ -109,7 +109,7 @@
             this.btnSummary.TabIndex = 8;
             this.btnSummary.Text = "Summary";
             this.btnSummary.UseVisualStyleBackColor = true;
-            this.btnSummary.Click += new System.EventHandler(this.btnSummary_Click);
+            this.btnSummary.Click += new System.EventHandler(this.BtnSummary_Click);
             // 
             // btnClose
             // 
@@ -131,7 +131,7 @@
             this.btnToExcel.TabIndex = 9;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // label7
             // 
@@ -199,7 +199,7 @@
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.Size = new System.Drawing.Size(149, 24);
             this.comboStatus.TabIndex = 4;
-            this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.comboStatus_SelectedIndexChanged);
+            this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.ComboStatus_SelectedIndexChanged);
             // 
             // labelNumOfSewer
             // 

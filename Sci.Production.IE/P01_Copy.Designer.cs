@@ -1,5 +1,11 @@
-﻿namespace Sci.Production.IE
+﻿using System;
+using Sci.Win.UI;
+
+namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_P01_Copy
+    /// </summary>
     partial class P01_Copy
     {
         /// <summary>
@@ -43,7 +49,6 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 23);
@@ -56,7 +61,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(25, 36);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(51, 23);
@@ -65,7 +69,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(25, 73);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(51, 23);
@@ -74,7 +77,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(25, 111);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(51, 23);
@@ -89,7 +91,7 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(80, 23);
             this.txtBrand.TabIndex = 3;
-            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBrand_PopUp);
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBrand_PopUp1);
             // 
             // txtStyle
             // 
@@ -99,8 +101,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(130, 23);
             this.txtStyle.TabIndex = 0;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
-            this.txtStyle.Validated += new System.EventHandler(this.txtStyle_Validated);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp1);
+            this.txtStyle.Validated += new System.EventHandler(this.TxtStyle_Validated1);
             // 
             // txtseason
             // 
@@ -111,7 +113,7 @@
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 2;
-            this.txtseason.Validated += new System.EventHandler(this.txtseason_Validated);
+            this.txtseason.Validated += new System.EventHandler(this.Txtseason_Validated1);
             // 
             // comboStyle
             // 
@@ -132,7 +134,7 @@
             this.btnOK.TabIndex = 4;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += new System.EventHandler(this.BtnOK_Click1);
             // 
             // btnCancel
             // 
@@ -166,7 +168,6 @@
             this.PerformLayout();
 
         }
-
         #endregion
 
         private Win.UI.Label label1;
