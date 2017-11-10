@@ -556,9 +556,9 @@ drop table #tmp");
             }
 
             /*
-             * 依照 From POID 建立 P23
+             * 依照 To POID 建立 P23
              */
-            var listPoid = findrow.Select(row => row["frompoid"]).Distinct().ToList();
+            var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
             var tmpId = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now, batchNumber: listPoid.Count);
             if (MyUtility.Check.Empty(tmpId))
             {
@@ -634,7 +634,7 @@ from #tmp";
 
             foreach (DataRow item in findrow)
             {
-                DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["frompoid"])).ToArray();
+                DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["ToPOID"])).ToArray();
                 DataRow drNewDetail = dtDetail.NewRow();
                 drNewDetail["ID"] = drGetID[0]["ID"];
                 drNewDetail["FromFtyInventoryUkey"] = item["fromftyinventoryukey"];
@@ -696,11 +696,12 @@ from #tmp";
             {
                 if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
-                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["frompoid"])).ToArray();
+                    DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(Alldetailrows["ToPOID"])).ToArray();
                     Alldetailrows.GetParentRow("rel1")["selected"] = true;
                     Alldetailrows.GetParentRow("rel1")["TransID"] = drGetID[0]["ID"];
                 }
             }
+
             //Create後Btn失效，需重新Qurey才能再使用。
             btnCreate.Enabled = false;
             this.gridRel.ValidateControl();
