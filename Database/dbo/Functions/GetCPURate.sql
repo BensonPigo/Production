@@ -25,7 +25,7 @@ Begin
 	End;
 	Else
 	Begin
-		If IsNull(@OrderTypeID, '') != ''
+		If IsNull(@ProgramID, '') != ''
 		Begin
  			Select Top 1 @CpuRate = Program.RateCost
 			  From Program WITH (NOLOCK)
