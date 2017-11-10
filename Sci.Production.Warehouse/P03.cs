@@ -156,8 +156,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_Refno(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_Refno(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
 
@@ -180,8 +183,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region Taipei Stock Qty 開窗
@@ -190,8 +196,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region Released Qty 開窗
@@ -200,8 +209,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
             #region Balance Qty 開窗
@@ -210,9 +222,16 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
-                DialogResult DR =  frm.ShowDialog(this);
-                if (DR == DialogResult.OK) btnQuery_Click(null, null);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
+                    frm.ShowDialog(this);
+                }
+                else if (dr["From_Program"].Equals("P04"))
+                {
+                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dr, "P03");
+                    form.Show(this);
+                }
             };
             #endregion
             #region Inventory Qty 開窗
@@ -221,8 +240,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -232,8 +254,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -243,8 +268,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -254,8 +282,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -265,8 +296,11 @@ namespace Sci.Production.Warehouse
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
-                frm.ShowDialog(this);
+                if (dr["From_Program"].Equals("P03"))
+                {
+                    var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -282,7 +316,7 @@ namespace Sci.Production.Warehouse
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
             .Text("refno", header: "Ref#", iseditingreadonly: true, settings: ts2)  //6
             .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(33))  //8
-            .Text("fabrictype2", header: "Fabric\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7            
+            .Text("fabrictype2", header: "Material\r\nType", iseditingreadonly: true, width: Widths.AnsiChars(6))  //7            
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
@@ -376,18 +410,18 @@ namespace Sci.Production.Warehouse
                 #endregion
 
 
-                if (dr["junk"].ToString() == "True")
+                if (dr["junk"].ToString() == "1")
                 {
                     gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                 }
                 else
                 {
-                    if (dr["ThirdCountry"].ToString() == "True")
+                    if (dr["ThirdCountry"].ToString() == "1")
                     {
                         gridMaterialStatus.Rows[i].Cells["Suppid"].Style.BackColor = Color.FromArgb(220, 140, 255);
                     }
 
-                    if (dr["BomTypeCalculate"].ToString() == "True")
+                    if (dr["BomTypeCalculate"].ToString() == "1")
                     {
                         gridMaterialStatus.Rows[i].Cells["description"].Style.BackColor = Color.FromArgb(255, 170, 100);
                     }
@@ -512,6 +546,7 @@ from(
             , FIR
             , Remark
             , OrderIdList
+             , From_Program
     from (
         select  *
                 , -len(description) as len_D 
@@ -588,6 +623,7 @@ from(
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 		                                    ) tmp for xml path(''))
                                     ,1,1,'')
+                    , [From_Program] = 'P03'
             from #tmpOrder as orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
@@ -665,6 +701,7 @@ from(
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 		                                     ) tmp for xml path(''))
                                             ,1,1,'')
+                    , [From_Program] = 'P03'
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join #tmpOrder as o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 
@@ -673,11 +710,63 @@ from(
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
         where   1=1 
-                AND a.id IS NOT NULL                 
+                AND a.id IS NOT NULL  
                ) as xxx
     ) as xxx2
 ) as xxx3
 where ROW_NUMBER_D =1 
+--加入P04資料
+	union all
+       select 
+			1 as ROW_NUMBER_D
+			, [ukey] = null
+           , [id] = l.OrderID
+           , [seq1] = '-'
+           , [seq2] = '-'
+			, [StyleID] = '-'
+           , [SuppID]  = c.ID + '-' + c.Abb
+           , [SuppCountry] = '-'
+           , [eta] = '-'
+           , [RevisedETA] = '-'
+           , [Refno]		= l.Refno
+           , [SCIRefno] = '-'
+           , [FabricType] = l.UnitID
+           , [fabrictype2] = l.UnitID
+           , [fabrictypeOrderby] = null
+           , [ColorID] = l.ThreadColorID
+           , [SizeSpec] = '-'
+           , [unitqty] = '-'
+           , [Qty] = '0'
+           , [NetQty] = '0'
+           , [useqty] = '0'
+           , [shipQty] = '0'
+           , [ShipFOC] = '-'
+           , [InputQty] = '0'
+           , [POUnit] = '-'
+           , [Complete] = '-'
+           , [FinalETA] = null
+           , [InQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
+           , [StockUnit] = '-' 
+           , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
+           , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
+           , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
+           , [LInvQty] =  '0' 
+           , [LObQty] =  '0'
+           , [ALocation] = l.ALocation
+           , [BLocation] = '-' 
+           , [ThirdCountry] = 0
+           , [junk] = 0
+           , [BomTypeCalculate] = 0
+           , [description]  = b.Description
+           , [currencyid] = '-'
+           , [FIR] = '-'
+           , [Remark] = '-'
+           , [OrderIdList] = '-'
+           , [From_Program] = 'P04'
+           from LocalInventory l
+           left join LocalItem b on l.Refno=b.RefNo
+           left join LocalSupp c on b.LocalSuppid=c.ID
+            where l.OrderID like @id + '%'      
 drop table #tmpOrder
             ";
             #endregion

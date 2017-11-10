@@ -22,14 +22,24 @@ namespace Sci.Production.Warehouse
         DataTable dataTable;
         List<SqlParameter> sqlPar = new List<SqlParameter>();
 
-        public P04_LocalTransaction(DataRow dataRow):base()
+        public P04_LocalTransaction(DataRow dataRow,string from_program):base()
         {
             InitializeComponent();
             this.dataRow = dataRow;
 
-            sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString().Trim()));
-            sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
-            sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString().Trim()));
+            if (from_program.Equals("P03"))
+            {
+                sqlPar.Add(new SqlParameter("@Poid", dataRow["id"].ToString().Trim()));
+                sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
+                sqlPar.Add(new SqlParameter("@ColorID", dataRow["ColorID"].ToString().Trim()));
+            }
+            else {
+                sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString().Trim()));
+                sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
+                sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString().Trim()));
+            }
+            
+         
         }
 
         protected override void OnFormLoaded()
