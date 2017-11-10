@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, f_codeTb;
+        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, GarmentTb_CutRefEmpty, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, headertb;
         string f_code;
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -434,16 +434,12 @@ namespace Sci.Production.Cutting
             artTb.Clear();
             qtyTb.Clear();
             GarmentTb = null;
+            GarmentTb_CutRefEmpty = null;
             CutRefTb = null;
             ArticleSizeTb = null;
             ExcessTb = null;
             SizeRatioTb = null;
-            f_codeTb = null;
-            //if (CutRefTb != null) CutRefTb.Clear();
-            //if (ArticleSizeTb != null) ArticleSizeTb.Clear();
-            //if (ExcessTb != null) ExcessTb.Clear();
-            //if (SizeRatioTb != null) SizeRatioTb.Clear();
-            //if (f_codeTb != null) f_codeTb.Clear();
+            headertb = null;
             #endregion
             //判斷必須有一條件存在
             if (MyUtility.Check.Empty(cutref) && MyUtility.Check.Empty(cutdate) && MyUtility.Check.Empty(poid))
@@ -640,44 +636,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 m.btn_Find.Location = new Point(150, 6);
                 m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
             }
-            #endregion
-            #region GarmentList Table
-            //將PO# Group by 
-            // CutRefTb.DefaultView.
-            //DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
-            DataTable dtDis = null;
-            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);
-            //foreach (DataRow dr in dtDis.Rows)
-            //{
-            //    DataTable tmpTb;
-            //    PublicPrg.Prgs.GetGarmentListTable("", dr["POID"].ToString(), out tmpTb);
-            //    if (GarmentTb == null)
-            //    {
-            //        GarmentTb = tmpTb;
-            //    }
-            //    else
-            //    {
-            //        GarmentTb.Merge(tmpTb);
-            //    }
-            //}
-            #endregion
-
-            #region ArticleGroup
-            //ArticleGroup
-            string sqlcmd = String.Format(@"
-SELECT pga.ArticleGroup
-FROM Pattern_GL_Article pga WITH (NOLOCK)
-inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
-inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
-WHERE o.ID = '{0}' and p.Status = 'Completed'
-AND p.EDITdATE = (
-	SELECT MAX(p2.EditDate) 
-	from pattern p2 WITH (NOLOCK) 
-	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
-)"
-                , dtDis.Rows[0]["poid"].ToString());
-            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
-            #endregion
+            #endregion        
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
             int iden = 1;
@@ -685,7 +644,6 @@ AND p.EDITdATE = (
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
                 dr["iden"] = iden;
-                PublicPrg.Prgs.GetGarmentListTable(dr["Cutref"].ToString(), dr["POID"].ToString(), out GarmentTb);
                 #region Create Qtytb
                 DataRow qty_newRow = qtyTb.NewRow();
                 qty_newRow["No"] = 1;
@@ -696,19 +654,7 @@ AND p.EDITdATE = (
                 qty_newRow["SizeCode"] = dr["SizeCode"];
                 qty_newRow["iden"] = iden;
                 qtyTb.Rows.Add(qty_newRow);
-                #endregion
-                string patidsql = String.Format(
-                            @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
-                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-                              AND EDITdATE = 
-                              (
-                                SELECT MAX(EditDate) 
-                                from pattern WITH (NOLOCK) 
-                                where styleukey = '{0}' and Status = 'Completed'
-                              )
-             ", dr["Styleukey"].ToString());
-                string patternukey = MyUtility.GetValue.Lookup(patidsql);
+                #endregion           
                 createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
@@ -737,7 +683,8 @@ AND p.EDITdATE = (
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
             string patidsql;
-
+            DataTable garmentListTb;
+            #region 輸出GarmentTb
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
             if (MyUtility.Check.Empty(cutref))
             {
@@ -767,13 +714,56 @@ AND p.EDITdATE = (
             string headercodesql = string.Format(@"
 Select distinct ArticleGroup 
 from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{0}'
+where PatternUkey = '{0}' 
 order by ArticleGroup", patternukey);
+            
+            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
+            if (!headerResult)
+            {
+                return;
+            }
+            #region 建立Table
+            string tablecreatesql = string.Format(@"Select '{0}' as orderid,a.*,'' as F_CODE", poid);
+            foreach (DataRow dr in headertb.Rows)
+            {
+                tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
+            }
+            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
+            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
+            if (!tablecreateResult)
+            {
+                return;
+            }
+            #endregion
 
-            DBProxy.Current.Select(null, headercodesql, out f_codeTb);
+            #region 寫入FCode~CodeA~CodeZ
+            string lecsql = "";
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
+            DataTable drtb;
+            DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
+            if (!drre)
+            {
+                return;
+            }
+            foreach (DataRow dr in garmentListTb.Rows)
+            {
+                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
+                foreach (DataRow lecdr in lecdrar)
+                {
+                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
+                    //dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                    //Mantis_7045 比照舊系統對應FabricPanelCode
+                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
+                }
+                if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
+            }
+            #endregion
+            GarmentTb = garmentListTb;
+            #endregion
+
             StringBuilder w = new StringBuilder();
             w.Append(string.Format("orderid = '{0}' and (1=0", poid));
-            foreach (DataRow dr in f_codeTb.Rows)
+            foreach (DataRow dr in headertb.Rows)
             {
                 w.Append(string.Format(" or {0} = '{1}' ", dr[0], patternpanel));
             }
