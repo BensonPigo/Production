@@ -172,7 +172,7 @@ outer apply (
 	where pd.OrderID = A1.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
-WHERE ot.IsGMTMaster = 1";
+WHERE ot.IsGMTMaster = 0";
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -323,7 +323,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
- WHERE ot.IsGMTMaster = 1";
+ WHERE ot.IsGMTMaster = 0";
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -408,7 +408,7 @@ OUTER APPLY (select top 1 PulloutDate
 			from Pullout_Detail pd 
 			where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
 Order by pulloutDate desc) pd 
-WHERE ot.IsGMTMaster = 1
+WHERE ot.IsGMTMaster = 0
       and opd.sQty <>0  ";
                     if (this.dateFactoryKPIDate.Value1 != null)
                     {
@@ -492,7 +492,7 @@ OUTER APPLY (select sum(ShipQty)   - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ
 OUTER APPLY (select top 1 PulloutDate 
 from Pullout_Detail pd where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
 Order by pulloutDate desc) pd
-WHERE ot.IsGMTMaster = 1
+WHERE ot.IsGMTMaster = 0
       and (opd.sQty > 0 or pd.PulloutDate is null)  
 ";
                     if (this.dateFactoryKPIDate.Value1 != null)
@@ -597,7 +597,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
-WHERE ot.IsGMTMaster = 1 ";
+WHERE ot.IsGMTMaster = 0 ";
                     if (this.dateFactoryKPIDate.Value1 != null)
                     {
                         strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
