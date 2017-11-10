@@ -30,7 +30,6 @@ namespace Sci.Production.Shipping
         Ict.Win.UI.DataGridViewTextBoxColumn col_code;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_rate;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_price;
         Ict.Win.UI.DataGridViewTextBoxColumn col_remark;
         private bool haveEditShareFee;
         public P08(ToolStripMenuItem menuitem)
@@ -287,7 +286,7 @@ where sd.ID = '{0}'", masterID);
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6), decimal_places: 4, settings: qty).Get(out col_qty)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), decimal_places: 4,minimum:-9999999999, settings: price).Get(out col_price)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 4,minimum:-9999999999, settings: price)
                 .Numeric("Rate", header: "Rate", width: Widths.AnsiChars(9), decimal_places: 6, settings: rate).Get(out col_rate)
                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
                 .Text("Remark", header: "WK#/Reamrk", width: Widths.AnsiChars(10)).Get(out col_remark)
@@ -647,12 +646,11 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 col_code.IsEditingReadOnly = false;
                 col_qty.IsEditingReadOnly = false;
                 col_rate.IsEditingReadOnly = false;
-                col_price.IsEditingReadOnly = false;
                 col_remark.IsEditingReadOnly = false;
                
                 for (int i = 0; i < detailgrid.ColumnCount; i++)
                 {
-                    if (i == 0 || i == 2 || i == 5|| i == 7)
+                    if (i == 0 || i == 2 || i == 7)
                     {
                         detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
                     }
@@ -663,7 +661,6 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 col_code.IsEditingReadOnly = true;
                 col_qty.IsEditingReadOnly = true;
                 col_rate.IsEditingReadOnly = true;
-                col_price.IsEditingReadOnly = true;
                 col_remark.IsEditingReadOnly = true;
                 for (int i = 0; i < detailgrid.ColumnCount; i++)
                 {
