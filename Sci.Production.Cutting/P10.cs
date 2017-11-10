@@ -1038,5 +1038,23 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
                 return;
             }
         }
+
+        protected override DualResult ClickDeletePost()
+        {
+            string id = CurrentMaintain["ID"].ToString();
+            string deleteBundleDetailQty = $@"
+delete 
+from Bundle_Detail_Qty
+where id = '{id}'";
+
+            DualResult result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
+
+            if (result == false)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePost();
+        }
     }
 }
