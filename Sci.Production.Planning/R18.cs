@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -13,74 +10,89 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R18
+    /// </summary>
     public partial class R18 : Sci.Win.Tems.PrintForm
     {
-        int selectindex = 0;
-        //decimal months;
-        string factory, mdivision;
-        DateTime? sewingDate1, sewingDate2;
-        DataTable printData, dtDateList;
-        StringBuilder condition = new StringBuilder();
-        StringBuilder datelist = new StringBuilder();
+        private int selectindex = 0;
+        private string factory;
+        private string mdivision;
+        private DateTime? sewingDate1;
+        private DateTime? sewingDate2;
+        private DataTable printData;
+        private DataTable dtDateList;
+        private StringBuilder condition = new StringBuilder();
+        private StringBuilder datelist = new StringBuilder();
 
+        /// <summary>
+        /// R18
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            txtfactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(comboArtworkType,1,1,"HT(UA),HT(Non-UA)");
-            comboArtworkType.SelectedIndex = 0;
-            dateSewingDate.Value1 = DateTime.Now.Date;
-            dateSewingDate.Value2 = DateTime.Now.Date.AddMonths(2);
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, 1, "HT(UA),HT(Non-UA)");
+            this.comboArtworkType.SelectedIndex = 0;
+            this.dateSewingDate.Value1 = DateTime.Now.Date;
+            this.dateSewingDate.Value2 = DateTime.Now.Date.AddMonths(2);
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
-            //    MyUtility.Msg.ErrorBox(" < Sewing Date > can't be empty!!");
-            //    return false;
-            //}
-
             #region -- 必輸的條件 --
-            sewingDate1 = dateSewingDate.Value1;
-            sewingDate2 = dateSewingDate.Value2;
+            this.sewingDate1 = this.dateSewingDate.Value1;
+            this.sewingDate2 = this.dateSewingDate.Value2;
             #endregion
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
-            selectindex = comboArtworkType.SelectedIndex;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.selectindex = this.comboArtworkType.SelectedIndex;
 
             DualResult result;
-            string sql = string.Format(@"with expend_date as 
-                (select cast('{0}' as date) workdate,cast('{1}' as date) endDate ,CONVERT(char(10), '{0}', 111) workdateStr
-                union all
-                select dateadd(day,1,workdate),endDate , CONVERT(CHAR(10),dateadd(day,1,workdate),111) from expend_date 
-                where dateadd(day,1,workdate) <= endDate)
-                select * from expend_date option (maxrecursion 365)",
-                Convert.ToDateTime(sewingDate1).ToString("d"), Convert.ToDateTime(sewingDate2).ToString("d"));
-            if (!(result = DBProxy.Current.Select("", sql , out dtDateList)))
+            string sql = string.Format(
+                @"
+;with expend_date as 
+(
+    select cast('{0}' as date) workdate,cast('{1}' as date) endDate ,CONVERT(char(10), '{0}', 111) workdateStr
+    union all
+    select dateadd(day,1,workdate),endDate , CONVERT(CHAR(10),dateadd(day,1,workdate),111) from expend_date 
+    where dateadd(day,1,workdate) <= endDate)
+    select * from expend_date option (maxrecursion 365)",
+                Convert.ToDateTime(this.sewingDate1).ToString("d"),
+                Convert.ToDateTime(this.sewingDate2).ToString("d"));
+            if (!(result = DBProxy.Current.Select(string.Empty, sql, out this.dtDateList)))
             {
                 MyUtility.Msg.ErrorBox("Sewing date can not more than 365 days !!");
                 return false;
             }
 
-            if (dtDateList.Rows.Count == 0)
+            if (this.dtDateList.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Artwork Type data not found, Please inform MIS to check !");
                 return false;
             }
 
-            datelist.Clear();
-            for (int i = 0; i < dtDateList.Rows.Count;i++ )
+            this.datelist.Clear();
+            for (int i = 0; i < this.dtDateList.Rows.Count; i++)
             {
-                datelist.Append(string.Format(@"[{0}],", dtDateList.Rows[i]["workdateStr"].ToString()));
+                this.datelist.Append(string.Format(@"[{0}],", this.dtDateList.Rows[i]["workdateStr"].ToString()));
             }
+
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
@@ -116,45 +128,44 @@ AND Order_TmsCost.TMS > 0
 "));
 
             #region --- 條件組合  ---
-            condition.Clear();
-            if (!MyUtility.Check.Empty(sewingDate1) && !MyUtility.Check.Empty(sewingDate2))
+            this.condition.Clear();
+            if (!MyUtility.Check.Empty(this.sewingDate1) && !MyUtility.Check.Empty(this.sewingDate2))
             {
-                sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))",
-                sewingDate1, Convert.ToDateTime(sewingDate2).ToString("d")));
-                condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
-                , Convert.ToDateTime(sewingDate1).ToString("d")
-                , Convert.ToDateTime(sewingDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))", this.sewingDate1, Convert.ToDateTime(this.sewingDate2).ToString("d")));
+                this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sewingDate1).ToString("d"), Convert.ToDateTime(this.sewingDate2).ToString("d")));
             }
             else
             {
-                if (!MyUtility.Check.Empty(sewingDate1))
+                if (!MyUtility.Check.Empty(this.sewingDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline >= '{0}' or SewingSchedule.Offline >='{0}' ", Convert.ToDateTime(sewingDate1).ToString("d")));
-                    condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sewingDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline >= '{0}' or SewingSchedule.Offline >='{0}' ", Convert.ToDateTime(this.sewingDate1).ToString("d")));
+                    this.condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(this.sewingDate1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(sewingDate2))
+
+                if (!MyUtility.Check.Empty(this.sewingDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline <= '{0}' or SewingSchedule.Offline <='{0}'", Convert.ToDateTime(sewingDate2).ToString("d")));
-                    condition.Append(string.Format(@"SCI Delivery :  ~ {0} ", Convert.ToDateTime(sewingDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline <= '{0}' or SewingSchedule.Offline <='{0}'", Convert.ToDateTime(this.sewingDate2).ToString("d")));
+                    this.condition.Append(string.Format(@"SCI Delivery :  ~ {0} ", Convert.ToDateTime(this.sewingDate2).ToString("d")));
                 }
             }
-            if (!MyUtility.Check.Empty(mdivision))
+
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and orders.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
-                condition.Append(string.Format(@"    M : {0}", mdivision));
+                this.condition.Append(string.Format(@"    M : {0}", this.mdivision));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and orders.FtyGroup = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
-                condition.Append(string.Format(@"    Factory : {0}", factory));
+                this.condition.Append(string.Format(@"    Factory : {0}", this.factory));
             }
 
-            switch (selectindex)
+            switch (this.selectindex)
             {
                 case 0:
                     sqlCmd.Append(@" AND orders.BrandID = 'U.ARMOUR'");
@@ -163,11 +174,13 @@ AND Order_TmsCost.TMS > 0
                     sqlCmd.Append(@" AND orders.BrandID != 'U.ARMOUR' ");
                     break;
             }
-            condition.Append(string.Format(@"    Category : {0}", comboArtworkType.SelectedText));
+
+            this.condition.Append(string.Format(@"    Category : {0}", this.comboArtworkType.SelectedText));
 
             #endregion
 
-            sqlCmd.Append(string.Format(@"union all
+            sqlCmd.Append(string.Format(
+                @"union all
 select id,factoryid,sewinglineid
 ,StyleID
 ,orderid
@@ -224,54 +237,59 @@ pivot
         sum(TTL_HT_TMS)
         for workdate  in ({0})
     )as pvt  order by factoryid,sewinglineid,orderid,inline
-", datelist.ToString().Substring(0, datelist.ToString().Length - 1)));
- 
+", this.datelist.ToString().Substring(0, this.datelist.ToString().Length - 1)));
+
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!");
                 return false;
             }
 
-            if (printData.Columns.Count > 16384)
+            if (this.printData.Columns.Count > 16384)
             {
                 MyUtility.Msg.ErrorBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            if (printData.Rows.Count + 6 > 1048576)
+            if (this.printData.Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.ErrorBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R18.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R18.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R18.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R18.xltx", 1, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
-            Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheet.Name = comboArtworkType.SelectedValue.ToString();
-            //objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
+            Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheet.Name = this.comboArtworkType.SelectedValue.ToString();
+
             Excel.Range range = null;
-            for (int i = 0; i < dtDateList.Rows.Count; i++)  //列印動態欄位的表頭
+            for (int i = 0; i < this.dtDateList.Rows.Count; i++)
             {
-                objSheet.Cells[1, 10 + i] = dtDateList.Rows[i]["workdateStr"].ToString();
-                range = ((Excel.Range)objSheet.Cells[1, 10 + i]);
+                objSheet.Cells[1, 10 + i] = this.dtDateList.Rows[i]["workdateStr"].ToString();
+                range = (Excel.Range)objSheet.Cells[1, 10 + i];
                 range.Select();
                 range.HorizontalAlignment = -4108;
                 range.VerticalAlignment = -4108;

@@ -74,16 +74,19 @@ from (
         ,b.Orderid [SP]
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
-        ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,a.SizeCode [Size]
         --,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
         ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
         --,Artwork.Artwork [Artwork]
-    ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
+        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+            ,brand=c.brandid
+        ,b.item
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -109,7 +112,7 @@ from (
         ,b.Orderid [SP]
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
-        ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,a.SizeCode [Size]
@@ -118,6 +121,9 @@ from (
         ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
         ,a.Qty [Quantity]
         ,a.BundleNo [Barcode]
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+            ,brand=c.brandid
+        ,b.item
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -162,7 +168,7 @@ from (
 			,b.Orderid [SP]
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
-			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
 			,a.SizeCode [Size]
@@ -171,6 +177,9 @@ from (
 			,a.Qty [Quantity]
 			,a.BundleNo [Barcode]
 			,a.Patterncode
+            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
+            ,brand=c.brandid
+        ,b.item
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -190,15 +199,18 @@ from (
 			,b.Orderid [SP]
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
-			,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
 			,a.SizeCode [Size]
 			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-	,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
+	        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
 			,a.Qty [Quantity]
 			,a.BundleNo [Barcode]
 			,a.Patterncode
+            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
+            ,brand=c.brandid
+            ,b.item
 	from dbo.Bundle_Detail a WITH (NOLOCK) 
 	left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
 	left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -518,7 +530,10 @@ order by x.[Bundle]");
                         Desc = row1["Desc"].ToString(),
                         Artwork = row1["Artwork"].ToString(),
                         Quantity = row1["Quantity"].ToString(),
-                        Barcode = row1["Barcode"].ToString()
+                        Barcode = row1["Barcode"].ToString(),
+                        Season = row1["Seasonid"].ToString(),
+                        brand = row1["brand"].ToString(),
+                        item = row1["item"].ToString()
                     }).ToList();
                 data.AddRange(
                  dt2.AsEnumerable().Select(row1 => new P10_PrintData()
@@ -538,7 +553,10 @@ order by x.[Bundle]");
                      Desc2 = row1["Desc"].ToString(),
                      Artwork2 = row1["Artwork"].ToString(),
                      Quantity2 = row1["Quantity"].ToString(),
-                     Barcode2 = row1["Barcode"].ToString()
+                     Barcode2 = row1["Barcode"].ToString(),
+                     Season2 = row1["Seasonid"].ToString(),
+                     brand2 = row1["brand"].ToString(),
+                     item2 = row1["item"].ToString()
                  }).ToList());
 
 
@@ -560,7 +578,10 @@ order by x.[Bundle]");
                     Desc3 = row1["Desc"].ToString(),
                     Artwork3 = row1["Artwork"].ToString(),
                     Quantity3 = row1["Quantity"].ToString(),
-                    Barcode3 = row1["Barcode"].ToString()
+                    Barcode3 = row1["Barcode"].ToString(),
+                    Season3 = row1["Seasonid"].ToString(),
+                    brand3 = row1["brand"].ToString(),
+                    item3 = row1["item"].ToString()
                 }).ToList());
 
                 report.ReportDataSource = data;

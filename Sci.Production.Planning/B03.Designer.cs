@@ -166,7 +166,7 @@
             this.gridArtworkType.Size = new System.Drawing.Size(918, 233);
             this.gridArtworkType.TabIndex = 1;
             this.gridArtworkType.TabStop = false;
-            this.gridArtworkType.SelectionChanged += new System.EventHandler(this.grid1_SelectionChanged);
+            this.gridArtworkType.SelectionChanged += new System.EventHandler(this.Grid1_SelectionChanged);
             // 
             // displayBrand
             // 

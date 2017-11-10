@@ -150,7 +150,7 @@
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
             this.dateDate.TabIndex = 0;
-            this.dateDate.Validated += new System.EventHandler(this.dateDate_Validated);
+            this.dateDate.Validated += new System.EventHandler(this.DateDate_Validated);
             // 
             // comboArtworkType
             // 
@@ -163,7 +163,7 @@
             this.comboArtworkType.Name = "comboArtworkType";
             this.comboArtworkType.Size = new System.Drawing.Size(159, 24);
             this.comboArtworkType.TabIndex = 1;
-            this.comboArtworkType.SelectedIndexChanged += new System.EventHandler(this.comboArtworkType_SelectedIndexChanged);
+            this.comboArtworkType.SelectedIndexChanged += new System.EventHandler(this.ComboArtworkType_SelectedIndexChanged);
             // 
             // numCapacity
             // 
@@ -236,7 +236,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(229, 31);
             this.radioPanel1.TabIndex = 5;
-            this.radioPanel1.Validated += new System.EventHandler(this.radioPanel1_Validated);
+            this.radioPanel1.Validated += new System.EventHandler(this.RadioPanel1_Validated);
             // 
             // radiobyMonth
             // 

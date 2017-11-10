@@ -11,6 +11,7 @@ using Sci.Win.UI;
 using Ict.Data;
 using Ict;
 using Sci.Win.Tools;
+using System.Transactions;
 
 namespace Sci.Production.Cutting
 {
@@ -367,45 +368,7 @@ order by bundlegroup"
                 }
             }
             #endregion
-
-            #region 處理Bundle_Detail_AllPart
-            //int allpart_old_rowCount = allparttmp.Rows.Count;
-
-            //foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
-            //{
-            //    //新的AllPartDetail 數量大於原本資料庫裡的,就進來
-            //    if (bundle_Detail_allpart_Tb.Rows.Count > allpart_old_rowCount)
-            //    {                  
-            //        allpart_cmd = allpart_cmd + string.Format(
-            //        @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
-            //        , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
-            //    }
-            //    //if (row >= allpart_old_rowCount) //新增
-            //    //{
-            //    //    allpart_cmd = allpart_cmd + string.Format(
-            //    //    @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
-            //    //    , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
-            //    //}
-            //    else //覆蓋
-            //    {
-            //        allpart_cmd = allpart_cmd + string.Format(
-            //    @"update bundle_Detail_allpart set PatternCode ='{0}',PatternDesc = '{1}',
-            //    Parts ={2}  Where ukey ={3};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"], allparttmp.Rows[row]["ukey"]);
-            //    }
-            //    row++;
-
-            //}
-            //bundle_Detail_allpart_Tb.AcceptChanges();//變更Row Status 狀態
-            //int allpart_new_rowCount = bundle_Detail_allpart_Tb.Rows.Count;
-            //if (allpart_old_rowCount > allpart_new_rowCount) //舊的筆數小於新的筆數 表示要先覆蓋再刪除多餘的
-            //{
-            //    for (int i = allpart_new_rowCount; i < allpart_old_rowCount; i++)
-            //    {
-            //        allpart_cmd = allpart_cmd + string.Format(@"Delete from bundle_Detail_allpart where ukey ='{0}';", allparttmp.Rows[i]["ukey"]);
-            //    }
-            //}
-            #endregion
-
+            
             #region 處理Bundle_Detail_Art 修改版
             /*
             * 先刪除原有資料
@@ -500,7 +463,7 @@ order by bundlegroup"
                     , CurrentMaintain["ID"], dr["sizecode"], dr["Qty"]);
                 }
                    
-            }   
+            }
 
             #endregion
             #region 處理Bundle_Detail_Qty
@@ -544,27 +507,32 @@ order by bundlegroup"
             //    }
             //}
             #endregion
-            DualResult upResult;
-            if (!MyUtility.Check.Empty(allpart_cmd))
+
+            using (TransactionScope scope = new TransactionScope())
             {
-                if (!(upResult = DBProxy.Current.Execute(null, allpart_cmd)))
+                DualResult upResult;
+                if (!MyUtility.Check.Empty(allpart_cmd))
                 {
-                    return upResult;
+                    if (!(upResult = DBProxy.Current.Execute(null, allpart_cmd)))
+                    {
+                        return upResult;
+                    }
                 }
-            }
-            if (!MyUtility.Check.Empty(Art_cmd))
-            {
-                if (!(upResult = DBProxy.Current.Execute(null, Art_cmd)))
+                if (!MyUtility.Check.Empty(Art_cmd))
                 {
-                    return upResult;
+                    if (!(upResult = DBProxy.Current.Execute(null, Art_cmd)))
+                    {
+                        return upResult;
+                    }
                 }
-            }
-            if (!MyUtility.Check.Empty(Qty_cmd))
-            {
-                if (!(upResult = DBProxy.Current.Execute(null, Qty_cmd)))
+                if (!MyUtility.Check.Empty(Qty_cmd))
                 {
-                    return upResult;
+                    if (!(upResult = DBProxy.Current.Execute(null, Qty_cmd)))
+                    {
+                        return upResult;
+                    }
                 }
+                scope.Complete();
             }
             return base.ClickSavePost();
         }

@@ -235,9 +235,11 @@ from(
         ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
         ,a.Parts [Parts]
         ,a.Qty [Qty]
-        ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
         ,c.FactoryID  [left]
         ,e.MarkerNo
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+        ,brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -280,9 +282,11 @@ from(
         ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
         ,d.Parts [Parts]
         ,a.Qty [Qty]
-        ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
         ,c.FactoryID  [left]
         ,e.MarkerNo
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+        ,brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -346,9 +350,11 @@ from(
         ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
         ,a.Parts [Parts]
         ,a.Qty [Qty]
-        ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
         ,c.FactoryID  [left]
         ,e.MarkerNo
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+        ,brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -391,9 +397,11 @@ from(
         ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
         ,a.Parts [Parts]
         ,a.Qty [Qty]
-        ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
         ,c.FactoryID  [left]
         ,e.MarkerNo
+        ,SeasonID = concat(c.SeasonID,' ', c.dest)
+        ,brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -516,7 +524,9 @@ outer apply
                 Desc = row1["Description"].ToString(),
                 SubProcess = row1["SubProcess"].ToString(),
                 Qty = row1["Qty"].ToString(),
-                Barcode = row1["Bundle"].ToString()
+                Barcode = row1["Bundle"].ToString(),
+                Season = row1["Seasonid"].ToString(),
+                brand = row1["brand"].ToString()
             }).ToList();
 
              res.AddRange( dt2.AsEnumerable()
@@ -540,7 +550,9 @@ outer apply
                Desc2 = row1["Description"].ToString(),
                SubProcess2 = row1["SubProcess"].ToString(),
                Qty2 = row1["Qty"].ToString(),
-               Barcode2 = row1["Bundle"].ToString()
+               Barcode2 = row1["Bundle"].ToString(),
+               Season2 = row1["Seasonid"].ToString(),
+               brand2 = row1["brand"].ToString()
            }).ToList());
 
              res.AddRange( dt3.AsEnumerable()
@@ -564,7 +576,9 @@ outer apply
                Desc3 = row1["Description"].ToString(),
                SubProcess3 = row1["SubProcess"].ToString(),
                Qty3 = row1["Qty"].ToString(),
-               Barcode3 = row1["Bundle"].ToString()
+               Barcode3 = row1["Bundle"].ToString(),
+               Season3 = row1["Seasonid"].ToString(),
+               brand3 = row1["brand"].ToString()
            }).ToList());
 
 

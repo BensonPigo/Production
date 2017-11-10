@@ -111,7 +111,7 @@
             this.radioProductionStatus.TabStop = true;
             this.radioProductionStatus.Text = "Prouction Status";
             this.radioProductionStatus.UseVisualStyleBackColor = true;
-            this.radioProductionStatus.CheckedChanged += new System.EventHandler(this.radioProductionStatus_CheckedChanged);
+            this.radioProductionStatus.CheckedChanged += new System.EventHandler(this.RadioProductionStatus_CheckedChanged);
             // 
             // txtFactory
             // 
@@ -324,7 +324,7 @@
             this.radioSemimonthlyReport.TabStop = true;
             this.radioSemimonthlyReport.Text = "Semimonthly Report";
             this.radioSemimonthlyReport.UseVisualStyleBackColor = true;
-            this.radioSemimonthlyReport.CheckedChanged += new System.EventHandler(this.radioSemimonthlyReport_CheckedChanged);
+            this.radioSemimonthlyReport.CheckedChanged += new System.EventHandler(this.RadioSemimonthlyReport_CheckedChanged);
             // 
             // radioMonthlyReport
             // 

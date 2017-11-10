@@ -1019,18 +1019,14 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                             #endregion
 
                         }
-                        DataRow[] artary = patternTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
-                        foreach (DataRow artdr in artary)
+                        else
                         {
-                            if (artdr.RowState != DataRowState.Deleted)
-                            {
-                                DataRow art_ndr = bundle_detail_artTb.NewRow();
-                                art_ndr["Bundleno"] = dr["Bundleno"];
-                                art_ndr["PatternCode"] = artdr["PatternCode"]; 
-                                art_ndr["Subprocessid"] = artdr["art"];
-                                art_ndr["ukey1"] = dr["ukey1"];
-                                bundle_detail_artTb.Rows.Add(art_ndr);
-                            }
+                            DataRow art_ndr = bundle_detail_artTb.NewRow();
+                            art_ndr["Bundleno"] = dr["Bundleno"];
+                            art_ndr["PatternCode"] = dr["PatternCode"];
+                            art_ndr["Subprocessid"] = dr["subprocessid"];
+                            art_ndr["ukey1"] = dr["ukey1"];
+                            bundle_detail_artTb.Rows.Add(art_ndr);
                         }
                     }
                 }
@@ -1085,18 +1081,13 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         #endregion
 
                     }
-                    DataRow[] artary = patternTb.Select(string.Format("PatternCode='{0}'", tmpdr["PatternCode"]));
-                    foreach (DataRow artdr in artary)
+                    else
                     {
-                        if (artdr.RowState != DataRowState.Deleted)
-                        {
-                            DataRow art_ndr = bundle_detail_artTb.NewRow();
-
-                            art_ndr["PatternCode"] = artdr["PatternCode"];
-                            art_ndr["Subprocessid"] = artdr["art"];
-                            art_ndr["ukey1"] = tmpdr["ukey1"];
-                            bundle_detail_artTb.Rows.Add(art_ndr);
-                        }
+                        DataRow art_ndr = bundle_detail_artTb.NewRow();
+                        art_ndr["PatternCode"] = tmpdr["PatternCode"];
+                        art_ndr["Subprocessid"] = tmpdr["subprocessid"];
+                        art_ndr["ukey1"] = tmpdr["ukey1"];
+                        bundle_detail_artTb.Rows.Add(art_ndr);
                     }
                 }
             }

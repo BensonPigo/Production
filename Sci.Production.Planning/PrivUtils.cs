@@ -1,99 +1,158 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-
 using Ict;
 using Microsoft.Office.Interop.Excel;
 using EXCEL = Microsoft.Office.Interop.Excel;
-using Sci;
 
 namespace Sci.Production.Report
 {
+    /// <summary>
+    /// PrivUtils
+    /// </summary>
     internal static class PrivUtils
     {
-        public static DualResult F_ReportNoData() { return new DualResult(false, "Data not found."); }
+        /// <summary>
+        /// F_ReportNoData
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public static DualResult F_ReportNoData()
+        {
+            return new DualResult(false, "Data not found.");
+        }
 
+        /// <summary>
+        /// Conds
+        /// </summary>
         public static class Conds
         {
+            /// <summary>
+            /// Between
+            /// </summary>
+            /// <param name="colname">colname</param>
+            /// <param name="value1">value1</param>
+            /// <param name="value2">value2</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
             public static void Between(string colname, string value1, string value2, IList<string> conds, IList<SqlParameter> paras)
             {
-                if (null != value1 && 0 < value1.Length && null != value2 && 0 < value2.Length)
+                if (value1 != null && value1.Length > 0 && value2 != null && value2.Length > 0)
                 {
                     string pname1, pname2;
-                    paras.Add(new SqlParameter(pname1 = ("sp_" + paras.Count), value1));
-                    paras.Add(new SqlParameter(pname2 = ("sp_" + paras.Count), value2));
+                    paras.Add(new SqlParameter(pname1 = "sp_" + paras.Count, value1));
+                    paras.Add(new SqlParameter(pname2 = "sp_" + paras.Count, value2));
                     conds.Add("{0} BETWEEN @{1} AND @{2}".InvariantFormat(colname, pname1, pname2));
                 }
-                else if (null != value1 && 0 < value1.Length)
+                else if (value1 != null && value1.Length > 0)
                 {
                     string pname;
-                    paras.Add(new SqlParameter(pname = ("sp_" + paras.Count), value1));
+                    paras.Add(new SqlParameter(pname = "sp_" + paras.Count, value1));
                     conds.Add("{0}>=@{1}".InvariantFormat(colname, pname));
                 }
-                else if (null != value2 && 0 < value2.Length)
+                else if (value2 != null && value2.Length > 0)
                 {
                     string pname;
-                    paras.Add(new SqlParameter(pname = ("sp_" + paras.Count), value2));
+                    paras.Add(new SqlParameter(pname = "sp_" + paras.Count, value2));
                     conds.Add("{0}<=@{1}".InvariantFormat(colname, pname));
                 }
             }
+
+            /// <summary>
+            /// Between
+            /// </summary>
+            /// <param name="colname">colname</param>
+            /// <param name="value1">value1</param>
+            /// <param name="value2">value2</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
             public static void Between(string colname, DateTime? value1, DateTime? value2, IList<string> conds, IList<SqlParameter> paras)
             {
                 if (value1.HasValue && value2.HasValue)
                 {
                     string pname1, pname2;
-                    paras.Add(new SqlParameter(pname1 = ("sp_" + paras.Count), value1));
-                    paras.Add(new SqlParameter(pname2 = ("sp_" + paras.Count), value2));
+                    paras.Add(new SqlParameter(pname1 = "sp_" + paras.Count, value1));
+                    paras.Add(new SqlParameter(pname2 = "sp_" + paras.Count, value2));
                     conds.Add("{0} BETWEEN @{1} AND @{2}".InvariantFormat(colname, pname1, pname2));
                 }
                 else if (value1.HasValue)
                 {
                     string pname;
-                    paras.Add(new SqlParameter(pname = ("sp_" + paras.Count), value1));
+                    paras.Add(new SqlParameter(pname = "sp_" + paras.Count, value1));
                     conds.Add("{0}>=@{1}".InvariantFormat(colname, pname));
                 }
                 else if (value2.HasValue)
                 {
                     string pname;
-                    paras.Add(new SqlParameter(pname = ("sp_" + paras.Count), value2));
+                    paras.Add(new SqlParameter(pname = "sp_" + paras.Count, value2));
                     conds.Add("{0}<=@{1}".InvariantFormat(colname, pname));
                 }
             }
+
+            /// <summary>
+            /// Eq
+            /// </summary>
+            /// <param name="colname">colname</param>
+            /// <param name="value">value</param>
+            /// <param name="conds">conds</param>
+            /// <param name="paras">paras</param>
+            /// <param name="ignoreNullAndEmpty">ignoreNullAndEmpty</param>
             public static void Eq(string colname, string value, IList<string> conds, IList<SqlParameter> paras, bool ignoreNullAndEmpty = true)
             {
                 if (ignoreNullAndEmpty)
                 {
-                    if (null == value || 0 == value.Length) return;
+                    if (value == null || value.Length == 0)
+                    {
+                        return;
+                    }
                 }
 
                 string pname;
-                paras.Add(new SqlParameter(pname = ("sp_" + paras.Count), value));
+                paras.Add(new SqlParameter(pname = "sp_" + paras.Count, value));
                 conds.Add("{0}=@{1}".InvariantFormat(colname, pname));
             }
         }
+
+        /// <summary>
+        /// Excels
+        /// </summary>
         public static class Excels
         {
+            /// <summary>
+            /// CellFormatter
+            /// </summary>
+            /// <param name="data">data</param>
+            /// <returns>delegate</returns>
             public delegate object CellFormatter(DataRow data);
+
+            /// <summary>
+            /// CreateExcel
+            /// </summary>
+            /// <param name="templatefile">templatefile</param>
+            /// <param name="excel">excel</param>
+            /// <returns>DualResult</returns>
             public static DualResult CreateExcel(string templatefile, out EXCEL.Application excel)
             {
                 excel = null;
 
-                if (!System.IO.File.Exists(templatefile)) return new DualResult(false, "'{0}' excel template file not exists.".InvariantFormat(templatefile));
+                if (!System.IO.File.Exists(templatefile))
+                {
+                    return new DualResult(false, "'{0}' excel template file not exists.".InvariantFormat(templatefile));
+                }
 
                 EXCEL.Application exc;
                 try
                 {
                     exc = new EXCEL.Application();
                 }
-                catch (Exception ex) { return new DualResult(false, "Create excel application error.", ex); }
+                catch (Exception ex)
+                {
+                    return new DualResult(false, "Create excel application error.", ex);
+                }
 
                 try
                 {
-                    if (null != templatefile && 0 < templatefile.Length)
+                    if (templatefile != null && templatefile.Length > 0)
                     {
                         switch (System.IO.Path.GetExtension(templatefile).ToLowerInvariant())
                         {
@@ -119,20 +178,19 @@ namespace Sci.Production.Report
                 excel = exc;
                 return Result.True;
             }
-            //自動開啟Excel存檔畫面
+
+            /// <summary>
+            /// SaveExcel
+            /// </summary>
+            /// <param name="templatefile">templatefile</param>
+            /// <param name="excel">excel</param>
+            /// <returns>DualResult</returns>
             public static DualResult SaveExcel(string templatefile, EXCEL.Application excel)
             {
-                string file_name = "";
+                string file_name = string.Empty;
                 try
                 {
-                    //存檔至Server特定路徑(抓設定檔)
-                    //excel.ActiveWorkbook.SaveAs(templatefile + ".xls");
-
-                    //excel.ActiveWorkbook.SaveAs(templatefile+".xls", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                    //EXCEL.XlSaveAsAccessMode.xlShared, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-
-                    //若取消會回傳false(bool)--則跳掉 exception 不處理
-                    var rtn = excel.GetSaveAsFilename(templatefile, "Excel workbook (*.xls;*.xlsx),*.xls;*.xlsx"); //Style:S1606LHSW510
+                    var rtn = excel.GetSaveAsFilename(templatefile, "Excel workbook (*.xls;*.xlsx),*.xls;*.xlsx");
                     try
                     {
                         file_name = rtn;
@@ -140,31 +198,32 @@ namespace Sci.Production.Report
                     catch (Exception)
                     {
                     }
-                    if (file_name != "")
-                    {
 
+                    if (file_name != string.Empty)
+                    {
                         excel.ActiveWorkbook.SaveAs(file_name);
                         excel.Visible = true;
                     }
-                    //excel.ActiveWorkbook.OpenLinks(file_name);
                 }
                 catch (Exception ex)
                 {
-                    //已存在檔案開啟中無法存檔
                     string[] arr = file_name.Split('\\');
                     if (ex.ToString().Contains(arr[arr.Length - 1]))
                     {
                         return new DualResult(false, "save fail : file opened, please close first.", ex);
-                    }
-                    else
-                    {
-                        //return new DualResult(false, "Svae excel workbook error.", ex);
                     }
                 }
 
                 return Result.True;
             }
 
+            /// <summary>
+            /// WriteDatas
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="datas">datas</param>
+            /// <param name="cols_or_formatters">cols_or_formatters</param>
+            /// <param name="rowix_begin">rowix_begin</param>
             public static void WriteDatas(Worksheet sheet, System.Data.DataTable datas, object[] cols_or_formatters, int rowix_begin)
             {
                 int ix = rowix_begin;
@@ -180,43 +239,62 @@ namespace Sci.Production.Report
                     }
                     catch (Exception)
                     {
-
                         string ss = string.Format("Export excel error.{0}", it[0].ToString());
-
                     }
 
                     ++ix;
                 }
             }
+
+            /// <summary>
+            /// WriteValue
+            /// </summary>
+            /// <param name="sheet">sheet</param>
+            /// <param name="cell">cell</param>
+            /// <param name="value">value</param>
             public static void WriteValue(Worksheet sheet, string cell, object value)
             {
                 sheet.Range[cell].Value = ParseValue(value);
             }
 
-            const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            private const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
             private static string ParseCell(int num)
             {
-                if (0 > num) return null;
+                if (num < 0)
+                {
+                    return null;
+                }
+
                 var ix = num - 1;
-                var cd = "";
+                var cd = string.Empty;
                 while (true)
                 {
                     int m = ix % 26;
                     cd = CELLs[m] + cd;
 
                     ix = ix / 26;
-                    if (0 == ix) break;
+                    if (ix == 0)
+                    {
+                        break;
+                    }
                 }
+
                 return cd;
             }
+
             private static object[,] ToArray(System.Data.DataRow data, object[] cols_or_formatters)
             {
                 var array = new object[1, cols_or_formatters.Length];
                 for (int i = 0; i < cols_or_formatters.Length; ++i)
                 {
                     var o = cols_or_formatters[i];
-                    if (null == o) continue;
-                    if (o is System.Data.DataColumn)
+                    if (o == null)
+                    {
+                        continue;
+                    }
+
+                    if (o is DataColumn)
                     {
                         var v = data[(System.Data.DataColumn)o];
                         array[0, i] = ParseValue(v);
@@ -233,12 +311,17 @@ namespace Sci.Production.Report
                         array[0, i] = ParseValue(v);
                     }
                 }
+
                 return array;
             }
 
             private static object ParseValue(object value)
             {
-                if (null == value || DBNull.Value == value) return null;
+                if (value == null || value == DBNull.Value)
+                {
+                    return null;
+                }
+
                 if (value is DateTime)
                 {
                     var v = (DateTime)value;
@@ -246,12 +329,21 @@ namespace Sci.Production.Report
                     {
                         return v.ToString("yyyy/MM/dd");
                     }
-                    else return v.ToString("yyyy/MM/dd HH:mm:ss");
+                    else
+                    {
+                        return v.ToString("yyyy/MM/dd HH:mm:ss");
+                    }
                 }
+
                 return value;
             }
         }
 
+        /// <summary>
+        /// CreateTable
+        /// </summary>
+        /// <typeparam name="TABLE">TABLE</typeparam>
+        /// <returns>TABLEx</returns>
         public static TABLE CreateTable<TABLE>()
             where TABLE : System.Data.DataTable, new()
         {
@@ -259,9 +351,17 @@ namespace Sci.Production.Report
             ClearConstrants(t);
             return t;
         }
+
+        /// <summary>
+        /// ClearConstrants
+        /// </summary>
+        /// <param name="table">table</param>
         public static void ClearConstrants(System.Data.DataTable table)
         {
-            if (null == table) table.Clear();
+            if (table == null)
+            {
+                table.Clear();
+            }
 
             table.Constraints.Clear();
             foreach (DataColumn it in table.Columns)
@@ -272,62 +372,122 @@ namespace Sci.Production.Report
                 it.ReadOnly = false;
                 it.Unique = false;
                 it.MaxLength = -1;
-                if (null != it.DefaultValue) it.DefaultValue = null;
+                if (it.DefaultValue != null)
+                {
+                    it.DefaultValue = null;
+                }
             }
         }
+
+        /// <summary>
+        /// GetString
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="col">col</param>
+        /// <returns>string</returns>
         public static string GetString(this DataRow data, DataColumn col)
         {
-            if (null == data) return null;
+            if (data == null)
+            {
+                return null;
+            }
+
             var obj = data[col];
-            return DBNull.Value != obj ? (string)obj : null;
+            return obj != DBNull.Value ? (string)obj : null;
         }
+
+        /// <summary>
+        /// GetDateTime
+        /// </summary>
+        /// <param name="data">data</param>
+        /// <param name="col">col</param>
+        /// <returns>DateTime</returns>
         public static DateTime? GetDateTime(this DataRow data, DataColumn col)
         {
-            if (null == data) return null;
+            if (data == null)
+            {
+                return null;
+            }
+
             var obj = data[col];
-            return DBNull.Value != obj ? (DateTime)obj : (DateTime?)null;
+            return obj != DBNull.Value ? (DateTime)obj : (DateTime?)null;
         }
-        public static string getPath_XLT(string sPath)
+
+        /// <summary>
+        /// GetPath_XLT
+        /// </summary>
+        /// <param name="sPath">sPath</param>
+        /// <returns>string</returns>
+        public static string GetPath_XLT(string sPath)
         {
-            //string strPath = Application.StartupPath.Substring(0, Application.StartupPath.LastIndexOf("Sci.Trade")) + "Sci.Trade.Report\\XLT"; //Excel範例檔路徑
-            //string temfile = Sci.Env.Cfg.XltPathDir + @"\Style-R13.SimilarStyleCalucateOrderqtyAndForecastqty.xltx";
-            string rtn = "";
-            if (Sci.Env.Cfg.XltPathDir != "")
+            string rtn = string.Empty;
+            if (Sci.Env.Cfg.XltPathDir != string.Empty)
             {
                 rtn = Sci.Env.Cfg.XltPathDir;
             }
             else
             {
-
-                string[] strPath_arr = sPath.Split('\\'); //Excel範例檔路徑
+                string[] strPath_arr = sPath.Split('\\'); // Excel範例檔路徑
                 for (int i = 0; i < strPath_arr.Length - 1; i++)
                 {
-                    rtn += strPath_arr[i] + "\\"; //Excel範例檔路徑
+                    rtn += strPath_arr[i] + "\\"; // Excel範例檔路徑
                 }
+
                 rtn += "XLT";
             }
+
             return rtn;
         }
-        const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        public static string getPosition(int num)
+
+        /// <summary>
+        /// CELLs
+        /// </summary>
+        private const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        /// <summary>
+        /// GetPosition
+        /// </summary>
+        /// <param name="num">num</param>
+        /// <returns>string</returns>
+        public static string GetPosition(int num)
         {
-            if (0 > num) return null;
+            if (num < 0)
+            {
+                return null;
+            }
+
             var ix = num - 1;
-            var cd = "";
+            var cd = string.Empty;
             while (true)
             {
                 int m = ix / 26;
                 ix = ix % 26;
-                if (m > 0) cd = cd + CELLs[m - 1];
-                else cd = cd + CELLs[ix];
+                if (m > 0)
+                {
+                    cd = cd + CELLs[m - 1];
+                }
+                else
+                {
+                    cd = cd + CELLs[ix];
+                }
 
-                if (0 == m) break;
+                if (m == 0)
+                {
+                    break;
+                }
             }
+
             return cd;
         }
-        public static string getDayOfWeek(string value)
+
+        /// <summary>
+        /// GetDayOfWeek
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetDayOfWeek(string value)
         {
-            var cd = "";
+            var cd = string.Empty;
             switch (value)
             {
                 case "Monday":
@@ -354,25 +514,26 @@ namespace Sci.Production.Report
                 default:
                     cd = value;
                     break;
-
             }
+
             return cd;
         }
+
+        /// <summary>
+        /// SetRangeMerageCell
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeMerageCell(Range rngCell)
         {
-            //rngCell.WrapText = false;
-            //rngCell.Orientation = 0;
-            //rngCell.AddIndent = false;
-            //rngCell.IndentLevel = 0;
-            //rngCell.ShrinkToFit = false;
             rngCell.MergeCells = true;
-            //rngCell.HorizontalAlignment = HorizontalAlignment.Center;
-            //rngCell.VerticalAlignment = HorizontalAlignment.Center;
             rngCell.VerticalAlignment = EXCEL.Constants.xlCenter;
             rngCell.HorizontalAlignment = EXCEL.Constants.xlCenter;
-
         }
 
+        /// <summary>
+        /// SetRangeLineStyle
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeLineStyle(Range rngCell)
         {
             rngCell.Borders[XlBordersIndex.xlEdgeTop].LineStyle = XlLineStyle.xlContinuous;
@@ -382,28 +543,53 @@ namespace Sci.Production.Report
             rngCell.Borders[XlBordersIndex.xlInsideVertical].LineStyle = XlLineStyle.xlContinuous;
             rngCell.Borders[XlBordersIndex.xlInsideHorizontal].LineStyle = XlLineStyle.xlContinuous;
         }
+
+        /// <summary>
+        /// SetRangeLineStyle_Top
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeLineStyle_Top(Range rngCell)
         {
             rngCell.Borders[XlBordersIndex.xlEdgeTop].LineStyle = XlLineStyle.xlContinuous;
         }
+
+        /// <summary>
+        /// SetRangeLineStyle_Bottom
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeLineStyle_Bottom(Range rngCell)
         {
             rngCell.Borders[XlBordersIndex.xlEdgeBottom].LineStyle = XlLineStyle.xlContinuous;
         }
+
+        /// <summary>
+        /// SetRangeLineStyle_Left
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeLineStyle_Left(Range rngCell)
         {
             rngCell.Borders[XlBordersIndex.xlEdgeLeft].LineStyle = XlLineStyle.xlContinuous;
         }
+
+        /// <summary>
+        /// SetRangeLineStyle_Right
+        /// </summary>
+        /// <param name="rngCell">rngCell</param>
         public static void SetRangeLineStyle_Right(Range rngCell)
         {
             rngCell.Borders[XlBordersIndex.xlEdgeRight].LineStyle = XlLineStyle.xlContinuous;
         }
-        public static string getVersion(string value)
+
+        /// <summary>
+        /// GetVersion
+        /// </summary>
+        /// <param name="value">value</param>
+        /// <returns>string</returns>
+        public static string GetVersion(string value)
         {
-            var rtn = value; // String.Format("{0}          {1}", value, " version.2016111101 ");
+            var rtn = value;
 
             return rtn;
         }
-
     }
 }

@@ -1,43 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R03
+    /// </summary>
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? sciDate1, sciDate2;
-        string style, brand, season, smr, subcon;
+        private DataTable printData;
+        private DateTime? sciDate1;
+        private DateTime? sciDate2;
+        private string style;
+        private string brand;
+        private string season;
+        private string smr;
+        private string subcon;
+
+        /// <summary>
+        /// R03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            style = txtstyle.Text;
-            brand = txtbrand.Text;
-            season = txtseason.Text;
-            smr = txttpeuser_caneditSMR.TextBox1.Text;
-            subcon = txtsubconSupplier.TextBox1.Text;
-            sciDate1 = dateSCIDelivery.Value1;
-            sciDate2 = dateSCIDelivery.Value2;
+            this.style = this.txtstyle.Text;
+            this.brand = this.txtbrand.Text;
+            this.season = this.txtseason.Text;
+            this.smr = this.txttpeuser_caneditSMR.TextBox1.Text;
+            this.subcon = this.txtsubconSupplier.TextBox1.Text;
+            this.sciDate1 = this.dateSCIDelivery.Value1;
+            this.sciDate2 = this.dateSCIDelivery.Value2;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -52,62 +68,63 @@ left join LocalSupp ls WITH (NOLOCK) on ls.ID = saq.LocalSuppId
 left join ArtworkType a WITH (NOLOCK) on a.ID = sa.ArtworkTypeID
 where 1 = 1");
 
-            if (!MyUtility.Check.Empty(style))
+            if (!MyUtility.Check.Empty(this.style))
             {
-                sqlCmd.Append(string.Format(@" and s.ID = '{0}'
-and o.StyleID = '{0}'", style));
+                sqlCmd.Append(string.Format(@" and s.ID = '{0}' and o.StyleID = '{0}'", this.style));
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(@" and s.BrandID = '{0}'
-and o.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(@" and s.BrandID = '{0}' and o.BrandID = '{0}'", this.brand));
             }
 
-            if (!MyUtility.Check.Empty(season))
+            if (!MyUtility.Check.Empty(this.season))
             {
-                sqlCmd.Append(string.Format(@" and s.SeasonID = '{0}'
-and o.SeasonID = '{0}'", season));
+                sqlCmd.Append(string.Format(@" and s.SeasonID = '{0}' and o.SeasonID = '{0}'", this.season));
             }
 
-            if (!MyUtility.Check.Empty(smr))
+            if (!MyUtility.Check.Empty(this.smr))
             {
-                sqlCmd.Append(string.Format(@" and ((s.Phase = 'Sample' and s.SampleSMR = '{0}') or (s.Phase ='Bulk' and s.BulkSMR = '{0}'))", smr));
+                sqlCmd.Append(string.Format(@" and ((s.Phase = 'Sample' and s.SampleSMR = '{0}') or (s.Phase ='Bulk' and s.BulkSMR = '{0}'))", this.smr));
             }
 
-            if (!MyUtility.Check.Empty(subcon))
+            if (!MyUtility.Check.Empty(this.subcon))
             {
-                sqlCmd.Append(string.Format(" and saq.LocalSuppId = '{0}'", subcon));
+                sqlCmd.Append(string.Format(" and saq.LocalSuppId = '{0}'", this.subcon));
             }
 
-            if (!MyUtility.Check.Empty(sciDate1))
+            if (!MyUtility.Check.Empty(this.sciDate1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDate2))
+            if (!MyUtility.Check.Empty(this.sciDate2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("d")));
             }
 
             sqlCmd.Append(" order by s.ID,s.BrandID,s.SeasonID,sa.ArtworkTypeID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -116,13 +133,16 @@ and o.SeasonID = '{0}'", season));
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Planning_R03_LocalQuotationList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            //填內容值
             int intRowsStart = 2;
             object[,] objArray = new object[1, 20];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["ID"];
                 objArray[0, 1] = dr["BrandID"];
@@ -145,7 +165,7 @@ and o.SeasonID = '{0}'", season));
                 objArray[0, 18] = dr["Mockup"];
                 objArray[0, 19] = dr["PriceApv"];
 
-                worksheet.Range[String.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

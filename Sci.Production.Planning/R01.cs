@@ -1,62 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R01
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        int selectindex = 0;
-        string factory, mdivision;
-        DateTime? sciDelivery1, sciDelivery2;
-        DataTable printData;
-        StringBuilder condition = new StringBuilder();
+        private int selectindex = 0;
+        private string factory;
+        private string mdivision;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private DataTable printData;
+        private StringBuilder condition = new StringBuilder();
 
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            txtfactory.Text = Sci.Env.User.Factory;
-            comboCategory.SelectedIndex = 1;  //Bulk
-            dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
-            dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Sci.Env.User.Factory;
+            this.comboCategory.SelectedIndex = 1;
+            this.dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
+            this.dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox(" < SCI Delivery > can't be empty!!");
                 return false;
             }
 
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateSCIDelivery.Value1;
-            sciDelivery2 = dateSCIDelivery.Value2;
-
+            this.sciDelivery1 = this.dateSCIDelivery.Value1;
+            this.sciDelivery2 = this.dateSCIDelivery.Value2;
             #endregion
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
-            selectindex = comboCategory.SelectedIndex;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
+            this.selectindex = this.comboCategory.SelectedIndex;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
-
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@factory";
 
@@ -64,7 +76,6 @@ namespace Sci.Production.Planning
             sp_mdivision.ParameterName = "@MDivision";
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
@@ -72,30 +83,31 @@ namespace Sci.Production.Planning
             sqlCmd.Append(@"select * into #tmporders from orders o where 1 = 1");
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(sciDelivery2))
-            {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(mdivision))
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and o.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and o.factoryid = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
-            switch (selectindex)
+            switch (this.selectindex)
             {
                 case 0:
                     sqlCmd.Append(@" and (Category = 'B' or Category = 'S')");
@@ -110,12 +122,9 @@ namespace Sci.Production.Planning
                     sqlCmd.Append(@" and (Category = 'M' )");
                     break;
             }
-
             #endregion
-            condition.Clear();
-            condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
-                , Convert.ToDateTime(sciDelivery1).ToString("d")
-                , Convert.ToDateTime(sciDelivery2).ToString("d")));
+            this.condition.Clear();
+            this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sciDelivery1).ToString("d"), Convert.ToDateTime(this.sciDelivery2).ToString("d")));
             sqlCmd.Append(@"
 Select 
 	[Factory Name] = o.FactoryID,
@@ -270,11 +279,10 @@ from
 	)bb
 )al
 order by [Artwork Type],[o2],[Factory Name]
-drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
-                );
+drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2");
 
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
 
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
@@ -282,35 +290,40 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            if (printData.Columns.Count > 16384)
+            if (this.printData.Columns.Count > 16384)
             {
                 MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            if (printData.Rows.Count + 6 > 1048576)
+            if (this.printData.Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R01.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R01.xltx", 4, false, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R01.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R01.xltx", 4, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -320,31 +333,37 @@ drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
 
             foreach (Microsoft.Office.Interop.Excel.Range row in rows)
             {
-
                 if (count > 0)
                 {
                     Microsoft.Office.Interop.Excel.Range firstCell = row.Cells[1];
                     row.Borders.Color = Color.Black;
-                    string firstCellValue = firstCell.Value as String;
-                    if (firstCellValue == null) continue;
+                    string firstCellValue = firstCell.Value as string;
+                    if (firstCellValue == null)
+                    {
+                        continue;
+                    }
+
                     if (firstCellValue.StrEndsWith("Subtotal"))
                     {
                         row.Font.Bold = true;
                     }
+
                     if (firstCellValue.StrEndsWith("Percentage"))
                     {
                         row.Font.Bold = true;
-                        row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 4; //上
-                        row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 4; //下
+                        row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 4; // 上
+                        row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 4; // 下
                         row.Borders.Color = Color.Black;
-
                     }
+
                     Marshal.ReleaseComObject(firstCell);
                 }
+
                 count++;
             }
+
             objSheets.Columns.AutoFit();
-            objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
+            objSheets.Cells[2, 1] = this.condition.ToString();   // 條件字串寫入excel
             objSheets.Cells[3, 2] = DateTime.Now.ToShortDateString();  // 列印日期寫入excel
 
             #region Save & Show Excel

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
@@ -13,57 +10,62 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R16
+    /// </summary>
     public partial class R16 : Sci.Win.Tems.PrintForm
     {
-        //int selectindex = 0;
-        //decimal months;
-        string factory, mdivision;
-        DateTime? sewingDate1, sewingDate2, sciDelivery1, sciDelivery2;
-        DataTable printData;
-        StringBuilder condition = new StringBuilder();
-        StringBuilder datelist = new StringBuilder();
+        private string factory;
+        private string mdivision;
+        private DateTime? sewingDate1;
+        private DateTime? sewingDate2;
+        private DateTime? sciDelivery1;
+        private DateTime? sciDelivery2;
+        private DataTable printData;
+        private StringBuilder condition = new StringBuilder();
+        private StringBuilder datelist = new StringBuilder();
 
+        /// <summary>
+        /// R16
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            txtMdivision.Text = Sci.Env.User.Keyword;
-            txtfactory.Text = Sci.Env.User.Factory;
+            this.InitializeComponent();
+            this.txtMdivision.Text = Sci.Env.User.Keyword;
+            this.txtfactory.Text = Sci.Env.User.Factory;
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(sciDeliveryRange.Value1))
-            //{
-            //    MyUtility.Msg.WarningBox(" < Sci Delivery > can't be empty!!");
-            //    return false;
-            //}
-
-            //if (MyUtility.Check.Empty(sewingDateRange.Value1))
-            //{
-            //    MyUtility.Msg.WarningBox(" < Sewing Date > can't be empty!!");
-            //    return false;
-            //}
-            if (MyUtility.Check.Empty(dateSciDelivery.Value1) && MyUtility.Check.Empty(dateSewingDate.Value1))
+            if (MyUtility.Check.Empty(this.dateSciDelivery.Value1) && MyUtility.Check.Empty(this.dateSewingDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > & < Sewing Date > can't be empty!!");
                 return false;
             }
 
             #region -- 必輸的條件 --
-            sciDelivery1 = dateSciDelivery.Value1;
-            sciDelivery2 = dateSciDelivery.Value2;
-            sewingDate1 = dateSewingDate.Value1;
-            sewingDate2 = dateSewingDate.Value2;
+            this.sciDelivery1 = this.dateSciDelivery.Value1;
+            this.sciDelivery2 = this.dateSciDelivery.Value2;
+            this.sewingDate1 = this.dateSewingDate.Value1;
+            this.sewingDate2 = this.dateSewingDate.Value2;
             #endregion
-            mdivision = txtMdivision.Text;
-            factory = txtfactory.Text;
+            this.mdivision = this.txtMdivision.Text;
+            this.factory = this.txtfactory.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
@@ -221,44 +223,45 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
 "));
 
             #region --- 條件組合  ---
-            condition.Clear();
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            this.condition.Clear();
+            if (!MyUtility.Check.Empty(this.sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.scidelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(sciDelivery2))
-            {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.scidelivery >= '{0}'", Convert.ToDateTime(this.sciDelivery1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sewingDate1) && !MyUtility.Check.Empty(sewingDate2))
+            if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@" AND (O.sewoffline !< '{0:d}' or o.sewInline !> '{1:d}')",
-                sewingDate1, sewingDate2));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sewingDate1) && !MyUtility.Check.Empty(this.sewingDate2))
+            {
+                sqlCmd.Append(string.Format(@" AND (O.sewoffline !< '{0:d}' or o.sewInline !> '{1:d}')", this.sewingDate1, this.sewingDate2));
             }
             else
             {
-                if (!MyUtility.Check.Empty(sewingDate1))
+                if (!MyUtility.Check.Empty(this.sewingDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and O.sewoffline !< '{0}'", Convert.ToDateTime(sewingDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and O.sewoffline !< '{0}'", Convert.ToDateTime(this.sewingDate1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(sewingDate2))
+
+                if (!MyUtility.Check.Empty(this.sewingDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and o.sewInline !> '{0}'", Convert.ToDateTime(sewingDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and o.sewInline !> '{0}'", Convert.ToDateTime(this.sewingDate2).ToString("d")));
                 }
             }
-           
-            if (!MyUtility.Check.Empty(mdivision))
+
+            if (!MyUtility.Check.Empty(this.mdivision))
             {
                 sqlCmd.Append(" and O.mdivisionid = @MDivision");
-                sp_mdivision.Value = mdivision;
+                sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
                 sqlCmd.Append(" and O.FtyGroup = @factory");
-                sp_factory.Value = factory;
+                sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
@@ -267,385 +270,390 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
             sqlCmd.Append(" order by o.factoryid,o.id");
 
             DBProxy.Current.DefaultTimeout = 1800;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            if (printData.Columns.Count > 16384)
+            if (this.printData.Columns.Count > 16384)
             {
                 MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            if (printData.Rows.Count + 6 > 1048576)
+            if (this.printData.Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R16.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R16.xltx", 2, false, null, objApp);      // 將datatable copy to excel
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R16.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R16.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            ////objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
             Excel.Range range = null;
-            for (int i = 0; i < printData.Rows.Count; i++)  //列印動態欄位的表頭
+
+            // 列印動態欄位的表頭
+            for (int i = 0; i < this.printData.Rows.Count; i++)
             {
-                if (!MyUtility.Check.Empty(printData.Rows[i]["PP Sample Material Arrival Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PP Sample Material Arrival Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["PP Sample Material Arrival Act."])) 
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["PP Sample Material Arrival Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 13]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 13];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["PP Sample Material Arrival Reqd."].ToString()),DateTime.Parse(printData.Rows[i]["PP Sample Material Arrival Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["PP Sample Material Arrival Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["PP Sample Material Arrival Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 13]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 13];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Sample approval Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample approval Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Sample approval Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Sample approval Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 16]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 16];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Sample approval Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Sample approval Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Sample approval Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Sample approval Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 16]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 16];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["CMPQ confirm Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["CMPQ confirm Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["CMPQ confirm Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["CMPQ confirm Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 19]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 19];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["CMPQ confirm Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["CMPQ confirm Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["CMPQ confirm Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["CMPQ confirm Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 19]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 19];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["M/Notice Approve Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["M/Notice Approve Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["M/Notice Approve Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["M/Notice Approve Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 21]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 21];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["M/Notice Approve Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["M/Notice Approve Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["M/Notice Approve Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["M/Notice Approve Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 21]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 21];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Each cons. Approve Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Each cons. Approve Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Each cons. Approve Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Each cons. Approve Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 21]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 21];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Each cons. Approve Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Each cons. Approve Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Each cons. Approve Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Each cons. Approve Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 21]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 21];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Sketch Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sketch Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Sketch Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Sketch Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 25]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 25];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Sketch Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Sketch Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Sketch Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Sketch Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 25]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 25];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["AD/BOM/KIT Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["AD/BOM/KIT Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["AD/BOM/KIT Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["AD/BOM/KIT Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 28]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 28];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["AD/BOM/KIT Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["AD/BOM/KIT Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["AD/BOM/KIT Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["AD/BOM/KIT Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 28]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 28];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Sample Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Sample Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Sample Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 31]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 31];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Sample Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Sample Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Sample Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Sample Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 31]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 31];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Mockup (Printing) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Printing) Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Mockup (Printing) Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Printing) Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 34]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 34];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Mockup (Printing) Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Mockup (Printing) Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Mockup (Printing) Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Mockup (Printing) Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 34]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 34];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Mockup (Embroidery) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Embroidery) Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Mockup (Embroidery) Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Embroidery) Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 37]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 37];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Mockup (Embroidery) Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Mockup (Embroidery) Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Mockup (Embroidery) Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Mockup (Embroidery) Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 37]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 37];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Mockup (Heat transfer) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Heat transfer) Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Mockup (Heat transfer) Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Heat transfer) Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 40]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 40];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Mockup (Heat transfer) Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Mockup (Heat transfer) Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Mockup (Heat transfer) Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Mockup (Heat transfer) Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 40]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 40];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Mockup (Emboss/Deboss) Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Emboss/Deboss) Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 43]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 43];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Mockup (Emboss/Deboss) Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Mockup (Emboss/Deboss) Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 43]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 43];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Trim card Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Trim card Reqd."]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Trim card Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Trim card Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 46]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 46];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Trim card Reqd."].ToString()), DateTime.Parse(printData.Rows[i]["Trim card Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Trim card Reqd."].ToString()), DateTime.Parse(this.printData.Rows[i]["Trim card Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 46]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 46];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Bulk marker request Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Bulk marker request Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Bulk marker request Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Bulk marker request Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 49]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 49];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Bulk marker request Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Bulk marker request Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Bulk marker request Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Bulk marker request Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 49]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 49];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Bulk marker release Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Bulk marker release Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Bulk marker release Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Bulk marker release Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 51]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 51];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Bulk marker release Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Bulk marker release Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Bulk marker release Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Bulk marker release Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 51]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 51];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Mtl LETA Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mtl LETA Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Mtl LETA Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Mtl LETA Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 53]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 53];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Mtl LETA Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Mtl LETA Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Mtl LETA Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Mtl LETA Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 53]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 53];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Fabric receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Fabric receiving Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 55]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 55];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Fabric receiving Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Fabric receiving Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Fabric receiving Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Fabric receiving Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 55]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 55];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Accessory receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Accessory receiving Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 58]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 58];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Accessory receiving Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Accessory receiving Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Accessory receiving Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Accessory receiving Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 58]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 58];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Packing material receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Packing material receiving Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 61]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 61];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Packing material receiving Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Packing material receiving Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Packing material receiving Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Packing material receiving Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 61]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 61];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Material Inspection Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Reqd"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Material Inspection Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Material Inspection Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 64]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 64];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Material Inspection Reqd"].ToString()), DateTime.Parse(printData.Rows[i]["Material Inspection Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Material Inspection Reqd"].ToString()), DateTime.Parse(this.printData.Rows[i]["Material Inspection Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 64]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 64];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Cutting inline Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Cutting inline Reqd Complete"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Cutting Inline Act."]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Cutting Inline Act."]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 66]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 66];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Cutting inline Reqd Complete"].ToString()), DateTime.Parse(printData.Rows[i]["Cutting Inline Act."].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Cutting inline Reqd Complete"].ToString()), DateTime.Parse(this.printData.Rows[i]["Cutting Inline Act."].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 66]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 66];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["PPMeeting Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["PPMeeting Act. Complete"]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Act. Complete"]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 71]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 71];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["PPMeeting Reqd Complete"].ToString()), DateTime.Parse(printData.Rows[i]["PPMeeting Act. Complete"].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["PPMeeting Reqd Complete"].ToString()), DateTime.Parse(this.printData.Rows[i]["PPMeeting Act. Complete"].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 71]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 71];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Wahsing Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Washing Act. Complete"]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Washing Act. Complete"]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 74]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 74];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Wahsing Reqd Complete"].ToString()), DateTime.Parse(printData.Rows[i]["Washing Act. Complete"].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Wahsing Reqd Complete"].ToString()), DateTime.Parse(this.printData.Rows[i]["Washing Act. Complete"].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 74]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 74];
                         range.Interior.ColorIndex = 3;
                     }
                 }
 
-                if (!MyUtility.Check.Empty(printData.Rows[i]["Carton Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete"]))
                 {
-                    if (MyUtility.Check.Empty(printData.Rows[i]["Carton Act. Complete"]))
+                    if (MyUtility.Check.Empty(this.printData.Rows[i]["Carton Act. Complete"]))
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 77]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 77];
                         range.Interior.ColorIndex = 3;
                     }
-                    else if (DateTime.Compare(DateTime.Parse(printData.Rows[i]["Carton Reqd Complete"].ToString()), DateTime.Parse(printData.Rows[i]["Carton Act. Complete"].ToString())) < 0)
+                    else if (DateTime.Compare(DateTime.Parse(this.printData.Rows[i]["Carton Reqd Complete"].ToString()), DateTime.Parse(this.printData.Rows[i]["Carton Act. Complete"].ToString())) < 0)
                     {
-                        range = ((Excel.Range)objSheet.Cells[i + 3, 77]);
+                        range = (Excel.Range)objSheet.Cells[i + 3, 77];
                         range.Interior.ColorIndex = 3;
                     }
                 }
-
             }
 
             #region Save & Show Excel

@@ -1123,7 +1123,7 @@ order by ArticleGroup", patternukey);
             DataRow selectDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
         }
-        
+
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
             if (CutRefTb == null) return;
@@ -1424,7 +1424,7 @@ order by ArticleGroup", patternukey);
                             ('{0}','{1}',{2},'{3}',
                             '{4}','{5}',{6},{7},0,0)",
                             id_list[idcount], bundleno_list[bundlenocount], startno, rowPat["PatternCode"],
-                            rowPat["PatternDesc"].ToString().Replace("'","''"), artar["SizeCode"], rowqty["Qty"], rowPat["Parts"]);
+                            rowPat["PatternDesc"].ToString().Replace("'", "''"), artar["SizeCode"], rowqty["Qty"], rowPat["Parts"]);
                         Insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
                         #endregion
                         if (!MyUtility.Check.Empty(rowPat["art"])) //非空白的Art 才存在
@@ -1475,70 +1475,56 @@ order by ArticleGroup", patternukey);
             }
             #endregion
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            using (TransactionScope _transactionscope = new TransactionScope())
             {
-                try
+                foreach (DataRow dr in Insert_Bundle.Rows)
                 {
-                    foreach (DataRow dr in Insert_Bundle.Rows)
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
                     {
-                        if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(dr["Insert"].ToString(), upResult);
-                            return;
-                        }
+                        _transactionscope.Dispose();
+                        ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
                     }
-                    foreach (DataRow dr in Insert_Bundle_Detail.Rows)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(dr["Insert"].ToString(), upResult);
-                            return;
-                        }
-                    }
-                    foreach (DataRow dr in Insert_Bundle_Detail_Art.Rows)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(dr["Insert"].ToString(), upResult);
-                            return;
-                        }
-                    }
-                    foreach (DataRow dr in Insert_Bundle_Detail_AllPart.Rows)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(dr["Insert"].ToString(), upResult);
-                            return;
-                        }
-                    }
-                    foreach (DataRow dr in Insert_Bundle_Detail_Qty.Rows)
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(dr["Insert"].ToString(), upResult);
-                            return;
-                        }
-                    }
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
                 }
-                catch (Exception ex)
+                foreach (DataRow dr in Insert_Bundle_Detail.Rows)
                 {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
+                    }
                 }
+                foreach (DataRow dr in Insert_Bundle_Detail_Art.Rows)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
+                    }
+                }
+                foreach (DataRow dr in Insert_Bundle_Detail_AllPart.Rows)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
+                    }
+                }
+                foreach (DataRow dr in Insert_Bundle_Detail_Qty.Rows)
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, dr["Insert"].ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(dr["Insert"].ToString(), upResult);
+                        return;
+                    }
+                }
+                MyUtility.Msg.InfoBox("Successfully");
+                _transactionscope.Complete();
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
-
         }
 
         private void gridArticleSize_RowEnter(object sender, DataGridViewCellEventArgs e)

@@ -1,32 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-//from here by andy
 using System.Data.SqlClient;
-using Sci;
 using Sci.Data;
 using Ict;
-using Ict.Win;
 using Sci.Win;
-using Sci.Production.Class.Commons;
-using System.IO;
 using Sci.Utility.Excel;
-//此程式前兩個用統計和半月統計是複製Trade Planning R02
+
+// 此程式前兩個用統計和半月統計是複製Trade Planning R02
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// R10
+    /// </summary>
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        DateTime currentTime = System.DateTime.Now;
+        private DateTime currentTime = System.DateTime.Now;
 
         private int ReportType = 1;
-        private string BrandID = "";
-        private string ArtWorkType = "";
+        private string BrandID = string.Empty;
+        private string ArtWorkType = string.Empty;
         private bool isSCIDelivery = true;
         private int intYear;
         private int intMonth;
@@ -36,122 +31,148 @@ namespace Sci.Production.Planning
         private string M;
         private string Fty;
 
-        string title = "";
-        string cmd, cmd2, cmd3, dStart, dEnd, LastDay, dLoad, STARTday, endDay, o, s, b;
-        DataTable dt;
-        Dictionary<string, string> dic = new Dictionary<string, string>();
-        DualResult dtresult;
+        private string title = string.Empty;
+        private string cmd;
+        private string cmd2;
+        private string cmd3;
+        private string dStart;
+        private string dEnd;
+        private string LastDay;
+        private string dLoad;
+        private string STARTday;
+        private string endDay;
+        private string o;
+        private string s;
+        private string b;
+        private DataTable dt;
+        private Dictionary<string, string> dic = new Dictionary<string, string>();
+        private DualResult dtresult;
 
-        System.Data.DataTable[] dt2;
-        System.Data.DataTable dt3fty;
-        System.Data.DataTable dt2Factory = null;
-        System.Data.DataTable dt2All = null;
+        private System.Data.DataTable[] dt2;
+        private System.Data.DataTable dt3fty;
+        private System.Data.DataTable dt2Factory = null;
+        private System.Data.DataTable dt2All = null;
+
+        /// <summary>
+        /// R10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
-            print.Visible = false;
-            txtM.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            this.EditMode = true;
+            this.print.Visible = false;
+            this.txtM.Text = Sci.Env.User.Keyword;
         }
 
-        protected override bool ValidateInput()  //欄位檢核
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
+        protected override bool ValidateInput()
         {
-            if (numYear.Text == "")
+            if (this.numYear.Text == string.Empty)
             {
-                ShowErr("Year can't be  blank");
+                this.ShowErr("Year can't be  blank");
                 return false;
             }
-            if (radioSemimonthlyReport.Checked)
+
+            if (this.radioSemimonthlyReport.Checked)
             {
-                if (numMonth.Text == "")
+                if (this.numMonth.Text == string.Empty)
                 {
-                    ShowErr("Month can't be  blank");
+                    this.ShowErr("Month can't be  blank");
                     return false;
                 }
             }
 
-            if (!checkOrder.Checked && !checkForecast.Checked && !checkFty.Checked)
+            if (!this.checkOrder.Checked && !this.checkForecast.Checked && !this.checkFty.Checked)
             {
-                ShowErr("Order, Forecast , Fty Local Order must select one at least ");
+                this.ShowErr("Order, Forecast , Fty Local Order must select one at least ");
                 return false;
             }
 
-            ReportType = radioMonthlyReport.Checked ? 1 : 2;
-            BrandID = txtBrand.Text;
-            ArtWorkType = comboReport.SelectedValue.ToString();
-            isSCIDelivery = (comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
+            this.ReportType = this.radioMonthlyReport.Checked ? 1 : 2;
+            this.BrandID = this.txtBrand.Text;
+            this.ArtWorkType = this.comboReport.SelectedValue.ToString();
+            this.isSCIDelivery = (this.comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
+            this.M = this.txtM.Text;
+            this.Fty = this.txtFactory.Text;
 
-            M = txtM.Text;
-            Fty = txtFactory.Text;
-
-            intYear = Convert.ToInt32(numYear.Value);
-            intMonth = Convert.ToInt32(numMonth.Value);
-            SourceStr = (checkOrder.Checked ? "Order," : "")
-                + (checkForecast.Checked ? "Forecast," : "")
-                + (checkFty.Checked ? "Fty Local Order," : "");            
+            this.intYear = Convert.ToInt32(this.numYear.Value);
+            this.intMonth = Convert.ToInt32(this.numMonth.Value);
+            this.SourceStr = (this.checkOrder.Checked ? "Order," : string.Empty)
+                + (this.checkForecast.Checked ? "Forecast," : string.Empty)
+                + (this.checkFty.Checked ? "Fty Local Order," : string.Empty);
             return true;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (IsFormClosed) return;
+            if (this.IsFormClosed)
+            {
+                return;
+            }
 
-            labelMonth.Visible = false;
-            numMonth.Visible = false;
-
-            checkOrder.Checked = true;
-            checkForecast.Checked = true;
-            checkFty.Checked = true;
-
-            numYear.Value = currentTime.Year;
-            numMonth.Value = currentTime.Month;
-            numMonth.Visible = false;
-
-            comboDate.Add("SCI Delivery", "S");
-            comboDate.Add("Buyer Delivery", "B");
-            comboDate.SelectedIndex = 0;
+            this.labelMonth.Visible = false;
+            this.numMonth.Visible = false;
+            this.checkOrder.Checked = true;
+            this.checkForecast.Checked = true;
+            this.checkFty.Checked = true;
+            this.numYear.Value = this.currentTime.Year;
+            this.numMonth.Value = this.currentTime.Month;
+            this.numMonth.Visible = false;
+            this.comboDate.Add("SCI Delivery", "S");
+            this.comboDate.Add("Buyer Delivery", "B");
+            this.comboDate.SelectedIndex = 0;
 
             #region 取得 Report 資料
             string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', 'ALL', '0000' order by SEQ";
             DataTable dt_ref = null;
             DualResult result = DBProxy.Current.Select(null, sql, out dt_ref);
 
-            comboReport.DataSource = dt_ref;
-            comboReport.DisplayMember = "NAME";
-            comboReport.ValueMember = "ID";
-            comboReport.SelectedValue = "SEWING";
+            this.comboReport.DataSource = dt_ref;
+            this.comboReport.DisplayMember = "NAME";
+            this.comboReport.ValueMember = "ID";
+            this.comboReport.SelectedValue = "SEWING";
             #endregion
 
         }
 
-
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            if (radioMonthlyReport.Checked || radioSemimonthlyReport.Checked)
+            if (this.radioMonthlyReport.Checked || this.radioSemimonthlyReport.Checked)
             {
                 DualResult result = Result.True;
                 try
                 {
-                    List<string> ArtworkLis = new List<string>();
-                    
-                    if (ArtWorkType == "All")
+                    List<string> artworkLis = new List<string>();
+
+                    if (this.ArtWorkType == "All")
                     {
-                        DataTable dt = (DataTable)comboReport.DataSource;
-                        ArtworkLis = dt.AsEnumerable()
+                        DataTable dt = (DataTable)this.comboReport.DataSource;
+                        artworkLis = dt.AsEnumerable()
                             .Where(row => row.Field<string>("ID") != "All")
                             .Select(row => row.Field<string>("ID").ToString()).ToList();
                     }
                     else
                     {
-                        ArtworkLis.Add(ArtWorkType);
+                        artworkLis.Add(this.ArtWorkType);
                     }
 
-
-                    string xltPath = "";
-                    string strHeaderRange = "";
-                    if (ReportType == 1)
+                    string xltPath = string.Empty;
+                    string strHeaderRange = string.Empty;
+                    if (this.ReportType == 1)
                     {
                         xltPath = @"Planning_R10_01.xltx";
                         strHeaderRange = "A2:O4";
@@ -161,24 +182,15 @@ namespace Sci.Production.Planning
                         xltPath = @"Planning_R10_02.xltx";
                         strHeaderRange = "A2:Q4";
                     }
+
                     SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
 
                     Dictionary<string, DataTable[]> dic = new Dictionary<string, DataTable[]>();
-                    foreach (string art in ArtworkLis)
+                    foreach (string art in artworkLis)
                     {
                         DataTable[] datas;
-                        DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R10"
-                            , new List<SqlParameter> { new SqlParameter("@ReportType", ReportType)
-                        , new SqlParameter("@BrandID", BrandID)
-                        , new SqlParameter("@ArtWorkType", art)
-                        , new SqlParameter("@isSCIDelivery", isSCIDelivery)
-                        , new SqlParameter("@Year", intYear)
-                        , new SqlParameter("@Month", intMonth)
-                        , new SqlParameter("@SourceStr", SourceStr)
-                        , new SqlParameter("@M", M)
-                        , new SqlParameter("@Fty", Fty)                            
-                            }, out datas);
+                        DualResult res = DBProxy.Current.SelectSP(string.Empty, "Planning_Report_R10", this.NewMethod(art), out datas);
 
                         if (res && datas[1].Rows.Count > 0)
                         {
@@ -190,62 +202,60 @@ namespace Sci.Production.Planning
                         }
                     }
 
-                    sheetStart = 5; //起始位置
-                    int ArtWorkStart = 2;
-
+                    this.sheetStart = 5; // 起始位置
+                    int artWorkStart = 2;
 
 #if DEBUG
-                sxrc.ExcelApp.Visible = true;
+                    sxrc.ExcelApp.Visible = true;
 #endif
 
-                    foreach (string art in ArtworkLis)
+                    foreach (string art in artworkLis)
                     {
-                        //CopyHeader
-                        if (ArtworkLis.IndexOf(art) > 0)
+                        // CopyHeader
+                        if (artworkLis.IndexOf(art) > 0)
                         {
-                            ArtWorkStart = sheetStart;
+                            artWorkStart = this.sheetStart;
 
-                            Microsoft.Office.Interop.Excel.Range desRg = wks.get_Range(string.Format("A{0}:A{0}", sheetStart.ToString()));
+                            Microsoft.Office.Interop.Excel.Range desRg = wks.get_Range(string.Format("A{0}:A{0}", this.sheetStart.ToString()));
                             wks.get_Range(strHeaderRange).Copy();
-                            desRg.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll); //Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAllExceptBorders
-                            sheetStart += 3;
+                            desRg.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll);
+                            this.sheetStart += 3;
                         }
 
                         if (dic[art] != null)
                         {
-                            if (ReportType == 1)
+                            if (this.ReportType == 1)
                             {
-                                transferReport1(dic[art], sxrc.ExcelApp.ActiveSheet);
+                                this.TransferReport1(dic[art], sxrc.ExcelApp.ActiveSheet);
                             }
                             else
                             {
-                                transferReport2(dic[art], sxrc.ExcelApp.ActiveSheet);
+                                this.TransferReport2(dic[art], sxrc.ExcelApp.ActiveSheet);
                             }
                         }
                         else
                         {
-                            wks.Cells[sheetStart, 1].Value = string.Format("{0} data not found.", art);
-                            //載入失敗
+                            wks.Cells[this.sheetStart, 1].Value = string.Format("{0} data not found.", art);
+
+                            // 載入失敗
                         }
 
-                        //修改Header
-                        if (ReportType == 1)
+                        // 修改Header
+                        if (this.ReportType == 1)
                         {
-                            wks.Cells[ArtWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", (art == "CPU" ? art : art + " TMS/Min"));
-                            wks.Cells[ArtWorkStart + 1, 1].Value = string.Format("Year:{0}", intYear);
-                            wks.Cells[ArtWorkStart + 1, 3].Value = string.Format("Print Type:< {0} >", SourceStr);
-                            wks.Cells[ArtWorkStart + 1, 8].Value = string.Format("By {0}                             Buyer : {1}"
-                                , (isSCIDelivery ? "Sci Delivery" : "Buyer Delivery")
-                                , BrandID);
+                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", art == "CPU" ? art : art + " TMS/Min");
+                            wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0}", this.intYear);
+                            wks.Cells[artWorkStart + 1, 3].Value = string.Format("Print Type:< {0} >", this.SourceStr);
+                            wks.Cells[artWorkStart + 1, 8].Value = string.Format("By {0}                             Buyer : {1}", this.isSCIDelivery ? "Sci Delivery" : "Buyer Delivery", this.BrandID);
                         }
                         else
                         {
-                            wks.Cells[ArtWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  (Half Month)", (art == "CPU" ? art : art + " TMS/Min"));
-                            wks.Cells[ArtWorkStart + 1, 1].Value = string.Format("Year:{0} Month:{1}", intYear, intMonth);
-                            wks.Cells[ArtWorkStart + 1, 8].Value = "By " + (isSCIDelivery ? "Sci Delivery" : "Buyer Delivery");
+                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  (Half Month)", art == "CPU" ? art : art + " TMS/Min");
+                            wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0} Month:{1}", this.intYear, this.intMonth);
+                            wks.Cells[artWorkStart + 1, 8].Value = "By " + (this.isSCIDelivery ? "Sci Delivery" : "Buyer Delivery");
                         }
 
-                        sheetStart += 3; //每個Artwork間隔 n - 1 格
+                        this.sheetStart += 3; // 每個Artwork間隔 n - 1 格
                     }
 
                     sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_Report_R10"));
@@ -258,87 +268,98 @@ namespace Sci.Production.Planning
             }
             else
             {
-                DateTime oDate = new DateTime(intYear, intMonth, 1).AddMonths(1).AddDays(-1);
-                DateTime FDate = new DateTime(intYear, intMonth, 1);
+                DateTime oDate = new DateTime(this.intYear, this.intMonth, 1).AddMonths(1).AddDays(-1);
+                DateTime fDate = new DateTime(this.intYear, this.intMonth, 1);
                 #region --Report Title & 撈資料的日期區間
-                if (intMonth == DateTime.Now.Month)
+                if (this.intMonth == DateTime.Now.Month)
                 {
-                    string m = DateTime.Now.AddDays(-1).Month.ToString();//前一天的月
-                    string day = DateTime.Now.AddDays(-1).Day.ToString();//前一天的日
+                    string m = DateTime.Now.AddDays(-1).Month.ToString(); // 前一天的月
+                    string day = DateTime.Now.AddDays(-1).Day.ToString(); // 前一天的日
                     string w = DateTime.Now.AddDays(-1).DayOfWeek.ToString();
-                    title = m + "/" + day + " " + w + "." + " Production Status";
-                    dStart = DateTime.Now.AddDays(-1 - DateTime.Now.Day + 1).ToShortDateString();
-                    dEnd = DateTime.Now.AddDays(-1).ToShortDateString();//前一天
-                    dLoad = DateTime.Now.AddDays(-1).ToShortDateString();//前一天
+                    this.title = m + "/" + day + " " + w + "." + " Production Status";
+                    this.dStart = DateTime.Now.AddDays(-1 - DateTime.Now.Day + 1).ToShortDateString();
+                    this.dEnd = DateTime.Now.AddDays(-1).ToShortDateString(); // 前一天
+                    this.dLoad = DateTime.Now.AddDays(-1).ToShortDateString(); // 前一天
+                }
 
-                }
-                if (intMonth < DateTime.Now.Month)
+                if (this.intMonth < DateTime.Now.Month)
                 {
-                    string LastDayM = oDate.Month.ToString(); // 最後一天的月
-                    LastDay = oDate.Day.ToString();   // 最後一天的日
-                    string LastDayWeek = oDate.DayOfWeek.ToString();
-                    dLoad = oDate.ToShortDateString();//輸入年月的最後一天
-                    title = LastDayM + "/" + LastDay + " " + LastDayWeek + "." + " Production Status";
+                    string lastDayM = oDate.Month.ToString(); // 最後一天的月
+                    this.LastDay = oDate.Day.ToString();   // 最後一天的日
+                    string lastDayWeek = oDate.DayOfWeek.ToString();
+                    this.dLoad = oDate.ToShortDateString(); // 輸入年月的最後一天
+                    this.title = lastDayM + "/" + this.LastDay + " " + lastDayWeek + "." + " Production Status";
                 }
-                if (intMonth > DateTime.Now.Month)
-                {
 
-                    string FirstDayM = FDate.Month.ToString(); //第一天的月
-                    string FirstDay = FDate.Day.ToString(); //第一天的日
-                    string FirstDayWeek = FDate.DayOfWeek.ToString();
-                    dLoad = FDate.ToShortDateString();
-                    title = FirstDayM + "/" + FirstDay + " " + FirstDayWeek + "." + " Production Status";
-                }
-                if (intMonth != DateTime.Now.Month)
+                if (this.intMonth > DateTime.Now.Month)
                 {
-                    dStart = intYear + "/" + intMonth + "/01";
-                    dEnd = oDate.ToShortDateString();//輸入年月的最後一天
+                    string firstDayM = fDate.Month.ToString(); // 第一天的月
+                    string firstDay = fDate.Day.ToString(); // 第一天的日
+                    string firstDayWeek = fDate.DayOfWeek.ToString();
+                    this.dLoad = fDate.ToShortDateString();
+                    this.title = firstDayM + "/" + firstDay + " " + firstDayWeek + "." + " Production Status";
                 }
-                STARTday = FDate.ToShortDateString();//輸入年月的第一天
-                endDay = oDate.ToShortDateString();//輸入年月的最後一天
+
+                if (this.intMonth != DateTime.Now.Month)
+                {
+                    this.dStart = this.intYear + "/" + this.intMonth + "/01";
+                    this.dEnd = oDate.ToShortDateString(); // 輸入年月的最後一天
+                }
+
+                this.STARTday = fDate.ToShortDateString(); // 輸入年月的第一天
+                this.endDay = oDate.ToShortDateString(); // 輸入年月的最後一天
                 #endregion
-                string sqlWhere = ""; string load = ""; string work = "";
+                string sqlWhere = string.Empty;
+                string load = string.Empty;
+                string work = string.Empty;
                 List<string> sqlWheres = new List<string>();
-                List<string> LoadingWheres = new List<string>();
-                List<string> WorkWheres = new List<string>();
+                List<string> loadingWheres = new List<string>();
+                List<string> workWheres = new List<string>();
                 #region --組WHERE--
                 if (!this.txtM.Text.Empty())
                 {
-                    sqlWheres.Add(" f.MDivisionID = '" + M + "'");
-                    LoadingWheres.Add("o.MDivisionID ='" + M + "'");
+                    sqlWheres.Add(" f.MDivisionID = '" + this.M + "'");
+                    loadingWheres.Add("o.MDivisionID ='" + this.M + "'");
 
                     if (!this.txtFactory.Text.Empty())
                     {
-                        WorkWheres.Add(" w.FactoryID ='" + Fty + "'");
-
+                        workWheres.Add(" w.FactoryID ='" + this.Fty + "'");
                     }
+
                     if (this.txtFactory.Text.Empty())
                     {
-                        WorkWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where MDivisionID = '" + M + "' and ID = w.FactoryID)");
+                        workWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where MDivisionID = '" + this.M + "' and ID = w.FactoryID)");
                     }
-                } if (!this.txtFactory.Text.Empty())
-                {
-                    sqlWheres.Add(" f.ID = '" + Fty + "'");
-                    LoadingWheres.Add(" o.Factoryid ='" + Fty + "'");
-                    if (this.txtM.Text.Empty()) { WorkWheres.Add(" w.FactoryID ='" + Fty + "'"); }
-
                 }
+
+                if (!this.txtFactory.Text.Empty())
+                {
+                    sqlWheres.Add(" f.ID = '" + this.Fty + "'");
+                    loadingWheres.Add(" o.Factoryid ='" + this.Fty + "'");
+                    if (this.txtM.Text.Empty())
+                    {
+                        workWheres.Add(" w.FactoryID ='" + this.Fty + "'");
+                    }
+                }
+
                 if (!this.txtBrand.Text.Empty())
                 {
-                    LoadingWheres.Add("o.BrandID = '" + BrandID + "'");
+                    loadingWheres.Add("o.BrandID = '" + this.BrandID + "'");
                 }
+
                 sqlWhere = string.Join(" and ", sqlWheres);
                 if (!sqlWhere.Empty())
                 {
                     sqlWhere = " and" + sqlWhere;
                 }
 
-                load = string.Join(" and ", LoadingWheres);
+                load = string.Join(" and ", loadingWheres);
                 if (!load.Empty())
                 {
                     load = "and " + load;
                 }
-                work = string.Join("and ", WorkWheres);
+
+                work = string.Join("and ", workWheres);
                 if (!work.Empty())
                 {
                     work = "where " + work;
@@ -346,7 +367,8 @@ namespace Sci.Production.Planning
                 #endregion
 
                 #region --Prouction Status Excel第一個頁籤SQL
-                cmd = string.Format(@"
+                this.cmd = string.Format(
+                    @"
                             -- 先撈出工廠的Capacity
                             Select f.CountryID, f.ID, (ft.TMS*3600)/(select StdTMS from System WITH (NOLOCK)) as Capacity 
                             into  #tmpFtyCapacity
@@ -425,11 +447,16 @@ namespace Sci.Production.Planning
                             DROP TABLE #tmpFtyCapacity
                             DROP TABLE #tmpLoad
                             DROP TABLE #tmpWorkHours
-                            DROP TABLE  #printdata
-                
-                            ", intYear, intMonth, dStart, dEnd, dLoad, endDay);
+                            DROP TABLE  #printdata                
+                            ", this.intYear,
+                            this.intMonth,
+                            this.dStart,
+                            this.dEnd,
+                            this.dLoad,
+                            this.endDay);
                 #endregion
-                cmd3 = string.Format(@"
+                this.cmd3 = string.Format(
+                    @"
                             --	撈出各工廠每天的平均工時
                             Select DISTINCT w.FactoryID, w.Date, AVG(w.Hours)over (partition by FactoryID,date order by FactoryID, Date) as AVGHours
                             into #tmpWorkHours
@@ -447,37 +474,50 @@ namespace Sci.Production.Planning
                 
                             DROP TABLE #tmpWorkHours
                             DROP TABLE #tmpWorkingHour
-                            ", STARTday, endDay);
-                dtresult = DBProxy.Current.Select("", cmd3, out dt3fty);
-                if (!dtresult)
+                            ", this.STARTday,
+                            this.endDay);
+                this.dtresult = DBProxy.Current.Select(string.Empty, this.cmd3, out this.dt3fty);
+                if (!this.dtresult)
                 {
-                    ShowErr(dtresult);
-                    return dtresult;
+                    this.ShowErr(this.dtresult);
+                    return this.dtresult;
                 }
-                if (dt3fty == null || dt3fty.Rows.Count == 0) { return new DualResult(true); }
 
-                dt2Factory = dt3fty;
-                dic.Clear();
-                if (s != null) { s = ""; }
-                if (b != null) { b = ""; }
-                for (int i = 0; i < dt2Factory.Rows.Count; i++)
+                if (this.dt3fty == null || this.dt3fty.Rows.Count == 0)
                 {
+                    return new DualResult(true);
+                }
 
-                    dic.Add(dt2Factory.Rows[i]["FactoryID"].ToString(), string.Format("{0},{1}", ((i * 2) + 2), ((i * 2) + 3)));
-                    string sss = dt2Factory.Rows[i]["FactoryID"].ToString();
-                    o = string.Format(" outer apply (select  AVGHours,RunningTotal from  #tmpWorkingHour k where date between '{0}' and '{1}' and FactoryID='{2}' and w.Date=k.Date )as {2}", STARTday, endDay, sss);
+                this.dt2Factory = this.dt3fty;
+                this.dic.Clear();
+                if (this.s != null)
+                {
+                    this.s = string.Empty;
+                }
+
+                if (this.b != null)
+                {
+                    this.b = string.Empty;
+                }
+
+                for (int i = 0; i < this.dt2Factory.Rows.Count; i++)
+                {
+                    this.dic.Add(this.dt2Factory.Rows[i]["FactoryID"].ToString(), string.Format("{0},{1}", (i * 2) + 2, (i * 2) + 3));
+                    string sss = this.dt2Factory.Rows[i]["FactoryID"].ToString();
+                    this.o = string.Format(" outer apply (select  AVGHours,RunningTotal from  #tmpWorkingHour k where date between '{0}' and '{1}' and FactoryID='{2}' and w.Date=k.Date )as {2}", this.STARTday, this.endDay, sss);
                     string a = string.Format("isnull({0}.AVGHours,0)AVGHours,isnull({0}.RunningTotal,0)RunningTotal", sss);
-                    b += a + ",";
-                    if (i == dt2Factory.Rows.Count - 1)
+                    this.b += a + ",";
+                    if (i == this.dt2Factory.Rows.Count - 1)
                     {
-                        b = b.Substring(0, b.Length - 1);
+                        this.b = this.b.Substring(0, this.b.Length - 1);
                     }
 
-                    s += o + Environment.NewLine;
+                    this.s += this.o + Environment.NewLine;
                 }
 
                 #region --Prouction Status Excel第二個頁籤SQL
-                cmd2 = string.Format(@"
+                this.cmd2 = string.Format(
+                    @"
                             --	撈出各工廠每天的平均工時 
                             Select DISTINCT w.FactoryID, w.Date, AVG(w.Hours)over (partition by FactoryID,date order by FactoryID, Date) as AVGHours
                             into #tmpWorkHours
@@ -498,302 +538,325 @@ namespace Sci.Production.Planning
                             DROP TABLE #tmpWorkHours
                             DROP TABLE #tmpWorkingHour
                             DROP TABLE #t
-                            ", STARTday, endDay, s, b);
+                            ", this.STARTday,
+                            this.endDay,
+                            this.s,
+                            this.b);
 
-
-                dtresult = DBProxy.Current.Select("", cmd, out dt);
-                if (!dtresult)
+                this.dtresult = DBProxy.Current.Select(string.Empty, this.cmd, out this.dt);
+                if (!this.dtresult)
                 {
-                    ShowErr(dtresult);
-                    return dtresult;
+                    this.ShowErr(this.dtresult);
+                    return this.dtresult;
                 }
-                dtresult = DBProxy.Current.Select("", cmd2, out dt2);
 
-                if (dt2 == null)
+                this.dtresult = DBProxy.Current.Select(string.Empty, this.cmd2, out this.dt2);
+
+                if (this.dt2 == null)
                 {
                     return new DualResult(true);
                 }
-                dt2All = dt2[2];
+
+                this.dt2All = this.dt2[2];
                 #endregion
             }
 
             return new DualResult(true);
         }
 
-        /// <summary>
-        /// Report1，開啟xlt填入資料
-        /// </summary>
-        private DualResult transferReport1(DataTable[] datas, Microsoft.Office.Interop.Excel.Worksheet wks)
+        private List<SqlParameter> NewMethod(string art)
         {
-            //Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
-            //sxrc.ExcelApp.Visible = true;
+            return new List<SqlParameter>
+                            {
+                                new SqlParameter("@ReportType", this.ReportType),
+                                new SqlParameter("@BrandID", this.BrandID),
+                                new SqlParameter("@ArtWorkType", art),
+                                new SqlParameter("@isSCIDelivery", this.isSCIDelivery),
+                                new SqlParameter("@Year", this.intYear),
+                                new SqlParameter("@Month", this.intMonth),
+                                new SqlParameter("@SourceStr", this.SourceStr),
+                                new SqlParameter("@M", this.M),
+                                new SqlParameter("@Fty", this.Fty)
+                            };
+        }
 
-            //For Country
-            int MDVIdx = 0; //每個MDV所在的Index，抓sheetStart，在Country下面
-            int MDVTotalIdx = 0;
+        /// <summary>
+        /// TransferReport1
+        /// </summary>
+        /// <param name="datas">datas</param>
+        /// <param name="wks">wks</param>
+        /// <returns>DualResult</returns>
+        private DualResult TransferReport1(DataTable[] datas, Microsoft.Office.Interop.Excel.Worksheet wks)
+        {
+            // For Country
+            int mDVIdx = 0; // 每個MDV所在的Index，抓sheetStart，在Country下面
+            int mDVTotalIdx = 0;
             List<string> lisCtyIdx = new List<string>();
             List<string> lisMDVTTLIdx = new List<string>();
-            List<string> lisOutputIdx = new List<string>(); //By Country
+            List<string> lisOutputIdx = new List<string>(); // By Country
 
             DataTable dtList = datas[0];
-            DataTable dt0 = datas[1]; //[0] Country Capacity
-            DataTable dt1 = datas[2]; //[1] By Factory Capacity
-            DataTable dt2 = datas[3]; //[2] non Sister
-            DataTable dt3 = datas[4]; //[3] For Forecast shared
-            DataTable dt4 = datas[5]; //[4] For Output, 及Output後面的Max日期
+            DataTable dt0 = datas[1]; // [0] Country Capacity
+            DataTable dt1 = datas[2]; // [1] By Factory Capacity
+            DataTable dt2 = datas[3]; // [2] non Sister
+            DataTable dt3 = datas[4]; // [3] For Forecast shared
+            DataTable dt4 = datas[5]; // [4] For Output, 及Output後面的Max日期
 
             DataTable dtCountryList = dtList.DefaultView.ToTable(true, "CountryID");
             List<string> lisBold = new List<string>();
             List<string> lisPercent = new List<string>();
             for (int idxCty = 0; idxCty < dtCountryList.Rows.Count; idxCty++)
             {
-                lisBold.Add(sheetStart.ToString());
-                string CountryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
-                DataTable dtCountry = safeGetDt(dt0, string.Format("CountryID = '{0}'", CountryID));
-                if (dtCountry.Rows.Count == 0) continue;
-                string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
+                lisBold.Add(this.sheetStart.ToString());
+                string countryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
+                DataTable dtCountry = this.SafeGetDt(dt0, string.Format("CountryID = '{0}'", countryID));
+                if (dtCountry.Rows.Count == 0)
+                {
+                    continue;
+                }
 
-                lisCtyIdx.Add(sheetStart.ToString());
-                setTableToRow(wks, sheetStart, CountryName, dtCountry);
-                sheetStart += 1;
+                string countryName = dtCountry.Rows[0]["CountryName"].ToString();
 
-                DataTable dtMDVList = safeGetDt(dtList, string.Format("CountryID = '{0}'", CountryID)).DefaultView.ToTable(true, "MDivisionID");
+                lisCtyIdx.Add(this.sheetStart.ToString());
+                this.SetTableToRow(wks, this.sheetStart, countryName, dtCountry);
+                this.sheetStart += 1;
+
+                DataTable dtMDVList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MDivisionID");
                 List<string> lisSumFtyNonSis = new List<string>();
 
-                setColumnToBack(dtMDVList, "MDivisionID", "Sample");
-                setColumnToBack(dtMDVList, "MDivisionID", "");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 bool isSample = false;
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
-                    lisBold.Add(sheetStart.ToString());
-                    //3 單一某個MDV加總
-                    MDVIdx = sheetStart;
-                    string MDivisionID = dtMDVList.Rows[idxMDV]["MDivisionID"].ToString();
+                    lisBold.Add(this.sheetStart.ToString());
 
-                    isSample = MDivisionID == "Sample";
+                    // 3 單一某個MDV加總
+                    mDVIdx = this.sheetStart;
+                    string mDivisionID = dtMDVList.Rows[idxMDV]["MDivisionID"].ToString();
 
-                    DataTable dtOneMDV = safeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", MDivisionID));
-                    setTableToRow(wks, sheetStart, MDivisionID, dtOneMDV);
-                    sheetStart += 1;
+                    isSample = mDivisionID == "Sample";
 
-                    //4 Factory Data，這裡需要迴圈For每個工廠
-                    DataTable dtFactory = safeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
-                    DataTable dtFactoryList = safeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID)).DefaultView.ToTable(true, "FactoryID");
-                    int ftyStart = sheetStart;
+                    DataTable dtOneMDV = this.SafeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", mDivisionID));
+                    this.SetTableToRow(wks, this.sheetStart, mDivisionID, dtOneMDV);
+                    this.sheetStart += 1;
+
+                    // 4 Factory Data，這裡需要迴圈For每個工廠
+                    DataTable dtFactory = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    DataTable dtFactoryList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID)).DefaultView.ToTable(true, "FactoryID");
+                    int ftyStart = this.sheetStart;
                     foreach (DataRow row in dtFactoryList.Rows)
                     {
-                        string FactoryID = row["FactoryID"].ToString();
-                        wks.Cells[sheetStart, 1].Value = FactoryID;
+                        string factoryID = row["FactoryID"].ToString();
+                        wks.Cells[this.sheetStart, 1].Value = factoryID;
 
                         for (int mon = 1; mon < 13; mon++)
                         {
-                            DataRow[] rows = dtFactory.Select(string.Format("Month = '{0}' and FactoryID = '{1}'", intYear.ToString() + mon.ToString("00"), FactoryID));
-                            wks.Cells[sheetStart, mon + 1].Value = (rows.Length > 0) ? rows[0]["Capacity"] : 0;
+                            DataRow[] rows = dtFactory.Select(string.Format("Month = '{0}' and FactoryID = '{1}'", this.intYear.ToString() + mon.ToString("00"), factoryID));
+                            wks.Cells[this.sheetStart, mon + 1].Value = (rows.Length > 0) ? rows[0]["Capacity"] : 0;
                         }
-                        wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
 
-                        DataRow[] tmprows = dtFactory.Select(string.Format("FactoryID = '{0}'", FactoryID));
-                        //var tms = dtFactory.Select(string.Format("FactoryID = '{0}'", FactoryID))[0]["Tms"];
-                        wks.Cells[sheetStart, 15].Value = (tmprows.Length > 0 && tmprows[0]["Tms"] != DBNull.Value ? tmprows[0]["Tms"] : 0);
-                        sheetStart += 1;
+                        wks.Cells[this.sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), this.sheetStart);
+
+                        DataRow[] tmprows = dtFactory.Select(string.Format("FactoryID = '{0}'", factoryID));
+                        wks.Cells[this.sheetStart, 15].Value = tmprows.Length > 0 && tmprows[0]["Tms"] != DBNull.Value ? tmprows[0]["Tms"] : 0;
+                        this.sheetStart += 1;
                     }
 
-                    //5 By non-sister
-                    int nonSisStart = sheetStart;
-                    DataTable dtByNonSister = safeGetDt(dt2, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
-                    setTableToRow(wks, sheetStart, "non-sister sub-in", dtByNonSister);
-                    drawBottomLine(wks, sheetStart, 1);
-                    sheetStart += 1;
+                    // 5 By non-sister
+                    int nonSisStart = this.sheetStart;
+                    DataTable dtByNonSister = this.SafeGetDt(dt2, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    this.SetTableToRow(wks, this.sheetStart, "non-sister sub-in", dtByNonSister);
+                    this.DrawBottomLine(wks, this.sheetStart, 1);
+                    this.sheetStart += 1;
 
                     if (isSample)
+                    {
                         continue;
+                    }
 
-                    //MDV total
-                    MDVTotalIdx = sheetStart;
-                    setFormulaToRow(wks, sheetStart, MDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1})", ftyStart, nonSisStart));
+                    // MDV total
+                    mDVTotalIdx = this.sheetStart;
+                    this.SetFormulaToRow(wks, this.sheetStart, mDivisionID + " total", string.Format("=SUM({{0}}{0}:{{0}}{1})", ftyStart, nonSisStart));
 
-                    drawBottomLine(wks, sheetStart, 1);
-                    sheetStart += 1;
+                    this.DrawBottomLine(wks, this.sheetStart, 1);
+                    this.sheetStart += 1;
 
                     lisSumFtyNonSis.Add(ftyStart.ToString() + "," + nonSisStart.ToString());
 
-                    //6 ForecastCapacity
-                    lisPercent.Add(sheetStart.ToString());
-                    DataTable dtForecastCapacityByMDV = safeGetDt(dt3, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
-                    wks.Cells[sheetStart, 1].Value = string.Format("{0} Forecast shared", MDivisionID);
+                    // 6 ForecastCapacity
+                    lisPercent.Add(this.sheetStart.ToString());
+                    DataTable dtForecastCapacityByMDV = this.SafeGetDt(dt3, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    wks.Cells[this.sheetStart, 1].Value = string.Format("{0} Forecast shared", mDivisionID);
                     for (int mon = 1; mon < 13; mon++)
                     {
-                        var ForCapa = dtForecastCapacityByMDV.Compute("SUM(Capacity)", string.Format("Month = '{0}'", intYear.ToString() + mon.ToString("00")));
-                        ForCapa = (ForCapa == DBNull.Value) ? 0 : ForCapa;
-                        wks.Cells[sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), MDVTotalIdx, ForCapa);
+                        var forCapa2 = dtForecastCapacityByMDV.Compute("SUM(Capacity)", string.Format("Month = '{0}'", this.intYear.ToString() + mon.ToString("00")));
+                        forCapa2 = (forCapa2 == DBNull.Value) ? 0 : forCapa2;
+                        wks.Cells[this.sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), mDVTotalIdx, forCapa2);
                     }
-                    var sumforcapaMDV = dtForecastCapacityByMDV.Compute("SUM(Capacity)", "");
-                    wks.Cells[sheetStart, 14].Value = string.Format("=({0}) / SUM({1}{3}:{2}{3})", (sumforcapaMDV == DBNull.Value) ? 0 : sumforcapaMDV, MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), MDVTotalIdx);
-                    sheetStart += 1;
 
-                    //MDV 1 Loading - CAPA
-                    setFormulaToRow(wks, sheetStart, string.Format("{0} Loading - CAPA", MDivisionID), string.Format("=({{0}}{0} - {{0}}{1})", MDVTotalIdx, MDVIdx));
-                    sheetStart += 1;
+                    var sumforcapaMDV = dtForecastCapacityByMDV.Compute("SUM(Capacity)", string.Empty);
+                    wks.Cells[this.sheetStart, 14].Value = string.Format("=({0}) / SUM({1}{3}:{2}{3})", (sumforcapaMDV == DBNull.Value) ? 0 : sumforcapaMDV, MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), mDVTotalIdx);
+                    this.sheetStart += 1;
 
+                    // MDV 1 Loading - CAPA
+                    this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", mDivisionID), string.Format("=({{0}}{0} - {{0}}{1})", mDVTotalIdx, mDVIdx));
+                    this.sheetStart += 1;
 
-                    //MDV FILL RATE
-                    lisPercent.Add(sheetStart.ToString());
-                    setFormulaToRow(wks, sheetStart, string.Format("{0} FILL RATE", MDivisionID), string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", MDVIdx, MDVTotalIdx));
+                    // MDV FILL RATE
+                    lisPercent.Add(this.sheetStart.ToString());
+                    this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} FILL RATE", mDivisionID), string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mDVIdx, mDVTotalIdx));
 
-                    drawBottomLine(wks, sheetStart, 1);
-                    sheetStart += 1;
+                    this.DrawBottomLine(wks, this.sheetStart, 1);
+                    this.sheetStart += 1;
 
                     // Max(OutputDate)
                     // Order+FactoryOrder 的 SewCapacity
-                    DataTable dtOutputMDV = safeGetDt(dt4, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
-                    string MaxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", "").ToString();
-                    MaxSewOutPut = MaxSewOutPut.Length > 0 ? MaxSewOutPut.Substring(5, MaxSewOutPut.Length - 5) : "";
-                    setTableToRow(wks, sheetStart, string.Format("{0} Output ({1})", MDivisionID, MaxSewOutPut), dtOutputMDV);
-                    sheetStart += 1;
+                    DataTable dtOutputMDV = this.SafeGetDt(dt4, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    string maxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", string.Empty).ToString();
+                    maxSewOutPut = maxSewOutPut.Length > 0 ? maxSewOutPut.Substring(5, maxSewOutPut.Length - 5) : string.Empty;
+                    this.SetTableToRow(wks, this.sheetStart, string.Format("{0} Output ({1})", mDivisionID, maxSewOutPut), dtOutputMDV);
+                    this.sheetStart += 1;
 
-                    //MDV Output  Rate
-                    lisPercent.Add(sheetStart.ToString());
-                    setFormulaToRow(wks, sheetStart, string.Format("{0} Output  Rate", MDivisionID), string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", MDVTotalIdx, sheetStart - 1));
+                    // MDV Output  Rate
+                    lisPercent.Add(this.sheetStart.ToString());
+                    this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Output  Rate", mDivisionID), string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", mDVTotalIdx, this.sheetStart - 1));
 
-                    drawBottomLine(wks, sheetStart, 2);
+                    this.DrawBottomLine(wks, this.sheetStart, 2);
 
-                    sheetStart += 1;
-
+                    this.sheetStart += 1;
                 }
 
-                //CountryID Grand TTL
-                MDVTotalIdx = sheetStart;
-                lisMDVTTLIdx.Add(sheetStart.ToString());
+                // CountryID Grand TTL
+                mDVTotalIdx = this.sheetStart;
+                lisMDVTTLIdx.Add(this.sheetStart.ToString());
                 string sumFtyStr = "=";
                 foreach (string str in lisSumFtyNonSis)
                 {
                     sumFtyStr += string.Format("+SUM({{0}}{0}:{{0}}{1})", str.Split(',')[0], str.Split(',')[1]);
                 }
-                setFormulaToRow(wks, sheetStart, string.Format("{0} Grand TTL", CountryID), sumFtyStr);
 
-                drawBottomLine(wks, sheetStart, 1);
-                sheetStart += 1;
+                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Grand TTL", countryID), sumFtyStr);
 
-                //CountryID Forecast shared
-                lisPercent.Add(sheetStart.ToString());
-                DataTable dtForecastCapacityByCty = safeGetDt(dt3, string.Format("CountryID = '{0}'", CountryID));
-                wks.Cells[sheetStart, 1].Value = string.Format("{0} Forecast shared", CountryID);
+                this.DrawBottomLine(wks, this.sheetStart, 1);
+                this.sheetStart += 1;
+
+                // CountryID Forecast shared
+                lisPercent.Add(this.sheetStart.ToString());
+                DataTable dtForecastCapacityByCty = this.SafeGetDt(dt3, string.Format("CountryID = '{0}'", countryID));
+                wks.Cells[this.sheetStart, 1].Value = string.Format("{0} Forecast shared", countryID);
                 for (int mon = 1; mon < 13; mon++)
                 {
-                    var ForCapa = dtForecastCapacityByCty.Compute("SUM(Capacity)", string.Format("Month = '{0}'", intYear.ToString() + mon.ToString("00")));
-                    ForCapa = (ForCapa == DBNull.Value) ? 0 : ForCapa;
-                    wks.Cells[sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), MDVTotalIdx, ForCapa);
+                    var forCapa1 = dtForecastCapacityByCty.Compute("SUM(Capacity)", string.Format("Month = '{0}'", this.intYear.ToString() + mon.ToString("00")));
+                    forCapa1 = (forCapa1 == DBNull.Value) ? 0 : forCapa1;
+                    wks.Cells[this.sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), mDVTotalIdx, forCapa1);
                 }
-                var sumforcapaCty = dtForecastCapacityByCty.Compute("SUM(Capacity)", "");
-                wks.Cells[sheetStart, 14].Value = string.Format("=({0}) / SUM({1}{3}:{2}{3})", (sumforcapaCty == DBNull.Value) ? 0 : sumforcapaCty, MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), MDVTotalIdx);
-                sheetStart += 1;
 
+                var sumforcapaCty = dtForecastCapacityByCty.Compute("SUM(Capacity)", string.Empty);
+                wks.Cells[this.sheetStart, 14].Value = string.Format("=({0}) / SUM({1}{3}:{2}{3})", (sumforcapaCty == DBNull.Value) ? 0 : sumforcapaCty, MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), mDVTotalIdx);
+                this.sheetStart += 1;
 
-                //CountryID Loading - CAPA
-                setFormulaToRow(wks, sheetStart, string.Format("{0} Loading - CAPA", CountryID), string.Format("=({{0}}{0} - {{0}}{1})", sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]));
-                sheetStart += 1;
+                // CountryID Loading - CAPA
+                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", countryID), string.Format("=({{0}}{0} - {{0}}{1})", this.sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]));
+                this.sheetStart += 1;
 
+                // CountryID FILL Rate
+                lisPercent.Add(this.sheetStart.ToString());
+                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} FILL Rate", countryID), string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", this.sheetStart - 3, lisCtyIdx[lisCtyIdx.Count - 1]));
+                this.sheetStart += 1;
 
-                //CountryID FILL Rate
-                lisPercent.Add(sheetStart.ToString());
-                setFormulaToRow(wks, sheetStart, string.Format("{0} FILL Rate", CountryID), string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", sheetStart - 3, lisCtyIdx[lisCtyIdx.Count - 1]));
-                sheetStart += 1;
+                // CountryID Output()
+                lisOutputIdx.Add(this.sheetStart.ToString());
+                DataTable dtOutputCty = this.SafeGetDt(dt4, string.Format("CountryID = '{0}'", countryID));
+                string maxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", string.Empty).ToString();
+                maxSewOutPutCty = maxSewOutPutCty.Length > 0 ? maxSewOutPutCty.Substring(5, maxSewOutPutCty.Length - 5) : string.Empty;
 
-                //CountryID Output()
-                lisOutputIdx.Add(sheetStart.ToString());
-                DataTable dtOutputCty = safeGetDt(dt4, string.Format("CountryID = '{0}'", CountryID));
-                string MaxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", "").ToString();
-                MaxSewOutPutCty = MaxSewOutPutCty.Length > 0 ? MaxSewOutPutCty.Substring(5, MaxSewOutPutCty.Length - 5) : "";
+                this.SetTableToRow(wks, this.sheetStart, string.Format("{0} Output ({1})", countryID, maxSewOutPutCty), dtOutputCty);
+                this.sheetStart += 1;
 
-                setTableToRow(wks, sheetStart, string.Format("{0} Output ({1})", CountryID, MaxSewOutPutCty), dtOutputCty);
-                sheetStart += 1;
+                // CountryID Output  Rate
+                lisPercent.Add(this.sheetStart.ToString());
+                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Output  Rate", countryID), string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", "{0}", mDVTotalIdx, this.sheetStart - 1));
 
-                //CountryID Output  Rate
-                lisPercent.Add(sheetStart.ToString());
-                setFormulaToRow(wks, sheetStart, string.Format("{0} Output  Rate", CountryID), string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", "{0}", MDVTotalIdx, sheetStart - 1));
+                this.DrawBottomLine(wks, this.sheetStart, 3);
 
-                drawBottomLine(wks, sheetStart, 3);
-
-                sheetStart += 1;
-
+                this.sheetStart += 1;
             }
 
-
-            //Total Capacity
-            lisBold.Add(sheetStart.ToString());
-            string TotalStr = "=";
+            // Total Capacity
+            lisBold.Add(this.sheetStart.ToString());
+            string totalStr = "=";
             foreach (string str in lisCtyIdx)
             {
-                TotalStr += string.Format("+{0}{1}", "{0}", str);
+                totalStr += string.Format("+{0}{1}", "{0}", str);
             }
-            setFormulaToRow(wks, sheetStart, "Total Capacity", TotalStr);
 
-            sheetStart += 1;
+            this.SetFormulaToRow(wks, this.sheetStart, "Total Capacity", totalStr);
 
+            this.sheetStart += 1;
 
-            //Total Loading - CAPA
-            lisBold.Add(sheetStart.ToString());
-            string TotalLoadStr = "=";
+            // Total Loading - CAPA
+            lisBold.Add(this.sheetStart.ToString());
+            string totalLoadStr = "=";
             foreach (string str in lisMDVTTLIdx)
             {
-                TotalLoadStr += string.Format("+{0}{1}", "{0}", str);
+                totalLoadStr += string.Format("+{0}{1}", "{0}", str);
             }
-            setFormulaToRow(wks, sheetStart, "Total Loading", TotalLoadStr);
 
-            sheetStart += 1;
+            this.SetFormulaToRow(wks, this.sheetStart, "Total Loading", totalLoadStr);
 
+            this.sheetStart += 1;
 
-            //Total Forecast shared
-            lisBold.Add(sheetStart.ToString());
-            lisPercent.Add(sheetStart.ToString());
+            // Total Forecast shared
+            lisBold.Add(this.sheetStart.ToString());
+            lisPercent.Add(this.sheetStart.ToString());
             DataTable dtForecastCapacity = dt3;
-            wks.Cells[sheetStart, 1].Value = "Total FC shared";
+            wks.Cells[this.sheetStart, 1].Value = "Total FC shared";
             for (int mon = 1; mon < 14; mon++)
             {
-                var ForCapa = dtForecastCapacity.Compute("SUM(Capacity)", string.Format("Month = '{0}'", intYear.ToString() + mon.ToString("00")));
-                ForCapa = (ForCapa == DBNull.Value) ? 0 : ForCapa;
-                wks.Cells[sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), sheetStart - 1, ForCapa);
+                var forCapa = dtForecastCapacity.Compute("SUM(Capacity)", string.Format("Month = '{0}'", this.intYear.ToString() + mon.ToString("00")));
+                forCapa = (forCapa == DBNull.Value) ? 0 : forCapa;
+                wks.Cells[this.sheetStart, mon + 1] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(mon + 1), this.sheetStart - 1, forCapa);
             }
-            sheetStart += 1;
 
-            //Total Loading - CAPA
-            lisBold.Add(sheetStart.ToString());
-            setFormulaToRow(wks, sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", sheetStart - 2, sheetStart - 3));
-            sheetStart += 1;
+            this.sheetStart += 1;
 
-            //FILL Rate
-            lisBold.Add(sheetStart.ToString());
-            lisPercent.Add(sheetStart.ToString());
-            setFormulaToRow(wks, sheetStart, "FIll RATE", string.Format("=IF({0}{2}>0,{0}{1}/{0}{2},0)", "{0}", sheetStart - 3, sheetStart - 4));
-            sheetStart += 1;
+            // Total Loading - CAPA
+            lisBold.Add(this.sheetStart.ToString());
+            this.SetFormulaToRow(wks, this.sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", this.sheetStart - 2, this.sheetStart - 3));
+            this.sheetStart += 1;
 
-            //Output()
-            lisBold.Add(sheetStart.ToString());
-            string OutPutStr = "=";
+            // FILL Rate
+            lisBold.Add(this.sheetStart.ToString());
+            lisPercent.Add(this.sheetStart.ToString());
+            this.SetFormulaToRow(wks, this.sheetStart, "FIll RATE", string.Format("=IF({0}{2}>0,{0}{1}/{0}{2},0)", "{0}", this.sheetStart - 3, this.sheetStart - 4));
+            this.sheetStart += 1;
+
+            // Output()
+            lisBold.Add(this.sheetStart.ToString());
+            string outPutStr = "=";
             foreach (string str in lisOutputIdx)
             {
-                OutPutStr += string.Format("+{{0}}{0}", str);
+                outPutStr += string.Format("+{{0}}{0}", str);
             }
 
             DataTable dtOutput = dt4;
-            string MaxSewOutPutT = dtOutput.Compute("MAX(SewingYYMM)", "").ToString();
-            MaxSewOutPutT = MaxSewOutPutT.Length > 0 ? MaxSewOutPutT.Substring(5, MaxSewOutPutT.Length - 5) : "";
+            string maxSewOutPutT = dtOutput.Compute("MAX(SewingYYMM)", string.Empty).ToString();
+            maxSewOutPutT = maxSewOutPutT.Length > 0 ? maxSewOutPutT.Substring(5, maxSewOutPutT.Length - 5) : string.Empty;
 
-            setFormulaToRow(wks, sheetStart, string.Format("Output ({0})", MaxSewOutPutT), OutPutStr);
-            sheetStart += 1;
+            this.SetFormulaToRow(wks, this.sheetStart, string.Format("Output ({0})", maxSewOutPutT), outPutStr);
+            this.sheetStart += 1;
 
-            //Output  Rate
-            lisPercent.Add(sheetStart.ToString());
-            lisBold.Add(sheetStart.ToString());
-            setFormulaToRow(wks, sheetStart, "Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", sheetStart - 5, sheetStart - 1));
+            // Output  Rate
+            lisPercent.Add(this.sheetStart.ToString());
+            lisBold.Add(this.sheetStart.ToString());
+            this.SetFormulaToRow(wks, this.sheetStart, "Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", this.sheetStart - 5, this.sheetStart - 1));
 
-
-
-            //第一排置中
-            Microsoft.Office.Interop.Excel.Range rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(1) + "5", MyExcelPrg.GetExcelColumnName(1) + sheetStart.ToString());
+            // 第一排置中
+            Microsoft.Office.Interop.Excel.Range rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(1) + "5", MyExcelPrg.GetExcelColumnName(1) + this.sheetStart.ToString());
             rg.Cells.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
-            //Country, MDvision, Total 第一格粗體
+            // Country, MDvision, Total 第一格粗體
             foreach (string idx in lisBold)
             {
                 string rgStr = string.Format("{0}{1}:{0}{1}", MyExcelPrg.GetExcelColumnName(1), idx);
@@ -801,13 +864,13 @@ namespace Sci.Production.Planning
                 rg.Font.Bold = true;
             }
 
-            ////數值格式
-            string lastCell = MyExcelPrg.GetExcelColumnName(15) + sheetStart.ToString();
+            // 數值格式
+            string lastCell = MyExcelPrg.GetExcelColumnName(15) + this.sheetStart.ToString();
             rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(2) + "5", lastCell);
             rg.Cells.NumberFormat = "##,###,##0";
 
-            //Total欄左右邊線
-            rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(14) + "5", MyExcelPrg.GetExcelColumnName(14) + sheetStart.ToString());
+            // Total欄左右邊線
+            rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(14) + "5", MyExcelPrg.GetExcelColumnName(14) + this.sheetStart.ToString());
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft].Weight = 2;
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -820,7 +883,7 @@ namespace Sci.Production.Planning
                 rg.Cells.NumberFormat = "###,##0.00%";
             }
 
-            //第一欄位Auto Fit
+            // 第一欄位Auto Fit
             rg = wks.get_Range("A:A");
             rg.Columns.AutoFit();
 
@@ -828,284 +891,297 @@ namespace Sci.Production.Planning
         }
 
         /// <summary>
-        /// Report2，開啟xlt填入資料
+        /// TransferReport2
         /// </summary>
-        private DualResult transferReport2(DataTable[] datas, Microsoft.Office.Interop.Excel.Worksheet wks)
+        /// <param name="datas">datas</param>
+        /// <param name="wks">wks</param>
+        /// <returns>DualResult</returns>
+        private DualResult TransferReport2(DataTable[] datas, Microsoft.Office.Interop.Excel.Worksheet wks)
         {
-            //string xltPath = @"Planning_R02_02.xlt";
-            //SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
-            //Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
-            //sxrc.ExcelApp.Visible = true;
+            int artworkStart = this.sheetStart;
 
-            int ArtworkStart = sheetStart;
-
-            //Set Header
-            DateTime startDate = new DateTime(intYear, intMonth, 1);
+            // Set Header
+            DateTime startDate = new DateTime(this.intYear, this.intMonth, 1);
             for (int mon = 0; mon < 6; mon++)
             {
                 DateTime nextDate = startDate.AddMonths(mon);
-                wks.Cells[sheetStart - 1, 5 + mon * 2].Value = new DateTime(nextDate.Year, nextDate.Month, 22).ToShortDateString();
-                wks.Cells[sheetStart - 1, 6 + mon * 2].Value = new DateTime(nextDate.Year, nextDate.Month, 7).AddMonths(1).ToShortDateString();
+                wks.Cells[this.sheetStart - 1, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 22).ToShortDateString();
+                wks.Cells[this.sheetStart - 1, 6 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 7).AddMonths(1).ToShortDateString();
             }
 
             DataTable dtList = datas[0];
-            DataTable dt0 = datas[1]; //[0] By Factory 最細的上下半月Capacity
-            DataTable dt1 = datas[2]; //[1] By Factory Loading CPU
-            DataTable dt2 = datas[3]; //[2] For Forecast shared
+            DataTable dt0 = datas[1]; // [0] By Factory 最細的上下半月Capacity
+            DataTable dt1 = datas[2]; // [1] By Factory Loading CPU
+            DataTable dt2 = datas[3]; // [2] For Forecast shared
 
             DataTable dtCountryList = dtList.DefaultView.ToTable(true, "CountryID");
             List<string> lisPercent = new List<string>();
 
-            //For Country
+            // For Country
             for (int idxCty = 0; idxCty < dtCountryList.Rows.Count; idxCty++)
             {
-                string CountryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
-                DataTable dtCountry = safeGetDt(dt0, string.Format("CountryID = '{0}'", CountryID));
-                if (dtCountry.Rows.Count == 0) continue;
-                string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
-                wks.Cells[sheetStart, 1].Value = CountryName;
+                string countryID = dtCountryList.Rows[idxCty]["CountryID"].ToString();
+                DataTable dtCountry = this.SafeGetDt(dt0, string.Format("CountryID = '{0}'", countryID));
+                if (dtCountry.Rows.Count == 0)
+                {
+                    continue;
+                }
 
-                DataTable dtMDVList = safeGetDt(dtList, string.Format("CountryID = '{0}'", CountryID)).DefaultView.ToTable(true, "MDivisionID");
+                string countryName = dtCountry.Rows[0]["CountryName"].ToString();
+                wks.Cells[this.sheetStart, 1].Value = countryName;
+
+                DataTable dtMDVList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}'", countryID)).DefaultView.ToTable(true, "MDivisionID");
 
                 List<string> lisCapaCty = new List<string>();
                 List<string> lisLoadingCty = new List<string>();
-                setColumnToBack(dtMDVList, "MDivisionID", "Sample");
-                setColumnToBack(dtMDVList, "MDivisionID", "");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", "Sample");
+                this.SetColumnToBack(dtMDVList, "MDivisionID", string.Empty);
                 int idx = 0;
 
                 for (int idxMDV = 0; idxMDV < dtMDVList.Rows.Count; idxMDV++)
                 {
-                    string MDivisionID = dtMDVList.Rows[idxMDV]["MDivisionID"].ToString();
-                    wks.Cells[sheetStart, 2].Value = MDivisionID;
+                    string mDivisionID = dtMDVList.Rows[idxMDV]["MDivisionID"].ToString();
+                    wks.Cells[this.sheetStart, 2].Value = mDivisionID;
 
-                    DataTable dtOneMDV = safeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", MDivisionID));
-                    DataTable dtFactory = safeGetDt(dtOneMDV, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
-                    DataTable dtFactoryList = safeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID)).DefaultView.ToTable(true, "FactoryID");
-                    int ftyStart = sheetStart;
+                    DataTable dtOneMDV = this.SafeGetDt(dtCountry, string.Format("MDivisionID = '{0}'", mDivisionID));
+                    DataTable dtFactory = this.SafeGetDt(dtOneMDV, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID));
+                    DataTable dtFactoryList = this.SafeGetDt(dtList, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", countryID, mDivisionID)).DefaultView.ToTable(true, "FactoryID");
+                    int ftyStart = this.sheetStart;
                     List<string> lisCapa = new List<string>();
                     List<string> lisLoading = new List<string>();
                     foreach (DataRow row in dtFactoryList.Rows)
                     {
-                        string FactoryID = row["FactoryID"].ToString();
-                        wks.Cells[sheetStart, 3].Value = FactoryID;
-                        wks.Cells[sheetStart, 4].Value = "Capa.";
-                        lisCapa.Add(sheetStart.ToString());
-                        lisCapaCty.Add(sheetStart.ToString());
+                        string factoryID = row["FactoryID"].ToString();
+                        wks.Cells[this.sheetStart, 3].Value = factoryID;
+                        wks.Cells[this.sheetStart, 4].Value = "Capa.";
+                        lisCapa.Add(this.sheetStart.ToString());
+                        lisCapaCty.Add(this.sheetStart.ToString());
                         idx = 0;
-                        for (int mon = intMonth; mon < intMonth + 6; mon++)
+                        for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                         {
-                            DataRow[] rows = dtFactory.Select(string.Format("FactoryID = '{0}' and MONTH = '{1}'", FactoryID, getCurrMonth(intYear, mon)));
-                            decimal Capacity1 = 0;
-                            decimal Capacity2 = 0;
+                            DataRow[] rows = dtFactory.Select(string.Format("FactoryID = '{0}' and MONTH = '{1}'", factoryID, this.GetCurrMonth(this.intYear, mon)));
+                            decimal capacity13 = 0;
+                            decimal capacity23 = 0;
                             if (rows.Length > 0)
                             {
-                                Capacity1 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                                Capacity2 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                                capacity13 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
+                                capacity23 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
                             }
-                            wks.Cells[sheetStart, 5 + idx * 2].Value = Capacity1;
-                            wks.Cells[sheetStart, 5 + idx * 2 + 1].Value = Capacity2;
+
+                            wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = capacity13;
+                            wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = capacity23;
                             idx += 1;
                         }
-                        wks.Cells[sheetStart, 17] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(5), MyExcelPrg.GetExcelColumnName(16), sheetStart);
 
-                        sheetStart += 1;
+                        wks.Cells[this.sheetStart, 17] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(5), MyExcelPrg.GetExcelColumnName(16), this.sheetStart);
 
-                        lisLoading.Add(sheetStart.ToString());
-                        lisLoadingCty.Add(sheetStart.ToString());
-                        wks.Cells[sheetStart, 4].Value = "Load.";
+                        this.sheetStart += 1;
+
+                        lisLoading.Add(this.sheetStart.ToString());
+                        lisLoadingCty.Add(this.sheetStart.ToString());
+                        wks.Cells[this.sheetStart, 4].Value = "Load.";
                         idx = 0;
-                        DataTable dtLoadCPU = safeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}' and FactoryID = '{2}'", CountryID, MDivisionID, FactoryID));
-                        for (int mon = intMonth; mon < intMonth + 6; mon++)
+                        DataTable dtLoadCPU = this.SafeGetDt(dt1, string.Format("CountryID = '{0}' And MDivisionID = '{1}' and FactoryID = '{2}'", countryID, mDivisionID, factoryID));
+                        for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                         {
-                            DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", getCurrMonth(intYear, mon)));
-                            decimal Capacity1 = 0;
-                            decimal Capacity2 = 0;
+                            DataRow[] rows = dtLoadCPU.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon)));
+                            decimal capacity12 = 0;
+                            decimal capacity22 = 0;
                             if (rows.Length > 0)
                             {
-                                Capacity1 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                                Capacity2 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                                capacity12 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
+                                capacity22 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
                             }
-                            wks.Cells[sheetStart, 5 + idx * 2].Value = Capacity1;
-                            wks.Cells[sheetStart, 5 + idx * 2 + 1].Value = Capacity2;
+
+                            wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = capacity12;
+                            wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = capacity22;
                             idx += 1;
                         }
-                        wks.Cells[sheetStart, 17] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(5), MyExcelPrg.GetExcelColumnName(16), sheetStart);
 
-                        sheetStart += 1;
+                        wks.Cells[this.sheetStart, 17] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(5), MyExcelPrg.GetExcelColumnName(16), this.sheetStart);
 
-                        wks.Cells[sheetStart, 4].Value = "Vari.";
+                        this.sheetStart += 1;
+
+                        wks.Cells[this.sheetStart, 4].Value = "Vari.";
                         for (int i = 5; i <= 17; i++)
                         {
-                            string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), sheetStart - 1, sheetStart - 2);
-                            wks.Cells[sheetStart, i] = str;
+                            string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 1, this.sheetStart - 2);
+                            wks.Cells[this.sheetStart, i] = str;
                         }
 
-                        drawBottomLine(wks, sheetStart, 4, 3, 17);
+                        this.DrawBottomLine(wks, this.sheetStart, 4, 3, 17);
 
-                        sheetStart += 1;
-
+                        this.sheetStart += 1;
                     }
 
-                    //Total Capa.
-                    wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Capa.", MDivisionID);
+                    // Total Capa.
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Capa.", mDivisionID);
                     string totalCapa = "=";
                     for (int i = 0; i < lisCapa.Count; i++)
                     {
                         totalCapa += string.Format("+{{0}}{0}", lisCapa[i]);
                     }
+
                     for (int i = 5; i <= 17; i++)
                     {
                         string str = string.Format(totalCapa, MyExcelPrg.GetExcelColumnName(i));
-                        wks.Cells[sheetStart, i] = str;
+                        wks.Cells[this.sheetStart, i] = str;
                     }
-                    sheetStart += 1;
 
-                    //Total Load.
-                    wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Load.", MDivisionID);
+                    this.sheetStart += 1;
+
+                    // Total Load.
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Load.", mDivisionID);
                     string totalLoad = "=";
                     for (int i = 0; i < lisLoading.Count; i++)
                     {
                         totalLoad += string.Format("+{{0}}{0}", lisLoading[i]);
                     }
+
                     for (int i = 5; i <= 17; i++)
                     {
                         string str = string.Format(totalLoad, MyExcelPrg.GetExcelColumnName(i));
-                        wks.Cells[sheetStart, i] = str;
+                        wks.Cells[this.sheetStart, i] = str;
                     }
-                    sheetStart += 1;
 
-                    //6 ForecastCapacity
-                    lisPercent.Add(sheetStart.ToString());
+                    this.sheetStart += 1;
+
+                    // 6 ForecastCapacity
+                    lisPercent.Add(this.sheetStart.ToString());
                     idx = 0;
-                    DataTable dtForecastCapacityByMDV = safeGetDt(dt2, string.Format("CountryID = '{0}' And MDivisionID = '{1}' ", CountryID, MDivisionID));
-                    wks.Cells[sheetStart, 3].Value = string.Format("{0} Total FC Shared", MDivisionID);
-                    for (int mon = intMonth; mon < intMonth + 6; mon++)
+                    DataTable dtForecastCapacityByMDV = this.SafeGetDt(dt2, string.Format("CountryID = '{0}' And MDivisionID = '{1}' ", countryID, mDivisionID));
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total FC Shared", mDivisionID);
+                    for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                     {
-                        DataRow[] rows = dtForecastCapacityByMDV.Select(string.Format("MONTH = '{0}'", getCurrMonth(intYear, mon)));
-                        decimal Capacity1 = 0;
-                        decimal Capacity2 = 0;
+                        DataRow[] rows = dtForecastCapacityByMDV.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon)));
+                        decimal capacity11 = 0;
+                        decimal capacity21 = 0;
                         if (rows.Length > 0)
                         {
                             for (int tmpRow = 0; tmpRow < rows.Length; tmpRow++)
                             {
-                                Capacity1 += rows[tmpRow]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity1"]) : 0;
-                                Capacity2 += rows[tmpRow]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity2"]) : 0;
+                                capacity11 += rows[tmpRow]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity1"]) : 0;
+                                capacity21 += rows[tmpRow]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[tmpRow]["Capacity2"]) : 0;
                             }
                         }
-                        wks.Cells[sheetStart, 5 + idx * 2].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2), sheetStart - 1, Capacity1);
-                        wks.Cells[sheetStart, 5 + idx * 2 + 1].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2 + 1), sheetStart - 1, Capacity2);
+
+                        wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + (idx * 2)), this.sheetStart - 1, capacity11);
+                        wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + (idx * 2) + 1), this.sheetStart - 1, capacity21);
                         idx += 1;
                     }
-                    var sumforcapaMDV = dtForecastCapacityByMDV.Compute("SUM(Capacity1)+SUM(Capacity2)", "");
-                    wks.Cells[sheetStart, 17] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(17), sheetStart - 1, (sumforcapaMDV == DBNull.Value) ? 0 : sumforcapaMDV);
 
-                    sheetStart += 1;
+                    var sumforcapaMDV = dtForecastCapacityByMDV.Compute("SUM(Capacity1)+SUM(Capacity2)", string.Empty);
+                    wks.Cells[this.sheetStart, 17] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(17), this.sheetStart - 1, (sumforcapaMDV == DBNull.Value) ? 0 : sumforcapaMDV);
 
+                    this.sheetStart += 1;
 
-
-                    //Total Vari.
-                    wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Vari.", MDivisionID);
+                    // Total Vari.
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Vari.", mDivisionID);
                     for (int i = 5; i <= 17; i++)
                     {
-                        string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), sheetStart - 2, sheetStart - 3);
-                        wks.Cells[sheetStart, i] = str;
+                        string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 2, this.sheetStart - 3);
+                        wks.Cells[this.sheetStart, i] = str;
                     }
-                    sheetStart += 1;
 
-                    //Total Fill Rate
-                    lisPercent.Add(sheetStart.ToString());
-                    wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Fill Rate", MDivisionID);
+                    this.sheetStart += 1;
+
+                    // Total Fill Rate
+                    lisPercent.Add(this.sheetStart.ToString());
+                    wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", mDivisionID);
                     for (int i = 5; i <= 17; i++)
                     {
-                        string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), sheetStart - 3, sheetStart - 4);
-                        wks.Cells[sheetStart, i] = str;
+                        string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 3, this.sheetStart - 4);
+                        wks.Cells[this.sheetStart, i] = str;
                     }
 
-                    drawBottomLine(wks, sheetStart, 4, 2, 17);
+                    this.DrawBottomLine(wks, this.sheetStart, 4, 2, 17);
 
-                    sheetStart += 1;
+                    this.sheetStart += 1;
                 }
 
-                //Country Total Capa.
-                wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Capa.", CountryID);
+                // Country Total Capa.
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Capa.", countryID);
                 string totalCapaCty = "={0}";
                 totalCapaCty += string.Join("+{0}", lisCapaCty);
                 for (int i = 5; i <= 17; i++)
                 {
                     string str = string.Format(totalCapaCty, MyExcelPrg.GetExcelColumnName(i));
-                    wks.Cells[sheetStart, i] = str;
+                    wks.Cells[this.sheetStart, i] = str;
                 }
-                sheetStart += 1;
 
-                //Country Total Load.
-                wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Load.", CountryID);
+                this.sheetStart += 1;
+
+                // Country Total Load.
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Load.", countryID);
                 string totalLoadCty = "={0}";
                 totalLoadCty += string.Join("+{0}", lisLoadingCty);
                 for (int i = 5; i <= 17; i++)
                 {
                     string str = string.Format(totalLoadCty, MyExcelPrg.GetExcelColumnName(i));
-                    wks.Cells[sheetStart, i] = str;
+                    wks.Cells[this.sheetStart, i] = str;
                 }
-                sheetStart += 1;
 
+                this.sheetStart += 1;
 
-                //Country FC Shared
-                lisPercent.Add(sheetStart.ToString());
+                // Country FC Shared
+                lisPercent.Add(this.sheetStart.ToString());
                 idx = 0;
-                DataTable dtForecastCapacity = safeGetDt(dt2, string.Format("CountryID = '{0}'", CountryID));
-                wks.Cells[sheetStart, 3].Value = string.Format("{0} Total FC Shared", CountryID);
-                for (int mon = intMonth; mon < intMonth + 6; mon++)
+                DataTable dtForecastCapacity = this.SafeGetDt(dt2, string.Format("CountryID = '{0}'", countryID));
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total FC Shared", countryID);
+                for (int mon = this.intMonth; mon < this.intMonth + 6; mon++)
                 {
-                    DataRow[] rows = dtForecastCapacity.Select(string.Format("MONTH = '{0}'", getCurrMonth(intYear, mon)));
-                    decimal Capacity1 = 0;
-                    decimal Capacity2 = 0;
+                    DataRow[] rows = dtForecastCapacity.Select(string.Format("MONTH = '{0}'", this.GetCurrMonth(this.intYear, mon)));
+                    decimal capacity1 = 0;
+                    decimal capacity2 = 0;
                     if (rows.Length > 0)
                     {
-                        Capacity1 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
-                        Capacity2 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
+                        capacity1 = rows[0]["Capacity1"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity1"]) : 0;
+                        capacity2 = rows[0]["Capacity2"] != DBNull.Value ? Convert.ToDecimal(rows[0]["Capacity2"]) : 0;
                     }
-                    wks.Cells[sheetStart, 5 + idx * 2].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2), sheetStart - 1, Capacity1);
-                    wks.Cells[sheetStart, 5 + idx * 2 + 1].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + idx * 2 + 1), sheetStart - 1, Capacity2);
+
+                    wks.Cells[this.sheetStart, 5 + (idx * 2)].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + (idx * 2)), this.sheetStart - 1, capacity1);
+                    wks.Cells[this.sheetStart, 5 + (idx * 2) + 1].Value = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(5 + (idx * 2) + 1), this.sheetStart - 1, capacity2);
                     idx += 1;
                 }
-                var sumforcapaMDVCty = dtForecastCapacity.Compute("SUM(Capacity1)+SUM(Capacity2)", "");
-                wks.Cells[sheetStart, 17] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(17), sheetStart - 1, (sumforcapaMDVCty == DBNull.Value) ? 0 : sumforcapaMDVCty);
 
-                sheetStart += 1;
+                var sumforcapaMDVCty = dtForecastCapacity.Compute("SUM(Capacity1)+SUM(Capacity2)", string.Empty);
+                wks.Cells[this.sheetStart, 17] = string.Format("=IF({0}{1}>0,{2}/{0}{1},0)", MyExcelPrg.GetExcelColumnName(17), this.sheetStart - 1, (sumforcapaMDVCty == DBNull.Value) ? 0 : sumforcapaMDVCty);
 
-                //Country Total Vari.
-                wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Vari.", CountryID);
+                this.sheetStart += 1;
+
+                // Country Total Vari.
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Vari.", countryID);
                 for (int i = 5; i <= 17; i++)
                 {
-                    string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), sheetStart - 2, sheetStart - 3);
-                    wks.Cells[sheetStart, i] = str;
+                    string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 2, this.sheetStart - 3);
+                    wks.Cells[this.sheetStart, i] = str;
                 }
-                sheetStart += 1;
 
-                //Country Total Fill Rate
-                lisPercent.Add(sheetStart.ToString());
-                wks.Cells[sheetStart, 3].Value = string.Format("{0} Total Fill Rate", CountryID);
+                this.sheetStart += 1;
+
+                // Country Total Fill Rate
+                lisPercent.Add(this.sheetStart.ToString());
+                wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", countryID);
                 for (int i = 5; i <= 17; i++)
                 {
-                    string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), sheetStart - 3, sheetStart - 4);
-                    wks.Cells[sheetStart, i] = str;
+                    string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 3, this.sheetStart - 4);
+                    wks.Cells[this.sheetStart, i] = str;
                 }
 
-                drawBottomLine(wks, sheetStart, 5, 1, 17);
+                this.DrawBottomLine(wks, this.sheetStart, 5, 1, 17);
 
-                sheetStart += 1;
-
+                this.sheetStart += 1;
             }
 
-            sheetStart -= 1;
+            this.sheetStart -= 1;
 
-            //欄位以直線區隔
-            string lastCell = MyExcelPrg.GetExcelColumnName(17) + sheetStart.ToString();
-            Microsoft.Office.Interop.Excel.Range rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(1) + ArtworkStart.ToString(), lastCell);
+            // 欄位以直線區隔
+            string lastCell = MyExcelPrg.GetExcelColumnName(17) + this.sheetStart.ToString();
+            Microsoft.Office.Interop.Excel.Range rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(1) + artworkStart.ToString(), lastCell);
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical].Weight = 2;
 
-            //數值格式
+            // 數值格式
             rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(5) + "5", lastCell);
             rg.Cells.NumberFormat = "##,###,##0";
 
@@ -1115,25 +1191,26 @@ namespace Sci.Production.Planning
                 rg = wks.get_Range(rgStr);
                 rg.Cells.NumberFormat = "###,##0.00%";
             }
-                      
+
             GC.Collect();
 
             return Result.True;
-
         }
-
 
         #region 減少Code用
-
-        private string getCurrMonth(int intYear, int month)
+        private string GetCurrMonth(int intYear, int month)
         {
             if (month > 12)
+            {
                 return (intYear + 1).ToString() + (month % 12).ToString("00");
+            }
             else
+            {
                 return intYear.ToString() + month.ToString("00");
+            }
         }
 
-        void setColumnToBack(DataTable dt, string column, string value)
+        private void SetColumnToBack(DataTable dt, string column, string value)
         {
             int idx = -1;
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -1144,6 +1221,7 @@ namespace Sci.Production.Planning
                     break;
                 }
             }
+
             if (idx != -1)
             {
                 DataRow r = dt.NewRow();
@@ -1153,120 +1231,126 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void drawBottomLine(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, int LineType, int sIdx = 1, int eIdx = 15)
+        private void DrawBottomLine(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, int lineType, int sIdx = 1, int eIdx = 15)
         {
             string rgStr = string.Format("{0}{2}:{1}{2}", MyExcelPrg.GetExcelColumnName(sIdx), MyExcelPrg.GetExcelColumnName(eIdx), sheetStart);
 
-            if (LineType == 1)
+            if (lineType == 1)
             {
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash;
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 1.5;
             }
-            if (LineType == 2)
+
+            if (lineType == 2)
             {
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDot;
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
             }
-            if (LineType == 3)
+
+            if (lineType == 3)
             {
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 4;
             }
 
-            if (LineType == 4)
+            if (lineType == 4)
             {
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             }
 
-            if (LineType == 5)
+            if (lineType == 5)
             {
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlDouble;
                 wks.get_Range(rgStr).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 4;
             }
         }
 
-        private void setTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string Cell1Str, DataTable dt)
+        private void SetTableToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, DataTable dt)
         {
-            wks.Cells[sheetStart, 1].Value = Cell1Str;
+            wks.Cells[sheetStart, 1].Value = cell1Str;
             for (int mon = 1; mon < 13; mon++)
             {
-                DataRow[] rows = dt.Select(string.Format("Month = '{0}'", intYear.ToString() + mon.ToString("00")));
+                DataRow[] rows = dt.Select(string.Format("Month = '{0}'", this.intYear.ToString() + mon.ToString("00")));
                 decimal v = 0;
                 if (rows.Length > 0)
                 {
                     for (int i = 0; i < rows.Length; i++)
                     {
                         decimal decCapacity;
-                        Decimal.TryParse(rows[i]["Capacity"].ToString(), out decCapacity);
+                        decimal.TryParse(rows[i]["Capacity"].ToString(), out decCapacity);
                         v += decCapacity;
                     }
                 }
+
                 wks.Cells[sheetStart, mon + 1].Value = v;
             }
+
             wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
         }
 
-        private void setFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string Cell1Str, string formula)
+        private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula)
         {
-            wks.Cells[sheetStart, 1].Value = Cell1Str;
+            wks.Cells[sheetStart, 1].Value = cell1Str;
             for (int i = 2; i <= 14; i++)
             {
                 string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
                 wks.Cells[sheetStart, i] = str;
             }
-            //wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
-
         }
 
-        private DataTable safeGetDt(DataTable dt, string filterStr)
+        private DataTable SafeGetDt(DataTable dt, string filterStr)
         {
             DataRow[] rows = dt.Select(filterStr);
             DataTable dtOutput = (rows.Length > 0) ? rows.CopyToDataTable() : dt.Clone();
             return dtOutput;
         }
-
         #endregion
 
-
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region raProductionStatus
-            if (radioProductionStatus.Checked == true)
+            if (this.radioProductionStatus.Checked == true)
             {
-                if (dt == null || dt.Rows.Count == 0)
+                if (this.dt == null || this.dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
                 }
+
                 Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
                 xl.BoOpenFile = true;
 
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dt);
+                SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
                 Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
-                xl.DicDatas.Add("##title", title);
+                xl.DicDatas.Add("##title", this.title);
                 dt1.ShowHeader = false;
                 xl.DicDatas.Add("##dt", dt1);
 
-                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dt2All);
+                SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(this.dt2All);
                 dt2.ShowHeader = false;
                 xl.DicDatas.Add("##dt2", dt2);
 
-                Sci.Utility.Excel.SaveXltReportCls.ReplaceAction a = setRow1;
+                SaveXltReportCls.ReplaceAction a = this.SetRow1;
                 xl.DicDatas.Add("##setRow1", a);
 
                 xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Planning_R10_ProuctionStatus"));
 
-                int startRow = 3; //title有2列
-                int lastRow = dt2.Rows.Count + 3 ;
-                int wt = dt2.Columns.Count-1;
+                int startRow = 3; // title有2列
+                int lastRow = dt2.Rows.Count + 3;
+                int wt = dt2.Columns.Count - 1;
                 wks.Cells[lastRow, 1] = "Total:";
-                string wt2,wt3;
+                string wt2, wt3;
                 for (int i = 0; i < wt; i++)
                 {
                     wt2 = MyExcelPrg.GetExcelColumnName(i + 2);
                     wt3 = string.Format("=SUM({0}{1}:{0}{2})", wt2, startRow, lastRow - 1);
-                    wks.Cells[lastRow, (i + 2)] = wt3;
+                    wks.Cells[lastRow, i + 2] = wt3;
                 }
 
                 xl.FinishSave();
@@ -1275,51 +1359,50 @@ namespace Sci.Production.Planning
             return true;
         }
 
-        void setRow1(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
+        private void SetRow1(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
         {
             int idx = 0;
-            foreach (DataRow row in dt2[0].Rows)
+            foreach (DataRow row in this.dt2[0].Rows)
             {
                 oSheet.Cells[1, 2 + idx].Value = row["FactoryID"];
                 idx += 2;
             }
         }
 
-        private void rdMonth_CheckedChanged(object sender, EventArgs e)
+        private void RdMonth_CheckedChanged(object sender, EventArgs e)
         {
-            labelMonth.Visible = !radioMonthlyReport.Checked;
-            numMonth.Visible = !radioMonthlyReport.Checked;
+            this.labelMonth.Visible = !this.radioMonthlyReport.Checked;
+            this.numMonth.Visible = !this.radioMonthlyReport.Checked;
 
-            if (radioMonthlyReport.Checked)
+            if (this.radioMonthlyReport.Checked)
             {
-                numMonth.Value = 0;
+                this.numMonth.Value = 0;
             }
         }
 
-        private void radioSemimonthlyReport_CheckedChanged(object sender, EventArgs e)
+        private void RadioSemimonthlyReport_CheckedChanged(object sender, EventArgs e)
         {
-            labelMonth.Visible = radioSemimonthlyReport.Checked;
-            numMonth.Visible = radioSemimonthlyReport.Checked;
+            this.labelMonth.Visible = this.radioSemimonthlyReport.Checked;
+            this.numMonth.Visible = this.radioSemimonthlyReport.Checked;
 
-            if (radioSemimonthlyReport.Checked)
+            if (this.radioSemimonthlyReport.Checked)
             {
-                numMonth.Value = System.DateTime.Today.Month;
+                this.numMonth.Value = System.DateTime.Today.Month;
             }
-
         }
 
-        private void radioProductionStatus_CheckedChanged(object sender, EventArgs e)
+        private void RadioProductionStatus_CheckedChanged(object sender, EventArgs e)
         {
-            labelMonth.Visible = radioProductionStatus.Checked;
-            numMonth.Visible = radioProductionStatus.Checked;
-            labelDate.Visible = !radioProductionStatus.Checked;
-            comboDate.Visible = !radioProductionStatus.Checked;
-            labelReport.Visible = !radioProductionStatus.Checked;
-            comboReport.Visible = !radioProductionStatus.Checked;
-            labelSource.Visible = !radioProductionStatus.Checked;
-            checkOrder.Visible = !radioProductionStatus.Checked;
-            checkForecast.Visible = !radioProductionStatus.Checked;
-            checkFty.Visible = !radioProductionStatus.Checked;
+            this.labelMonth.Visible = this.radioProductionStatus.Checked;
+            this.numMonth.Visible = this.radioProductionStatus.Checked;
+            this.labelDate.Visible = !this.radioProductionStatus.Checked;
+            this.comboDate.Visible = !this.radioProductionStatus.Checked;
+            this.labelReport.Visible = !this.radioProductionStatus.Checked;
+            this.comboReport.Visible = !this.radioProductionStatus.Checked;
+            this.labelSource.Visible = !this.radioProductionStatus.Checked;
+            this.checkOrder.Visible = !this.radioProductionStatus.Checked;
+            this.checkForecast.Visible = !this.radioProductionStatus.Checked;
+            this.checkFty.Visible = !this.radioProductionStatus.Checked;
         }
     }
 }

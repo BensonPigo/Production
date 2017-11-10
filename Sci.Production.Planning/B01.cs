@@ -1,20 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Sci.Win.UI;
 
 namespace Sci.Production.Planning
 {
+    /// <summary>
+    /// B01
+    /// </summary>
     public partial class B01 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B01
+        /// </summary>
+        /// <param name="menuitem">PlanningB01</param>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DataTable dt = new DataTable();
             dt.Columns.Add("Value");
@@ -38,63 +41,69 @@ namespace Sci.Production.Planning
             this.comboArtworkType.DisplayMember = "Value";
             this.comboArtworkType.ValueMember = "Value";
         }
-        //新增資料預設
+
+        /// <summary>
+        /// ClickNewAfter
+        /// </summary>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["unit"] = 1;
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
-        //存檔前檢查
+
+        /// <summary>
+        /// ClickSaveBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["issuedate"].ToString()))
             {
                 this.dateDate.Focus();
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["artworktypeid"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["artworktypeid"].ToString()))
             {
                 this.comboArtworkType.Focus();
                 MyUtility.Msg.WarningBox("< Artwork Type > can not be empty!");
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ftysupp"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ftysupp"].ToString()))
             {
                 this.txtsubconFtySupp.Focus();
                 MyUtility.Msg.WarningBox("< Fty / Supp > can not be empty!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["heads"]) && CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
+            if (MyUtility.Check.Empty(this.CurrentMaintain["heads"]) && this.CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
             {
                 this.numHeads.Focus();
                 MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
                 return false;
             }
 
-
-
-            if (radiobyMonth.Checked == true)
+            if (this.radiobyMonth.Checked == true)
             {
-                int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
-                int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
-                CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
-            } 
-
-
+                int yy = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Year;
+                int mm = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Month;
+                this.CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
+            }
 
             return base.ClickSaveBefore();
         }
 
-        //combo下拉控制其它物件
-        private void comboArtworkType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboArtworkType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (null == this.comboArtworkType.SelectedValue) return;
-            switch(this.comboArtworkType.SelectedValue.ToString().TrimEnd())
+            if (this.comboArtworkType.SelectedValue == null)
+            {
+                return;
+            }
+
+            switch (this.comboArtworkType.SelectedValue.ToString().TrimEnd())
             {
                 case "Bonding (Hand)":
                     this.labelCapacity.Text = "Capacity (Person):";
@@ -110,16 +119,16 @@ namespace Sci.Production.Planning
                     this.labelHeads.Visible = false;
                     this.numHeads.Visible = false;
                     break;
-
             }
-
         }
-        
-        //refresh
-       protected override void OnDetailEntered()
+
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
+        protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            switch (CurrentMaintain["artworktypeid"].ToString().TrimEnd())
+            switch (this.CurrentMaintain["artworktypeid"].ToString().TrimEnd())
             {
                 case "Bonding (Hand)":
                     this.labelCapacity.Text = "Capacity (Person):";
@@ -135,30 +144,28 @@ namespace Sci.Production.Planning
                     this.labelHeads.Visible = false;
                     this.numHeads.Visible = false;
                     break;
-
             }
         }
 
-       private void dateDate_Validated(object sender, EventArgs e)
+        private void DateDate_Validated(object sender, EventArgs e)
         {
-            if (CurrentMaintain["unit"].ToString() == "2")
+            if (this.CurrentMaintain["unit"].ToString() == "2")
             {
-                int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
-                int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
-                CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString()+"/"+mm.ToString()+"/1");
+                int yy = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Year;
+                int mm = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Month;
+                this.CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
             }
         }
 
-        private void radioPanel1_Validated(object sender, EventArgs e)
+        private void RadioPanel1_Validated(object sender, EventArgs e)
         {
             Sci.Win.UI.RadioPanel rdoG = (RadioPanel)sender;
-            if (rdoG.Value == "2" && !MyUtility.Check.Empty(CurrentMaintain["issuedate"]))
+            if (rdoG.Value == "2" && !MyUtility.Check.Empty(this.CurrentMaintain["issuedate"]))
             {
-                int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
-                int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
-                CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
-            } 
-          
+                int yy = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Year;
+                int mm = DateTime.Parse(this.CurrentMaintain["issuedate"].ToString()).Month;
+                this.CurrentMaintain["issuedate"] = DateTime.Parse(yy.ToString() + "/" + mm.ToString() + "/1");
+            }
         }
     }
 }

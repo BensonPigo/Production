@@ -92,7 +92,7 @@
             this.btnFind.TabIndex = 3;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // btnQuery
             // 
@@ -102,7 +102,7 @@
             this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtLocateForSPNo
             // 
@@ -218,7 +218,7 @@
             this.btnCheckData.TabIndex = 3;
             this.btnCheckData.Text = "Check Data";
             this.btnCheckData.UseVisualStyleBackColor = true;
-            this.btnCheckData.Click += new System.EventHandler(this.btnCheckData_Click);
+            this.btnCheckData.Click += new System.EventHandler(this.BtnCheckData_Click);
             // 
             // comboinhouseOsp2
             // 
@@ -250,7 +250,7 @@
             this.btnClose.TabIndex = 5;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnSave
             // 
@@ -261,7 +261,7 @@
             this.btnSave.TabIndex = 4;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // pictureBox2
             // 
@@ -273,7 +273,7 @@
             this.pictureBox2.TabIndex = 6;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.WaitOnLoad = true;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.pictureBox2.Click += new System.EventHandler(this.PictureBox2_Click);
             // 
             // pictureBox1
             // 
@@ -285,7 +285,7 @@
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // labelCheckedQty
             // 
@@ -353,7 +353,7 @@
             this.gridPrintingQuickAdjust.Size = new System.Drawing.Size(647, 610);
             this.gridPrintingQuickAdjust.TabIndex = 0;
             this.gridPrintingQuickAdjust.TabStop = false;
-            this.gridPrintingQuickAdjust.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.gridPrintingQuickAdjust_ColumnDividerDoubleClick);
+            this.gridPrintingQuickAdjust.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.GridPrintingQuickAdjust_ColumnDividerDoubleClick);
             // 
             // groupBox1
             // 
@@ -384,7 +384,7 @@
             this.checkSuppID.TabIndex = 0;
             this.checkSuppID.Text = "< Supp ID >";
             this.checkSuppID.UseVisualStyleBackColor = true;
-            this.checkSuppID.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
+            this.checkSuppID.CheckedChanged += new System.EventHandler(this.CheckSuppID_CheckedChanged);
             // 
             // checkInLine
             // 
@@ -396,7 +396,7 @@
             this.checkInLine.TabIndex = 1;
             this.checkInLine.Text = "< In Line >";
             this.checkInLine.UseVisualStyleBackColor = true;
-            this.checkInLine.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
+            this.checkInLine.CheckedChanged += new System.EventHandler(this.CheckSuppID_CheckedChanged);
             // 
             // gridSupplier
             // 
@@ -423,7 +423,7 @@
             this.gridSupplier.Size = new System.Drawing.Size(330, 205);
             this.gridSupplier.TabIndex = 17;
             this.gridSupplier.TabStop = false;
-            this.gridSupplier.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.gridSupplier_ColumnDividerDoubleClick);
+            this.gridSupplier.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.GridSupplier_ColumnDividerDoubleClick);
             // 
             // groupBox2
             // 
@@ -533,7 +533,7 @@
             this.btnUpdateInline.TabIndex = 10;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;
-            this.btnUpdateInline.Click += new System.EventHandler(this.btnUpdateInline_Click);
+            this.btnUpdateInline.Click += new System.EventHandler(this.BtnUpdateInline_Click);
             // 
             // txtseason
             // 
@@ -553,7 +553,7 @@
             this.btnSetDefaultSuppFromStyle.TabIndex = 9;
             this.btnSetDefaultSuppFromStyle.Text = "Set Default Supp from Style";
             this.btnSetDefaultSuppFromStyle.UseVisualStyleBackColor = true;
-            this.btnSetDefaultSuppFromStyle.Click += new System.EventHandler(this.btnSetDefaultSuppFromStyle_Click);
+            this.btnSetDefaultSuppFromStyle.Click += new System.EventHandler(this.BtnSetDefaultSuppFromStyle_Click);
             // 
             // labelStyle
             // 
