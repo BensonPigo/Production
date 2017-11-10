@@ -140,7 +140,6 @@ namespace Sci.Production.Cutting
 
                 if (oldCutOutput.EqualString(newCutOutput) == false)
                 {
-                    changeLabelTotalCutOutputValue();
                     changeLabelBalanceValue();
 
                     int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
@@ -1618,7 +1617,7 @@ values
 
         private void changeLabelTotalCutOutputValue()
         {
-            this.labelToalCutOutputValue.Text = ArticleSizeTb.Compute("sum(CutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+            this.labelToalCutOutputValue.Text = ArticleSizeTb.Compute("sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
         }
 
         private void changeLabelBalanceValue()
