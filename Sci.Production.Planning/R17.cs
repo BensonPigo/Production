@@ -293,6 +293,8 @@ SELECT   A= A2.CountryID
 		,T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
 		,U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
 FROM ORDERS A1 WITH (NOLOCK) 
+inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
+                                         and A1.OrderTypeID = ot.ID
 LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
 LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
@@ -321,7 +323,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
- WHERE 1= 1  ";
+ WHERE ot.IsGMTMaster = 1";
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -344,7 +346,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                         strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
 
-                    strSQL += " AND A1.Category='B'";
+                    strSQL += " AND A1.Category in ('B', 'G')";
                 }
                 else if (this.radioSample.Checked)
                 {
@@ -394,6 +396,8 @@ from Order_QtyShip oq WITH (NOLOCK)
 where oq.id=a1.id 
 for xml path(''))                                               
 FROM ORDERS A1 WITH (NOLOCK) 
+inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
+                                         and A1.OrderTypeID = ot.ID
 LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
@@ -404,7 +408,8 @@ OUTER APPLY (select top 1 PulloutDate
 			from Pullout_Detail pd 
 			where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
 Order by pulloutDate desc) pd 
-WHERE 1= 1 and opd.sQty <>0  ";
+WHERE ot.IsGMTMaster = 1
+      and opd.sQty <>0  ";
                     if (this.dateFactoryKPIDate.Value1 != null)
                     {
                         strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -427,7 +432,7 @@ WHERE 1= 1 and opd.sQty <>0  ";
                             strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category='B'";
+                        strSQL += " AND A1.Category in ('B', 'G')";
                     }
                     else if (this.radioSample.Checked)
                     {
@@ -473,6 +478,8 @@ SELECT distinct A =A2.CountryID
            when 'S' then rs.Name
            else '' end                                               
 FROM ORDERS A1 WITH (NOLOCK) 
+inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
+                                         and A1.OrderTypeID = ot.ID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID 
@@ -485,8 +492,8 @@ OUTER APPLY (select sum(ShipQty)   - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ
 OUTER APPLY (select top 1 PulloutDate 
 from Pullout_Detail pd where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
 Order by pulloutDate desc) pd
-WHERE 1= 1
-and (opd.sQty > 0 or pd.PulloutDate is null)  
+WHERE ot.IsGMTMaster = 1
+      and (opd.sQty > 0 or pd.PulloutDate is null)  
 ";
                     if (this.dateFactoryKPIDate.Value1 != null)
                     {
@@ -510,7 +517,7 @@ and (opd.sQty > 0 or pd.PulloutDate is null)
                             strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category='B'";
+                        strSQL += " AND A1.Category in ('B', 'G')";
                     }
                     else if (this.radioSample.Checked)
                     {
@@ -560,6 +567,8 @@ SELECT   A= A2.CountryID
 		,T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
 		,U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
 FROM ORDERS A1 WITH (NOLOCK) 
+inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
+                                         and A1.OrderTypeID = ot.ID
 LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
 LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
@@ -588,7 +597,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
- WHERE 1= 1  ";
+WHERE ot.IsGMTMaster = 1 ";
                     if (this.dateFactoryKPIDate.Value1 != null)
                     {
                         strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -611,7 +620,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                             strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='B' ) ", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category='B'";
+                        strSQL += " AND A1.Category in ('B', 'G')";
                     }
 
                     if (this.radioSample.Checked)
