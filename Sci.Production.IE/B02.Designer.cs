@@ -141,7 +141,7 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(188, 24);
             this.comboType.TabIndex = 1;
-            this.comboType.SelectedIndexChanged += new System.EventHandler(this.comboType_SelectedIndexChanged);
+            this.comboType.SelectedIndexChanged += new System.EventHandler(this.ComboType_SelectedIndexChanged);
             // 
             // numTarget
             // 

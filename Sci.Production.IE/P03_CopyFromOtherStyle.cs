@@ -11,49 +11,74 @@ using Sci.Data;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_P03_CopyFromOtherStyle
+    /// </summary>
     public partial class P03_CopyFromOtherStyle : Sci.Win.Subs.Base
     {
-        public DataRow P03CopyLineMapping;
+        private DataRow _P03CopyLineMapping;
 
-        public P03_CopyFromOtherStyle()
+        /// <summary>
+        /// P03CopyLineMapping
+        /// </summary>
+        public DataRow P03CopyLineMapping
         {
-            InitializeComponent();
+            get
+            {
+                return this._P03CopyLineMapping;
+            }
+
+            set
+            {
+                this._P03CopyLineMapping = value;
+            }
         }
 
-        private void btnCopy_Click(object sender, EventArgs e)
+        /// <summary>
+        /// P03_CopyFromOtherStyle
+        /// </summary>
+        public P03_CopyFromOtherStyle()
+        {
+            this.InitializeComponent();
+        }
+
+        private void BtnCopy_Click(object sender, EventArgs e)
         {
             string style, season, brand, version;
-            style = txtstyle.Text;
-            season = txtseason.Text;
-            brand = txtbrand.Text;
-            version = txtLineMappingVersion.Text;
+            style = this.txtstyle.Text;
+            season = this.txtseason.Text;
+            brand = this.txtbrand.Text;
+            version = this.txtLineMappingVersion.Text;
 
             if (MyUtility.Check.Empty(style))
             {
                 MyUtility.Msg.WarningBox("Style# can't empty!!");
-                txtstyle.Focus();
-                return;
-            }
-            if (MyUtility.Check.Empty(season))
-            {
-                MyUtility.Msg.WarningBox("Season can't empty!!");
-                txtseason.Focus();
-                return;
-            }
-            if (MyUtility.Check.Empty(brand))
-            {
-                MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand.Focus();
-                return;
-            }
-            if (MyUtility.Check.Empty(version))
-            {
-                MyUtility.Msg.WarningBox("Line mapping versioncan't empty!!");
-                txtLineMappingVersion.Focus();
+                this.txtstyle.Focus();
                 return;
             }
 
-            //sql參數
+            if (MyUtility.Check.Empty(season))
+            {
+                MyUtility.Msg.WarningBox("Season can't empty!!");
+                this.txtseason.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(brand))
+            {
+                MyUtility.Msg.WarningBox("Brand can't empty!!");
+                this.txtbrand.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(version))
+            {
+                MyUtility.Msg.WarningBox("Line mapping versioncan't empty!!");
+                this.txtLineMappingVersion.Focus();
+                return;
+            }
+
+            // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
@@ -73,24 +98,24 @@ namespace Sci.Production.IE
             cmds.Add(sp3);
             cmds.Add(sp4);
             string sqlCmd = "select * from LineMapping WITH (NOLOCK) where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version";
-            DataTable Linemap;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out Linemap);
+            DataTable linemap;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out linemap);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                 return;
             }
             else
             {
-                if (Linemap.Rows.Count <= 0)
+                if (linemap.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                     return;
                 }
                 else
                 {
-                    P03CopyLineMapping = Linemap.Rows[0];
-                    DialogResult = System.Windows.Forms.DialogResult.OK;
+                    this._P03CopyLineMapping = linemap.Rows[0];
+                    this.DialogResult = System.Windows.Forms.DialogResult.OK;
                 }
             }
         }

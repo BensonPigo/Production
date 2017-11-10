@@ -101,7 +101,7 @@
             this.btnFind.TabIndex = 5;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txtDescription
             // 
@@ -275,7 +275,7 @@
             this.btnSelect.TabIndex = 1;
             this.btnSelect.Text = "Select";
             this.btnSelect.UseVisualStyleBackColor = true;
-            this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
+            this.btnSelect.Click += new System.EventHandler(this.BtnSelect_Click);
             // 
             // panel5
             // 

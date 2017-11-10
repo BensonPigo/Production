@@ -8,25 +8,38 @@ using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_B02
+    /// </summary>
     public partial class B02 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B02
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            DefaultFilter = string.Format("MDivisionID = '{0}'",Sci.Env.User.Keyword);
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboType, 2, 1, "LBR,Line Balancing (%),LLER,Lean Line Eff. (%),EFF.,Efficiency,COPT,Changeover Process Time,COT,Changeover Time");
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "LBR,Line Balancing (%),LLER,Lean Line Eff. (%),EFF.,Efficiency,COPT,Changeover Process Time,COT,Changeover Time");
         }
 
+        /// <summary>
+        /// OnDetailEntered()
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if ((CurrentMaintain["Type"].ToString().Trim() == "COPT" || CurrentMaintain["Type"].ToString().Trim() == "COT"))
+            if (this.CurrentMaintain["Type"].ToString().Trim() == "COPT" || this.CurrentMaintain["Type"].ToString().Trim() == "COT")
             {
                 this.labelTarget.Text = "Target (min)";
             }
@@ -36,13 +49,19 @@ namespace Sci.Production.IE
             }
         }
 
+        /// <summary>
+        /// ClickNewAfter()
+        /// </summary>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["EffectiveDate"] = DateTime.Today;
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["EffectiveDate"] = DateTime.Today;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
+        /// <summary>
+        /// ClickEditAfter()
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
@@ -50,51 +69,59 @@ namespace Sci.Production.IE
             this.comboType.ReadOnly = true;
         }
 
+        /// <summary>
+        /// ClickCopyAfter()
+        /// </summary>
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
-            CurrentMaintain["ID"] = DBNull.Value;
+            this.CurrentMaintain["ID"] = DBNull.Value;
         }
 
+        /// <summary>
+        /// ClickSaveBefore()
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["EffectiveDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["EffectiveDate"]))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 this.dateDate.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("< Type > can not be empty!");
                 this.comboType.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
 
-        private void comboType_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboType.SelectedIndex != -1)
+            if (this.comboType.SelectedIndex != -1)
             {
-                switch (comboType.SelectedValue.ToString())
+                switch (this.comboType.SelectedValue.ToString())
                 {
                     case "COPT":
-                        labelTarget.Text = "Target (min)";
+                        this.labelTarget.Text = "Target (min)";
                         break;
                     case "COT":
-                        labelTarget.Text = "Target (min)";
+                        this.labelTarget.Text = "Target (min)";
                         break;
                     default:
-                        labelTarget.Text = "Target (%)";
+                        this.labelTarget.Text = "Target (%)";
                         break;
                 }
             }
             else
             {
-                labelTarget.Text = "Target";
+                this.labelTarget.Text = "Target";
             }
-        }   
+        }
     }
 }

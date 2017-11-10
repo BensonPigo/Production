@@ -60,7 +60,7 @@
             // 
             // save
             // 
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // btnToExcel
             // 
@@ -72,7 +72,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // P02_RepeatCheckList
             // 

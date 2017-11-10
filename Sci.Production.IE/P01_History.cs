@@ -1,52 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_P01_History
+    /// </summary>
     public partial class P01_History : Sci.Win.Subs.Base
     {
         private DataTable gridData;
-        IList<string> comboBox1_RowSource = new List<string>();
-        DataRow masterData;
+        private IList<string> comboBox1_RowSource = new List<string>();
+        private DataRow masterData;
 
-        public P01_History(DataRow MasterData)
+        /// <summary>
+        /// P01_History
+        /// </summary>
+        /// <param name="masterData">MasterData</param>
+        public P01_History(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
-            this.Text = "History -- " + masterData["StyleID"].ToString();
+            this.InitializeComponent();
+            this.masterData = masterData;
+            this.Text = "History -- " + this.masterData["StyleID"].ToString();
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            displayStyle.Value = masterData["StyleID"].ToString();
-            displaySeason.Value = masterData["SeasonID"].ToString();
-            displayStyle1.Value = masterData["ComboType"].ToString();
-            numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(masterData["TotalSewingTime"]);
-            numNumOfSewer.Value = MyUtility.Convert.GetInt(masterData["NumberSewer"]);
+            this.displayStyle.Value = this.masterData["StyleID"].ToString();
+            this.displaySeason.Value = this.masterData["SeasonID"].ToString();
+            this.displayStyle1.Value = this.masterData["ComboType"].ToString();
+            this.numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(this.masterData["TotalSewingTime"]);
+            this.numNumOfSewer.Value = MyUtility.Convert.GetInt(this.masterData["NumberSewer"]);
 
-            //sql參數
+            // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@styleid";
-            sp1.Value = masterData["StyleID"].ToString();
+            sp1.Value = this.masterData["StyleID"].ToString();
             sp2.ParameterName = "@seasonid";
-            sp2.Value = masterData["SeasonID"].ToString();
+            sp2.Value = this.masterData["SeasonID"].ToString();
             sp3.ParameterName = "@brandid";
-            sp3.Value = masterData["BrandID"].ToString();
+            sp3.Value = this.masterData["BrandID"].ToString();
             sp4.ParameterName = "@combotype";
-            sp4.Value = masterData["ComboType"].ToString();
+            sp4.Value = this.masterData["ComboType"].ToString();
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -54,21 +60,21 @@ namespace Sci.Production.IE
             cmds.Add(sp3);
             cmds.Add(sp4);
 
-            //撈CD Code
+            // 撈CD Code
             DataTable cdCode;
             string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {
-                displayCD.Value = "";
+                this.displayCD.Value = string.Empty;
                 MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
             }
             else
             {
-                displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+                this.displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : string.Empty;
             }
 
-            //撈Grid資料
+            // 撈Grid資料
             sqlCmd = @"select th.ID,th.TotalSewingTime,th.NumberSewer,thd.Seq,thd.OperationID,o.DescEN,
 thd.Annotation,thd.Frequency,thd.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
 thd.PcsPerHour,thd.Sewer,thd.IETMSSMV,
@@ -79,25 +85,27 @@ left join TimeStudyHistory_Detail thd WITH (NOLOCK) on th.ID = thd.ID
 left join Operation o WITH (NOLOCK) on thd.OperationID = o.ID
 where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and ComboType = @combotype
 order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))),th.Version,thd.Seq";
-            result = DBProxy.Current.Select(null, sqlCmd, cmds, out gridData);
+            result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
             }
             else
             {
-                foreach (DataRow dr in gridData.Rows)
+                foreach (DataRow dr in this.gridData.Rows)
                 {
-                    if (comboBox1_RowSource.Contains(dr["Status"].ToString()) == false)
+                    if (this.comboBox1_RowSource.Contains(dr["Status"].ToString()) == false)
                     {
-                        comboBox1_RowSource.Add(dr["Status"].ToString());
+                        this.comboBox1_RowSource.Add(dr["Status"].ToString());
                     }
                 }
-                comboStatus.DataSource = comboBox1_RowSource;
-            }
-            listControlBindingSource1.DataSource = gridData;
 
-            Helper.Controls.Grid.Generator(this.gridDetail)
+                this.comboStatus.DataSource = this.comboBox1_RowSource;
+            }
+
+            this.listControlBindingSource1.DataSource = this.gridData;
+
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .EditText("DescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -113,44 +121,44 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
             this.gridDetail.AutoResizeColumns();
         }
 
-        //Status
-        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
+        // Status
+        private void ComboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboStatus.SelectedIndex != -1)
+            if (this.comboStatus.SelectedIndex != -1)
             {
-                gridData.DefaultView.RowFilter = "Status = '" + comboStatus.SelectedValue.ToString() + "'";
+                this.gridData.DefaultView.RowFilter = "Status = '" + this.comboStatus.SelectedValue.ToString() + "'";
 
-                numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["TotalSewingTime"]);
-                numNumOfSewer.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["NumberSewer"]);
+                this.numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(this.gridData.DefaultView[0]["TotalSewingTime"]);
+                this.numNumOfSewer.Value = MyUtility.Convert.GetInt(this.gridData.DefaultView[0]["NumberSewer"]);
             }
             else
             {
-                gridData.DefaultView.RowFilter = "Status = ''";
-                numTotalSewingTimePc.Value = 0;
-                numNumOfSewer.Value = 0;
+                this.gridData.DefaultView.RowFilter = "Status = ''";
+                this.numTotalSewingTimePc.Value = 0;
+                this.numNumOfSewer.Value = 0;
             }
         }
 
-        //Summary
-        private void btnSummary_Click(object sender, EventArgs e)
+        // Summary
+        private void BtnSummary_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_ArtworkSummary callNextForm;
-            if (gridData.DefaultView.Count > 0)
+            if (this.gridData.DefaultView.Count > 0)
             {
-                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", MyUtility.Convert.GetLong(gridData.DefaultView[0]["ID"]));
+                callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", MyUtility.Convert.GetLong(this.gridData.DefaultView[0]["ID"]));
             }
             else
             {
                 callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudyHistory_Detail", 0);
             }
-            DialogResult result = callNextForm.ShowDialog(this);
 
+            DialogResult result = callNextForm.ShowDialog(this);
         }
 
-        //To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        // To Excel
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(masterData, MyUtility.Convert.GetString(comboStatus.SelectedValue), MyUtility.Convert.GetString(displayCD.Value), MyUtility.Convert.GetInt(numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(numNumOfSewer.Value));
+            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(this.masterData, MyUtility.Convert.GetString(this.comboStatus.SelectedValue), MyUtility.Convert.GetString(this.displayCD.Value), MyUtility.Convert.GetInt(this.numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(this.numNumOfSewer.Value));
             DialogResult result = callNextForm.ShowDialog(this);
         }
     }

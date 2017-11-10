@@ -2,68 +2,105 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
-
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_P02
+    /// </summary>
     public partial class P02 : Sci.Win.Tems.Input1
     {
-        private string dateTimeMask = "", emptyDTMask = "", empmask, dtmask, type;
-        public P02(ToolStripMenuItem menuitem, string Type)
+        private string dateTimeMask = string.Empty;
+        private string emptyDTMask = string.Empty;
+        private string empmask;
+        private string dtmask;
+        private string type;
+
+        /// <summary>
+        /// P02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        /// <param name="type">Type</param>
+        public P02(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
-            InitializeComponent();
-            type = Type;
-            this.Text = type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
-            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
-            if (type == "2")
+            this.InitializeComponent();
+            this.type = type;
+            this.Text = this.type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
+            this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Sci.Env.User.Keyword);
+            if (this.type == "2")
            {
                this.IsSupportEdit = false;
             }
-            
-            //組InLine date的mask
+
+            // 組InLine date的mask
             for (int i = 0; i < Sci.Env.Cfg.DateTimeStringFormat.Length; i++)
             {
-                dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
-                empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? "" : " ";
-                dateTimeMask = dateTimeMask + dtmask;
-                emptyDTMask = emptyDTMask + empmask;
+                this.dtmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
+                this.empmask = Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Sci.Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
+                this.DateTimeMask = this.DateTimeMask + this.dtmask;
+                this.emptyDTMask = this.emptyDTMask + this.empmask;
             }
-            txtInLineDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
-            txtInLineDate.Mask = dateTimeMask;
+
+            this.txtInLineDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtInLineDate.Mask = this.DateTimeMask;
         }
 
-        string StdTMS = ""; DataTable dt1; DataTable dt2;
+        private string StdTMS = string.Empty; private DataTable dt1; private DataTable dt2;
+
+        /// <summary>
+        /// DateTimeMask
+        /// </summary>
+        public string DateTimeMask
+        {
+            get
+            {
+                return this.dateTimeMask;
+            }
+
+            set
+            {
+                this.dateTimeMask = value;
+            }
+        }
+
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            string brand = string.Format(@"SELECT BrandID FROM Orders WITH (NOLOCK) 
+            string brand = string.Format(
+                @"SELECT BrandID FROM Orders WITH (NOLOCK) 
                              left join ChgOver WITH (NOLOCK) on  Orders.id= ChgOver.OrderID
-                             where ChgOver.OrderID ='{0}'", CurrentMaintain["OrderID"].ToString());
+                             where ChgOver.OrderID ='{0}'",
+                this.CurrentMaintain["OrderID"].ToString());
             DataTable brandOutput;
             DualResult res = DBProxy.Current.Select(null, brand, out brandOutput);
-            if (!res) { this.ShowErr(res); }
+            if (!res)
+            {
+                this.ShowErr(res);
+            }
+
             if (brandOutput.Rows.Count < 1)
             {
-                txtBrand.Text = "";
+                this.txtBrand.Text = string.Empty;
             }
             else
             {
-                txtBrand.Text = brandOutput.Rows[0]["BrandID"].ToString();
+                this.txtBrand.Text = brandOutput.Rows[0]["BrandID"].ToString();
             }
-            //  textBox_brand.Visible = false;
 
-            txtBrand.ReadOnly = true;
-            labelType.Text = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
-            string sqlCmd = string.Format(@"with tmpSO
+            // textBox_brand.Visible = false;
+            this.txtBrand.ReadOnly = true;
+            this.labelType.Text = this.CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
+            string sqlCmd = string.Format(
+                @"with tmpSO
 as
 (
 select distinct s.OutputDate,s.Manpower,s.ID
@@ -95,11 +132,22 @@ select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/
 isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
-", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["ComboType"].ToString(), CurrentMaintain["SewingLineID"].ToString(), CurrentMaintain["FactoryID"].ToString());
+",
+                this.CurrentMaintain["OrderID"].ToString(),
+                this.CurrentMaintain["ComboType"].ToString(),
+                this.CurrentMaintain["SewingLineID"].ToString(),
+                this.CurrentMaintain["FactoryID"].ToString());
             DataTable sewingOutput;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out sewingOutput);
-            if (sewingOutput.Rows.Count < 1) { StdTMS = "0"; }
-            else{StdTMS = sewingOutput.Rows[0]["StdTMS"].ToString();}
+            if (sewingOutput.Rows.Count < 1)
+            {
+                this.StdTMS = "0";
+            }
+            else
+            {
+                this.StdTMS = sewingOutput.Rows[0]["StdTMS"].ToString();
+            }
+
             if (result)
             {
                 int rec = 0;
@@ -109,19 +157,19 @@ order by OutputDate
                     switch (rec)
                     {
                         case 1:
-                            dateSewingDate1stDay.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numEFF1stDay.Value = Convert.ToDecimal(dr["Eff"]);
-                            numRFT1stDay.Value = Convert.ToDecimal(dr["Rft"]);
+                            this.dateSewingDate1stDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            this.numEFF1stDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            this.numRFT1stDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         case 2:
-                            dateSewingDate2ndDay.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numEFF2ndDay.Value = Convert.ToDecimal(dr["Eff"]);
-                            numRFT2ndDay.Value = Convert.ToDecimal(dr["Rft"]);
+                            this.dateSewingDate2ndDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            this.numEFF2ndDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            this.numRFT2ndDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         case 3:
-                            dateSewingDate3rdDay.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numEFF3rdDay.Value = Convert.ToDecimal(dr["Eff"]);
-                            numRFT3rdDay.Value = Convert.ToDecimal(dr["Rft"]);
+                            this.dateSewingDate3rdDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            this.numEFF3rdDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            this.numRFT3rdDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         default:
                             break;
@@ -133,34 +181,36 @@ order by OutputDate
                     switch (rec)
                     {
                         case 0:
-                            dateSewingDate1stDay.Value = null;
-                            numEFF1stDay.Value = 0;
-                            numRFT1stDay.Value = 0;
-                            dateSewingDate2ndDay.Value = null;
-                            numEFF2ndDay.Value = 0;
-                            numRFT2ndDay.Value = 0;
-                            dateSewingDate3rdDay.Value = null;
-                            numEFF3rdDay.Value = 0;
-                            numRFT3rdDay.Value = 0;
+                            this.dateSewingDate1stDay.Value = null;
+                            this.numEFF1stDay.Value = 0;
+                            this.numRFT1stDay.Value = 0;
+                            this.dateSewingDate2ndDay.Value = null;
+                            this.numEFF2ndDay.Value = 0;
+                            this.numRFT2ndDay.Value = 0;
+                            this.dateSewingDate3rdDay.Value = null;
+                            this.numEFF3rdDay.Value = 0;
+                            this.numRFT3rdDay.Value = 0;
                             break;
                         case 1:
-                            dateSewingDate2ndDay.Value = null;
-                            numEFF2ndDay.Value = 0;
-                            numRFT2ndDay.Value = 0;
-                            dateSewingDate3rdDay.Value = null;
-                            numEFF3rdDay.Value = 0;
-                            numRFT3rdDay.Value = 0;
+                            this.dateSewingDate2ndDay.Value = null;
+                            this.numEFF2ndDay.Value = 0;
+                            this.numRFT2ndDay.Value = 0;
+                            this.dateSewingDate3rdDay.Value = null;
+                            this.numEFF3rdDay.Value = 0;
+                            this.numRFT3rdDay.Value = 0;
                             break;
                         case 2:
-                            dateSewingDate3rdDay.Value = null;
-                            numEFF3rdDay.Value = 0;
-                            numRFT3rdDay.Value = 0;
+                            this.dateSewingDate3rdDay.Value = null;
+                            this.numEFF3rdDay.Value = 0;
+                            this.numRFT3rdDay.Value = 0;
                             break;
                         default:
                             break;
                     }
                 }
-string ExcelDt = string.Format(@"SELECT C.OrderID,
+
+                string sqlcmd = string.Format(
+    @"SELECT C.OrderID,
                                         c.MDivisionID,
 	                                    c.FactoryID,
                                         c.SewingLineID,
@@ -191,36 +241,46 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
                                  outer apply(select * from style t WITH (NOLOCK) where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
                                  outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
                                  where c.orderid='{0}'
-                                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline", CurrentMaintain["orderid"]);
-                DualResult result1 = DBProxy.Current.Select(null, ExcelDt, out dt1);
-                if (!result1) { this.ShowErr(result1); }
-
+                                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline",
+    this.CurrentMaintain["orderid"]);
+                DualResult result1 = DBProxy.Current.Select(
+                    null,
+                    sqlcmd,
+                    out this.dt1);
+                if (!result1)
+                {
+                    this.ShowErr(result1);
+                }
             }
         }
 
+        /// <summary>
+        /// ClickEditBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickEditBefore()
         {
-            if (!MyUtility.Check.Empty(CurrentMaintain["ApvDate"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
             {
                 MyUtility.Msg.WarningBox("This record is 'Approved', can't be modify!");
-              
+
                 return false;
             }
-         
+
             return base.ClickEditBefore();
         }
 
-        //Time of First/Last Good Output
-        private void txtTimeOfFirstGoodOutput_Validating(object sender, CancelEventArgs e)
+        // Time of First/Last Good Output
+        private void TxtTimeOfFirstGoodOutput_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
-            if (EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 string textValue = prodTextValue.Text.ToString().PadRight(4);
                 if ((!MyUtility.Check.Empty(textValue.Substring(0, 2)) && Convert.ToInt32(textValue.Substring(0, 2)) > 24) || ((!MyUtility.Check.Empty(textValue.Substring(0, 2)) && Convert.ToInt32(textValue.Substring(0, 2)) == 24) && (!MyUtility.Check.Empty(textValue.Substring(2, 2)) && Convert.ToInt32(textValue.Substring(2, 2)) != 0)) || (!MyUtility.Check.Empty(textValue.Substring(2, 2)) && Convert.ToInt32(textValue.Substring(2, 2)) >= 60))
                 {
-                    prodTextValue.Text = "";
-                    e.Cancel = true; 
+                    prodTextValue.Text = string.Empty;
+                    e.Cancel = true;
                     MyUtility.Msg.WarningBox("The time format is wrong, can't exceed '24:00'!");
                     return;
                 }
@@ -232,29 +292,29 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
             }
         }
 
-        //FTY GSD
-        private void btnFTYGSD_Click(object sender, EventArgs e)
+        // FTY GSD
+        private void BtnFTYGSD_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString())), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["ComboType"].ToString());
+            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(this.CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["ComboType"].ToString());
             callNextForm.ShowDialog(this);
         }
 
-        //Check List
-        private void btnCheckList_Click(object sender, EventArgs e)
+        // Check List
+        private void BtnCheckList_Click(object sender, EventArgs e)
         {
-            if (CurrentMaintain["Type"].ToString() == "N")
+            if (this.CurrentMaintain["Type"].ToString() == "N")
             {
-                if (type == "1")
+                if (this.type == "1")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
                     {
-                        //sql參數
+                        // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                         sp1.ParameterName = "@id";
-                        sp1.Value = CurrentMaintain["ID"].ToString();
+                        sp1.Value = this.CurrentMaintain["ID"].ToString();
                         sp2.ParameterName = "@orderid";
-                        sp2.Value = CurrentMaintain["OrderID"].ToString();
+                        sp2.Value = this.CurrentMaintain["OrderID"].ToString();
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -269,24 +329,24 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or Use
                             return;
                         }
                     }
-
                 }
-                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(CurrentMaintain["Status"].ToString() == "New", CurrentMaintain["ID"].ToString(), null, null);
+
+                Sci.Production.IE.P02_NewCheckList callNextForm = new Sci.Production.IE.P02_NewCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
                 callNextForm.ShowDialog(this);
             }
             else
             {
-                if (type == "1")
+                if (this.type == "1")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
                     {
-                        //sql參數
+                        // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                         sp1.ParameterName = "@id";
-                        sp1.Value = CurrentMaintain["ID"].ToString();
+                        sp1.Value = this.CurrentMaintain["ID"].ToString();
                         sp2.ParameterName = "@orderid";
-                        sp2.Value = CurrentMaintain["OrderID"].ToString();
+                        sp2.Value = this.CurrentMaintain["OrderID"].ToString();
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -301,22 +361,25 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or Use
                             return;
                         }
                     }
-
                 }
-                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(CurrentMaintain["Status"].ToString() == "New", CurrentMaintain["ID"].ToString(), null, null);
+
+                Sci.Production.IE.P02_RepeatCheckList callNextForm = new Sci.Production.IE.P02_RepeatCheckList(this.CurrentMaintain["Status"].ToString() == "New", this.CurrentMaintain["ID"].ToString(), null, null);
                 callNextForm.ShowDialog(this);
             }
         }
 
-        //Problem
-        private void btnProblem_Click(object sender, EventArgs e)
+        // Problem
+        private void BtnProblem_Click(object sender, EventArgs e)
         {
-            if (type == "1")
+            if (this.type == "1")
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Problem WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Problem WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
                 {
-                    string insertCmd = string.Format(@"insert into ChgOver_Problem (ID,IEReasonID,AddName,AddDate)
-select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
+                    string insertCmd = string.Format(
+                        @"insert into ChgOver_Problem (ID,IEReasonID,AddName,AddDate)
+select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
+                        this.CurrentMaintain["ID"].ToString(),
+                        Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
@@ -324,47 +387,50 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", 
                         return;
                     }
                 }
-
             }
-            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(CurrentMaintain["Status"].ToString() != "Closed", CurrentMaintain["ID"].ToString(), null, null);
+
+            Sci.Production.IE.P02_Problem callNextForm = new Sci.Production.IE.P02_Problem(this.CurrentMaintain["Status"].ToString() != "Closed", this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 
-        //Confirm
+        /// <summary>
+        /// ClickConfirm
+        /// </summary>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'Approved', ApvDate = GETDATE(), EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
             }
-
-            
         }
 
-        //UnConfirm
+        /// <summary>
+        /// UnConfirm
+        /// </summary>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
-            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            string sqlCmd = string.Format("update ChgOver set Status = 'New', ApvDate = null, EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
-
-            
         }
 
-        //Print
+        /// <summary>
+        /// ClickPrint
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            ToExcel();
+            this.ToExcel();
             return base.ClickPrint();
         }
 
@@ -372,36 +438,41 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", 
         {
             DataTable dtTitle;
 
-            string OrderID = dt1.Rows[0]["orderid"].ToString();
-            string BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", OrderID));
-            string StyleID = dt1.Rows[0]["StyleID"].ToString().Trim();
-            string SeasonID = dt1.Rows[0]["SeasonID"].ToString().Trim();
-            string CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", BrandID, StyleID, SeasonID));
-            string FirstOutputTime = dt1.Rows[0]["FirstOutputTime"].ToString().Trim();
-            FirstOutputTime = MyUtility.Check.Empty(FirstOutputTime) ? "" : FirstOutputTime.Substring(0, 2) + ":" + FirstOutputTime.Substring(2, 2);
-            string LastOutputTime = dt1.Rows[0]["LastOutputTime"].ToString().Trim();
-            LastOutputTime = MyUtility.Check.Empty(LastOutputTime) ? "" : LastOutputTime.Substring(0, 2) + ":" + LastOutputTime.Substring(2, 2);
-            string FactoryID = dt1.Rows[0]["FactoryID"].ToString().Trim();
-            string SewingLineID = dt1.Rows[0]["SewingLineID"].ToString().Trim();
-            string ComboType = dt1.Rows[0]["ComboType"].ToString().Trim();
+            string orderID = this.dt1.Rows[0]["orderid"].ToString();
+            string brandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", orderID));
+            string styleID = this.dt1.Rows[0]["StyleID"].ToString().Trim();
+            string seasonID = this.dt1.Rows[0]["SeasonID"].ToString().Trim();
+            string cPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", brandID, styleID, seasonID));
+            string firstOutputTime = this.dt1.Rows[0]["FirstOutputTime"].ToString().Trim();
+            firstOutputTime = MyUtility.Check.Empty(firstOutputTime) ? string.Empty : firstOutputTime.Substring(0, 2) + ":" + firstOutputTime.Substring(2, 2);
+            string lastOutputTime = this.dt1.Rows[0]["LastOutputTime"].ToString().Trim();
+            lastOutputTime = MyUtility.Check.Empty(lastOutputTime) ? string.Empty : lastOutputTime.Substring(0, 2) + ":" + lastOutputTime.Substring(2, 2);
+            string factoryID = this.dt1.Rows[0]["FactoryID"].ToString().Trim();
+            string sewingLineID = this.dt1.Rows[0]["SewingLineID"].ToString().Trim();
+            string comboType = this.dt1.Rows[0]["ComboType"].ToString().Trim();
 
             #region 取出ChgOverTarget.Target，然後再依ChgOver.Inline找出最接近但沒有超過這一天的Target
-            string MDivisionID = dt1.Rows[0]["MDivisionID"].ToString().Trim();
-            DateTime Inline = Convert.ToDateTime(dt1.Rows[0]["Inline"]);
-            string Target_COPT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
+            string mDivisionID = this.dt1.Rows[0]["MDivisionID"].ToString().Trim();
+            DateTime inline = Convert.ToDateTime(this.dt1.Rows[0]["Inline"]);
+            string target_COPT = MyUtility.GetValue.Lookup(string.Format(
+                @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
-                                                                        Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
-            string Target_COT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
+                                                                        Order by EffectiveDate desc", mDivisionID,
+                           inline.ToShortDateString()));
+            string target_COT = MyUtility.GetValue.Lookup(string.Format(
+                @"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
-                                                                        Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
+                                                                        Order by EffectiveDate desc", mDivisionID,
+                           inline.ToShortDateString()));
             #endregion
 
-            string CDCodeID = dt1.Rows[0]["CDCodeID"].ToString().Trim();
-            DataRow TYPE = GetType(ComboType, CDCodeID);
+            string cDCodeID = this.dt1.Rows[0]["CDCodeID"].ToString().Trim();
+            DataRow tYPE = this.GetType(comboType, cDCodeID);
             #region 找出上一筆
-            
-            string Previous_CPU = string.Empty;
-            string exceldt2 = string.Format(@"SELECT  * FROM (
+
+            string previous_CPU = string.Empty;
+            string exceldt2 = string.Format(
+                @"SELECT  * FROM (
                 SELECT Top 1 C.OrderID,
                        c.MDivisionID,
                        c.FactoryID,
@@ -419,177 +490,260 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", 
                 WHERE Inline >= '{0}'
 		        AND OrderID !='{1}' and StyleID <='{2}' and FactoryID >= '{3}' and SewingLineID >='{4}' and CELL.SewingCell >='{5}'
                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline asc
-                )[Found]", Inline.ToShortDateString(), dt1.Rows[0]["OrderID"], dt1.Rows[0]["StyleID"], dt1.Rows[0]["FactoryID"], dt1.Rows[0]["SewingLineID"], dt1.Rows[0]["SewingCell"]);
-                DualResult result2 = DBProxy.Current.Select(null, exceldt2, out dt2);
-                if (!result2) { this.ShowErr(result2); }
-                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", dt2.Rows[0]["OrderID"].ToString().Trim()));
-                string Previous_StyleID = dt2.Rows[0]["StyleID"].ToString().Trim();
-                string Previous_SeasonID = dt2.Rows[0]["SeasonID"].ToString().Trim();
-                Previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", Previous_BrandID, Previous_StyleID, Previous_SeasonID));
-                //Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
-            
+                )[Found]",
+                inline.ToShortDateString(),
+                this.dt1.Rows[0]["OrderID"],
+                this.dt1.Rows[0]["StyleID"],
+                this.dt1.Rows[0]["FactoryID"],
+                this.dt1.Rows[0]["SewingLineID"],
+                this.dt1.Rows[0]["SewingCell"]);
+                DualResult result2 = DBProxy.Current.Select(null, exceldt2, out this.dt2);
+                if (!result2)
+                {
+                    this.ShowErr(result2);
+                }
+
+                string previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", this.dt2.Rows[0]["OrderID"].ToString().Trim()));
+                string previous_StyleID = this.dt2.Rows[0]["StyleID"].ToString().Trim();
+                string previous_SeasonID = this.dt2.Rows[0]["SeasonID"].ToString().Trim();
+                previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", previous_BrandID, previous_StyleID, previous_SeasonID));
+
+                // Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
             #endregion
 
                 string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); // 預先開啟excel app
 
-            if (MyUtility.Excel.CopyToXls(dtTitle, "", "IE_P02_ChangeoverReport.xltx", 2, false, null, objApp, false))
-            {    // 將datatable copy to excel
-                objApp.Visible = false;  //隱藏，避免使用者誤按
+            if (MyUtility.Excel.CopyToXls(dtTitle, string.Empty, "IE_P02_ChangeoverReport.xltx", 2, false, null, objApp, false))
+            { // 將datatable copy to excel
+                objApp.Visible = false;  // 隱藏，避免使用者誤按
                 Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
 
-                objSheet.Cells[9, 4] = FactoryID;  //Factory
-                objSheet.Cells[9, 7] = SewingLineID;  //Line No.
-                objSheet.Cells[9, 11] = dt2.Rows[0]["SewingCell"].ToString().Trim();  //Cell No.
-          
-                objSheet.Cells[12, 4] = StyleID;  //Style No.
-                objSheet.Cells[13, 4] = CPU;  //CPU/pc
-                objSheet.Cells[14, 4] = CDCodeID;  //CD Code
-                objSheet.Cells[14, 5] = dt1.Rows[0]["TopProductionType"];  //Prod. Type
-                objSheet.Cells[14, 6] = dt1.Rows[0]["TopFabricType"];  //Fab. Type
-                   
-                #region 抓上一筆資料
-                if (dt1.Rows[0]["SewingLineID"].ToString() == dt2.Rows[0]["SewingLineID"].ToString())
-                {
-                    objSheet.Cells[12, 9] = dt2.Rows[0]["StyleID"].ToString().Trim();  //Style No.
-                    objSheet.Cells[13, 9] = Previous_CPU;  //CPU/pc
-                    objSheet.Cells[14, 9] = dt2.Rows[0]["CDCodeID"].ToString().Trim();  //CD Code
-                    objSheet.Cells[14, 10] = dt2.Rows[0]["TopProductionType"];  //Prod. Type
-                    objSheet.Cells[14, 11] = dt2.Rows[0]["TopFabricType"];  //Fab. Type
+                objSheet.Cells[9, 4] = factoryID;  // Factory
+                objSheet.Cells[9, 7] = sewingLineID;  // Line No.
+                objSheet.Cells[9, 11] = this.dt2.Rows[0]["SewingCell"].ToString().Trim();  // Cell No.
 
+                objSheet.Cells[12, 4] = styleID;  // Style No.
+                objSheet.Cells[13, 4] = cPU;  // CPU/pc
+                objSheet.Cells[14, 4] = cDCodeID;  // CD Code
+                objSheet.Cells[14, 5] = this.dt1.Rows[0]["TopProductionType"];  // Prod. Type
+                objSheet.Cells[14, 6] = this.dt1.Rows[0]["TopFabricType"];  // Fab. Type
+
+                #region 抓上一筆資料
+                if (this.dt1.Rows[0]["SewingLineID"].ToString() == this.dt2.Rows[0]["SewingLineID"].ToString())
+                {
+                    objSheet.Cells[12, 9] = this.dt2.Rows[0]["StyleID"].ToString().Trim();  // Style No.
+                    objSheet.Cells[13, 9] = previous_CPU;  // CPU/pc
+                    objSheet.Cells[14, 9] = this.dt2.Rows[0]["CDCodeID"].ToString().Trim();  // CD Code
+                    objSheet.Cells[14, 10] = this.dt2.Rows[0]["TopProductionType"];  // Prod. Type
+                    objSheet.Cells[14, 11] = this.dt2.Rows[0]["TopFabricType"];  // Fab. Type
                 }
-                else if (dt1.Rows[0]["SewingLineID"] != dt2.Rows[0]["SewingLineID"])
-                { 
-                        objSheet.Cells[12, 9] ="";
-                        objSheet.Cells[13, 9] ="";
-                        objSheet.Cells[14, 9] = "";
-                        objSheet.Cells[14, 10] = "";
-                        objSheet.Cells[14, 11] =  "";
+                else if (this.dt1.Rows[0]["SewingLineID"] != this.dt2.Rows[0]["SewingLineID"])
+                {
+                        objSheet.Cells[12, 9] = string.Empty;
+                        objSheet.Cells[13, 9] = string.Empty;
+                        objSheet.Cells[14, 9] = string.Empty;
+                        objSheet.Cells[14, 10] = string.Empty;
+                        objSheet.Cells[14, 11] = string.Empty;
                 }
-                   
+
                 #endregion
 
-                objSheet.Cells[18, 5] = dt1.Rows[0]["Type"].ToString() == "N" ? "New" : "Repeat";  //Classification
-                objSheet.Cells[19, 4] = dt1.Rows[0]["Category"].ToString().Trim();  //Category
-                objSheet.Cells[20, 4] = Inline.ToShortDateString();  //Inline Date
-                objSheet.Cells[21, 5] = Inline.ToString("HH:mm");  //Inline Time(HH:mm)
-                objSheet.Cells[22, 6] = FirstOutputTime;  //Time of First Good Output (hh:mm):
-                objSheet.Cells[22, 11] = LastOutputTime;  //Time of Last Good Output (hh:mm):
+                objSheet.Cells[18, 5] = this.dt1.Rows[0]["Type"].ToString() == "N" ? "New" : "Repeat";  // Classification
+                objSheet.Cells[19, 4] = this.dt1.Rows[0]["Category"].ToString().Trim();  // Category
+                objSheet.Cells[20, 4] = inline.ToShortDateString();  // Inline Date
+                objSheet.Cells[21, 5] = inline.ToString("HH:mm");  // Inline Time(HH:mm)
+                objSheet.Cells[22, 6] = firstOutputTime;  // Time of First Good Output (hh:mm):
+                objSheet.Cells[22, 11] = lastOutputTime;  // Time of Last Good Output (hh:mm):
 
-                objSheet.Cells[27, 3] = Target_COPT;  //Target
-                objSheet.Cells[27, 8] = Target_COT;  //Target
-                objSheet.Cells[27, 4] = dt1.Rows[0]["COPT"].ToString().Trim();  //Actual
-                objSheet.Cells[27, 9] = dt1.Rows[0]["COT"].ToString().Trim();  //Actual
+                objSheet.Cells[27, 3] = target_COPT;  // Target
+                objSheet.Cells[27, 8] = target_COT;  // Target
+                objSheet.Cells[27, 4] = this.dt1.Rows[0]["COPT"].ToString().Trim();  // Actual
+                objSheet.Cells[27, 9] = this.dt1.Rows[0]["COT"].ToString().Trim();  // Actual
 
                 #region 32列
-                string SewingDate = MyUtility.GetValue.Lookup(string.Format(@"select convert(varchar, min(a.OutputDate), 111) as SewingDate
+                string sewingDate = MyUtility.GetValue.Lookup(string.Format(
+                    @"select convert(varchar, min(a.OutputDate), 111) as SewingDate
                                                                     from SewingOutput a WITH (NOLOCK) 
                                                                     left join SewingOutput_Detail b WITH (NOLOCK) on a.ID=b.ID
-                                                                    where b.OrderId='{0}'", OrderID));
-                string Sewers_A = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
+                                                                    where b.OrderId='{0}'", orderID));
+                string sewers_A = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Distinct a.Manpower 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string Sewers_B = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
+                string sewers_B = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Distinct a.Manpower 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string WorkingHours_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
+                string workingHours_A = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Sum(b.WorkHour)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string WorkingHours_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
+                string workingHours_B = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Sum(b.WorkHour)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string Target = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget  WITH (NOLOCK) 
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
+                string target = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select top 1 Target from ChgOverTarget  WITH (NOLOCK) 
                                                                     where Type = 'EFF.' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
-                                                                    Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
-                string OutputCMP_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty)  
+                                                                    Order by EffectiveDate desc", mDivisionID,
+                           inline.ToShortDateString()));
+                string outputCMP_A = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Sum(b.QAQty)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string OutputCMP_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty) 
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
+                string outputCMP_B = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select Sum(b.QAQty) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b  WITH (NOLOCK) 
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
-                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
+                                                                    and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType));
 
-                if (MyUtility.Check.Empty(CPU)) CPU = "1";
-                string Efficiency_A = MyUtility.GetValue.Lookup(string.Format(@"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
+                if (MyUtility.Check.Empty(cPU))
+                {
+                    cPU = "1";
+                }
+
+                string efficiency_A = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                     cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
-                string Efficiency_B = MyUtility.GetValue.Lookup(string.Format(@"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
+                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType,
+                    cPU,
+                    this.StdTMS));
+                string efficiency_B = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                     cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
-                string PPH_A = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType,
+                    cPU,
+                    this.StdTMS));
+                string pPH_A = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                     cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
-                string PPH_B = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType,
+                    cPU));
+                string pPH_B = MyUtility.GetValue.Lookup(string.Format(
+                    @"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
                                                                     from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                     left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                     cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                     where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
+                                                                    and b.OrderID = '{3}' and b.ComboType = '{4}' ",
+                    sewingDate,
+                    factoryID,
+                    sewingLineID,
+                    orderID,
+                    comboType,
+                    cPU));
 
-                objSheet.Cells[32, 1] = SewingDate;  //Date
-                objSheet.Cells[32, 2] = Sewers_A;  //No. of Sewers(Shift A)
-                objSheet.Cells[32, 3] = Sewers_B;  //No. of Sewers(Shift B)
-                objSheet.Cells[32, 4] = WorkingHours_A;  //Working Hours(Shift A)
-                objSheet.Cells[32, 5] = WorkingHours_B;  //Working Hours(Shift B)
-                objSheet.Cells[32, 6] = Target;  //Target(Eff)
-                objSheet.Cells[32, 8] = OutputCMP_A;  //Output (CMP) (Shift A)
-                objSheet.Cells[32, 9] = OutputCMP_B;  //Output (CMP) (Shift B)
-                objSheet.Cells[32, 10] = Efficiency_A;  //Efficiency (Shift A)
-                objSheet.Cells[32, 11] = Efficiency_B;  //Efficiency (Shift B)
-                objSheet.Cells[32, 12] = PPH_A;  //PPH (Shift A)
-                objSheet.Cells[32, 13] = PPH_B;  //PPH (Shift B)
+                objSheet.Cells[32, 1] = sewingDate;  // Date
+                objSheet.Cells[32, 2] = sewers_A;  // No. of Sewers(Shift A)
+                objSheet.Cells[32, 3] = sewers_B;  // No. of Sewers(Shift B)
+                objSheet.Cells[32, 4] = workingHours_A;  // Working Hours(Shift A)
+                objSheet.Cells[32, 5] = workingHours_B;  // Working Hours(Shift B)
+                objSheet.Cells[32, 6] = target;  // Target(Eff)
+                objSheet.Cells[32, 8] = outputCMP_A;  // Output (CMP) (Shift A)
+                objSheet.Cells[32, 9] = outputCMP_B;  // Output (CMP) (Shift B)
+                objSheet.Cells[32, 10] = efficiency_A;  // Efficiency (Shift A)
+                objSheet.Cells[32, 11] = efficiency_B;  // Efficiency (Shift B)
+                objSheet.Cells[32, 12] = pPH_A;  // PPH (Shift A)
+                objSheet.Cells[32, 13] = pPH_B;  // PPH (Shift B)
                 #endregion
 
                 #region Problem Encountered
                 DataTable dtProblem;
-                string sql = string.Format(@"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
+                string sql = string.Format(
+                    @"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
                                         from ChgOver_Problem a WITH (NOLOCK) , IEReason b WITH (NOLOCK) 
-                                        where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ", CurrentMaintain["ID"].ToString().Trim());
+                                        where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ",
+                    this.CurrentMaintain["ID"].ToString().Trim());
                 DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
 
-                //若超過4筆資料，Excel就要在新增列數
+                // 若超過4筆資料，Excel就要在新增列數
                 if (dtProblem.Rows.Count > 4)
                 {
-                    string RowNum, RowStr;
+                    string rowNum, rowStr;
                     int repeat = dtProblem.Rows.Count - 4;
 
-                    Microsoft.Office.Interop.Excel.Range RngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
-                    Microsoft.Office.Interop.Excel.Range RngToInsert;
+                    Microsoft.Office.Interop.Excel.Range rngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert;
 
                     for (int i = 0; i < repeat; i++)
                     {
-                        RowNum = Convert.ToString(40 + i);
-                        RowStr = string.Format("A{0}:M{0}", RowNum);
-                        RngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(RowStr).EntireRow;
-                        RngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, RngToCopy.Copy(Type.Missing));
+                        rowNum = Convert.ToString(40 + i);
+                        rowStr = string.Format("A{0}:M{0}", rowNum);
+                        rngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(rowStr).EntireRow;
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
                     }
                 }
 
-                //Clipboard.Clear();  //清空剪貼簿
-
+                // Clipboard.Clear();  //清空剪貼簿
                 int count = 0;
                 foreach (DataRow dr in dtProblem.Rows)
                 {
-                    objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  //Problem Encountered
-                    objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  //Shift A
-                    objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  //Shift B
+                    objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  // Problem Encountered
+                    objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  // Shift A
+                    objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  // Shift B
                     count++;
                 }
                 #endregion
@@ -600,36 +754,46 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", 
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 objApp.Quit();
-                Marshal.ReleaseComObject(objSheet);    //釋放sheet
-                Marshal.ReleaseComObject(objApp);      //釋放objApp
+                Marshal.ReleaseComObject(objSheet);    // 釋放sheet
+                Marshal.ReleaseComObject(objApp);      // 釋放objApp
                 Marshal.ReleaseComObject(workbook);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
             }
 
             return true;
-
         }
 
-        private DataRow GetType(string ComboType, string CDCodeID)
+        private DataRow GetType(string comboType, string cDCodeID)
         {
             DataRow returnValue = null;
             DataTable dtTemp;
             string sql;
-            if (ComboType == "T" || ComboType == "")
-                sql = string.Format("select  TopProductionType as ProdType,TopFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
-            else if (ComboType == "B")
-                sql = string.Format("select BottomProductionType as ProdType,BottomFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
-            else if (ComboType == "I")
-                sql = string.Format("select InnerProductionType as ProdType,InnerFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
+            if (comboType == "T" || comboType == string.Empty)
+            {
+                sql = string.Format("select  TopProductionType as ProdType,TopFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", cDCodeID);
+            }
+            else if (comboType == "B")
+            {
+                sql = string.Format("select BottomProductionType as ProdType,BottomFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", cDCodeID);
+            }
+            else if (comboType == "I")
+            {
+                sql = string.Format("select InnerProductionType as ProdType,InnerFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", cDCodeID);
+            }
             else
-                sql = string.Format("select OuterProductionType as ProdType,OuterFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
+            {
+                sql = string.Format("select OuterProductionType as ProdType,OuterFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", cDCodeID);
+            }
+
             DualResult result = DBProxy.Current.Select(null, sql, out dtTemp);
-            if (result && dtTemp.Rows.Count > 0) returnValue = dtTemp.Rows[0];
+            if (result && dtTemp.Rows.Count > 0)
+            {
+                returnValue = dtTemp.Rows[0];
+            }
+
             return returnValue;
         }
-
-
     }
 }

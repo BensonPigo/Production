@@ -382,7 +382,7 @@
             this.btnNewVersion.TabIndex = 16;
             this.btnNewVersion.Text = "New Version";
             this.btnNewVersion.UseVisualStyleBackColor = true;
-            this.btnNewVersion.Click += new System.EventHandler(this.btnNewVersion_Click);
+            this.btnNewVersion.Click += new System.EventHandler(this.BtnNewVersion_Click);
             // 
             // btnNewStatus
             // 
@@ -393,7 +393,7 @@
             this.btnNewStatus.TabIndex = 17;
             this.btnNewStatus.Text = "New Status";
             this.btnNewStatus.UseVisualStyleBackColor = true;
-            this.btnNewStatus.Click += new System.EventHandler(this.btnNewStatus_Click);
+            this.btnNewStatus.Click += new System.EventHandler(this.BtnNewStatus_Click);
             // 
             // btnHistory
             // 
@@ -404,7 +404,7 @@
             this.btnHistory.TabIndex = 18;
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
-            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
             // 
             // btnCopy
             // 
@@ -415,7 +415,7 @@
             this.btnCopy.TabIndex = 15;
             this.btnCopy.Text = "Copy";
             this.btnCopy.UseVisualStyleBackColor = true;
-            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            this.btnCopy.Click += new System.EventHandler(this.BtnCopy_Click);
             // 
             // btnArtSum
             // 
@@ -425,7 +425,7 @@
             this.btnArtSum.TabIndex = 14;
             this.btnArtSum.Text = "Art. Sum";
             this.btnArtSum.UseVisualStyleBackColor = true;
-            this.btnArtSum.Click += new System.EventHandler(this.btnArtSum_Click);
+            this.btnArtSum.Click += new System.EventHandler(this.BtnArtSum_Click);
             // 
             // btnSketch
             // 
@@ -435,7 +435,7 @@
             this.btnSketch.TabIndex = 13;
             this.btnSketch.Text = "Sketch";
             this.btnSketch.UseVisualStyleBackColor = true;
-            this.btnSketch.Click += new System.EventHandler(this.btnSketch_Click);
+            this.btnSketch.Click += new System.EventHandler(this.BtnSketch_Click);
             // 
             // btnCopyFromStyleStdGSD
             // 
@@ -446,7 +446,7 @@
             this.btnCopyFromStyleStdGSD.TabIndex = 12;
             this.btnCopyFromStyleStdGSD.Text = "Copy from style std. GSD";
             this.btnCopyFromStyleStdGSD.UseVisualStyleBackColor = true;
-            this.btnCopyFromStyleStdGSD.Click += new System.EventHandler(this.btnCopyFromStyleStdGSD_Click);
+            this.btnCopyFromStyleStdGSD.Click += new System.EventHandler(this.BtnCopyFromStyleStdGSD_Click);
             // 
             // txtStyle
             // 
@@ -457,7 +457,7 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(130, 23);
             this.txtStyle.TabIndex = 0;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
             this.txtStyle.Validated += new System.EventHandler(this.GenCD);
             // 
             // txtBrand
@@ -469,7 +469,7 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(80, 23);
             this.txtBrand.TabIndex = 3;
-            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBrand_PopUp);
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBrand_PopUp);
             this.txtBrand.Validated += new System.EventHandler(this.GenCD);
             // 
             // btnStdGSDList
@@ -480,7 +480,7 @@
             this.btnStdGSDList.TabIndex = 2;
             this.btnStdGSDList.Text = "Std. GSD List";
             this.btnStdGSDList.UseVisualStyleBackColor = true;
-            this.btnStdGSDList.Click += new System.EventHandler(this.btnStdGSDList_Click);
+            this.btnStdGSDList.Click += new System.EventHandler(this.BtnStdGSDList_Click);
             // 
             // labelApplyNo
             // 
@@ -539,7 +539,7 @@
             this.btnDel.TabIndex = 28;
             this.btnDel.Text = "Del";
             this.btnDel.UseVisualStyleBackColor = true;
-            this.btnDel.Click += new System.EventHandler(this.btnDel_Click);
+            this.btnDel.Click += new System.EventHandler(this.BtnDel_Click);
             // 
             // P01
             // 

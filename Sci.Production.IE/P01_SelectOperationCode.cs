@@ -11,109 +11,140 @@ using Sci.Data;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// P01_SelectOperationCode
+    /// </summary>
     public partial class P01_SelectOperationCode : Sci.Win.Subs.Base
     {
-    
         private DataTable gridData;
-        public DataRow p01SelectOperationCode;
+
+        private DataRow _P01SelectOperationCode;
+
+        /// <summary>
+        /// p01SelectOperationCode
+        /// </summary>
+        public DataRow P01SelectOperationCode
+        {
+            get
+            {
+                return this._P01SelectOperationCode;
+            }
+
+            set
+            {
+                this._P01SelectOperationCode = value;
+            }
+        }
+
+        /// <summary>
+        /// P01_SelectOperationCode
+        /// </summary>
         public P01_SelectOperationCode()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
-        
+
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             Ict.Win.DataGridViewGeneratorTextColumnSettings s1 = new DataGridViewGeneratorTextColumnSettings();
             base.OnFormLoaded();
             this.gridDetail.IsEditingReadOnly = true;
-            this.gridDetail.DataSource = listControlBindingSource1;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
 
-            s1.CellMouseDoubleClick += (s, e) => 
+            s1.CellMouseDoubleClick += (s, e) =>
             {
-                if ( e.Button == MouseButtons.Left)
+                if (e.Button == MouseButtons.Left)
                 {
-                    DataGridViewSelectedRowCollection selectRows = gridDetail.SelectedRows;
+                    DataGridViewSelectedRowCollection selectRows = this.gridDetail.SelectedRows;
                     foreach (DataGridViewRow datarow in selectRows)
                     {
-                        p01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
-                        DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                        this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
+                        this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
                     }
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.gridDetail)
-                .Text("ID", header: "ID", width: Widths.AnsiChars(20), iseditingreadonly: true,settings: s1)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .Text("ID", header: "ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: s1)
                  .Text("DescEN", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                 .Numeric("SMV", header: "S.M.V",decimal_places:4, iseditingreadonly: true)
+                 .Numeric("SMV", header: "S.M.V", decimal_places: 4, iseditingreadonly: true)
                  .Text("MachineTypeID", header: "Machine Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Numeric("SeamLength", header: "Seam Length",decimal_places:2, iseditingreadonly: true);
+                 .Numeric("SeamLength", header: "Seam Length", decimal_places: 2, iseditingreadonly: true);
 
             string sqlCmd = "select ID,DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID from Operation WITH (NOLOCK) where CalibratedCode = 1";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query Operation fail\r\n"+result.ToString());
+                MyUtility.Msg.ErrorBox("Query Operation fail\r\n" + result.ToString());
             }
-            listControlBindingSource1.DataSource = gridData;
-            numCount.Value = gridData.Rows.Count;
+
+            this.listControlBindingSource1.DataSource = this.gridData;
+            this.numCount.Value = this.gridData.Rows.Count;
         }
 
-        //Find
-        private void btnFind_Click(object sender, EventArgs e)
+        // Find
+        private void BtnFind_Click(object sender, EventArgs e)
         {
             StringBuilder filterCondition = new StringBuilder();
-            if (!MyUtility.Check.Empty(txtID.Text))
+            if (!MyUtility.Check.Empty(this.txtID.Text))
             {
-                filterCondition.Append(string.Format(" ID like '%{0}%' and", txtID.Text.Trim()));
+                filterCondition.Append(string.Format(" ID like '%{0}%' and", this.txtID.Text.Trim()));
             }
-            if (txtID.Text == "")
+
+            if (this.txtID.Text == string.Empty)
             {
                 filterCondition.Append(string.Format("   "));
             }
-            if (!MyUtility.Check.Empty(numSMV.Value))
+
+            if (!MyUtility.Check.Empty(this.numSMV.Value))
             {
-                filterCondition.Append(string.Format(" SMV >= {0} and", numSMV.Value.ToString().Trim()));
+                filterCondition.Append(string.Format(" SMV >= {0} and", this.numSMV.Value.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(txtMachineCode.Text))
+
+            if (!MyUtility.Check.Empty(this.txtMachineCode.Text))
             {
-                filterCondition.Append(string.Format(" MachineTypeID like '%{0}%' and", txtMachineCode.Text.Trim()));
+                filterCondition.Append(string.Format(" MachineTypeID like '%{0}%' and", this.txtMachineCode.Text.Trim()));
             }
-            if (!MyUtility.Check.Empty(numSeamLength.Value))
+
+            if (!MyUtility.Check.Empty(this.numSeamLength.Value))
             {
-                filterCondition.Append(string.Format(" SeamLength >= {0} and", numSeamLength.Value.ToString().Trim()));
+                filterCondition.Append(string.Format(" SeamLength >= {0} and", this.numSeamLength.Value.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(txtDescription.Text))
+
+            if (!MyUtility.Check.Empty(this.txtDescription.Text))
             {
-                filterCondition.Append(string.Format(" DescEN like'%{0}%' and", txtDescription.Text.Trim()));
+                filterCondition.Append(string.Format(" DescEN like'%{0}%' and", this.txtDescription.Text.Trim()));
             }
-            
+
             if (filterCondition.Length > 0)
             {
                 string filter = filterCondition.ToString().Substring(0, filterCondition.Length - 3);
-                gridData.DefaultView.RowFilter = filter;
-                numCount.Value = gridData.DefaultView.Count;
+                this.gridData.DefaultView.RowFilter = filter;
+                this.numCount.Value = this.gridData.DefaultView.Count;
             }
+
             this.gridDetail.AutoResizeColumns();
         }
 
-        //Select
-        private void btnSelect_Click(object sender, EventArgs e)
+        // Select
+        private void BtnSelect_Click(object sender, EventArgs e)
         {
-            if (gridDetail.SelectedRows.Count == 0)
+            if (this.gridDetail.SelectedRows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Must Select one!!!");
                 return;
             }
 
-            DataGridViewSelectedRowCollection selectRows = gridDetail.SelectedRows;
+            DataGridViewSelectedRowCollection selectRows = this.gridDetail.SelectedRows;
             foreach (DataGridViewRow datarow in selectRows)
             {
-                p01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
+                this._P01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
             }
-            
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
-
-
     }
 }

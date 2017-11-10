@@ -226,7 +226,7 @@
             this.btnPicture2Delete.TabIndex = 7;
             this.btnPicture2Delete.Text = "Delete";
             this.btnPicture2Delete.UseVisualStyleBackColor = true;
-            this.btnPicture2Delete.Click += new System.EventHandler(this.btnPicture2Delete_Click);
+            this.btnPicture2Delete.Click += new System.EventHandler(this.BtnPicture2Delete_Click);
             // 
             // btnPicture2Attach
             // 
@@ -237,7 +237,7 @@
             this.btnPicture2Attach.TabIndex = 6;
             this.btnPicture2Attach.Text = "Attach";
             this.btnPicture2Attach.UseVisualStyleBackColor = true;
-            this.btnPicture2Attach.Click += new System.EventHandler(this.btnPicture2Attach_Click);
+            this.btnPicture2Attach.Click += new System.EventHandler(this.BtnPicture2Attach_Click);
             // 
             // picture2
             // 
@@ -257,7 +257,7 @@
             this.btnPicture1Delete.TabIndex = 4;
             this.btnPicture1Delete.Text = "Delete";
             this.btnPicture1Delete.UseVisualStyleBackColor = true;
-            this.btnPicture1Delete.Click += new System.EventHandler(this.btnPicture1Delete_Click);
+            this.btnPicture1Delete.Click += new System.EventHandler(this.BtnPicture1Delete_Click);
             // 
             // btnPicture1Attach
             // 
@@ -268,7 +268,7 @@
             this.btnPicture1Attach.TabIndex = 3;
             this.btnPicture1Attach.Text = "Attach";
             this.btnPicture1Attach.UseVisualStyleBackColor = true;
-            this.btnPicture1Attach.Click += new System.EventHandler(this.btnPicture1Attach_Click);
+            this.btnPicture1Attach.Click += new System.EventHandler(this.BtnPicture1Attach_Click);
             // 
             // picture1
             // 

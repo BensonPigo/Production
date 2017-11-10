@@ -270,7 +270,7 @@
             this.btnThreadRatio.TabIndex = 15;
             this.btnThreadRatio.Text = "Thread Ratio";
             this.btnThreadRatio.UseVisualStyleBackColor = true;
-            this.btnThreadRatio.Click += new System.EventHandler(this.btnThreadRatio_Click);
+            this.btnThreadRatio.Click += new System.EventHandler(this.BtnThreadRatio_Click);
             // 
             // checkThreadcons
             // 
