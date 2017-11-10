@@ -368,9 +368,9 @@
             this.btnImportfromRealtimeBundleTracking.Name = "btnImportfromRealtimeBundleTracking";
             this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(160, 50);
             this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
-            this.btnImportfromRealtimeBundleTracking.Text = "Import from Realtime Bundle Tracking";
+            this.btnImportfromRealtimeBundleTracking.Text = "Import from RFID";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
-            this.btnImportfromRealtimeBundleTracking.Visible = false;
+            this.btnImportfromRealtimeBundleTracking.Click += new System.EventHandler(this.btnImportfromRealtimeBundleTracking_Click);
             // 
             // label1
             // 
