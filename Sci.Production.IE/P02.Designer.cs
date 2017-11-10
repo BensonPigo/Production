@@ -416,7 +416,7 @@
             this.txtTimeOfFirstGoodOutput.TabIndex = 2;
             this.txtTimeOfFirstGoodOutput.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             this.txtTimeOfFirstGoodOutput.ValidatingType = typeof(System.DateTime);
-            this.txtTimeOfFirstGoodOutput.Validating += new System.ComponentModel.CancelEventHandler(this.txtTimeOfFirstGoodOutput_Validating);
+            this.txtTimeOfFirstGoodOutput.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTimeOfFirstGoodOutput_Validating);
             // 
             // txtRemark
             // 
@@ -594,7 +594,7 @@
             this.txtTimeOfLastGoodOutput.TabIndex = 3;
             this.txtTimeOfLastGoodOutput.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             this.txtTimeOfLastGoodOutput.ValidatingType = typeof(System.DateTime);
-            this.txtTimeOfLastGoodOutput.Validating += new System.ComponentModel.CancelEventHandler(this.txtTimeOfFirstGoodOutput_Validating);
+            this.txtTimeOfLastGoodOutput.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTimeOfFirstGoodOutput_Validating);
             // 
             // labelType
             // 
@@ -620,7 +620,7 @@
             this.btnFTYGSD.TabIndex = 35;
             this.btnFTYGSD.Text = "FTY GSD";
             this.btnFTYGSD.UseVisualStyleBackColor = true;
-            this.btnFTYGSD.Click += new System.EventHandler(this.btnFTYGSD_Click);
+            this.btnFTYGSD.Click += new System.EventHandler(this.BtnFTYGSD_Click);
             // 
             // btnCheckList
             // 
@@ -631,7 +631,7 @@
             this.btnCheckList.TabIndex = 36;
             this.btnCheckList.Text = "Check List";
             this.btnCheckList.UseVisualStyleBackColor = true;
-            this.btnCheckList.Click += new System.EventHandler(this.btnCheckList_Click);
+            this.btnCheckList.Click += new System.EventHandler(this.BtnCheckList_Click);
             // 
             // btnProblem
             // 
@@ -642,7 +642,7 @@
             this.btnProblem.TabIndex = 37;
             this.btnProblem.Text = "Problem";
             this.btnProblem.UseVisualStyleBackColor = true;
-            this.btnProblem.Click += new System.EventHandler(this.btnProblem_Click);
+            this.btnProblem.Click += new System.EventHandler(this.BtnProblem_Click);
             // 
             // labelSewingDate
             // 

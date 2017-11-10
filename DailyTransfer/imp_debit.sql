@@ -43,8 +43,8 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	using (Select * from Trade_To_Pms.dbo.debit WITH (NOLOCK) where IsSubcon = 1 ) as s
 	on t.id = s.id
 	when not matched by target then
-		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
-		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New',
+		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID,Currencyid, AddDate, AddName,[status],MDivisionID,issuedate)
+		values( '1', Id, BrandID, Amount, CurrencyID,CurrencyID, AddDate,'SCIMIS','New',
 		isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),''),s.adddate )
 		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
 

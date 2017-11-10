@@ -400,7 +400,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(70, 21);
             this.txtFactory.TabIndex = 1;
-            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFactory_PopUp);
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFactory_PopUp);
             // 
             // txtStyleComboType
             // 
@@ -414,7 +414,7 @@
             this.txtStyleComboType.ReadOnly = true;
             this.txtStyleComboType.Size = new System.Drawing.Size(26, 21);
             this.txtStyleComboType.TabIndex = 3;
-            this.txtStyleComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyleComboType_PopUp);
+            this.txtStyleComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyleComboType_PopUp);
             // 
             // displaySeason
             // 
@@ -955,7 +955,7 @@
             0,
             0,
             0});
-            this.numOprtsIdeal.Validated += new System.EventHandler(this.numOprtsIdeal_Validated);
+            this.numOprtsIdeal.Validated += new System.EventHandler(this.NumOprtsIdeal_Validated);
             // 
             // numNoOfHours
             // 
@@ -976,7 +976,7 @@
             0,
             0,
             0});
-            this.numNoOfHours.Validated += new System.EventHandler(this.numNoOfHours_Validated);
+            this.numNoOfHours.Validated += new System.EventHandler(this.NumNoOfHours_Validated);
             // 
             // numNetAvailableTime
             // 
@@ -1224,7 +1224,7 @@
             this.btnNotHitTargetReason.TabIndex = 31;
             this.btnNotHitTargetReason.Text = "Not hit target reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
-            this.btnNotHitTargetReason.Click += new System.EventHandler(this.btnNotHitTargetReason_Click);
+            this.btnNotHitTargetReason.Click += new System.EventHandler(this.BtnNotHitTargetReason_Click);
             // 
             // btnCopyFromOtherLineMapping
             // 
@@ -1235,7 +1235,7 @@
             this.btnCopyFromOtherLineMapping.TabIndex = 32;
             this.btnCopyFromOtherLineMapping.Text = "Copy from other line mapping";
             this.btnCopyFromOtherLineMapping.UseVisualStyleBackColor = true;
-            this.btnCopyFromOtherLineMapping.Click += new System.EventHandler(this.btnCopyFromOtherLineMapping_Click);
+            this.btnCopyFromOtherLineMapping.Click += new System.EventHandler(this.BtnCopyFromOtherLineMapping_Click);
             // 
             // btnCopyFromGSD
             // 
@@ -1246,7 +1246,7 @@
             this.btnCopyFromGSD.TabIndex = 33;
             this.btnCopyFromGSD.Text = "Copy from GSD";
             this.btnCopyFromGSD.UseVisualStyleBackColor = true;
-            this.btnCopyFromGSD.Click += new System.EventHandler(this.btnCopyFromGSD_Click);
+            this.btnCopyFromGSD.Click += new System.EventHandler(this.BtnCopyFromGSD_Click);
             // 
             // txtStyleID
             // 
@@ -1260,7 +1260,7 @@
             this.txtStyleID.ReadOnly = true;
             this.txtStyleID.Size = new System.Drawing.Size(120, 21);
             this.txtStyleID.TabIndex = 2;
-            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyleID_PopUp);
+            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyleID_PopUp);
             // 
             // numTotalTimeDiff
             // 

@@ -12,29 +12,39 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_B08
+    /// </summary>
     public partial class B08 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B08
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public B08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
-            
         }
-       
+
+        /// <summary>
+        /// OnFormLoaded()
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //新增Import From Barcode按鈕
+
+            // 新增Import From Barcode按鈕
             Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
             btn.Text = "Import From Excel";
-            btn.Click += new EventHandler(btn_Click);
-            browsetop.Controls.Add(btn);
-            btn.Size = new Size(165, 30);//預設是(80,30)
+            btn.Click += new EventHandler(this.Btn_Click);
+            this.browsetop.Controls.Add(btn);
+            btn.Size = new Size(165, 30); // 預設是(80,30)
         }
 
-        //Import From Barcode按鈕的Click事件
-        private void btn_Click(object sender, EventArgs e)
+        // Import From Barcode按鈕的Click事件
+        private void Btn_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -43,19 +53,22 @@ namespace Sci.Production.IE
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
 
-            DataTable ExcelDataTable, MFactory, UpdateData;
+            DataTable excelDataTable, mFactory, updateData;
             string sqlCmd = "select MDIVISIONID,FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee WITH (NOLOCK)	where 1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
 
             sqlCmd = string.Format("select * from Factory WITH (NOLOCK)	where MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            result = DBProxy.Current.Select(null, sqlCmd, out MFactory);
-            MFactory.PrimaryKey = new DataColumn[] { MFactory.Columns["ID"] };
+            result = DBProxy.Current.Select(null, sqlCmd, out mFactory);
+            mFactory.PrimaryKey = new DataColumn[] { mFactory.Columns["ID"] };
 
-            //UpdateData = ((DataTable)gridbs.DataSource).Clone();
+            // UpdateData = ((DataTable)gridbs.DataSource).Clone();
             sqlCmd = "select * from Employee WITH (NOLOCK)    where 1 = 0";
-            result = DBProxy.Current.Select(null, sqlCmd, out UpdateData);
+            result = DBProxy.Current.Select(null, sqlCmd, out updateData);
 
             this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
@@ -71,11 +84,11 @@ namespace Sci.Production.IE
             while (intRowsRead < intRowsCount)
             {
                 intRowsRead++;
-              
-                range = worksheet.Range[String.Format("A{0}:G{0}", intRowsRead)];
+
+                range = worksheet.Range[string.Format("A{0}:G{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                DataRow newRow = ExcelDataTable.NewRow();
+                DataRow newRow = excelDataTable.NewRow();
                 newRow["FactoryID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                 newRow["ID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                 newRow["Name"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
@@ -83,9 +96,9 @@ namespace Sci.Production.IE
                 newRow["OnBoardDate"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "D");
                 newRow["ResignationDate"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "D");
                 newRow["SewingLineID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                newRow["ErrorMsg"] = "";
+                newRow["ErrorMsg"] = string.Empty;
 
-                ExcelDataTable.Rows.Add(newRow);
+                excelDataTable.Rows.Add(newRow);
             }
 
             excel.Workbooks.Close();
@@ -93,16 +106,15 @@ namespace Sci.Production.IE
             excel = null;
 
             int hasError = 0, hasInsert = 0;
-            foreach (DataRow dr in ExcelDataTable.Rows)
+            foreach (DataRow dr in excelDataTable.Rows)
             {
                 if (!MyUtility.Check.Empty(dr["FactoryID"]) && !MyUtility.Check.Empty(dr["ID"]))
                 {
-                    //DataRow[] findData = MFactory.Select(string.Format("ID = {0}", MyUtility.Convert.GetString(dr["FactoryID"])));
-
-                    DataRow findData = MFactory.Rows.Find(MyUtility.Convert.GetString(dr["FactoryID"]));
+                    // DataRow[] findData = MFactory.Select(string.Format("ID = {0}", MyUtility.Convert.GetString(dr["FactoryID"])));
+                    DataRow findData = mFactory.Rows.Find(MyUtility.Convert.GetString(dr["FactoryID"]));
                     if (findData != null)
                     {
-                        DataRow newRow = UpdateData.NewRow();
+                        DataRow newRow = updateData.NewRow();
                         newRow["FactoryID"] = dr["FactoryID"];
                         newRow["ID"] = dr["ID"];
                         newRow["Name"] = dr["Name"];
@@ -113,9 +125,9 @@ namespace Sci.Production.IE
                         newRow["MDivisionID"] = Sci.Env.User.Keyword;
                         newRow["AddName"] = Sci.Env.User.UserID;
                         newRow["AddDate"] = DateTime.Now;
-                        newRow["EditName"] = "";
+                        newRow["EditName"] = string.Empty;
                         newRow["EditDate"] = DBNull.Value;
-                        UpdateData.Rows.Add(newRow);
+                        updateData.Rows.Add(newRow);
 
                         dr["ErrorMsg"] = "Job is completed!";
                         hasInsert = 1;
@@ -133,7 +145,7 @@ namespace Sci.Production.IE
                 }
             }
 
-            if (!MyUtility.Tool.CursorUpdateTable(UpdateData, "Employee", "Production"))
+            if (!MyUtility.Tool.CursorUpdateTable(updateData, "Employee", "Production"))
             {
                 this.HideWaitMessage();
                 MyUtility.Msg.WarningBox("Import data fail. Pls try again!");
@@ -146,6 +158,7 @@ namespace Sci.Production.IE
                     MyUtility.Msg.InfoBox("Excel data import completed.");
                 }
             }
+
             this.HideWaitMessage();
 
             if (hasError == 1)
@@ -154,15 +167,19 @@ namespace Sci.Production.IE
 
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08_ImportResult.xltx";
                 Microsoft.Office.Interop.Excel.Application exportExcel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (exportExcel == null) return;
+                if (exportExcel == null)
+                {
+                    return;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet1 = exportExcel.ActiveWorkbook.Worksheets[1];
 
                 object[,] objArray = new object[1, 7];
                 intRowsStart = 2;
                 int rownum = 0;
-                for (int i = 0; i < ExcelDataTable.Rows.Count; i++)
+                for (int i = 0; i < excelDataTable.Rows.Count; i++)
                 {
-                    DataRow dr = ExcelDataTable.Rows[i];
+                    DataRow dr = excelDataTable.Rows[i];
                     rownum = intRowsStart + i;
                     objArray[0, 0] = dr["FactoryID"];
                     objArray[0, 1] = dr["ID"];
@@ -172,70 +189,86 @@ namespace Sci.Production.IE
                     objArray[0, 5] = dr["ResignationDate"];
                     objArray[0, 6] = dr["ErrorMsg"];
 
-                    worksheet1.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+                    worksheet1.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
                 }
+
                 exportExcel.Visible = true;
             }
         }
 
+        /// <summary>
+        /// ClickNewAfter()
+        /// </summary>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            txtSkill.BackColor = Color.White;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.txtSkill.BackColor = Color.White;
         }
 
+        /// <summary>
+        /// ClickEditAfter()
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtEmployee.ReadOnly = true;
-            txtSkill.BackColor = Color.White;
+            this.txtSkill.BackColor = Color.White;
         }
 
+        /// <summary>
+        /// ClickSaveBefore()
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("< Factory > can not be empty!");
-                txtmfactory.Focus();
+                this.txtmfactory.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Employee# > can not be empty!");
                 this.txtEmployee.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Nick Name > can not be empty!");
                 this.txtNickName.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["OnBoardDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OnBoardDate"]))
             {
                 MyUtility.Msg.WarningBox("< Hired on > can not be empty!");
                 this.dateHiredOn.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("< Line > can not be empty!");
                 this.txtsewingline.Focus();
                 return false;
             }
-            txtSkill.BackColor = displayM.BackColor;
+
+            this.txtSkill.BackColor = this.displayM.BackColor;
             return base.ClickSaveBefore();
         }
 
+        /// <summary>
+        /// ClickPrint()
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            DataTable browseData = (DataTable)gridbs.DataSource;
+            DataTable browseData = (DataTable)this.gridbs.DataSource;
             if (browseData == null || browseData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
@@ -244,7 +277,11 @@ namespace Sci.Production.IE
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P08.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             object[,] objArray = new object[1, 7];
@@ -262,7 +299,7 @@ namespace Sci.Production.IE
                 objArray[0, 5] = dr["ResignationDate"];
                 objArray[0, 6] = dr["SewingLineID"];
 
-                worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
             }
 
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P08");
@@ -277,31 +314,38 @@ namespace Sci.Production.IE
             strExcelName.OpenFile();
             return base.ClickPrint();
         }
-        
+
+        /// <summary>
+        /// ClickUndo()
+        /// </summary>
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            txtSkill.BackColor = displayM.BackColor;
+            this.txtSkill.BackColor = this.displayM.BackColor;
         }
 
-        private void txtSkill_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSkill_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {
-                DataTable MachineGroup;
-                Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out MachineGroup);
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,35", txtSkill.Text);
+                DataTable machineGroup;
+                Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out machineGroup);
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(machineGroup, "ID,Description", "Group ID,Description", "2,35", this.txtSkill.Text);
 
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
 
-                string returnData = "";
+                string returnData = string.Empty;
                 IList<DataRow> gridData = item.GetSelecteds();
                 foreach (DataRow currentRecord in gridData)
                 {
                     returnData = returnData + currentRecord["ID"].ToString() + ",";
                 }
-                CurrentMaintain["Skill"] = returnData.ToString();
+
+                this.CurrentMaintain["Skill"] = returnData.ToString();
             }
         }
     }

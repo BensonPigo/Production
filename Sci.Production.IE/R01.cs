@@ -1,78 +1,105 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
 namespace Sci.Production.IE
 {
+    /// <summary>
+    /// IE_R01
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string factory, style, season, team, inline1, inline2;
-        DataTable printData;
+        private string factory;
+        private string style;
+        private string season;
+        private string team;
+        private string inline1;
+        private string inline2;
+        private DataTable printData;
+
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboTeam, 1, 1, ",A,B");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, ",A,B");
         }
-       
-        //Factory
-        private void txtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+
+        // Factory
+        private void TxtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", txtFactory.Text, "Factory");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.txtFactory.Text, "Factory");
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtFactory.Text = item.GetSelectedString();
-           
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtFactory.Text = item.GetSelectedString();
         }
 
-        //Style
-        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Style
+        private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", txtStyle.Text, "Style#,Brand,Description");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", this.txtStyle.Text, "Style#,Brand,Description");
             item.Width = 800;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtStyle.Text = item.GetSelectedString();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStyle.Text = item.GetSelectedString();
         }
 
-        //Season
-        private void txtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Season
+        private void TxtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 ORDER BY ID DESC";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", txtSeason.Text, "Season");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.txtSeason.Text, "Season");
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtSeason.Text = item.GetSelectedString();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSeason.Text = item.GetSelectedString();
         }
-            
-        // 驗證輸入條件
+
+        /// <summary>
+        /// ValidateInput 驗證輸入條件
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-         
-            factory = txtFactory.Text;
-            style = txtStyle.Text;
-            season = txtSeason.Text;
-            team = comboTeam.SelectedIndex == -1 || comboTeam.SelectedIndex == 0 ? "" : comboTeam.SelectedIndex == 1 ? "A" : "B";
-            inline1 = String.Format("{0:yyyy-MM-dd}", dateInlineDate.Value1);
-            inline2 = String.Format("{0:yyyy-MM-dd}", dateInlineDate.Value2);
+            this.factory = this.txtFactory.Text;
+            this.style = this.txtStyle.Text;
+            this.season = this.txtSeason.Text;
+            this.team = this.comboTeam.SelectedIndex == -1 || this.comboTeam.SelectedIndex == 0 ? string.Empty : this.comboTeam.SelectedIndex == 1 ? "A" : "B";
+            this.inline1 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value1);
+            this.inline2 = string.Format("{0:yyyy-MM-dd}", this.dateInlineDate.Value2);
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad 非同步取資料
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -99,14 +126,21 @@ select lm.FactoryID,
 	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
 from LineMapping lm WITH (NOLOCK) 
 ");
-            if (!MyUtility.Check.Empty(inline1) || !MyUtility.Check.Empty(inline2))
+            if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2))
             {
-                string dateQuery = "";
-                if (!MyUtility.Check.Empty(inline1))
-                    dateQuery += (string.Format("and '{0}' <= convert(varchar(10), Inline, 120) ", inline1));
-                if (!MyUtility.Check.Empty(inline2))
-                    dateQuery += (string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", inline2));
-                sqlCmd.Append(string.Format(@"
+                string dateQuery = string.Empty;
+                if (!MyUtility.Check.Empty(this.inline1))
+                {
+                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), Inline, 120) ", this.inline1);
+                }
+
+                if (!MyUtility.Check.Empty(this.inline2))
+                {
+                    dateQuery += string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", this.inline2);
+                }
+
+                sqlCmd.Append(string.Format(
+                    @"
 inner join(
 	select distinct Orders.StyleID
 			, Orders.SeasonID
@@ -119,52 +153,66 @@ inner join(
             }
 
             sqlCmd.Append("where 1 = 1");
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'",factory));
-            }
-            if (!MyUtility.Check.Empty(style))
-            {
-                sqlCmd.Append(string.Format(" and lm.StyleID = '{0}'",style));
-            }
-            if (!MyUtility.Check.Empty(season))
-            {
-                sqlCmd.Append(string.Format(" and lm.SeasonID = '{0}'",season));
-            }
-            if (!MyUtility.Check.Empty(team))
-            {
-                sqlCmd.Append(string.Format(" and lm.Team = '{0}'", team));
+                sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'", this.factory));
             }
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                sqlCmd.Append(string.Format(" and lm.StyleID = '{0}'", this.style));
+            }
+
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                sqlCmd.Append(string.Format(" and lm.SeasonID = '{0}'", this.season));
+            }
+
+            if (!MyUtility.Check.Empty(this.team))
+            {
+                sqlCmd.Append(string.Format(" and lm.Team = '{0}'", this.team));
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel 產生Excel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_R01_LineMappingList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            //填內容值
+
+            // 填內容值
             int intRowsStart = 2;
             object[,] objArray = new object[1, 22];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["FactoryID"];
                 objArray[0, 1] = dr["StyleID"];
@@ -189,7 +237,7 @@ inner join(
                 objArray[0, 20] = dr["EditBy"];
                 objArray[0, 21] = dr["EditDate"];
 
-                worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -208,74 +256,92 @@ inner join(
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
 
-        private void txtFactory_Validating(object sender, CancelEventArgs e)
+        private void TxtFactory_Validating(object sender, CancelEventArgs e)
         {
-            DataTable FactoryData; string fac = "";
+            DataTable factoryData;
+            string fac = string.Empty;
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out FactoryData);
-            foreach (DataRow dr in FactoryData.Rows)
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out factoryData);
+            foreach (DataRow dr in factoryData.Rows)
             {
                 fac = dr["FTYGroup"].ToString();
-                if (txtFactory.Text == fac) { return; }
+                if (this.txtFactory.Text == fac)
+                {
+                    return;
+                }
             }
-            if (txtFactory.Text == "")
+
+            if (this.txtFactory.Text == string.Empty)
             {
-                txtFactory.Text = "";
+                this.txtFactory.Text = string.Empty;
                 return;
             }
-            if (txtFactory.Text != fac)
+
+            if (this.txtFactory.Text != fac)
             {
-                txtFactory.Text = "";
+                this.txtFactory.Text = string.Empty;
                 MyUtility.Msg.WarningBox("This Factory is wrong!");
                 return;
             }
         }
 
-        private void txtStyle_Validating(object sender, CancelEventArgs e)
+        private void TxtStyle_Validating(object sender, CancelEventArgs e)
         {
-            DataTable StyleData; string sty = "";
+            DataTable styleData;
+            string sty = string.Empty;
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out StyleData);
-            foreach (DataRow dr in StyleData.Rows)
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out styleData);
+            foreach (DataRow dr in styleData.Rows)
             {
                 sty = dr["ID"].ToString();
-                if (txtStyle.Text == sty) { return; }
+                if (this.txtStyle.Text == sty)
+                {
+                    return;
+                }
             }
-            if (txtStyle.Text == "")
+
+            if (this.txtStyle.Text == string.Empty)
             {
-                txtStyle.Text = "";
+                this.txtStyle.Text = string.Empty;
                 return;
             }
-            if (txtStyle.Text != sty)
+
+            if (this.txtStyle.Text != sty)
             {
-                txtStyle.Text = "";
+                this.txtStyle.Text = string.Empty;
                 MyUtility.Msg.WarningBox("This Style# is wrong!");
                 return;
             }
         }
 
-        private void txtSeason_Validating(object sender, CancelEventArgs e)
+        private void TxtSeason_Validating(object sender, CancelEventArgs e)
         {
-            DataTable SeasonData; string season = "";
+            DataTable seasonData;
+            string season = string.Empty;
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out SeasonData);
-            foreach (DataRow dr in SeasonData.Rows)
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out seasonData);
+            foreach (DataRow dr in seasonData.Rows)
             {
                 season = dr["ID"].ToString();
-                if (txtSeason.Text == season) { return; }
+                if (this.txtSeason.Text == season)
+                {
+                    return;
+                }
             }
-            if (txtSeason.Text == "")
+
+            if (this.txtSeason.Text == string.Empty)
             {
-                txtSeason.Text = "";
+                this.txtSeason.Text = string.Empty;
                 return;
             }
-            if (txtSeason.Text != season)
+
+            if (this.txtSeason.Text != season)
             {
-                txtSeason.Text = "";
+                this.txtSeason.Text = string.Empty;
                 MyUtility.Msg.WarningBox("This Season is wrong!");
                 return;
             }

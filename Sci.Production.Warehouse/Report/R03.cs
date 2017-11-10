@@ -108,9 +108,9 @@ namespace Sci.Production.Warehouse
 select  F.MDivisionID
         ,O.FactoryID
         ,PS.id
-        ,style = (select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) 
+        ,style = si.StyleID
         ,PSD.FinalETD
-        ,supp = PS.suppid+'-'+S.NameEN 
+        ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
         ,PSD.Refno
         ,PSD.SEQ1
@@ -120,7 +120,8 @@ select  F.MDivisionID
                         when 'A' then 'Accessory'
                         when 'O' then 'Other'
                       end 
-        ,LTRIM(RTRIM(dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)))
+        --,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
+		,ds5.string
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty
@@ -132,11 +133,7 @@ select  F.MDivisionID
         ,iif(PSD.Complete=1,'Y','N')
         --,PSD.ETA
         ,PSD.FinalETA
-        ,orderlist = (select t.orderid+',' 
-                      from (select OrderID 
-                            from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) 
-                            where id=PSD.id and seq1=PSD.seq1 and seq2 = PSD.SEQ2) t 
-                      for xml path('')) 
+        ,orderlist = a.orderlist
         ,MDPD.InQty
         ,PSD.StockUnit
         ,MDPD.OutQty
@@ -145,16 +142,8 @@ select  F.MDivisionID
         ,MDPD.ALocation
         ,MDPD.BLocation
         ,case PSD.FabricType 
-            when 'F' then (select x.result+'/' 
-                           from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
-                                 from dbo.FIR t2 WITH (NOLOCK) 
-                                 where t2.POID = PSD.ID and t2.seq1 = PSD.seq1 and t2.seq2 = PSD.seq2) x 
-                           for xml path(''))
-            when 'A' then (select x.result+'/' 
-                           from (select result = iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) 
-                                 from dbo.AIR t3 WITH (NOLOCK) 
-                                 where t3.POID = PSD.ID and t3.seq1 = PSD.seq1 and t3.seq2 = PSD.seq2) x 
-                           for xml path(''))
+            when 'F' then FT.F
+            when 'A' then FT2.A
          end
 from dbo.PO_Supp_Detail PSD
 join dbo.PO_Supp PS on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
@@ -162,6 +151,90 @@ join dbo.Supp S on S.id = PS.SuppID
 join dbo.Orders O on o.id = PSD.id
 join dbo.Factory F on f.id = o.FactoryId
 left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
+outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
+outer apply
+(
+	select orderlist = 
+	stuff((
+		select concat(',',OrderID)
+        from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) 
+        where id=PSD.id and seq1=PSD.seq1 and seq2 = PSD.SEQ2
+        for xml path('')
+	 ),1,1,'')
+)a
+outer apply
+(
+	select F = 
+	stuff((
+		select concat('/',iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)))         
+        from dbo.AIR t3 WITH (NOLOCK) 
+        where t3.POID = PSD.ID and t3.seq1 = PSD.seq1 and t3.seq2 = PSD.seq2
+        for xml path('')
+	),1,1,'')
+)FT
+outer apply
+(
+	select A = 
+	stuff((
+		select concat('/',x.result )
+        from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
+                from dbo.FIR t2 WITH (NOLOCK) 
+                where t2.POID = PSD.ID and t2.seq1 = PSD.seq1 and t2.seq2 = PSD.seq2) x 
+        for xml path('')
+	 ),1,1,'')
+)FT2
+outer apply
+(
+	SELECT p.SCIRefno
+		, p.Refno
+		, suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor)
+							,iif(ISNULL(p.SuppColor,'') != '' and ISNULL(p.ColorID,'') != '',CHAR(10),'')
+						    ,iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') 
+							,c.Name)
+		, StockSP = concat(iif(isnull(p.StockPOID,'')='','',p.StockPOID+' ')
+						  ,iif(isnull(p.StockSeq1,'')='','',p.StockSeq1+' ')
+						  ,p.StockSeq2)
+		, po_desc= concat(iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail)
+						 ,iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
+						 ,p.SizeUnit
+						 ,p.Special
+						 ,p.Spec
+						 ,p.Remark)
+		, Spec = iif(stockPO3.Spec is null,p.Spec ,stockPO3.Spec)
+		, fabric_detaildesc = f.DescDetail
+		, zn.ZipperName
+	from dbo.po_supp_detail p WITH (NOLOCK)
+	left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
+	left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and p.ColorID = c.ID 
+	outer apply ( 
+		select Spec,BomZipperInsert 
+		from PO_Supp_Detail tmpPO3
+		where tmpPO3.ID = p.StockPOID and tmpPO3.Seq1 =  p.StockSeq1 and tmpPO3.Seq2 =  p.StockSeq2
+	) stockPO3
+	outer apply
+	(
+		Select ZipperName = DropDownList.Name
+		From Production.dbo.DropDownList
+		Where Type = 'Zipper' And ID = iif(stockPO3.BomZipperInsert is null,p.BomZipperInsert ,stockPO3.BomZipperInsert)
+	)zn
+	WHERE p.ID=PSD.id and seq1 = PSD.seq1 and seq2=PSD.seq2
+)ds
+outer apply
+(
+	select string = 
+	concat(iif(isnull(ds.fabric_detaildesc,'')='','',ds.fabric_detaildesc+CHAR(10))
+		  ,iif(isnull(ds.suppcolor,'')='','',ds.suppcolor+CHAR(10))
+		  ,replace(ds.po_desc,char(10),'')
+		  )
+)ds2
+outer apply
+(
+	select string = iif(left(PSD.seq1,1) = '7'
+					,concat('**PLS USE STOCK FROM SP#:', ds.StockSP, '**', iif(isnull(ds2.string,'')='', '', CHAR(10) + ds2.string))
+					,ds2.string)
+)ds3
+outer apply(select string=concat(iif(isnull(ds3.string,'')='','',ds3.string+CHAR(10)),IIF(IsNull(ds.ZipperName,'') = '','','Spec:'+ ds.ZipperName+Char(10)),RTrim(ds.Spec)))ds4
+outer apply(select string=replace(replace(replace(replace(ds4.string,char(13),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)))ds5
 where 1=1  
 "));
 
@@ -318,23 +391,16 @@ where 1=1
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
-            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R03.xltx", 1);
+            
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx"); //預先開啟excel app
-            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R03.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
             this.ShowWaitMessage("Excel Processing...");
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R03.xltx", objApp);
+
+            //com.TransferArray_Limit = 200000;
+            com.ColumnsAutoFit = false;
             com.WriteTable(printData,2);
-
-
-            
-            Excel.Worksheet worksheet = objApp.Sheets[1];
-            worksheet.Columns[6].ColumnWidth = 35;
-            worksheet.Columns[23].ColumnWidth = 35;
-            worksheet.Columns[29].ColumnWidth = 35;
-            worksheet.Columns[30].ColumnWidth = 35;
-            //objApp.Rows.AutoFit();
-            //objApp.Columns.AutoFit();
+                        
+            //Excel.Worksheet worksheet = objApp.Sheets[1];
 
             //for (int i = 1; i <= printData.Rows.Count; i++)
             //{
@@ -348,7 +414,7 @@ where 1=1
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(worksheet);
+            //Marshal.ReleaseComObject(worksheet);
 
             strExcelName.OpenFile();
             #endregion
