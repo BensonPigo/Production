@@ -118,6 +118,8 @@ SELECT   A = A2.CountryID
        , T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
        , U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
 FROM ORDERS A1 WITH (NOLOCK) 
+inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
+                                         and A1.OrderTypeID = ot.ID
 LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
@@ -170,7 +172,7 @@ outer apply (
 	where pd.OrderID = A1.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
-WHERE 1 = 1 ";
+WHERE ot.IsGMTMaster = 1";
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -193,7 +195,7 @@ WHERE 1 = 1 ";
                         strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
 
-                    strSQL += " AND A1.Category='B'";
+                    strSQL += " AND A1.Category in ('B', 'G')";
                 }
                 else if (this.radioSample.Checked)
                 {
