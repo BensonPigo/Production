@@ -61,7 +61,7 @@ BEGIN
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
-	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')
+	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')  and localorder = 0
 
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
@@ -177,7 +177,7 @@ BEGIN
 	And Orders.Qty > 0
 	AND @HasForecast = 1
 	AND Orders.IsForecast = 1
-	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
+	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')  and localorder = 0
 	
 	--
 	declare @tmpFinal table (
