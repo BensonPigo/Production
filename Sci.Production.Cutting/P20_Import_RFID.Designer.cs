@@ -1,0 +1,209 @@
+﻿namespace Sci.Production.Cutting
+{
+    partial class P20_Import_RFID
+    {
+        /// <summary>
+        /// 設計工具所需的變數。
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// 清除任何使用中的資源。
+        /// </summary>
+        /// <param name="disposing">如果應該處置 Managed 資源則為 true，否則為 false。</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form 設計工具產生的程式碼
+
+        /// <summary>
+        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改
+        /// 這個方法的內容。
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.panelTOP = new Sci.Win.UI.Panel();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.labelRFIDDate = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.panelBOTTOM = new Sci.Win.UI.Panel();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.gridImport = new Sci.Win.UI.Grid();
+            this.dateRFID = new Sci.Win.UI.DateRange();
+            this.panelTOP.SuspendLayout();
+            this.panelBOTTOM.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // panelTOP
+            // 
+            this.panelTOP.Controls.Add(this.dateRFID);
+            this.panelTOP.Controls.Add(this.txtSP);
+            this.panelTOP.Controls.Add(this.labelLocateForSP);
+            this.panelTOP.Controls.Add(this.labelRFIDDate);
+            this.panelTOP.Controls.Add(this.btnQuery);
+            this.panelTOP.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTOP.Location = new System.Drawing.Point(0, 0);
+            this.panelTOP.Name = "panelTOP";
+            this.panelTOP.Size = new System.Drawing.Size(883, 44);
+            this.panelTOP.TabIndex = 1;
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(441, 11);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(145, 23);
+            this.txtSP.TabIndex = 17;
+            // 
+            // labelLocateForSP
+            // 
+            this.labelLocateForSP.Location = new System.Drawing.Point(398, 11);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(40, 23);
+            this.labelLocateForSP.TabIndex = 18;
+            this.labelLocateForSP.Text = "SP#";
+            // 
+            // labelRFIDDate
+            // 
+            this.labelRFIDDate.Location = new System.Drawing.Point(13, 12);
+            this.labelRFIDDate.Name = "labelRFIDDate";
+            this.labelRFIDDate.Size = new System.Drawing.Size(99, 23);
+            this.labelRFIDDate.TabIndex = 5;
+            this.labelRFIDDate.Text = "RFID Date";
+            // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(793, 8);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 1;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            // 
+            // panelBOTTOM
+            // 
+            this.panelBOTTOM.Controls.Add(this.btnClose);
+            this.panelBOTTOM.Controls.Add(this.btnImport);
+            this.panelBOTTOM.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelBOTTOM.Location = new System.Drawing.Point(0, 418);
+            this.panelBOTTOM.Name = "panelBOTTOM";
+            this.panelBOTTOM.Size = new System.Drawing.Size(883, 39);
+            this.panelBOTTOM.TabIndex = 8;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(791, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnImport
+            // 
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(705, 5);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
+            // gridImport
+            // 
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 44);
+            this.gridImport.Name = "gridImport";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(883, 374);
+            this.gridImport.TabIndex = 9;
+            this.gridImport.TabStop = false;
+            // 
+            // dateRFID
+            // 
+            // 
+            // 
+            // 
+            this.dateRFID.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRFID.DateBox1.Name = "";
+            this.dateRFID.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRFID.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRFID.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRFID.DateBox2.Name = "";
+            this.dateRFID.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRFID.DateBox2.TabIndex = 1;
+            this.dateRFID.IsRequired = false;
+            this.dateRFID.Location = new System.Drawing.Point(115, 11);
+            this.dateRFID.Name = "dateRFID";
+            this.dateRFID.Size = new System.Drawing.Size(280, 23);
+            this.dateRFID.TabIndex = 19;
+            // 
+            // P20_Import_FRID
+            // 
+            this.ClientSize = new System.Drawing.Size(883, 457);
+            this.Controls.Add(this.gridImport);
+            this.Controls.Add(this.panelBOTTOM);
+            this.Controls.Add(this.panelTOP);
+            this.Name = "P20_Import_FRID";
+            this.Text = "Import From RFID";
+            this.panelTOP.ResumeLayout(false);
+            this.panelTOP.PerformLayout();
+            this.panelBOTTOM.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private Win.UI.Panel panelTOP;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelLocateForSP;
+        private Win.UI.Label labelRFIDDate;
+        private Win.UI.Button btnQuery;
+        private Win.UI.Panel panelBOTTOM;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnImport;
+        private Win.UI.Grid gridImport;
+        private Win.UI.DateRange dateRFID;
+    }
+}

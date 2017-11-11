@@ -699,5 +699,13 @@ from Cutting c left join
             base.OnFormLoaded();
             
         }
+
+        private void btnImportfromRealtimeBundleTracking_Click(object sender, EventArgs e)
+        {
+            detailgrid.ValidateControl();
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            var frm = new P20_Import_RFID(CurrentMaintain, dt);
+            frm.ShowDialog(this);
+        }
     }
 }
