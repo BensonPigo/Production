@@ -284,6 +284,7 @@
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.disCustCD = new Sci.Win.UI.DisplayBox();
+            this.btnBuyerDeliveryHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -300,6 +301,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnBuyerDeliveryHistory);
             this.detailcont.Controls.Add(this.disCustCD);
             this.detailcont.Controls.Add(this.labeOrderCombo);
             this.detailcont.Controls.Add(this.displayOrderCombo);
@@ -2236,7 +2238,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(220, 197);
+            this.labelFactory.Location = new System.Drawing.Point(227, 197);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(55, 21);
             this.labelFactory.TabIndex = 56;
@@ -2244,7 +2246,7 @@
             // 
             // labelFtyCode
             // 
-            this.labelFtyCode.Location = new System.Drawing.Point(220, 224);
+            this.labelFtyCode.Location = new System.Drawing.Point(227, 224);
             this.labelFtyCode.Name = "labelFtyCode";
             this.labelFtyCode.Size = new System.Drawing.Size(55, 21);
             this.labelFtyCode.TabIndex = 57;
@@ -2252,7 +2254,7 @@
             // 
             // labelModel
             // 
-            this.labelModel.Location = new System.Drawing.Point(220, 251);
+            this.labelModel.Location = new System.Drawing.Point(227, 251);
             this.labelModel.Name = "labelModel";
             this.labelModel.Size = new System.Drawing.Size(55, 21);
             this.labelModel.TabIndex = 58;
@@ -2260,7 +2262,7 @@
             // 
             // labelKPIDel
             // 
-            this.labelKPIDel.Location = new System.Drawing.Point(220, 278);
+            this.labelKPIDel.Location = new System.Drawing.Point(227, 278);
             this.labelKPIDel.Name = "labelKPIDel";
             this.labelKPIDel.Size = new System.Drawing.Size(55, 21);
             this.labelKPIDel.TabIndex = 59;
@@ -2271,7 +2273,7 @@
             this.displayFtyCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFtyCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandFTYCode", true));
             this.displayFtyCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFtyCode.Location = new System.Drawing.Point(278, 224);
+            this.displayFtyCode.Location = new System.Drawing.Point(285, 224);
             this.displayFtyCode.Name = "displayFtyCode";
             this.displayFtyCode.Size = new System.Drawing.Size(67, 21);
             this.displayFtyCode.TabIndex = 30;
@@ -2281,7 +2283,7 @@
             this.txtModel.BackColor = System.Drawing.Color.White;
             this.txtModel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Model", true));
             this.txtModel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtModel.Location = new System.Drawing.Point(278, 251);
+            this.txtModel.Location = new System.Drawing.Point(285, 251);
             this.txtModel.Name = "txtModel";
             this.txtModel.Size = new System.Drawing.Size(100, 21);
             this.txtModel.TabIndex = 15;
@@ -2290,7 +2292,7 @@
             // 
             this.dateKPIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyKPI", true));
             this.dateKPIDel.IsSupportEditMode = false;
-            this.dateKPIDel.Location = new System.Drawing.Point(278, 278);
+            this.dateKPIDel.Location = new System.Drawing.Point(285, 278);
             this.dateKPIDel.Name = "dateKPIDel";
             this.dateKPIDel.ReadOnly = true;
             this.dateKPIDel.Size = new System.Drawing.Size(100, 21);
@@ -3043,7 +3045,7 @@
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtmfactory.IssupportJunk = false;
-            this.txtmfactory.Location = new System.Drawing.Point(278, 197);
+            this.txtmfactory.Location = new System.Drawing.Point(285, 197);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
@@ -3184,6 +3186,17 @@
             this.disCustCD.Size = new System.Drawing.Size(84, 21);
             this.disCustCD.TabIndex = 130;
             this.disCustCD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DisCustCD_MouseDown);
+            // 
+            // btnBuyerDeliveryHistory
+            // 
+            this.btnBuyerDeliveryHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnBuyerDeliveryHistory.Location = new System.Drawing.Point(202, 197);
+            this.btnBuyerDeliveryHistory.Name = "btnBuyerDeliveryHistory";
+            this.btnBuyerDeliveryHistory.Size = new System.Drawing.Size(20, 23);
+            this.btnBuyerDeliveryHistory.TabIndex = 218;
+            this.btnBuyerDeliveryHistory.Text = "H";
+            this.btnBuyerDeliveryHistory.UseVisualStyleBackColor = true;
+            this.btnBuyerDeliveryHistory.Click += new System.EventHandler(this.BtnBuyerDeliveryHistory_Click);
             // 
             // P01
             // 
@@ -3472,5 +3485,6 @@
         private Win.UI.Button btnMeterialStatus;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
         private Win.UI.DisplayBox disCustCD;
+        private Win.UI.Button btnBuyerDeliveryHistory;
     }
 }
