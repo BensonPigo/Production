@@ -322,7 +322,7 @@ where not exists(select 1 from Production.dbo.Style_TmsCost as a where a.StyleUk
 RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_Artwork
 from Production.dbo.Style_Artwork as a 
-INNER JOIN Trade_To_Pms.dbo.Style as t on a.TradeUkey=t.Ukey
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_Artwork as b
 on a.TradeUkey = b.Ukey
 where b.Ukey is null
