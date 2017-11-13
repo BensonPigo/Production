@@ -101,10 +101,10 @@ Select  0 as Selected
         , aaa.id as orderid
         , sum(bbb.qty) poqty 
         , unitprice = iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
-        , 0.0000 as price
+        , price = iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
+        , amount = sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
         , 1 as qtygarment
         , 0.0000 as pricegmt
-        , 0.0000 as amount 
         , ccc.id as artworktypeid
         , rtrim(ccc.id) as artworkid
         , patterncode = (select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
@@ -142,7 +142,7 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTyp
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += @"
            ) as aa
-where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
+where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid and aa.ArtworkTypeID = oa.artworktypeid
 group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,ot.Price";
 
 

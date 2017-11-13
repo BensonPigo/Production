@@ -97,7 +97,7 @@ select  Selected = 0
         , Cost = iif(at.isArtwork = 1,oa.Cost,ot.Price)
         , unitprice = iif(at.isArtwork = 1,oa.Cost,ot.Price)
         , price = oa.Cost
-        , amount = (sum(q.qty)-IssueQty.IssueQty)*cost 
+        , amount = (sum(q.qty)-IssueQty.IssueQty)*iif(at.isArtwork = 1,oa.Cost,ot.Price)
         , Style = o.StyleID
 from orders o WITH (NOLOCK) 
 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
