@@ -1,30 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Data;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P01_CTNData
+    /// </summary>
     public partial class P01_CTNData : Sci.Win.Subs.Base
     {
         private DataRow masterData;
-        public P01_CTNData(DataRow MasterData)
+
+        /// <summary>
+        /// P01_CTNData
+        /// </summary>
+        /// <param name="masterData">MasterData</param>
+        public P01_CTNData(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
+            this.InitializeComponent();
+            this.masterData = masterData;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable CTNData;
-            string sqlCmd = string.Format(@"select oc.RefNo,oc.QtyPerCTN,oc.GMTQty,oc.CTNQty,isnull(li.Description,'') as Description, isnull(li.CtnUnit,'') as CtnUnit,
+            DataTable cTNData;
+            string sqlCmd = string.Format(
+                @"select oc.RefNo,oc.QtyPerCTN,oc.GMTQty,oc.CTNQty,isnull(li.Description,'') as Description, isnull(li.CtnUnit,'') as CtnUnit,
 isnull((STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4)),'') as Dimension,
 isnull((ls.ID+'-'+ls.Abb),'') as Supplier,
 isnull((select sum(ld.Qty) from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) where l.Category = 'CARTON' and l.Id = ld.Id and ld.OrderId = oc.ID and ld.Refno = oc.RefNo),0) as POQty
@@ -32,18 +38,20 @@ from Order_CTNData oc WITH (NOLOCK)
 left join LocalItem li WITH (NOLOCK) on oc.RefNo = li.RefNo
 left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
 where oc.ID = '{0}'
-order by oc.RefNo", masterData["ID"].ToString());
+order by oc.RefNo", this.masterData["ID"].ToString());
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTNData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out cTNData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query Order_CTNData fail!!");
             }
-            listControlBindingSource1.DataSource = CTNData;
-            //設定Grid的顯示欄位
+
+            this.listControlBindingSource1.DataSource = cTNData;
+
+            // 設定Grid的顯示欄位
             this.gridCartonInformation.IsEditingReadOnly = true;
-            this.gridCartonInformation.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridCartonInformation)
+            this.gridCartonInformation.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridCartonInformation)
                 .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(20))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(30))
                 .Text("Dimension", header: "Dimension", width: Widths.AnsiChars(30))

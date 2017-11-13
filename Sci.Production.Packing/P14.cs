@@ -1,41 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
 
-
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P14
+    /// </summary>
     public partial class P14 : Sci.Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <summary>
+        /// P14
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
-        DataTable gridData;        
-        string selectDataTable_DefaultView_Sort = "";
+
+        private DataTable gridData;
+        private string selectDataTable_DefaultView_Sort = string.Empty;
+
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
-            dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
-            dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
-            dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
-            //Grid設定
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
+            this.dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            this.dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
+
+            // Grid設定
             this.gridDetail.IsEditingReadOnly = false;
-            this.gridDetail.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridDetail)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Date("TransferDate", header: "Transfer Date",iseditable:false)
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .Date("TransferDate", header: "Transfer Date", iseditable: false)
                 .Text("TransferSlipNo", header: "TransferSlipNo", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
@@ -50,50 +60,45 @@ namespace Sci.Production.Packing
                 .DateTime("AddDate", header: "Create Date", iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
-            int RowIndex = 0;
-            int ColumIndex = 0;
-            gridDetail.CellClick += (s, e) =>
+            int rowIndex = 0;
+            int columIndex = 0;
+            this.gridDetail.CellClick += (s, e) =>
             {
-                RowIndex = e.RowIndex;
-                ColumIndex = e.ColumnIndex;
-
+                rowIndex = e.RowIndex;
+                columIndex = e.ColumnIndex;
             };
 
-            gridDetail.Sorted += (s, e) =>
+            this.gridDetail.Sorted += (s, e) =>
             {
-
-                if ((RowIndex == -1) & (ColumIndex == 4))
+                if ((rowIndex == -1) & (columIndex == 4))
                 {
+                    this.listControlBindingSource1.DataSource = null;
 
-                    listControlBindingSource1.DataSource = null;
-
-                    if (selectDataTable_DefaultView_Sort == "DESC")
+                    if (this.selectDataTable_DefaultView_Sort == "DESC")
                     {
-                        gridData.DefaultView.Sort = "rn1 DESC";
-                        selectDataTable_DefaultView_Sort = "";
+                        this.gridData.DefaultView.Sort = "rn1 DESC";
+                        this.selectDataTable_DefaultView_Sort = string.Empty;
                     }
                     else
                     {
-                        gridData.DefaultView.Sort = "rn1 ASC";
-                        selectDataTable_DefaultView_Sort = "DESC";
+                        this.gridData.DefaultView.Sort = "rn1 ASC";
+                        this.selectDataTable_DefaultView_Sort = "DESC";
                     }
-                    listControlBindingSource1.DataSource = gridData;
+
+                    this.listControlBindingSource1.DataSource = this.gridData;
                     return;
                 }
-
-
             };
-
-
-            //
-        
         }
-        string cmd;
-        //Query
-        private void btnQuery_Click(object sender, EventArgs e)
+
+        private string cmd;
+
+        // Query
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select  *
         , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
@@ -122,92 +127,97 @@ from (
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateTimePicker1.Text))
+            if (!MyUtility.Check.Empty(this.dateTimePicker1.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", dateTimePicker1.Text));
+                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", this.dateTimePicker1.Text));
             }
-            if (!MyUtility.Check.Empty(dateTimePicker2.Text))
+
+            if (!MyUtility.Check.Empty(this.dateTimePicker2.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", dateTimePicker2.Text));
+                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.dateTimePicker2.Text));
             }
-            if (!MyUtility.Check.Empty(txtPackID.Text))
+
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and t.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
+                sqlCmd.Append(string.Format(" and t.PackingListID = '{0}'", MyUtility.Convert.GetString(this.txtPackID.Text)));
             }
-            if (!MyUtility.Check.Empty(txtSP.Text))
+
+            if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(txtSP.Text)));
+                sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(this.txtSP.Text)));
             }
-            if (!MyUtility.Check.Empty(txtfactory.Text))
+
+            if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", MyUtility.Convert.GetString(txtfactory.Text)));
+                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", MyUtility.Convert.GetString(this.txtfactory.Text)));
             }
-            if (!MyUtility.Check.Empty(txtTransferSlipNo.Text))
+
+            if (!MyUtility.Check.Empty(this.txtTransferSlipNo.Text))
             {
-                sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(txtTransferSlipNo.Text)));
+                sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(this.txtTransferSlipNo.Text)));
             }
+
             sqlCmd.Append(@"
 ) X order by rn");
-           
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
             }
-            cmd = sqlCmd.ToString();
-            if (gridData.Rows.Count == 0)
+
+            this.cmd = sqlCmd.ToString();
+            if (this.gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
-            listControlBindingSource1.DataSource = gridData;
+
+            this.listControlBindingSource1.DataSource = this.gridData;
         }
 
-        //Close
-        private void btnClose_Click(object sender, EventArgs e)
+        // Close
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        //To Excel
-        private void btnToExcel_Click(object sender, EventArgs e)
+        // To Excel
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            //button1_Click(null, null);
-            DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
-            if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
+            this.listControlBindingSource1.EndEdit();
+
+            // button1_Click(null, null);
+            DataTable excelTable = (DataTable)this.listControlBindingSource1.DataSource;
+            if (excelTable == null || excelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
-            //如果沒勾選資料,會跳訊息
-            DataRow[] SelectedData = ExcelTable.Select("Selected = 1");
-            if (SelectedData.Length==0)
+
+            // 如果沒勾選資料,會跳訊息
+            DataRow[] selectedData = excelTable.Select("Selected = 1");
+            if (selectedData.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
                 return;
             }
-            //將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
+
+            // 將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid",
-             @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp where selected=1", out selectData, "#tmp");
-            
-            //
-            
-            //bool result = MyUtility.Excel.CopyToXls(k, "", xltfile: "Packing_P14_TransferSlip.xltx", headerRow: 3);
-            ////bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", xltfile: "Packing_P14.xltx", headerRow: 1);
-            //if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            ////P14_Print_OrderList frm = new P14_Print_OrderList();
-            ////frm.ShowDialog();
-            string date1, date2, packID, SPNo;
-            date1 = (!MyUtility.Check.Empty(dateTimePicker1.Text)) ? dateTimePicker1.Text : null;
-            date2 = (!MyUtility.Check.Empty(dateTimePicker2.Text)) ? dateTimePicker2.Text : null;
-            packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
-            SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
-            P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo, cmd);
+
+            string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp where selected=1";
+            MyUtility.Tool.ProcessWithDatatable(
+                excelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out selectData, "#tmp");
+
+            string date1, date2, packID, sPNo;
+            date1 = (!MyUtility.Check.Empty(this.dateTimePicker1.Text)) ? this.dateTimePicker1.Text : null;
+            date2 = (!MyUtility.Check.Empty(this.dateTimePicker2.Text)) ? this.dateTimePicker2.Text : null;
+            packID = (!MyUtility.Check.Empty(this.txtPackID.Text)) ? this.txtPackID.Text : null;
+            sPNo = (!MyUtility.Check.Empty(this.txtSP.Text)) ? this.txtSP.Text : null;
+            P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, sPNo, this.cmd);
             frm.ShowDialog();
         }
-
     }
 }

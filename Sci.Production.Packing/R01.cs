@@ -12,52 +12,145 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_Packing
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             DataTable factory;
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
-
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.Text = Sci.Env.User.Factory;
         }
 
         // 驗證輸入條件
-        string _sp1, _sp2, _packingno1, _packingno2, _po1, _po2, _brand, _mDivision, _factory, _bdate1, _bdate2, _scandate1, _scandate2;
+        private string _sp1;
+
+        // 驗證輸入條件
+        private string _sp2;
+
+        // 驗證輸入條件
+        private string _packingno1;
+
+        // 驗證輸入條件
+        private string _packingno2;
+
+        // 驗證輸入條件
+        private string _po1;
+
+        // 驗證輸入條件
+        private string _po2;
+
+        // 驗證輸入條件
+        private string _brand;
+
+        // 驗證輸入條件
+        private string _mDivision;
+
+        // 驗證輸入條件
+        private string _factory;
+
+        // 驗證輸入條件
+        private string _bdate1;
+
+        // 驗證輸入條件
+        private string _bdate2;
+
+        // 驗證輸入條件
+        private string _scandate1;
+
+        // 驗證輸入條件
+        private string _scandate2;
+
+        /// <summary>
+        /// ValidateInput
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            _sp1 = txtSPNoStart.Text;
-            _sp2 = txtSPNoEnd.Text;
-            _packingno1 = txtPackingStart.Text;
-            _packingno2 = txtPackingEnd.Text;
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
-                _bdate1 = Convert.ToDateTime(dateBuyerDelivery.Value1).ToString("d");
-            else _bdate1 = null;
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
-                _bdate2 = Convert.ToDateTime(dateBuyerDelivery.Value2).ToString("d");
-            else _bdate2 = null;
-            if (!MyUtility.Check.Empty(dateSacnDate.Value1))
-                _scandate1 = Convert.ToDateTime(dateSacnDate.Value1).ToString("d");
-            else _scandate1 = null;
-            if (!MyUtility.Check.Empty(dateSacnDate.Value2))
-                _scandate2 = Convert.ToDateTime(dateSacnDate.Value2).ToString("d") + " 23:59:59";
-            else _scandate2 = null;
-            _po1 = txtPONoStart.Text;
-            _po2 = txtPONoEnd.Text;
-            _brand = txtbrand.Text;
-            _mDivision = txtMdivision1.Text;
-            _factory = comboFactory.Text;
+            this._sp1 = this.txtSPNoStart.Text;
+            this._sp2 = this.txtSPNoEnd.Text;
+            this._packingno1 = this.txtPackingStart.Text;
+            this._packingno2 = this.txtPackingEnd.Text;
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                this._bdate1 = Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d");
+            }
+            else
+            {
+                this._bdate1 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            {
+                this._bdate2 = Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d");
+            }
+            else
+            {
+                this._bdate2 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSacnDate.Value1))
+            {
+                this._scandate1 = Convert.ToDateTime(this.dateSacnDate.Value1).ToString("d");
+            }
+            else
+            {
+                this._scandate1 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSacnDate.Value2))
+            {
+                this._scandate2 = Convert.ToDateTime(this.dateSacnDate.Value2).ToString("d") + " 23:59:59";
+            }
+            else
+            {
+                this._scandate2 = null;
+            }
+
+            this._po1 = this.txtPONoStart.Text;
+            this.Po2 = this.txtPONoEnd.Text;
+            this._brand = this.txtbrand.Text;
+            this._mDivision = this.txtMdivision1.Text;
+            this._factory = this.comboFactory.Text;
 
             return base.ValidateInput();
         }
 
-         // 非同步取資料
-        DataTable _printData;
-        string _columnname;
+        // 非同步取資料
+        private DataTable _printData;
+        private string _columnname;
+
+        /// <summary>
+        /// Po2
+        /// </summary>
+        public string Po2
+        {
+            get
+            {
+                return this._po2;
+            }
+
+            set
+            {
+                this._po2 = value;
+            }
+        }
+
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlcmd;
@@ -65,53 +158,84 @@ namespace Sci.Production.Packing
             StringBuilder sqlwhere = new StringBuilder();
 
             #region 準備where條件, 兩段sql用相同條件
-            if (!MyUtility.Check.Empty(_sp1))
-                sqlwhere.Append(string.Format(" and pld.OrderID >= '{0}'", _sp1));
+            if (!MyUtility.Check.Empty(this._sp1))
+            {
+                sqlwhere.Append(string.Format(" and pld.OrderID >= '{0}'", this._sp1));
+            }
 
-            if (!MyUtility.Check.Empty(_sp2))
-                sqlwhere.Append(string.Format(" and pld.OrderID <= '{0}'",_sp2));
+            if (!MyUtility.Check.Empty(this._sp2))
+            {
+                sqlwhere.Append(string.Format(" and pld.OrderID <= '{0}'", this._sp2));
+            }
 
-            if (!MyUtility.Check.Empty(_packingno1))
-                sqlwhere.Append(string.Format(" and pld.id >= '{0}'",_packingno1));
+            if (!MyUtility.Check.Empty(this._packingno1))
+            {
+                sqlwhere.Append(string.Format(" and pld.id >= '{0}'", this._packingno1));
+            }
 
-            if (!MyUtility.Check.Empty(_packingno2))
-                sqlwhere.Append(string.Format(" and pld.id <= '{0}'",_packingno2));
+            if (!MyUtility.Check.Empty(this._packingno2))
+            {
+                sqlwhere.Append(string.Format(" and pld.id <= '{0}'", this._packingno2));
+            }
 
-            if (!MyUtility.Check.Empty(_bdate1))
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery >= '{0}'",_bdate1));
+            if (!MyUtility.Check.Empty(this._bdate1))
+            {
+                sqlwhere.Append(string.Format(" and o.BuyerDelivery >= '{0}'", this._bdate1));
+            }
 
-            if (!MyUtility.Check.Empty(_bdate2))
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery <= '{0}'",_bdate2));
+            if (!MyUtility.Check.Empty(this._bdate2))
+            {
+                sqlwhere.Append(string.Format(" and o.BuyerDelivery <= '{0}'", this._bdate2));
+            }
 
-            if (!MyUtility.Check.Empty(_scandate1))
-                sqlwhere.Append(string.Format(" and pld.ScanEditDate >= '{0}'",_scandate1));
+            if (!MyUtility.Check.Empty(this._scandate1))
+            {
+                sqlwhere.Append(string.Format(" and pld.ScanEditDate >= '{0}'", this._scandate1));
+            }
 
-            if (!MyUtility.Check.Empty(_scandate2))
-                sqlwhere.Append(string.Format(" and pld.ScanEditDate <= '{0}'",_scandate2));
+            if (!MyUtility.Check.Empty(this._scandate2))
+            {
+                sqlwhere.Append(string.Format(" and pld.ScanEditDate <= '{0}'", this._scandate2));
+            }
 
-            if (!MyUtility.Check.Empty(_po1))
-                sqlwhere.Append(string.Format(" and o.CustPONo >= '{0}'",_po1));
+            if (!MyUtility.Check.Empty(this._po1))
+            {
+                sqlwhere.Append(string.Format(" and o.CustPONo >= '{0}'", this._po1));
+            }
 
-            if (!MyUtility.Check.Empty(_po2))
-                sqlwhere.Append(string.Format(" and o.CustPONo <= '{0}'",_po2));
+            if (!MyUtility.Check.Empty(this.Po2))
+            {
+                sqlwhere.Append(string.Format(" and o.CustPONo <= '{0}'", this.Po2));
+            }
 
-            if (!MyUtility.Check.Empty(_brand))
-                sqlwhere.Append(string.Format(" and pl.brandid = '{0}'",_brand));
+            if (!MyUtility.Check.Empty(this._brand))
+            {
+                sqlwhere.Append(string.Format(" and pl.brandid = '{0}'", this._brand));
+            }
 
-            if (!MyUtility.Check.Empty(_mDivision))
-                sqlwhere.Append(string.Format(" and pl.MDivisionID = '{0}'",_mDivision));
+            if (!MyUtility.Check.Empty(this._mDivision))
+            {
+                sqlwhere.Append(string.Format(" and pl.MDivisionID = '{0}'", this._mDivision));
+            }
 
-            if (!MyUtility.Check.Empty(_factory))
-                sqlwhere.Append(string.Format(" and pl.FactoryID = '{0}'",_factory));
+            if (!MyUtility.Check.Empty(this._factory))
+            {
+                sqlwhere.Append(string.Format(" and pl.FactoryID = '{0}'", this._factory));
+            }
 
-            if (rdbtnDetail.Checked)
+            if (this.rdbtnDetail.Checked)
+            {
                 sqlwhere.Append(" and (pld.ScanEditDate !='' or pld.ScanEditDate is not null)");
-            else if (rdbtnSummary.Checked)
+            }
+            else if (this.rdbtnSummary.Checked)
+            {
                 sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null)");
+            }
             #endregion
 
             #region 先準備主要資料table
-            sqlcmd = string.Format(@"
+            sqlcmd = string.Format(
+                @"
 select 
 	[Packing#] = pld.ID
 	,[Factory] = pl.FactoryID
@@ -209,7 +333,8 @@ DROP TABLE #TMP
             #endregion
 
             #region 準備動態的(欄位名稱)
-            sqlcmdcolumnName = string.Format(@"
+            sqlcmdcolumnName = string.Format(
+                @"
 select Customize1 = stuff((
 	select concat('/',x.Customize1)
 	from
@@ -229,51 +354,56 @@ select Customize1 = stuff((
 
             #region Get Data
             DualResult result;
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out _printData)))
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out this._printData)))
             {
                 return result;
             }
 
             try
             {
-                _columnname = MyUtility.GetValue.Lookup(sqlcmdcolumnName);
+                this._columnname = MyUtility.GetValue.Lookup(sqlcmdcolumnName);
             }
             catch (Exception ex)
             {
                 return Result.F("Get column name failed!!\r\n", ex);
             }
             #endregion
-            
+
             return Result.True;
         }
 
+        /// <summary>
+        /// OnToExcel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData
-            if (_printData == null || _printData.Rows.Count == 0)
+            if (this._printData == null || this._printData.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
             #endregion
 
-            this.SetCount(_printData.Rows.Count);
+            this.SetCount(this._printData.Rows.Count);
             this.ShowWaitMessage("Excel Processing");
 
             #region To Excel
             string reportname = "Packing_R01.xltx";
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + reportname);
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            worksheet.Cells[2, 2] = _sp1 + "~" + _sp2;
-            worksheet.Cells[2, 5] = _packingno1 + "~" + _packingno2;
-            worksheet.Cells[2, 8] = _bdate1 + "~" + _bdate2;
-            worksheet.Cells[2, 11] = _scandate1 + "~" + _scandate2;
-            worksheet.Cells[2, 14] = _po1 + "~" + _po2;
-            worksheet.Cells[2, 16] = _brand;
-            worksheet.Cells[2, 18] = _factory;
-            worksheet.Cells[2, 20] = rdbtnDetail.Checked ? "Complete" : (rdbtnSummary.Checked ? "Not Complete" : "ALL");
-            worksheet.Cells[3, 8] = _columnname;
-            MyUtility.Excel.CopyToXls(_printData, "", reportname, 3, showExcel: false, excelApp: objApp);
+            worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
+            worksheet.Cells[2, 5] = this._packingno1 + "~" + this._packingno2;
+            worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
+            worksheet.Cells[2, 11] = this._scandate1 + "~" + this._scandate2;
+            worksheet.Cells[2, 14] = this._po1 + "~" + this.Po2;
+            worksheet.Cells[2, 16] = this._brand;
+            worksheet.Cells[2, 18] = this._factory;
+            worksheet.Cells[2, 20] = this.rdbtnDetail.Checked ? "Complete" : (this.rdbtnSummary.Checked ? "Not Complete" : "ALL");
+            worksheet.Cells[3, 8] = this._columnname;
+            MyUtility.Excel.CopyToXls(this._printData, string.Empty, reportname, 3, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
             #region Save & Show Excel
@@ -287,7 +417,7 @@ select Customize1 = stuff((
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             #endregion
             this.HideWaitMessage();
             return true;

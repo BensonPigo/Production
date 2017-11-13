@@ -15,23 +15,34 @@ using System.Linq;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P10
+    /// </summary>
     public partial class P10 : Sci.Win.Tems.QueryForm
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <summary>
+        /// P10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridDetail.IsEditingReadOnly = false;
-            this.gridDetail.DataSource = listControlBindingSource1;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridDetail)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -43,6 +54,7 @@ namespace Sci.Production.Packing
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
+
         private void Find()
         {
             if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtPO.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
@@ -50,9 +62,11 @@ namespace Sci.Production.Packing
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
             }
+
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select	ID
 		, selected
 		, PackingListID
@@ -93,14 +107,17 @@ from (
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSP.Text.ToString().Trim()));
             }
+
             if (!MyUtility.Check.Empty(this.txtPO.Text))
             {
                 sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPO.Text.ToString().Trim()));
             }
+
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
+
             sqlCmd.Append(@"
 ) detail
 ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
@@ -112,35 +129,40 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                 if (selectDataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("Data not found!");
-                    ControlButton4Text("Close");
+                    this.ControlButton4Text("Close");
                 }
                 else
                 {
-                    ControlButton4Text("Cancel");
+                    this.ControlButton4Text("Cancel");
                 }
             }
             else
             {
                 MyUtility.Msg.WarningBox(selectResult.Description);
-                ControlButton4Text("Close");
+                this.ControlButton4Text("Close");
             }
-            listControlBindingSource1.DataSource = selectDataTable;
-        }
-        //Find
-        private void btnFind_Click(object sender, EventArgs e)
-        {
-            Find();
+
+            this.listControlBindingSource1.DataSource = selectDataTable;
         }
 
-        //Import From Barcode
-        private void btnImportFromBarcode_Click(object sender, EventArgs e)
+        // Find
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            this.Find();
+        }
+
+        // Import From Barcode
+        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading...");
-            //設定只能選txt檔
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
+
+            // 設定只能選txt檔
+            this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //先將Grid的結構給開出來
+                // 先將Grid的結構給開出來
                 string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
                                                              from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
@@ -150,11 +172,11 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                     MyUtility.Msg.WarningBox("Connection faile.!");
                     return;
                 }
-                listControlBindingSource1.DataSource = selectDataTable;
 
-               
-                //讀檔案
-                using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                this.listControlBindingSource1.DataSource = selectDataTable;
+
+                // 讀檔案
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
                     DataTable loginMErr = selectDataTable.Clone();
@@ -176,12 +198,13 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                             DataRow dr = selectDataTable.NewRow();
                             if (sl[1].Length >= 13)
                             {
-                                dr["ID"] = "";
+                                dr["ID"] = string.Empty;
                                 dr["selected"] = 1;
                                 dr["PackingListID"] = sl[1].Substring(0, 13);
                                 dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13);
 
-                                string sqlCmd = string.Format(@"
+                                string sqlCmd = string.Format(
+                                    @"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
         , o.MDivisionID
@@ -191,7 +214,9 @@ inner join Orders o on pd.OrderID = o.id
 where   pd.ID = '{0}' 
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
-", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+",
+                                    dr["PackingListID"].ToString(),
+                                    dr["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     #region checkM & checkTransfer
@@ -200,6 +225,7 @@ where   pd.ID = '{0}'
                                         loginMErr.Rows.Add(dr.ItemArray);
                                         continue;
                                     }
+
                                     if (!seekData["TransferDate"].ToString().Empty())
                                     {
                                         transferErr.Rows.Add(dr.ItemArray);
@@ -209,7 +235,8 @@ where   pd.ID = '{0}'
 
                                     dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                     string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                    sqlCmd = string.Format(@"
+                                    sqlCmd = string.Format(
+                                        @"
 select  a.StyleID
         , a.SeasonID
         , a.BrandID
@@ -220,7 +247,9 @@ select  a.StyleID
 from Orders a WITH (NOLOCK) 
 left join Country b WITH (NOLOCK) on b.ID = a.Dest
 left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{1}'
-where   a.ID = '{0}'", dr["OrderID"].ToString(), seq);
+where   a.ID = '{0}'",
+                                        dr["OrderID"].ToString(),
+                                        seq);
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
                                         dr["StyleID"] = seekData["StyleID"].ToString().Trim();
@@ -268,42 +297,57 @@ where   a.ID = '{0}'", dr["OrderID"].ToString(), seq);
                             warningmsg.Append(string.Format(@"PackingListID: {0} CTN#: {1} " + Environment.NewLine, dr["PackingListID"], dr["CTNStartNo"]));
                         }
                     }
+
                     if (loginMErr.Rows.Count > 0)
                     {
-                        if (warningmsg.ToString().Length > 0) warningmsg.Append(Environment.NewLine);
+                        if (warningmsg.ToString().Length > 0)
+                        {
+                            warningmsg.Append(Environment.NewLine);
+                        }
+
                         warningmsg.Append("Order's M is not equal to login M." + Environment.NewLine);
                         foreach (DataRow dr in loginMErr.Rows)
                         {
                             warningmsg.Append(string.Format(@"PackingListID: {0} CTN#: {1} " + Environment.NewLine, dr["PackingListID"], dr["CTNStartNo"]));
                         }
-                        
                     }
+
                     if (transferErr.Rows.Count > 0)
                     {
-                        if (warningmsg.ToString().Length > 0) warningmsg.Append(Environment.NewLine);
+                        if (warningmsg.ToString().Length > 0)
+                        {
+                            warningmsg.Append(Environment.NewLine);
+                        }
+
                         warningmsg.Append("Data transferred." + Environment.NewLine);
                         foreach (DataRow dr in transferErr.Rows)
                         {
                             warningmsg.Append(string.Format(@"PackingListID: {0} CTN#: {1} " + Environment.NewLine, dr["PackingListID"], dr["CTNStartNo"]));
                         }
                     }
+
                     if (warningmsg.ToString().Length > 0)
                     {
                         MyUtility.Msg.WarningBox(warningmsg.ToString());
                     }
-                    ControlButton4Text("Cancel");
+
+                    this.ControlButton4Text("Cancel");
                 }
             }
         }
 
-        //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        // Save
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            //檢查是否有勾選資料
+            // 檢查是否有勾選資料
             this.gridDetail.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dt)) return;
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                return;
+            }
+
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
@@ -313,24 +357,37 @@ where   a.ID = '{0}'", dr["OrderID"].ToString(), seq);
 
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
-            //組要Insert進TransferToClog的資料
+
+            // 組要Insert進TransferToClog的資料
             foreach (DataRow dr in selectedData)
             {
-                insertCmds.Add(string.Format(@"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());", Sci.Env.User.Keyword, MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"])));
-                //要順便更新PackingList_Detail
-                updateCmds.Add(string.Format(@"update PackingList_Detail 
+                insertCmds.Add(string.Format(
+                    @"insert into TransferToClog(TransferDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
+                    Sci.Env.User.Keyword,
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
+
+                // 要順便更新PackingList_Detail
+                updateCmds.Add(string.Format(
+                    @"update PackingList_Detail 
 set TransferDate = GETDATE(), ReceiveDate = null, ClogLocationId = '', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["CTNStartNo"])));
+where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ",
+                    MyUtility.Convert.GetString(dr["PackingListID"]),
+                    MyUtility.Convert.GetString(dr["OrderID"]),
+                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }
 
-            //Update Orders的資料
+            // Update Orders的資料
             DataTable selectData = null;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,OrderID", @"select distinct OrderID
-from #tmp a
-where a.Selected = 1", out selectData);
+                MyUtility.Tool.ProcessWithDatatable(
+                    dt,
+                    "Selected,OrderID",
+                    @"select distinct OrderID from #tmp a where a.Selected = 1",
+                    out selectData);
             }
             catch (Exception ex)
             {
@@ -346,17 +403,19 @@ where a.Selected = 1", out selectData);
                     {
                         result1 = Sci.Data.DBProxy.Current.Executes(null, updateCmds);
                     }
+
                     if (insertCmds.Count > 0)
                     {
                         result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
                     }
+
                     DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
                     if (result1 && result2 && prgResult)
                     {
                         transactionScope.Complete();
                         transactionScope.Dispose();
-                        ControlButton4Text("Close");
+                        this.ControlButton4Text("Close");
                         MyUtility.Msg.InfoBox("Complete!!");
                     }
                     else
@@ -369,30 +428,30 @@ where a.Selected = 1", out selectData);
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
 
             if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
             {
-                listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
             }
             else
             {
-                listControlBindingSource1.DataSource = null;
+                this.listControlBindingSource1.DataSource = null;
             }
         }
 
-        //Close/Cancel
-        private void btnClose_Click(object sender, EventArgs e)
+        // Close/Cancel
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         private void ControlButton4Text(string showText)
         {
-            btnClose.Text = showText;
+            this.btnClose.Text = showText;
         }
     }
 }

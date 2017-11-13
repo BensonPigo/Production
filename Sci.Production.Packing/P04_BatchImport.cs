@@ -13,33 +13,45 @@ using System.Linq;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P04_BatchImport
+    /// </summary>
     public partial class P04_BatchImport : Sci.Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRow packingListData;
-        DataTable selectDataTable, detailData;
-        
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataRow packingListData;
+        private DataTable selectDataTable;
+        private DataTable detailData;
+
+        /// <summary>
+        /// P04_BatchImport
+        /// </summary>
+        /// <param name="packingListData">packingListData</param>
+        /// <param name="detailData">detailData</param>
         public P04_BatchImport(DataRow packingListData, DataTable detailData)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.packingListData = packingListData;
             this.detailData = detailData;
-            displayBrand.Value = packingListData["BrandID"].ToString();
-            displayShipMode.Value = packingListData["ShipModeID"].ToString();
-            txtcountryDestination.TextBox1.Text = packingListData["Dest"].ToString();
-            txtcustcd.Text = packingListData["CustCDID"].ToString();
-            txtcountryDestination.TextBox1.IsSupportEditMode = false;
-            txtcountryDestination.TextBox1.ReadOnly = true;
+            this.displayBrand.Value = packingListData["BrandID"].ToString();
+            this.displayShipMode.Value = packingListData["ShipModeID"].ToString();
+            this.txtcountryDestination.TextBox1.Text = packingListData["Dest"].ToString();
+            this.txtcustcd.Text = packingListData["CustCDID"].ToString();
+            this.txtcountryDestination.TextBox1.IsSupportEditMode = false;
+            this.txtcountryDestination.TextBox1.ReadOnly = true;
         }
 
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridDetail.IsEditingReadOnly = false;
-            this.gridDetail.DataSource = listControlBindingSource1;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.gridDetail)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("OrderId", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -54,8 +66,8 @@ namespace Sci.Production.Packing
                 .Numeric("ShipQty", header: "Qty", iseditingreadonly: true);
         }
 
-        //Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Query
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
@@ -65,30 +77,36 @@ as
  from Orders WITH (NOLOCK) 
  where Category = 'S'
  and BrandID = @brand");
-            if (!MyUtility.Check.Empty(txtcustcd.Text))
+            if (!MyUtility.Check.Empty(this.txtcustcd.Text))
             {
                 sqlCmd.Append("\r\n and CustCDID = @custcd");
             }
-            if (!MyUtility.Check.Empty(txtOrderType.Text))
+
+            if (!MyUtility.Check.Empty(this.txtOrderType.Text))
             {
                 sqlCmd.Append("\r\n and OrderTypeID = @orderType");
             }
-            if (!MyUtility.Check.Empty(txtseason.Text))
+
+            if (!MyUtility.Check.Empty(this.txtseason.Text))
             {
                 sqlCmd.Append("\r\n and SeasonID = @season");
             }
-            if (!MyUtility.Check.Empty(txtdropdownlistBuyMonth.SelectedValue))
+
+            if (!MyUtility.Check.Empty(this.txtdropdownlistBuyMonth.SelectedValue))
             {
                 sqlCmd.Append("\r\n and BuyMonth = @buyMonth");
             }
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
                 sqlCmd.Append("\r\n and BuyerDelivery >= @buyerDelivery1");
             }
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
                 sqlCmd.Append("\r\n and BuyerDelivery <= @buyerDelivery2");
             }
+
             sqlCmd.Append(@"),
 OrderQty
 as
@@ -97,14 +115,16 @@ from OrderData o, Order_QtyShip oqs WITH (NOLOCK) , Order_QtyShip_Detail oqsd WI
 where oqs.Id = o.OrderID
 and oqs.Id = oqsd.Id
 and oqs.Seq = oqsd.Seq");
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
                 sqlCmd.Append("\r\n and oqs.BuyerDelivery >= @buyerDelivery1");
             }
-            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
                 sqlCmd.Append("\r\n and oqs.BuyerDelivery <= @buyerDelivery2");
             }
+
             sqlCmd.Append(@"),
 PackData
 as
@@ -126,19 +146,20 @@ select 0 as Selected,pd.OrderID,pd.StyleID,pd.SeasonID,pd.CustCDID,pd.SeasonID,p
 from PackData pd
 left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article");
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBrand.Value);
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", txtcustcd.Text);
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", txtOrderType.Text);
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", txtseason.Text);
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", this.displayBrand.Value);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", this.txtcustcd.Text);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", this.txtOrderType.Text);
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", this.txtseason.Text);
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@buyMonth";
-            sp5.Value = !MyUtility.Check.Empty(txtdropdownlistBuyMonth.SelectedValue) ? txtdropdownlistBuyMonth.SelectedValue : "";
+            sp5.Value = !MyUtility.Check.Empty(this.txtdropdownlistBuyMonth.SelectedValue) ?
+                this.txtdropdownlistBuyMonth.SelectedValue : string.Empty;
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@buyerDelivery1";
-            sp6.Value = !MyUtility.Check.Empty(dateBuyerDelivery.Value1) ? dateBuyerDelivery.Value1 : DateTime.Now;
+            sp6.Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) ? this.dateBuyerDelivery.Value1 : DateTime.Now;
             sp7.ParameterName = "@buyerDelivery2";
-            sp7.Value = !MyUtility.Check.Empty(dateBuyerDelivery.Value2) ? dateBuyerDelivery.Value2 : DateTime.Now;
+            sp7.Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) ? this.dateBuyerDelivery.Value2 : DateTime.Now;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -150,9 +171,9 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
             cmds.Add(sp7);
             #endregion
             DualResult selectResult;
-            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out selectDataTable))
+            if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.selectDataTable))
             {
-                if (selectDataTable.Rows.Count == 0)
+                if (this.selectDataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
@@ -163,37 +184,49 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
                 return;
             }
 
-            listControlBindingSource1.DataSource = selectDataTable;
+            this.listControlBindingSource1.DataSource = this.selectDataTable;
         }
 
-        //Order Type Right Click
-        private void txtOrderType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Order Type Right Click
+        private void TxtOrderType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = string.Format("select ID from OrderType WITH (NOLOCK) where BrandID = '{0}' order by ID", packingListData["BrandID"].ToString());
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, "");
+            string sqlWhere = string.Format("select ID from OrderType WITH (NOLOCK) where BrandID = '{0}' order by ID", this.packingListData["BrandID"].ToString());
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, string.Empty);
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtOrderType.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtOrderType.Text = item.GetSelectedString();
         }
 
-        //Find
-        private void btnFind_Click(object sender, EventArgs e)
+        // Find
+        private void BtnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("OrderId", txtLocateSPNo.Text.ToString());
+            if (MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
+            {
+                return;
+            }
+
+            int index = this.listControlBindingSource1.Find("OrderId", this.txtLocateSPNo.Text.ToString());
             if (index == -1)
-            { MyUtility.Msg.WarningBox("Data was not found!!"); }
+            {
+                MyUtility.Msg.WarningBox("Data was not found!!");
+            }
             else
-            { listControlBindingSource1.Position = index; }
+            {
+                this.listControlBindingSource1.Position = index;
+            }
         }
 
-        //Import
-        private void btnImport_Click(object sender, EventArgs e)
+        // Import
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
 
             if (gridData.Rows.Count == 0)
             {
@@ -206,12 +239,12 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", currentRow["OrderID"].ToString(), currentRow["OrderShipmodeSeq"].ToString(), currentRow["Article"].ToString(), currentRow["SizeCode"].ToString()));
+                    DataRow[] findrow = this.detailData.Select(string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", currentRow["OrderID"].ToString(), currentRow["OrderShipmodeSeq"].ToString(), currentRow["Article"].ToString(), currentRow["SizeCode"].ToString()));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
                         currentRow.SetAdded();
-                        detailData.ImportRow(currentRow);
+                        this.detailData.ImportRow(currentRow);
                     }
                     else
                     {
@@ -220,8 +253,9 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
                     }
                 }
             }
-            //系統會自動有回傳值
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            // 系統會自動有回傳值
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

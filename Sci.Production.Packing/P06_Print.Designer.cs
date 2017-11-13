@@ -82,7 +82,7 @@
             this.radioPackingGuideReport.TabStop = true;
             this.radioPackingGuideReport.Text = "Packing Guide Report";
             this.radioPackingGuideReport.UseVisualStyleBackColor = true;
-            this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.radioPackingGuideReport_CheckedChanged);
+            this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.RadioPackingGuideReport_CheckedChanged);
             // 
             // labelCTN
             // 

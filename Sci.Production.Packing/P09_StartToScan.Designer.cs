@@ -171,7 +171,7 @@
             this.btnReset.TabIndex = 16;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // labelOrderID
             // 
@@ -306,7 +306,7 @@
             this.txtScanBarcode.Name = "txtScanBarcode";
             this.txtScanBarcode.Size = new System.Drawing.Size(278, 29);
             this.txtScanBarcode.TabIndex = 5;
-            this.txtScanBarcode.Validating += new System.ComponentModel.CancelEventHandler(this.txtScanBarcode_Validating);
+            this.txtScanBarcode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScanBarcode_Validating);
             // 
             // displayRefBarcode
             // 
@@ -317,7 +317,7 @@
             this.displayRefBarcode.Name = "displayRefBarcode";
             this.displayRefBarcode.Size = new System.Drawing.Size(278, 29);
             this.displayRefBarcode.TabIndex = 4;
-            this.displayRefBarcode.TextChanged += new System.EventHandler(this.displayRefBarcode_TextChanged);
+            this.displayRefBarcode.TextChanged += new System.EventHandler(this.DisplayRefBarcode_TextChanged);
             // 
             // labelColorway
             // 
@@ -378,7 +378,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // btnComplete
             // 
@@ -388,7 +388,7 @@
             this.btnComplete.TabIndex = 0;
             this.btnComplete.Text = "Complete";
             this.btnComplete.UseVisualStyleBackColor = true;
-            this.btnComplete.Click += new System.EventHandler(this.btnComplete_Click);
+            this.btnComplete.Click += new System.EventHandler(this.BtnComplete_Click);
             // 
             // panel5
             // 
@@ -441,7 +441,7 @@
             this.gridDetail.Size = new System.Drawing.Size(816, 288);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            this.gridDetail.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.gridDetail_RowSelecting);
+            this.gridDetail.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.GridDetail_RowSelecting);
             // 
             // P09_StartToScan
             // 

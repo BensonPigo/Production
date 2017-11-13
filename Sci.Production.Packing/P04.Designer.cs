@@ -314,7 +314,7 @@
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 3;
-            this.txtcustcd.Validated += new System.EventHandler(this.txtcustcd_Validated);
+            this.txtcustcd.Validated += new System.EventHandler(this.Txtcustcd_Validated);
             // 
             // txtcountry
             // 
@@ -529,7 +529,7 @@
             this.btnCartonSummary.TabIndex = 49;
             this.btnCartonSummary.Text = "Carton Summary";
             this.btnCartonSummary.UseVisualStyleBackColor = true;
-            this.btnCartonSummary.Click += new System.EventHandler(this.btnCartonSummary_Click);
+            this.btnCartonSummary.Click += new System.EventHandler(this.BtnCartonSummary_Click);
             // 
             // btnBatchImport
             // 
@@ -540,7 +540,7 @@
             this.btnBatchImport.TabIndex = 50;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // btnImportFromExcel
             // 
@@ -551,7 +551,7 @@
             this.btnImportFromExcel.TabIndex = 51;
             this.btnImportFromExcel.Text = "Import from excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
-            this.btnImportFromExcel.Click += new System.EventHandler(this.btnImportFromExcel_Click);
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
             // 
             // btnDownloadExcelFormat
             // 
@@ -562,7 +562,7 @@
             this.btnDownloadExcelFormat.TabIndex = 52;
             this.btnDownloadExcelFormat.Text = "Download excel format";
             this.btnDownloadExcelFormat.UseVisualStyleBackColor = true;
-            this.btnDownloadExcelFormat.Click += new System.EventHandler(this.btnDownloadExcelFormat_Click);
+            this.btnDownloadExcelFormat.Click += new System.EventHandler(this.BtnDownloadExcelFormat_Click);
             // 
             // btnRecalculateWeight
             // 
@@ -573,7 +573,7 @@
             this.btnRecalculateWeight.TabIndex = 53;
             this.btnRecalculateWeight.Text = "Recalculate Weight";
             this.btnRecalculateWeight.UseVisualStyleBackColor = true;
-            this.btnRecalculateWeight.Click += new System.EventHandler(this.btnRecalculateWeight_Click);
+            this.btnRecalculateWeight.Click += new System.EventHandler(this.BtnRecalculateWeight_Click);
             // 
             // numTtlCtn
             // 
