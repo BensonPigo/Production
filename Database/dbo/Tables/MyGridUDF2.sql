@@ -10,6 +10,9 @@
     [GridWidth]         INT           CONSTRAINT [DF_MyGridUDF2_GridWidth] DEFAULT ((0)) NULL,
     [GridFormat]        VARCHAR (20)  CONSTRAINT [DF_MyGridUDF2_GridFormat] DEFAULT ('') NULL,
     [GridInputmask]     VARCHAR (20)  CONSTRAINT [DF_MyGridUDF2_GridInputmask] DEFAULT ('') NULL,
+    [GridColumnName]    VARCHAR (80)  NULL,
     CONSTRAINT [PK_MyGridUDF2] PRIMARY KEY CLUSTERED ([PKey] ASC)
 );
+
+
 
