@@ -1,97 +1,106 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P01
+    /// </summary>
     public partial class P01 : Sci.Win.Tems.Input1
     {
-        public P01(ToolStripMenuItem menuitem, string Type)
+        /// <summary>
+        /// P01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        /// <param name="type">Type</param>
+        public P01(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
-            InitializeComponent();
-            this.Text = Type == "1" ? "P01. Packing Master List" : "P011. Packing Master List (History)";
-            this.DefaultFilter = Type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Keyword);
-            txtcountryDestination.TextBox1.ReadOnly = true;
-            txtcountryDestination.TextBox1.IsSupportEditMode = false;
-            txtuserLocalMR.TextBox1.ReadOnly = true;
-            txtuserLocalMR.TextBox1.IsSupportEditMode = false;
+            this.InitializeComponent();
+            this.Text = type == "1" ? "P01. Packing Master List" : "P011. Packing Master List (History)";
+            this.DefaultFilter = type == "1" ? string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is null", Sci.Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND IsForecast = 0 AND GMTClose is not null", Sci.Env.User.Keyword);
+            this.txtcountryDestination.TextBox1.ReadOnly = true;
+            this.txtcountryDestination.TextBox1.IsSupportEditMode = false;
+            this.txtuserLocalMR.TextBox1.ReadOnly = true;
+            this.txtuserLocalMR.TextBox1.IsSupportEditMode = false;
         }
 
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            displayDescription.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style WITH (NOLOCK) where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
-            displayPOcombo.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
-            btnbdown.Enabled = CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2" && !EditMode;
-            //按鈕變色
-            if (MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2")
+            this.displayDescription.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style WITH (NOLOCK) where Ukey = {0}", this.CurrentMaintain["StyleUkey"].ToString()));
+            this.displayPOcombo.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString()));
+            this.btnbdown.Enabled = this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["CtnType"]) == "2" && !this.EditMode;
+
+            // 按鈕變色
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["CtnType"]) == "2")
             {
-                btnbdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyCTN WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+                this.btnbdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyCTN WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             }
-            btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            btnPackingMethod.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
-            btnCartonStatus.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            btnMaterialImport.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
-            btnCartonBooking.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            bool gmtClose = !MyUtility.Check.Empty(CurrentMaintain["GMTClose"]);
-            btnOverrunGarmentRecord.Visible = gmtClose;
+
+            this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            this.btnPackingMethod.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
+            this.btnCartonStatus.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            this.btnMaterialImport.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", this.CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
+            this.btnCartonBooking.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            bool gmtClose = !MyUtility.Check.Empty(this.CurrentMaintain["GMTClose"]);
+            this.btnOverrunGarmentRecord.Visible = gmtClose;
             if (gmtClose)
             {
-                btnOverrunGarmentRecord.ForeColor = MyUtility.Check.Seek(string.Format("select ID from OverrunGMT WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+                this.btnOverrunGarmentRecord.ForeColor = MyUtility.Check.Seek(string.Format("select ID from OverrunGMT WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             }
         }
 
-        //b'down
-        private void btnbdown_Click(object sender, EventArgs e)
+        // b'down
+        private void Btnbdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(CurrentMaintain);
+            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
-        //Quantity breakdown
-        private void btnQuantityBreakdown_Click(object sender, EventArgs e)
+        // Quantity breakdown
+        private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(displayPOcombo.Value));
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.displayPOcombo.Value));
             callNextForm.ShowDialog(this);
         }
 
-        //Packing method
-        private void btnPackingMethod_Click(object sender, EventArgs e)
+        // Packing method
+        private void BtnPackingMethod_Click(object sender, EventArgs e)
         {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["Packing"].ToString(), "Packing method", false, null);
+            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(this.CurrentMaintain["Packing"].ToString(), "Packing method", false, null);
             callNextForm.ShowDialog(this);
         }
 
-        //Carton Status
-        private void btnCartonStatus_Click(object sender, EventArgs e)
+        // Carton Status
+        private void BtnCartonStatus_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(CurrentMaintain["ID"].ToString(), false);
+            Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), false);
             callNextForm.ShowDialog(this);
         }
 
-        //Material import
-        private void btnMaterialImport_Click(object sender, EventArgs e)
+        // Material import
+        private void BtnMaterialImport_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(CurrentMaintain);
+            Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
-        //Carton Booking
-        private void btnCartonBooking_Click(object sender, EventArgs e)
+        // Carton Booking
+        private void BtnCartonBooking_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(CurrentMaintain);
+            Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
-        //Overrun garment record
-        private void btnOverrunGarmentRecord_Click(object sender, EventArgs e)
+        // Overrun garment record
+        private void BtnOverrunGarmentRecord_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P01_OverrunGMTRecord callNextForm = new Sci.Production.Packing.P01_OverrunGMTRecord(CurrentMaintain["ID"].ToString());
+            Sci.Production.Packing.P01_OverrunGMTRecord callNextForm = new Sci.Production.Packing.P01_OverrunGMTRecord(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
     }

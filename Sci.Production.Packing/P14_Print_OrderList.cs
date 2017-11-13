@@ -17,40 +17,64 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P14_Print_OrderList
+    /// </summary>
     public partial class P14_Print_OrderList : Sci.Win.Tems.QueryForm
     {
-        DataTable dt;
-        string date1, date2, packID, SPNo,_cmd;
-        public P14_Print_OrderList(DataTable dt, string date1, string date2, string packID, string SPNo,string cmd)
+        private DataTable dt;
+        private string date1;
+        private string date2;
+        private string packID;
+        private string SPNo;
+        private string _cmd;
+
+        /// <summary>
+        /// P14_Print_OrderList
+        /// </summary>
+        /// <param name="dt">dt</param>
+        /// <param name="date1">date1</param>
+        /// <param name="date2">date2</param>
+        /// <param name="packID">packID</param>
+        /// <param name="sPNo">SPNo</param>
+        /// <param name="cmd">cmd</param>
+        public P14_Print_OrderList(DataTable dt, string date1, string date2, string packID, string sPNo, string cmd)
         {
-            
             this.dt = dt;
             this.date1 = date1;
             this.date2 = date2;
             this.packID = packID;
-            this.SPNo = SPNo;
-            _cmd = cmd;
-            InitializeComponent();
-            EditMode = true;
+            this.SPNo = sPNo;
+            this._cmd = cmd;
+            this.InitializeComponent();
+            this.EditMode = true;
         }
-        string TransferSlipNo;
+
+        private string TransferSlipNo;
+
+        /// <summary>
+        /// ToExcel
+        /// </summary>
+        /// <returns>bool</returns>
         private bool ToExcel()
         {
-            if (radioTransferList.Checked)
+            if (this.radioTransferList.Checked)
             {
-                DataTable dt2 = dt.Copy();
+                DataTable dt2 = this.dt.Copy();
                 dt2.Columns.Remove("tid");
                 #region ListCheck
-                toExcel("Packing_P14.xltx", 4, dt2);
+                this.ToExcel1("Packing_P14.xltx", 4, dt2);
                 #endregion
             }
-            if (radioTransferSlip.Checked)
+
+            if (this.radioTransferSlip.Checked)
             {
                 #region SlipCheck
-                TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
+                this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
                 DataTable a;
-                string update_TransferSlipNo = string.Format(@"
+                string update_TransferSlipNo = string.Format(
+                    @"
 update t set TransferSlipNo = '{0}'
 from TransferToClog t
 where id in(select tid from #tmp where isnull(TransferSlipNo,'') = '')
@@ -87,20 +111,25 @@ from (
     where t.MDivisionID = '{1}' and t.TransferSlipNo in (select TransferSlipNo from #tmp_TransferSlipNo)
 ) X order by rn
 
-", TransferSlipNo, Sci.Env.User.Keyword);
-                MyUtility.Tool.ProcessWithDatatable(dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
+",
+                    this.TransferSlipNo,
+                    Sci.Env.User.Keyword);
+                MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
                 #endregion
                 DataTable b;
-                MyUtility.Tool.ProcessWithDatatable(a, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid",
-                 @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp", out b);
+                string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp";
 
-                var Slip = (from p in b.AsEnumerable()
+                MyUtility.Tool.ProcessWithDatatable(a, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out b);
+
+                var slip = (from p in b.AsEnumerable()
                             group p by new
                             {
                                 PackingListID = p["PackingListID"].ToString(),
                                 OrderID = p["OrderID"].ToString(),
                                 TransferSlipNo = p["TransferSlipNo"].ToString()
-                            } into m
+                            }
+
+into m
                             select new PackData
                             {
                                 TTL_Qty = m.Count(r => !r["CTNStartNo"].Empty()).ToString(),
@@ -112,7 +141,6 @@ from (
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
                                 TransferSlipNo = m.First()["TransferSlipNo"].ToString()
                             }).ToList();
-                //
                 string sql = @"
 select  t.TTL_Qty, 
         t.PackID, 
@@ -136,34 +164,35 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )a
-            ";                
+            ";
                 DataTable k;
-                MyUtility.Tool.ProcessWithObject(Slip, "", sql, out k);
-                toExcel("Packing_P14_TransferSlip.xltx", 4, k);
+                MyUtility.Tool.ProcessWithObject(slip, string.Empty, sql, out k);
+                this.ToExcel1("Packing_P14_TransferSlip.xltx", 4, k);
                 #endregion
             }
+
             return true;
         }
 
-        private void toExcel(string xltFile, int headerRow, DataTable ExcelTable)
+        private void ToExcel1(string xltFile, int headerRow, DataTable excelTable)
         {
-            string strExcelProcessName = "";
-            if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
+            string strExcelProcessName = string.Empty;
+            if (excelTable == null || excelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
+
             this.ShowWaitMessage("Excel Processing...");
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile); //預先開啟excel app
-            //objApp.Visible = true;
-            
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile);
 
+            // 預先開啟excel app
+            // objApp.Visible = true;
             if (xltFile.EqualString("Packing_P14_TransferSlip.xltx"))
             {
-                
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                
+
                 #region Set Login M & Transfer Date
 
                 string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
@@ -172,36 +201,42 @@ outer apply(
                     objSheets.Cells[1, 1] = strLoginM;
                 }
                 #endregion
-                if (date1 != null && date2 != null)
-                    objSheets.Cells[3, 8] = date1 + " ~ " + date2;
-                //TransferSlipNo欄位 distinct
-                DataTable myDT = ExcelTable.DefaultView.ToTable(true, new string[] { "TransferSlipNo" });
-                //依據TransferSlipNo數量複製sheet
+                if (this.date1 != null && this.date2 != null)
+                {
+                    objSheets.Cells[3, 8] = this.date1 + " ~ " + this.date2;
+                }
+
+                // TransferSlipNo欄位 distinct
+                DataTable myDT = excelTable.DefaultView.ToTable(true, new string[] { "TransferSlipNo" });
+
+                // 依據TransferSlipNo數量複製sheet
                 int countsheet = myDT.Rows.Count;
                 for (int i = 0; i < countsheet; i++)
                 {
                     if (i > 0)
                     {
-                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
-                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                        Excel.Worksheet worksheetn = (Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
                         worksheet1.Copy(worksheetn);
                     }
                 }
+
                 int j = 1;
                 foreach (DataRow dr in myDT.Rows)
                 {
                     objSheets = objApp.ActiveWorkbook.Worksheets[j];   // 取得工作表
-                    objSheets.Name = dr["TransferSlipNo"].ToString();//工作表名稱
+                    objSheets.Name = dr["TransferSlipNo"].ToString(); // 工作表名稱
                     objSheets.Cells[3, 3] = dr["TransferSlipNo"].ToString();
-                    DataTable pdt = ExcelTable.Select(string.Format("TransferSlipNo = '{0}'", dr["TransferSlipNo"].ToString())).CopyToDataTable();
+                    DataTable pdt = excelTable.Select(string.Format("TransferSlipNo = '{0}'", dr["TransferSlipNo"].ToString())).CopyToDataTable();
 
                     pdt.Columns.Remove("TransferSlipNo");
-                    bool result = MyUtility.Excel.CopyToXls(pdt, "", showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp, wSheet: objSheets);
+                    bool result = MyUtility.Excel.CopyToXls(pdt, string.Empty, showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp, wSheet: objSheets);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
                         return;
                     }
+
                     decimal sumTTL = 0;
                     int r = pdt.Rows.Count;
                     for (int i = 1; i <= r; i++)
@@ -209,7 +244,9 @@ outer apply(
                         sumTTL += Convert.ToDecimal(pdt.Rows[i - 1]["TTL_Qty"]);
                         string str = objSheets.Cells[i + headerRow, 8].Value;
                         if (!MyUtility.Check.Empty(str))
+                        {
                             objSheets.Cells[i + headerRow, 8] = str.Trim();
+                        }
                     }
 
                     objSheets.get_Range(string.Format("A5:I{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
@@ -223,7 +260,6 @@ outer apply(
                     j++;
                 }
 
-                
                 strExcelProcessName = "Packing_P14_TransferSlip";
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(strExcelProcessName);
@@ -239,12 +275,20 @@ outer apply(
                 #endregion
                 this.HideWaitMessage();
 
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                if (objSheets != null)
+                {
+                    Marshal.FinalReleaseComObject(objSheets);    // 釋放sheet
+                }
+
+                if (objApp != null)
+                {
+                    Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
+                }
             }
+
             if (xltFile.EqualString("Packing_P14.xltx"))
             {
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
+                bool result = MyUtility.Excel.CopyToXls(excelTable, string.Empty, showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 if (!result)
@@ -261,10 +305,13 @@ outer apply(
                     objSheets.Cells[1, 1] = strLoginM;
                 }
                 #endregion
-                if (date1 != null && date2 != null)
-                    objSheets.Cells[3, 2] = date1 + " ~ " + date2;
+                if (this.date1 != null && this.date2 != null)
+                {
+                    objSheets.Cells[3, 2] = this.date1 + " ~ " + this.date2;
+                }
+
                 strExcelProcessName = "Packing_P14";
-                int r = ExcelTable.Rows.Count;
+                int r = excelTable.Rows.Count;
                 objSheets.get_Range(string.Format("A5:M{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();
@@ -282,31 +329,71 @@ outer apply(
                 #endregion
                 this.HideWaitMessage();
 
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                if (objSheets != null)
+                {
+                    Marshal.FinalReleaseComObject(objSheets);    // 釋放sheet
+                }
+
+                if (objApp != null)
+                {
+                    Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
+                }
             }
-            
         }
 
-        private void btnToExcel_Click(object sender, EventArgs e)
+        private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            ToExcel();
+            this.ToExcel();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
-        
+
+        /// <summary>
+        /// PackData
+        /// </summary>
         public class PackData
         {
-            public string TTL_Qty { get; set; }            
+            /// <summary>
+            /// TTL_Qty
+            /// </summary>
+            public string TTL_Qty { get; set; }
+
+            /// <summary>
+            /// TransferSlipNo
+            /// </summary>
             public string TransferSlipNo { get; set; }
+
+            /// <summary>
+            /// PackID
+            /// </summary>
             public string PackID { get; set; }
+
+            /// <summary>
+            /// OrderID
+            /// </summary>
             public string OrderID { get; set; }
+
+            /// <summary>
+            /// PONo
+            /// </summary>
             public string PONo { get; set; }
+
+            /// <summary>
+            /// Dest
+            /// </summary>
             public string Dest { get; set; }
+
+            /// <summary>
+            /// BuyerDelivery
+            /// </summary>
             public string BuyerDelivery { get; set; }
+
+            /// <summary>
+            /// CartonNum
+            /// </summary>
             public string CartonNum { get; set; }
         }
     }
