@@ -13,16 +13,18 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Linq;
+using Sci.Utility;
+using Sci.Win.Tems;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P02 : Sci.Win.Tems.Input6
+    public partial class P02 : Sci.Win.Tems.Input8
     {
         #region
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
 
-        private DataTable sizeratioTb, layersTb, distqtyTb, qtybreakTb, sizeGroup, spTb, artTb, PatternPanelTb;
+        private DataTable sizeratioTb, layersTb, distqtyTb, qtybreakTb, sizeGroup, spTb, artTb, PatternPanelTb, PatternPanelTb_Copy;
         private DataTable chksize;
         private DataRow drTEMP;  //紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
 
@@ -60,6 +62,8 @@ namespace Sci.Production.Cutting
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
             txtCutCell.MDivisionID = Sci.Env.User.Keyword;
+
+            DoSubForm = new P02_PatternPanel();
             /*
              *設定Binding Source for Text
             */
@@ -135,7 +139,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }               
                 this.ReloadDatas();
             };
-        }
+        }           
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -298,16 +302,23 @@ Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
 
-            #region distqtyTb / PatternPanelTb
+            #region distqtyTb / PatternPanelTb / PatternPanelTb_Copy
             cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out distqtyTb);
             if (!dr) ShowErr(cmdsql, dr);
 
+            //cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
+            //dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
             cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
             if (!dr) ShowErr(cmdsql, dr);
-            #endregion
+
+            cmdsql = @"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where 1=0";
+            dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb_Copy);
             
+            if (!dr) ShowErr(cmdsql, dr);
+            #endregion
+
             #region 建立要使用右鍵開窗Grid
             string settbsql = string.Format(@"
 Select a.id, a.article, a.sizecode, a.qty,  isnull(balc.minQty-a.qty,0) as balance, c.workorder_Distribute_Qty
@@ -353,6 +364,17 @@ where w.ID = '{0}'", masterID);
             #endregion
 
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        // 撈第三層資料
+        protected override DualResult OnSubDetailSelectCommandPrepare(PrepareSubDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
+            this.SubDetailSelectCommand = string.Format(@"
+select * from WorkOrder_PatternPanel
+where WorkOrderUkey={0}", masterID);
+
+            return base.OnSubDetailSelectCommandPrepare(e);
         }
 
         protected override void OnDetailEntered()
@@ -1731,6 +1753,40 @@ where w.ID = '{0}'", masterID);
             var frm = new Sci.Production.Cutting.P02_BatchAssignCellCutDate((DataTable)(detailgridbs.DataSource));
             frm.ShowDialog(this);
         }
+   
+
+        /// <summary>
+        /// 產生SubDetail(PatternPanel)資料
+        /// </summary>
+        /// <param name="dr"></param>
+        private void CreateSubDetailDatas(DataRow dr)
+        {
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@ukey", dr["UKey"]);
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            if (PatternPanelTb_Copy.Rows.Count > 0)
+            {
+                DataTable SubDetailData;
+                GetSubDetailDatas(dr, out SubDetailData);
+                foreach (DataRow ddr in PatternPanelTb_Copy.Rows)
+                {
+                    if (!SubDetailData.AsEnumerable().Any(row => row["ID"].EqualString(ddr["id"])
+                    && row["WorkOrderUkey"].Equals(ddr["WorkOrderUkey"])
+                    && row["PatternPanel"].Equals(ddr["PatternPanel"])
+                    && row["FabricPanelCode"].Equals(ddr["FabricPanelCode"])))
+                    {
+                        DataRow newDr = SubDetailData.NewRow();
+                        for (int i = 0; i < SubDetailData.Columns.Count; i++)
+                        {
+                            newDr[SubDetailData.Columns[i].ColumnName] = ddr[SubDetailData.Columns[i].ColumnName];
+                        }
+                        SubDetailData.Rows.Add(newDr);
+                    }
+                }
+            }
+           
+        }
 
         //grid新增一筆的btn
         bool flag = false;
@@ -1766,6 +1822,7 @@ where w.ID = '{0}'", masterID);
             newRow["SCIRefno"] = OldRow["SCIRefno"];
             newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
+
             //因按下新增也會進來這,但新增的btn不要複製全部
             if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
             {
@@ -1779,94 +1836,168 @@ where w.ID = '{0}'", masterID);
                     newRow["OrderID"] = OldRow["ID"];
                 }
                 if (index == -1) index = TEMP;
+
+                // add PatternPanel 第三層資料
+
+                PatternPanelTb_Copy.Clear();
+                DataRow drNEW = PatternPanelTb_Copy.NewRow();
+                drNEW["id"] = CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = "";
+                drNEW["FabricPanelCode"] = "";
+                PatternPanelTb_Copy.Rows.Add(drNEW);
+                
                 OldRow.Table.Rows.InsertAt(newRow, index);
-                flag = false;
-                return;
+                //flag = false;
             }
-            newRow["OrderID"] = OldRow["OrderID"];
-            newRow["SEQ1"] = OldRow["SEQ1"];
-            newRow["SEQ2"] = OldRow["SEQ2"];
-            //CutRef
-            //newRow["Cutplanid"] = OldRow["Cutplanid"];
-            //Cutno
-            newRow["Layer"] = OldRow["Layer"];
-            newRow["Colorid"] = OldRow["Colorid"];
-            newRow["Markername"] = OldRow["Markername"];
-            newRow["EstCutDate"] = OldRow["EstCutDate"];
-            newRow["Cutcellid"] = OldRow["Cutcellid"];
-            newRow["MarkerLength"] = OldRow["MarkerLength"];
-            newRow["ConsPC"] = OldRow["ConsPC"];
-            newRow["Cons"] = OldRow["Cons"];
-            newRow["Refno"] = OldRow["Refno"];
-            newRow["MarkerNo"] = OldRow["MarkerNo"];
-            newRow["MarkerVersion"] = OldRow["MarkerVersion"];
-            //newRow["Addname"] = Sci.Env.User.UserName;
-            //newRow["AddDate"] = DateTime.Now;
-            //EditName
-            //EditDate
-            newRow["MarkerDownLoadID"] = OldRow["MarkerDownLoadID"];
-            newRow["FabricCode"] = OldRow["FabricCode"];
-            newRow["Order_EachconsUKey"] = OldRow["Order_EachconsUKey"];
-            newRow["Article"] = OldRow["Article"];
-            newRow["SizeCode"] = OldRow["SizeCode"];
-            newRow["CutQty"] = OldRow["CutQty"];
-            newRow["FabricPanelCode1"] = OldRow["FabricPanelCode1"];
-            newRow["PatternPanel"] = OldRow["PatternPanel"];
-            newRow["Fabeta"] = OldRow["Fabeta"];
-            newRow["sewinline"] = OldRow["sewinline"];
-            newRow["actcutdate"] = OldRow["actcutdate"];
-            newRow["Adduser"] = loginID;
-            newRow["edituser"] = OldRow["edituser"];
-            newRow["totallayer"] = OldRow["totallayer"];
-            newRow["multisize"] = OldRow["multisize"];
-            newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
-            newRow["SORT_NUM"] = OldRow["SORT_NUM"];
-            newRow["MtlTypeID"] = OldRow["MtlTypeID"];
-            newRow["DescDetail"] = OldRow["DescDetail"];
-            newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
-            newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
-
-            if (index == -1) index = TEMP;
-            OldRow.Table.Rows.InsertAt(newRow, index);
-            DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-            foreach (DataRow drTEMP in drTEMPS)
+            else
             {
-                DataRow drNEW = sizeratioTb.NewRow();
-                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
-                drNEW["ID"] = drTEMP["ID"];
-                drNEW["SizeCode"] = drTEMP["SizeCode"];
-                drNEW["Qty"] = drTEMP["Qty"];
-                drNEW["newkey"] = maxkey;
-                sizeratioTb.Rows.Add(drNEW);
+                newRow["OrderID"] = OldRow["OrderID"];
+                newRow["SEQ1"] = OldRow["SEQ1"];
+                newRow["SEQ2"] = OldRow["SEQ2"];
+                //CutRef
+                //newRow["Cutplanid"] = OldRow["Cutplanid"];
+                //Cutno
+                newRow["Layer"] = OldRow["Layer"];
+                newRow["Colorid"] = OldRow["Colorid"];
+                newRow["Markername"] = OldRow["Markername"];
+                newRow["EstCutDate"] = OldRow["EstCutDate"];
+                newRow["Cutcellid"] = OldRow["Cutcellid"];
+                newRow["MarkerLength"] = OldRow["MarkerLength"];
+                newRow["ConsPC"] = OldRow["ConsPC"];
+                newRow["Cons"] = OldRow["Cons"];
+                newRow["Refno"] = OldRow["Refno"];
+                newRow["MarkerNo"] = OldRow["MarkerNo"];
+                newRow["MarkerVersion"] = OldRow["MarkerVersion"];
+                //newRow["Addname"] = Sci.Env.User.UserName;
+                //newRow["AddDate"] = DateTime.Now;
+                //EditName
+                //EditDate
+                newRow["MarkerDownLoadID"] = OldRow["MarkerDownLoadID"];
+                newRow["FabricCode"] = OldRow["FabricCode"];
+                newRow["Order_EachconsUKey"] = OldRow["Order_EachconsUKey"];
+                newRow["Article"] = OldRow["Article"];
+                newRow["SizeCode"] = OldRow["SizeCode"];
+                newRow["CutQty"] = OldRow["CutQty"];
+                newRow["FabricPanelCode1"] = OldRow["FabricPanelCode1"];
+                newRow["PatternPanel"] = OldRow["PatternPanel"];
+                newRow["Fabeta"] = OldRow["Fabeta"];
+                newRow["sewinline"] = OldRow["sewinline"];
+                newRow["actcutdate"] = OldRow["actcutdate"];
+                newRow["Adduser"] = loginID;
+                newRow["edituser"] = OldRow["edituser"];
+                newRow["totallayer"] = OldRow["totallayer"];
+                newRow["multisize"] = OldRow["multisize"];
+                newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
+                newRow["SORT_NUM"] = OldRow["SORT_NUM"];
+                newRow["MtlTypeID"] = OldRow["MtlTypeID"];
+                newRow["DescDetail"] = OldRow["DescDetail"];
+                newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
+                newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
+
+                if (index == -1) index = TEMP;
+                OldRow.Table.Rows.InsertAt(newRow, index);
+                DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+                foreach (DataRow drTEMP in drTEMPS)
+                {
+                    DataRow drNEW = sizeratioTb.NewRow();
+                    drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                    drNEW["ID"] = drTEMP["ID"];
+                    drNEW["SizeCode"] = drTEMP["SizeCode"];
+                    drNEW["Qty"] = drTEMP["Qty"];
+                    drNEW["newkey"] = maxkey;
+                    sizeratioTb.Rows.Add(drNEW);
+                }
+
+                DataRow[] drTEMPdists = distqtyTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+                foreach (DataRow drTEMP in drTEMPdists)
+                {
+                    DataRow drNEW = distqtyTb.NewRow();
+                    drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                    drNEW["ID"] = drTEMP["ID"];
+                    drNEW["OrderID"] = drTEMP["OrderID"];
+                    drNEW["Article"] = drTEMP["Article"];
+                    drNEW["SizeCode"] = drTEMP["SizeCode"];
+                    drNEW["Qty"] = drTEMP["Qty"];
+                    drNEW["newkey"] = maxkey;
+                    distqtyTb.Rows.Add(drNEW);
+                }
+                DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+                foreach (DataRow drTEMP in drTEMPPP)
+                {
+                    PatternPanelTb_Copy.Clear();
+                    DataRow drNEW = PatternPanelTb_Copy.NewRow();
+                    drNEW["id"] = CurrentMaintain["ID"];
+                    drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                    drNEW["PatternPanel"] = drTEMP["PatternPanel"];
+                    drNEW["FabricPanelCode"] = drTEMP["FabricPanelCode"];
+                    PatternPanelTb_Copy.Rows.Add(drNEW);
+                }
+
             }
 
-            DataRow[] drTEMPdists = distqtyTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-            foreach (DataRow drTEMP in drTEMPdists)
+
+            if (flag)
             {
-                DataRow drNEW = distqtyTb.NewRow();
-                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
-                drNEW["ID"] = drTEMP["ID"];
-                drNEW["OrderID"] = drTEMP["OrderID"];
-                drNEW["Article"] = drTEMP["Article"];
-                drNEW["SizeCode"] = drTEMP["SizeCode"];
-                drNEW["Qty"] = drTEMP["Qty"];
-                drNEW["newkey"] = maxkey;
-                distqtyTb.Rows.Add(drNEW);
+                CreateSubDetailDatas(DetailDatas[0]);
             }
-
-            DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-            foreach (DataRow drTEMP in drTEMPPP)
+            else
             {
-                DataRow drNEW = PatternPanelTb.NewRow();
-                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
-                drNEW["PatternPanel"] = drTEMP["PatternPanel"];
-                drNEW["FabricPanelCode"] = drTEMP["FabricPanelCode"];
+                CreateSubDetailDatas(this.detailgrid.GetDataRow(this.detailgridbs.Position-1));
+            }            
+            #region 使用AutoUpdator 建立WorkOrder.Ukey 並新增至WordOrder_PattenPanel
+            //using (var helper = new AutoUpdator())
+            //{
+            //    //第二層Table
+            //    var dt = helper.LoadTable(@"
+            //    Select * from WorkOrder 
+            //    where id=@id 
+            //    and Factoryid=@fty
+            //    and MdivisionID = @mdi
+            //    and seq1=@seq1
+            //    and seq2=@seq2"
+            //    , "id", this.CurrentMaintain["ID"].ToString()
+            //    , "fty", Sci.Env.User.Factory
+            //    , "mdi", Sci.Env.User.Keyword
+            //    , "seq1", OldRow["SEQ1"]
+            //    , "seq2", OldRow["SEQ2"]
+            //    );
+            //    var dt_detail = helper.LoadTable("select * from WorkOrder_PatternPanel where 1=2");
 
-                drNEW["newkey"] = maxkey;
-                PatternPanelTb.Rows.Add(drNEW);
-            }
+            //    var newRowPanel = dt.NewRow();
+            //    newRowPanel["id"]= this.CurrentMaintain["id"];
+            //    newRowPanel["Factoryid"]= Sci.Env.User.Factory;
+            //    newRowPanel["MdivisionID"]= Sci.Env.User.Keyword;
+            //    newRowPanel["seq1"] = OldRow["SEQ1"];
+            //    newRowPanel["seq2"] = OldRow["SEQ2"];
+            //    dt.Rows.Add(newRowPanel);
+            //    ModifyRecords(newRowPanel);
+
+            //    DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+            //    foreach (DataRow drTEMP in drTEMPPP)
+            //    {
+            //        var newRowPanel2 = dt_detail.NewRow();
+            //        //drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+            //        newRowPanel2["PatternPanel"] = drTEMP["PatternPanel"];
+            //        newRowPanel2["FabricPanelCode"] = drTEMP["FabricPanelCode"];
+
+            //        dt_detail.Rows.Add(newRowPanel2);
+            //        helper.AppendUkeyRelation(newRowPanel, "WorkOrderUkey", newRowPanel2);
+            //    }
+            //    try
+            //    {
+            //        helper.UpdateAllTable();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        base.ShowErr(ex);
+            //        return ; 
+            //    } 
+
+            //}
+            #endregion
             flag = false;
-        }
+        }     
 
         protected override void OnDetailGridDelete()
         {
@@ -2138,11 +2269,11 @@ where w.ID = '{0}'", masterID);
                         dr2["WorkOrderUkey"] = ukey;
                     }
 
-                    dray = PatternPanelTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
-                    foreach (DataRow dr2 in dray)
-                    {
-                        dr2["WorkOrderUkey"] = ukey;
-                    }
+                    //dray = PatternPanelTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
+                    //foreach (DataRow dr2 in dray)
+                    //{
+                    //    dr2["WorkOrderUkey"] = ukey;
+                    //}
                 }
             }
             string delsql = "", updatesql = "", insertsql = "";
@@ -2199,15 +2330,15 @@ where w.ID = '{0}'", masterID);
             }
             #endregion
             #region PatternPanel 修改
-            foreach (DataRow dr in PatternPanelTb.Rows)
-            {
-                #region 新增
-                if (dr.RowState == DataRowState.Added)
-                {
-                    insertsql = insertsql + string.Format("Insert into Workorder_PatternPanel(WorkOrderUkey,PatternPanel,FabricPanelCode,ID) values({0},'{1}','{2}','{3}');", dr["WorkOrderUkey"], dr["PatternPanel"], dr["FabricPanelCode"], cId);
-                }
-                #endregion
-            }
+            //foreach (DataRow dr in PatternPanelTb.Rows)
+            //{
+            //    #region 新增
+            //    if (dr.RowState == DataRowState.Added)
+            //    {
+            //        insertsql = insertsql + string.Format("Insert into Workorder_PatternPanel(WorkOrderUkey,PatternPanel,FabricPanelCode,ID) values({0},'{1}','{2}','{3}');", dr["WorkOrderUkey"], dr["PatternPanel"], dr["FabricPanelCode"], cId);
+            //    }
+            //    #endregion
+            //}
             #endregion
 
             #region 回寫orders CutInLine,CutOffLine
@@ -2294,6 +2425,46 @@ where w.ID = '{0}'", masterID);
             this.detailgrid.SelectRowTo(0);
         }
 
+        private void txtBoxMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode)
+            {
+                string sqlCmd = string.Format(@"
+select distinct a.MarkerNo from Order_EachCons a
+inner join orders b on a.id = b.ID
+where b.poid = '{0}'
+", CurrentMaintain["ID"]);
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", txtBoxMarkerNo.Text);
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel) { return; }
+                txtBoxMarkerNo.Text = item.GetSelectedString();
+            }
+            
+        }
+
+        private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {              
+                if (!MyUtility.Check.Seek(string.Format(@"
+select 1 from Order_EachCons a
+inner join orders b on a.id = b.ID
+where b.poid = '{0}' and a.MarkerNo='{1}'
+", CurrentMaintain["ID"],this.txtBoxMarkerNo.Text)))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
+                    e.Cancel = true;
+                    return;
+                } 
+            }
+            if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
+                e.Cancel = true;
+                return;
+            }
+        }
+
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
@@ -2306,9 +2477,11 @@ where w.ID = '{0}'", masterID);
         //PatternPanel
         private void btnPatternPanel_Click(object sender, EventArgs e)
         {
-            var dr = this.CurrentDetailData; if (null == dr) return;
-            var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
-            frm.ShowDialog(this);
+            //var dr = this.CurrentDetailData; if (null == dr) return;
+            //var frm = new Sci.Production.Cutting.P02_PatternPanel(this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
+            //frm.ShowDialog(this);
+            
+            OpenSubDetailPage();
         }
 
         private void distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -2325,6 +2498,13 @@ where w.ID = '{0}'", masterID);
 
         protected override void ClickUndo()
         {
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    if (dr.RowState==DataRowState.Added)
+            //    {
+            //        MyUtility.Msg.InfoBox("add row !");
+            //    }
+            //}
             base.ClickUndo();
             RenewData();
             OnDetailEntered();

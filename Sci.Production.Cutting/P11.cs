@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, f_codeTb;
+        DataTable CutRefTb, ArticleSizeTb, ExcessTb, GarmentTb, GarmentTb_CutRefEmpty, allpartTb, patternTb, artTb, qtyTb, SizeRatioTb, headertb;
         string f_code;
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -46,6 +46,7 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings Linecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Cellcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Qtycell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cutOutputCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings QtySizecell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell2 = new DataGridViewGeneratorTextColumnSettings();
@@ -117,8 +118,36 @@ namespace Sci.Production.Cutting
                 int newcount = Convert.ToInt16(e.FormattedValue);
                 numNoOfBundle.Value = newcount;
                 distSizeQty(rowcount, newcount, dr);
-
             };
+
+            cutOutputCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
+                int oldCutOutput = Convert.ToInt32(dr["cutOutput"]);
+                int newCutOutput = Convert.ToInt32(e.FormattedValue);
+                dr["cutOutput"] = newCutOutput;
+                dr.EndEdit();
+
+                int newBalance = Convert.ToInt32(ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter));
+
+                if (newBalance > 0)
+                {
+                    MyUtility.Msg.InfoBox("Balance can not more than zero.");
+                    dr["cutOutput"] = oldCutOutput;
+                    dr.EndEdit();
+                    return;
+                }
+
+                if (oldCutOutput.EqualString(newCutOutput) == false)
+                {
+                    changeLabelBalanceValue();
+
+                    int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
+                    int newcount = MyUtility.Convert.GetInt(dr["Qty"]);
+                    distSizeQty(rowcount, newcount, dr);
+                }
+            };
+
             QtySizecell.CellValidating += (s, e) =>
             {
                 DataRow dr = gridQty.GetDataRow(e.RowIndex);
@@ -336,7 +365,7 @@ namespace Sci.Production.Cutting
            .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
            .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: Cellcell)
            .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
-           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+           .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: false, settings: cutOutputCell)
            .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
             gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -344,6 +373,7 @@ namespace Sci.Production.Cutting
             gridArticleSize.Columns["SewingLine"].DefaultCellStyle.BackColor = Color.Pink;
             gridArticleSize.Columns["SewingCell"].DefaultCellStyle.BackColor = Color.Pink;
             gridArticleSize.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.Columns["Cutoutput"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             #region 左下一Qty
             this.gridQty.IsEditingReadOnly = false;
@@ -404,16 +434,12 @@ namespace Sci.Production.Cutting
             artTb.Clear();
             qtyTb.Clear();
             GarmentTb = null;
+            GarmentTb_CutRefEmpty = null;
             CutRefTb = null;
             ArticleSizeTb = null;
             ExcessTb = null;
             SizeRatioTb = null;
-            f_codeTb = null;
-            //if (CutRefTb != null) CutRefTb.Clear();
-            //if (ArticleSizeTb != null) ArticleSizeTb.Clear();
-            //if (ExcessTb != null) ExcessTb.Clear();
-            //if (SizeRatioTb != null) SizeRatioTb.Clear();
-            //if (f_codeTb != null) f_codeTb.Clear();
+            headertb = null;
             #endregion
             //判斷必須有一條件存在
             if (MyUtility.Check.Empty(cutref) && MyUtility.Check.Empty(cutdate) && MyUtility.Check.Empty(poid))
@@ -468,7 +494,8 @@ Select  distinct 0 as sel
                             and Style.ukey = ord.styleukey 
                             and Style.ApparelType = Reason.id )
 	    , 1 as Qty
-        , isnull(sum(b.Qty),0) as cutoutput
+        , cutoutput = isnull(sum(b.Qty),0)
+        , RealCutOutput = isnull(sum(b.Qty),0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
@@ -609,44 +636,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 m.btn_Find.Location = new Point(150, 6);
                 m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
             }
-            #endregion
-            #region GarmentList Table
-            //將PO# Group by 
-            // CutRefTb.DefaultView.
-            //DataTable dtDistinct = CutRefTb.DefaultView.ToTable(true, new string[] { "POID" });
-            DataTable dtDis = null;
-            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "cutref,poid", "select TOP 1 cutref,poid from #tmp", out dtDis);
-            //foreach (DataRow dr in dtDis.Rows)
-            //{
-            //    DataTable tmpTb;
-            //    PublicPrg.Prgs.GetGarmentListTable("", dr["POID"].ToString(), out tmpTb);
-            //    if (GarmentTb == null)
-            //    {
-            //        GarmentTb = tmpTb;
-            //    }
-            //    else
-            //    {
-            //        GarmentTb.Merge(tmpTb);
-            //    }
-            //}
-            #endregion
-
-            #region ArticleGroup
-            //ArticleGroup
-            string sqlcmd = String.Format(@"
-SELECT pga.ArticleGroup
-FROM Pattern_GL_Article pga WITH (NOLOCK)
-inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
-inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
-WHERE o.ID = '{0}' and p.Status = 'Completed'
-AND p.EDITdATE = (
-	SELECT MAX(p2.EditDate) 
-	from pattern p2 WITH (NOLOCK) 
-	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
-)"
-                , dtDis.Rows[0]["poid"].ToString());
-            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
-            #endregion
+            #endregion        
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
             int iden = 1;
@@ -654,7 +644,6 @@ AND p.EDITdATE = (
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
                 dr["iden"] = iden;
-                PublicPrg.Prgs.GetGarmentListTable(dr["Cutref"].ToString(), dr["POID"].ToString(), out GarmentTb);
                 #region Create Qtytb
                 DataRow qty_newRow = qtyTb.NewRow();
                 qty_newRow["No"] = 1;
@@ -665,19 +654,7 @@ AND p.EDITdATE = (
                 qty_newRow["SizeCode"] = dr["SizeCode"];
                 qty_newRow["iden"] = iden;
                 qtyTb.Rows.Add(qty_newRow);
-                #endregion
-                string patidsql = String.Format(
-                            @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
-                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-                              AND EDITdATE = 
-                              (
-                                SELECT MAX(EditDate) 
-                                from pattern WITH (NOLOCK) 
-                                where styleukey = '{0}' and Status = 'Completed'
-                              )
-             ", dr["Styleukey"].ToString());
-                string patternukey = MyUtility.GetValue.Lookup(patidsql);
+                #endregion           
                 createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
@@ -706,7 +683,8 @@ AND p.EDITdATE = (
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
             string patidsql;
-
+            DataTable garmentListTb;
+            #region 輸出GarmentTb
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
             if (MyUtility.Check.Empty(cutref))
             {
@@ -736,13 +714,56 @@ AND p.EDITdATE = (
             string headercodesql = string.Format(@"
 Select distinct ArticleGroup 
 from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{0}'
+where PatternUkey = '{0}' 
 order by ArticleGroup", patternukey);
+            
+            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
+            if (!headerResult)
+            {
+                return;
+            }
+            #region 建立Table
+            string tablecreatesql = string.Format(@"Select '{0}' as orderid,a.*,'' as F_CODE", poid);
+            foreach (DataRow dr in headertb.Rows)
+            {
+                tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
+            }
+            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
+            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
+            if (!tablecreateResult)
+            {
+                return;
+            }
+            #endregion
 
-            DBProxy.Current.Select(null, headercodesql, out f_codeTb);
+            #region 寫入FCode~CodeA~CodeZ
+            string lecsql = "";
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
+            DataTable drtb;
+            DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
+            if (!drre)
+            {
+                return;
+            }
+            foreach (DataRow dr in garmentListTb.Rows)
+            {
+                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
+                foreach (DataRow lecdr in lecdrar)
+                {
+                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
+                    //dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
+                    //Mantis_7045 比照舊系統對應FabricPanelCode
+                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
+                }
+                if (dr["SEQ"].ToString() == "0001") dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
+            }
+            #endregion
+            GarmentTb = garmentListTb;
+            #endregion
+
             StringBuilder w = new StringBuilder();
             w.Append(string.Format("orderid = '{0}' and (1=0", poid));
-            foreach (DataRow dr in f_codeTb.Rows)
+            foreach (DataRow dr in headertb.Rows)
             {
                 w.Append(string.Format(" or {0} = '{1}' ", dr[0], patternpanel));
             }
@@ -861,7 +882,11 @@ order by ArticleGroup", patternukey);
         {
             DataRow selectDr_Cutref;
             DataRow selectDr_Artsize;
-            if (CutRefTb.Rows.Count == 0) return;
+            if (CutRefTb.Rows.Count == 0)
+            {
+                return;
+            }
+
             if (gridCutRef.GetSelectedRowIndex() == -1)
             {
                 selectDr_Cutref = CutRefTb.Rows[0];
@@ -870,9 +895,14 @@ order by ArticleGroup", patternukey);
             {
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
+
             ArticleSizeTb.DefaultView.RowFilter
                 = string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]);
-            if (ArticleSizeTb.Rows.Count == 0) return;
+            if (ArticleSizeTb.Rows.Count == 0)
+            {
+                return;
+            }
+
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
                 selectDr_Artsize = ArticleSizeTb.Rows[0];
@@ -882,7 +912,6 @@ order by ArticleGroup", patternukey);
                 selectDr_Artsize = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
 
-
             qtyTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             allpartTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             patternTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
@@ -890,6 +919,9 @@ order by ArticleGroup", patternukey);
             numNoOfBundle.Value = Convert.ToInt16(selectDr_Artsize["Qty"]);
             numTotalPart.Value = Convert.ToInt16(selectDr_Artsize["TotalParts"]);
             label_TotalQty.Text = qtyTb.Compute("Sum(Qty)", string.Format("iden={0}", selectDr_Artsize["iden"])).ToString();
+
+            changeLabelTotalCutOutputValue();
+            changeLabelBalanceValue();
         }
 
         public void distSizeQty(int rowcount, int newcount, DataRow dr)//計算Size Qty
@@ -935,8 +967,15 @@ order by ArticleGroup", patternukey);
                 {
                     if (eachqty != 0)
                     {
-                        if (modqty > 0) dr2["Qty"] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
-                        else dr2["Qty"] = eachqty;
+                        if (modqty > 0)
+                        {
+                            dr2["Qty"] = eachqty + 1;//每組分配一個Qty 當分配完表示沒了
+                        }
+                        else
+                        {
+                            dr2["Qty"] = eachqty;
+                        }
+
                         modqty--; //剩餘數一定小於rowcount所以會有筆數沒有拿到
                     }
                     else
@@ -947,7 +986,7 @@ order by ArticleGroup", patternukey);
                             modqty--;
                         }
                         else dr2.Delete();
-                    }
+                    }                    
                 }
             }
         }
@@ -1309,7 +1348,7 @@ order by ArticleGroup", patternukey);
             spStartnoTb.Columns.Add("orderid", typeof(string));
             spStartnoTb.Columns.Add("startno", typeof(string));
 
-            DataRow[] ArtAy = ArticleSizeTb.Select("Sel=1", "Orderid");
+            var ArtAy = ArticleSizeTb.Select("Sel=1", "Orderid").OrderBy(row => row["Fabriccombo"]).ThenBy(row => row["Cutno"]);
             foreach (DataRow artar in ArtAy)
             {
                 #region 填入SizeRatio
@@ -1383,15 +1422,39 @@ order by ArticleGroup", patternukey);
 
                 DataRow nBundle_dr = Insert_Bundle.NewRow();
                 nBundle_dr["Insert"] = string.Format(
-                @"Insert Into Bundle
-                (ID,POID,mDivisionid,SizeCode,Colorid,Article,PatternPanel,Cutno,
-                cDate,OrderID,SewingLineid,Item,SewingCell,
-                Ratio,Startno,Qty,AllPart,CutRef,AddName,AddDate,FabricPanelCode) values
-                ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
-                GetDate(),'{8}','{9}','{10}','{11}','{12}',
-                '{13}',{14},{15},'{16}','{17}',GetDate(),'{18}')",
-                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["Fabriccombo"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Length > 2 ? artar["SewingLine"].ToString().Substring(0, 2) : artar["SewingLine"].ToString()), artar["item"], artar["SewingCell"],
-                 artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID, artar["FabricPanelCode"]);
+                @"
+Insert Into Bundle
+(ID               , POID        , mDivisionid, SizeCode , Colorid
+ , Article        , PatternPanel, Cutno      , cDate    , OrderID
+ , SewingLineid   , Item        , SewingCell , Ratio    , Startno
+ , Qty            , AllPart     , CutRef     , AddName  , AddDate
+ , FabricPanelCode) 
+values
+('{0}'            , '{1}'       , '{2}'      , '{3}'    , '{4}'
+ , '{5}'          , '{6}'       , {7}        , GetDate(), '{8}'
+ , '{9}'          , '{10}'      , '{11}'     , '{12}'   , '{13}'
+ , {14}           , {15}        , '{16}'     , '{17}'   , GetDate()
+ , '{18}')",
+                id_list[idcount],
+                artar["POID"],
+                keyWord,
+                artar["SizeCode"],
+                artar["colorid"],
+                artar["Article"],
+                artar["Fabriccombo"],
+                artar["Cutno"],
+                artar["orderid"],
+                (artar["SewingLine"].Empty() ? string.Empty : artar["SewingLine"].ToString().Length > 2 ? artar["SewingLine"].ToString().Substring(0, 2) : artar["SewingLine"].ToString()),
+                artar["item"],
+                artar["SewingCell"],
+                artar["Ratio"],
+                startno,
+                artar["Qty"],
+                artar["TotalParts"],
+                artar["Cutref"],
+                loginID,
+                artar["FabricPanelCode"]);
+
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion
 
@@ -1542,5 +1605,14 @@ order by ArticleGroup", patternukey);
             gridAllPart.ValidateControl();
         }
 
+        private void changeLabelTotalCutOutputValue()
+        {
+            this.labelToalCutOutputValue.Text = ArticleSizeTb.Compute("sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
+
+        private void changeLabelBalanceValue()
+        {
+            this.labelBalanceValue.Text = ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+        }
     }
 }

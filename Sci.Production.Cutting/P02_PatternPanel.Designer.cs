@@ -23,8 +23,8 @@
         #region Windows Form 設計工具產生的程式碼
 
         /// <summary>
-        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
-        /// 修改這個方法的內容。
+        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改
+        /// 這個方法的內容。
         /// </summary>
         private void InitializeComponent()
         {
@@ -33,34 +33,36 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btmcont
-            // 
-            this.btmcont.Location = new System.Drawing.Point(0, 276);
-            this.btmcont.Size = new System.Drawing.Size(439, 40);
-            // 
             // gridcont
             // 
-            this.gridcont.Size = new System.Drawing.Size(415, 254);
+            this.gridcont.Size = new System.Drawing.Size(516, 265);
             // 
-            // undo
+            // btmcont
             // 
-            this.undo.Location = new System.Drawing.Point(349, 5);
+            this.btmcont.Location = new System.Drawing.Point(0, 287);
+            this.btmcont.Size = new System.Drawing.Size(540, 40);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(269, 5);
+            this.save.Location = new System.Drawing.Point(370, 5);
             // 
-            // P02_PatternPanel
+            // undo
             // 
-            this.ClientSize = new System.Drawing.Size(439, 316);
-            this.DefaultOrder = "PatternPanel";
-            this.GridUniqueKey = "PatternPanel";
-            this.KeyField1 = "WorkOrderUkey";
-            this.Name = "P02_PatternPanel";
-            this.Text = "P02_Pattern Panel";
-            this.WorkAlias = "WorkOrder_PatternPanel";
-            this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.gridcont, 0);
+            this.undo.Location = new System.Drawing.Point(450, 5);
+            // 
+            // next
+            // 
+            this.next.Location = new System.Drawing.Point(315, 5);
+            // 
+            // prev
+            // 
+            this.prev.Location = new System.Drawing.Point(260, 5);
+            // 
+            // P02_PatternPanel_Edit
+            // 
+            this.ClientSize = new System.Drawing.Size(540, 327);
+            this.Name = "P02_PatternPanel_Edit";
+            this.Text = "P02_Pattern Panel_8A";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
