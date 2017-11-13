@@ -129,7 +129,7 @@ select  F.MDivisionID
         ,PSD.ShipFOC
         ,PSD.ApQty
         ,PSD.InputQty
-        ,[Scrap Qty]= MDPD.LObQty
+        ,[Scrap Qty]= isnull(MDPD.LObQty,0)
         ,PSD.POUnit
         ,iif(PSD.Complete=1,'Y','N')
         --,PSD.ETA
