@@ -263,8 +263,8 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(120, 23);
             this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
-            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSP_Validating);
+            this.txtSP.Validated += new System.EventHandler(this.TxtSP_Validated);
             // 
             // displayStyle
             // 
@@ -298,7 +298,7 @@
             this.txtSeq.ReadOnly = true;
             this.txtSeq.Size = new System.Drawing.Size(28, 23);
             this.txtSeq.TabIndex = 14;
-            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq_PopUp);
+            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // labelSeq
             // 
@@ -439,7 +439,7 @@
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 2;
-            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePullOutDate_Validating);
+            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.DatePullOutDate_Validating);
             // 
             // displayPullOutNo
             // 

@@ -122,7 +122,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // btnImportFromBarcode
             // 
@@ -133,7 +133,7 @@
             this.btnImportFromBarcode.TabIndex = 7;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
-            this.btnImportFromBarcode.Click += new System.EventHandler(this.btnImportFromBarcode_Click);
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.BtnImportFromBarcode_Click);
             // 
             // btnSave
             // 
@@ -144,7 +144,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnCancel
             // 
