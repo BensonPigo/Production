@@ -413,7 +413,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	and p.FACILITYID = fa.ID 
 	and po.ID = pd.POID 
 	and pd.PRODUCTIONEVENTID = p.ID 
-	and EXISTS (SELECT 1 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT aa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))) and bb.POID=po.ID)
+	and EXISTS (SELECT 1 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT aa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE()))) and bb.POID=po.ID)
 	and f.Code = '''+ @factoryid + ''''
 	execute (@cmd)
 
@@ -421,7 +421,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	select SALESORDERNO as OrderID,IIF(REFNO is null or REFNO = '', isnull((select TOP (1) sl.Location from Orders o, Style_Location sl where o.ID = SALESORDERNO and o.StyleUkey = sl.StyleUkey),''),REFNO) as ComboType,ID as APSNo into #tmpCheckData from #tmpAPSSchedule
 	--刪除PMS存在但APS不存在的Schedule
 	DECLARE cursor_needtodeletesewingschedule CURSOR FOR
-	select APSNo,OrderID,ComboType from SewingSchedule where FactoryID = @factoryid and CONVERT(DATE,Offline) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))
+	select APSNo,OrderID,ComboType from SewingSchedule where FactoryID = @factoryid and CONVERT(DATE,Offline) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE()))
 	except
 	select APSNo,OrderID,ComboType from #tmpCheckData
 
