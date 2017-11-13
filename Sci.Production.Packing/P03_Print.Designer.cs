@@ -74,7 +74,7 @@
             this.radioBarcodePrint.TabStop = true;
             this.radioBarcodePrint.Text = "Barcode Print";
             this.radioBarcodePrint.UseVisualStyleBackColor = true;
-            this.radioBarcodePrint.CheckedChanged += new System.EventHandler(this.radioBarcodePrint_CheckedChanged);
+            this.radioBarcodePrint.CheckedChanged += new System.EventHandler(this.RadioBarcodePrint_CheckedChanged);
             // 
             // radioPackingGuideReport
             // 

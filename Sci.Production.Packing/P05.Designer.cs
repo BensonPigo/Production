@@ -371,7 +371,7 @@
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 5;
-            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePullOutDate_Validating);
+            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.DatePullOutDate_Validating);
             // 
             // displayPullOutNo
             // 
@@ -402,7 +402,7 @@
             this.btnBatchImport.TabIndex = 23;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // txtshipmode
             // 

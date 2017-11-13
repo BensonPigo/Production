@@ -9,59 +9,38 @@ using System.Configuration;
 
 namespace Sci.Production.Packing
 {
-    public class DllInvoke
-    {
-        [DllImport("Kernel32.dll")]
-        private extern static IntPtr LoadLibrary(String path);
 
-        [DllImport("Kernel32.dll")]
-        private extern static IntPtr GetProcAddress(IntPtr lib, String funcName);
-
-        [DllImport("Kernel32.dll")]
-        private extern static bool FreeLibrary(IntPtr lib);
-
-        private IntPtr hLib;
-        public DllInvoke(String DLLPath)
-        {
-            hLib = LoadLibrary(DLLPath);
-        }
-
-        ~DllInvoke()
-        {
-            FreeLibrary(hLib);
-        }
-
-        public Delegate Invoke(String APIName, Type t)
-        {
-            IntPtr api = GetProcAddress(hLib, APIName);
-            try
-            {
-                return (Delegate)Marshal.GetDelegateForFunctionPointer(api, t);
-            }
-            catch (Exception e)
-            {
-                MyUtility.Msg.ErrorBox(e.Message);
-                return null;
-            }
-        }
-    }
-
+    /// <summary>
+    /// P09_IDX_CTRL
+    /// </summary>
     public class P09_IDX_CTRL
     {
-        private delegate int IdxCallVB_func(int command, string Request, int RequestSize);
-        DllInvoke dll;
-        IdxCallVB_func func;
+        private delegate int IdxCallVB_func(int command, string request, int requestSize);
 
+        private DllInvoke dll;
+        private IdxCallVB_func func;
+
+        /// <summary>
+        /// P09_IDX_CTRL
+        /// </summary>
         public P09_IDX_CTRL()
         {
-            dll = new DllInvoke(".\\IDX_CTRL.dll");
-            func = (IdxCallVB_func)dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));
+            this.dll = new DllInvoke(".\\IDX_CTRL.dll");
+            this.func = (IdxCallVB_func)this.dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));
         }
-        public bool IdxCall(int command, string Request, int RequestSize)
+
+        /// <summary>
+        /// IdxCall
+        /// </summary>
+        /// <param name="command">command</param>
+        /// <param name="request">Request</param>
+        /// <param name="requestSize">RequestSize</param>
+        /// <returns>bool</returns>
+        public bool IdxCall(int command, string request, int requestSize)
         {
-            if (func != null)
+            if (this.func != null)
             {
-                func(command, Request, RequestSize);
+                this.func(command, request, requestSize);
                 return true;
             }
             else
