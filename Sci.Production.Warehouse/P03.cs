@@ -178,7 +178,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region Ship qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts3 = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -191,7 +191,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Taipei Stock Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts4 = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
             ts4.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -235,7 +235,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Inventory Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts7 = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -249,7 +249,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             #region Scrap Qty 開窗
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ts8 = new DataGridViewGeneratorNumericColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts8 = new DataGridViewGeneratorTextColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
@@ -320,24 +320,34 @@ namespace Sci.Production.Warehouse
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
-            .Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
-            .Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
-            .Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
-            .Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
-            .Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
-            .Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
-            .Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
+            //.Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
+            .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2),alignment : DataGridViewContentAlignment.MiddleRight)  //12
+            //.Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
+            .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //13            
+            //.Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //14
+            //.Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
+            .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //15
+            //.Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
+            .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3)  //16
+            //.Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
+            .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight)  //17
+            //.Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
+            .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4)  //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true,width:Widths.AnsiChars(3))  //21
-            .Date("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
+            //.Date("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
+            .Text("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(8), iseditingreadonly: true)    //22
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList)  //23
             .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
             .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //25
             .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5)    //26
             .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true)    //27
             .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6)    //28
-            .Numeric("LInvQty", header: "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
-            .Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
+            //.Numeric("LInvQty", header: "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
+            .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7)  //29
+            //.Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
+            .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8)  //30
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
@@ -409,6 +419,7 @@ namespace Sci.Production.Warehouse
                 }
                 #endregion
 
+                
 
                 if (dr["junk"].ToString() == "1")
                 {
@@ -440,7 +451,7 @@ namespace Sci.Production.Warehouse
                         gridMaterialStatus.Rows[i].Cells["Seq2"].Style.BackColor = Color.FromArgb(255, 255, 128);
                     }
 
-                    if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty())
+                    if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty() && !dr["NETQty"].ToString().Equals("-"))
                     if (Convert.ToDecimal(dr["OutQty"].ToString()) > Convert.ToDecimal(dr["NETQty"].ToString()))
                     {
                         gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
@@ -519,23 +530,23 @@ from(
             , fabrictypeOrderby
             , ColorID
             , SizeSpec
-            , unitqty = iif (unitqty = 0, '', Convert (varchar, unitqty))
-            , Qty = iif (Qty = 0, '', Convert (varchar, Qty))
-            , NetQty = iif (NetQty = 0, '', Convert (varchar, NetQty))
-            , useqty = iif (useqty = 0, '', Convert (varchar, useqty))
-            , shipQty = iif (shipQty = 0, '', Convert (varchar, shipQty))
-            , ShipFOC = iif (ShipFOC = 0, '', Convert (varchar, ShipFOC))
-            , InputQty = iif (InputQty = 0, '', Convert (varchar, InputQty))
+            , unitqty = iif (unitqty = 0, '', format(unitqty,'#,###,###,###.####'))
+            , Qty = iif (Qty = 0, '',format(Qty,'#,###,###,###.##'))
+            , NetQty = iif (NetQty = 0, '', format(NetQty,'#,###,###,###.##'))
+            , useqty = iif (useqty = 0, '',format(useqty,'#,###,###,###.##'))
+            , shipQty = iif (shipQty = 0, '',format(shipQty,'#,###,###,###.##'))
+            , ShipFOC = iif (ShipFOC = 0, '', format(ShipFOC,'###.##'))
+            , InputQty = iif (InputQty = 0, '',format(InputQty,'#,###,###,###.##'))
             , POUnit
             , Complete
-            , FinalETA
+            , [FinalETA] = format(FinalETA,'yyyy/MM/dd') 
             , InQty = iif (InQty = 0, '', Convert (varchar, InQty))
             , StockUnit = iif (InQty = 0, '', StockUnit)
             , OutQty = iif (OutQty = 0, '', Convert (varchar, OutQty))
             , AdjustQty = iif (AdjustQty = 0, '', Convert (varchar, AdjustQty))
             , balanceqty = iif (balanceqty = 0, '', Convert (varchar, balanceqty))
-            , LInvQty = iif (LInvQty = 0, '', Convert (varchar, LInvQty))
-            , LObQty = iif (LObQty = 0, '', Convert (varchar, LObQty))
+            , LInvQty = iif (LInvQty = 0, '', format(LInvQty,'#,###,###,###.##'))
+            , LObQty = iif (LObQty = 0, '',format(LObQty,'#,###,###,###.##'))
             , ALocation
             , BLocation 
             , ThirdCountry
@@ -724,7 +735,7 @@ where ROW_NUMBER_D =1
            , [seq1] = '-'
            , [seq2] = '-'
 			, [StyleID] = '-'
-           , [SuppID]  = c.ID + '-' + c.Abb
+           , [SuppID]  = c.ID 
            , [SuppCountry] = '-'
            , [eta] = '-'
            , [RevisedETA] = '-'
@@ -736,22 +747,22 @@ where ROW_NUMBER_D =1
            , [ColorID] = l.ThreadColorID
            , [SizeSpec] = '-'
            , [unitqty] = '-'
-           , [Qty] = '0'
-           , [NetQty] = '0'
-           , [useqty] = '0'
-           , [shipQty] = '0'
+           , [Qty] = '-'
+           , [NetQty] = '-'
+           , [useqty] = '-'
+           , [shipQty] = '-'
            , [ShipFOC] = '-'
-           , [InputQty] = '0'
+           , [InputQty] = '-'
            , [POUnit] = '-'
            , [Complete] = '-'
-           , [FinalETA] = null
+           , [FinalETA] = '-'
            , [InQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
            , [StockUnit] = '-' 
            , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
            , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
            , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
-           , [LInvQty] =  '0' 
-           , [LObQty] =  '0'
+           , [LInvQty] =  '-' 
+           , [LObQty] =  '-'
            , [ALocation] = l.ALocation
            , [BLocation] = '-' 
            , [ThirdCountry] = 0

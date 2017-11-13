@@ -106,22 +106,22 @@ namespace Sci.Production.Warehouse
 			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
 			                                       ,a.SizeSpec [Size]
 			                                       ,h.Currencyid [Currency]
-			                                       ,a.UsedQty [Qty]
-			                                       ,a.Qty [Order Qty]
-		                                           ,a.NETQty [Net Qty]
-			                                       ,a.NETQty+a.LossQty [Use Qty]
-			                                       ,a.ShipQty [Ship Qty]
-			                                       ,a.ShipFOC [F.O.C]
-			                                       ,a.ApQty [AP Qty]
+			                                       ,format(a.UsedQty,'#,###,###,###.####')  [Qty]
+			                                       ,format(a.Qty,'#,###,###,###.##')  [Order Qty]
+		                                           ,format(a.NETQty,'#,###,###,###.##') [Net Qty]
+			                                       ,format(a.NETQty+a.LossQty,'#,###,###,###.##') [Use Qty]
+			                                       ,format(a.ShipQty,'#,###,###,###.##') [Ship Qty]
+			                                       ,format(a.ShipFOC,'#,###,###,###.##') [F.O.C]
+			                                       ,format(a.ApQty,'#,###,###,###.##') [AP Qty]
 			                                       ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
 			                                            WHERE g.PoID = a.id
 			                                            AND g.SEQ1 = a.seq1
 			                                            AND g.SEQ2 =a.seq2
 			                                            AND IsFormA = 1),'Y','') [FormA]
-			                                       ,a.InputQty [Taipei Stock Qty]
+			                                       ,format(a.InputQty,'#,###,###,###.##') [Taipei Stock Qty]
 			                                       ,a.POUnit [POUnit]
 			                                       ,a.Complete [Cmplt]
-			                                       ,substring(convert(varchar, a.FinalETA, 101),1,5) [Act. Eta]
+			                                       ,format(a.FinalETA,'yyyy/MM/dd') [Act. Eta]
 			                                       ,(select id+',' from 
 			                                           (select distinct id from export_detail WITH (NOLOCK)  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path(''))  [WK#]
 			                                       ,(select orderid+',' from 
@@ -131,8 +131,8 @@ namespace Sci.Production.Warehouse
 			                                       ,i.OutQty [Released Qty]
 			                                       ,i.AdjustQty [Adjust Qty]
 			                                       ,i.InQty-i.OutQty+i.AdjustQty [Balance]
-			                                       ,i.LInvQty [Stock Qty]
-			                                       ,i.LObQty [Scrap Qty]
+			                                       ,format(i.LInvQty,'###,###,###.##') [Stock Qty]
+			                                       ,format(i.LObQty,'###,###,###.##') [Scrap Qty]
 			                                       ,i.ALocation [Bulk Location]
 			                                       ,i.BLocation [Stock Location]
                                                    ,[FIR]=dbo.getinspectionresult(a.id,a.seq1,a.seq2)
@@ -154,7 +154,7 @@ namespace Sci.Production.Warehouse
                                                  [sp] = l.OrderID
                                              , [StyleID] = '-'
                                                 , [SEQ] = '-'
-                                                , [Supp]  = c.ID + '-' + c.Abb
+                                                , [Supp]  = c.ID 
                                              , [Supp Name] = '-'
                                              , [Sup. 1st Cfm ETA] = '-'
                                              , [RevisedETD] = '-'
@@ -167,30 +167,30 @@ namespace Sci.Production.Warehouse
                                                 , [Size] = '-'
                                              , [Currency] = '-'
                                              , [Qty] = null
-                                             , [Order Qty]  = null
-                                             , [Net Qty] = null
-                                             , [Use Qty] = null
-                                             , [Ship Qty] = null
-                                             , [F.O.C] = null
-                                             , [AP Qty] = null
-                                             , [FormA] = null
-                                             , [Taipei Stock Qty] = null
-                                             , [POUnit] = null
+                                             , [Order Qty]  = '-'
+                                             , [Net Qty] = '-'
+                                             , [Use Qty] = '-'
+                                             , [Ship Qty] = '-'
+                                             , [F.O.C] = '-'
+                                             , [AP Qty] = '-'
+                                             , [FormA] = '-'
+                                             , [Taipei Stock Qty] = '-'
+                                             , [POUnit] = '-'
                                              , [Cmplt] = null
-                                             , [Act. Eta] = null
+                                             , [Act. Eta] = '-'
                                              , [WK#] = '-'
-                                             , [Order List] = null
+                                             , [Order List] = '-'
                                              , [Arrived Qty] = isnull(l.InQty,0)
                                              , [StockUnitUnit]  = l.UnitID
                                              , [Released Qty] = isnull(l.OutQty,0)
                                              , [Adjust Qty] =isnull( l.AdjustQty,0)
                                              , [Balance]  = isnull(InQty - OutQty + AdjustQty,0)
-                                             , [Stock Qty] = null
-                                             , [Scrap Qty] = null
+                                             , [Stock Qty] = '-'
+                                             , [Scrap Qty] = '-'
                                              , [Bulk Location] = l.ALocation
-                                             , [Stock Location] = null
-                                             , [FIR] = null
-                                             , [Remark] = null
+                                             , [Stock Location] = '-'
+                                             , [FIR] = '-'
+                                             , [Remark] = '-'
                                              , [junk]  = 'false'
                                               from LocalInventory l
                                                 left join LocalItem b on l.Refno=b.RefNo
@@ -216,15 +216,15 @@ namespace Sci.Production.Warehouse
                                               ,Supp_Name=f.AbbEN
                                               ,Currency=f.Currencyid
                                               ,Del=substring(convert(varchar, a.cfmetd, 101),1,5)
-                                              ,Used_Qty=a.UsedQty
-                                              ,Order_Qty=a.qty
-                                              ,Taipei_Stock=a.InputQty
-                                              ,Unit=a.POUnit
-                                              ,TTL_Qty=a.ShipQty
-                                              ,FOC=a.FOC
-                                              ,ty=convert(numeric(5,2), iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100))
+                                              ,Used_Qty=format(a.UsedQty,'#,###,###,###.##')
+                                              ,Order_Qty=format(a.qty ,'#,###,###,###.##')
+                                              ,Taipei_Stock= format(a.InputQty,'#,###,###,###.##')
+                                              ,Unit=a.POUnit 
+                                              ,TTL_Qty= format(a.ShipQty,'#,###,###,###.##')
+                                              ,FOC=format(a.FOC,'#,###,###,###.##')
+                                              ,ty= format( iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100),'##,###.##') 
                                               ,OK=a.Complete
-                                              ,Exp_Date=substring(convert(varchar,a.eta, 101),1,5)
+                                              ,Exp_Date=format(a.eta,'yyyy/MM/dd') 
                                               ,FormA=IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
                                                     WHERE g.PoID =a.id
                                                     AND g.SEQ1 = a.seq1
@@ -248,19 +248,19 @@ namespace Sci.Production.Warehouse
                                     	 , [Chinese Abb] = '-'
                                     	 , [Material_Type] = l.UnitID
                                     	 , [HS Code] = '-'
-                                    	 , [Supp]  = c.ID + '-' + c.Abb
+                                    	 , [Supp]  = c.ID 
                                     	 , [Supp Name] = '-'
                                     	 , [Currency] = '-'
                                     	 , [Del] = '-'
-                                    	 , [Used_Qty] = 0
-                                    	 , [Order Qty]  = null
-                                        , [Taipei Stock Qty] = null
-                                    	 , [POUnit] = null
-                                    	 , [TTL_Qty] = 0
-                                    	 , [F.O.C] = null
-                                    	 , [ty] = 0
+                                    	 , [Used_Qty] = '-'
+                                    	 , [Order Qty]  = '-'
+                                        , [Taipei Stock Qty] = '-'
+                                    	 , [POUnit] = '-'
+                                    	 , [TTL_Qty] = '-'
+                                    	 , [F.O.C] = '-'
+                                    	 , [ty] = '-'
                                     	 , [OK] = 'true'
-                                    	 , [Exp_Date] = null
+                                    	 , [Exp_Date] = '-'
                                     	 , [FormA] = '-'
                                     	 , [junk] = 'false'
                                     	  from LocalInventory l
