@@ -758,6 +758,9 @@
     <None Include="XLT\Sewing_R04_SewingDailyOutputList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Sewing_R05_GarmentOrderAllocateOutputReport.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_B03_PrintReviseList.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
