@@ -490,6 +490,8 @@
     <None Include="stylecop2.json" />
     <None Include="stylecop3.json" />
     <None Include="stylecop4.json" />
+    <None Include="stylecop5.json" />
+    <None Include="stylecop6.json" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

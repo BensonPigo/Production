@@ -12,70 +12,91 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P04_Print
+    /// </summary>
     public partial class P04_Print : Sci.Win.Tems.PrintForm
     {
-        DataRow masterData;
-        string reportType, ctn1, ctn2, destination;
-        DataTable printData, ctnDim;
-        public P04_Print(DataRow MasterData)
+        private DataRow masterData;
+        private string reportType;
+        private string ctn1;
+        private string ctn2;
+        private string destination;
+        private DataTable printData;
+        private DataTable ctnDim;
+
+        /// <summary>
+        /// P04_Print
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        public P04_Print(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
-            radioPackingGuideReport.Checked = true;
-            ControlPrintFunction(true);
+            this.InitializeComponent();
+            this.masterData = masterData;
+            this.radioPackingGuideReport.Checked = true;
+            this.ControlPrintFunction(true);
         }
 
-        //Packing Guide Report
-        private void radioPackingGuideReport_CheckedChanged(object sender, EventArgs e)
+        // Packing Guide Report
+        private void RadioPackingGuideReport_CheckedChanged(object sender, EventArgs e)
         {
-            ControlPrintFunction(radioPackingGuideReport.Checked);
+            this.ControlPrintFunction(this.radioPackingGuideReport.Checked);
         }
 
-        //控制元件是否可使用
+        // 控制元件是否可使用
         private void ControlPrintFunction(bool isSupport)
         {
             this.IsSupportToPrint = !isSupport;
             this.IsSupportToExcel = isSupport;
-            txtCTNStart.Enabled = !isSupport;
-            txtCTNEnd.Enabled = !isSupport;
+            this.txtCTNStart.Enabled = !isSupport;
+            this.txtCTNEnd.Enabled = !isSupport;
             if (isSupport)
             {
-                txtCTNStart.Text = "";
-                txtCTNEnd.Text = "";
+                this.txtCTNStart.Text = string.Empty;
+                this.txtCTNEnd.Text = string.Empty;
             }
         }
 
-        // 驗證輸入條件
+        /// <summary>
+        /// ValidateInput驗證輸入條件
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            reportType = radioPackingGuideReport.Checked ? "1" : "2";
-            ctn1 = txtCTNStart.Text;
-            ctn2 = txtCTNEnd.Text;
-            ReportResourceName = "BarcodePrint.rdlc";
+            this.reportType = this.radioPackingGuideReport.Checked ? "1" : "2";
+            this.ctn1 = this.txtCTNStart.Text;
+            this.ctn2 = this.txtCTNEnd.Text;
+            this.ReportResourceName = "BarcodePrint.rdlc";
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <summary>
+        /// OnAsyncDataLoad
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
-                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
-                string sqlCmd = string.Format(@"select pd.OrderID,o.StyleID,o.Customize1,o.CustPONo,pd.CTNStartNo,pd.CTNEndNo,pd.CTNQty,pd.Article,
+                this.destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Dest"])));
+                string sqlCmd = string.Format(
+                    @"select pd.OrderID,o.StyleID,o.Customize1,o.CustPONo,pd.CTNStartNo,pd.CTNEndNo,pd.CTNQty,pd.Article,
 pd.Color,pd.SizeCode,pd.ShipQty,pd.NW,pd.GW,pd.NNW,pd.NWPerPcs,pd.NW*pd.CTNQty as TtlNW,
 pd.GW*pd.CTNQty as TtlGW,pd.NNW*pd.CTNQty as TtlNNW,o.FactoryID
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 where pd.ID = '{0}'
-order by pd.Seq", MyUtility.Convert.GetString(masterData["ID"]));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
+order by pd.Seq", MyUtility.Convert.GetString(this.masterData["ID"]));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
                 if (!result)
                 {
                     return result;
                 }
 
-                sqlCmd = string.Format(@"Declare @packinglistid VARCHAR(13),
+                sqlCmd = string.Format(
+                    @"Declare @packinglistid VARCHAR(13),
 		@refno VARCHAR(21), 
 		@ctnstartno VARCHAR(6),
 		@firstctnno VARCHAR(6),
@@ -145,47 +166,56 @@ select distinct t.RefNo,l.Description, STR(l.CtnLength,8,4)+'\'+STR(l.CtnWidth,8
 l.CBM*(select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where ID = @packinglistid and Refno = t.RefNo) as TtlCBM
 from @tempPackingListDetail t
 left join LocalItem l on l.RefNo = t.RefNo
-order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out ctnDim);
+order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
+                result = DBProxy.Current.Select(null, sqlCmd, out this.ctnDim);
                 return result;
             }
             else
             {
-                DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(masterData["ID"]), ctn1, ctn2, out printData);
+                DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(this.masterData["ID"]), this.ctn1, this.ctn2, out this.printData);
                 if (!result)
                 {
                     return result;
                 }
 
-                e.Report.ReportDataSource = printData;
+                e.Report.ReportDataSource = this.printData;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <summary>
+        /// OnToExcel產生Excel
+        /// </summary>
+        /// <param name="report">report</param>
+        /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 this.ShowWaitMessage("Starting to excel...");
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[3, 1] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(masterData["FactoryID"]);
-                worksheet.Cells[3, 4] = MyUtility.Convert.GetString(masterData["INVNo"]);
-                worksheet.Cells[3, 5] = MyUtility.Convert.GetString(masterData["ShipModeID"]);
-                worksheet.Cells[3, 9] = MyUtility.Convert.GetString(masterData["ShipQty"]);
-                worksheet.Cells[3, 11] = MyUtility.Convert.GetInt(masterData["CTNQty"]);
-                worksheet.Cells[3, 12] = MyUtility.Convert.GetString(masterData["CBM"]);
-                worksheet.Cells[3, 15] = MyUtility.Convert.GetString(masterData["Dest"]) + "-" + destination;
+                worksheet.Cells[3, 1] = MyUtility.Convert.GetString(this.masterData["ID"]);
+                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(this.masterData["FactoryID"]);
+                worksheet.Cells[3, 4] = MyUtility.Convert.GetString(this.masterData["INVNo"]);
+                worksheet.Cells[3, 5] = MyUtility.Convert.GetString(this.masterData["ShipModeID"]);
+                worksheet.Cells[3, 9] = MyUtility.Convert.GetString(this.masterData["ShipQty"]);
+                worksheet.Cells[3, 11] = MyUtility.Convert.GetInt(this.masterData["CTNQty"]);
+                worksheet.Cells[3, 12] = MyUtility.Convert.GetString(this.masterData["CBM"]);
+                worksheet.Cells[3, 15] = MyUtility.Convert.GetString(this.masterData["Dest"]) + "-" + this.destination;
 
-                //當要列印的筆數超過16筆，就要插入Row，因為範本只留16筆記錄的空間
-                if (printData.Rows.Count > 16)
+                // 當要列印的筆數超過16筆，就要插入Row，因為範本只留16筆記錄的空間
+                if (this.printData.Rows.Count > 16)
                 {
-                    for (int i = 1; i <= printData.Rows.Count - 16; i++)
+                    for (int i = 1; i <= this.printData.Rows.Count - 16; i++)
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A6:A6", Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
@@ -194,30 +224,30 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 }
 
                 int excelRow = 5;
-                foreach (DataRow dr in printData.Rows)
+                foreach (DataRow dr in this.printData.Rows)
                 {
                     worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(dr["OrderID"]);
                     worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["StyleID"]);
                     worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(dr["Customize1"]);
                     worksheet.Cells[excelRow, 4] = MyUtility.Convert.GetString(dr["CustPONo"]);
-                    worksheet.Cells[excelRow, 5] = MyUtility.Check.Empty(dr["CTNQty"]) ? "" : MyUtility.Convert.GetString(dr["CTNStartNo"]);
-                    worksheet.Cells[excelRow, 6] = MyUtility.Convert.GetString(dr["CTNStartNo"]) == MyUtility.Convert.GetString(dr["CTNEndNo"]) ? "" : MyUtility.Convert.GetString(dr["CTNEndNo"]);
-                    worksheet.Cells[excelRow, 7] = MyUtility.Check.Empty(dr["CTNQty"]) ? "" : MyUtility.Convert.GetString(dr["CTNQty"]);
+                    worksheet.Cells[excelRow, 5] = MyUtility.Check.Empty(dr["CTNQty"]) ? string.Empty : MyUtility.Convert.GetString(dr["CTNStartNo"]);
+                    worksheet.Cells[excelRow, 6] = MyUtility.Convert.GetString(dr["CTNStartNo"]) == MyUtility.Convert.GetString(dr["CTNEndNo"]) ? string.Empty : MyUtility.Convert.GetString(dr["CTNEndNo"]);
+                    worksheet.Cells[excelRow, 7] = MyUtility.Check.Empty(dr["CTNQty"]) ? string.Empty : MyUtility.Convert.GetString(dr["CTNQty"]);
                     worksheet.Cells[excelRow, 8] = MyUtility.Convert.GetString(dr["Article"]) + " " + MyUtility.Convert.GetString(dr["Color"]);
                     worksheet.Cells[excelRow, 9] = MyUtility.Convert.GetString(dr["SizeCode"]);
                     worksheet.Cells[excelRow, 10] = MyUtility.Convert.GetString(dr["ShipQty"]);
-                    worksheet.Cells[excelRow, 11] = MyUtility.Check.Empty(dr["NW"]) ? "" : MyUtility.Convert.GetString(dr["NW"]);
-                    worksheet.Cells[excelRow, 12] = MyUtility.Check.Empty(dr["GW"]) ? "" : MyUtility.Convert.GetString(dr["GW"]);
-                    worksheet.Cells[excelRow, 13] = MyUtility.Check.Empty(dr["NNW"]) ? "" : MyUtility.Convert.GetString(dr["NNW"]);
-                    worksheet.Cells[excelRow, 14] = MyUtility.Check.Empty(dr["NWPerPcs"]) ? "" : MyUtility.Convert.GetString(dr["NWPerPcs"]);
-                    worksheet.Cells[excelRow, 15] = MyUtility.Check.Empty(dr["TtlNW"]) ? "" : MyUtility.Convert.GetString(dr["TtlNW"]);
-                    worksheet.Cells[excelRow, 16] = MyUtility.Check.Empty(dr["TtlGW"]) ? "" : MyUtility.Convert.GetString(dr["TtlGW"]);
-                    worksheet.Cells[excelRow, 17] = MyUtility.Check.Empty(dr["TtlNNW"]) ? "" : MyUtility.Convert.GetString(dr["TtlNNW"]);
+                    worksheet.Cells[excelRow, 11] = MyUtility.Check.Empty(dr["NW"]) ? string.Empty : MyUtility.Convert.GetString(dr["NW"]);
+                    worksheet.Cells[excelRow, 12] = MyUtility.Check.Empty(dr["GW"]) ? string.Empty : MyUtility.Convert.GetString(dr["GW"]);
+                    worksheet.Cells[excelRow, 13] = MyUtility.Check.Empty(dr["NNW"]) ? string.Empty : MyUtility.Convert.GetString(dr["NNW"]);
+                    worksheet.Cells[excelRow, 14] = MyUtility.Check.Empty(dr["NWPerPcs"]) ? string.Empty : MyUtility.Convert.GetString(dr["NWPerPcs"]);
+                    worksheet.Cells[excelRow, 15] = MyUtility.Check.Empty(dr["TtlNW"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlNW"]);
+                    worksheet.Cells[excelRow, 16] = MyUtility.Check.Empty(dr["TtlGW"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlGW"]);
+                    worksheet.Cells[excelRow, 17] = MyUtility.Check.Empty(dr["TtlNNW"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlNNW"]);
                     excelRow++;
                 }
 
-                worksheet.Range[String.Format("A{0}:Q{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("A{0}:Q{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
+                worksheet.Range[string.Format("A{0}:Q{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A{0}:Q{0}", excelRow)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
                 worksheet.Cells[excelRow, 6] = "Total";
 
                 if (excelRow > 5)
@@ -234,20 +264,24 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                     excelRow = 21;
                 }
 
-                //Carton Dimension:
+                // Carton Dimension:
                 excelRow++;
                 StringBuilder ctnDimension = new StringBuilder();
-                foreach (DataRow dr in ctnDim.Rows)
+                foreach (DataRow dr in this.ctnDim.Rows)
                 {
-                    ctnDimension.Append(string.Format("{0} - {1} - {2} {3}, (CTN#:{4}) \r\n",
+                    ctnDimension.Append(string.Format(
+                        "{0} - {1} - {2} {3}, (CTN#:{4}) \r\n",
+#pragma warning disable SA1117 // Parameters must be on same line or separate lines
                         MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]),
+#pragma warning restore SA1117 // Parameters must be on same line or separate lines
                         MyUtility.Convert.GetString(dr["Ctn"]).Substring(0, MyUtility.Convert.GetString(dr["Ctn"]).Length - 1)));
                 }
-                worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
 
-                //Remarks
+                worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : string.Empty;
+
+                // Remarks
                 excelRow++;
-                worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(masterData["Remark"]);
+                worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(this.masterData["Remark"]);
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P04_PackingListReport");
@@ -260,9 +294,10 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 Marshal.ReleaseComObject(workbook);
 
                 strExcelName.OpenFile();
-                #endregion 
+                #endregion
                 this.HideWaitMessage();
             }
+
             return true;
         }
     }

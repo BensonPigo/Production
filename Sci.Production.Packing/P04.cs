@@ -14,94 +14,136 @@ using System.Linq;
 
 namespace Sci.Production.Packing
 {
+    /// <summary>
+    /// Packing_P04
+    /// </summary>
     public partial class P04 : Sci.Win.Tems.Input6
     {
-        Ict.Win.UI.DataGridViewTextBoxColumn col_orderid;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_seq;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_1stctnno;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_lastctnno;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_article;
-        Ict.Win.UI.DataGridViewTextBoxColumn col_size;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_ctnqty;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_qtyperctn;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_nw;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
-        Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_orderid;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_seq;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_1stctnno;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_lastctnno;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_article;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_size;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ctnqty;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_qtyperctn;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_nw;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_gw;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_nnw;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_nwpcs;
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings shipQtySetting = new DataGridViewGeneratorNumericColumnSettings();
         private DialogResult buttonResult;
         private DualResult result;
         private DataRow dr;
-        private string sqlCmd = "", filter = "", masterID;
+        private string sqlCmd = string.Empty;
+        private string filter = string.Empty;
+        private string masterID;
 
+        /// <summary>
+        /// P04
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DefaultFilter = "Type = 'S'";
-            detailgrid.AllowUserToOrderColumns = true;
-            InsertDetailGridOnDoubleClick = false;
+            this.detailgrid.AllowUserToOrderColumns = true;
+            this.InsertDetailGridOnDoubleClick = false;
         }
 
+        /// <summary>
+        /// OnDetailSelectCommandPrepare
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(masterID);
+            this.masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = Prgs.QueryPackingListSQLCmd(this.masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            //Purchase Ctn
-            displayPurchaseCTN.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
+            // Purchase Ctn
+            this.displayPurchaseCTN.Value = MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]) ? string.Empty : "Y";
 
-            labelConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
+            this.labelConfirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
             DataRow dr;
-            string sqlStatus = string.Format(@"select * from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"].ToString());
+            string sqlStatus = string.Format(@"select * from PackingList WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["id"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
-                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "New";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "Confirmed";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "Confirmed";
-                else labelConfirmed.Text = "Shipping Lock";
+                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
+                {
+                    this.labelConfirmed.Text = "New";
+                }
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
+                {
+                    this.labelConfirmed.Text = "Confirmed";
+                }
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
+                {
+                    this.labelConfirmed.Text = "Confirmed";
+                }
+                else
+                {
+                    this.labelConfirmed.Text = "Shipping Lock";
+                }
             }
 
-            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("OrderQty"))
+            {
                 dt.ColumnsIntAdd("OrderQty");
+            }
+
             if (!dt.Columns.Contains("OtherConfirmQty"))
+            {
                 dt.ColumnsIntAdd("OtherConfirmQty");
+            }
+
             if (!dt.Columns.Contains("InvAdjustQty"))
+            {
                 dt.ColumnsIntAdd("InvAdjustQty");
-            ComputeOrderQty();
+            }
+
+            this.ComputeOrderQty();
         }
 
+        /// <summary>
+        /// OnDetailGridSetup
+        /// </summary>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
 
             #region OrderID & Seq & Article & SizeCode按右鍵與Validating
-            //OrderID
-            orderid.CellValidating += (s, e) =>
+
+            // OrderID
+            this.orderid.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != this.dr["OrderID"].ToString())
                     {
-                        //sql參數
+                        // sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString());
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]));
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
@@ -123,7 +165,7 @@ where o.ID = @orderid
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                         if (!result)
                         {
-                            ClearGridRowData(dr);
+                            this.ClearGridRowData(this.dr);
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             return;
@@ -133,71 +175,72 @@ where o.ID = @orderid
                             if (orderData.Rows.Count <= 0)
                             {
                                 MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
-                                ClearGridRowData(dr);
+                                this.ClearGridRowData(this.dr);
                                 e.Cancel = true;
                                 return;
                             }
                             else
                             {
-                                dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
-                                dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
-                                dr["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString();
-                                dr["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString();
-                                dr["Article"] = "";
-                                dr["Color"] = "";
-                                dr["SizeCode"] = "";
-                                dr["OtherConfirmQty"] = 0;
-                                dr["InvAdjustQty"] = 0;
-                                dr["BalanceQty"] = 0;
-                                dr["OrderQty"] = 0;
-                                dr["shipQty"] = 0;
+                                this.dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
+                                this.dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
+                                this.dr["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString();
+                                this.dr["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString();
+                                this.dr["Article"] = string.Empty;
+                                this.dr["Color"] = string.Empty;
+                                this.dr["SizeCode"] = string.Empty;
+                                this.dr["OtherConfirmQty"] = 0;
+                                this.dr["InvAdjustQty"] = 0;
+                                this.dr["BalanceQty"] = 0;
+                                this.dr["OrderQty"] = 0;
+                                this.dr["shipQty"] = 0;
                                 #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                                 DataRow orderQtyData;
-                                sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
+                                sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.dr["OrderID"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out orderQtyData))
                                 {
                                     if (orderQtyData["CountID"].ToString() == "1")
                                     {
-                                        dr["OrderShipmodeSeq"] = MyUtility.GetValue.Lookup("Seq", dr["OrderID"].ToString(), "Order_QtyShip", "ID");
+                                        this.dr["OrderShipmodeSeq"] = MyUtility.GetValue.Lookup("Seq", this.dr["OrderID"].ToString(), "Order_QtyShip", "ID");
                                     }
                                     else
                                     {
-                                        sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
-                                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
+                                        sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", this.dr["OrderID"].ToString());
+                                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
-                                        {                                            
-                                            dr["OrderShipmodeSeq"] = "";
+                                        {
+                                            this.dr["OrderShipmodeSeq"] = string.Empty;
                                         }
                                         else
-                                        {                                           
-                                            dr["OrderShipmodeSeq"] = item.GetSelectedString();
+                                        {
+                                            this.dr["OrderShipmodeSeq"] = item.GetSelectedString();
                                         }
                                     }
                                 }
                                 #endregion
-                                dr.EndEdit();
+                                this.dr.EndEdit();
                             }
                         }
-                    }else if (MyUtility.Check.Empty(e.FormattedValue))
+                    }
+                    else if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        ClearGridRowData(dr);
+                        this.ClearGridRowData(this.dr);
                     }
                 }
             };
 
-            //Seq
-            seq.EditingMouseDown += (s, e) =>
+            // Seq
+            this.seq.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode & MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+                if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
+                            this.sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "4,20,20,10", string.Empty, "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -207,9 +250,10 @@ where o.ID = @orderid
                             {
                                 dr["OrderShipmodeSeq"] = item.GetSelectedString();
                             }
-                            dr["Article"] = "";
-                            dr["Color"] = "";
-                            dr["SizeCode"] = "";
+
+                            dr["Article"] = string.Empty;
+                            dr["Color"] = string.Empty;
+                            dr["SizeCode"] = string.Empty;
                             dr["OtherConfirmQty"] = 0;
                             dr["InvAdjustQty"] = 0;
                             dr["BalanceQty"] = 0;
@@ -221,35 +265,39 @@ where o.ID = @orderid
                 }
             };
 
-            //Article
-            article.EditingMouseDown += (s, e) =>
+            // Article
+            this.article.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode & MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+                if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
+                            this.sqlCmd = string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) { return; }
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
                             e.EditingControl.Text = item.GetSelectedString();
                         }
                     }
                 }
             };
 
-            article.CellValidating += (s, e) =>
+            this.article.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
-                        dr["Color"] = "";
-                        dr["SizeCode"] = "";
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
                         dr["OtherConfirmQty"] = 0;
                         dr["InvAdjustQty"] = 0;
                         dr["BalanceQty"] = 0;
@@ -258,27 +306,31 @@ where o.ID = @orderid
                         if (!MyUtility.Check.Seek(string.Format("Select Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString())))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
-                            dr["Article"] = "";
+                            dr["Article"] = string.Empty;
                         }
                         else
                         {
                             dr["Article"] = e.FormattedValue.ToString().ToUpper();
-                            sqlCmd = string.Format(@"select ColorID 
+                            this.sqlCmd = string.Format(
+                                @"select ColorID 
                                                                         from View_OrderFAColor 
-                                                                        where ID = '{0}' and Article = '{1}'", dr["OrderID"].ToString(), dr["Article"]);
+                                                                        where ID = '{0}' and Article = '{1}'",
+                                dr["OrderID"].ToString(),
+                                dr["Article"]);
                             DataRow colorData;
-                            if (MyUtility.Check.Seek(sqlCmd, out colorData))
+                            if (MyUtility.Check.Seek(this.sqlCmd, out colorData))
                             {
                                 dr["Color"] = colorData["ColorID"].ToString();
                             }
                         }
+
                         dr.EndEdit();
                     }
                     else if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        dr["Article"] = "";
-                        dr["Color"] = "";
-                        dr["SizeCode"] = "";
+                        dr["Article"] = string.Empty;
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
                         dr["OtherConfirmQty"] = 0;
                         dr["InvAdjustQty"] = 0;
                         dr["BalanceQty"] = 0;
@@ -289,17 +341,18 @@ where o.ID = @orderid
                 }
             };
 
-            //SizeCode
-            size.EditingMouseDown += (s, e) =>
+            // SizeCode
+            this.size.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode & MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+                if (this.EditMode & MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format(@"
+                            this.sqlCmd = string.Format(
+                                @"
 select a.SizeCode,a.qty
 from
 (
@@ -312,17 +365,23 @@ from
 )a
 left join Orders o WITH (NOLOCK) on o.ID = a.Id
 left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.SizeCode
-order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString());
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
+order by os.Seq", dr["OrderID"].ToString(),
+                                dr["OrderShipmodeSeq"].ToString(),
+                                dr["Article"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(this.sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) { return; }
+                            if (returnResult == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
                             e.EditingControl.Text = item.GetSelectedString();
                         }
                     }
                 }
             };
 
-            size.CellValidating += (s, e) =>
+            this.size.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -336,7 +395,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         dr["shipQty"] = 0;
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
-                            dr["SizeCode"] = "";
+                            dr["SizeCode"] = string.Empty;
                             dr.EndEdit();
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
@@ -346,12 +405,12 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         {
                             dr["SizeCode"] = e.FormattedValue;
                             dr.EndEdit();
-                            ComputeOrderQty();
+                            this.ComputeOrderQty();
                         }
                     }
                     else if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        dr["SizeCode"] = "";
+                        dr["SizeCode"] = string.Empty;
                         dr["OtherConfirmQty"] = 0;
                         dr["InvAdjustQty"] = 0;
                         dr["BalanceQty"] = 0;
@@ -374,38 +433,38 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             };
             #endregion
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_orderid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: this.orderid).Get(out this.col_orderid)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq).Get(out col_seq)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: this.seq).Get(out this.col_seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CTNStartNo", header: "1st CTN#", width: Widths.AnsiChars(6)).Get(out col_1stctnno)
-                .Text("CTNEndNo", header: "Last CTN#", width: Widths.AnsiChars(6)).Get(out col_lastctnno)
-                .Numeric("CTNQty", header: "# of CTN").Get(out col_ctnqty)
-                .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out col_refno)
+                .Text("CTNStartNo", header: "1st CTN#", width: Widths.AnsiChars(6)).Get(out this.col_1stctnno)
+                .Text("CTNEndNo", header: "Last CTN#", width: Widths.AnsiChars(6)).Get(out this.col_lastctnno)
+                .Numeric("CTNQty", header: "# of CTN").Get(out this.col_ctnqty)
+                .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: article).Get(out col_article)
+                .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: this.article).Get(out this.col_article)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size).Get(out col_size)
-                .Numeric("QtyPerCTN", header: "PC/Ctn").Get(out col_qtyperctn)
-                .Numeric("ShipQty", header: "Qty", settings: shipQtySetting).Get(out col_shipqty)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: this.size).Get(out this.col_size)
+                .Numeric("QtyPerCTN", header: "PC/Ctn").Get(out this.col_qtyperctn)
+                .Numeric("ShipQty", header: "Qty", settings: this.shipQtySetting).Get(out this.col_shipqty)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
-                .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out col_nw)
-                .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out col_gw)
-                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out col_nnw)
-                .Numeric("NWPerPcs", header: "N.W./Pcs", integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0).Get(out col_nwpcs);
+                .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_nw)
+                .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_gw)
+                .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_nnw)
+                .Numeric("NWPerPcs", header: "N.W./Pcs", integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0).Get(out this.col_nwpcs);
 
             this.detailgrid.CellValueChanged += (s, e) =>
             {
                 #region 選完RefNo後，要自動帶出Description
-                if (detailgrid.Columns[e.ColumnIndex].DataPropertyName == col_refno.DataPropertyName)
+                if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno.DataPropertyName)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
                     if (MyUtility.Check.Empty(dr["RefNo"]))
                     {
-                        dr["Description"] = "";
+                        dr["Description"] = string.Empty;
                     }
                     else
                     {
@@ -417,31 +476,27 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                         }
                         else
                         {
-                            dr["Description"] = "";
+                            dr["Description"] = string.Empty;
                         }
                     }
+
                     dr.EndEdit();
                 }
                 #endregion
-            };            
-
-            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            //{
-            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
+            };
         }
 
-        //清空Order相關欄位值
+        // 清空Order相關欄位值
         private void ClearGridRowData(DataRow dr)
         {
-            dr["OrderID"] = "";
-            dr["SeasonID"] = "";
-            dr["OrderShipmodeSeq"] = "";
-            dr["Article"] = "";
-            dr["Color"] = "";
-            dr["SizeCode"] = "";
-            dr["StyleID"] = "";
-            dr["CustPONo"] = "";
+            dr["OrderID"] = string.Empty;
+            dr["SeasonID"] = string.Empty;
+            dr["OrderShipmodeSeq"] = string.Empty;
+            dr["Article"] = string.Empty;
+            dr["Color"] = string.Empty;
+            dr["SizeCode"] = string.Empty;
+            dr["StyleID"] = string.Empty;
+            dr["CustPONo"] = string.Empty;
             dr["OtherConfirmQty"] = 0;
             dr["InvAdjustQty"] = 0;
             dr["BalanceQty"] = 0;
@@ -450,84 +505,100 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             dr.EndEdit();
         }
 
+        /// <summary>
+        /// ClickNewAfter
+        /// </summary>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            txtshipmode.ReadOnly = false;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
-            CurrentMaintain["Type"] = "S";
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.txtshipmode.ReadOnly = false;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Type"] = "S";
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
 
-            gridicon.Append.Enabled = true;
-            gridicon.Insert.Enabled = true;
-            gridicon.Remove.Enabled = true;
-            DetailGridEditing(true);
+            this.gridicon.Append.Enabled = true;
+            this.gridicon.Insert.Enabled = true;
+            this.gridicon.Remove.Enabled = true;
+            this.DetailGridEditing(true);
         }
 
+        /// <summary>
+        /// ClickEditBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <summary>
+        /// ClickEditAfter
+        /// </summary>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtbrand.ReadOnly = true;
-            //部分欄位會依某些條件來決定是否可以被修改
-            if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+            this.txtbrand.ReadOnly = true;
+
+            // 部分欄位會依某些條件來決定是否可以被修改
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
             {
-                editRemark.ReadOnly = true;
-                txtshipmode.ReadOnly = true;
-                gridicon.Append.Enabled = false;
-                gridicon.Insert.Enabled = false;
-                gridicon.Remove.Enabled = false;
-                DetailGridEditing(false);
+                this.editRemark.ReadOnly = true;
+                this.txtshipmode.ReadOnly = true;
+                this.gridicon.Append.Enabled = false;
+                this.gridicon.Insert.Enabled = false;
+                this.gridicon.Remove.Enabled = false;
+                this.DetailGridEditing(false);
             }
             else
             {
-                DetailGridEditing(true);
-                gridicon.Append.Enabled = true;
-                gridicon.Insert.Enabled = true;
-                gridicon.Remove.Enabled = true;
+                this.DetailGridEditing(true);
+                this.gridicon.Append.Enabled = true;
+                this.gridicon.Insert.Enabled = true;
+                this.gridicon.Remove.Enabled = true;
             }
 
-            if (!MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]))
             {
-                dateCartonEstBooking.ReadOnly = true;
-                dateCartonEstArrived.ReadOnly = true;
+                this.dateCartonEstBooking.ReadOnly = true;
+                this.dateCartonEstArrived.ReadOnly = true;
             }
         }
 
+        /// <summary>
+        /// ClickSaveBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]))
             {
-                txtshipmode.Focus();
+                this.txtshipmode.Focus();
                 MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
-                txtbrand.Focus();
+                this.txtbrand.Focus();
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Dest"]))
             {
-                txtcountry.Focus();
+                this.txtcountry.Focus();
                 MyUtility.Msg.WarningBox("Destination can't empty!!");
                 return false;
-            }         
+            }
 
-            //刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
+            // 刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，順便填入Seq欄位值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
             int i = 0, ctnQty = 0, shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0, drCtnQty = 0;
             double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
             string ctnCBM;
@@ -536,18 +607,18 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             DualResult selectResult;
             DataRow[] detailData;
 
-            //準備needPackData的Schema
-            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
-            if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
+            // 準備needPackData的Schema
+            this.sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
+            if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out needPackData)))
             {
                 MyUtility.Msg.WarningBox("Query  schema fail!");
                 return false;
             }
 
-            //Balance < 0 ErrorMsg
+            // Balance < 0 ErrorMsg
             List<string> listErrorMsg = new List<string>();
 
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 #region 刪除表身SP No.或Qty為空白的資料
                 if (MyUtility.Check.Empty(dr["OrderID"]) || MyUtility.Check.Empty(dr["ShipQty"]))
@@ -560,14 +631,14 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #region 表身的Color Way與Size不可以為空值
                 if (MyUtility.Check.Empty(dr["Article"]))
                 {
-                    detailgrid.Focus();
+                    this.detailgrid.Focus();
                     MyUtility.Msg.WarningBox("< ColorWay >  can't empty!");
                     return false;
                 }
 
                 if (MyUtility.Check.Empty(dr["SizeCode"]))
                 {
-                    detailgrid.Focus();
+                    this.detailgrid.Focus();
                     MyUtility.Msg.WarningBox("< Size >  can't empty!");
                     return false;
                 }
@@ -579,7 +650,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #endregion
 
                 #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
-                drCtnQty = (MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : MyUtility.Convert.GetInt(dr["CTNQty"]));
+                drCtnQty = MyUtility.Check.Empty(dr["CTNQty"]) ? 0 : MyUtility.Convert.GetInt(dr["CTNQty"]);
                 ctnQty = ctnQty + drCtnQty;
                 shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
                 nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
@@ -593,13 +664,15 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #endregion
 
                 #region 重算表身Grid的Bal. Qty
-                //目前還有多少衣服尚未裝箱
-                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                detailData = needPackData.Select(filter);
+
+                // 目前還有多少衣服尚未裝箱
+                this.filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                detailData = needPackData.Select(this.filter);
                 if (detailData.Length <= 0)
                 {
-                    //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"
+                    // 撈取此SP+Seq尚未裝箱的數量
+                    this.sqlCmd = string.Format(
+                        @"
 select oqd.Id as OrderID
        , oqd.Seq as OrderShipmodeSeq
        , oqd.Article
@@ -607,8 +680,9 @@ select oqd.Id as OrderID
        , Qty = oqd.Qty 
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
-      and oqd.Seq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                    if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
+      and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
+                        dr["OrderShipmodeSeq"].ToString());
+                    if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
                         return false;
@@ -625,15 +699,15 @@ where oqd.Id = '{0}'
                 }
 
                 needPackQty = 0;
-                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
-                detailData = needPackData.Select(filter);
+                this.filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                detailData = needPackData.Select(this.filter);
                 if (detailData.Length > 0)
                 {
                     needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"]);
                 }
 
-                //加總表身特定Article/SizeCode的Ship Qty數量
-                detailData = ((DataTable)detailgridbs.DataSource).Select(filter);
+                // 加總表身特定Article/SizeCode的Ship Qty數量
+                detailData = ((DataTable)this.detailgridbs.DataSource).Select(this.filter);
                 ttlShipQty = 0;
                 if (detailData.Length != 0)
                 {
@@ -643,7 +717,8 @@ where oqd.Id = '{0}'
                     }
                 }
 
-                string strOtherConfirmSQL = string.Format(@"
+                string strOtherConfirmSQL = string.Format(
+                    @"
 select Qty = isnull (sum (pld.ShipQty), 0)
 from Packinglist pl
 inner join Packinglist_detail pld on pl.ID = pld.ID
@@ -652,23 +727,24 @@ where pl.ID != '{0}'
       and pld.OrderID = '{1}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
-      and pld.SizeCode = '{4}'", dr["ID"]
-                               , dr["OrderID"]
-                               , dr["OrderShipmodeSeq"]
-                               , dr["Article"]
-                               , dr["SizeCode"]);
+      and pld.SizeCode = '{4}'", dr["ID"],
+                               dr["OrderID"],
+                               dr["OrderShipmodeSeq"],
+                               dr["Article"],
+                               dr["SizeCode"]);
 
-                string strInvAdjustSQL = string.Format(@"
+                string strInvAdjustSQL = string.Format(
+                    @"
 select Qty = isnull (sum (InvAQ.DiffQty), 0)
 from InvAdjust InvA
 inner join  InvAdjust_Qty InvAQ WITH (NOLOCK) on InvA.ID = InvAQ.ID
 where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
-      and InvAQ.SizeCode = '{3}'", dr["OrderID"]
-                                 , dr["OrderShipmodeSeq"]
-                                 , dr["Article"]
-                                 , dr["SizeCode"]);
+      and InvAQ.SizeCode = '{3}'", dr["OrderID"],
+                                 dr["OrderShipmodeSeq"],
+                                 dr["Article"],
+                                 dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
@@ -677,18 +753,19 @@ where InvA.OrderID = '{0}'
                 {
                     isNegativeBalQty = true;
                     listErrorMsg.Add(string.Format("Order Qty: {0}, Shipped Qty: {1}, Qty: {2}", dr["OrderQty"], Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]), dr["ShipQty"]));
-                    detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
+                    this.detailgrid.Rows[count].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 #endregion
                 count = count + 1;
             }
-            //CTNQty, ShipQty, NW, GW, NNW, CBM
-            CurrentMaintain["CTNQty"] = ctnQty;
-            CurrentMaintain["ShipQty"] = shipQty;
-            CurrentMaintain["NW"] = nw;
-            CurrentMaintain["GW"] = gw;
-            CurrentMaintain["NNW"] = nnw;
-            CurrentMaintain["CBM"] = cbm;
+
+            // CTNQty, ShipQty, NW, GW, NNW, CBM
+            this.CurrentMaintain["CTNQty"] = ctnQty;
+            this.CurrentMaintain["ShipQty"] = shipQty;
+            this.CurrentMaintain["NW"] = nw;
+            this.CurrentMaintain["GW"] = gw;
+            this.CurrentMaintain["NNW"] = nnw;
+            this.CurrentMaintain["CBM"] = cbm;
 
             if (isNegativeBalQty)
             {
@@ -696,34 +773,40 @@ where InvA.OrderID = '{0}'
                 return false;
             }
 
-            //表身Grid不可為空
+            // 表身Grid不可為空
             if (i == 0)
             {
-                detailgrid.Focus();
+                this.detailgrid.Focus();
                 MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 return false;
             }
 
-            //檢查Refno是否有改變，若有改變提醒使用者通知採購團隊紙箱號碼改變。
-            DataView dataView = DetailDatas.CopyToDataTable().DefaultView;
+            // 檢查Refno是否有改變，若有改變提醒使用者通知採購團隊紙箱號碼改變。
+            DataView dataView = this.DetailDatas.CopyToDataTable().DefaultView;
             DataTable dataTableDistinct = dataView.ToTable(true, "OrderID", "RefNo");
             StringBuilder warningmsg = new StringBuilder();
             warningmsg.Append("Please inform Purchase Team that the Carton Ref No. has been changed.");
 
             foreach (DataRow dt in dataTableDistinct.Rows)
             {
-                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}'", dt["OrderID"].ToString()))) continue;
+                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}'", dt["OrderID"].ToString())))
+                {
+                    continue;
+                }
 
                 if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}' and Refno='{1}'", dt["OrderID"].ToString(), dt["RefNo"].ToString())))
                 {
                     warningmsg.Append(Environment.NewLine + string.Format("SP#：<{0}>, RefNo：<{1}>.", dt["OrderID"].ToString(), dt["RefNo"].ToString()));
                 }
             }
-            if (warningmsg.ToString() != "Please inform Purchase Team that the Carton Ref No. has been changed.")
-                MyUtility.Msg.InfoBox(warningmsg.ToString());
 
-            //GetID
-            if (IsDetailInserting)
+            if (warningmsg.ToString() != "Please inform Purchase Team that the Carton Ref No. has been changed.")
+            {
+                MyUtility.Msg.InfoBox(warningmsg.ToString());
+            }
+
+            // GetID
+            if (this.IsDetailInserting)
             {
                 string id = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
@@ -731,11 +814,13 @@ where InvA.OrderID = '{0}'
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
-                CurrentMaintain["ID"] = id;
+
+                this.CurrentMaintain["ID"] = id;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CBM"]) || MyUtility.Check.Empty(this.CurrentMaintain["GW"]))
             {
-                numTtlCBM.Focus();
+                this.numTtlCBM.Focus();
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 return false;
             }
@@ -743,30 +828,49 @@ where InvA.OrderID = '{0}'
             return base.ClickSaveBefore();
         }
 
+        /// <summary>
+        /// ClickSaveAfter
+        /// </summary>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("OrderQty"))
+            {
                 dt.ColumnsIntAdd("OrderQty");
+            }
+
             if (!dt.Columns.Contains("OtherConfirmQty"))
+            {
                 dt.ColumnsIntAdd("OtherConfirmQty");
+            }
+
             if (!dt.Columns.Contains("InvAdjustQty"))
+            {
                 dt.ColumnsIntAdd("InvAdjustQty");
-            ComputeOrderQty();
+            }
+
+            this.ComputeOrderQty();
         }
 
+        /// <summary>
+        /// ClickSavePre
+        /// </summary>
+        /// <returns>DualResult</returns>
         protected override DualResult ClickSavePre()
         {
-            if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
             {
-                sqlCmd = string.Format(@"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
+                this.sqlCmd = string.Format(
+                    @"select isnull(sum(ShipQty),0) as ShipQty,isnull(sum(CTNQty),0) as CTNQty,isnull(sum(NW),0) as NW,isnull(sum(GW),0) as GW,isnull(sum(NNW),0) as NNW,isnull(sum(CBM),0) as CBM
 from PackingList WITH (NOLOCK) 
 where INVNo = '{0}'
-and ID != '{1}'", CurrentMaintain["INVNo"].ToString(), CurrentMaintain["ID"].ToString());
+and ID != '{1}'",
+                    this.CurrentMaintain["INVNo"].ToString(),
+                    this.CurrentMaintain["ID"].ToString());
 
                 DataTable summaryData;
-                if (result = DBProxy.Current.Select(null, sqlCmd, out summaryData))
+                if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out summaryData))
                 {
                     string updateCmd = @"update GMTBooking
 set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
@@ -774,32 +878,31 @@ where ID = @INVNo";
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                     sp1.ParameterName = "@ttlShipQty";
-                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]);
+                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]);
 
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                     sp2.ParameterName = "@ttlCTNQty";
-                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["CTNQty"]);
+                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["CTNQty"]);
 
                     System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                     sp3.ParameterName = "@ttlNW";
-                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(CurrentMaintain["NW"].ToString()), 2);
+                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NW"].ToString()), 2);
 
                     System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
                     sp4.ParameterName = "@ttlNNW";
-                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(CurrentMaintain["NNW"].ToString()), 2);
+                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["NNW"].ToString()), 2);
 
                     System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                     sp5.ParameterName = "@ttlGW";
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(CurrentMaintain["GW"].ToString()), 2);
+                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"].ToString()), 2);
 
                     System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
-                    sp6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(CurrentMaintain["CBM"].ToString()), 2);
+                    sp6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString()), 2);
 
                     System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                     sp7.ParameterName = "@INVNo";
-                    sp7.Value = CurrentMaintain["INVNo"].ToString();
-
+                    sp7.Value = this.CurrentMaintain["INVNo"].ToString();
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
@@ -811,252 +914,278 @@ where ID = @INVNo";
                     cmds.Add(sp7);
                     #endregion
 
-                    result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
-                    if (!result)
+                    this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
+                    if (!this.result)
                     {
-                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + result.ToString());
+                        DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + this.result.ToString());
                         return failResult;
                     }
                 }
                 else
                 {
-                    DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + result.ToString());
+                    DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + this.result.ToString());
                     return failResult;
                 }
             }
+
             return Result.True;
         }
 
+        /// <summary>
+        /// ClickSavePost
+        /// </summary>
+        /// <returns>DualResult</returns>
         protected override DualResult ClickSavePost()
         {
-            //存檔成功後，要再呼叫CreateOrderCTNData
-            if (!Prgs.CreateOrderCTNData(CurrentMaintain["ID"].ToString()))
+            // 存檔成功後，要再呼叫CreateOrderCTNData
+            if (!Prgs.CreateOrderCTNData(this.CurrentMaintain["ID"].ToString()))
             {
                 DualResult failResult = new DualResult(false, "Create Order_CTN fail!");
                 return failResult;
             }
+
             return Result.True;
         }
 
+        /// <summary>
+        /// ClickDeleteBefore
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() == "Confirmed")
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be deleted!");
                 return false;
             }
 
-            if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
             {
                 MyUtility.Msg.WarningBox("This record had booking no. Can't be deleted!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <summary>
+        /// ClickPrint
+        /// </summary>
+        /// <returns>bool</returns>
         protected override bool ClickPrint()
         {
-            Sci.Production.Packing.P04_Print callNextForm = new Sci.Production.Packing.P04_Print(CurrentMaintain);
+            Sci.Production.Packing.P04_Print callNextForm = new Sci.Production.Packing.P04_Print(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
 
-        //控制表身Grid欄位是否可被編輯
+        // 控制表身Grid欄位是否可被編輯
         private void DetailGridEditing(bool isEditing)
         {
             if (isEditing)
             {
-                col_orderid.IsEditingReadOnly = false;
-                col_1stctnno.IsEditingReadOnly = false;
-                col_lastctnno.IsEditingReadOnly = false;
-                col_ctnqty.IsEditingReadOnly = false;
-                col_refno.IsEditingReadOnly = false;
-                col_article.IsEditingReadOnly = false;
-                col_size.IsEditingReadOnly = false;
-                col_qtyperctn.IsEditingReadOnly = false;
-                col_shipqty.IsEditingReadOnly = false;
-                col_nw.IsEditingReadOnly = false;
-                col_gw.IsEditingReadOnly = false;
-                col_nnw.IsEditingReadOnly = false;
+                this.col_orderid.IsEditingReadOnly = false;
+                this.col_1stctnno.IsEditingReadOnly = false;
+                this.col_lastctnno.IsEditingReadOnly = false;
+                this.col_ctnqty.IsEditingReadOnly = false;
+                this.col_refno.IsEditingReadOnly = false;
+                this.col_article.IsEditingReadOnly = false;
+                this.col_size.IsEditingReadOnly = false;
+                this.col_qtyperctn.IsEditingReadOnly = false;
+                this.col_shipqty.IsEditingReadOnly = false;
+                this.col_nw.IsEditingReadOnly = false;
+                this.col_gw.IsEditingReadOnly = false;
+                this.col_nnw.IsEditingReadOnly = false;
 
-                for (int i = 0; i < detailgrid.ColumnCount; i++)
+                for (int i = 0; i < this.detailgrid.ColumnCount; i++)
                 {
                     if (i == 0 || i == 1 || i == 4 || i == 5 || i == 6 || i == 7 || i == 9 || i == 11 || i == 12 || i == 13 || i == 15 || i == 16 || i == 17 || i == 18)
                     {
-                        detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
+                        this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
                     }
                 }
-                //先-再+預防重複出現多次視窗
-                col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
-                col_refno.EditingMouseDown += new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
+
+                // 先-再+預防重複出現多次視窗
+                this.col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
+                this.col_refno.EditingMouseDown += new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
             }
             else
             {
-                col_orderid.IsEditingReadOnly = true;
-                col_1stctnno.IsEditingReadOnly = true;
-                col_lastctnno.IsEditingReadOnly = true;
-                col_ctnqty.IsEditingReadOnly = true;
-                col_refno.IsEditingReadOnly = true;
-                col_article.IsEditingReadOnly = true;
-                col_size.IsEditingReadOnly = true;
-                col_qtyperctn.IsEditingReadOnly = true;
-                col_shipqty.IsEditingReadOnly = true;
-                col_nw.IsEditingReadOnly = true;
-                col_gw.IsEditingReadOnly = true;
-                col_nnw.IsEditingReadOnly = true;
-                for (int i = 0; i < detailgrid.ColumnCount; i++)
+                this.col_orderid.IsEditingReadOnly = true;
+                this.col_1stctnno.IsEditingReadOnly = true;
+                this.col_lastctnno.IsEditingReadOnly = true;
+                this.col_ctnqty.IsEditingReadOnly = true;
+                this.col_refno.IsEditingReadOnly = true;
+                this.col_article.IsEditingReadOnly = true;
+                this.col_size.IsEditingReadOnly = true;
+                this.col_qtyperctn.IsEditingReadOnly = true;
+                this.col_shipqty.IsEditingReadOnly = true;
+                this.col_nw.IsEditingReadOnly = true;
+                this.col_gw.IsEditingReadOnly = true;
+                this.col_nnw.IsEditingReadOnly = true;
+                for (int i = 0; i < this.detailgrid.ColumnCount; i++)
                 {
                     if (i != 18)
                     {
-                        detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
+                        this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
                     }
                 }
-                col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
+
+                this.col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
             }
         }
 
-        //Carton Summary
-        private void btnCartonSummary_Click(object sender, EventArgs e)
+        // Carton Summary
+        private void BtnCartonSummary_Click(object sender, EventArgs e)
         {
-            Sci.Production.Packing.P04_CartonSummary callNextForm = new Sci.Production.Packing.P04_CartonSummary(CurrentMaintain["ID"].ToString());
+            Sci.Production.Packing.P04_CartonSummary callNextForm = new Sci.Production.Packing.P04_CartonSummary(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
-        //Batch Import
-        private void btnBatchImport_Click(object sender, EventArgs e)
+        // Batch Import
+        private void BtnBatchImport_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't be empty!");
                 return;
             }
-            Sci.Production.Packing.P04_BatchImport callNextForm = new Sci.Production.Packing.P04_BatchImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+
+            Sci.Production.Packing.P04_BatchImport callNextForm = new Sci.Production.Packing.P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
-        //Recalculate Weight
-        private void btnRecalculateWeight_Click(object sender, EventArgs e)
+        // Recalculate Weight
+        private void BtnRecalculateWeight_Click(object sender, EventArgs e)
         {
-            //如果已經Shipping Lock的話就不可以再重算重量
-            if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+            // 如果已經Shipping Lock的話就不可以再重算重量
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["GMTBookingLock"]))
             {
                 MyUtility.Msg.WarningBox("This record already shipping lock, can't recalculate weight!");
                 return;
             }
 
-            Prgs.RecaluateCartonWeight((DataTable)detailgridbs.DataSource, CurrentMaintain);
+            Prgs.RecaluateCartonWeight((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain);
         }
 
-        //Confirm
+        /// <summary>
+        /// ClickConfirm
+        /// </summary>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
 
-            //還沒有Invoice No就不可以做Confirm
-            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
+            // 還沒有Invoice No就不可以做Confirm
+            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", this.CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
                 MyUtility.Msg.WarningBox("Shipping is not yet booking so can't confirm!");
                 return;
             }
 
-            //檢查累計Pullout數不可超過訂單數量
-            if (!Prgs.CheckPulloutQtyWithOrderQty(CurrentMaintain["ID"].ToString()))
+            // 檢查累計Pullout數不可超過訂單數量
+            if (!Prgs.CheckPulloutQtyWithOrderQty(this.CurrentMaintain["ID"].ToString()))
             {
                 return;
             }
 
-            //檢查Sewing Output Qty是否有超過Packing Qty
-            if (!Prgs.CheckPackingQtyWithSewingOutput(CurrentMaintain["ID"].ToString()))
+            // 檢查Sewing Output Qty是否有超過Packing Qty
+            if (!Prgs.CheckPackingQtyWithSewingOutput(this.CurrentMaintain["ID"].ToString()))
             {
                 return;
             }
 
-            sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
-            result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
+            this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+            this.result = DBProxy.Current.Execute(null, this.sqlCmd);
+            if (!this.result)
             {
-                MyUtility.Msg.WarningBox("Confirm fail !\r\n" + result.ToString());
+                MyUtility.Msg.WarningBox("Confirm fail !\r\n" + this.result.ToString());
                 return;
             }
-
-           
         }
 
-        //UnConfirm
+        /// <summary>
+        /// ClickUnconfirm
+        /// </summary>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            if (!MyUtility.Check.Empty(CurrentMaintain["INVNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
             {
-                if (MyUtility.GetValue.Lookup("Status", CurrentMaintain["INVNo"].ToString(), "GMTBooking", "ID") == "Confirmed")
+                if (MyUtility.GetValue.Lookup("Status", this.CurrentMaintain["INVNo"].ToString(), "GMTBooking", "ID") == "Confirmed")
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Garment booking already confirmed, so can't unconfirm! \n pullout report:{0}", CurrentMaintain["INVNo"].ToString()));
+                    MyUtility.Msg.WarningBox(string.Format("Garment booking already confirmed, so can't unconfirm! \n pullout report:{0}", this.CurrentMaintain["INVNo"].ToString()));
                     return;
                 }
             }
 
-            DataTable Dtt;
-            string chkpullout = string.Format(@"select p.Status, pl.PulloutId  from Pullout p,packinglist pl where pl.PulloutId = p.ID and pl.id='{0}'", CurrentMaintain["id"].ToString());
-            DualResult dr = DBProxy.Current.Select(null, chkpullout, out Dtt);
+            DataTable dtt;
+            string chkpullout = string.Format(@"select p.Status, pl.PulloutId  from Pullout p,packinglist pl where pl.PulloutId = p.ID and pl.id='{0}'", this.CurrentMaintain["id"].ToString());
+            DualResult dr = DBProxy.Current.Select(null, chkpullout, out dtt);
             if (!dr)
             {
                 MyUtility.Msg.ErrorBox("Sql command Error!");
                 return;
             }
-            if (Dtt.Rows.Count>0)
+
+            if (dtt.Rows.Count > 0)
             {
-                if (Dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
+                if (dtt.Rows[0]["Status"].ToString().ToUpper() != "NEW")
                 {
-                    MyUtility.Msg.WarningBox(string.Format(@"Pullout already confirmed, so can't unconfirm!
-Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
+                    MyUtility.Msg.WarningBox(string.Format(
+                        @"Pullout already confirmed, so can't unconfirm!
+Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                     return;
                 }
             }
-            
 
-            //問是否要做Unconfirm，確定才繼續往下做
-            buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            // 問是否要做Unconfirm，確定才繼續往下做
+            this.buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unconfirm > this data?", "Warning", MessageBoxButtons.YesNo);
+            if (this.buttonResult == System.Windows.Forms.DialogResult.No)
             {
                 return;
             }
 
-            sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, CurrentMaintain["ID"].ToString());
+            this.sqlCmd = string.Format("update PackingList set Status = 'New', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
 
-            result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
+            this.result = DBProxy.Current.Execute(null, this.sqlCmd);
+            if (!this.result)
             {
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
         }
 
-        //Download excel format
-        private void btnDownloadExcelFormat_Click(object sender, EventArgs e)
+        // Download excel format
+        private void BtnDownloadExcelFormat_Click(object sender, EventArgs e)
         {
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
+
             excel.Visible = true;
         }
 
-        //Import from excel
-        private void btnImportFromExcel_Click(object sender, EventArgs e)
+        // Import from excel
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
         {
-            
-            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"])) {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
+            {
                 MyUtility.Msg.WarningBox("Please input < Brand >!!");
                 return;
             }
-            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource, CurrentMaintain["BrandID"].ToString());
+
+            Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
-        private void txtcustcd_Validated(object sender, EventArgs e)
+        private void Txtcustcd_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtcustcd.Text) && this.txtcustcd.OldValue != this.txtcustcd.Text)
             {
-                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
-            }      
+                this.CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), this.txtcustcd.Text));
+            }
         }
 
         private void ComputeOrderQty()
@@ -1065,24 +1194,27 @@ Pullout No. < {0} > ", Dtt.Rows[0]["PulloutId"].ToString()));
             DataTable needPackData, tmpPackData;
             DualResult selectResult;
             DataRow[] detailData;
-            //準備needPackData的Schema
-            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
-            if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
+
+            // 準備needPackData的Schema
+            this.sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
+            if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out needPackData)))
             {
                 MyUtility.Msg.WarningBox("Query  schema fail!");
             }
 
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 #region 重算表身Grid的Bal. Qty
-                //目前還有多少衣服尚未裝箱
-                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
-                detailData = needPackData.Select(filter);
+
+                // 目前還有多少衣服尚未裝箱
+                this.filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                detailData = needPackData.Select(this.filter);
 
                 if (detailData.Length <= 0)
                 {
-                    //撈取此SP+Seq尚未裝箱的數量
-                    sqlCmd = string.Format(@"
+                    // 撈取此SP+Seq尚未裝箱的數量
+                    this.sqlCmd = string.Format(
+                        @"
 select oqd.Id as OrderID
        , oqd.Seq as OrderShipmodeSeq
        , oqd.Article
@@ -1090,9 +1222,9 @@ select oqd.Id as OrderID
        , Qty = oqd.Qty 
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
-      and oqd.Seq = '{1}'", dr["OrderID"].ToString()
-                          , dr["OrderShipmodeSeq"].ToString());
-                    if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
+      and oqd.Seq = '{1}'", dr["OrderID"].ToString(),
+                          dr["OrderShipmodeSeq"].ToString());
+                    if (!(selectResult = DBProxy.Current.Select(null, this.sqlCmd, out tmpPackData)))
                     {
                         MyUtility.Msg.WarningBox("Query pack qty fail!");
                     }
@@ -1108,15 +1240,15 @@ where oqd.Id = '{0}'
                 }
 
                 needPackQty = 0;
-                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
-                detailData = needPackData.Select(filter);
+                this.filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                detailData = needPackData.Select(this.filter);
                 if (detailData.Length > 0)
                 {
                     needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"]);
                 }
 
-                //加總表身特定Article/SizeCode的Ship Qty數量
-                detailData = ((DataTable)detailgridbs.DataSource).Select(filter);
+                // 加總表身特定Article/SizeCode的Ship Qty數量
+                detailData = ((DataTable)this.detailgridbs.DataSource).Select(this.filter);
                 ttlShipQty = 0;
                 if (detailData.Length != 0)
                 {
@@ -1126,7 +1258,8 @@ where oqd.Id = '{0}'
                     }
                 }
 
-                string strOtherConfirmSQL = string.Format(@"
+                string strOtherConfirmSQL = string.Format(
+                    @"
 select Qty = isnull (sum (pld.ShipQty), 0)
 from Packinglist pl
 inner join Packinglist_detail pld on pl.ID = pld.ID
@@ -1135,23 +1268,24 @@ where pl.ID != '{0}'
       and pld.OrderID = '{1}'
       and pld.OrderShipmodeSeq = '{2}'
       and pld.Article = '{3}'
-      and pld.SizeCode = '{4}'", dr["ID"]
-                               , dr["OrderID"]
-                               , dr["OrderShipmodeSeq"]
-                               , dr["Article"]
-                               , dr["SizeCode"]);
+      and pld.SizeCode = '{4}'", dr["ID"],
+                               dr["OrderID"],
+                               dr["OrderShipmodeSeq"],
+                               dr["Article"],
+                               dr["SizeCode"]);
 
-                string strInvAdjustSQL = string.Format(@"
+                string strInvAdjustSQL = string.Format(
+                    @"
 select Qty = isnull (sum (InvAQ.DiffQty), 0)
 from InvAdjust InvA
 inner join  InvAdjust_Qty InvAQ WITH (NOLOCK) on InvA.ID = InvAQ.ID
 where InvA.OrderID = '{0}'
       and InvA.OrderShipmodeSeq = '{1}'
       and InvAQ.Article = '{2}'
-      and InvAQ.SizeCode = '{3}'", dr["OrderID"]
-                                 , dr["OrderShipmodeSeq"]
-                                 , dr["Article"]
-                                 , dr["SizeCode"]);
+      and InvAQ.SizeCode = '{3}'", dr["OrderID"],
+                                 dr["OrderShipmodeSeq"],
+                                 dr["Article"],
+                                 dr["SizeCode"]);
 
                 dr["OtherConfirmQty"] = MyUtility.GetValue.Lookup(strOtherConfirmSQL);
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);

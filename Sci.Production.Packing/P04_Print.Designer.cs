@@ -91,7 +91,7 @@
             this.radioPackingGuideReport.TabStop = true;
             this.radioPackingGuideReport.Text = "Packing List Report";
             this.radioPackingGuideReport.UseVisualStyleBackColor = true;
-            this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.radioPackingGuideReport_CheckedChanged);
+            this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.RadioPackingGuideReport_CheckedChanged);
             // 
             // label2
             // 
