@@ -84,7 +84,7 @@ namespace Sci.Production.Sewing
                                         ) as SODDG
                         outer apply(select Isnull(Sum(SewingOutput_Detail_Detail.QAQty),0) as FromSp_Sewing_qty
                                     from SewingOutput_Detail_Detail  WITH (NOLOCK)
-                                    Where SewingOutput_Detail_Detail.OrderId = OQG.ID
+                                    Where SewingOutput_Detail_Detail.OrderId = OQG.OrderIDFrom
                                     		and SewingOutput_Detail_Detail.ComboType = SL.Location
                                     		and SewingOutput_Detail_Detail.Article = OQG.Article
                                     		and SewingOutput_Detail_Detail.SizeCode = OQG.SizeCode
