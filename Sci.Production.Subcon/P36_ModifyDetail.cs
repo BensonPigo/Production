@@ -9,32 +9,32 @@ using System.Windows.Forms;
 namespace Sci.Production.Subcon
 {
     public partial class P36_ModifyDetail : Sci.Win.Subs.Input6A
-    {        
+    {
         public P36_ModifyDetail()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            if (CurrentData["TaipeiDBC"].ToString()=="False"&& EditMode)
+            if (CurrentData["TaipeiDBC"].ToString() == "False" && EditMode)
             {
-            txtSPNo.ReadOnly = false;
-            numClaimAmt.ReadOnly = false;
-            numAffectQty.ReadOnly = false;
-            numAdditionCharge.ReadOnly = false;
-            txtUnit.TextBox1.ReadOnly = false;
+                txtSPNo.ReadOnly = false;
+                numClaimAmt.ReadOnly = false;
+                numAffectQty.ReadOnly = false;
+                numAdditionCharge.ReadOnly = false;
+                txtUnit.TextBox1.ReadOnly = false;
 
-         }
+            }
             else
-            {              
-            txtSPNo.ReadOnly = true;
-            numClaimAmt.ReadOnly = true;
-            numAffectQty.ReadOnly = true;
-            numAdditionCharge.ReadOnly = true;
-            txtUnit.TextBox1.ReadOnly = true;
-         }
+            {
+                txtSPNo.ReadOnly = true;
+                numClaimAmt.ReadOnly = true;
+                numAffectQty.ReadOnly = true;
+                numAdditionCharge.ReadOnly = true;
+                txtUnit.TextBox1.ReadOnly = true;
+            }
         }
 
         private void txtSPNo_Validating(object sender, CancelEventArgs e)
