@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -111,72 +112,103 @@ Reason can’t be empty!!"
         {
             base.ClickConfirm();
             if (null == CurrentMaintain) return;
-            #region 	依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
-            string sql = string.Format(@"
-from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-where d.Id = '{0}'
-and f.StockType = 'O'", CurrentMaintain["id"]);
-
-            DataTable dt;            
-            DualResult dr;
-            string chksql = string.Format(@"
-Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-	,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
-	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
-	,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) +(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
-{0}", sql);
-            if (!(dr = DBProxy.Current.Select(null, chksql, out dt)))
+            DataTable[] dts;
+            string id = CurrentMaintain["ID"].ToString();
+            DualResult res = DBProxy.Current.SelectSP("", "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", id) }, out dts);
+            if (!res)
             {
-                MyUtility.Msg.WarningBox("Update datas error!!");
+                MyUtility.Msg.ErrorBox(res.ToString(), "error");
+                return ;
+            }
+            if (dts.Length < 1)
+            {
+                MyUtility.Msg.InfoBox("Confirmed Successful.");
                 return;
             }
-            StringBuilder warningmsg = new StringBuilder();
-            foreach (DataRow drs in dt.Rows)
+            else
             {
-                if (MyUtility.Convert.GetInt(drs["q"])<0)
+                StringBuilder warningmsg = new StringBuilder();
+                foreach (DataRow drs in dts[0].Rows)
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
+                    if (MyUtility.Convert.GetDecimal(drs["q"]) < 0)
+                    {
+                        warningmsg.Append(string.Format(@"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
 Balacne Qty is not enough!!
 ", drs["POID"].ToString(), drs["seq"].ToString(), drs["Roll"].ToString(), drs["Dyelot"].ToString(), drs["balance"].ToString(), drs["Adjustqty"].ToString()));
+                    }
+                }
+                if (!MyUtility.Check.Empty(warningmsg.ToString()))
+                {
+                    MyUtility.Msg.WarningBox(warningmsg.ToString());
+                    return;
                 }
             }
-            if (!MyUtility.Check.Empty(warningmsg.ToString()))
-            {
-                MyUtility.Msg.WarningBox(warningmsg.ToString());
-                return;
-            }
-            string upcmd = string.Format(@"
-Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore) 
-{0}
+            //            #region 	依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
+            //            string sql = string.Format(@"
+            //from dbo.Adjust_Detail d WITH (NOLOCK) 
+            //inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
+            //where d.Id = '{0}'
+            //and f.StockType = 'O'", CurrentMaintain["id"]);
 
-update m2 set 
-LObQty = b.l
-from(
-	select l=sum(a.InQty-a.OutQty+a.AdjustQty),POID,Seq1,Seq2
-	from
-	(
-		select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
-		from dbo.Adjust_Detail d WITH (NOLOCK) 
-		inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
-		inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
-		where d.Id = '{1}'
-		and f.StockType = 'O'
-		group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
-	)a
-	group by POID,Seq1,Seq2
-)b
-,MDivisionPoDetail m2
-where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
+            //            DataTable dt;            
+            //            DualResult dr;
+            //            string chksql = string.Format(@"
+            //Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
+            //	,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+            //	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
+            //	,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) +(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
+            //{0}", sql);
+            //            if (!(dr = DBProxy.Current.Select(null, chksql, out dt)))
+            //            {
+            //                MyUtility.Msg.WarningBox("Update datas error!!");
+            //                return;
+            //            }
+            //            StringBuilder warningmsg = new StringBuilder();
+            //            foreach (DataRow drs in dt.Rows)
+            //            {
+            //                if (MyUtility.Convert.GetInt(drs["q"])<0)
+            //                {
+            //                    warningmsg.Append(string.Format(@"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
+            //Balacne Qty is not enough!!
+            //", drs["POID"].ToString(), drs["seq"].ToString(), drs["Roll"].ToString(), drs["Dyelot"].ToString(), drs["balance"].ToString(), drs["Adjustqty"].ToString()));
+            //                }
+            //            }
+            //            if (!MyUtility.Check.Empty(warningmsg.ToString()))
+            //            {
+            //                MyUtility.Msg.WarningBox(warningmsg.ToString());
+            //                return;
+            //            }
+            //            string upcmd = string.Format(@"
+            //Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore) 
+            //{0}
 
-update Adjust set Status ='Confirmed' where id = '{1}'
-", sql, CurrentMaintain["id"]);
-            if (!(dr = DBProxy.Current.Execute(null, upcmd)))
-            {
-                MyUtility.Msg.WarningBox("Update datas error!!");
-                return;
-            }
-            #endregion 
+            //update m2 set 
+            //LObQty = b.l
+            //from(
+            //	select l=sum(a.InQty-a.OutQty+a.AdjustQty),POID,Seq1,Seq2
+            //	from
+            //	(
+            //		select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
+            //		from dbo.Adjust_Detail d WITH (NOLOCK) 
+            //		inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
+            //		inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
+            //		where d.Id = '{1}'
+            //		and f.StockType = 'O'
+            //		group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
+            //	)a
+            //	group by POID,Seq1,Seq2
+            //)b
+            //,MDivisionPoDetail m2
+            //where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
+
+            //update Adjust set Status ='Confirmed' where id = '{1}'
+            //", sql, CurrentMaintain["id"]);
+            //            if (!(dr = DBProxy.Current.Execute(null, upcmd)))
+            //            {
+            //                MyUtility.Msg.WarningBox("Update datas error!!");
+            //                return;
+            //            }
+            //            #endregion 
         }
         //Confirm
         protected override void ClickUnconfirm()

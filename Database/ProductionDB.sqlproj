@@ -2232,6 +2232,7 @@
     <Build Include="dbo\Functions\getWaste.sql" />
     <Build Include="dbo\Tables\ThreadAllowanceScale.sql" />
     <Build Include="dbo\Functions\GetBOFExpend.sql" />
+    <Build Include="dbo\Stored Procedures\usp_RemoveScrapById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
