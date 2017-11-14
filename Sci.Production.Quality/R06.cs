@@ -25,6 +25,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             print.Enabled = false;
+            txtbrand.MultiSelect = true;
         }
 
         protected override bool ValidateInput()
@@ -75,10 +76,16 @@ namespace Sci.Production.Quality
 
            } if (!this.brand.Empty())
            {
-               sqlWheres.Add("o.brandid = @brand");
-               lis.Add(new SqlParameter("@brand", brand));
-              
-           } if (!this.season.Empty())
+                string str_multi = "";
+                foreach (string v_str in brand.Split(','))
+                {
+                    str_multi += "," + "'" + v_str + "'";
+                }
+
+                sqlWheres.Add(string.Format("o.brandid in ({0})", str_multi.Substring(1)));
+                //lis.Add(new SqlParameter("@brand", brand));
+
+            } if (!this.season.Empty())
            {
                sqlWheres.Add("o.Seasonid = @season");
                lis.Add(new SqlParameter("@season", season)); 
