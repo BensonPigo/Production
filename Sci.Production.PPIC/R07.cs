@@ -120,7 +120,11 @@ into #Sewtmp
 from SewingSchedule s WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
-where (s.Inline between @sewinginline and @sewingoffline or s.Offline between @sewinginline and @sewingoffline)
+where (s.Inline between  @sewinginline and @sewingoffline 
+    or s.Offline between @sewinginline and @sewingoffline
+	or @sewinginline between s.Inline and s.Offline
+	or @sewingoffline between s.Inline and s.Offline
+)
  and s.MDivisionID = @MDivisionID and s.FactoryID = @FactoryID --and SewingLineID = '18'
 
 select distinct

@@ -15,14 +15,35 @@ namespace Sci.Production.Class
 {
     public partial class txtbrand : Sci.Win.UI.TextBox
     {
+        private bool multi_select = false;
+
+        public bool MultiSelect
+        {
+            set
+            {
+               this.multi_select = value;
+            }
+        }
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,29,35", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(777, 666);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            this.Text = item.GetSelectedString();
+            if (multi_select)
+            {
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere,"", "10,29,35", "", null, null, null);
+                item.Size = new System.Drawing.Size(810, 666);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.Text = item.GetSelectedString();
+            }
+            else {
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,29,35", this.Text, false, ",");
+                item.Size = new System.Drawing.Size(777, 666);
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                this.Text = item.GetSelectedString();
+            }
+            
             this.ValidateText();
         }
 
@@ -32,13 +53,36 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(str, "Brand", "id") == false)
+                string[] str_multi = str.Split(',');
+                if (str_multi.Length > 1)
                 {
-                    this.Text = "";
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Brand : {0} > not found!!!", str));
-                    return;
+                    string err_brand = "";
+                    foreach (string chk_str in str_multi)
+                    {
+                        if (MyUtility.Check.Seek(chk_str, "Brand", "id") == false)
+                        {
+                            err_brand += "," + chk_str;
+                        }
+                    }
+
+                    if (!err_brand.Equals("")) {
+                        this.Text = "";
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Brand : {0} > not found!!!", err_brand.Substring(1)));
+                        return;
+                    }
+
                 }
+                else {
+                    if (MyUtility.Check.Seek(str, "Brand", "id") == false)
+                    {
+                        this.Text = "";
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Brand : {0} > not found!!!", str));
+                        return;
+                    }
+                }
+                
             }
         }
 
