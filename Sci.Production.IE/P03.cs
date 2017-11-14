@@ -44,6 +44,7 @@ namespace Sci.Production.IE
             this.DetailSelectCommand = string.Format(
                 @"
 select  ld.*
+        , OriNo = No
         , o.DescEN as Description
         , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
@@ -78,15 +79,6 @@ order by ld.No, ld.GroupKey", masterID);
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
-            this.detailgrid.AutoResizeColumn(0);
-            this.detailgrid.AutoResizeColumn(3);
-            this.detailgrid.AutoResizeColumn(4);
-            this.detailgrid.AutoResizeColumn(5);
-            this.detailgrid.AutoResizeColumn(6);
-            this.detailgrid.AutoResizeColumn(7);
-            this.detailgrid.AutoResizeColumn(8);
-            this.detailgrid.AutoResizeColumn(9);
-            this.detailgrid.AutoResizeColumn(10);
         }
 
         /// <summary>
@@ -115,6 +107,7 @@ order by ld.No, ld.GroupKey", masterID);
 
                             this.ReclculateGridGSDCycleTime(oldValue);
                             this.ReclculateGridGSDCycleTime(dr["No"].ToString());
+                            this.ComputeTaktTime();
                         }
                     }
                 };
@@ -142,32 +135,7 @@ order by ld.No, ld.GroupKey", masterID);
                             }
                             else
                             {
-                                if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["GSD"]))
-                                {
-                                    dr["Cycle"] = dr["GSD"];
-                                    MyUtility.Msg.WarningBox("Cycle time can't greater than GSD Time!!");
-                                }
-                                else
-                                {
-                                    dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
-
-                                    // string c = dr["Cycle"].ToString();
-                                    // DataTable EffData;
-                                    // string Eff = string.Format(@"
-                                    //        select ld.*,o.DescEN as Description,e.Name as EmployeeName,
-                                    //                e.Skill as EmployeeSkill,
-                                    //                iif(ld.Cycle = 0,0,ROUND(ld.GSD/'{1}',2)*100) as Efficiency
-                                    //        from LineMapping_Detail ld WITH (NOLOCK)
-                                    //        left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-                                    //        left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-                                    //        where ld.ID = '{0}' and ld.No='{2}' and ld.Annotation='{3}'
-                                    //              and ld.GroupKey='{4}' and ld.OperationID='{5}'
-                                    //        order by ld.No,ld.GroupKey", dr["ID"], c, dr["No"], dr["Annotation"], dr["GroupKey"], dr["OperationID"]);
-                                    // DualResult result = DBProxy.Current.Select(null, Eff, out EffData);
-
-                                    // dr["Efficiency"] = EffData.Rows[0]["Efficiency"];
-                                }
-
+                                dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
                                 dr["Efficiency"] = Math.Round(MyUtility.Convert.GetDecimal(dr["GSD"]) / MyUtility.Convert.GetDecimal(dr["Cycle"]), 2) * 100;
                             }
                         }
@@ -175,6 +143,7 @@ order by ld.No, ld.GroupKey", masterID);
 
                     dr.EndEdit();
                     this.ReclculateGridGSDCycleTime(MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString());
+                    this.ComputeTaktTime();
                 }
             };
             #endregion
@@ -305,6 +274,7 @@ order by ld.No, ld.GroupKey", masterID);
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
                 .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -313,6 +283,8 @@ order by ld.No, ld.GroupKey", masterID);
                 .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
                 .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                 .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
+                .CheckBox("Attachment", header: "Attachment", trueValue: 1, falseValue: 0)
+                .CheckBox("Template", header: "Template", trueValue: 1, falseValue: 0)
                 .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
                 .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -323,6 +295,17 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["TotalGSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["TotalCycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeSkill"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             this.detailgrid.RowPrePaint += (s, e) =>
             {
@@ -493,33 +476,8 @@ order by ld.No, ld.GroupKey", masterID);
                 return false;
             }
             #endregion
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Empty);
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Empty);
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", string.Empty);
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", string.Empty);
 
-            // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
-            int countopts = 0;
-            var temptable = this.DetailDatas.CopyToDataTable();
-            temptable.DefaultView.Sort = "No";
-            string no = string.Empty;
-            foreach (DataRow dr in temptable.DefaultView.ToTable().Rows)
-            {
-                if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
-                {
-                    countopts += 1;
-                    no = dr["No"].ToString();
-                }
-            }
-
-            this.CurrentMaintain["TotalGSD"] = sumGSD;
-            this.CurrentMaintain["TotalCycle"] = sumCycle;
-            this.CurrentMaintain["HighestGSD"] = maxHighGSD;
-            this.CurrentMaintain["HighestCycle"] = maxHighCycle;
-            this.CurrentMaintain["CurrentOperators"] = countopts;
-            this.CurrentMaintain["StandardOutput"] = MyUtility.Check.Empty(this.CurrentMaintain["TotalCycle"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycle"]), 0);
-            this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StandardOutput"]), 0);
-            this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
+            this.ComputeTaktTime();
 
             // Vision為空的話就要填值
             if (MyUtility.Check.Empty(this.CurrentMaintain["Version"]) || this.CurrentMaintain["Version"].ToString() == "0")
@@ -557,7 +515,9 @@ order by ld.No, ld.GroupKey", masterID);
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray; // 將剛剛紀錄的資料複製到新增的那筆record
             this.CurrentDetailData["New"] = true;
+            this.CurrentDetailData["No"] = string.Empty;
             this.AssignNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
+            this.ComputeTaktTime();
         }
 
         /// <summary>
@@ -579,6 +539,7 @@ order by ld.No, ld.GroupKey", masterID);
                 base.OnDetailGridDelete();
                 this.AssignNoGSDCycleTime(groupkey);
                 this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                this.ComputeTaktTime();
             }
         }
 
@@ -657,6 +618,38 @@ order by ld.No, ld.GroupKey", masterID);
             this.numTargetHrIdeal.Value = MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]), 0);
             this.numDailydemandshiftIdeal.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.numTargetHrIdeal.Value), 0);
             this.numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value), 0);
+        }
+
+        // Compute Takt Time
+        private void ComputeTaktTime()
+        {
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Empty);
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Empty);
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", string.Empty);
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", string.Empty);
+
+            // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
+            int countopts = 0;
+            var temptable = this.DetailDatas.CopyToDataTable();
+            temptable.DefaultView.Sort = "No";
+            string no = string.Empty;
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Rows)
+            {
+                if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
+                {
+                    countopts += 1;
+                    no = dr["No"].ToString();
+                }
+            }
+
+            this.CurrentMaintain["TotalGSD"] = sumGSD;
+            this.CurrentMaintain["TotalCycle"] = sumCycle;
+            this.CurrentMaintain["HighestGSD"] = maxHighGSD;
+            this.CurrentMaintain["HighestCycle"] = maxHighCycle;
+            this.CurrentMaintain["CurrentOperators"] = countopts;
+            this.CurrentMaintain["StandardOutput"] = MyUtility.Check.Empty(this.CurrentMaintain["TotalCycle"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycle"]), 0);
+            this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StandardOutput"]), 0);
+            this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
         }
 
         // 計算Total % time diff,Highest % time diff,Effieiency(%),Effieiency(%),PPH,LBR欄位值
@@ -873,12 +866,32 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             {
                 DataTable copyLineMapDetail;
                 string sqlCmd = string.Format(
-                    @"select null as ID,ld.No,ld.Annotation,ld.GSD,ld.TotalGSD,ld.Cycle,ld.TotalCycle,ld.MachineTypeID,ld.OperationID,ld.MoldID,ld.GroupKey,ld.New,ld.EmployeeID,
-o.DescEN as Description,e.Name as EmployeeName,e.Skill as EmployeeSkill,iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+                    @"
+select ID = null
+	   , OriNo = ld.No
+	   , No = ''
+	   , ld.Annotation
+	   , ld.GSD
+	   , ld.TotalGSD
+	   , ld.Cycle
+	   , ld.TotalCycle
+	   , ld.MachineTypeID
+       , Attachment = null
+       , Template = null
+	   , ld.OperationID
+	   , ld.MoldID
+	   , ld.GroupKey
+	   , ld.New
+	   , ld.EmployeeID
+	   , Description = o.DescEN
+	   , EmployeeName = e.Name
+	   , EmployeeSkill = e.Skill
+	   , Efficiency = iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100)
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
+where ld.ID = {0} 
+order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
                 {
@@ -920,8 +933,8 @@ where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToStrin
                 this.CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 this.CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 this.CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
-                this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
                 this.CalculateValue(0);
+                this.ComputeTaktTime();
             }
         }
 
@@ -937,12 +950,15 @@ where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToStrin
             DataRow timeStudy;
             DataTable timeStudy_Detail;
             string sqlCmd = string.Format(
-                @"select t.* from TimeStudy t WITH (NOLOCK) , Style s WITH (NOLOCK) 
+                @"
+select t.* 
+from TimeStudy t WITH (NOLOCK) 
+	 , Style s WITH (NOLOCK) 
 where t.StyleID = s.ID 
-and t.BrandID = s.BrandID 
-and t.SeasonID = s.SeasonID 
-and s.Ukey = {0}
-and t.ComboType = '{1}'",
+	  and t.BrandID = s.BrandID 
+	  and t.SeasonID = s.SeasonID 
+	  and s.Ukey = {0}
+	  and t.ComboType = '{1}'",
                 this.CurrentMaintain["StyleUkey"].ToString(),
                 this.CurrentMaintain["ComboType"].ToString());
             if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
@@ -952,11 +968,32 @@ and t.ComboType = '{1}'",
             }
 
             sqlCmd = string.Format(
-                @"select null as ID,td.Seq as No,td.Annotation,td.SMV as GSD,td.SMV as TotalGSD,td.SMV as Cycle,td.SMV as TotalCycle,td.MachineTypeID,td.OperationID,td.Mold as MoldID,0 as GroupKey,0 as New,'' as EmployeeID,
-o.DescEN as Description,'' as EmployeeName,'' as EmployeeSkill,100 as Efficiency
+                @"
+select ID = null
+	   , No = ''
+	   , OriNo = td.Seq
+	   , td.Annotation
+	   , GSD = td.SMV
+	   , TotalGSD = td.SMV
+	   , Cycle = td.SMV
+	   , TotalCycle = td.SMV
+	   , td.MachineTypeID
+       , Attachment = null
+       , Template = null
+	   , td.OperationID
+	   , MoldID = td.Mold
+	   , GroupKey = 0
+	   , New = 0
+	   , EmployeeID = ''
+	   , Description = o.DescEN
+	   , EmployeeName = ''
+	   , EmployeeSkill = ''
+	   , Efficiency = 100
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-where td.ID = {0} and td.SMV > 0 order by td.Seq", timeStudy["ID"].ToString());
+where td.ID = {0} 
+	  and td.SMV > 0 
+order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
             {
@@ -987,8 +1024,8 @@ where td.ID = {0} and td.SMV > 0 order by td.Seq", timeStudy["ID"].ToString());
             this.CurrentMaintain["TotalCycle"] = sumSMV;
             this.CurrentMaintain["HighestGSD"] = maxSMV;
             this.CurrentMaintain["HighestCycle"] = maxSMV;
-            this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             this.CalculateValue(0);
+            this.ComputeTaktTime();
         }
     }
 }
