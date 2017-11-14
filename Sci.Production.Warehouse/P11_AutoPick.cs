@@ -307,10 +307,16 @@ from (
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
             , b.ColorMultipleID
     from #tmpPO_supp_detail b
-    left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
-                                   and b.poid = tb.ID 
-                                   and (b.SizeSpec = isnull(tb.SizeSpec, ''))
-                                   and (b.ColorID = tb.ColorID)
+    left join (
+        select tmpB.*
+               , ob.Seq1
+        from #Tmp_BoaExpend tmpB
+        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
+    ) tb on b.SCIRefno = tb.SciRefno 
+            and b.poid = tb.ID 
+            and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
+            and (b.ColorID = tb.ColorID)
+            and b.Seq1 = tb.Seq1
 ) x
 left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
@@ -328,10 +334,16 @@ with cte as(
             , tb.SizeCode
             , qty = Round (sum (isnull (1.0 * tb.OrderQty * SizeSpec.value, 0.00) * b.UsedQty * b.RATE), 2) 
 	from #tmpPO_supp_detail b 
-    left join #Tmp_BoaExpend tb on b.SCIRefno = tb.SciRefno 
-                                   and b.poid = tb.ID 
-                                   and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
-                                   and (b.ColorID = tb.ColorID)
+    left join (
+        select tmpB.*
+               , ob.Seq1
+        from #Tmp_BoaExpend tmpB
+        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
+    ) tb on b.SCIRefno = tb.SciRefno 
+            and b.poid = tb.ID 
+            and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
+            and (b.ColorID = tb.ColorID)
+            and b.Seq1 = tb.Seq1
     outer apply (
         select value = case
                             when b.BomTypeCalculate != 1 then 1
