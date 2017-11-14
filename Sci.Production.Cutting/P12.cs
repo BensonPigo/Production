@@ -474,114 +474,140 @@ outer apply
             }
 
             DataTable dt1, dt2, dt3,dtSelect;
-            //int count =dt.Rows.Count;
-            int count = 1;
             dt1 = dtt.Clone();
             dt2 = dtt.Clone();
             dt3 = dtt.Clone();
             dtSelect = dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"]).CopyToDataTable();
-            foreach (DataRow dr in dtSelect.Rows)
-            {
-                //第一列資料
-                if (count % 3 == 1)
-                {
-                    dt1.ImportRow(dr);
-                }
-                //第二列資料
-                if (count % 3 == 2)
-                {
-                    dt2.ImportRow(dr);
-                }
-                //第三列資料
-                if (count % 3 == 0)
-                {
-                    dt3.ImportRow(dr);
-                }
-                count++;
-            }
-
-
-            //傳 list 資料            
-            var res = dt1.AsEnumerable()
                 .Where(row => (bool)row["selected"])
-            .Select(row1 => new P12_PrintData()
+                .OrderBy(row=>row["CutRef"].ToString())
+                .CopyToDataTable();
+
+            var names = new string[]{
+                "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
+                "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
+
+            List<P12_PrintData> data = new List<P12_PrintData>();
+            bool changeGroup = true;
+            for (int i = 0; i< dtSelect.Rows.Count;)
             {
-                Group_right = row1["Group"].ToString(),
-                Group_left = row1["left"].ToString(),
-                Line = row1["Line"].ToString(),
-                Cell = row1["Cell"].ToString(),
-                SP = row1["SP"].ToString(),
-                Style = row1["Style"].ToString(),
-                MarkerNo = row1["MarkerNo"].ToString(),
-                Item = row1["Item"].ToString(),
-                Body_Cut = row1["Body_Cut"].ToString(),
-                Parts = row1["Parts"].ToString(),
-                Color = row1["Color2"].ToString(),
-                Size = row1["Size"].ToString(),
-                SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-                Patterncode = row1["Patterncode"].ToString(),
-                Desc = row1["Description"].ToString(),
-                SubProcess = row1["SubProcess"].ToString(),
-                Qty = row1["Qty"].ToString(),
-                Barcode = row1["Bundle"].ToString(),
-                Season = row1["Seasonid"].ToString(),
-                brand = row1["brand"].ToString()
-            }).ToList();
+                string thisGroupCutRef;
+                if (checkChangepagebyCut.Checked)
+                {
+                    thisGroupCutRef = dtSelect.Rows[i]["CutRef"].ToString();
+                }
+                else
+                {
+                    thisGroupCutRef = "1";
+                }
+                string tmpCutRef = null;
+                var pdata = new P12_PrintData();
+                data.Add(pdata);
+                int j = 0;
+                for (; j < 3 && i + j < dtSelect.Rows.Count; j++)
+                {
+                    DataRow dr = dtSelect.Rows[i + j];
+                    if (checkChangepagebyCut.Checked)
+                    {
+                        tmpCutRef = dr["CutRef"].ToString();
+                    }
+                    else
+                    {
+                        tmpCutRef = "1";
+                    }
+                    
+                    if (changeGroup && tmpCutRef != thisGroupCutRef)
+                    {
+                        break;
+                    }
 
-             res.AddRange( dt2.AsEnumerable()
-               .Where(row => (bool)row["selected"])
-           .Select(row1 => new P12_PrintData()
-           {
-               Group_right2 = row1["Group"].ToString(),
-               Group_left2 = row1["left"].ToString(),
-               Line2 = row1["Line"].ToString(),
-               Cell2 = row1["Cell"].ToString(),
-               SP2 = row1["SP"].ToString(),
-               Style2 = row1["Style"].ToString(),
-               MarkerNo2 = row1["MarkerNo"].ToString(),
-               Item2 = row1["Item"].ToString(),
-               Body_Cut2 = row1["Body_Cut"].ToString(),
-               Parts2 = row1["Parts"].ToString(),
-               Color2 = row1["Color2"].ToString(),
-               Size2 = row1["Size"].ToString(),
-               SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-               Patterncode2 = row1["Patterncode"].ToString(),
-               Desc2 = row1["Description"].ToString(),
-               SubProcess2 = row1["SubProcess"].ToString(),
-               Qty2 = row1["Qty"].ToString(),
-               Barcode2 = row1["Bundle"].ToString(),
-               Season2 = row1["Seasonid"].ToString(),
-               brand2 = row1["brand"].ToString()
-           }).ToList());
-
-             res.AddRange( dt3.AsEnumerable()
-               .Where(row => (bool)row["selected"])
-           .Select(row1 => new P12_PrintData()
-           {
-               Group_right3 = row1["Group"].ToString(),
-               Group_left3 = row1["left"].ToString(),
-               Line3 = row1["Line"].ToString(),
-               Cell3 = row1["Cell"].ToString(),
-               SP3 = row1["SP"].ToString(),
-               Style3 = row1["Style"].ToString(),
-               MarkerNo3 = row1["MarkerNo"].ToString(),
-               Item3 = row1["Item"].ToString(),
-               Body_Cut3 = row1["Body_Cut"].ToString(),
-               Parts3 = row1["Parts"].ToString(),
-               Color3 = row1["Color2"].ToString(),
-               Size3 = row1["Size"].ToString(),
-               SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? "" : "(" + row1["SizeSpec"].ToString() + ")",
-               Patterncode3 = row1["Patterncode"].ToString(),
-               Desc3 = row1["Description"].ToString(),
-               SubProcess3 = row1["SubProcess"].ToString(),
-               Qty3 = row1["Qty"].ToString(),
-               Barcode3 = row1["Bundle"].ToString(),
-               Season3 = row1["Seasonid"].ToString(),
-               brand3 = row1["brand"].ToString()
-           }).ToList());
-
-
+                    if (j == 0)
+                    {
+                        pdata.Group_right = dr["Group"].ToString();
+                        pdata.Group_left = dr["left"].ToString();
+                        pdata.Line = dr["Line"].ToString();
+                        pdata.Cell = dr["Cell"].ToString();
+                        pdata.SP = dr["SP"].ToString();
+                        pdata.Style = dr["Style"].ToString();
+                        pdata.Item = dr["Item"].ToString();
+                        pdata.Body_Cut = dr["Body_Cut"].ToString();
+                        pdata.Parts = dr["Parts"].ToString();
+                        pdata.Color = dr["Color"].ToString();
+                        pdata.Size = dr["Size"].ToString();
+                        pdata.SizeSpec = dr["SizeSpec"].ToString();
+                        pdata.Desc = dr["Description"].ToString();
+                        pdata.SubProcess = dr["SubProcess"].ToString();
+                        pdata.Qty = dr["Qty"].ToString();
+                        pdata.Barcode = dr["Bundle"].ToString();
+                        pdata.Patterncode = dr["Patterncode"].ToString();
+                        pdata.MarkerNo = dr["MarkerNo"].ToString();
+                        pdata.Season = dr["Seasonid"].ToString();
+                        pdata.brand = dr["brand"].ToString();
+                        pdata.item = dr["item"].ToString();
+                        pdata.CutRef = dr["CutRef"].ToString();
+                    }
+                    else if (j == 1)
+                    {
+                        pdata.Group_right2 = dr["Group"].ToString();
+                        pdata.Group_left2 = dr["left"].ToString();
+                        pdata.Line2 = dr["Line"].ToString();
+                        pdata.Cell2 = dr["Cell"].ToString();
+                        pdata.SP2 = dr["SP"].ToString();
+                        pdata.Style2 = dr["Style"].ToString();
+                        pdata.Item2 = dr["Item"].ToString();
+                        pdata.Body_Cut2 = dr["Body_Cut"].ToString();
+                        pdata.Parts2 = dr["Parts"].ToString();
+                        pdata.Color2 = dr["Color"].ToString();
+                        pdata.Size2 = dr["Size"].ToString();
+                        pdata.SizeSpec2 = dr["SizeSpec"].ToString();
+                        pdata.Desc2 = dr["Description"].ToString();
+                        pdata.SubProcess2 = dr["SubProcess"].ToString();
+                        pdata.Qty2 = dr["Qty"].ToString();
+                        pdata.Barcode2 = dr["Bundle"].ToString();
+                        pdata.Patterncode2 = dr["Patterncode"].ToString();
+                        pdata.MarkerNo2 = dr["MarkerNo"].ToString();
+                        pdata.Season2 = dr["Seasonid"].ToString();
+                        pdata.brand2 = dr["brand"].ToString();
+                        pdata.item2 = dr["item"].ToString();
+                        pdata.CutRef2 = dr["CutRef"].ToString();
+                    }
+                    else
+                    {
+                        pdata.Group_right3 = dr["Group"].ToString();
+                        pdata.Group_left3 = dr["left"].ToString();
+                        pdata.Line3 = dr["Line"].ToString();
+                        pdata.Cell3 = dr["Cell"].ToString();
+                        pdata.SP3 = dr["SP"].ToString();
+                        pdata.Style3 = dr["Style"].ToString();
+                        pdata.Item3 = dr["Item"].ToString();
+                        pdata.Body_Cut3 = dr["Body_Cut"].ToString();
+                        pdata.Parts3 = dr["Parts"].ToString();
+                        pdata.Color3 = dr["Color"].ToString();
+                        pdata.Size3 = dr["Size"].ToString();
+                        pdata.SizeSpec3 = dr["SizeSpec"].ToString();
+                        pdata.Desc3 = dr["Description"].ToString();
+                        pdata.SubProcess3 = dr["SubProcess"].ToString();
+                        pdata.Qty3 = dr["Qty"].ToString();
+                        pdata.Barcode3 = dr["Bundle"].ToString();
+                        pdata.Patterncode3 = dr["Patterncode"].ToString();
+                        pdata.MarkerNo3 = dr["MarkerNo"].ToString();
+                        pdata.Season3 = dr["Seasonid"].ToString();
+                        pdata.brand3 = dr["brand"].ToString();
+                        pdata.item3 = dr["item"].ToString();
+                        pdata.CutRef3 = dr["CutRef"].ToString();
+                    }
+                }
+                
+                if (changeGroup && tmpCutRef != thisGroupCutRef)
+                {
+                    i += j;
+                }
+                else
+                {
+                    i += 3;
+                }
+                
+            }
+            var res = data;
 
             //指定是哪個 RDLC
 
