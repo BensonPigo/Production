@@ -222,7 +222,9 @@ namespace Sci.Production.Planning
             string masterID = (e.Master == null) ? string.Empty : e.Master["ukey"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"select A.*,S.ABB SuppName from style_artwork_quot a WITH (NOLOCK)
-INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}", masterID);
+INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}
+ORDER BY UKEY
+", masterID);
 
             string sqlcmd = string.Format(
                 @"select t.*,B.ArtworkUnit AS unit from style_artwork t WITH (NOLOCK)
