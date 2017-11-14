@@ -79,15 +79,6 @@ order by ld.No, ld.GroupKey", masterID);
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
-            this.detailgrid.AutoResizeColumn(0);
-            this.detailgrid.AutoResizeColumn(3);
-            this.detailgrid.AutoResizeColumn(4);
-            this.detailgrid.AutoResizeColumn(5);
-            this.detailgrid.AutoResizeColumn(6);
-            this.detailgrid.AutoResizeColumn(7);
-            this.detailgrid.AutoResizeColumn(8);
-            this.detailgrid.AutoResizeColumn(9);
-            this.detailgrid.AutoResizeColumn(10);
         }
 
         /// <summary>
@@ -283,8 +274,8 @@ order by ld.No, ld.GroupKey", masterID);
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
                 .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
                 .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
@@ -304,6 +295,17 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["TotalGSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["TotalCycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            this.detailgrid.Columns["EmployeeSkill"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             this.detailgrid.RowPrePaint += (s, e) =>
             {
@@ -931,7 +933,6 @@ order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
                 this.CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 this.CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 this.CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
-                this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
                 this.CalculateValue(0);
                 this.ComputeTaktTime();
             }
@@ -1023,7 +1024,6 @@ order by td.Seq", timeStudy["ID"].ToString());
             this.CurrentMaintain["TotalCycle"] = sumSMV;
             this.CurrentMaintain["HighestGSD"] = maxSMV;
             this.CurrentMaintain["HighestCycle"] = maxSMV;
-            this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             this.CalculateValue(0);
             this.ComputeTaktTime();
         }
