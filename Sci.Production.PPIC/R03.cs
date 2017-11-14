@@ -16,6 +16,7 @@ namespace Sci.Production.PPIC
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
         private string style;
+        private string Article;
         private string season;
         private string brand;
         private string custcd;
@@ -125,6 +126,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             this.orderCfm1 = this.dateOrderCfmDate.Value1;
             this.orderCfm2 = this.dateOrderCfmDate.Value2;
             this.style = this.txtstyle.Text.Trim();
+            this.Article = this.txtArticle.Text.Trim();
             this.season = this.txtseason.Text.Trim();
             this.brand = this.txtbrand.Text.Trim();
             this.custcd = this.txtcustcd.Text.Trim();
@@ -243,6 +245,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
+	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = oq.id)a
     where  ( o.junk = 0 or o.junk is null) ");
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
@@ -315,6 +318,11 @@ with tmpOrders as (
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.style));
             }
 
+            if (!MyUtility.Check.Empty(this.Article))
+            {
+                sqlCmd.Append(string.Format(" and (a.Article = '{0}' or (a.Article is null and 1=1))", this.Article));
+            }
+
             if (!MyUtility.Check.Empty(this.season))
             {
                 sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'", this.season));
@@ -382,6 +390,7 @@ with tmpOrders as (
             {
                 sqlCmd.Append(" and o.Category = ''");
             }
+            
 
             sqlCmd.Append(@"
 ),
