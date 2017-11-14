@@ -319,7 +319,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Name = "P03";
-            this.Text = "P03. Material Status";
+            this.Text = "P03. Material Status (With Local Material)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.panel2, 0);

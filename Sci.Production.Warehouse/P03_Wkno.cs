@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             this.gridWkno.IsEditingReadOnly = true;
             this.gridWkno.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.gridWkno)
-                 .Text("id", header: "WK#", width: Widths.AnsiChars(13))
+                 .Text("id", header: "WK#", width: Widths.AnsiChars(18))
                  .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
                  .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)

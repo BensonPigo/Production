@@ -33,15 +33,15 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             if (sort_by == 0)
             {
-                order_by = " order by  a.refno ,a.id, iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)), dbo.GetColorMultipleID(b.BrandID,a.ColorID)";
+                order_by = " order by  a.[Ref#] ,a.[sp] , iif(a.Material_Type='Fabric',1,iif(a.Material_Type='Accessory',2,3)), a.[Color]";
             }
             else {
-                order_by = " order by a.id,a.seq1 , a.seq2";
+                order_by = " order by a.sp,a.[SEQ]";
             }
 
             if (chk_includeJunk == false)
             {
-                junk_where = " and a.junk <> 'true' "; ;
+                junk_where = " where a.junk <> 'true' "; ;
             }
             this.CurrentDataRow = row;
             print.Visible = false;
@@ -73,12 +73,12 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             //string xlt;
-
+            DualResult result;
             if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 //xlt = @"Warehouse_P03_Print-1.xltx";
                 //PO_Supp_tmp為了Chinese Abb Fabric_Supp 的suppID如果找不到，請找 PO_Supp_Detail.SCIRefno seq1最小的且suppID在 Fabric_Supp是有資料的那筆
-                DBProxy.Current.Select("", @"with PO_Supp_tmp as (
+                result= DBProxy.Current.Select("", @"with PO_Supp_tmp as (
                                                  select aa.*,bb.AbbCH from 
                                                  (select a.ID,a.SCIRefno,FIRST_VALUE(b.SuppID) OVER (partition by a.SCIRefno ORDER BY b.SEQ1 ) SuppID ,a.SEQ1 ,a.SEQ2
                                                  from dbo.PO_Supp_Detail a WITH (NOLOCK) 
@@ -86,6 +86,7 @@ namespace Sci.Production.Warehouse
                                                  where a.id=@ID ) aa
                                                  left join dbo.Fabric_Supp bb on bb.SCIRefno = aa.SCIRefno and bb.SuppID = aa.SuppID 
                                                 )
+                                                select * from (
                                                 select a.id [sp]
 			                                       ,b.StyleID [style#]
 			                                       ,a.SEQ1+a.SEQ2 [SEQ]
@@ -105,33 +106,33 @@ namespace Sci.Production.Warehouse
 			                                       ,dbo.GetColorMultipleID(b.BrandID,a.ColorID) [Color]
 			                                       ,a.SizeSpec [Size]
 			                                       ,h.Currencyid [Currency]
-			                                       ,a.UsedQty [Qty]
-			                                       ,a.Qty [Order Qty]
-		                                           ,a.NETQty [Net Qty]
-			                                       ,a.NETQty+a.LossQty [Use Qty]
-			                                       ,a.ShipQty [Ship Qty]
-			                                       ,a.ShipFOC [F.O.C]
-			                                       ,a.ApQty [AP Qty]
+			                                       ,format(a.UsedQty,'#,###,###,###.####')  [Qty]
+			                                       ,format(a.Qty,'#,###,###,###.##')  [Order Qty]
+		                                           ,format(a.NETQty,'#,###,###,###.##') [Net Qty]
+			                                       ,format(a.NETQty+a.LossQty,'#,###,###,###.##') [Use Qty]
+			                                       ,format(a.ShipQty,'#,###,###,###.##') [Ship Qty]
+			                                       ,format(a.ShipFOC,'#,###,###,###.##') [F.O.C]
+			                                       ,format(a.ApQty,'#,###,###,###.##') [AP Qty]
 			                                       ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
 			                                            WHERE g.PoID = a.id
 			                                            AND g.SEQ1 = a.seq1
 			                                            AND g.SEQ2 =a.seq2
 			                                            AND IsFormA = 1),'Y','') [FormA]
-			                                       ,a.InputQty [Taipei Stock Qty]
-			                                       ,a.POUnit [Unit]
+			                                       ,format(a.InputQty,'#,###,###,###.##') [Taipei Stock Qty]
+			                                       ,a.POUnit [POUnit]
 			                                       ,a.Complete [Cmplt]
-			                                       ,substring(convert(varchar, a.FinalETA, 101),1,5) [Act. Eta]
+			                                       ,format(a.FinalETA,'yyyy/MM/dd') [Act. Eta]
 			                                       ,(select id+',' from 
 			                                           (select distinct id from export_detail WITH (NOLOCK)  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path(''))  [WK#]
 			                                       ,(select orderid+',' from 
 			                                           (select ol.orderid  from PO_Supp_Detail_OrderList ol WITH (NOLOCK)  where id =a.id and seq1=a.seq1 and seq2=a.seq2) ol for xml path(''))  [Order List]
 			                                       ,i.InQty [Arrived Qty]
-			                                       ,a.StockUnit [Unit]
+			                                       ,a.StockUnit [StockUnit]
 			                                       ,i.OutQty [Released Qty]
 			                                       ,i.AdjustQty [Adjust Qty]
 			                                       ,i.InQty-i.OutQty+i.AdjustQty [Balance]
-			                                       ,i.LInvQty [Stock Qty]
-			                                       ,i.LObQty [Scrap Qty]
+			                                       ,format(i.LInvQty,'###,###,###.##') [Stock Qty]
+			                                       ,format(i.LObQty,'###,###,###.##') [Scrap Qty]
 			                                       ,i.ALocation [Bulk Location]
 			                                       ,i.BLocation [Stock Location]
                                                    ,[FIR]=dbo.getinspectionresult(a.id,a.seq1,a.seq2)
@@ -147,12 +148,60 @@ namespace Sci.Production.Warehouse
 		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
 			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
                                             left join PO_Supp_tmp j on a.ID = j.ID and a.SEQ1 = j.SEQ1 and a.SEQ2 = j.SEQ2
-			                                where a.id=@ID  " + junk_where + order_by, pars, out dt);			       
+			                                where a.id=@ID  
+                                            union all
+                                            select 
+                                                 [sp] = l.OrderID
+                                             , [StyleID] = '-'
+                                                , [SEQ] = '-'
+                                                , [Supp]  = c.ID 
+                                             , [Supp Name] = '-'
+                                             , [Sup. 1st Cfm ETA] = '-'
+                                             , [RevisedETD] = '-'
+                                             , [Ref#]		= l.Refno
+                                             , [description]  = b.Description
+                                             , [Chinese Abb] = '-'
+                                             , [HS Code] = '-'
+                                             , [Material_Type] = l.UnitID
+                                             , [Color] = l.ThreadColorID
+                                                , [Size] = '-'
+                                             , [Currency] = '-'
+                                             , [Qty] = null
+                                             , [Order Qty]  = '-'
+                                             , [Net Qty] = '-'
+                                             , [Use Qty] = '-'
+                                             , [Ship Qty] = '-'
+                                             , [F.O.C] = '-'
+                                             , [AP Qty] = '-'
+                                             , [FormA] = '-'
+                                             , [Taipei Stock Qty] = '-'
+                                             , [POUnit] = '-'
+                                             , [Cmplt] = null
+                                             , [Act. Eta] = '-'
+                                             , [WK#] = '-'
+                                             , [Order List] = '-'
+                                             , [Arrived Qty] = isnull(l.InQty,0)
+                                             , [StockUnitUnit]  = l.UnitID
+                                             , [Released Qty] = isnull(l.OutQty,0)
+                                             , [Adjust Qty] =isnull( l.AdjustQty,0)
+                                             , [Balance]  = isnull(InQty - OutQty + AdjustQty,0)
+                                             , [Stock Qty] = '-'
+                                             , [Scrap Qty] = '-'
+                                             , [Bulk Location] = l.ALocation
+                                             , [Stock Location] = '-'
+                                             , [FIR] = '-'
+                                             , [Remark] = '-'
+                                             , [junk]  = 'false'
+                                              from LocalInventory l
+                                                left join LocalItem b on l.Refno=b.RefNo
+                                                left join LocalSupp c on b.LocalSuppid=c.ID
+                                                 where l.OrderID = @ID     ) as a " + junk_where + order_by, pars, out dt);			       
           }
           else  
           {
-           //xlt = @"Warehouse_P03_Print-2.xltx";
-           DBProxy.Current.Select("", @"select a.id [sp]
+                //xlt = @"Warehouse_P03_Print-2.xltx";
+                result = DBProxy.Current.Select("", @"select * from (
+                                            select a.id [sp]
                                               ,b.StyleID [style]
                                               ,a.SEQ1+a.SEQ2 [SEQ]
                                               ,[Desc]=dbo.getMtlDesc(a.id,a.SEQ1,a.seq2,2,0)
@@ -167,15 +216,15 @@ namespace Sci.Production.Warehouse
                                               ,Supp_Name=f.AbbEN
                                               ,Currency=f.Currencyid
                                               ,Del=substring(convert(varchar, a.cfmetd, 101),1,5)
-                                              ,Used_Qty=a.UsedQty
-                                              ,Order_Qty=a.qty
-                                              ,Taipei_Stock=a.InputQty
-                                              ,Unit=a.POUnit
-                                              ,TTL_Qty=a.ShipQty
-                                              ,FOC=a.FOC
-                                              ,ty=convert(numeric(5,2), iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100))
+                                              ,Used_Qty=format(a.UsedQty,'#,###,###,###.##')
+                                              ,Order_Qty=format(a.qty ,'#,###,###,###.##')
+                                              ,Taipei_Stock= format(a.InputQty,'#,###,###,###.##')
+                                              ,Unit=a.POUnit 
+                                              ,TTL_Qty= format(a.ShipQty,'#,###,###,###.##')
+                                              ,FOC=format(a.FOC,'#,###,###,###.##')
+                                              ,ty= format( iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100),'##,###.##') 
                                               ,OK=a.Complete
-                                              ,Exp_Date=substring(convert(varchar,a.eta, 101),1,5)
+                                              ,Exp_Date=format(a.eta,'yyyy/MM/dd') 
                                               ,FormA=IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
                                                     WHERE g.PoID =a.id
                                                     AND g.SEQ1 = a.seq1
@@ -189,12 +238,40 @@ namespace Sci.Production.Warehouse
                                        left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
                                        left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
                                        left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
-                                       where a.id=@ID " + junk_where + order_by, pars, out dt);                          
+                                       where a.id=@ID 
+                                        union all
+                                    select 
+                                         [sp] = l.OrderID
+                                    	 , [StyleID] = '-'
+                                        , [SEQ] = '-'
+                                    	 , [description]  = b.Description
+                                    	 , [Chinese Abb] = '-'
+                                    	 , [Material_Type] = l.UnitID
+                                    	 , [HS Code] = '-'
+                                    	 , [Supp]  = c.ID 
+                                    	 , [Supp Name] = '-'
+                                    	 , [Currency] = '-'
+                                    	 , [Del] = '-'
+                                    	 , [Used_Qty] = '-'
+                                    	 , [Order Qty]  = '-'
+                                        , [Taipei Stock Qty] = '-'
+                                    	 , [POUnit] = '-'
+                                    	 , [TTL_Qty] = '-'
+                                    	 , [F.O.C] = '-'
+                                    	 , [ty] = '-'
+                                    	 , [OK] = 'true'
+                                    	 , [Exp_Date] = '-'
+                                    	 , [FormA] = '-'
+                                    	 , [junk] = 'false'
+                                    	  from LocalInventory l
+                                        left join LocalItem b on l.Refno=b.RefNo
+                                        left join LocalSupp c on b.LocalSuppid=c.ID
+                                         where l.OrderID  = @ID    ) as a   " + junk_where + " order by a.sp,a.[SEQ]", pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);
           //xl.dicDatas.Add("##sp", dt);
           //xl.Save(outpa, false);
-          return Result.True;
+          return result;
         }
 
         protected override bool OnToExcel(ReportDefinition report)

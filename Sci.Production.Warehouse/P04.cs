@@ -95,7 +95,7 @@ namespace Sci.Production.Warehouse
                 var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
-                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow);
+                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow,"P04");
                     form.Show(this);
                 }
             };
