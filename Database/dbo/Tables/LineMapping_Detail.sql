@@ -12,8 +12,12 @@
     [GroupKey]      INT            CONSTRAINT [DF_LineMapping_Detail_GroupKey] DEFAULT ((0)) NOT NULL,
     [New]           BIT            CONSTRAINT [DF_LineMapping_Detail_New] DEFAULT ((0)) NULL,
     [EmployeeID]    VARCHAR (10)   CONSTRAINT [DF_LineMapping_Detail_EmployeeID] DEFAULT ('') NULL,
+    [Attachment]    BIT            NULL,
+    [Template]      BIT            NULL,
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [GroupKey] ASC)
 );
+
+
 
 
 
