@@ -83,31 +83,35 @@ namespace Sci.Production.Quality
             {
                 dateTargetLeadtime.Text = "";
             }
-            decimal dRowCount = DetailDatas.Count;
-            string inspnum = "0";
-            DataTable articleDT = (DataTable)detailgridbs.DataSource;
 
+            #region 比照R03報表計算方式
+            DataTable dtArticle;
+            DBProxy.Current.Select("", string.Format(@"
+SELECT 1 from 
+(select distinct o.poid,q.Article from dbo.orders o WITH (NOLOCK) 
+inner join         dbo.Order_Qty q WITH (NOLOCK) on q.id =o.id 
+where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle);
+            decimal dRowCount = dtArticle.Rows.Count;            
+            decimal intArticle = 0;
+            DataTable articleDT = (DataTable)detailgridbs.DataSource;
             if (articleDT.Rows.Count != 0)
             {
-                DataRow[] articleAry = articleDT.Select("status='Confirmed'");
-                if (articleAry.Length > 0)
+                intArticle = Math.Round((articleDT.Rows.Count / dRowCount) * 100, 2);
+                if (intArticle > 100)
                 {
-                    inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
-                    displayArticleofInspection.Text = inspnum + "%";
+                    displayArticleofInspection.Text = "100%";
                 }
                 else
                 {
-                    displayArticleofInspection.Text = "";
+                    displayArticleofInspection.Text = intArticle.ToString() + "%";
                 }
             }
             else
             {
                 displayArticleofInspection.Text = "";
             }
-
-
             DateTime CompDate;
-            if (inspnum == "100")
+            if (intArticle >= 100)
             {
                 CompDate = ((DateTime)articleDT.Compute("Max(Inspdate)", ""));
                 dateCompletionDate.Value = CompDate;
@@ -116,6 +120,27 @@ namespace Sci.Production.Quality
             {
                 dateCompletionDate.Text = "";
             }
+            #endregion
+            //if (articleDT.Rows.Count != 0)
+            //{
+            //    DataRow[] articleAry = articleDT.Select("status='Confirmed'");
+            //    if (articleAry.Length > 0)
+            //    {
+            //        inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
+            //        displayArticleofInspection.Text = inspnum + "%";
+            //    }
+            //    else
+            //    {
+            //        displayArticleofInspection.Text = "";
+            //    }
+            //}
+            //else
+            //{
+            //    displayArticleofInspection.Text = "";
+            //}
+
+
+
 
             //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
             contextMenuStrip();
