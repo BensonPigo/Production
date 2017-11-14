@@ -295,7 +295,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) , qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
@@ -344,7 +344,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
@@ -374,7 +374,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct  poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct  poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
@@ -422,7 +422,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
