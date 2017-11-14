@@ -15,7 +15,8 @@ namespace Sci.Production.Planning
     public partial class P01 : Sci.Win.Tems.Input6
     {
         private bool firstTime = true;
-
+        private bool data_overload = false;
+        private string overload_date;
         /// <summary>
         /// P01
         /// </summary>
@@ -42,6 +43,17 @@ namespace Sci.Production.Planning
             if (history.ToUpper() == "Y")
             {
                 this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 ";
+
+                // 因為在x86 run 有記憶體限制，如果筆數超過12萬筆就加入時間條件add_date兩年內的
+                DataRow dr;
+                if (MyUtility.Check.Seek("select count(*),FORMAT(dateadd(YEAR,-2,DATEADD(DD, DATEDIFF(DD, 0, GETDATE()), 0)),'yyyy/MM/dd') from orders where " + this.DefaultFilter, out dr)) {
+                    if ((int)dr[0] > 120000)
+                    {
+                        this.DefaultFilter = this.DefaultFilter + @" and AddDate >= dateadd(YEAR,-2,DATEADD(DD, DATEDIFF(DD, 0, GETDATE()), 0)) ";
+                        this.data_overload = true;
+                        this.overload_date = dr[1].ToString();
+                    }
+                }
             }
             else
             {
@@ -51,6 +63,18 @@ namespace Sci.Production.Planning
             this.Text = "P01 Sub-process master list (History)";
             this.IsSupportEdit = false;
             this.btnBatchApprove.Enabled = false;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            if (this.data_overload)
+            {
+                MyUtility.Msg.InfoBox(string.Format("Due to excessive data, data show nearly two years only(AddDate from {0}).\r\nFilter other Data, please use the LOCATE function.", this.overload_date));
+            }
+
         }
 
         private void ComboxChange(object o, DataGridViewCellEventArgs e)
