@@ -729,7 +729,7 @@ where id = @MDivision", pars, out dt);
                 return false;
             }
 
-            string ApvDate = ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToShortDateString();
+            string ApvDate = ((DateTime)MyUtility.Convert.GetDate(dtApv.Rows[0]["ApvDate"])).ToString("yyyy/MM/dd HH:mm:ss");
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
 
             #endregion

@@ -617,6 +617,7 @@
             this.txtFabricPanelCode.Name = "txtFabricPanelCode";
             this.txtFabricPanelCode.Size = new System.Drawing.Size(51, 23);
             this.txtFabricPanelCode.TabIndex = 15;
+            this.txtFabricPanelCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtFabricPanelCode_Validating);
             // 
             // txtFabricCombo
             // 

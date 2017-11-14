@@ -2465,6 +2465,33 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             }
         }
 
+        private void txtFabricPanelCode_Validating(object sender, CancelEventArgs e)
+        {
+            DataRow dr;
+            string new_FabricPanelCode = txtFabricPanelCode.Text;
+            string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.MtlTypeID
+                            from Order_BoF ob 
+                            left join Fabric f on ob.SCIRefno = f.SCIRefno
+                             where 
+                             exists (select id from Order_FabricCode ofa where ofa.id = '{0}' and ofa.FabricPanelCode = '{1}'
+                             and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)", CurrentMaintain["ID"], new_FabricPanelCode);
+           
+            if (MyUtility.Check.Seek(sqlcmd, out dr))
+            {
+                CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
+                CurrentDetailData["MtlTypeID_SCIRefno"] = dr["MtlTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
+                CurrentDetailData["Description"] = dr["Description"].ToString();
+                CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(string.Format("This FabricPanelCode<{0}> is wrong", txtFabricPanelCode.Text));
+                e.Cancel = true;
+                return;
+            };
+        }
+
+        
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
