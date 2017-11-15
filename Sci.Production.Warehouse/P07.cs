@@ -1598,6 +1598,9 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         {
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
             base.ClickUndo();
+
+            comboTypeFilter.SelectedIndex = 0;
+            detailgridbs.Filter = "";
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
