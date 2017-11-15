@@ -110,7 +110,6 @@ namespace Sci.Production.Warehouse
             string errorkey;
             foreach (DataRow row in DetailDatas)
             {
-                
                 //List<string> listRowErrMsg = new List<string>();
                 errorkey = string.Format("<SP#> : {0}, <Seq> : {1}", row["Poid"], row["Seq"]);
                 if (!errormsgDir.ContainsKey(errorkey))
@@ -326,7 +325,6 @@ where x.value > 1
             warningmsg.Clear();
             foreach (DataRow row in DetailDatas)
             {
-
                 if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
                     if (row.RowState == DataRowState.Added)
@@ -365,7 +363,9 @@ where x.value > 1
             }
             //Check Roll 是否已經存在
             if (!checkRoll())
+            {
                 return false;
+            }
 
             if (!MyUtility.Check.Empty(DetailDatas) && DetailDatas.Count > 0)
             {
@@ -404,7 +404,6 @@ where   #tmp.poid = dbo.po_supp.id
                 }
                 CurrentMaintain["id"] = tmpId;
             }
-
             return base.ClickSaveBefore();
         }
 
@@ -939,6 +938,11 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
             {
+                if (dtr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 string[] dtrLocation = dtr["location"].ToString().Split(',');
                 if (dtrLocation.Length == 0)
                 {
@@ -1350,7 +1354,15 @@ Where a.id = '{0}' ", masterID);
             DataTable dt;
             if (txtInvoiceNo.Text != txtInvoiceNo.OldValue)
             {
-                ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+                foreach (DataRow drDetail in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    if (drDetail.RowState != DataRowState.Deleted)
+                    {
+                        //清空表身資料
+                        drDetail.Delete();
+                    }
+                }
+
                 CurrentMaintain["invno"] = txtInvoiceNo.Text;
                 CurrentMaintain["ETA"] = DBNull.Value;
                 CurrentMaintain["WhseArrival"] = DBNull.Value;
@@ -1407,9 +1419,9 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                         MyUtility.Msg.WarningBox("Export Data not found!!");
                         return;
                     }
-                    foreach (var item in dt.ToList())
+                    foreach (DataRow item in dt.Rows)
                     {
-                        //DetailDatas.Add(item);
+                        item.SetAdded();
                         ((DataTable)detailgridbs.DataSource).ImportRow(item);
                     }
                 }
@@ -1427,6 +1439,11 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         {
             //((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows) {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
                 dr.Delete();
             }
             
@@ -1572,12 +1589,18 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         {
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
             base.ClickSaveAfter();
+
+            comboTypeFilter.SelectedIndex = 0;
+            detailgridbs.Filter = "";
         }
 
         protected override void ClickUndo()
         {
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
             base.ClickUndo();
+
+            comboTypeFilter.SelectedIndex = 0;
+            detailgridbs.Filter = "";
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -1726,6 +1749,7 @@ already exists, system will update the Qty for original Deylot <{3}>
                     #endregion
                 }
             }
+
             #region 若上方判斷有 同 Roll 不同 Dyelot
             if (listMsg.Count > 0)
             {
