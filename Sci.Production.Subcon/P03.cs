@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
-            txtmfactory.ReadOnly = true;            
+            txtmfactory.ReadOnly = true;
         }
 
         // detail 新增時設定預設值
@@ -42,8 +42,9 @@ namespace Sci.Production.Subcon
             if ((o.Text != o.OldValue) && this.EditMode)
             {
                 DataTable dt = (DataTable)detailgridbs.DataSource;
-                for (int i = dt.Rows.Count-1 ; i >= 0  ;i--){
-                    DataRow dr  = dt.Rows[i];
+                for (int i = dt.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dr = dt.Rows[i];
                     dr.Delete();
                 }
             }
@@ -83,10 +84,10 @@ namespace Sci.Production.Subcon
                 this.RenewData();
                 return false;
             }
-            
+
             return base.ClickEditBefore();
         }
-    
+
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
@@ -154,11 +155,11 @@ namespace Sci.Production.Subcon
             }
             #region 加總明細Qty是否=0
             object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "");
-            if (MyUtility.Convert.GetDecimal(detail_a)==0)
+            if (MyUtility.Convert.GetDecimal(detail_a) == 0)
             {
                 MessageBox.Show("Farm In# Detail Qty can't all be zero.");
                 return false;
-            }            
+            }
 
             #endregion
             #region 加總明細金額至表頭
@@ -202,38 +203,12 @@ where id='{0}'", id);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        // grid 加工填值
-        //protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        //{
-        //    if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-        //    {
-        //        (e.Details).Columns.Add("StyleId", typeof(String));
-        //        (e.Details).Columns.Add("Variance", typeof(decimal));
-        //        (e.Details).Columns.Add("BalQty", typeof(decimal));
-
-        //        foreach (DataRow dr in e.Details.Rows)
-        //        {
-        //            dr["Variance"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"];
-        //            dr["BalQty"] = (decimal)dr["artworkpoqty"] - (decimal)dr["onhand"] - (decimal)dr["qty"];
-        //            DataTable order_dt;
-        //            DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-        //            if (order_dt.Rows.Count == 0)
-        //                continue;
-        //            dr["StyleId"] = order_dt.Rows[0]["styleid"].ToString();
-
-        //        }
-        //    }
-        //    return base.OnRenewDataDetailPost(e);
-        //}
-
-        //refresh
-
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            
+
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
-           
+
             this.txtmfactory.ReadOnly = true;
 
             #region -- 加總明細金額，顯示於表頭 --
@@ -244,10 +219,10 @@ where id='{0}'", id);
                 {
                     x += (decimal)drr["qty"];
                 }
-               
+
                 Console.WriteLine("get {0}", x);
-              
-                numTotalQty.Text= x.ToString();
+
+                numTotalQty.Text = x.ToString();
             }
             #endregion
             #region Status Label
@@ -306,11 +281,10 @@ where id='{0}'", id);
                         return;
                     }
 
-                   
+
 
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
                     {
-                        
                         string sqlcmd = string.Format(@"
 SELECT  B.id
         , b.artworktypeid
@@ -319,6 +293,7 @@ SELECT  B.id
         , b.patterndesc
         , b.poqty
         , b.farmout
+        , b.farmin
         , b.ukey
         , A.Status
 FROM ArtworkPO A WITH (NOLOCK) 
@@ -328,31 +303,10 @@ WHERE   a.mdivisionid = '{2}'
         AND A.Closed = 0
         AND B.OrderID ='{0}'
         AND B.ArtworkTypeID = '{1}' 
-order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"],Sci.Env.User.Keyword);
-                        Sci.Win.Tools.SelectItem item
-                            = new Sci.Win.Tools.SelectItem(sqlcmd, "13,13,13,13,15,5,5,0", dr["artworkpoID"].ToString(), "POID,Artwork Type,Artwork,Cutpart,Cutpart Name,PoQty,FarmOut,Ukey");
-                        item.Width = 1024;
-                        item.Height = 480;
-
-                        DialogResult returnResult = item.ShowDialog();
-                        IList<DataRow> selectedData = item.GetSelecteds();
-                        if (returnResult == DialogResult.Cancel) { return; }
-                        if ((selectedData[0])["Status"].ToString() =="New")
-                        {
-                            MyUtility.Msg.WarningBox("PO is not confirmed yet");
-                        } 
-                        else if (selectedData.Count > 0)
-                        {
-                            dr["artworkpoID"] = item.GetSelectedString();
-                            dr["artworkid"] = (selectedData[0])["artworkid"].ToString();
-                            dr["patterncode"] = (selectedData[0])["patterncode"].ToString();
-                            dr["patterndesc"] = (selectedData[0])["patterndesc"].ToString();
-                            dr["artworkpoqty"] = (selectedData[0])["poqty"].ToString();
-                            dr["onhand"] = (selectedData[0])["farmout"];
-                            dr["ArtworkPo_DetailUkey"] = (selectedData[0])["ukey"].ToString();
-                            dr["qty"] = (decimal)(selectedData[0])["poqty"] - (decimal)(selectedData[0])["farmout"];
-                        }
-                        
+order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Keyword);
+                        var frm = new Sci.Production.Subcon.P03_P04_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "P03", sqlcmd, dr);
+                        frm.ShowDialog(this);
+                        this.grid.ValidateControl();
                     }
                 }
             };
@@ -476,14 +430,14 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"],Sci.Env.User.Key
                     }
                     if (datacheck.Rows.Count > 0)
                     {
-                         sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
-                                + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)dr["qty"], dr["artworkpo_detailukey"]);
-                        
+                        sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                               + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)dr["qty"], dr["artworkpo_detailukey"]);
+
                     }
                     else
                     {
-                         sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
-                                + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
+                        sqlcmd2 += string.Format("update artworkpo_detail set farmout = {0} where ukey = '{1}';"
+                               + Environment.NewLine, (decimal)dr["qty"], dr["artworkpo_detailukey"]);
                     }
                 }
             }
@@ -520,7 +474,7 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"],Sci.Env.User.Key
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-         
+
         }
 
         protected override void ClickUnconfirm()
@@ -560,7 +514,7 @@ inner join farmout_detail c WITH (NOLOCK) on  b.bundleno = c.bundleno
 where   c.bundleno !='' 
         and a.Status = 'Confirmed'
         and c.id = '{0}'
-        and a.artworktypeid = '{1}'", 
+        and a.artworktypeid = '{1}'",
                                     CurrentMaintain["id"], CurrentMaintain["artworktypeid"]);
 
             ids = "";
@@ -594,7 +548,7 @@ where   c.bundleno !=''
                 DataRow[] Srows;
                 foreach (var dr in DetailDatas)
                 {
-                    Srows = datacheck.Select(string.Format("OrderID = '{0}'",dr["orderid"].ToString()));
+                    Srows = datacheck.Select(string.Format("OrderID = '{0}'", dr["orderid"].ToString()));
                     if ((decimal)Srows[0]["farmout"] - (decimal)dr["qty"] < (decimal)Srows[0]["farmin"])
                     {
                         mids.Append(string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5} \n", Srows[0]["id"], Srows[0]["orderid"], Srows[0]["artworktypeid"], Srows[0]["artworkid"], Srows[0]["patterncode"], Srows[0]["farmin"]));
@@ -691,7 +645,7 @@ where   c.bundleno !=''
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         /// <summary>確認 DB 是否存在相同【ArtworkTypeID, BundleNo, ArtworkID, PatternCode】
