@@ -180,7 +180,7 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 	) tmp),'yyyy/MM/dd') as ETA
 	,format(MIN(a.SewInLine),'yyyy/MM/dd') as FstSewinline
     ,b.Special AS cutType
-	,qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), (select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit))
+	,qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), iif(b.StockUnit!='',(select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit),2))
 	,b.stockunit
 	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
     ,c.TapeInline,c.TapeOffline
