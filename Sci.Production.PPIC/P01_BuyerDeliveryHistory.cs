@@ -41,6 +41,7 @@ namespace Sci.Production.PPIC
             this._HisType = hisType;
             this._SourceID = sourceID;
             this._SourceIDRange = sourceIDRange;
+            this.Text = this.Text + $"({this._SourceID})";
         }
 
         /// <inheritdoc/>
@@ -122,11 +123,7 @@ where TableName = @TableName";
                 }
 
                 this.grid_BS.DataSource = dt;
-
-                for (int i = 0; i < dt.Columns.Count; i++)
-                {
-                    this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                }
+                this.grid.ColumnsAutoSize();
             }
         }
     }

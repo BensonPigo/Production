@@ -46,21 +46,21 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(0, 0);
             this.grid.Name = "grid";
-            this.grid.RowHeadersVisible = false;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
+            this.grid.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid.Size = new System.Drawing.Size(763, 352);
+            this.grid.Size = new System.Drawing.Size(1041, 352);
             this.grid.TabIndex = 3;
             this.grid.TabStop = false;
             // 
             // P01_BuyerDeliveryHistory
             // 
-            this.ClientSize = new System.Drawing.Size(763, 352);
+            this.ClientSize = new System.Drawing.Size(1041, 352);
             this.Controls.Add(this.grid);
             this.Name = "P01_BuyerDeliveryHistory";
-            this.Text = "() ";
+            this.Text = "Buyer Delivery ";
             this.Controls.SetChildIndex(this.grid, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_BS)).EndInit();
