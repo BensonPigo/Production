@@ -543,7 +543,7 @@ outer apply
                         pdata.Season = dr["Seasonid"].ToString();
                         pdata.brand = dr["brand"].ToString();
                         pdata.item = dr["item"].ToString();
-                        pdata.CutRef = dr["CutRef"].ToString();
+                        pdata.CutRef = tmpCutRef;
                     }
                     else if (j == 1)
                     {
@@ -568,7 +568,7 @@ outer apply
                         pdata.Season2 = dr["Seasonid"].ToString();
                         pdata.brand2 = dr["brand"].ToString();
                         pdata.item2 = dr["item"].ToString();
-                        pdata.CutRef2 = dr["CutRef"].ToString();
+                        pdata.CutRef2 = tmpCutRef;
                     }
                     else
                     {
@@ -593,7 +593,7 @@ outer apply
                         pdata.Season3 = dr["Seasonid"].ToString();
                         pdata.brand3 = dr["brand"].ToString();
                         pdata.item3 = dr["item"].ToString();
-                        pdata.CutRef3 = dr["CutRef"].ToString();
+                        pdata.CutRef3 = tmpCutRef;
                     }
                 }
                 
