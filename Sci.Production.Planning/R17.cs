@@ -757,9 +757,9 @@ ORDER BY A1.ID";
                         }
 
                         worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                     }
 
+                    worksheet.Columns.AutoFit();
                     worksheet.Cells[rc + 2, 2] = "Total:";
                     worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
@@ -799,10 +799,11 @@ ORDER BY A1.ID";
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
+                            
                             worksheet.Range[string.Format("F{0}:G{0}", intIndex + 2)].NumberFormatLocal = "yyyy/MM/dd";
                         }
 
+                        worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
@@ -844,9 +845,9 @@ ORDER BY A1.ID";
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                         }
 
+                        worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
@@ -887,9 +888,9 @@ ORDER BY A1.ID";
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); // 自動調整欄寬
                         }
 
+                        worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
                         worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
 
