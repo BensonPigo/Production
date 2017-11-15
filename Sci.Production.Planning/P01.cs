@@ -61,7 +61,6 @@ namespace Sci.Production.Planning
             }
 
             this.Text = "P01 Sub-process master list (History)";
-            this.IsSupportEdit = false;
             this.btnBatchApprove.Enabled = false;
         }
 
