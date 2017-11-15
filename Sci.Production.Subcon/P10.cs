@@ -190,6 +190,37 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
+            #region 表身的來源subconp01單號是否CONFIRM。
+            string chkp01 =
+                @"
+select distinct ap.id
+from ArtworkPO ap with(nolock) 
+inner join #tmp t on t.artworkpoid = ap.id
+where  ap.status = 'New'
+";
+            DataTable dt;
+            DualResult result;
+            if(result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "Artworkpoid", chkp01, out dt))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    StringBuilder chkp01comfirmed = new StringBuilder();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        chkp01comfirmed.Append(string.Format("Please confirm [Subcon][P01]:{0} first !!\r\n", dr["id"]));
+                    }
+                    MyUtility.Msg.WarningBox(chkp01.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return false;
+            }
+
+            #endregion
+
             //取單號： 
             if (this.IsDetailInserting)
             {

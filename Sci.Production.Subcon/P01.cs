@@ -384,20 +384,51 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
         protected override void ClickConfirm()
         {
-            base.ClickConfirm();
-            String sqlcmd;
+            DualResult result;
+            #region 須檢核其來源單[P10]狀態為CONFIRM。
+            string check_p10status = string.Format(
+                @"
+select distinct aa.id,status=isnull(aa.status,'')
+from ArtworkPO ap with(nolock)
+left join ArtworkAP_detail aad with(nolock) on ap.id = aad.artworkpoid
+left join ArtworkAP aa with(nolock)on aad.id = aa.id
+where aa.status = 'New' and ap.Id ='{0}'",
+                CurrentMaintain["id"]);
+            DataTable chktb;
+            if(result = DBProxy.Current.Select(null, check_p10status, out chktb))
+            {
+                if (chktb.Rows.Count>1)
+                {
+                    string p10id = "";
+                    foreach (DataRow dr in chktb.Rows)
+                    {
+                        p10id += dr["id"].ToString();
+                    }
+                    string chkp10msg = string.Format("Please confirm [Subcon][P10]:{0} first !!", p10id);
+                    MyUtility.Msg.WarningBox(chkp10msg);
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+            #endregion
+
+            string sqlcmd;
 
             sqlcmd = string.Format("update artworkpo set status = 'Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
 
-            DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 ShowErr(sqlcmd, result);
                 return;
             }
-           
+
+            base.ClickConfirm();
         }
 
         protected override void ClickUnconfirm()
@@ -572,6 +603,40 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             this.detailgrid.Columns["coststitch"].HeaderText = "Cost" + Environment.NewLine + "(" + artworkunit + ")";
             this.detailgrid.Columns["stitch"].HeaderText = artworkunit;
             #endregion
+        }
+
+        protected override void OnDetailGridDelete()
+        {
+            string chkp10exists = string.Format(
+                @"
+select distinct aad.orderid,aad.id
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  ap.id = '{0}' and aad.ukey = '{1}'
+",
+                CurrentMaintain["id"],CurrentDetailData["Ukey"]);
+            DualResult Result;
+            DataTable dt;
+            if(Result = DBProxy.Current.Select(null, chkp10exists,out dt))
+            {
+                if (dt.Rows.Count > 1)
+                {
+                    StringBuilder p10exists = new StringBuilder();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        p10exists.Append(string.Format("Please delete [Subcon][P10]:{0} {1} first !! \r\n", dr["id"], dr["orderid"]));
+                    }
+                    MyUtility.Msg.WarningBox(p10exists.ToString());
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(Result.ToString());
+                return;
+            }
+
+            base.OnDetailGridDelete();
         }
     }
 }
