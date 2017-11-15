@@ -973,6 +973,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                                 dr["StatusExp"] = GetStatusName(newStatus);
                             }
                             ddr.Delete();
+                            dr["ReviseDate"] = DateTime.Now;
                         }
                         else
                         {
@@ -984,6 +985,7 @@ select AllShipQty = (isnull ((select sum(ShipQty)
                                 }
 
                                 ddr["ShipQty"] = PulloutSubDetail[0]["Shipqty"];
+                                dr["ReviseDate"] = DateTime.Now;
                             }
                         }
                     }
