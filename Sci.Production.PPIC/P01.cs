@@ -1376,5 +1376,12 @@ where POID = @poid group by POID,b.spno";
                 }
             }
         }
+
+        private void BtnBuyerDeliveryHistory_Click(object sender, EventArgs e)
+        {
+            string orderID = this.CurrentMaintain["id"].ToString();
+            P01_BuyerDeliveryHistory pb = new P01_BuyerDeliveryHistory("Order", "Orders", "OrdersBuyerDelivery", orderID);
+            pb.ShowDialog(this);
+        }
     }
 }

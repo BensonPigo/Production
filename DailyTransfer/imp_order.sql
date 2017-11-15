@@ -2480,6 +2480,37 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 drop table #tmpOrders
 drop table #TOrder
 
+---- 轉入 歷史資料 TradeHis_Order 必須與 Trade 資料相同----
+Merge Production.dbo.TradeHis_Order as t
+Using (
+	select * 
+	from Trade_To_Pms.dbo.TradeHis_Order
+	where tableName = 'Orders' 
+		  and histype = 'OrdersBuyerDelivery'
+) as s on t.Ukey = s.Ukey
+when matched then update set
+	t.[TableName] = s.[TableName]
+	, t.[HisType] = s.[HisType]
+	, t.[SourceID] = s.[SourceID]
+	, t.[ReasonTypeID] = s.[ReasonTypeID]
+	, t.[ReasonID] = s.[ReasonID]
+	, t.[OldValue] = s.[OldValue]
+	, t.[NewValue] = s.[NewValue]
+	, t.[Remark] = s.[Remark]
+	, t.[AddName] = s.[AddName]
+	, t.[AddDate] = s.[AddDate]
+when not matched by target then
+	insert (
+		[UKEY] 		  , [TableName]  , [HisType]   , [SourceID]  , [ReasonTypeID] 
+		, [ReasonID]  , [OldValue]   , [NewValue]  , [Remark]    , [AddName] 
+		, [AddDate]
+	) values (
+		s.[UKEY]	  , s.[TableName], s.[HisType] , s.[SourceID], s.[ReasonTypeID]
+		, s.[ReasonID], s.[OldValue] , s.[NewValue], s.[Remark]  , s.[AddName]
+		, s.[AddDate]
+	)
+when not matched by source then
+	delete;
 
 END
 ------------------------------------------------------------------------------------------------------------------------

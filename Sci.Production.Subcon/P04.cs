@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("mdivisionid = '{0}'", Sci.Env.User.Keyword);
-            
+
         }
 
         // detail 新增時設定預設值
@@ -82,15 +82,15 @@ namespace Sci.Production.Subcon
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("FarmIn", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
-         
+
                 this.RenewData();
-               
+
                 return false;
             }
 
             this.txtmfactory.ReadOnly = true;
             return base.ClickEditBefore();
-        }       
+        }
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -271,6 +271,7 @@ where id='{0}'", id);
 ,b.farmout
 ,b.farmin
 ,b.ukey
+, A.Status
 FROM ArtworkPO A WITH (NOLOCK) , ArtworkPO_Detail B WITH (NOLOCK) 
 WHERE A.ID = B.ID
 AND A.ApvName IS NOT NULL
@@ -278,25 +279,10 @@ AND A.status = 'Approved'
 AND B.OrderID ='{0}'
 AND B.ArtworkTypeID = '{1}' 
 and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaintain["artworktypeid"].ToString(), Sci.Env.User.Keyword);
-                        Sci.Win.Tools.SelectItem item
-                            = new Sci.Win.Tools.SelectItem(sqlcmd, "13,13,13,13,15,5,5,5,0", dr["artworkpoID"].ToString(), "POID,Artwork Type,Artwork,Cutpart,Cutpart Name,PoQty,Farm Out,Farm In,Ukey");
-                        item.Width = 1024;
-                        item.Height = 480;
 
-                        DialogResult returnResult = item.ShowDialog();
-                        if (returnResult == DialogResult.Cancel) { return; }
-                        dr["artworkpoID"] = item.GetSelectedString();
-                        IList<DataRow> selectedData = item.GetSelecteds();
-                        if (selectedData.Count > 0)
-                        {
-                            dr["artworkid"] = (selectedData[0])["artworkid"].ToString();
-                            dr["patterncode"] = (selectedData[0])["patterncode"].ToString();
-                            dr["patterndesc"] = (selectedData[0])["patterndesc"].ToString();
-                            dr["ArtworkPoQty"] = (selectedData[0])["poqty"].ToString();
-                            dr["onhand"] = (selectedData[0])["farmin"];
-                            dr["ArtworkPo_DetailUkey"] = (selectedData[0])["ukey"].ToString();
-                            dr["qty"] = (decimal)(selectedData[0])["farmout"] - (decimal)(selectedData[0])["farmin"];
-                        }
+                        var frm = new Sci.Production.Subcon.P03_P04_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, "P04", sqlcmd, dr);
+                        frm.ShowDialog(this);
+                        this.grid.ValidateControl();
                     }
                 }
             };
@@ -459,7 +445,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         protected override void ClickUnconfirm()
@@ -510,7 +496,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                     if ((decimal)drTEMP["Farmin_Cal"] < (decimal)drTEMP["ApQty"])
                     {
                         ids += string.Format("{0}-{1}-{2}-{3} FarmIn can't less AP qty {4}", dr["orderid"], dr["artworkpoid"]
-                            , dr["artworkid"], dr["patterncode"].ToString().Trim() , drTEMP["ApQty"]) + Environment.NewLine;
+                            , dr["artworkid"], dr["patterncode"].ToString().Trim(), drTEMP["ApQty"]) + Environment.NewLine;
                     }
                 }
             }
@@ -601,7 +587,7 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         /// <summary>確認 DB 是否存在相同【ArtworkTypeID, BundleNo, ArtworkID, PatternCode】
@@ -662,7 +648,7 @@ inner join (
             }
             P03_Import imoprt = new P03_Import(P03_Import.Subcon_P04, this.txtartworktype_ftyArtworkType.Text, ((DataTable)((BindingSource)detailgrid.DataSource).DataSource));
             imoprt.ShowDialog(this);
-          
+
         }
     }
 }

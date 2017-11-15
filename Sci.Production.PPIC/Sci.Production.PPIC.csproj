@@ -213,6 +213,12 @@
     <Compile Include="P01_BatchShipmentFinished.Designer.cs">
       <DependentUpon>P01_BatchShipmentFinished.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BuyerDeliveryHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BuyerDeliveryHistory.Designer.cs">
+      <DependentUpon>P01_BuyerDeliveryHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_CTNStatus.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -605,6 +611,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_BatchShipmentFinished.resx">
       <DependentUpon>P01_BatchShipmentFinished.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_BuyerDeliveryHistory.resx">
+      <DependentUpon>P01_BuyerDeliveryHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CTNStatus.resx">
       <DependentUpon>P01_CTNStatus.cs</DependentUpon>
