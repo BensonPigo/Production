@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P46_BatchCreate
+    partial class P48
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -291,15 +291,15 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // P46_BatchCreate
+            // P48
             // 
             this.ClientSize = new System.Drawing.Size(953, 473);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.EditMode = true;
-            this.Name = "P46_BatchCreate";
-            this.Text = "P46 Batch Create Remove From Scrap Whse";
+            this.Name = "P48";
+            this.Text = "P48 Batch Create Remove From Scrap Whse";
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.panel1, 0);

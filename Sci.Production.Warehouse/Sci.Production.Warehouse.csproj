@@ -327,11 +327,11 @@
     <Compile Include="P46.Designer.cs">
       <DependentUpon>P46.cs</DependentUpon>
     </Compile>
-    <Compile Include="P46_BatchCreate.cs">
+    <Compile Include="P48.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P46_BatchCreate.Designer.cs">
-      <DependentUpon>P46_BatchCreate.cs</DependentUpon>
+    <Compile Include="P48.Designer.cs">
+      <DependentUpon>P48.cs</DependentUpon>
     </Compile>
     <Compile Include="P46_Import.cs">
       <SubType>Form</SubType>
@@ -1293,8 +1293,8 @@
     <EmbeddedResource Include="P46.resx">
       <DependentUpon>P46.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P46_BatchCreate.resx">
-      <DependentUpon>P46_BatchCreate.cs</DependentUpon>
+    <EmbeddedResource Include="P48.resx">
+      <DependentUpon>P48.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P46_Import.resx">
       <DependentUpon>P46_Import.cs</DependentUpon>

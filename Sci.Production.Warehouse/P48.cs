@@ -14,12 +14,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class P46_BatchCreate : Sci.Win.Tems.QueryForm
+    public partial class P48 : Sci.Win.Tems.QueryForm
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtInventory;
 
-        public P46_BatchCreate(ToolStripMenuItem menuitem)
+        public P48(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
