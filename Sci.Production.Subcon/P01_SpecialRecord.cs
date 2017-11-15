@@ -100,9 +100,9 @@ Select  0 as Selected
         , '' as id
         , aaa.id as orderid
         , sum(bbb.qty) poqty 
-        , unitprice = iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
-        , price = iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
-        , amount = sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,ot.Price)
+        , unitprice = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
+        , price = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
+        , amount = sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,bb.price)
         , 1 as qtygarment
         , 0.0000 as pricegmt
         , ccc.id as artworktypeid
@@ -142,8 +142,9 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTyp
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += @"
            ) as aa
-where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid and aa.ArtworkTypeID = oa.artworktypeid
-group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,ot.Price";
+outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = aa.artworktypeid and ott.id = aa.orderid)bb
+where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
+group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price";
 
 
                 Ict.DualResult result;
