@@ -245,7 +245,7 @@ with tmpOrders as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID = O.InspHandle
     )I
-	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = oq.id)a
+	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id)a
     where  ( o.junk = 0 or o.junk is null) ");
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
