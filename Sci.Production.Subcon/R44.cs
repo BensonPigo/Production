@@ -498,7 +498,7 @@ select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
     outer apply (
     	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
     ) BCS
-where SewingDate between @StartDate and @EndDate
+where SewingDate between @StartDate and @EndDate and acc.QtyAll > 0
 and p.AccuStd !=0
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
