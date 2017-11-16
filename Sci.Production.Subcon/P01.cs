@@ -384,20 +384,21 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
         protected override void ClickConfirm()
         {
-            base.ClickConfirm();
-            String sqlcmd;
+            DualResult result;
+
+            string sqlcmd;
 
             sqlcmd = string.Format("update artworkpo set status = 'Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
 
-            DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 ShowErr(sqlcmd, result);
                 return;
             }
-           
+
+            base.ClickConfirm();
         }
 
         protected override void ClickUnconfirm()
@@ -572,6 +573,45 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             this.detailgrid.Columns["coststitch"].HeaderText = "Cost" + Environment.NewLine + "(" + artworkunit + ")";
             this.detailgrid.Columns["stitch"].HeaderText = artworkunit;
             #endregion
+        }
+
+        protected override void OnDetailGridDelete()
+        {
+            if (((DataTable)this.detailgridbs.DataSource).Rows.Count==0)
+            {
+                return;
+            }
+
+            string chkp10exists = string.Format(
+                @"
+select distinct aad.orderid,aad.id
+from ArtworkPO_detail apd with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
+where  apd.id = '{0}' and apd.ukey = '{1}'
+",
+                CurrentMaintain["id"],CurrentDetailData["Ukey"]);
+            DualResult Result;
+            DataTable dt;
+            if(Result = DBProxy.Current.Select(null, chkp10exists,out dt))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    StringBuilder p10exists = new StringBuilder();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        p10exists.Append(string.Format("Please delete [Subcon][P10]:{0} {1} first !! \r\n", dr["id"], dr["orderid"]));
+                    }
+                    MyUtility.Msg.WarningBox(p10exists.ToString());
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(Result.ToString());
+                return;
+            }
+
+            base.OnDetailGridDelete();
         }
     }
 }

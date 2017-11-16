@@ -531,7 +531,7 @@ outer apply
                         pdata.Item = dr["Item"].ToString();
                         pdata.Body_Cut = dr["Body_Cut"].ToString();
                         pdata.Parts = dr["Parts"].ToString();
-                        pdata.Color = dr["Color"].ToString();
+                        pdata.Color = dr["Color2"].ToString();
                         pdata.Size = dr["Size"].ToString();
                         pdata.SizeSpec = dr["SizeSpec"].ToString();
                         pdata.Desc = dr["Description"].ToString();
@@ -556,7 +556,7 @@ outer apply
                         pdata.Item2 = dr["Item"].ToString();
                         pdata.Body_Cut2 = dr["Body_Cut"].ToString();
                         pdata.Parts2 = dr["Parts"].ToString();
-                        pdata.Color2 = dr["Color"].ToString();
+                        pdata.Color2 = dr["Color2"].ToString();
                         pdata.Size2 = dr["Size"].ToString();
                         pdata.SizeSpec2 = dr["SizeSpec"].ToString();
                         pdata.Desc2 = dr["Description"].ToString();
@@ -581,7 +581,7 @@ outer apply
                         pdata.Item3 = dr["Item"].ToString();
                         pdata.Body_Cut3 = dr["Body_Cut"].ToString();
                         pdata.Parts3 = dr["Parts"].ToString();
-                        pdata.Color3 = dr["Color"].ToString();
+                        pdata.Color3 = dr["Color2"].ToString();
                         pdata.Size3 = dr["Size"].ToString();
                         pdata.SizeSpec3 = dr["SizeSpec"].ToString();
                         pdata.Desc3 = dr["Description"].ToString();

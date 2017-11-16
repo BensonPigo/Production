@@ -190,6 +190,37 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
+            #region 表身的來源subconp01單號是否CONFIRM。
+            string chkp01 =
+                @"
+select distinct ap.id
+from ArtworkPO ap with(nolock) 
+inner join #tmp t on t.artworkpoid = ap.id
+where  ap.status = 'New'
+";
+            DataTable dt;
+            DualResult result;
+            if(result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "Artworkpoid", chkp01, out dt))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    StringBuilder chkp01comfirmed = new StringBuilder();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        chkp01comfirmed.Append(string.Format("Please confirm [Subcon][P01]:{0} first !!\r\n", dr["id"]));
+                    }
+                    MyUtility.Msg.WarningBox(chkp01comfirmed.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return false;
+            }
+
+            #endregion
+
             //取單號： 
             if (this.IsDetailInserting)
             {
@@ -338,11 +369,42 @@ where a.id='{0}'
         //Approve
         protected override void ClickConfirm()
         {
-            base.ClickConfirm();
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 須檢核其來源單[P10]狀態為CONFIRM。
+            string check_p10status = string.Format(
+                @"
+select distinct ap.id
+from ArtworkAP aa with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on aad.id = aa.id
+inner join ArtworkPO ap with(nolock)on ap.id = aad.ArtworkPoid
+where ap.status = 'New' and aa.Id ='{0}'",
+                CurrentMaintain["id"]);
+            DataTable chktb;
+            if (result = DBProxy.Current.Select(null, check_p10status, out chktb))
+            {
+                if (chktb.Rows.Count > 0)
+                {
+                    string p10id = "";
+                    foreach (DataRow drr in chktb.Rows)
+                    {
+                        p10id += drr["id"].ToString();
+                    }
+                    string chkp10msg = string.Format("Please confirm [Subcon][P01]:{0} first !!", p10id);
+                    MyUtility.Msg.WarningBox(chkp10msg);
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+            #endregion
+
             #region 檢查po是否close了。
             sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'", CurrentMaintain["id"]);
@@ -444,8 +506,9 @@ where a.id='{0}'
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-               
+
             #endregion
+            base.ClickConfirm();
         }
         
         //unApprove
