@@ -867,23 +867,35 @@
           <TablixMembers>
             <TablixMember>
               <FixedData>true</FixedData>
-              <KeepWithGroup>After</KeepWithGroup>
-              <RepeatOnNewPage>true</RepeatOnNewPage>
             </TablixMember>
             <TablixMember>
-              <Group Name="POID_Group">
+              <Group Name="POID">
                 <GroupExpressions>
                   <GroupExpression>=Fields!POID.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!SEQ.Value</Value>
+                  <Value>=Fields!POID.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <TablixMembers>
-                <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Group Name="Seq_Group">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!SEQ.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SEQ.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -908,7 +920,7 @@
       </Border>
     </Style>
   </Body>
-  <Width>8.20989in</Width>
+  <Width>9.19414in</Width>
   <Page>
     <PageHeader>
       <Height>4.82071cm</Height>
