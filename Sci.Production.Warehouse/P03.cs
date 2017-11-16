@@ -742,7 +742,7 @@ where ROW_NUMBER_D =1
            , [Refno]		= l.Refno
            , [SCIRefno] = '-'
            , [FabricType] = l.UnitID
-           , [fabrictype2] = l.UnitID
+           , [fabrictype2] = '-'
            , [fabrictypeOrderby] = null
            , [ColorID] = l.ThreadColorID
            , [SizeSpec] = '-'
@@ -757,7 +757,7 @@ where ROW_NUMBER_D =1
            , [Complete] = '-'
            , [FinalETA] = '-'
            , [InQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
-           , [StockUnit] = '-' 
+           , [StockUnit] = l.UnitID 
            , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
            , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
            , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
@@ -838,11 +838,11 @@ drop table #tmpOrder
                 {
                     case 0:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = " refno ,id,fabrictypeOrderby, colorid";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = " from_Program ,refno ,id,fabrictypeOrderby, colorid";
                         break;
                     case 1:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,seq1 , seq2";
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "from_Program ,id,seq1 , seq2";
                         break;
                 }
             }
