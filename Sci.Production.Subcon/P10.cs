@@ -369,7 +369,6 @@ where a.id='{0}'
         //Approve
         protected override void ClickConfirm()
         {
-            base.ClickConfirm();
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
@@ -379,15 +378,15 @@ where a.id='{0}'
             string check_p10status = string.Format(
                 @"
 select distinct ap.id
-from ArtworkPO ap with(nolock)
-inner join ArtworkAP_detail aad with(nolock) on ap.id = aad.artworkpoid
-inner join ArtworkAP aa with(nolock)on aad.id = aa.id
+from ArtworkAP aa with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on aad.id = aa.id
+inner join ArtworkPO ap with(nolock)on ap.id = aad.ArtworkPoid
 where ap.status = 'New' and aa.Id ='{0}'",
                 CurrentMaintain["id"]);
             DataTable chktb;
             if (result = DBProxy.Current.Select(null, check_p10status, out chktb))
             {
-                if (chktb.Rows.Count > 1)
+                if (chktb.Rows.Count > 0)
                 {
                     string p10id = "";
                     foreach (DataRow drr in chktb.Rows)
@@ -507,8 +506,9 @@ where ap.status = 'New' and aa.Id ='{0}'",
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-               
+
             #endregion
+            base.ClickConfirm();
         }
         
         //unApprove

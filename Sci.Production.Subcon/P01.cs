@@ -587,14 +587,14 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 select distinct aad.orderid,aad.id
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-where  apd.id = '{0}' and aad.ukey = '{1}'
+where  apd.id = '{0}' and apd.ukey = '{1}'
 ",
                 CurrentMaintain["id"],CurrentDetailData["Ukey"]);
             DualResult Result;
             DataTable dt;
             if(Result = DBProxy.Current.Select(null, chkp10exists,out dt))
             {
-                if (dt.Rows.Count > 1)
+                if (dt.Rows.Count > 0)
                 {
                     StringBuilder p10exists = new StringBuilder();
                     foreach (DataRow dr in dt.Rows)
