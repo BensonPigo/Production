@@ -71,8 +71,9 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
 Where   c.lock = 0 
-        and c.inqty-c.outqty + c.adjustqty <> 0
-        and f.mdivisionid = '{0}'", Sci.Env.User.Keyword));
+        and c.inqty-c.outqty + c.adjustqty > 0
+        and f.mdivisionid = '{0}'        
+        ", Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp1))
                 {
