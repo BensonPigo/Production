@@ -430,7 +430,8 @@ from #tmp";
                 drNewMaster["FactoryID"] = Sci.Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
-                drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");   
+                drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+                drNewMaster["remark"] = "Batch create by P48";
                 dtMaster.Rows.Add(drNewMaster);
             }
 
@@ -535,24 +536,24 @@ from #tmp";
                 }
             }
             #endregion
-
-            DataTable dtCreate = new DataTable();
-            dtCreate.Columns.Add("ID");
-            for (int i = 0; i < listPoid.Count; i++)
-            {
-                DataRow drCreate = dtCreate.NewRow();
-                drCreate["ID"] = tmpId[i].ToString();
-                dtCreate.Rows.Add(drCreate);
-            }
-            if (dtCreate.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(dtCreate, "These Adjust ID have been created.", "Create Successful.");
-                m.Width = 400;
-                m.grid1.Columns[0].Width = 150;
-                m.text_Find.Width = 150;
-                m.btn_Find.Location = new Point(170, 6);
-                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
-            }
+            MyUtility.Msg.InfoBox("Create Successful.");
+            //DataTable dtCreate = new DataTable();
+            //dtCreate.Columns.Add("ID");
+            //for (int i = 0; i < listPoid.Count; i++)
+            //{
+            //    DataRow drCreate = dtCreate.NewRow();
+            //    drCreate["ID"] = tmpId[i].ToString();
+            //    dtCreate.Rows.Add(drCreate);
+            //}
+            //if (dtCreate.Rows.Count > 0)
+            //{
+            //    var m = MyUtility.Msg.ShowMsgGrid(dtCreate, "These Adjust ID have been created.", "Create Successful.");
+            //    m.Width = 400;
+            //    m.grid1.Columns[0].Width = 150;
+            //    m.text_Find.Width = 150;
+            //    m.btn_Find.Location = new Point(170, 6);
+            //    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+            //}
             #endregion
             this.HideWaitMessage();
         }

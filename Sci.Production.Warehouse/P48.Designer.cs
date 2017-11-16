@@ -117,7 +117,7 @@
             this.txtSPNo2.Location = new System.Drawing.Point(219, 20);
             this.txtSPNo2.Name = "txtSPNo2";
             this.txtSPNo2.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNo2.TabIndex = 110;
+            this.txtSPNo2.TabIndex = 1;
             // 
             // label1
             // 
@@ -138,7 +138,7 @@
             this.txtdropdownlistFabricType.Location = new System.Drawing.Point(666, 18);
             this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
             this.txtdropdownlistFabricType.Size = new System.Drawing.Size(143, 24);
-            this.txtdropdownlistFabricType.TabIndex = 4;
+            this.txtdropdownlistFabricType.TabIndex = 3;
             this.txtdropdownlistFabricType.Type = "FabricType_Condition";
             // 
             // txtLocation
@@ -148,7 +148,7 @@
             this.txtLocation.Location = new System.Drawing.Point(431, 19);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(132, 23);
-            this.txtLocation.TabIndex = 3;
+            this.txtLocation.TabIndex = 2;
             this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocation_PopUp);
             this.txtLocation.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocation_Validating);
             // 
@@ -175,7 +175,7 @@
             this.txtRef.Location = new System.Drawing.Point(81, 50);
             this.txtRef.Name = "txtRef";
             this.txtRef.Size = new System.Drawing.Size(260, 23);
-            this.txtRef.TabIndex = 2;
+            this.txtRef.TabIndex = 4;
             // 
             // labelRef
             // 
