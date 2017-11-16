@@ -68,8 +68,8 @@ namespace Sci.Production.Subcon
                 .Numeric("poqty", header: "PO QTY", settings: pos)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "UnitPrice", decimal_places: 4, settings: ns, iseditable: flag)
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
-                .Numeric("Amount", header: "Amount", iseditingreadonly: true);
+                .Numeric("Price", header: "Price/GMT", decimal_places: 4, iseditingreadonly: true)
+                .Numeric("Amount", header: "Amount", decimal_places: 2, iseditingreadonly: true);
 
             this.gridSpecialRecord.Columns["UnitPrice"].Visible = flag;
             this.gridSpecialRecord.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
@@ -100,21 +100,23 @@ Select  0 as Selected
         , '' as id
         , aaa.id as orderid
         , sum(bbb.qty) poqty 
-        , 0.0000 as unitprice
-        , 0.0000 as price
+        , unitprice = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
+        , price = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
+        , amount = sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,bb.price)
         , 1 as qtygarment
         , 0.0000 as pricegmt
-        , 0.0000 as amount 
         , ccc.id as artworktypeid
         , rtrim(ccc.id) as artworkid
-        , patterncode = (select PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
-        , patterndesc = (select PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterncode = (select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterndesc = (select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
         , Style = aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
-from    orders aaa WITH (NOLOCK) 
-        , order_qty bbb WITH (NOLOCK) 
-        , artworktype  ccc WITH (NOLOCK) 
+from orders aaa WITH (NOLOCK) 
+inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
+inner join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+,artworktype  ccc WITH (NOLOCK)
         , (Select   a.id orderid
                     , c.id as artworktypeid
                     , rtrim(c.id) as artwork
@@ -140,10 +142,9 @@ from    orders aaa WITH (NOLOCK)
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += @"
            ) as aa
-where   aaa.id = bbb.id
-        and aaa.ID = aa.orderid
-        and ccc.ID = aa.artworktypeid
-group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
+outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = aa.artworktypeid and ott.id = aa.orderid)bb
+where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
+group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price";
 
 
                 Ict.DualResult result;
