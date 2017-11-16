@@ -36,7 +36,12 @@ namespace Sci.Production.Quality
             {
                 foreach (string dr in defect)
                 {
-                    //第一碼為ID,第二碼為Points
+                    // 避免defect值是空值會掛掉
+                    if (MyUtility.Check.Empty(dr))
+                    {
+                        continue;
+                    }
+                    // 第一碼為ID,第二碼為Points
                     defid = dr.Substring(0, 1);
                     point = MyUtility.Convert.GetInt(dr.Substring(1));
                     DataRow[] Ary = defRecord.Select(string.Format("ID = '{0}'", defid));
