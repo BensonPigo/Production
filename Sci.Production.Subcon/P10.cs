@@ -374,6 +374,38 @@ where a.id='{0}'
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 須檢核其來源單[P10]狀態為CONFIRM。
+            string check_p10status = string.Format(
+                @"
+select distinct ap.id
+from ArtworkPO ap with(nolock)
+inner join ArtworkAP_detail aad with(nolock) on ap.id = aad.artworkpoid
+inner join ArtworkAP aa with(nolock)on aad.id = aa.id
+where ap.status = 'New' and aa.Id ='{0}'",
+                CurrentMaintain["id"]);
+            DataTable chktb;
+            if (result = DBProxy.Current.Select(null, check_p10status, out chktb))
+            {
+                if (chktb.Rows.Count > 1)
+                {
+                    string p10id = "";
+                    foreach (DataRow drr in chktb.Rows)
+                    {
+                        p10id += drr["id"].ToString();
+                    }
+                    string chkp10msg = string.Format("Please confirm [Subcon][P10]:{0} first !!", p10id);
+                    MyUtility.Msg.WarningBox(chkp10msg);
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+            #endregion
+
             #region 檢查po是否close了。
             sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'", CurrentMaintain["id"]);

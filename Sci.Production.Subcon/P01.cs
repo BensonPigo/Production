@@ -385,36 +385,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         protected override void ClickConfirm()
         {
             DualResult result;
-            #region 須檢核其來源單[P10]狀態為CONFIRM。
-            string check_p10status = string.Format(
-                @"
-select distinct aa.id,status=isnull(aa.status,'')
-from ArtworkPO ap with(nolock)
-left join ArtworkAP_detail aad with(nolock) on ap.id = aad.artworkpoid
-left join ArtworkAP aa with(nolock)on aad.id = aa.id
-where aa.status = 'New' and ap.Id ='{0}'",
-                CurrentMaintain["id"]);
-            DataTable chktb;
-            if(result = DBProxy.Current.Select(null, check_p10status, out chktb))
-            {
-                if (chktb.Rows.Count>1)
-                {
-                    string p10id = "";
-                    foreach (DataRow dr in chktb.Rows)
-                    {
-                        p10id += dr["id"].ToString();
-                    }
-                    string chkp10msg = string.Format("Please confirm [Subcon][P10]:{0} first !!", p10id);
-                    MyUtility.Msg.WarningBox(chkp10msg);
-                    return;
-                }
-            }
-            else
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return;
-            }
-            #endregion
 
             string sqlcmd;
 
