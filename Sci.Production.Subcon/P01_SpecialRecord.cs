@@ -68,7 +68,7 @@ namespace Sci.Production.Subcon
                 .Numeric("poqty", header: "PO QTY", settings: pos)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "UnitPrice", decimal_places: 4, settings: ns, iseditable: flag)
-                .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
+                .Numeric("Price", header: "Price/GMT", decimal_places: 4, iseditingreadonly: true)
                 .Numeric("Amount", header: "Amount", iseditingreadonly: true);
 
             this.gridSpecialRecord.Columns["UnitPrice"].Visible = flag;
