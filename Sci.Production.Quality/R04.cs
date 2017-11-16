@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Utility.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -227,13 +228,16 @@ namespace Sci.Production.Quality
             string d2 = (MyUtility.Check.Empty(DateRecEnd)) ? "" : Convert.ToDateTime(DateRecEnd).ToString("yyyy/MM/dd");
             string d3 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d4 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
-           
+            
             xl.DicDatas.Add("##QADate", d1 + "~" + d2);
             xl.DicDatas.Add("##ArriveDate", d3 + "~" + d4);
             xl.DicDatas.Add("##Category", Category);
             xl.DicDatas.Add("##Factory", factory);
             xl.DicDatas.Add("##Outstanding", OUTSTAN);
-            xl.DicDatas.Add("##body", dt);
+
+            SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(dt);
+            xlTable.ShowHeader = false;
+            xl.DicDatas.Add("##body", xlTable);
 
             xl.Save(Sci.Production.Class.MicrosoftFile.GetName("Quality_R04"));
             ((Microsoft.Office.Interop.Excel.Worksheet)xl.ExcelApp.ActiveSheet).Columns.AutoFit();

@@ -1354,13 +1354,17 @@ Where a.id = '{0}' ", masterID);
             DataTable dt;
             if (txtInvoiceNo.Text != txtInvoiceNo.OldValue)
             {
-                foreach (DataRow drDetail in ((DataTable)detailgridbs.DataSource).Rows)
+                for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count;)
                 {
-                    if (drDetail.RowState != DataRowState.Deleted)
+                    DataRow drDetail = ((DataTable)detailgridbs.DataSource).Rows[i];
+                    if (drDetail.RowState == DataRowState.Deleted)
                     {
-                        //清空表身資料
-                        drDetail.Delete();
+                        i++;
+                        continue;
                     }
+
+                    //清空表身資料
+                    drDetail.Delete();
                 }
 
                 CurrentMaintain["invno"] = txtInvoiceNo.Text;
@@ -1438,9 +1442,12 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         private void btDeleteAllDetail_Click(object sender, EventArgs e)
         {
             //((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows) {
+            for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count;)
+            {
+                DataRow dr = ((DataTable)detailgridbs.DataSource).Rows[i];
                 if (dr.RowState == DataRowState.Deleted)
                 {
+                    i++;
                     continue;
                 }
 
