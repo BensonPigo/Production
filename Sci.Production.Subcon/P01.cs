@@ -577,12 +577,17 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
         protected override void OnDetailGridDelete()
         {
+            if (((DataTable)this.detailgridbs.DataSource).Rows.Count==0)
+            {
+                return;
+            }
+
             string chkp10exists = string.Format(
                 @"
 select distinct aad.orderid,aad.id
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-where  ap.id = '{0}' and aad.ukey = '{1}'
+where  apd.id = '{0}' and aad.ukey = '{1}'
 ",
                 CurrentMaintain["id"],CurrentDetailData["Ukey"]);
             DualResult Result;

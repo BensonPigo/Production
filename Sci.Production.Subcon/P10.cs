@@ -209,7 +209,7 @@ where  ap.status = 'New'
                     {
                         chkp01comfirmed.Append(string.Format("Please confirm [Subcon][P01]:{0} first !!\r\n", dr["id"]));
                     }
-                    MyUtility.Msg.WarningBox(chkp01.ToString());
+                    MyUtility.Msg.WarningBox(chkp01comfirmed.ToString());
                     return false;
                 }
             }
