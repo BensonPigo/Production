@@ -57,8 +57,8 @@ namespace Sci.Production.PPIC
             this.gridCuttingDailyOutput.IsEditingReadOnly = true;
             this.gridCuttingDailyOutput.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
-                 .Date("CDate", header: "Date", width: Widths.AnsiChars(12))
-                 .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6))
+                 .Date("CDate", header: "Date", width: Widths.AnsiChars(10))
+                 .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(8))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
                  .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
@@ -116,15 +116,16 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             else
             {
                 sqlCmd = string.Format(
-                    @"select c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
-from Orders o WITH (NOLOCK) 
-inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
-inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-inner join WorkOrder w WITH (NOLOCK) on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
-inner join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
-inner join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
-where {0}
-group by c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,Status",
+@"select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno, sum(wd.Qty) as CutQty, Status
+ from Orders o WITH (NOLOCK) 
+ left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
+ left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+ left join WorkOrder w WITH (NOLOCK) on w.ID = wp.ID and w.Ukey = wp.WorkOrderUkey
+ left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
+ left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
+ where {0}
+ group by c.cDate,cd.CutRef,w.CutRef,wp.PatternPanel,w.FabricPanelCode,w.Cutno,Status
+ order by wp.PatternPanel ",
                     string.Format("o.ID = '{0}'", this.id),
                     this.article,
                     this.sizeCode);
