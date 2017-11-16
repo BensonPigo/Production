@@ -17,24 +17,25 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            if (CurrentData["TaipeiDBC"].ToString() == "False" && EditMode)
+            if (EditMode)
             {
-                txtSPNo.ReadOnly = false;
-                numClaimAmt.ReadOnly = false;
-                numAffectQty.ReadOnly = false;
-                numAdditionCharge.ReadOnly = false;
-                txtUnit.TextBox1.ReadOnly = false;
-
-            }
-            else
-            {
-                txtSPNo.ReadOnly = true;
-                numClaimAmt.ReadOnly = true;
-                numAffectQty.ReadOnly = true;
-                numAdditionCharge.ReadOnly = true;
-                txtUnit.TextBox1.ReadOnly = true;
-            }
+                if (CurrentData["TaipeiDBC"].ToString() == "True")
+                {
+                    txtSPNo.ReadOnly = true;
+                    numClaimAmt.ReadOnly = true;
+                    numAffectQty.ReadOnly = true;
+                    numAdditionCharge.ReadOnly = true;
+                    txtUnit.TextBox1.ReadOnly = true;
+                }
+                else
+                {
+                    txtSPNo.ReadOnly = false;
+                    numClaimAmt.ReadOnly = false;
+                    numAffectQty.ReadOnly = false;
+                    numAdditionCharge.ReadOnly = false;
+                    txtUnit.TextBox1.ReadOnly = false;
+                }
+            }            
         }
 
         private void txtSPNo_Validating(object sender, CancelEventArgs e)
