@@ -425,27 +425,15 @@ IF @ByFactory = 1
 	group by FactoryID, SewingDate
 	order by FactoryID, SewingDate
 Else  
-select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
-		, BCS = iif(BCS.value >= 100, 100, BCS.value)
-from #print p
----0006111以上全部都不動，直接組新的Table計算欄位(acc.QtyAll)Accu. Loading Qty of Garment
----再依[SP#]= p.SP and FactoryID = p.FactoryID做outer apply
-outer apply(
-	select FactoryID,[SP#],QtyAll=sum(QtySM)
-	from
-	(
-		select FactoryID,[SP#],[Article],SizeCode,QtySM = min(QtySum)
-		from(
-			Select DISTINCT
-				 o.FactoryID,
-				[SP#] = b.Orderid,
-				[Article] = b.Article,
+with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總數
+		Select 
+				o.FactoryID,
+				b.Orderid,
+				b.Article,
 				bd.SizeCode,
-				[Comb] = b.PatternPanel,
-				[Artwork] = sub.sub,
-				[Pattern] = bd.PatternCode,
-				--[Qty] = bd.Qty,
-				[QtySum] = sum(bd.Qty) over(partition by o.FactoryID,b.Orderid,b.Article,bd.SizeCode,b.PatternPanel,sub.sub,bd.PatternCode)
+				b.PatternPanel,
+				bd.PatternCode,
+				QtySum =SUM(iif(isnull(bio.InComing,'') = '',0,bd.Qty))
 			from Bundle b WITH (NOLOCK) 
 			inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 			left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
@@ -460,28 +448,57 @@ outer apply(
 						for xml path('')
 					),1,1,'')
 			) as sub
-			where 1=1
-			and s.Id = 'LOADING'
-			and b.Orderid = p.SP
-			and bio.InComing is not null and bio.InComing !='' and bio.InComing< p.SewingDate
-			and b.PatternPanel in(
+			where s.Id = 'LOADING' and b.Orderid in (select distinct sp from #print)
+			and b.PatternPanel in (
 				Select distinct oe.PatternPanel
 				From dbo.Order_EachCons a WITH (NOLOCK) 
 				Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
 				left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
 				left join Order_EachCons_PatternPanel oe WITH (NOLOCK) on oe.Order_EachConsUkey = a.Ukey
-				Where a.ID = o.POID and bof.kind !=0
-			)
-		)aa
-		group by FactoryID,[SP#],[Article],SizeCode
-	)bb
-	where [SP#]= p.SP and FactoryID = p.FactoryID
-	group by FactoryID,[SP#]
-)acc 
-outer apply (
-	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
-) BCS
-where SewingDate between @StartDate and @EndDate
+				Where a.ID = o.POID and bof.kind !=0 )
+			  group by o.FactoryID,
+				 b.Orderid,
+				 b.Article,
+				bd.SizeCode,
+				 b.PatternPanel,
+                bd.PatternCode)
+,	step2 as( --同一個Pattern Combo下抓出量最小的pattern的數量，作沒該Pattern Combo的數量
+		select	FactoryID,
+				Orderid,
+				Article,
+				SizeCode,
+				PatternPanel,
+				QtySum = MIN(QtySum)
+		from	step1
+		group by	FactoryID,
+					Orderid,
+					Article,
+					SizeCode,
+					PatternPanel
+	)
+,	step3 as(--抓出sp下Pattern Combo中數量最小的值，代表成衣數量
+		select	FactoryID,
+				Orderid,
+				Article,
+				SizeCode,
+				QtySum = min(QtySum)
+		from	step2
+		group by	FactoryID,
+					Orderid,
+					Article,
+					SizeCode
+				)
+select	p.FactoryID,p.SP,p.StyleID,p.SewingDate,p.Line,p.AccuStd,acc.QtyAll
+		, BCS = iif(BCS.value >= 100, 100, BCS.value)
+	from #print p
+	outer apply(select FactoryID,[SP#] = Orderid,QtyAll=sum(QtySum) 
+				from step3 where Orderid= p.SP and FactoryID = p.FactoryID
+				group by FactoryID,Orderid
+				) acc 
+    outer apply (
+    	select value = ROUND(acc.QtyAll / iif(AccuStd = 0, 1, AccuStd) * 100, 2)
+    ) BCS
+where SewingDate between @StartDate and @EndDate and acc.QtyAll > 0
 and p.AccuStd !=0
 order by p.FactoryID,p.SP,p.SewingDate,p.Line
 
