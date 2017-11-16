@@ -126,7 +126,7 @@ Where   c.lock = 0
                     {
                         dtInventory.Columns.Add("adjustqty", typeof(decimal));
                         dtInventory.Columns["adjustqty"].Expression = "qtybefore-qtyafter";
-                        dtInventory.DefaultView.Sort = "seq1,seq2,location,dyelot";
+                        dtInventory.DefaultView.Sort = "poid,seq1,seq2,roll,dyelot";
                     }
                     listControlBindingSource1.DataSource = dtInventory;
                 }
