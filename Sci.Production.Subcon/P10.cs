@@ -393,7 +393,7 @@ where ap.status = 'New' and aa.Id ='{0}'",
                     {
                         p10id += drr["id"].ToString();
                     }
-                    string chkp10msg = string.Format("Please confirm [Subcon][P10]:{0} first !!", p10id);
+                    string chkp10msg = string.Format("Please confirm [Subcon][P01]:{0} first !!", p10id);
                     MyUtility.Msg.WarningBox(chkp10msg);
                     return;
                 }
