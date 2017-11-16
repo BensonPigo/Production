@@ -336,16 +336,31 @@ where   StockType='O'
             }
 
             dr2 = dtGridBS1.Select("reasonid = '' and Selected = 1");
+            DataTable warningTB = new DataTable();
             if (dr2.Length > 0)
-            {
-                StringBuilder warningmsg = new StringBuilder();
+            {                               
+                warningTB.Columns.Add("SpNo");
+                warningTB.Columns.Add("SEQ");
+                warningTB.Columns.Add("Roll");
                 foreach (DataRow drReason in dr2)
                 {
-                    warningmsg.Append(string.Format(@"SP#: {0} SEQ#: {1} Roll#: {2}'s Reason ID of selected row can't be empty!", drReason["POID"].ToString(), drReason["seq"].ToString(), drReason["Roll"].ToString())+ Environment.NewLine);
+                    DataRow drNoReason = warningTB.NewRow();
+                    drNoReason["SpNo"] = drReason["POID"].ToString();
+                    drNoReason["SEQ"] = drReason["seq"].ToString();
+                    drNoReason["Roll"] = drReason["Roll"].ToString();
+                    warningTB.Rows.Add(drNoReason);
                 }
-                if (!MyUtility.Check.Empty(warningmsg.ToString()))
+                if (warningTB.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WarningBox("Reason ID of selected row can't be empty!" + Environment.NewLine + warningmsg.ToString());
+                    var m = MyUtility.Msg.ShowMsgGrid(warningTB, "These SP#'s Reason ID cannot be empty!", "Warning");
+                    m.Width = 400;
+                    m.grid1.Columns[0].Width = 200;
+                    m.grid1.Columns[0].Width = 50;
+                    m.grid1.Columns[0].Width = 100;
+                    m.text_Find.Width = 150;
+                    m.btn_Find.Location = new Point(170, 6);
+
+                    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
                     return;
                 }
             }
@@ -361,7 +376,7 @@ where   StockType='O'
                 MyUtility.Msg.WarningBox("Get document id fail!");
                 return;
             }
-
+            this.ShowWaitMessage("Data Creating....");
             #region insert Table
 
             string insertMaster = @"
@@ -415,8 +430,7 @@ from #tmp";
                 drNewMaster["FactoryID"] = Sci.Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
-                drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
-                //drNewMaster["remark"] = "Batch create by P46 Batch Create Remove From Scrap Whse";
+                drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");   
                 dtMaster.Rows.Add(drNewMaster);
             }
 
@@ -464,7 +478,6 @@ from #tmp";
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Adjust  ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!", "Complete!");
                 }
                 catch (Exception ex)
                 {
@@ -479,7 +492,7 @@ from #tmp";
             // Create後Btn失效，需重新Qurey才能再使用。
             btnImport.Enabled = false;
 
-            #region Batch Confirmed 
+            #region Confirmed 
             if (tmpId.Count < 1)
             {
                 return;
@@ -493,7 +506,7 @@ from #tmp";
                     DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}'", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
-                        item["CreateStatus"] = "Confirmed Fail! " + res.ToString();
+                        item["CreateStatus"] = string.Format("{0} Confirmed Fail! ", tmpId[i].ToString()) + res.ToString();
                     }
                 }
                 if (dts.Length > 0)
@@ -506,8 +519,8 @@ from #tmp";
                             foreach (var item in drfail)
                             {
                                 item["CreateStatus"] = string.Format(
-                                    @"balance: {0} is less than Adjust qty: {1}
-                                    Balacne Qty is not enough!!", drs["balance"].ToString(), drs["Adjustqty"].ToString());
+                                    @"{2}'s balance: {0} is less than Adjust qty: {1}
+                                    Balacne Qty is not enough!!", drs["balance"].ToString(), drs["Adjustqty"].ToString(), tmpId[i].ToString());
                             }
                         }
                     }
@@ -517,12 +530,31 @@ from #tmp";
                     DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}'", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
-                        item["CreateStatus"] = "Create and Confirm Success ";
+                        item["CreateStatus"] = string.Format("{0} Create and Confirm Success ", tmpId[i].ToString());
                     }
                 }
             }
             #endregion
+
+            DataTable dtCreate = new DataTable();
+            dtCreate.Columns.Add("ID");
+            for (int i = 0; i < listPoid.Count; i++)
+            {
+                DataRow drCreate = dtCreate.NewRow();
+                drCreate["ID"] = tmpId[i].ToString();
+                dtCreate.Rows.Add(drCreate);
+            }
+            if (dtCreate.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(dtCreate, "These Adjust ID have been created.", "Create Successful.");
+                m.Width = 400;
+                m.grid1.Columns[0].Width = 150;
+                m.text_Find.Width = 150;
+                m.btn_Find.Location = new Point(170, 6);
+                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+            }
             #endregion
+            this.HideWaitMessage();
         }
     }
 }
