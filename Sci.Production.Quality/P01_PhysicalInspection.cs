@@ -197,7 +197,20 @@ namespace Sci.Production.Quality
 
                     if (def_locT < ActualYdsF && def_locT - def_locF != 4)
                     {
-                        Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
+                        /*  
+                         *  如果DefectLocation的相同範圍內有２筆資料,就必須把舊的給刪除
+                         *  ex: 080-083 汙點D1, 080-084 汙點A1/D1 ,就必須要080-083給刪除
+                         *  不然將080-083 改為080-084 Pkey就會重複
+                        */
+                        DataRow[] Ary = Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", CurrentData["NewKey"].ToString(), def_locF));
+                        if (Ary.Length > 1)
+                        {
+                            Fir_physical_Defect.Rows[i].Delete();
+                        }
+                        else
+                        {
+                            Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
+                        }
                     }
                 }
             }
@@ -569,10 +582,7 @@ where	WEAVETYPEID = '{0}'
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd = update_cmd + string.Format(
-                    @"
-Delete From Fir_physical Where DetailUkey = {0} ;
-Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; 
-Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
+                    @"Delete From Fir_physical Where DetailUkey = {0} ;Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ; Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     dr["DetailUKey", DataRowVersion.Original]);
                     continue;
                 }
@@ -587,8 +597,7 @@ Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {0} ;",
                     string add_cmd = "";
                     
                     add_cmd =string.Format(
-                    @"
-Insert into Fir_Physical
+                    @"Insert into Fir_Physical
 (ID,Roll,Dyelot,TicketYds,ActualYds,FullWidth,ActualWidth,TotalPoint,PointRate,Grade,Result,Remark,InspDate,Inspector,Moisture,AddName,AddDate) 
 Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate()) ;",
                             dr["ID"], dr["roll"].ToString().Replace("'","''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"].ToString().Replace("'", "''"), inspdate, dr["Inspector"], bolMoisture, loginID);
@@ -632,55 +641,34 @@ Where DetailUkey = {15};",
 
             #region Fir_Physical_Defect
             string update_cmd1 = "";
-            bool Dele1st = true;
             foreach (DataRow dr in Fir_physical_Defect.Rows)
             {
-                /*
-                 * 先刪除所有資料,再insert所有資料
-                 * 這目的是第三層會修改Pkey[DefectLocation],很容易衝突到相同的Pkey                 
-                 */
-
-                //　先刪除所有資料
-                if (Dele1st)
+                if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd1 = update_cmd1 + string.Format(
-                   @"
-Delete From Fir_physical_Defect 
-Where ID = {0} ",
-                   dr["ID"]);                
-                    Dele1st = false;
+                    @"Delete From Fir_physical_Defect Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation ='{2}';",
+                    dr["ID", DataRowVersion.Original], dr["FIR_PhysicalDetailUKey", DataRowVersion.Original], dr["DefectLocation", DataRowVersion.Original]);
+
                 }
-               
-                // 再insert 所有資料
-                if (dr.RowState!=DataRowState.Deleted)
+                if (dr.RowState == DataRowState.Added)
                 {
                     update_cmd1 = update_cmd1 + string.Format(
                         @"Insert into Fir_Physical_Defect(ID,FIR_PhysicalDetailUKey,DefectLocation,DefectRecord,Point) 
                             Values({0},{1},'{2}','{3}',{4});",
                             dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation"], dr["DefectRecord"], dr["Point"]);
                 }
+                if (dr.RowState == DataRowState.Modified)
+                {
+                    update_cmd1 = update_cmd1 + string.Format(
+                        @"Update Fir_Physical_Defect set DefectRecord = '{3}',Point = {4},DefectLocation = '{2}'
+                            Where ID = {0} and FIR_PhysicalDetailUKey = {1} and DefectLocation = '{5}';",
+                            dr["ID"], dr["FIR_PhysicalDetailUKey"], dr["DefectLocation",DataRowVersion.Current], dr["DefectRecord"], dr["Point"], dr["DefectLocation",DataRowVersion.Original]);
+                }
             }
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            if (update_cmd1 != "")
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, update_cmd1)))
-                    {
-                        _transactionscope.Dispose();
-                        return upResult;
-                    }
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return upResult;
-                }
-            }           
+                upResult = DBProxy.Current.Execute(null, update_cmd1);
+            }
             #endregion
             return upResult;
         }
