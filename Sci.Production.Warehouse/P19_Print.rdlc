@@ -6,34 +6,34 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>0.63345cm</Width>
+              <Width>0.60699cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.32537cm</Width>
+              <Width>2.29891cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.19789cm</Width>
+              <Width>1.17143cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.52563cm</Width>
+              <Width>1.49917cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.58207cm</Width>
+              <Width>1.80697cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>5.79394cm</Width>
+              <Width>5.48967cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.63509cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.02646cm</Width>
+              <Width>1.26458cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.54184cm</Width>
+              <Width>1.51538cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.06221cm</Width>
+              <Width>2.03575cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -50,13 +50,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>No</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -83,13 +81,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>SP#</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -116,13 +112,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>SEQ#</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -149,13 +143,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>ROLL#</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -182,13 +174,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>DYELOT</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -215,13 +205,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>DESCRIPTION</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -248,13 +236,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>STOCK_TYPE</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -281,13 +267,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>UNIT</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -314,13 +298,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>QTY</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -347,13 +329,11 @@
                           <TextRuns>
                             <TextRun>
                               <Value>LOCATION</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Center</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -729,7 +709,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>-------------------------------------------------------------------------------------------------------------------------------------</Value>
+                              <Value>--------------------------------------------------------------------------------------------------------------------------------</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -903,6 +883,7 @@
         <RepeatRowHeaders>true</RepeatRowHeaders>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
+        <Top>0.22225cm</Top>
         <Left>0.52917cm</Left>
         <Height>1.8cm</Height>
         <Width>20.32395cm</Width>
@@ -910,20 +891,25 @@
           <Border>
             <Style>None</Style>
           </Border>
+          <TopBorder>
+            <Color>Black</Color>
+            <Style>Solid</Style>
+            <Width>1pt</Width>
+          </TopBorder>
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.70866in</Height>
+    <Height>0.79616in</Height>
     <Style>
       <Border>
         <Style>None</Style>
       </Border>
     </Style>
   </Body>
-  <Width>9.19414in</Width>
+  <Width>8.20989in</Width>
   <Page>
     <PageHeader>
-      <Height>4.82071cm</Height>
+      <Height>4.18571cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1068,7 +1054,7 @@
           <Top>2.70052cm</Top>
           <Left>14.76905cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.48002cm</Width>
+          <Width>2.53294cm</Width>
           <ZIndex>4</ZIndex>
           <Style>
             <Border>
@@ -1098,7 +1084,7 @@
           <Top>3.30052cm</Top>
           <Left>14.76905cm</Left>
           <Height>0.62646cm</Height>
-          <Width>2.48002cm</Width>
+          <Width>2.53294cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -1157,7 +1143,7 @@
           <rd:DefaultName>Textbox8</rd:DefaultName>
           <Top>3.30052cm</Top>
           <Left>3.0727cm</Left>
-          <Height>1.19652cm</Height>
+          <Height>0.63704cm</Height>
           <Width>9.40982cm</Width>
           <ZIndex>7</ZIndex>
           <Style>
@@ -1186,9 +1172,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox9</rd:DefaultName>
           <Top>2.70052cm</Top>
-          <Left>17.24907cm</Left>
+          <Left>17.30199cm</Left>
           <Height>0.6cm</Height>
-          <Width>3.60405cm</Width>
+          <Width>3.55113cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1218,9 +1204,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox10</rd:DefaultName>
           <Top>3.30052cm</Top>
-          <Left>17.24907cm</Left>
+          <Left>17.30199cm</Left>
           <Height>0.62646cm</Height>
-          <Width>3.60405cm</Width>
+          <Width>3.55113cm</Width>
           <ZIndex>9</ZIndex>
           <Style>
             <Border>
@@ -1232,19 +1218,6 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
-        <Line Name="Line3">
-          <Top>4.82071cm</Top>
-          <Left>0.52917cm</Left>
-          <Height>0cm</Height>
-          <Width>20.32395cm</Width>
-          <ZIndex>10</ZIndex>
-          <Style>
-            <Border>
-              <Style>Solid</Style>
-              <Width>2pt</Width>
-            </Border>
-          </Style>
-        </Line>
       </ReportItems>
       <Style>
         <Border>
