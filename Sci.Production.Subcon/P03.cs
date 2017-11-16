@@ -531,7 +531,7 @@ where   c.bundleno !=''
             }
 
             string sqlcmdio = string.Format(@"
-                            select c.FarmOut,c.FarmIn,b.id,b.orderid,a.artworktypeid,b.artworkid,b.patterncode,c.Farmin
+                            select c.FarmOut,c.FarmIn,b.id,b.orderid,a.artworktypeid,b.artworkid,b.patterncode,c.Farmin,b.ukey
                             from FarmOut a WITH (NOLOCK) 
                             inner join FarmOut_Detail b WITH (NOLOCK) on a.id=b.id
                             inner join ArtworkPO_Detail c WITH (NOLOCK) on b.ArtworkPo_DetailUkey=c.Ukey
@@ -548,7 +548,7 @@ where   c.bundleno !=''
                 DataRow[] Srows;
                 foreach (var dr in DetailDatas)
                 {
-                    Srows = datacheck.Select(string.Format("OrderID = '{0}'", dr["orderid"].ToString()));
+                    Srows = datacheck.Select(string.Format("OrderID = '{0}' and ukey = '{1}'", dr["orderid"].ToString(), dr["ukey"].ToString()));
                     if ((decimal)Srows[0]["farmout"] - (decimal)dr["qty"] < (decimal)Srows[0]["farmin"])
                     {
                         mids.Append(string.Format("{0}-{1}-{2}-{3}-{4} can't less farm in qty {5} \n", Srows[0]["id"], Srows[0]["orderid"], Srows[0]["artworktypeid"], Srows[0]["artworkid"], Srows[0]["patterncode"], Srows[0]["farmin"]));
