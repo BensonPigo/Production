@@ -505,7 +505,7 @@ from #tmp";
                 DualResult res = DBProxy.Current.SelectSP("", "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", tmpId[i].ToString()) }, out dts);
                 if (!res)
                 {
-                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}'", listPoid[i].ToString()));
+                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
                         item["CreateStatus"] = string.Format("{0} Confirmed Fail! ", tmpId[i].ToString()) + res.ToString();
@@ -529,7 +529,8 @@ from #tmp";
                 }
                 else
                 {
-                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}'", listPoid[i].ToString()));
+
+                    DataRow[] drfound = dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
                     foreach (var item in drfound)
                     {
                         item["CreateStatus"] = string.Format("{0} Create and Confirm Success ", tmpId[i].ToString());
