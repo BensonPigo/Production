@@ -2234,6 +2234,7 @@
     <Build Include="dbo\Functions\GetBOFExpend.sql" />
     <Build Include="dbo\Functions\getOvenTest.sql" />
     <Build Include="dbo\Tables\TradeHIS_Order.sql" />
+    <Build Include="dbo\Stored Procedures\usp_RemoveScrapById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

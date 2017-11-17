@@ -327,6 +327,12 @@
     <Compile Include="P46.Designer.cs">
       <DependentUpon>P46.cs</DependentUpon>
     </Compile>
+    <Compile Include="P48.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P48.Designer.cs">
+      <DependentUpon>P48.cs</DependentUpon>
+    </Compile>
     <Compile Include="P46_Import.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1286,6 +1292,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P46.resx">
       <DependentUpon>P46.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P48.resx">
+      <DependentUpon>P48.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P46_Import.resx">
       <DependentUpon>P46_Import.cs</DependentUpon>
