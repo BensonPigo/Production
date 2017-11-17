@@ -12,46 +12,58 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P41_Print
+    /// </summary>
     public partial class P41_Print : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? date1, date2;
-        string brand;
+        private DataTable printData;
+        private DateTime? date1;
+        private DateTime? date2;
+        private string brand;
+
+        /// <summary>
+        /// P41_Print
+        /// </summary>
         public P41_Print()
         {
-            InitializeComponent();
-            dateDate.Value1 = DateTime.Today;
-            dateDate.Value2 = DateTime.Today;
+            this.InitializeComponent();
+            this.dateDate.Value1 = DateTime.Today;
+            this.dateDate.Value2 = DateTime.Today;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateDate.Value1) || MyUtility.Check.Empty(dateDate.Value2))
+            if (MyUtility.Check.Empty(this.dateDate.Value1) || MyUtility.Check.Empty(this.dateDate.Value2))
             {
-                dateDate.TextBox1.Focus();
+                this.dateDate.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Date can't empty");
                 return false;
             }
-            date1 = dateDate.Value1;
-            date2 = dateDate.Value2;
-            brand = txtbrand.Text;
+
+            this.date1 = this.dateDate.Value1;
+            this.date2 = this.dateDate.Value2;
+            this.brand = this.txtbrand.Text;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
-            if (!MyUtility.Check.Empty(date1))
+            if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCondition.Append(string.Format(" and e.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                sqlCondition.Append(string.Format(" and e.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(date2))
+
+            if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCondition.Append(string.Format(" and e.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                sqlCondition.Append(string.Format(" and e.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
             }
-            string sqlCmd = string.Format(@"with FirstStepFilterData
+
+            string sqlCmd = string.Format(
+                @"with FirstStepFilterData
 as (
 select e.ID,e.CDate,e.InvNo,e.VNContractID,e.VNExportPortID,e.DataFrom, isnull(ep.Name,'') as ExportPort,
 IIF(e.DataFrom = 'PACKINGLIST',pl.BrandID,g.BrandID) as BrandID,
@@ -103,10 +115,11 @@ select '1' as Type,ROW_NUMBER() OVER (ORDER BY InvNo) as rno,*,
 union all
 select '2' as Type,0 as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
 InvNo as InvNo1,OrderID,StyleID,SizeCode,CustomSP,TtlExportQty,FOB
-from tmpSumDetail
+from tmpSumDetail",
+                sqlCondition,
+                MyUtility.Check.Empty(this.brand) ? "1=1" : string.Format("BrandID = '{0}'", this.brand));
 
-", sqlCondition, MyUtility.Check.Empty(brand) ? "1=1" : string.Format("BrandID = '{0}'", brand));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -116,13 +129,13 @@ from tmpSumDetail
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 1)
+            if (this.printData.Rows.Count <= 1)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -130,20 +143,24 @@ from tmpSumDetail
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            //填內容值
+            // 填內容值
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P41_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[2];
             int row = 1, sheetcount = 1;
             string invNo = "XXX";
             object[,] objArray = new object[1, 13];
             object[,] objArray1 = new object[1, 7];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["Type"]) == "0")
                 {
-                    //有幾筆Custom SP就新增幾個WorkSheet
+                    // 有幾筆Custom SP就新增幾個WorkSheet
                     if (MyUtility.Convert.GetInt(dr["rno"]) > 1)
                     {
                         for (int i = 1; i < MyUtility.Convert.GetInt(dr["rno"]); i++)
@@ -162,15 +179,15 @@ from tmpSumDetail
                     objArray[0, 2] = dr["VNExportPortID"];
                     objArray[0, 3] = dr["ExportPort"];
                     objArray[0, 4] = dr["CountryAlias"];
-                    objArray[0, 5] = MyUtility.Check.Empty(dr["CountryAlias"]) ? "" : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(0, 1);
-                    objArray[0, 6] = MyUtility.Check.Empty(dr["CountryAlias"]) ? "" : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(1, 1);
+                    objArray[0, 5] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(0, 1);
+                    objArray[0, 6] = MyUtility.Check.Empty(dr["CountryAlias"]) ? string.Empty : MyUtility.Convert.GetString(dr["CountryAlias"]).Substring(1, 1);
                     objArray[0, 7] = dr["ShipTerm"];
                     objArray[0, 8] = dr["ShipQty"];
                     objArray[0, 9] = dr["CTNQty"];
                     objArray[0, 10] = dr["GW"];
                     objArray[0, 11] = dr["NW"];
                     objArray[0, 12] = dr["CMP"];
-                    worksheet.Range[String.Format("A{0}:M{0}", row)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:M{0}", row)].Value2 = objArray;
                 }
 
                 if (MyUtility.Convert.GetString(dr["Type"]) == "2")
@@ -183,9 +200,10 @@ from tmpSumDetail
                         invNo = MyUtility.Convert.GetString(dr["InvNo1"]);
                         row = 1;
                         worksheet = excel.ActiveWorkbook.Worksheets[sheetcount];
-                        worksheet.Name = MyUtility.Convert.GetString(dr["InvNo1"]); //更改Sheet Name
+                        worksheet.Name = MyUtility.Convert.GetString(dr["InvNo1"]); // 更改Sheet Name
                         worksheet.Select();
                     }
+
                     row++;
                     objArray1[0, 0] = dr["OrderID"];
                     objArray1[0, 1] = dr["StyleID"];
@@ -195,12 +213,14 @@ from tmpSumDetail
                     objArray1[0, 5] = dr["FOB"];
                     objArray1[0, 6] = MyUtility.Convert.GetDecimal(dr["TtlExportQty"]) * MyUtility.Convert.GetDecimal(dr["FOB"]);
 
-                    worksheet.Range[String.Format("A{0}:G{0}", row)].Value2 = objArray1;
+                    worksheet.Range[string.Format("A{0}:G{0}", row)].Value2 = objArray1;
                 }
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            //最後顯示前將Sheet切換到第一頁
+
+            // 最後顯示前將Sheet切換到第一頁
             worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Select();
             excel.Cells.EntireColumn.AutoFit();

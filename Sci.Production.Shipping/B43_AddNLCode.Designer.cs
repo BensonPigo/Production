@@ -105,7 +105,7 @@
             this.btnSave.TabIndex = 3;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnImportFromExcel
             // 
@@ -115,7 +115,7 @@
             this.btnImportFromExcel.TabIndex = 2;
             this.btnImportFromExcel.Text = "Import from excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
-            this.btnImportFromExcel.Click += new System.EventHandler(this.btnImportFromExcel_Click);
+            this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
             // 
             // btnDelete
             // 
@@ -125,7 +125,7 @@
             this.btnDelete.TabIndex = 1;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // btnAppend
             // 
@@ -135,7 +135,7 @@
             this.btnAppend.TabIndex = 0;
             this.btnAppend.Text = "Append";
             this.btnAppend.UseVisualStyleBackColor = true;
-            this.btnAppend.Click += new System.EventHandler(this.btnAppend_Click);
+            this.btnAppend.Click += new System.EventHandler(this.BtnAppend_Click);
             // 
             // panel5
             // 

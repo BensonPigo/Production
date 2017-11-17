@@ -399,7 +399,7 @@
             this.btnDeleteAll.TabIndex = 8;
             this.btnDeleteAll.Text = "Delete All";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
-            this.btnDeleteAll.Click += new System.EventHandler(this.btnDeleteAll_Click);
+            this.btnDeleteAll.Click += new System.EventHandler(this.BtnDeleteAll_Click);
             // 
             // btnAppend
             // 
@@ -410,7 +410,7 @@
             this.btnAppend.TabIndex = 7;
             this.btnAppend.Text = "Append";
             this.btnAppend.UseVisualStyleBackColor = true;
-            this.btnAppend.Click += new System.EventHandler(this.btnAppend_Click);
+            this.btnAppend.Click += new System.EventHandler(this.BtnAppend_Click);
             // 
             // btnReCalculate
             // 
@@ -421,7 +421,7 @@
             this.btnReCalculate.TabIndex = 6;
             this.btnReCalculate.Text = "Re-Calculate";
             this.btnReCalculate.UseVisualStyleBackColor = true;
-            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            this.btnReCalculate.Click += new System.EventHandler(this.BtnReCalculate_Click);
             // 
             // btnUndo
             // 
@@ -431,7 +431,7 @@
             this.btnUndo.TabIndex = 5;
             this.btnUndo.Text = "Undo";
             this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            this.btnUndo.Click += new System.EventHandler(this.BtnUndo_Click);
             // 
             // btnSave
             // 
@@ -441,7 +441,7 @@
             this.btnSave.TabIndex = 4;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnImport
             // 
@@ -452,7 +452,7 @@
             this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnDelete
             // 
@@ -463,7 +463,7 @@
             this.btnDelete.TabIndex = 1;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // P08_ShareExpense
             // 

@@ -108,7 +108,7 @@
             this.txtReceiver.Name = "txtReceiver";
             this.txtReceiver.Size = new System.Drawing.Size(245, 23);
             this.txtReceiver.TabIndex = 99;
-            this.txtReceiver.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtReceiver_PopUp);
+            this.txtReceiver.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReceiver_PopUp);
             // 
             // txtUserInCharge
             // 

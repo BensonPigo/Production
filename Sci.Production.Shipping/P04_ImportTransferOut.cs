@@ -12,23 +12,32 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P04_ImportTransferOut
+    /// </summary>
     public partial class P04_ImportTransferOut : Sci.Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataTable detailData;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable detailData;
+
+        /// <summary>
+        /// P04_ImportTransferOut
+        /// </summary>
+        /// <param name="dt">dt</param>
         public P04_ImportTransferOut(DataTable dt)
         {
-            InitializeComponent();
-            detailData = dt;
+            this.InitializeComponent();
+            this.detailData = dt;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridImport.IsEditingReadOnly = false;
-            gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -42,17 +51,18 @@ namespace Sci.Production.Shipping
                 .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
         }
 
-        //Qurey
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Qurey
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtTransferOutNo.Text))
+            if (MyUtility.Check.Empty(this.txtTransferOutNo.Text))
             {
-                txtTransferOutNo.Focus();
+                this.txtTransferOutNo.Focus();
                 MyUtility.Msg.WarningBox("< Transfer Out No. > can't be empty!");
                 return;
             }
-            //sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtTransferOutNo.Text.Trim());
+
+            // sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtTransferOutNo.Text.Trim());
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -94,23 +104,25 @@ where td.ID = @id";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query error."+result.ToString());
+                MyUtility.Msg.ErrorBox("Query error." + result.ToString());
                 return;
             }
+
             if (selectData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
             }
-            listControlBindingSource1.DataSource = selectData;
+
+            this.listControlBindingSource1.DataSource = selectData;
         }
 
-        //Import
-        private void btnImport_Click(object sender, EventArgs e)
+        // Import
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(gridData)|| gridData.Rows.Count == 0)
+            this.listControlBindingSource1.EndEdit();
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data!");
                 return;
@@ -146,15 +158,15 @@ group by Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
 		 , SCIRefNo, Description, FabricType, Type 
 	   	 , MtlTypeID, UnitId, BuyerDelivery, BrandID
 	   	 , FactoryID, SciDelivery";
-                MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), "", strComputeQtySQL, out dtComputeQty);
+                MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), string.Empty, strComputeQtySQL, out dtComputeQty);
                 foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
+                    DataRow[] findrow = this.detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
                         currentRow.SetAdded();
-                        detailData.ImportRow(currentRow);
+                        this.detailData.ImportRow(currentRow);
                     }
                     else
                     {
@@ -164,6 +176,7 @@ group by Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
                     }
                 }
             }
+
             MyUtility.Msg.InfoBox("Import completed!");
         }
     }

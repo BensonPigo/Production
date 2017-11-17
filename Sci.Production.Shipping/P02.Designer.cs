@@ -362,7 +362,7 @@
             this.comboFrom.Name = "comboFrom";
             this.comboFrom.Size = new System.Drawing.Size(80, 24);
             this.comboFrom.TabIndex = 0;
-            this.comboFrom.SelectionChangeCommitted += new System.EventHandler(this.comboFrom_SelectionChangeCommitted);
+            this.comboFrom.SelectionChangeCommitted += new System.EventHandler(this.ComboFrom_SelectionChangeCommitted);
             // 
             // comboTO
             // 
@@ -375,7 +375,7 @@
             this.comboTO.Name = "comboTO";
             this.comboTO.Size = new System.Drawing.Size(80, 24);
             this.comboTO.TabIndex = 2;
-            this.comboTO.SelectionChangeCommitted += new System.EventHandler(this.comboTO_SelectionChangeCommitted);
+            this.comboTO.SelectionChangeCommitted += new System.EventHandler(this.ComboTO_SelectionChangeCommitted);
             // 
             // txtFrom
             // 
@@ -386,8 +386,8 @@
             this.txtFrom.Name = "txtFrom";
             this.txtFrom.Size = new System.Drawing.Size(73, 23);
             this.txtFrom.TabIndex = 1;
-            this.txtFrom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFrom_PopUp);
-            this.txtFrom.Validating += new System.ComponentModel.CancelEventHandler(this.txtFrom_Validating);
+            this.txtFrom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFrom_PopUp);
+            this.txtFrom.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFrom_Validating);
             // 
             // displayFrom
             // 
@@ -407,8 +407,8 @@
             this.txtTO.Name = "txtTO";
             this.txtTO.Size = new System.Drawing.Size(73, 23);
             this.txtTO.TabIndex = 3;
-            this.txtTO.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtTO_PopUp);
-            this.txtTO.Validating += new System.ComponentModel.CancelEventHandler(this.txtTO_Validating);
+            this.txtTO.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtTO_PopUp);
+            this.txtTO.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTO_Validating);
             // 
             // displayTO
             // 
@@ -502,7 +502,7 @@
             this.btnMailto.TabIndex = 22;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
-            this.btnMailto.Click += new System.EventHandler(this.btnMailto_Click);
+            this.btnMailto.Click += new System.EventHandler(this.BtnMailto_Click);
             // 
             // btnCartonDimensionWeight
             // 
@@ -513,7 +513,7 @@
             this.btnCartonDimensionWeight.TabIndex = 23;
             this.btnCartonDimensionWeight.Text = "Carton Dimension && Weight";
             this.btnCartonDimensionWeight.UseVisualStyleBackColor = true;
-            this.btnCartonDimensionWeight.Click += new System.EventHandler(this.btnCartonDimensionWeight_Click);
+            this.btnCartonDimensionWeight.Click += new System.EventHandler(this.BtnCartonDimensionWeight_Click);
             // 
             // shapeContainer1
             // 
@@ -586,7 +586,7 @@
             this.dateETD.Name = "dateETD";
             this.dateETD.Size = new System.Drawing.Size(110, 23);
             this.dateETD.TabIndex = 9;
-            this.dateETD.Validating += new System.ComponentModel.CancelEventHandler(this.dateETD_Validating);
+            this.dateETD.Validating += new System.ComponentModel.CancelEventHandler(this.DateETD_Validating);
             // 
             // dateETA
             // 
@@ -595,7 +595,7 @@
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(110, 23);
             this.dateETA.TabIndex = 10;
-            this.dateETA.Validating += new System.ComponentModel.CancelEventHandler(this.dateETA_Validating);
+            this.dateETA.Validating += new System.ComponentModel.CancelEventHandler(this.DateETA_Validating);
             // 
             // labelETA
             // 
@@ -800,8 +800,8 @@
             this.txtCarrier.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditMode;
             this.txtCarrier.Size = new System.Drawing.Size(40, 23);
             this.txtCarrier.TabIndex = 11;
-            this.txtCarrier.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCarrier_PopUp);
-            this.txtCarrier.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCarrier_KeyDown);
+            this.txtCarrier.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCarrier_PopUp);
+            this.txtCarrier.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtCarrier_KeyDown);
             // 
             // displayCarrier
             // 
@@ -831,7 +831,7 @@
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.Size = new System.Drawing.Size(185, 23);
             this.txtBLNo.TabIndex = 12;
-            this.txtBLNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBLNo_Validating);
+            this.txtBLNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBLNo_Validating);
             // 
             // txtInvoiceNo
             // 

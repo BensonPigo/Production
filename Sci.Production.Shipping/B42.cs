@@ -12,37 +12,55 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B42
+    /// </summary>
     public partial class B42 : Sci.Win.Tems.Input6
     {
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
-        DataTable tmpConsumptionArticle, tmpConsumptionSizecode, VNConsumption_Detail_Detail;
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+        private DataTable tmpConsumptionArticle;
+        private DataTable tmpConsumptionSizecode;
+        private DataTable VNConsumption_Detail_Detail;
+
+        /// <summary>
+        /// B42
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "B,Bulk,S,Sample");
-            //取VNConsumption_Article, VNConsumption_SizeCode結構，存檔時使用
-            DBProxy.Current.Select(null, "select * from VNConsumption_Article WITH (NOLOCK) where 1 = 0", out tmpConsumptionArticle);
-            DBProxy.Current.Select(null, "select * from VNConsumption_SizeCode WITH (NOLOCK) where 1 = 0", out tmpConsumptionSizecode);
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "B,Bulk,S,Sample");
+
+            // 取VNConsumption_Article, VNConsumption_SizeCode結構，存檔時使用
+            DBProxy.Current.Select(null, "select * from VNConsumption_Article WITH (NOLOCK) where 1 = 0", out this.tmpConsumptionArticle);
+            DBProxy.Current.Select(null, "select * from VNConsumption_SizeCode WITH (NOLOCK) where 1 = 0", out this.tmpConsumptionSizecode);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //新增Import From Barcode按鈕
+
+            // 新增Import From Barcode按鈕
             Sci.Win.UI.Button btn = new Sci.Win.UI.Button();
             btn.Text = "Batch Create";
-            btn.Click += new EventHandler(btn_Click);
-            browsetop.Controls.Add(btn);
-            btn.Size = new Size(120, 30);//預設是(80,30)
+            btn.Click += new EventHandler(this.Btn_Click);
+            this.browsetop.Controls.Add(btn);
+
+            // 預設是(80,30)
+            btn.Size = new Size(120, 30);
             btn.Enabled = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B42. Custom SP# and Consumption", "CanNew");
             this.grid.Columns[0].Visible = false;
-            //新增Import From Batch按鈕
+
+            // 新增Import From Batch按鈕
             Sci.Win.UI.Button btn2 = new Sci.Win.UI.Button();
             btn2.Text = "Batch Import";
-            btn2.Click += Btn2_Click;
-            browsetop.Controls.Add(btn2);
-            btn2.Size = new Size(120, 30);//預設是(80,30)
+            btn2.Click += this.Btn2_Click;
+            this.browsetop.Controls.Add(btn2);
+
+            // 預設是(80,30)
+            btn2.Size = new Size(120, 30);
         }
 
         private void Btn2_Click(object sender, EventArgs e)
@@ -50,33 +68,35 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.B42_BatchImport callNextForm = new Sci.Production.Shipping.B42_BatchImport();
             DialogResult result = callNextForm.ShowDialog(this);
 
-            ReloadDatas();
+            this.ReloadDatas();
         }
 
-        //Batch Create按鈕的Click事件
-        private void btn_Click(object sender, EventArgs e)
+        // Batch Create按鈕的Click事件
+        private void Btn_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.B42_BatchCreate callNextForm = new Sci.Production.Shipping.B42_BatchCreate();
             DialogResult result = callNextForm.ShowDialog(this);
 
-            ReloadDatas();
+            this.ReloadDatas();
         }
-        
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numBalanceQty.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["PulloutQty"]);
-            string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article WITH (NOLOCK) where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            editColorway.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length - 1);
-            string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? "" : sizeGroup.Substring(0, sizeGroup.Length - 1);
-            DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out VNConsumption_Detail_Detail);
+            this.numBalanceQty.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(this.CurrentMaintain["PulloutQty"]);
+            string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article WITH (NOLOCK) where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            this.editColorway.Text = MyUtility.Check.Empty(colorWay) ? string.Empty : colorWay.Substring(0, colorWay.Length - 1);
+            string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
+            DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])), out this.VNConsumption_Detail_Detail);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region Qty DBClick
-            qty.CellMouseDoubleClick += (s, e) =>
+            this.qty.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
@@ -90,7 +110,11 @@ namespace Sci.Production.Shipping
                         DataTable detail2s;
                         try
                         {
-                            MyUtility.Tool.ProcessWithDatatable(VNConsumption_Detail_Detail, "NLCode,SCIRefno,RefNo,Qty,LocalItem", string.Format(@"select a.RefNo,IIF(a.LocalItem = 1,a.Description,a.DescDetail) as Description,
+                            MyUtility.Tool.ProcessWithDatatable(
+                                this.VNConsumption_Detail_Detail,
+                                "NLCode,SCIRefno,RefNo,Qty,LocalItem",
+                                string.Format(
+                                @"select a.RefNo,IIF(a.LocalItem = 1,a.Description,a.DescDetail) as Description,
 IIF(a.LocalItem = 1,a.LocalSuppid,'') as SuppID,
 IIF(a.LocalItem = 1,a.Category,IIF(a.Type = 'F','Fabric','Accessory')) as Type,
 IIF(a.LocalItem = 1,a.LUnit,a.FUnit) as UnitID,a.Qty
@@ -100,13 +124,15 @@ from #tmp t
 left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno
 left join LocalItem l WITH (NOLOCK) on t.RefNo = l.RefNo
 where t.NLCode = '{0}') a
-order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
+order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
+                                out detail2s);
                         }
                         catch (Exception ex)
                         {
                             MyUtility.Msg.ErrorBox("Query detail data fail!!\r\n" + ex.ToString());
                             return;
                         }
+
                         Sci.Production.Shipping.B42_Detail callNextForm = new Sci.Production.Shipping.B42_Detail(detail2s);
                         DialogResult result = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
@@ -116,184 +142,209 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             #endregion
 
             #region NLCode
-            DataGridViewGeneratorTextColumnSettings Nlcode = new DataGridViewGeneratorTextColumnSettings();
-            Nlcode.CellEditable += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
+
+            nlcode.CellEditable += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Convert.GetBool(dr["UserCreate"])) e.IsEditable = false;
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetBool(dr["UserCreate"]))
+                {
+                    e.IsEditable = false;
+                }
             };
-            Nlcode.CellValidating += (s, e) =>
+
+            nlcode.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue) return;
-                if (!MyUtility.Check.Seek(string.Format("select 1 from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, CurrentMaintain["VNContractID"].ToString())))
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                if (!MyUtility.Check.Seek(string.Format("select 1 from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, this.CurrentMaintain["VNContractID"].ToString())))
                 {
                     MyUtility.Msg.WarningBox(string.Format("NLCode:{0} not found!", newvalue));
-                    dr["NLCode"] = "";
+                    dr["NLCode"] = string.Empty;
                 }
             };
             #endregion
 
             Ict.Win.UI.DataGridViewNumericBoxColumn qtyColumn;
-            Ict.Win.UI.DataGridViewNumericBoxColumn SystemQtyColumn;
+            Ict.Win.UI.DataGridViewNumericBoxColumn systemQtyColumn;
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: Nlcode)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(14), iseditingreadonly: true).Get(out SystemQtyColumn)
-                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: qty).Get(out qtyColumn)
+                .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(14), iseditingreadonly: true).Get(out systemQtyColumn)
+                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: this.qty).Get(out qtyColumn)
                 .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
             qtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
-            SystemQtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
+            systemQtyColumn.DecimalZeroize = Ict.Win.UI.NumericBoxDecimalZeroize.Default;
         }
 
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
-
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["Category"] = "B";
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Category"] = "B";
+            this.CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"
 select  ID 
 from VNContract WITH (NOLOCK) 
 where StartDate = (select   MAX(StartDate) 
                    from VNContract WITH (NOLOCK) 
                    where    GETDATE() between StartDate and EndDate 
                             and Status = 'Confirmed')");
-            CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(@"
+            this.CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(
+                @"
 select  CustomSP = isnull (MAX (CustomSP), 'SP000000') 
 from VNConsumption WITH (NOLOCK) 
-where VNContractID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
-            CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup(@"
+where VNContractID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
+
+            this.CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup(@"
 select  VNMultiple 
 from System WITH (NOLOCK) ");
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtCustomSPNo.ReadOnly = true;
-            txtContractNo.ReadOnly = true;
-            dateDate.ReadOnly = true;
+            this.txtCustomSPNo.ReadOnly = true;
+            this.txtContractNo.ReadOnly = true;
+            this.dateDate.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, can't delete!!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             IList<string> deleteCmds = new List<string>();
-            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             return DBProxy.Current.Executes(null, deleteCmds);
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["CustomSP"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CustomSP"]))
             {
-                txtCustomSPNo.Focus();
+                this.txtCustomSPNo.Focus();
                 MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["VNContractID"]))
             {
-                txtContractNo.Focus();
+                this.txtContractNo.Focus();
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
             {
-                dateDate.Focus();
+                this.dateDate.Focus();
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
             {
-                txtStyle.Focus();
+                this.txtStyle.Focus();
                 MyUtility.Msg.WarningBox("Style can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Category"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Category"]))
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["SizeCode"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SizeCode"]))
             {
-                txtSize.Focus();
+                this.txtSize.Focus();
                 MyUtility.Msg.WarningBox("Size can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["Qty"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Qty"]))
             {
-                numQty.Focus();
+                this.numQty.Focus();
                 MyUtility.Msg.WarningBox("Q'ty can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editColorway.Text))
+            if (MyUtility.Check.Empty(this.editColorway.Text))
             {
-                editColorway.Focus();
+                this.editColorway.Focus();
                 MyUtility.Msg.WarningBox("Color way can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editSizeGroup.Text))
+            if (MyUtility.Check.Empty(this.editSizeGroup.Text))
             {
-                editSizeGroup.Focus();
+                this.editSizeGroup.Focus();
                 MyUtility.Msg.WarningBox("Size Group can't empty!!");
                 return false;
             }
             #endregion
 
-            int detailRecord = 0;   //紀錄表身資料筆數
+            // 紀錄表身資料筆數
+            int detailRecord = 0;
 
             #region 刪除表身Qty為0的資料
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["Qty"]))
                 {
                     dr.Delete();
                     continue;
                 }
+
                 detailRecord++;
             }
             #endregion
@@ -306,47 +357,48 @@ from System WITH (NOLOCK) ");
             }
             #endregion
 
-            //Get ID && Get Version
-            if (IsDetailInserting)
+            // Get ID && Get Version
+            if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Env.User.Keyword + "SP", "VNConsumption", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
-                CurrentMaintain["ID"] = newID;
 
-                string maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption WITH (NOLOCK) where StyleUKey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])));
-                CurrentMaintain["Version"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxVersion) + 1).PadLeft(3, '0');
+                this.CurrentMaintain["ID"] = newID;
+
+                string maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption WITH (NOLOCK) where StyleUKey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])));
+                this.CurrentMaintain["Version"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxVersion) + 1).PadLeft(3, '0');
             }
 
-            //準備資料
-            tmpConsumptionArticle.Clear();
-            tmpConsumptionSizecode.Clear();
-            string[] colorway = editColorway.Text.Split(',');
-            string[] sizecode = editSizeGroup.Text.Split(',');
+            // 準備資料
+            this.tmpConsumptionArticle.Clear();
+            this.tmpConsumptionSizecode.Clear();
+            string[] colorway = this.editColorway.Text.Split(',');
+            string[] sizecode = this.editSizeGroup.Text.Split(',');
             foreach (string s in colorway)
             {
-                DataRow dr = tmpConsumptionArticle.NewRow();
-                dr["ID"] = CurrentMaintain["ID"];
+                DataRow dr = this.tmpConsumptionArticle.NewRow();
+                dr["ID"] = this.CurrentMaintain["ID"];
                 dr["Article"] = s;
-                tmpConsumptionArticle.Rows.Add(dr);
+                this.tmpConsumptionArticle.Rows.Add(dr);
             }
 
             foreach (string s in sizecode)
             {
-                DataRow dr = tmpConsumptionSizecode.NewRow();
-                dr["ID"] = CurrentMaintain["ID"];
+                DataRow dr = this.tmpConsumptionSizecode.NewRow();
+                dr["ID"] = this.CurrentMaintain["ID"];
                 dr["SizeCode"] = s;
-                tmpConsumptionSizecode.Rows.Add(dr);
+                this.tmpConsumptionSizecode.Rows.Add(dr);
             }
 
-            foreach (DataRow dr in VNConsumption_Detail_Detail.Rows)
+            foreach (DataRow dr in this.VNConsumption_Detail_Detail.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    dr["ID"] = CurrentMaintain["ID"];
+                    dr["ID"] = this.CurrentMaintain["ID"];
                 }
             }
 
@@ -367,22 +419,23 @@ from System WITH (NOLOCK) ");
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            //存VNConsumption_Detail_Detail, VNConsumption_Article, VNConsumption_SizeCode資料
-            if (!MyUtility.Tool.CursorUpdateTable(VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
+            // 存VNConsumption_Detail_Detail, VNConsumption_Article, VNConsumption_SizeCode資料
+            if (!MyUtility.Tool.CursorUpdateTable(this.VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_Detail_Detail fail!!");
                 return failResult;
             }
 
-            if (!MyUtility.Tool.CursorUpdateTable(tmpConsumptionArticle, "VNConsumption_Article", "Production"))
+            if (!MyUtility.Tool.CursorUpdateTable(this.tmpConsumptionArticle, "VNConsumption_Article", "Production"))
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_Article fail!!");
                 return failResult;
             }
 
-            if (!MyUtility.Tool.CursorUpdateTable(tmpConsumptionSizecode, "VNConsumption_SizeCode", "Production"))
+            if (!MyUtility.Tool.CursorUpdateTable(this.tmpConsumptionSizecode, "VNConsumption_SizeCode", "Production"))
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_SizeCode fail!!");
                 return failResult;
@@ -391,30 +444,34 @@ from System WITH (NOLOCK) ");
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsertClick()
         {
             base.OnDetailGridInsertClick();
-            DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+            DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow["UserCreate"] = 1;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
-            DataRow newrow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex());
+            DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow["UserCreate"] = 1;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
-            if (CurrentDetailData != null)
+            if (this.CurrentDetailData != null)
             {
-                string nlCode = MyUtility.Convert.GetString(CurrentDetailData["NLCode"]); //紀錄要被刪除的NLCode
-                string userCreate = MyUtility.Convert.GetString(CurrentDetailData["UserCreate"]).ToUpper();
+                // 紀錄要被刪除的NLCode
+                string nlCode = MyUtility.Convert.GetString(this.CurrentDetailData["NLCode"]);
+                string userCreate = MyUtility.Convert.GetString(this.CurrentDetailData["UserCreate"]).ToUpper();
                 base.OnDetailGridDelete();
                 if (userCreate == "FALSE")
                 {
-                    foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
+                    foreach (DataRow dr in this.VNConsumption_Detail_Detail.ToList())
                     {
                         if (dr.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(dr["NLCode"]) == nlCode)
                         {
@@ -425,6 +482,7 @@ from System WITH (NOLOCK) ");
             }
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             Sci.Production.Shipping.B42_Print callPurchaseForm = new Sci.Production.Shipping.B42_Print();
@@ -432,33 +490,37 @@ from System WITH (NOLOCK) ");
             return base.ClickPrint();
         }
 
-        //Contract No.
-        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Contract No.
+        private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
-                txtContractNo.Text = item.GetSelectedString();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtContractNo.Text = item.GetSelectedString();
             }
         }
 
-        //Contract No.
-        private void txtContractNo_Validating(object sender, CancelEventArgs e)
+        // Contract No.
+        private void TxtContractNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtContractNo.OldValue != txtContractNo.Text && !MyUtility.Check.Empty(txtContractNo.Text))
+            if (this.EditMode && this.txtContractNo.OldValue != this.txtContractNo.Text && !MyUtility.Check.Empty(this.txtContractNo.Text))
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", this.txtContractNo.Text)))
                 {
-                    txtContractNo.Text = "";
+                    this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
-                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", txtContractNo.Text)))
+                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", this.txtContractNo.Text)))
                 {
-                    txtContractNo.Text = "";
+                    this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("This Contract can't use.");
                     return;
@@ -466,70 +528,86 @@ from System WITH (NOLOCK) ");
             }
         }
 
-        //Style
-        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Style
+        private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 IList<DataRow> selectedData = item.GetSelecteds();
-                CurrentMaintain["StyleID"] = item.GetSelectedString();
-                CurrentMaintain["SeasonID"] = selectedData[0]["SeasonID"];
-                CurrentMaintain["BrandID"] = selectedData[0]["BrandID"];
-                CurrentMaintain["StyleUKey"] = selectedData[0]["Ukey"];
-                CurrentMaintain["CPU"] = selectedData[0]["CPU"];
+                this.CurrentMaintain["StyleID"] = item.GetSelectedString();
+                this.CurrentMaintain["SeasonID"] = selectedData[0]["SeasonID"];
+                this.CurrentMaintain["BrandID"] = selectedData[0]["BrandID"];
+                this.CurrentMaintain["StyleUKey"] = selectedData[0]["Ukey"];
+                this.CurrentMaintain["CPU"] = selectedData[0]["CPU"];
             }
         }
 
-        //Size
-        private void txtSize_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Size
+        private void TxtSize_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "15,10,10,0", txtStyle.Text, headercaptions: "Size");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "15,10,10,0", this.txtStyle.Text, headercaptions: "Size");
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
-                CurrentMaintain["SizeCode"] = item.GetSelectedString();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.CurrentMaintain["SizeCode"] = item.GetSelectedString();
             }
         }
 
-        //Color Way
-        private void editColorway_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        // Color Way
+        private void EditColorway_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editColorway.Text, null, null, null);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editColorway.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
-                editColorway.Text = item.GetSelectedString();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.editColorway.Text = item.GetSelectedString();
             }
         }
 
-        //Size Group
-        private void editSizeGroup_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        // Size Group
+        private void EditSizeGroup_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editSizeGroup.Text, null, null, null);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(this.CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"])), "Color Way", "8", this.editSizeGroup.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel) { return; }
-                editSizeGroup.Text = item.GetSelectedString();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.editSizeGroup.Text = item.GetSelectedString();
             }
         }
 
-        //Sketch
-        private void btnSketch_Click(object sender, EventArgs e)
+        // Sketch
+        private void BtnSketch_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_Sketch callNextForm = new Sci.Production.IE.P01_Sketch(CurrentMaintain);
+            IE.P01_Sketch callNextForm = new IE.P01_Sketch(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
-        //Calculate
-        private void btnCalculate_Click(object sender, EventArgs e)
+        // Calculate
+        private void BtnCalculate_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]) || MyUtility.Check.Empty(CurrentMaintain["Category"]) || MyUtility.Check.Empty(CurrentMaintain["SizeCode"]) || MyUtility.Check.Empty(editColorway.Text))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Category"]) || MyUtility.Check.Empty(this.CurrentMaintain["SizeCode"]) || MyUtility.Check.Empty(this.editColorway.Text))
             {
                 MyUtility.Msg.WarningBox("Style, Category, Size and Color way can't empty!!");
                 return;
@@ -541,9 +619,11 @@ from System WITH (NOLOCK) ");
             StringBuilder emptyNLCode = new StringBuilder();
             StringBuilder wrongUnit = new StringBuilder();
             StringBuilder allMessage = new StringBuilder();
-            string[] colorway = editColorway.Text.Split(',');
+            string[] colorway = this.editColorway.Text.Split(',');
             #region 組撈Detail_Detail Data的SQL
-            sqlCmd.Append(string.Format(@"Declare @styleukey bigint,
+            sqlCmd.Append(string.Format(
+                @"
+Declare @styleukey bigint,
 		@sizecode varchar(8),
 		@article varchar(8),
 		@category varchar(1),
@@ -671,7 +751,12 @@ union all
 select * from tmpBOAData
 union all
 select * from tmpLocalData) a
-group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]), MyUtility.Convert.GetString(CurrentMaintain["SizeCode"]), colorway[0], MyUtility.Convert.GetString(CurrentMaintain["Category"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem",
+                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),
+                colorway[0],
+                MyUtility.Convert.GetString(this.CurrentMaintain["Category"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out queryDetail2Data);
             if (!result)
@@ -694,7 +779,8 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem", MyUtility.
 
             sqlCmd.Clear();
             #region 組撈FixDeclare的資料
-            sqlCmd.Append(string.Format(@"with tmpFixDeclare
+            sqlCmd.Append(string.Format(
+                @"with tmpFixDeclare
 as (
 select vfd.* ,sa.TissuePaper as ArticleTissuePaper,isnull(s.CTNQty,0) as CTNQty
 from VNFixedDeclareItem vfd WITH (NOLOCK) 
@@ -703,7 +789,9 @@ left join Style s WITH (NOLOCK) on s.Ukey = {0}
 )
 select NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty
 from tmpFixDeclare
-where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]), colorway[0]));
+where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
+                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
+                colorway[0]));
             #endregion
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out fixDeclareData);
             if (!result)
@@ -731,13 +819,14 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtilit
 
             sqlCmd.Clear();
             #region 檢查是否有每次都該要出現的項目
-            sqlCmd.Append(string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+            sqlCmd.Append(string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1", MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out necessaryItem);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query necessary item data fail!!\r\n" + result.ToString());
                 return;
             }
+
             foreach (DataRow dr in necessaryItem.Rows)
             {
                 DataRow[] findrow = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
@@ -750,7 +839,8 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtilit
 
             sqlCmd.Clear();
             #region 撈出NL Code為空或單位無法轉換的資料
-            sqlCmd.Append(string.Format(@"Declare @styleukey bigint,
+            sqlCmd.Append(string.Format(
+                @"Declare @styleukey bigint,
 		@sizecode varchar(8),
 		@article varchar(8),
 		@category varchar(1),
@@ -853,7 +943,12 @@ AND NOT (UsageUnit = 'PCS' and (CustomsUnit = 'KGS' OR CustomsUnit = 'M2' OR Cus
 select * from tmpEmptyNLCode
 union all
 select * from tmpUnitNotFound
-order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]), MyUtility.Convert.GetString(CurrentMaintain["SizeCode"]), colorway[0], MyUtility.Convert.GetString(CurrentMaintain["Category"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+order by DataType,SCIRefno,UsageUnit",
+                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),
+                colorway[0],
+                MyUtility.Convert.GetString(this.CurrentMaintain["Category"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             #endregion
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out invalidData);
             if (!result)
@@ -883,7 +978,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             #endregion
 
             #region 刪除VNConsumption_Detail與VNConsumption_Detail_Detail資料
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 DataRow[] queryData = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
                 if (queryData.Length <= 0)
@@ -891,16 +986,17 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     dr.Delete();
                 }
             }
-            foreach (DataRow dr in VNConsumption_Detail_Detail.ToList())
+
+            foreach (DataRow dr in this.VNConsumption_Detail_Detail.ToList())
             {
-                if (dr.RowState != DataRowState.Deleted) {
+                if (dr.RowState != DataRowState.Deleted)
+                {
                     DataRow[] queryData = queryDetail2Data.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
                     if (queryData.Length <= 0)
                     {
                         dr.Delete();
                     }
                 }
-               
             }
 
             #endregion
@@ -908,59 +1004,58 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             #region 塞資料進VNConsumption_Detail與VNConsumption_Detail_Detail
             foreach (DataRow dr in queryDetailData.Rows)
             {
-                DataRow[] queryData = ((DataTable)detailgridbs.DataSource).Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
                 if (queryData.Length <= 0)
                 {
-                    DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
+                    DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                     newRow["NLCode"] = dr["NLCode"];
                     newRow["HSCode"] = dr["HSCode"];
                     newRow["UnitID"] = dr["CustomsUnit"];
                     newRow["Qty"] = dr["Qty"];
                     newRow["SystemQty"] = dr["Qty"];
-                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"
-select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
-
-, MyUtility.Convert.GetString(CurrentMaintain["StyleID"])
-, MyUtility.Convert.GetString(CurrentMaintain["BrandID"])
-, MyUtility.Convert.GetString(CurrentMaintain["SeasonID"])
-, MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])
-, MyUtility.Convert.GetString(dr["NLCode"]))));
+                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
+                        @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                        MyUtility.Convert.GetString(dr["NLCode"]))));
                     newRow["UserCreate"] = 0;
-                    ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
+                    ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
                 }
                 else
                 {
                     queryData[0]["HSCode"] = dr["HSCode"];
                     queryData[0]["UnitID"] = dr["CustomsUnit"];
                     queryData[0]["Qty"] = dr["Qty"];
-                    queryData[0]["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(@"
-select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
-, MyUtility.Convert.GetString(CurrentMaintain["StyleID"])
-, MyUtility.Convert.GetString(CurrentMaintain["BrandID"])
-, MyUtility.Convert.GetString(CurrentMaintain["SeasonID"])
-, MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])
-, MyUtility.Convert.GetString(dr["NLCode"]))));
+                    queryData[0]["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
+                        @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                        MyUtility.Convert.GetString(dr["NLCode"]))));
                     queryData[0]["UserCreate"] = 0;
                 }
             }
 
             foreach (DataRow dr in queryDetail2Data.Rows)
             {
-                DataRow[] queryData = VNConsumption_Detail_Detail.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
+                DataRow[] queryData = this.VNConsumption_Detail_Detail.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
                 if (queryData.Length <= 0)
                 {
-                    DataRow newRow = VNConsumption_Detail_Detail.NewRow();
+                    DataRow newRow = this.VNConsumption_Detail_Detail.NewRow();
                     newRow["NLCode"] = dr["NLCode"];
                     newRow["SCIRefno"] = dr["SCIRefno"];
                     newRow["RefNo"] = dr["RefNo"];
                     newRow["Qty"] = MyUtility.Check.Empty(dr["Qty"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     newRow["LocalItem"] = dr["LocalItem"];
-                    VNConsumption_Detail_Detail.Rows.Add(newRow);
+                    this.VNConsumption_Detail_Detail.Rows.Add(newRow);
                 }
                 else
                 {
                     queryData[0]["RefNo"] = dr["RefNo"];
-                    queryData[0]["Qty"] = MyUtility.Check.Empty(dr["Qty"])?0:MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    queryData[0]["Qty"] = MyUtility.Check.Empty(dr["Qty"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
                     queryData[0]["LocalItem"] = dr["LocalItem"];
                 }
             }
@@ -971,10 +1066,12 @@ select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
             {
                 allMessage.Append(string.Format("Below data is no Customs Code in B40, B41:\r\n{0}\r\n", emptyNLCode.ToString()));
             }
+
             if (!MyUtility.Check.Empty(wrongUnit.ToString()))
             {
                 allMessage.Append(string.Format("Below data is no transfer formula. Please contact with Taipei MIS.\r\n{0}\r\n", wrongUnit.ToString()));
             }
+
             if (!MyUtility.Check.Empty(needItem.ToString()))
             {
                 allMessage.Append(string.Format("Below data is lacking item. Please pay attention!!\r\n{0}\r\n", needItem.ToString()));
@@ -991,28 +1088,37 @@ select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')"
             }
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            //檢查表身Grid資料是否有缺一必輸的NLCode資料，若有，就出訊息告知使用者
-            string sqlCmd = string.Format(@"select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1
+
+            // 檢查表身Grid資料是否有缺一必輸的NLCode資料，若有，就出訊息告知使用者
+            string sqlCmd = string.Format(
+                @"
+select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1
 except
-select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
-            DataTable LackData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out LackData);
-            if (LackData.Rows.Count > 0)
+select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
+                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DataTable lackData;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out lackData);
+            if (lackData.Rows.Count > 0)
             {
                 StringBuilder lackNLCode = new StringBuilder();
-                foreach (DataRow dr in LackData.Rows)
+                foreach (DataRow dr in lackData.Rows)
                 {
                     lackNLCode.Append(MyUtility.Convert.GetString(dr["NLCode"]) + ",");
                 }
+
                 MyUtility.Msg.WarningBox(string.Format("Lacking regular Customs Code: {0}. Please double check.", lackNLCode.ToString(0, lackNLCode.ToString().Length - 1)));
             }
 
-            string updateCmds = string.Format("update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -1020,16 +1126,17 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtili
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-           
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
-            string updateCmds = string.Format("update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                            Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNConsumption set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -1037,7 +1144,6 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtili
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
-
         }
     }
 }

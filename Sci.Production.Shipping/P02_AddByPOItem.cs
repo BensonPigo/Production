@@ -12,80 +12,90 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_AddByPOItem
+    /// </summary>
     public partial class P02_AddByPOItem : Sci.Win.Subs.Input2A
     {
+        /// <summary>
+        /// P02_AddByPOItem
+        /// </summary>
         public P02_AddByPOItem()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnAttaching(DataRow data)
         {
             base.OnAttaching(data);
-            if (OperationMode == 1 || OperationMode == 4)
+            if (this.OperationMode == 1 || this.OperationMode == 4)
             {
-                MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "1,Sample,2,SMS,3,Bulk");
+                MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "1,Sample,2,SMS,3,Bulk");
             }
-            if (OperationMode == 2 || OperationMode == 3)
+
+            if (this.OperationMode == 2 || this.OperationMode == 3)
             {
-                MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "2,SMS,3,Bulk");
+                MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "2,SMS,3,Bulk");
             }
-            
+
             if (MyUtility.Convert.GetString(data["Category"]) == "1")
             {
-                labelAirPPNo.Text = "FOC PL#";
-                if (OperationMode == 3)
+                this.labelAirPPNo.Text = "FOC PL#";
+                if (this.OperationMode == 3)
                 {
-                    MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "1,Sample");
-                    txtAirPPNo.ReadOnly = true;
-                    txtAirPPNo.IsSupportEditMode = false;
+                    MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "1,Sample");
+                    this.txtAirPPNo.ReadOnly = true;
+                    this.txtAirPPNo.IsSupportEditMode = false;
                 }
             }
 
-            if (OperationMode == 3)
+            if (this.OperationMode == 3)
             {
-                txtSPNo.ReadOnly = true;
-                txtSPNo.IsSupportEditMode = false;
+                this.txtSPNo.ReadOnly = true;
+                this.txtSPNo.IsSupportEditMode = false;
             }
         }
 
-        //CTN No.
-        private void txtCTNNo_Validated(object sender, EventArgs e)
+        // CTN No.
+        private void TxtCTNNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
+            if (this.EditMode && this.txtCTNNo.OldValue != this.txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
+                this.CurrentData["CTNNo"] = this.txtCTNNo.Text.Trim();
             }
         }
 
-        //SP#
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        // SP#
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
-                //sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
+                // sql參數
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSPNo.Text);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
 
                 string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
-                DataTable OrderData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
-                if (result && OrderData.Rows.Count > 0)
+                DataTable orderData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
+                if (result && orderData.Rows.Count > 0)
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"select oq.Id
+                    if (!MyUtility.Check.Seek(string.Format(
+                        @"select oq.Id
 from Order_QtyShip oq WITH (NOLOCK) 
 inner join ShipMode s WITH (NOLOCK) on UseFunction like '%AirPP%' and oq.ShipmodeID = s.ID
-where oq.Id = '{0}'", txtSPNo.Text)))
+where oq.Id = '{0}'", this.txtSPNo.Text)))
                     {
                         string shipMode = MyUtility.GetValue.Lookup(@"select (select ID+',' from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%'
 for xml path('')) as ShipModeID");
-                        if (shipMode != "")
+                        if (shipMode != string.Empty)
                         {
                             shipMode = shipMode.Substring(0, shipMode.Length - 1);
                         }
-                        CurrentData["OrderID"] = "";
+
+                        this.CurrentData["OrderID"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("Ship mode must be '{0}'", shipMode));
                         return;
@@ -101,51 +111,54 @@ for xml path('')) as ShipModeID");
                     {
                         MyUtility.Msg.WarningBox("SP# not found!!");
                     }
-                    CurrentData["OrderID"] = "";
+
+                    this.CurrentData["OrderID"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
             }
         }
 
-        //SP#
-        private void txtSPNo_Validated(object sender, EventArgs e)
+        // SP#
+        private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
+            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
-                DataRow OrderData;
-                if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
+                DataRow orderData;
+                if (MyUtility.Check.Seek(
+                    string.Format(
+                    @"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
+from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
                 {
-                    CurrentData["OrderID"] = txtSPNo.Text;
-                    CurrentData["SeasonID"] = OrderData["SeasonID"];
-                    CurrentData["StyleID"] = OrderData["StyleID"];
-                    CurrentData["BrandID"] = OrderData["BrandID"];
-                    CurrentData["Leader"] = OrderData["SMR"];
-                    if (MyUtility.Check.Empty(CurrentData["Description"]))
+                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
+                    this.CurrentData["SeasonID"] = orderData["SeasonID"];
+                    this.CurrentData["StyleID"] = orderData["StyleID"];
+                    this.CurrentData["BrandID"] = orderData["BrandID"];
+                    this.CurrentData["Leader"] = orderData["SMR"];
+                    if (MyUtility.Check.Empty(this.CurrentData["Description"]))
                     {
-                        CurrentData["Description"] = OrderData["Description"];
+                        this.CurrentData["Description"] = orderData["Description"];
                     }
                 }
                 else
                 {
-                    CurrentData["OrderID"] = txtSPNo.Text;
-                    CurrentData["SeasonID"] = "";
-                    CurrentData["StyleID"] = "";
-                    CurrentData["BrandID"] = "";
-                    CurrentData["Leader"] = "";
+                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
+                    this.CurrentData["SeasonID"] = string.Empty;
+                    this.CurrentData["StyleID"] = string.Empty;
+                    this.CurrentData["BrandID"] = string.Empty;
+                    this.CurrentData["Leader"] = string.Empty;
                 }
             }
         }
 
-        //Air PP No.
-        private void txtAirPPNo_Validating(object sender, CancelEventArgs e)
+        // Air PP No.
+        private void TxtAirPPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtAirPPNo.OldValue != txtAirPPNo.Text)
+            if (this.EditMode && this.txtAirPPNo.OldValue != this.txtAirPPNo.Text)
             {
-                if (!ChkAirPP())
+                if (!this.ChkAirPP())
                 {
-                    CurrentData["DutyNo"] = "";
+                    this.CurrentData["DutyNo"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
@@ -154,155 +167,179 @@ from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
 
         private bool ChkAirPP()
         {
-            DataRow AirPPData;
-            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", txtAirPPNo.Text), out AirPPData))
+            DataRow airPPData;
+            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", this.txtAirPPNo.Text), out airPPData))
             {
                 MyUtility.Msg.WarningBox("Air PP No. not found!!");
                 return false;
             }
             else
             {
-                if (AirPPData["OrderID"].ToString() != txtSPNo.Text)
+                if (airPPData["OrderID"].ToString() != this.txtSPNo.Text)
                 {
                     MyUtility.Msg.WarningBox("SP# and Air PP's SP# is inconsistent!!");
                     return false;
                 }
             }
 
-            if (MyUtility.Check.Seek(string.Format(@"select ed.ID 
+            if (MyUtility.Check.Seek(
+                string.Format(
+                @"select ed.ID 
 from Express_Detail ed WITH (NOLOCK) 
 inner join Express e WITH (NOLOCK) on ed.ID = e.ID and e.Status <> 'Junked'
-where DutyNo = '{0}' and ed.ID <> '{1}'", txtAirPPNo.Text, MyUtility.Convert.GetString(CurrentData["ID"])), out AirPPData))
+where DutyNo = '{0}' and ed.ID <> '{1}'",
+                this.txtAirPPNo.Text,
+                MyUtility.Convert.GetString(this.CurrentData["ID"])), out airPPData))
             {
-                MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(AirPPData["ID"])));
+                MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(airPPData["ID"])));
                 return false;
             }
+
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentData["OrderID"]))
+            if (MyUtility.Check.Empty(this.CurrentData["OrderID"]))
             {
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 MyUtility.Msg.WarningBox("SP# can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Description"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Description"]))
             {
-                editDescription.Focus();
+                this.editDescription.Focus();
                 MyUtility.Msg.WarningBox("Description can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["CTNNo"]))
             {
-                txtCTNNo.Focus();
+                this.txtCTNNo.Focus();
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Qty"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
             {
-                numQty.Focus();
+                this.numQty.Focus();
                 MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["UnitID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["UnitID"]))
             {
-                txtunit_ftyUnit.Focus();
+                this.txtunit_ftyUnit.Focus();
                 MyUtility.Msg.WarningBox("Unit can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["NW"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["NW"]))
             {
-                numNW.Focus();
+                this.numNW.Focus();
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Category"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Category"]))
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.WarningBox("Category can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Receiver"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Receiver"]))
             {
-                txtReceiver.Focus();
+                this.txtReceiver.Focus();
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["DutyNo"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["DutyNo"]))
             {
-                txtAirPPNo.Focus();
+                this.txtAirPPNo.Focus();
                 MyUtility.Msg.WarningBox("Air PP No. can't empty!");
                 return false;
             }
             #endregion
 
-            //新增檢查
-            if (OperationMode == 2)
+            // 新增檢查
+            if (this.OperationMode == 2)
             {
-                if (!ChkAirPP())
+                if (!this.ChkAirPP())
                 {
                     return false;
                 }
-                DataRow Seq;
-                if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
+
+                DataRow seq;
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                    @"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
+from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(this.CurrentData["ID"])), out seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;
                 }
-                CurrentData["Seq1"] = Seq["Seq1"];
-                CurrentData["InCharge"] = Sci.Env.User.UserID;
+
+                this.CurrentData["Seq1"] = seq["Seq1"];
+                this.CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
-//            DualResult result1 = DBProxy.Current.Execute(null,"select * from ")
+
+// DualResult result1 = DBProxy.Current.Execute(null,"select * from ")
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDeletePre()
         {
-            if (MyUtility.Convert.GetString(CurrentData["Category"]) == "1")
+            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "1")
             {
                 DualResult failResult;
-                
-                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", MyUtility.Convert.GetString(CurrentData["DutyNo"])));
+
+                DualResult result = DBProxy.Current.Execute(null, string.Format("update PackingList set ExpressID = '' where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentData["DutyNo"])));
                 if (!result)
                 {
                     failResult = new DualResult(false, "Update packing list fail!! Pls try again.\r\n" + result.ToString());
                     return failResult;
                 }
 
-                result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and DutyNo = '{1}'", MyUtility.Convert.GetString(CurrentData["ID"]), MyUtility.Convert.GetString(CurrentData["DutyNo"])));
+                result = DBProxy.Current.Execute(null, string.Format("delete Express_Detail where ID = '{0}' and DutyNo = '{1}'", MyUtility.Convert.GetString(this.CurrentData["ID"]), MyUtility.Convert.GetString(this.CurrentData["DutyNo"])));
                 if (!result)
                 {
                     failResult = new DualResult(false, "Delete fail!! Pls try again.\r\n" + result.ToString());
                     return failResult;
                 }
             }
+
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
     }

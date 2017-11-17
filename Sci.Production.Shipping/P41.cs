@@ -11,28 +11,37 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P41
+    /// </summary>
     public partial class P41 : Sci.Win.Tems.Input6
     {
-        Ict.Win.DataGridViewGeneratorTextColumnSettings customsp = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings customsp = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+
+        /// <summary>
+        /// /P41
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select * from VNExportDeclaration_Detail WITH (NOLOCK) where ID = '{0}' order by OrderID,Article,SizeCode", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region Custom SP#的Validating與按右鍵
-            customsp.EditingMouseDown += (s, e) =>
+            this.customsp.EditingMouseDown += (s, e) =>
                 {
-                    
                     if (this.EditMode)
                     {
                         if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -40,7 +49,8 @@ namespace Sci.Production.Shipping
                             if (e.RowIndex != -1)
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                                string sqlCmd = string.Format(@"select c.CustomSP,(c.Qty-c.PulloutQty) as Balance
+                                string sqlCmd = string.Format(
+                                    @"select c.CustomSP,(c.Qty-c.PulloutQty) as Balance
 from VNConsumption c WITH (NOLOCK) 
 where c.VNContractID = '{0}'
 and c.StyleID = '{1}'
@@ -48,17 +58,28 @@ and c.Category = '{2}'
 and c.BrandID = '{3}'
 and exists (select 1 from VNConsumption_Article ca WITH (NOLOCK) where ca.ID = c.ID and ca.Article = '{4}')
 and exists (select 1 from VNConsumption_SizeCode cs WITH (NOLOCK) where cs.ID = c.ID and cs.SizeCode = '{5}')
-order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Category"]), MyUtility.Convert.GetString(dr["BrandID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+order by c.CustomSP",
+                                    MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                                    MyUtility.Convert.GetString(dr["StyleID"]),
+                                    MyUtility.Convert.GetString(dr["Category"]),
+                                    MyUtility.Convert.GetString(dr["BrandID"]),
+                                    MyUtility.Convert.GetString(dr["Article"]),
+                                    MyUtility.Convert.GetString(dr["SizeCode"]));
+
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", dr["CustomSP"].ToString().Trim());
                                 DialogResult returnResult = item.ShowDialog();
-                                if (returnResult == DialogResult.Cancel) { return; }
+                                if (returnResult == DialogResult.Cancel)
+                                {
+                                    return;
+                                }
+
                                 dr["CustomSP"] = item.GetSelectedString();
                             }
                         }
                     }
                 };
 
-            customsp.CellValidating += (s, e) =>
+            this.customsp.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -67,7 +88,8 @@ order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"
                     {
                         if (MyUtility.Convert.GetString(dr["CustomSP"]) != MyUtility.Convert.GetString(e.FormattedValue))
                         {
-                            string sqlCmd = string.Format(@"select c.CustomSP,(c.Qty-c.PulloutQty) as Balance
+                            string sqlCmd = string.Format(
+                                @"select c.CustomSP,(c.Qty-c.PulloutQty) as Balance
 from VNConsumption c WITH (NOLOCK) 
 where c.VNContractID = '{0}'
 and c.StyleID = '{1}'
@@ -76,10 +98,18 @@ and c.BrandID = '{3}'
 and c.CustomSP = '{6}'
 and exists (select 1 from VNConsumption_Article ca WITH (NOLOCK) where ca.ID = c.ID and ca.Article = '{4}')
 and exists (select 1 from VNConsumption_SizeCode cs WITH (NOLOCK) where cs.ID = c.ID and cs.SizeCode = '{5}')
-order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Category"]), MyUtility.Convert.GetString(dr["BrandID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(e.FormattedValue));
+order by c.CustomSP",
+                                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                                MyUtility.Convert.GetString(dr["StyleID"]),
+                                MyUtility.Convert.GetString(dr["Category"]),
+                                MyUtility.Convert.GetString(dr["BrandID"]),
+                                MyUtility.Convert.GetString(dr["Article"]),
+                                MyUtility.Convert.GetString(dr["SizeCode"]),
+                                MyUtility.Convert.GetString(e.FormattedValue));
+
                             if (!MyUtility.Check.Seek(sqlCmd))
                             {
-                                dr["CustomSP"] = "";
+                                dr["CustomSP"] = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Custom SP# not found!!");
                                 return;
@@ -90,135 +120,155 @@ order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"
             };
             #endregion
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Category", header: "Category", width: Widths.AnsiChars(1), iseditingreadonly: true)
-                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), settings: customsp)
+                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), settings: this.customsp)
                 .Text("Article", header: "Color way", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("ExportQty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
-            numQty.Value = 0;
-            numNW.Value = 0;
-            numGW.Value = 0;
-            numCMP.Value = 0;
+            this.numQty.Value = 0;
+            this.numNW.Value = 0;
+            this.numGW.Value = 0;
+            this.numCMP.Value = 0;
             string sqlCmd;
-            if (!MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
-                if (MyUtility.Convert.GetString(CurrentMaintain["DataFrom"]) == "PACKINGLIST")
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["DataFrom"]) == "PACKINGLIST")
                 {
-                    sqlCmd = string.Format(@"select sum(NW) as NW,sum(GW) as GW,sum(ShipQty) as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
+                    sqlCmd = string.Format(
+                        @"select sum(NW) as NW,sum(GW) as GW,sum(ShipQty) as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 where ed.ID = '{0}'
 and c.VNContractID = '{1}') as CMP 
-from PackingList WITH (NOLOCK) where INVNo = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["InvNo"]));
+from PackingList WITH (NOLOCK) where INVNo = '{2}'",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]));
                 }
                 else
                 {
-                    sqlCmd = string.Format(@"select TotalNW as NW,TotalGW as GW,TotalShipQty as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
+                    sqlCmd = string.Format(
+                        @"select TotalNW as NW,TotalGW as GW,TotalShipQty as ShipQty,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 where ed.ID = '{0}'
 and c.VNContractID = '{1}') as CMP 
-from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["InvNo"]));
+from GMTBooking WITH (NOLOCK) where ID = '{2}'",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]));
                 }
+
                 DataTable tmpData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
                 if (result && tmpData.Rows.Count > 0)
                 {
-                    numQty.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["ShipQty"]);
-                    numNW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["NW"]);
-                    numGW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["GW"]);
-                    numCMP.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["CMP"]);
+                    this.numQty.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["ShipQty"]);
+                    this.numNW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["NW"]);
+                    this.numGW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["GW"]);
+                    this.numCMP.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["CMP"]);
                 }
             }
 
-            if (EditMode)
+            if (this.EditMode)
             {
-                if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    dateDate.ReadOnly = true;
-                    txtInvNo.ReadOnly = true;
-                    txtContractNo.ReadOnly = true;
-                    txtPortofExport.ReadOnly = true;
-                    btnReCalculate.Enabled = true;
-                    detailgrid.IsEditingReadOnly = true;
+                    this.dateDate.ReadOnly = true;
+                    this.txtInvNo.ReadOnly = true;
+                    this.txtContractNo.ReadOnly = true;
+                    this.txtPortofExport.ReadOnly = true;
+                    this.btnReCalculate.Enabled = true;
+                    this.detailgrid.IsEditingReadOnly = true;
                 }
                 else
                 {
-                    txtCustomdeclareno.ReadOnly = true;
+                    this.txtCustomdeclareno.ReadOnly = true;
                 }
-                detailgrid.EnsureStyle();
+
+                this.detailgrid.EnsureStyle();
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["CDate"] = DateTime.Today;
+            this.CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "JUNKED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "JUNKED")
             {
                 MyUtility.Msg.WarningBox("This record already junked, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, can't delete!!");
                 return false;
             }
 
-            if (!MyUtility.Check.Empty(CurrentMaintain["DeclareNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["DeclareNo"]))
             {
                 MyUtility.Msg.WarningBox("Already have declare no., can't delete!!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
             {
-                dateDate.Focus();
+                this.dateDate.Focus();
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["VNContractID"]))
             {
-                txtContractNo.Focus();
+                this.txtContractNo.Focus();
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
-                txtInvNo.Focus();
+                this.txtInvNo.Focus();
                 MyUtility.Msg.WarningBox("Inv No. can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["VNExportPortID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["VNExportPortID"]))
             {
-                txtPortofExport.Focus();
+                this.txtPortofExport.Focus();
                 MyUtility.Msg.WarningBox("Port of Export can't empty!!");
                 return false;
             }
@@ -227,15 +277,17 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
 
             #region 檢查表身Custom SP#不可為空值與表身資料不可為空
             int recCount = 0;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["CustomSP"]))
                 {
                     MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
                     return false;
                 }
+
                 recCount++;
             }
+
             if (recCount == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't empty!!");
@@ -243,20 +295,23 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             }
             #endregion
 
-            //Get ID
-            if (IsDetailInserting)
+            // Get ID
+            if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
-                CurrentMaintain["ID"] = newID;
+
+                this.CurrentMaintain["ID"] = newID;
             }
+
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
             Sci.Production.Shipping.P41_Print callPurchaseForm = new Sci.Production.Shipping.P41_Print();
@@ -264,15 +319,16 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             return base.ClickPrint();
         }
 
-        //Junk
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
-            if (!MyUtility.Check.Empty(CurrentMaintain["DeclareNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["DeclareNo"]))
             {
                 MyUtility.Msg.WarningBox("This record already have Custom declare no., can't Junk!!");
                 return;
             }
+
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Junk > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {
@@ -280,10 +336,11 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             }
 
             IList<string> updateCmds = new List<string>();
-            string sqlCmd = string.Format(@"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
+            string sqlCmd = string.Format(
+                @"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable updateData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
@@ -291,12 +348,13 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Sum total export qty fail!!");
                 return;
             }
+
             foreach (DataRow dr in updateData.Rows)
             {
-                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Junked' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -304,18 +362,16 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Junk fail!!\r\n" + result.ToString());
                 return;
             }
-          
-
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            
-            if (MyUtility.Convert.GetString(CurrentMaintain["DataFrom"]) == "PACKINGLIST")
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["DataFrom"]) == "PACKINGLIST")
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}' and Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
+                if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}' and Status = 'Confirmed'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]))))
                 {
                     MyUtility.Msg.WarningBox("Packing FOC not yet confirmed, this declaration can't confirm!!");
                     return;
@@ -323,22 +379,26 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
             else
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}' and Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
+                if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}' and Status = 'Confirmed'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]))))
                 {
                     MyUtility.Msg.WarningBox("Garment booking not yet confirmed, this declaration can't confirm!!");
                     return;
                 }
             }
 
-            //檢查CustomSP的Balance Qty是否會小於0
-            string sqlCmd = string.Format(@"select CustomSP 
+            // 檢查CustomSP的Balance Qty是否會小於0
+            string sqlCmd = string.Format(
+                @"select CustomSP 
 from (select ed.CustomSP,sum(ed.ExportQty) as ExportQty, c.Qty-c.PulloutQty as RemainQty
 	  from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 	  inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 	  where c.VNContractID = '{0}'
 	  and ed.ID = '{1}'
 	  group by ed.CustomSP,c.Qty-c.PulloutQty) a
-where a.RemainQty - a.ExportQty < 0", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+where a.RemainQty - a.ExportQty < 0",
+                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
             DataTable checkData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out checkData);
             if (!result)
@@ -346,6 +406,7 @@ where a.RemainQty - a.ExportQty < 0", MyUtility.Convert.GetString(CurrentMaintai
                 MyUtility.Msg.WarningBox("Check CustomSp Balance Qty fail!!");
                 return;
             }
+
             if (checkData.Rows.Count > 0)
             {
                 StringBuilder errMsg = new StringBuilder();
@@ -354,16 +415,21 @@ where a.RemainQty - a.ExportQty < 0", MyUtility.Convert.GetString(CurrentMaintai
                 {
                     errMsg.Append(string.Format("{0}\r\n", MyUtility.Convert.GetString(dr["CustomSP"])));
                 }
+
                 MyUtility.Msg.WarningBox(errMsg.ToString());
                 return;
             }
 
-            //檢查報關數量是否跟Garment Booking數量一致，若不一致會請User確認是否要繼續做Confirmed
-            string qty = MyUtility.GetValue.Lookup(string.Format(@"select (isnull((select sum(pd.ShipQty)
+            // 檢查報關數量是否跟Garment Booking數量一致，若不一致會請User確認是否要繼續做Confirmed
+            string qty = MyUtility.GetValue.Lookup(string.Format(
+                @"select (isnull((select sum(pd.ShipQty)
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd on p.ID = pd.ID
 where p.INVNo = '{0}'),0)-
-isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH (NOLOCK) where ID = '{1}'),0)) as BalanceQty", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH (NOLOCK) where ID = '{1}'),0)) as BalanceQty",
+                MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+
             if (qty != "0")
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Declaration Qty is not equal to Garment Booking Qty. Are you sure you want to < Confirm > this data?", "Warning", MessageBoxButtons.YesNo);
@@ -374,23 +440,25 @@ isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH 
             }
 
             IList<string> updateCmds = new List<string>();
-            sqlCmd = string.Format(@"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
+            sqlCmd = string.Format(
+                @"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable updateData;
-            result = DBProxy.Current.Select(null,sqlCmd,out updateData);
+            result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Sum total export qty fail!!");
                 return;
             }
+
             foreach (DataRow dr in updateData.Rows)
             {
-                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty+{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty+{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-           
+
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -398,18 +466,18 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
             IList<string> updateCmds = new List<string>();
-            string sqlCmd = string.Format(@"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
+            string sqlCmd = string.Format(
+                @"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable updateData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
@@ -417,11 +485,13 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Sum total export qty fail!!");
                 return;
             }
+
             foreach (DataRow dr in updateData.Rows)
             {
-                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+                updateCmds.Add(string.Format("update VNConsumption set PulloutQty = PulloutQty-{0} where CustomSP = '{1}' and VNContractID = '{2}';", MyUtility.Convert.GetString(dr["ExportQty"]), MyUtility.Convert.GetString(dr["CustomSP"]), MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"])));
             }
-            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+
+            updateCmds.Add(string.Format("update VNExportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}';", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             result = DBProxy.Current.Executes(null, updateCmds);
             if (!result)
@@ -429,30 +499,32 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
-
-            
         }
 
-        //Contract No.
-        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Contract No.
+        private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
+            string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtContractNo.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtContractNo.Text = item.GetSelectedString();
         }
 
-        //Contract No.
-        private void txtContractNo_Validating(object sender, CancelEventArgs e)
+        // Contract No.
+        private void TxtContractNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(txtContractNo.Text) && txtContractNo.Text != txtContractNo.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtContractNo.Text) && this.txtContractNo.Text != this.txtContractNo.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", this.txtContractNo.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", this.txtContractNo.Text, MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
-                        txtContractNo.Text = "";
+                        this.txtContractNo.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("This Contract can't use.");
                         return;
@@ -460,7 +532,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 }
                 else
                 {
-                    txtContractNo.Text = "";
+                    this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
@@ -468,23 +540,27 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
         }
 
-        //Port of Export
-        private void txtPortofExport_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Port of Export
+        private void TxtPortofExport_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtPortofExport.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtPortofExport.Text = item.GetSelectedString();
         }
 
-        //Port of Export
-        private void txtPortofExport_Validating(object sender, CancelEventArgs e)
+        // Port of Export
+        private void TxtPortofExport_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(txtPortofExport.Text) && txtPortofExport.Text != txtPortofExport.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtPortofExport.Text) && this.txtPortofExport.Text != this.txtPortofExport.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNExportPort WITH (NOLOCK) where ID = '{0}'", txtPortofExport.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNExportPort WITH (NOLOCK) where ID = '{0}'", this.txtPortofExport.Text)))
                 {
-                    txtPortofExport.Text = "";
+                    this.txtPortofExport.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!!");
                     return;
@@ -492,63 +568,65 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
         }
 
-        //Port of Export
-        private void txtPortofExport_TextChanged(object sender, EventArgs e)
+        // Port of Export
+        private void TxtPortofExport_TextChanged(object sender, EventArgs e)
         {
-            displayPortofExport.Text = MyUtility.GetValue.Lookup("Name", txtPortofExport.Text, "VNExportPort", "ID");
+            this.displayPortofExport.Text = MyUtility.GetValue.Lookup("Name", this.txtPortofExport.Text, "VNExportPort", "ID");
         }
 
-        //Inv No.
-        private void txtInvNo_Validating(object sender, CancelEventArgs e)
+        // Inv No.
+        private void TxtInvNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtInvNo.Text != txtInvNo.OldValue)
+            if (this.EditMode && this.txtInvNo.Text != this.txtInvNo.OldValue)
             {
-                foreach (DataRow dr in DetailDatas)
+                foreach (DataRow dr in this.DetailDatas)
                 {
                     dr.Delete();
                 }
 
-                if (!MyUtility.Check.Empty(txtInvNo.Text))
+                if (!MyUtility.Check.Empty(this.txtInvNo.Text))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", txtInvNo.Text)))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", this.txtInvNo.Text)))
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", txtInvNo.Text)))
+                        if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", this.txtInvNo.Text)))
                         {
-                            txtInvNo.Text = "";
+                            this.txtInvNo.Text = string.Empty;
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!!");
                             return;
                         }
                         else
                         {
-                            CurrentMaintain["InvNo"] = txtInvNo.Text;
-                            CurrentMaintain["DataFrom"] = "PACKINGLIST";
+                            this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
+                            this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
                         }
                     }
                     else
                     {
-                        CurrentMaintain["InvNo"] = txtInvNo.Text;
-                        CurrentMaintain["DataFrom"] = "GMTBOOKING";
+                        this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
+                        this.CurrentMaintain["DataFrom"] = "GMTBOOKING";
                     }
 
-                    if (MyUtility.Check.Seek(string.Format("select ID from VNExportDeclaration WITH (NOLOCK) where ID <> '{0}' and InvNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
+                    if (MyUtility.Check.Seek(string.Format("select ID from VNExportDeclaration WITH (NOLOCK) where ID <> '{0}' and InvNo = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]))))
                     {
-                        CurrentMaintain["InvNo"] = "";
-                        CurrentMaintain["DataFrom"] = "";
+                        this.CurrentMaintain["InvNo"] = string.Empty;
+                        this.CurrentMaintain["DataFrom"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("This <Inv No.> already created!!");
                         return;
                     }
                 }
-                GenDetailData();
+
+                this.GenDetailData();
             }
         }
 
-        //產生Detail資料
+        // 產生Detail資料
         private void GenDetailData()
         {
             #region 組撈資料SQL
-            string sqlCmd = string.Format(@"Declare @invno VARCHAR(25),
+            string sqlCmd = string.Format(
+                @"Declare @invno VARCHAR(25),
 		@contractid VARCHAR(15)
 
 SET @invno = '{0}'
@@ -647,7 +725,10 @@ END
 CLOSE cursor_packingdata
 DEALLOCATE cursor_packingdata
 
-select * from @tempPackingList", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]));
+select * from @tempPackingList",
+                MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]),
+                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]));
+
             #endregion
             DataTable tmpDetail;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpDetail);
@@ -659,7 +740,7 @@ select * from @tempPackingList", MyUtility.Convert.GetString(CurrentMaintain["In
 
             foreach (DataRow dr in tmpDetail.Rows)
             {
-                DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
+                DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 newRow["OrderID"] = dr["OrderID"];
                 newRow["StyleID"] = dr["StyleID"];
                 newRow["SeasonID"] = dr["SeasonID"];
@@ -671,18 +752,18 @@ select * from @tempPackingList", MyUtility.Convert.GetString(CurrentMaintain["In
                 newRow["ExportQty"] = dr["ExportQty"];
                 newRow["StyleUKey"] = dr["StyleUKey"];
 
-                ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
+                ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
             }
         }
 
-        //Re-Calculate
-        private void btnReCalculate_Click(object sender, EventArgs e)
+        // Re-Calculate
+        private void BtnReCalculate_Click(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
-                if (MyUtility.Convert.GetString(CurrentMaintain["DataFrom"]) == "PACKINGLIST")
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["DataFrom"]) == "PACKINGLIST")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]))))
                     {
                         MyUtility.Msg.WarningBox("Invoice No. not exiest!!");
                         return;
@@ -690,18 +771,19 @@ select * from @tempPackingList", MyUtility.Convert.GetString(CurrentMaintain["In
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]))))
                     {
                         MyUtility.Msg.WarningBox("Invoice No. not exiest!!");
                         return;
                     }
                 }
 
-                foreach (DataRow dr in DetailDatas)
+                foreach (DataRow dr in this.DetailDatas)
                 {
                     dr.Delete();
                 }
-                GenDetailData();
+
+                this.GenDetailData();
             }
         }
     }

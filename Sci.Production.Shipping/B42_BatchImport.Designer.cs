@@ -204,7 +204,7 @@
             this.btnselectfile.TabIndex = 1;
             this.btnselectfile.Text = "Select File";
             this.btnselectfile.UseVisualStyleBackColor = true;
-            this.btnselectfile.Click += new System.EventHandler(this.btnselectfile_Click);
+            this.btnselectfile.Click += new System.EventHandler(this.Btnselectfile_Click);
             // 
             // btnImport
             // 
@@ -214,7 +214,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnClose
             // 
@@ -225,7 +225,7 @@
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // gridBatchImport
             // 

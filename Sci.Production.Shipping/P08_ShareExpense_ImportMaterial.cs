@@ -12,28 +12,38 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P08_ShareExpense_ImportMaterial
+    /// </summary>
     public partial class P08_ShareExpense_ImportMaterial : Sci.Win.Subs.Base
     {
-        DataTable detailData, gridData;
-        DataRow apData;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable detailData;
+        private DataTable gridData;
+        private DataRow apData;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-        public P08_ShareExpense_ImportMaterial(DataTable DetailData, DataRow APDate)
+        /// <summary>
+        /// P08_ShareExpense_ImportMaterial
+        /// </summary>
+        /// <param name="detailData">detailData</param>
+        /// <param name="aPDate">aPDate</param>
+        public P08_ShareExpense_ImportMaterial(DataTable detailData, DataRow aPDate)
         {
-            InitializeComponent();
-            detailData = DetailData;
-            apData = APDate;
+            this.InitializeComponent();
+            this.detailData = detailData;
+            this.apData = aPDate;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            //Grid設定
+            // Grid設定
             this.gridImport.IsEditingReadOnly = false;
-            this.gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("WKNo", header: "WK#/Fty WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -41,56 +51,56 @@ namespace Sci.Production.Shipping
                 .Numeric("CBM", header: "CBM", decimal_places: 2, width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
-        //Query
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Query
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateArrivePortDate.Value1) && MyUtility.Check.Empty(dateArrivePortDate.Value2) && MyUtility.Check.Empty(txtInvoiceNo.Text) && 
-                MyUtility.Check.Empty(txtBLNo.Text) && MyUtility.Check.Empty(txtWKNo.Text))
+            if (MyUtility.Check.Empty(this.dateArrivePortDate.Value1) && MyUtility.Check.Empty(this.dateArrivePortDate.Value2) && MyUtility.Check.Empty(this.txtInvoiceNo.Text) &&
+                MyUtility.Check.Empty(this.txtBLNo.Text) && MyUtility.Check.Empty(this.txtWKNo.Text))
             {
-                dateArrivePortDate.TextBox1.Focus();
+                this.dateArrivePortDate.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("< Arrive Port Date > or < Invoice No. > or < B/L No. > or < WK No. > can not be empty!");
                 return;
             }
 
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
-            if (MyUtility.Convert.GetString(apData["Type"]) == "EXPORT")
+            if (MyUtility.Convert.GetString(this.apData["Type"]) == "EXPORT")
             {
                 #region FtyExport (Type = 3)
                 sqlCmd.Append(@"select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
 '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
 from FtyExport WITH (NOLOCK) 
 where Type = 3 ");
-                if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
+                if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
+                if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
+                if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
+                    sqlCmd.Append(string.Format(" and INVNo = '{0}' ", this.txtInvoiceNo.Text));
                 }
 
-                if (!MyUtility.Check.Empty(txtBLNo.Text))
+                if (!MyUtility.Check.Empty(this.txtBLNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
+                    sqlCmd.Append(string.Format(" and BLNo = '{0}' ", this.txtBLNo.Text));
                 }
 
-                if (!MyUtility.Check.Empty(txtWKNo.Text))
+                if (!MyUtility.Check.Empty(this.txtWKNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
+                    sqlCmd.Append(string.Format(" and ID = '{0}' ", this.txtWKNo.Text));
                 }
                 #endregion
             }
             else
             {
                 #region Export, FtyExport(Type != 3)
-                if (MyUtility.Convert.GetString(apData["SubType"]) == "MATERIAL" || MyUtility.Convert.GetString(apData["SubType"]).ToUpper() == "OTHER")
+                if (MyUtility.Convert.GetString(this.apData["SubType"]) == "MATERIAL" || MyUtility.Convert.GetString(this.apData["SubType"]).ToUpper() == "OTHER")
                 {
                     sqlCmd.Append(@"with ExportData 
 as 
@@ -98,30 +108,31 @@ as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
  from Export WITH (NOLOCK) 
  where 1 = 1 ");
-                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
+                    if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
+                    if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
+                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", this.txtInvoiceNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(txtBLNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtBLNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
+                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", this.txtBLNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(txtWKNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtWKNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
+                        sqlCmd.Append(string.Format(" and ID = '{0}' ", this.txtWKNo.Text));
                     }
+
                     sqlCmd.Append("), ");
                 }
                 else
@@ -133,7 +144,7 @@ as
  from Export WITH (NOLOCK) where 1 = 0), ");
                 }
 
-                if (MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(apData["SubType"]).ToUpper() == "OTHER")
+                if (MyUtility.Convert.GetString(this.apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(this.apData["SubType"]).ToUpper() == "OTHER")
                 {
                     sqlCmd.Append(@"FtyExportData 
 as 
@@ -141,30 +152,31 @@ as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
  from FtyExport WITH (NOLOCK) 
  where Type <> 3 ");
-                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
+                    if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value1).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
+                    if (!MyUtility.Check.Empty(this.dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(this.dateArrivePortDate.Value2).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtInvoiceNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
+                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", this.txtInvoiceNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(txtBLNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtBLNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
+                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", this.txtBLNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(txtWKNo.Text))
+                    if (!MyUtility.Check.Empty(this.txtWKNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
+                        sqlCmd.Append(string.Format(" and ID = '{0}' ", this.txtWKNo.Text));
                     }
+
                     sqlCmd.Append(") ");
                 }
                 else
@@ -184,41 +196,42 @@ select * from FtyExportData");
             }
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
             }
             else
             {
-                if (gridData.Rows.Count == 0)
+                if (this.gridData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
-            listControlBindingSource1.DataSource = gridData;
+
+            this.listControlBindingSource1.DataSource = this.gridData;
         }
 
-        //Import
-        private void btnImport_Click(object sender, EventArgs e)
+        // Import
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            gridData = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            this.gridData = (DataTable)this.listControlBindingSource1.DataSource;
 
-            if (!MyUtility.Check.Empty(gridData) && gridData.Rows.Count > 0)
+            if (!MyUtility.Check.Empty(this.gridData) && this.gridData.Rows.Count > 0)
             {
-                DataRow[] dr = gridData.Select("Selected = 1");
+                DataRow[] dr = this.gridData.Select("Selected = 1");
                 if (dr.Length > 0)
                 {
                     foreach (DataRow currentRow in dr)
                     {
-                        DataRow[] findrow = detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(currentRow["BLNo"]), MyUtility.Convert.GetString(currentRow["WKNo"]), MyUtility.Convert.GetString(currentRow["InvNo"])));
+                        DataRow[] findrow = this.detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(currentRow["BLNo"]), MyUtility.Convert.GetString(currentRow["WKNo"]), MyUtility.Convert.GetString(currentRow["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             currentRow.AcceptChanges();
                             currentRow.SetAdded();
-                            detailData.ImportRow(currentRow);
+                            this.detailData.ImportRow(currentRow);
                         }
                         else
                         {
@@ -229,6 +242,7 @@ select * from FtyExportData");
                     }
                 }
             }
+
             MyUtility.Msg.InfoBox("Import finished!");
         }
     }

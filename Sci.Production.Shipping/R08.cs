@@ -12,53 +12,69 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R08
+    /// </summary>
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
-        DateTime? buyerDlv1, buyerDlv2, sciDlv1, sciDlv2, cutoffDate1, cutoffDate2;
-        string brand,custcd, mDivision,factory;
-        int category;
-        bool onlyirregular;
-        DataTable printData;
+        private DateTime? buyerDlv1;
+        private DateTime? buyerDlv2;
+        private DateTime? sciDlv1;
+        private DateTime? sciDlv2;
+        private DateTime? cutoffDate1;
+        private DateTime? cutoffDate2;
+        private string brand;
+        private string custcd;
+        private string mDivision;
+        private string factory;
+        private int category;
+        private bool onlyirregular;
+        private DataTable printData;
+
+        /// <summary>
+        /// R08
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.SelectedIndex = -1;
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
-            comboCategory.SelectedIndex = 2;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboFactory.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
+            this.comboCategory.SelectedIndex = 2;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateCutOffDate.Value1) && MyUtility.Check.Empty(dateCutOffDate.Value2) && MyUtility.Check.Empty(txtbrand.Text) && MyUtility.Check.Empty(txtCustcd.Text))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) && MyUtility.Check.Empty(this.dateCutOffDate.Value1) && MyUtility.Check.Empty(this.dateCutOffDate.Value2) && MyUtility.Check.Empty(this.txtbrand.Text) && MyUtility.Check.Empty(this.txtCustcd.Text))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery, SCI Delivery, Cut-Off Date, Brand, Cust CD can't all empty!!");
                 return false;
             }
-            
-            buyerDlv1 = dateBuyerDelivery.Value1;
-            buyerDlv2 = dateBuyerDelivery.Value2;
-            sciDlv1 = dateSCIDelivery.Value1;
-            sciDlv2 = dateSCIDelivery.Value2;
-            cutoffDate1 = dateCutOffDate.Value1;
-            cutoffDate2 = dateCutOffDate.Value2;
-            brand = txtbrand.Text;
-            custcd = txtCustcd.Text;
-            mDivision = comboM.Text;
-            factory = comboFactory.Text;
-            category = comboCategory.SelectedIndex;
-            onlyirregular = checkOnlyPrintTheIrregularData.Checked;
+
+            this.buyerDlv1 = this.dateBuyerDelivery.Value1;
+            this.buyerDlv2 = this.dateBuyerDelivery.Value2;
+            this.sciDlv1 = this.dateSCIDelivery.Value1;
+            this.sciDlv2 = this.dateSCIDelivery.Value2;
+            this.cutoffDate1 = this.dateCutOffDate.Value1;
+            this.cutoffDate2 = this.dateCutOffDate.Value2;
+            this.brand = this.txtbrand.Text;
+            this.custcd = this.txtCustcd.Text;
+            this.mDivision = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+            this.category = this.comboCategory.SelectedIndex;
+            this.onlyirregular = this.checkOnlyPrintTheIrregularData.Checked;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -74,67 +90,67 @@ inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq =
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 where 1=1");
 
-            if (!MyUtility.Check.Empty(sciDlv1))
+            if (!MyUtility.Check.Empty(this.sciDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(sciDlv2))
+            if (!MyUtility.Check.Empty(this.sciDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(brand))
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
             }
 
-            if (!MyUtility.Check.Empty(custcd))
+            if (!MyUtility.Check.Empty(this.custcd))
             {
-                sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", custcd));
+                sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custcd));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
 
-            if (!MyUtility.Check.Empty(mDivision))
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
             }
 
-            if (category == 0)
+            if (this.category == 0)
             {
                 sqlCmd.Append(" and o.Category = 'B'");
             }
-            else if (category == 1)
+            else if (this.category == 1)
             {
                 sqlCmd.Append(" and o.Category = 'S'");
             }
-            else if (category == 2)
+            else if (this.category == 2)
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
 
-            if (!MyUtility.Check.Empty(buyerDlv1))
+            if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(buyerDlv2))
+            if (!MyUtility.Check.Empty(this.buyerDlv2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(cutoffDate1))
+            if (!MyUtility.Check.Empty(this.cutoffDate1))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(cutoffDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}'", Convert.ToDateTime(this.cutoffDate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(cutoffDate2))
+            if (!MyUtility.Check.Empty(this.cutoffDate2))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(cutoffDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoffDate2).ToString("d")));
             }
 
             sqlCmd.Append(@"),
@@ -157,28 +173,30 @@ left join PackData p on t.ID = p.ID and t.Seq = p.Seq and t.Article = p.Article 
 select *,IIF(ASQty <> SewQty,'Sewing Qty is not equal to Order Qty.','')+IIF(ShipQty <> PackQty,'Packing Qty '+IIF(ShipQty <> PullQty,'and Pullout Qty ','')+'is not equal to Order Qty by ship.',IIF(ShipQty <> PullQty,'Pullout Qty is not equal to Order Qty by ship.','')) as Reason
 from tempdata");
 
-            if (onlyirregular)
+            if (this.onlyirregular)
             {
                 sqlCmd.Append(@" where ASQty = SewQty
 and ShipQty = PackQty
 and ShipQty = PullQty");
             }
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -187,13 +205,17 @@ and ShipQty = PullQty");
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R08_PackingCheckList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            //填內容值
+            // 填內容值
             int intRowsStart = 2;
             object[,] objArray = new object[1, 24];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["PackID"];
                 objArray[0, 1] = dr["ID"];
@@ -219,8 +241,8 @@ and ShipQty = PullQty");
                 objArray[0, 21] = dr["PackQty"];
                 objArray[0, 22] = dr["PullQty"];
                 objArray[0, 23] = dr["Reason"];
-                
-                worksheet.Range[String.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
+
+                worksheet.Range[string.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

@@ -11,20 +11,28 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P05_QtyBreakDown
+    /// </summary>
     public partial class P05_QtyBreakDown : Sci.Win.Subs.Input6A
     {
-        public P05_QtyBreakDown(DataRow MasterData)
+        /// <summary>
+        /// P05_QtyBreakDown
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        public P05_QtyBreakDown(DataRow masterData)
         {
-            InitializeComponent();
-            displayInvoice.Text = MyUtility.Convert.GetString(MasterData["ID"]);
+            this.InitializeComponent();
+            this.displayInvoice.Text = MyUtility.Convert.GetString(masterData["ID"]);
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
-            gridQtyBreakDown.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
+
+            this.gridQtyBreakDown.IsEditingReadOnly = true;
+            this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13))
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
@@ -34,10 +42,12 @@ namespace Sci.Production.Shipping
                 .Numeric("Surcharge", header: "Surcharge", decimal_places: 4);
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
-            string sqlCmd = string.Format(@"select a.OrderID,a.OrderShipmodeSeq,a.Article,a.SizeCode,oqd.Qty as OrderQty,a.ShipQty,isnull(ou2.POPrice,ou1.POPrice) as POPrice,
+            string sqlCmd = string.Format(
+                @"select a.OrderID,a.OrderShipmodeSeq,a.Article,a.SizeCode,oqd.Qty as OrderQty,a.ShipQty,isnull(ou2.POPrice,ou1.POPrice) as POPrice,
 (select round(sum(iif(os.PriceType = '1',(os.Price/o.Qty),os.Price)),4)
 from Order_Surcharge os WITH (NOLOCK) , Orders o WITH (NOLOCK) 
 where os.Id = o.ID
@@ -52,7 +62,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID and oqd.S
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 left join Order_Article oa WITH (NOLOCK) on oa.ID = o.POID and oa.Article = a.Article
 left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.SizeCode
-order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", displayPacking.Text);
+order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", this.displayPacking.Text);
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
@@ -60,7 +70,7 @@ order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", displayPacking.Text);
                 MyUtility.Msg.ErrorBox(result.ToString());
             }
 
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
         }
     }
 }

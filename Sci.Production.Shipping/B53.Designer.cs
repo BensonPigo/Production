@@ -172,8 +172,8 @@
             this.txtGoodsDescription.Name = "txtGoodsDescription";
             this.txtGoodsDescription.Size = new System.Drawing.Size(263, 23);
             this.txtGoodsDescription.TabIndex = 36;
-            this.txtGoodsDescription.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtGoodsDescription_PopUp);
-            this.txtGoodsDescription.Validating += new System.ComponentModel.CancelEventHandler(this.txtGoodsDescription_Validating);
+            this.txtGoodsDescription.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtGoodsDescription_PopUp);
+            this.txtGoodsDescription.Validating += new System.ComponentModel.CancelEventHandler(this.TxtGoodsDescription_Validating);
             // 
             // displayMaterialType
             // 

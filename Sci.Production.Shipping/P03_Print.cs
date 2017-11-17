@@ -12,121 +12,146 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P03_Print
+    /// </summary>
     public partial class P03_Print : Sci.Win.Tems.PrintForm
     {
-        string reportType, eta1, eta2, factory, handle, ext, email;
-        DataRow masterData;
-        DataTable detailData, printData;
-        public P03_Print(DataRow MasterData, DataTable DetailData)
+        private string reportType;
+        private string eta1;
+        private string eta2;
+        private string factory;
+        private string handle;
+        private string ext;
+        private string email;
+        private DataRow masterData;
+        private DataTable detailData;
+        private DataTable printData;
+
+        /// <summary>
+        /// P03_Print
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        /// <param name="detailData">detailData</param>
+        public P03_Print(DataRow masterData, DataTable detailData)
         {
-            InitializeComponent();
-            radioDetailReport.Checked = true;
-            dateETA.Enabled = false;
-            txtfactory.Enabled = false;
-            masterData = MasterData;
-            detailData = DetailData;
+            this.InitializeComponent();
+            this.radioDetailReport.Checked = true;
+            this.dateETA.Enabled = false;
+            this.txtfactory.Enabled = false;
+            this.masterData = masterData;
+            this.detailData = detailData;
         }
 
-        //控制ETA & Factory可否輸入
-        private void radioListReport_CheckedChanged(object sender, EventArgs e)
+        // 控制ETA & Factory可否輸入
+        private void RadioListReport_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioListReport.Checked)
+            if (this.radioListReport.Checked)
             {
-                dateETA.Enabled = true;
-                txtfactory.Enabled = true;
+                this.dateETA.Enabled = true;
+                this.txtfactory.Enabled = true;
             }
             else
             {
-                dateETA.Enabled = false;
-                txtfactory.Enabled = false;
+                this.dateETA.Enabled = false;
+                this.txtfactory.Enabled = false;
             }
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            reportType = radioDetailReport.Checked ? "1" : "2";
-            eta1 = MyUtility.Check.Empty(dateETA.Value1) ? "" : Convert.ToDateTime(dateETA.Value1).ToString("d");
-            eta2 = MyUtility.Check.Empty(dateETA.Value2) ? "" : Convert.ToDateTime(dateETA.Value2).ToString("d");
-            factory = txtfactory.Text;
+            this.reportType = this.radioDetailReport.Checked ? "1" : "2";
+            this.eta1 = MyUtility.Check.Empty(this.dateETA.Value1) ? string.Empty : Convert.ToDateTime(this.dateETA.Value1).ToString("d");
+            this.eta2 = MyUtility.Check.Empty(this.dateETA.Value2) ? string.Empty : Convert.ToDateTime(this.dateETA.Value2).ToString("d");
+            this.factory = this.txtfactory.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
-                string sqlCmd = string.Format("select * from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Handle"]));
-                DataTable TPEPass1;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out TPEPass1);
-                if (!result || TPEPass1.Rows.Count <= 0)
+                string sqlCmd = string.Format("select * from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Handle"]));
+                DataTable tPEPass1;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out tPEPass1);
+                if (!result || tPEPass1.Rows.Count <= 0)
                 {
-                    handle = "";
-                    ext = "";
-                    email = "";
+                    this.handle = string.Empty;
+                    this.ext = string.Empty;
+                    this.email = string.Empty;
                 }
                 else
                 {
-                    handle = MyUtility.Convert.GetString(TPEPass1.Rows[0]["Name"]);
-                    ext = MyUtility.Convert.GetString(TPEPass1.Rows[0]["ExtNo"]);
-                    email = MyUtility.Convert.GetString(TPEPass1.Rows[0]["EMail"]);
+                    this.handle = MyUtility.Convert.GetString(tPEPass1.Rows[0]["Name"]);
+                    this.ext = MyUtility.Convert.GetString(tPEPass1.Rows[0]["ExtNo"]);
+                    this.email = MyUtility.Convert.GetString(tPEPass1.Rows[0]["EMail"]);
                 }
             }
             else
             {
-                string sqlCmd = string.Format(@"select e.ID,e.Eta,e.Blno,e.InvNo,e.PackingArrival,e.PortArrival,e.WhseArrival,e.DocArrival,e.Sono,e.Vessel,isnull(t.Name,'') as Name,isnull(t.ExtNo,'') as ExtNo,isnull(t.EMail,'') as EMail ,
+                string sqlCmd = string.Format(
+                    @"select e.ID,e.Eta,e.Blno,e.InvNo,e.PackingArrival,e.PortArrival,e.WhseArrival,e.DocArrival,e.Sono,e.Vessel,isnull(t.Name,'') as Name,isnull(t.ExtNo,'') as ExtNo,isnull(t.EMail,'') as EMail ,
 case when e.Payer= 'S' then 'By Sci Taipei Office(Sender)' when e.Payer= 'M' then 'By Mill(Sender)' when e.Payer= 'F' then 'By Factory(Receiver)' else '' end as Payer
 from Export e WITH (NOLOCK) 
 left join TPEPass1 t WITH (NOLOCK) on e.Handle = t.ID
 where 1=1{0}{1}{2}
-order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "'"), (MyUtility.Check.Empty(eta2) ? "" : " and e.Eta <= '" + eta2 + "'"), (MyUtility.Check.Empty(factory) ? "" : " and e.FactoryID = '" + factory + "'"));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
+order by e.ID",
+                    MyUtility.Check.Empty(this.eta1) ? string.Empty : " and e.Eta >= '" + this.eta1 + "'",
+                    MyUtility.Check.Empty(this.eta2) ? string.Empty : " and e.Eta <= '" + this.eta2 + "'",
+                    MyUtility.Check.Empty(this.factory) ? string.Empty : " and e.FactoryID = '" + this.factory + "'");
+
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                     return failResult;
                 }
-
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_Detail.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[2, 2] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[2, 6] = MyUtility.Convert.GetString(masterData["INVNo"]);
-                worksheet.Cells[2, 9] = MyUtility.Check.Empty(masterData["PackingArrival"]) ? "" : Convert.ToDateTime(masterData["PackingArrival"]).ToString("d");
-                worksheet.Cells[3, 2] = MyUtility.Check.Empty(masterData["Eta"]) ? "" : Convert.ToDateTime(masterData["Eta"]).ToString("d");
-                worksheet.Cells[3, 6] = MyUtility.Convert.GetString(masterData["Payer"]) == "S" ? "By Sci Taipei Office(Sender)" : MyUtility.Convert.GetString(masterData["Payer"]) == "M" ? "By Mill(Sender)" : MyUtility.Convert.GetString(masterData["Payer"]) == "F" ? "By Factory(Receiver)" : "";
-                worksheet.Cells[3, 9] = MyUtility.Check.Empty(masterData["PortArrival"]) ? "" : Convert.ToDateTime(masterData["PortArrival"]).ToString("d");
-                worksheet.Cells[4, 2] = MyUtility.Convert.GetString(masterData["Consignee"]);
-                worksheet.Cells[4, 6] = MyUtility.Convert.GetString(masterData["Blno"]);
-                worksheet.Cells[4, 9] = MyUtility.Check.Empty(masterData["WhseArrival"]) ? "" : Convert.ToDateTime(masterData["WhseArrival"]).ToString("d");
-                worksheet.Cells[5, 2] = MyUtility.Convert.GetString(masterData["Packages"]);
-                worksheet.Cells[5, 6] = MyUtility.Convert.GetString(masterData["Vessel"]);
-                worksheet.Cells[5, 9] = MyUtility.Check.Empty(masterData["DocArrival"]) ? "" : Convert.ToDateTime(masterData["DocArrival"]).ToString("d");
-                worksheet.Cells[6, 2] = MyUtility.Convert.GetString(masterData["CYCFS"]);
-                worksheet.Cells[6, 6] = MyUtility.Convert.GetString(masterData["NetKg"]) + " / " + MyUtility.Convert.GetString(masterData["WeightKg"]);
-                worksheet.Cells[7, 2] = MyUtility.Convert.GetString(masterData["Sono"]);
-                worksheet.Cells[7, 6] = MyUtility.Convert.GetString(masterData["Cbm"]);
-                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(masterData["Remark"]);
-                worksheet.Cells[9, 2] = handle;
-                worksheet.Cells[9, 6] = ext;
-                worksheet.Cells[9, 8] = email;
+                worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.masterData["ID"]);
+                worksheet.Cells[2, 6] = MyUtility.Convert.GetString(this.masterData["INVNo"]);
+                worksheet.Cells[2, 9] = MyUtility.Check.Empty(this.masterData["PackingArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PackingArrival"]).ToString("d");
+                worksheet.Cells[3, 2] = MyUtility.Check.Empty(this.masterData["Eta"]) ? string.Empty : Convert.ToDateTime(this.masterData["Eta"]).ToString("d");
+                worksheet.Cells[3, 6] = MyUtility.Convert.GetString(this.masterData["Payer"]) == "S" ? "By Sci Taipei Office(Sender)" : MyUtility.Convert.GetString(this.masterData["Payer"]) == "M" ? "By Mill(Sender)" : MyUtility.Convert.GetString(this.masterData["Payer"]) == "F" ? "By Factory(Receiver)" : string.Empty;
+                worksheet.Cells[3, 9] = MyUtility.Check.Empty(this.masterData["PortArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["PortArrival"]).ToString("d");
+                worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.masterData["Consignee"]);
+                worksheet.Cells[4, 6] = MyUtility.Convert.GetString(this.masterData["Blno"]);
+                worksheet.Cells[4, 9] = MyUtility.Check.Empty(this.masterData["WhseArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["WhseArrival"]).ToString("d");
+                worksheet.Cells[5, 2] = MyUtility.Convert.GetString(this.masterData["Packages"]);
+                worksheet.Cells[5, 6] = MyUtility.Convert.GetString(this.masterData["Vessel"]);
+                worksheet.Cells[5, 9] = MyUtility.Check.Empty(this.masterData["DocArrival"]) ? string.Empty : Convert.ToDateTime(this.masterData["DocArrival"]).ToString("d");
+                worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.masterData["CYCFS"]);
+                worksheet.Cells[6, 6] = MyUtility.Convert.GetString(this.masterData["NetKg"]) + " / " + MyUtility.Convert.GetString(this.masterData["WeightKg"]);
+                worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.masterData["Sono"]);
+                worksheet.Cells[7, 6] = MyUtility.Convert.GetString(this.masterData["Cbm"]);
+                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.masterData["Remark"]);
+                worksheet.Cells[9, 2] = this.handle;
+                worksheet.Cells[9, 6] = this.ext;
+                worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
                 object[,] objArray = new object[1, 17];
-                foreach (DataRow dr in detailData.Rows)
+                foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["FactoryID"];
                     objArray[0, 1] = dr["ProjectID"];
@@ -145,7 +170,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                     objArray[0, 14] = dr["BalanceQty"];
                     objArray[0, 15] = dr["NetKg"];
                     objArray[0, 16] = dr["WeightKg"];
-                    worksheet.Range[String.Format("A{0}:Q{0}", rownum)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:Q{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
@@ -163,9 +188,9 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
             else
             {
                 // 顯示筆數於PrintForm上Count欄位
-                SetCount(printData.Rows.Count);
+                this.SetCount(this.printData.Rows.Count);
 
-                if (printData.Rows.Count <= 0)
+                if (this.printData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                     return false;
@@ -173,14 +198,18 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
 
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P03_List.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-                worksheet.Cells[2, 2] = (MyUtility.Check.Empty(eta1) ? "" : eta1) + " ~ " + (MyUtility.Check.Empty(eta2) ? "" : eta2);
-                worksheet.Cells[2, 7] = MyUtility.Check.Empty(factory) ? "All" : factory;
+                worksheet.Cells[2, 2] = (MyUtility.Check.Empty(this.eta1) ? string.Empty : this.eta1) + " ~ " + (MyUtility.Check.Empty(this.eta2) ? string.Empty : this.eta2);
+                worksheet.Cells[2, 7] = MyUtility.Check.Empty(this.factory) ? "All" : this.factory;
 
                 int rownum = 4;
                 object[,] objArray = new object[1, 14];
-                foreach (DataRow dr in printData.Rows)
+                foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
                     objArray[0, 1] = dr["Eta"];
@@ -196,7 +225,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                     objArray[0, 11] = dr["Name"];
                     objArray[0, 12] = dr["ExtNo"];
                     objArray[0, 13] = dr["EMail"];
-                    worksheet.Range[String.Format("A{0}:N{0}", rownum)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:N{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
@@ -214,7 +243,7 @@ order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "
                 strExcelName.OpenFile();
                 #endregion
             }
-            
+
             return true;
         }
     }

@@ -169,7 +169,7 @@
             this.btnFindNow.TabIndex = 3;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
             // 
             // txtSPNo
             // 
@@ -236,7 +236,7 @@
             this.btnUpdate.TabIndex = 0;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
             // 
             // panel5
             // 

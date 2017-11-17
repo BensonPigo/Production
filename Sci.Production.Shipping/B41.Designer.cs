@@ -237,8 +237,8 @@
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(60, 23);
             this.txtNLCode.TabIndex = 0;
-            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtNLCode_PopUp);
-            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtNLCode_Validating);
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
             // 
             // displayHSCode
             // 

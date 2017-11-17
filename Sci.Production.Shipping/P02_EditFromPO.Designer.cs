@@ -193,7 +193,7 @@
             this.txtCTNNo.Name = "txtCTNNo";
             this.txtCTNNo.Size = new System.Drawing.Size(90, 23);
             this.txtCTNNo.TabIndex = 130;
-            this.txtCTNNo.Validated += new System.EventHandler(this.txtCTNNo_Validated);
+            this.txtCTNNo.Validated += new System.EventHandler(this.TxtCTNNo_Validated);
             // 
             // labelCTNNo
             // 

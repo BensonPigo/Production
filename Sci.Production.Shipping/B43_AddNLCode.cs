@@ -11,21 +11,30 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B43_AddNLCode
+    /// </summary>
     public partial class B43_AddNLCode : Sci.Win.Subs.Base
     {
-        DataRow masterData;
-        Ict.Win.DataGridViewGeneratorTextColumnSettings unit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        public B43_AddNLCode(DataRow MasterData)
+        private DataRow masterData;
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings unit = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+
+        /// <summary>
+        /// B43_AddNLCode
+        /// </summary>
+        /// <param name="masterData">MasterData</param>
+        public B43_AddNLCode(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
+            this.InitializeComponent();
+            this.masterData = masterData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             #region Unit的Validating
-            unit.CellValidating += (s, e) =>
+            this.unit.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -45,11 +54,11 @@ namespace Sci.Production.Shipping
             };
             #endregion
             this.gridAddNewNLCode.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(gridAddNewNLCode)
+            this.Helper.Controls.Grid.Generator(this.gridAddNewNLCode)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10))
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7))
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
-                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), settings: unit)
+                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), settings: this.unit)
                 .Numeric("Waste", header: "Waste", decimal_places: 3)
                 .Numeric("Price", header: "Unit Price", decimal_places: 3)
                 .CheckBox("LocalPurchase", header: "Buy in VN", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -58,29 +67,29 @@ namespace Sci.Production.Shipping
             DataTable gridData;
             string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1=0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
         }
 
-        //Append
-        private void btnAppend_Click(object sender, EventArgs e)
+        // Append
+        private void BtnAppend_Click(object sender, EventArgs e)
         {
-            DataTable datas = (DataTable)listControlBindingSource1.DataSource;
+            DataTable datas = (DataTable)this.listControlBindingSource1.DataSource;
             var data = datas.NewRow();
             datas.Rows.Add(data);
-            listControlBindingSource1.MoveLast();
+            this.listControlBindingSource1.MoveLast();
         }
 
-        //Delete
-        private void btnDelete_Click(object sender, EventArgs e)
+        // Delete
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.Position != -1)
+            if (this.listControlBindingSource1.Position != -1)
             {
-                listControlBindingSource1.RemoveCurrent();
+                this.listControlBindingSource1.RemoveCurrent();
             }
         }
 
-        //Import from excel
-        private void btnImportFromExcel_Click(object sender, EventArgs e)
+        // Import from excel
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -89,13 +98,16 @@ namespace Sci.Production.Shipping
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
 
-            DataTable ExcelDataTable, UpdateData;
+            DataTable excelDataTable, updateData;
             string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
 
-            UpdateData = ((DataTable)listControlBindingSource1.DataSource).Clone();
+            updateData = ((DataTable)this.listControlBindingSource1.DataSource).Clone();
 
             this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
@@ -112,10 +124,10 @@ namespace Sci.Production.Shipping
             {
                 intRowsRead++;
 
-                range = worksheet.Range[String.Format("A{0}:H{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:H{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                DataRow newRow = ExcelDataTable.NewRow();
+                DataRow newRow = excelDataTable.NewRow();
                 newRow["HSCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                 newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                 newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
@@ -132,46 +144,56 @@ namespace Sci.Production.Shipping
                 {
                     newRow["WrongUnit"] = 1;
                 }
-                ExcelDataTable.Rows.Add(newRow);
+
+                excelDataTable.Rows.Add(newRow);
             }
 
             excel.Workbooks.Close();
             excel.Quit();
             excel = null;
 
-            //刪除Grid資料
-            ((DataTable)listControlBindingSource1.DataSource).Clear();
+            // 刪除Grid資料
+            ((DataTable)this.listControlBindingSource1.DataSource).Clear();
 
-            //將Excel寫入表身Grid
-            foreach (DataRow dr in ExcelDataTable.Rows)
+            // 將Excel寫入表身Grid
+            foreach (DataRow dr in excelDataTable.Rows)
             {
-                ((DataTable)listControlBindingSource1.DataSource).ImportRow(dr);
+                ((DataTable)this.listControlBindingSource1.DataSource).ImportRow(dr);
             }
+
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
         }
 
-        //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        // Save
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridAddNewNLCode.ValidateControl();
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             IList<string> insertCmds = new List<string>();
             StringBuilder dupNLCode = new StringBuilder();
             StringBuilder wrongUnit = new StringBuilder();
-            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
-                insertCmds.Add(string.Format(@"insert into VNContract_Detail (      ID,HSCode,NLCode,Qty,UnitID,Waste,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
-values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}',GETDATE());", 
-MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["HSCode"]),
-MyUtility.Convert.GetString(dr["NLCode"]),MyUtility.Convert.GetString(dr["Qty"]), 
-MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Waste"]),
-MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
-MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0", Sci.Env.User.UserID));
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
+                insertCmds.Add(string.Format(
+                    @"insert into VNContract_Detail (      ID,HSCode,NLCode,Qty,UnitID,Waste,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
+values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}',GETDATE());",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    MyUtility.Convert.GetString(dr["HSCode"]),
+                    MyUtility.Convert.GetString(dr["NLCode"]),
+                    MyUtility.Convert.GetString(dr["Qty"]),
+                    MyUtility.Convert.GetString(dr["UnitID"]),
+                    MyUtility.Convert.GetString(dr["Waste"]),
+                    MyUtility.Convert.GetString(dr["Price"]),
+                    MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
+                    MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0",
+                    Sci.Env.User.UserID));
+
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(this.masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {
                     dupNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));
                 }
+
                 if (MyUtility.Convert.GetString(dr["WrongUnit"]) == "1")
                 {
                     wrongUnit.Append(string.Format("Customs Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
@@ -180,19 +202,21 @@ MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0"
 
             if (!MyUtility.Check.Empty(dupNLCode.ToString()) || !MyUtility.Check.Empty(wrongUnit.ToString()))
             {
-                MyUtility.Msg.WarningBox(string.Format("{0}{1}",
-                    !MyUtility.Check.Empty(dupNLCode.ToString()) ? "Below 'Customs Code' already exist, please delete below 'Customs Code' then save again.\r\n" + dupNLCode.ToString() + "\r\n\r\n" : "",
-                    !MyUtility.Check.Empty(wrongUnit.ToString()) ? "Below data is 'Unit' not correct.\r\n" + wrongUnit.ToString() : ""));
-                return;
-            }
-            DualResult result = DBProxy.Current.Executes(null, insertCmds);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Save Fail, please try again.\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox(string.Format(
+                    "{0}{1}",
+                    !MyUtility.Check.Empty(dupNLCode.ToString()) ? "Below 'Customs Code' already exist, please delete below 'Customs Code' then save again.\r\n" + dupNLCode.ToString() + "\r\n\r\n" : string.Empty,
+                    !MyUtility.Check.Empty(wrongUnit.ToString()) ? "Below data is 'Unit' not correct.\r\n" + wrongUnit.ToString() : string.Empty));
                 return;
             }
 
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            DualResult result = DBProxy.Current.Executes(null, insertCmds);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Save Fail, please try again.\r\n" + result.ToString());
+                return;
+            }
+
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

@@ -11,20 +11,29 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B42_Detail
+    /// </summary>
     public partial class B42_Detail : Sci.Win.Subs.Base
     {
-        DataTable gridData;
-        public B42_Detail(DataTable GridData)
+        private DataTable gridData;
+
+        /// <summary>
+        /// B42_Detail
+        /// </summary>
+        /// <param name="gridData">GridData</param>
+        public B42_Detail(DataTable gridData)
         {
-            InitializeComponent();
-            gridData = GridData;
+            this.InitializeComponent();
+            this.gridData = gridData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridDetail.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(gridDetail)
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Text("SuppID", header: "Supp ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -32,16 +41,17 @@ namespace Sci.Production.Shipping
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 4, iseditingreadonly: true);
 
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = this.gridData;
             decimal totalQty = 0;
-            if (gridData != null)
+            if (this.gridData != null)
             {
-                foreach (DataRow dr in gridData.Rows)
+                foreach (DataRow dr in this.gridData.Rows)
                 {
                     totalQty = totalQty + MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
             }
-            numTotalQty.Value = MyUtility.Math.Round(totalQty,3);
+
+            this.numTotalQty.Value = MyUtility.Math.Round(totalQty, 3);
         }
     }
 }

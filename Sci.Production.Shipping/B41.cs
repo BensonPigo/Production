@@ -11,43 +11,54 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B41
+    /// </summary>
     public partial class B41 : Sci.Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
+
+        /// <summary>
+        /// B41
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            editName = MyUtility.Convert.GetString(CurrentMaintain["EditName"]);
-            editDate = MyUtility.Convert.GetDate(CurrentMaintain["EditDate"]);
+            this.editName = MyUtility.Convert.GetString(this.CurrentMaintain["EditName"]);
+            this.editDate = MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]);
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            editDescription.ReadOnly = true;
-            txtSubconSupplier.TextBox1.ReadOnly = true;
-            checkJunk.ReadOnly = true;
+            this.editDescription.ReadOnly = true;
+            this.txtSubconSupplier.TextBox1.ReadOnly = true;
+            this.checkJunk.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
-            CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
+            this.CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
             if (MyUtility.Check.Empty(this.txtNLCode.Text))
             {
                 this.txtNLCode.Focus();
                 MyUtility.Msg.InfoBox("<Customs Code> can't be empty!!");
                 return false;
             }
-            
-            if (CurrentMaintain["HSCode"].Empty() || CurrentMaintain["CustomsUnit"].Empty())
+
+            if (this.CurrentMaintain["HSCode"].Empty() || this.CurrentMaintain["CustomsUnit"].Empty())
             {
                 MyUtility.Msg.InfoBox("HS Code cannot be empty!!" + Environment.NewLine + "Customs Unit cannot be empty!!");
             }
@@ -55,71 +66,86 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult ClickSavePost()
         {
             string updateCmd;
-            if (MyUtility.Check.Empty(editDate))
+            if (MyUtility.Check.Empty(this.editDate))
             {
-                updateCmd = string.Format("update LocalItem Set EditName = '{0}', EditDate = null where RefNo = '{1}';", editName, MyUtility.Convert.GetString(CurrentMaintain["RefNo"]));
+                updateCmd = string.Format("update LocalItem Set EditName = '{0}', EditDate = null where RefNo = '{1}';", this.editName, MyUtility.Convert.GetString(this.CurrentMaintain["RefNo"]));
             }
             else
             {
-                updateCmd = string.Format("update LocalItem Set EditName = '{0}', EditDate = '{1}' where RefNo = '{2}';", editName, Convert.ToDateTime(editDate).ToString("yyyy/MM/dd HH:mm:ss"), MyUtility.Convert.GetString(CurrentMaintain["RefNo"]));
+                updateCmd = string.Format("update LocalItem Set EditName = '{0}', EditDate = '{1}' where RefNo = '{2}';", this.editName, Convert.ToDateTime(this.editDate).ToString("yyyy/MM/dd HH:mm:ss"), MyUtility.Convert.GetString(this.CurrentMaintain["RefNo"]));
             }
 
             return DBProxy.Current.Execute(null, updateCmd);
         }
 
-        //NL Code
-        private void txtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // NL Code
+        private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select NLCode,HSCode,UnitID
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "Customs Code, HSCode, Unit");
+order by NLCode",
+                "5,11,8",
+                this.Text,
+                false,
+                ",",
+                headercaptions: "Customs Code, HSCode, Unit");
+
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             IList<DataRow> selectedData = item.GetSelecteds();
-            CurrentMaintain["NLCode"] = item.GetSelectedString();
-            CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
-            CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
-            CurrentMaintain.EndEdit();
+            this.CurrentMaintain["NLCode"] = item.GetSelectedString();
+            this.CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
+            this.CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
+            this.CurrentMaintain.EndEdit();
         }
 
-        //NL Code
-        private void txtNLCode_Validating(object sender, CancelEventArgs e)
+        // NL Code
+        private void TxtNLCode_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtNLCode.OldValue != txtNLCode.Text)
+            if (this.EditMode && this.txtNLCode.OldValue != this.txtNLCode.Text)
             {
-                if (MyUtility.Check.Empty(txtNLCode.Text))
+                if (MyUtility.Check.Empty(this.txtNLCode.Text))
                 {
-                    CurrentMaintain["NLCode"] = "";
-                    CurrentMaintain["HSCode"] = "";
-                    CurrentMaintain["CustomsUnit"] = "";
+                    this.CurrentMaintain["NLCode"] = string.Empty;
+                    this.CurrentMaintain["HSCode"] = string.Empty;
+                    this.CurrentMaintain["CustomsUnit"] = string.Empty;
                 }
                 else
                 {
-                    DataRow NLCodeDate;
-                    if (MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
+                    DataRow nLCodeDate;
+                    if (MyUtility.Check.Seek(
+                        string.Format(
+                            @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
+and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
                     {
-                        CurrentMaintain["NLCode"] = txtNLCode.Text;
-                        CurrentMaintain["HSCode"] = NLCodeDate["HSCode"];
-                        CurrentMaintain["CustomsUnit"] = NLCodeDate["UnitID"];
+                        this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+                        this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
+                        this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
                     }
                     else
                     {
-                        CurrentMaintain["NLCode"] = "";
-                        CurrentMaintain["HSCode"] = "";
-                        CurrentMaintain["CustomsUnit"] = "";
+                        this.CurrentMaintain["NLCode"] = string.Empty;
+                        this.CurrentMaintain["HSCode"] = string.Empty;
+                        this.CurrentMaintain["CustomsUnit"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
                         return;
                     }
                 }
-                CurrentMaintain.EndEdit();
+
+                this.CurrentMaintain.EndEdit();
             }
         }
     }

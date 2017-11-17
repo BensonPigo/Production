@@ -11,109 +11,133 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B52
+    /// </summary>
     public partial class B52 : Sci.Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
+
+        /// <summary>
+        /// B52
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B52(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboType, 2, 1, "F,Fabric,A,Accessory");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "F,Fabric,A,Accessory");
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            labelWeight.Text = string.Format("Weight\r\n(kgs/{0})", MyUtility.Convert.GetString(CurrentMaintain["UsageUnit"]));
-            txtGoodsDescription.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode WITH (NOLOCK) where NLCode = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["NLCode"])));
+            this.labelWeight.Text = string.Format("Weight\r\n(kgs/{0})", MyUtility.Convert.GetString(this.CurrentMaintain["UsageUnit"]));
+            this.txtGoodsDescription.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode WITH (NOLOCK) where NLCode = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["NLCode"])));
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            editName = MyUtility.Convert.GetString(CurrentMaintain["EditName"]);
-            editDate = MyUtility.Convert.GetDate(CurrentMaintain["EditDate"]);
+            this.editName = MyUtility.Convert.GetString(this.CurrentMaintain["EditName"]);
+            this.editDate = MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]);
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            editDescDetail.ReadOnly = true;
-            comboType.ReadOnly = true;
-            txtUnitUsageUnit.TextBox1.ReadOnly = true;
-            checkJunk.ReadOnly = true;
+            this.editDescDetail.ReadOnly = true;
+            this.comboType.ReadOnly = true;
+            this.txtUnitUsageUnit.TextBox1.ReadOnly = true;
+            this.checkJunk.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
-            CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
+            this.CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
 
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult ClickSavePost()
         {
             string updateCmd;
-            if (MyUtility.Check.Empty(editDate))
+            if (MyUtility.Check.Empty(this.editDate))
             {
-                updateCmd = string.Format("update Fabric Set EditName = '{0}', EditDate = null where SCIRefNo = '{1}';", editName, MyUtility.Convert.GetString(CurrentMaintain["SCIRefNo"]));
+                updateCmd = string.Format("update Fabric Set EditName = '{0}', EditDate = null where SCIRefNo = '{1}';", this.editName, MyUtility.Convert.GetString(this.CurrentMaintain["SCIRefNo"]));
             }
             else
             {
-                updateCmd = string.Format("update Fabric Set EditName = '{0}', EditDate = '{1}' where SCIRefNo = '{2}';", editName, Convert.ToDateTime(editDate).ToString("yyyy/MM/dd HH:mm:ss"), MyUtility.Convert.GetString(CurrentMaintain["SCIRefNo"]));
+                updateCmd = string.Format("update Fabric Set EditName = '{0}', EditDate = '{1}' where SCIRefNo = '{2}';", this.editName, Convert.ToDateTime(this.editDate).ToString("yyyy/MM/dd HH:mm:ss"), MyUtility.Convert.GetString(this.CurrentMaintain["SCIRefNo"]));
             }
 
             return DBProxy.Current.Execute(null, updateCmd);
         }
 
-        //Good's Description
-        private void txtGoodsDescription_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Good's Description
+        private void TxtGoodsDescription_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select g.GoodsDescription, g.Category, isnull(cd.UnitID,'') as UnitID, g.NLCode
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                    @"select g.GoodsDescription, g.Category, isnull(cd.UnitID,'') as UnitID, g.NLCode
 from KHGoodsHSCode g WITH (NOLOCK) 
 left join KHContract_Detail cd on g.NLCode = cd.NLCode
 where g.Junk = 0
 and cd.ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)
 and Category <> 'MACHINERY'
-order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: "Good's Description,Category,Unit,");
+order by GoodsDescription",
+                    "50,10,8,0",
+                    this.Text,
+                    false,
+                    ",",
+                    headercaptions: "Good's Description,Category,Unit,");
+
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
                 IList<DataRow> selectedData = item.GetSelecteds();
-                txtGoodsDescription.Text = item.GetSelectedString();
-                CurrentMaintain["NLCode"] = selectedData[0]["NLCode"];
-                CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
+                this.txtGoodsDescription.Text = item.GetSelectedString();
+                this.CurrentMaintain["NLCode"] = selectedData[0]["NLCode"];
+                this.CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
             }
         }
 
-        //Good's Description
-        private void txtGoodsDescription_Validating(object sender, CancelEventArgs e)
+        // Good's Description
+        private void TxtGoodsDescription_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtGoodsDescription.OldValue != txtGoodsDescription.Text)
+            if (this.EditMode && this.txtGoodsDescription.OldValue != this.txtGoodsDescription.Text)
             {
-                if (MyUtility.Check.Empty(txtGoodsDescription.Text))
+                if (MyUtility.Check.Empty(this.txtGoodsDescription.Text))
                 {
-                    txtGoodsDescription.Text = "";
-                    CurrentMaintain["NLCode"] = "";
-                    CurrentMaintain["CustomsUnit"] = "";
+                    this.txtGoodsDescription.Text = string.Empty;
+                    this.CurrentMaintain["NLCode"] = string.Empty;
+                    this.CurrentMaintain["CustomsUnit"] = string.Empty;
                 }
                 else
                 {
-                    DataRow NLCodeDate;
-                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", txtGoodsDescription.Text), out NLCodeDate))
+                    DataRow nLCodeDate;
+                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", this.txtGoodsDescription.Text), out nLCodeDate))
                     {
-                        txtGoodsDescription.Text = txtGoodsDescription.Text;
-                        CurrentMaintain["NLCode"] = NLCodeDate["NLCode"];
-                        CurrentMaintain["CustomsUnit"] = MyUtility.GetValue.Lookup(string.Format("select TOP(1) UnitID from KHContract_Detail WITH (NOLOCK) where NLCode = '{0}' and ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)", MyUtility.Convert.GetString(NLCodeDate["NLCode"])));
+                        this.txtGoodsDescription.Text = this.txtGoodsDescription.Text;
+                        this.CurrentMaintain["NLCode"] = nLCodeDate["NLCode"];
+                        this.CurrentMaintain["CustomsUnit"] = MyUtility.GetValue.Lookup(string.Format("select TOP(1) UnitID from KHContract_Detail WITH (NOLOCK) where NLCode = '{0}' and ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)", MyUtility.Convert.GetString(nLCodeDate["NLCode"])));
                     }
                     else
                     {
-                        txtGoodsDescription.Text = "";
-                        CurrentMaintain["NLCode"] = "";
-                        CurrentMaintain["CustomsUnit"] = "";
+                        this.txtGoodsDescription.Text = string.Empty;
+                        this.CurrentMaintain["NLCode"] = string.Empty;
+                        this.CurrentMaintain["CustomsUnit"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("The Good's Description is not in the Contract!!");
                         return;
