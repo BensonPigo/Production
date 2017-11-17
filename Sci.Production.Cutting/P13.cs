@@ -410,6 +410,7 @@ order by x.[Bundle]";
                  */
                 if (printSheetNum % 255 == 0 && printSheetNum != 0)
                 {
+                    objApp.Sheets.Move(objApp.Worksheets[1]);
                     objApp.ActiveWorkbook.SaveAs(printExcelName);
                     objApp.Quit();
                     openWorkBook.Add(printExcelName);
@@ -478,6 +479,7 @@ order by x.[Bundle]";
                 printSheetNum++;
             }
 
+            objApp.Sheets.Move(objApp.Worksheets[1]);
             objApp.ActiveWorkbook.SaveAs(printExcelName);
             objApp.Quit();
             openWorkBook.Add(printExcelName);
