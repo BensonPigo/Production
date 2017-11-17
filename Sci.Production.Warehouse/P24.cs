@@ -169,6 +169,63 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+            #region -- To Location 右鍵開窗 --
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            ts2.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(CurrentDetailData["tostocktype"].ToString(), CurrentDetailData["tolocation"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    CurrentDetailData["tolocation"] = item.GetSelectedString();
+                }
+            };
+
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    CurrentDetailData["tolocation"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK)
+WHERE   StockType='{0}'
+        and junk != '1'", CurrentDetailData["tostocktype"].ToString());
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["tolocation"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["tolocation"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
+            #endregion
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
@@ -180,9 +237,11 @@ namespace Sci.Production.Warehouse
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
             .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
+            .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(30), settings: ts2).Get(out col_tolocation)    //8
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -731,6 +790,7 @@ select
     ,a.ToStockType
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
     ,a.ukey
+    ,a.tolocation
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
