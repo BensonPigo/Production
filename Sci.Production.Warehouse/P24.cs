@@ -236,8 +236,8 @@ WHERE   StockType='{0}'
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    //5
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
-            .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(30), settings: ts2).Get(out col_tolocation)    //8
+            .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(15))    //8
+            .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(15), settings: ts2).Get(out col_tolocation)    //8
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -408,7 +408,32 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
                          }).ToList();
-            var data_Fty_2T = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_2T = (from m in newDt.AsEnumerable()
                            select new
                            {
                                poid = m.Field<string>("topoid"),

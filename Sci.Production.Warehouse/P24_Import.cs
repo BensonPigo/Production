@@ -71,6 +71,7 @@ select 	selected = 0
         , toFactoryID = orders.FactoryID
 		, toStocktype = 'O' 
 		, Fromlocation = dbo.Getlocation(c.ukey)
+        , ToLocation=''
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id
@@ -168,6 +169,65 @@ Where   c.lock = 0
                 }
             };
 
+            #region -- Location 右鍵開窗 --
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            ts2.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
+                    Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["ToStocktype"].ToString(), currentrow["ToLocation"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    currentrow["ToLocation"] = item.GetSelectedString();
+                }
+            };
+
+
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    dr["ToLocation"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", dr["ToStocktype"].ToString());
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    dr["ToLocation"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
+            Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
+            #endregion Location 右鍵開窗
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
@@ -178,10 +238,12 @@ Where   c.lock = 0
                 .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Numeric("balance", header: "Inventory" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
                 .Numeric("Qty", header: "Scrap" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //8
-                .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //9
+                .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(20), iseditingreadonly: true)    //9
+                .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                ;
 
             this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -223,6 +285,7 @@ Where   c.lock = 0
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["Tolocation"] = tmp["Tolocation"];
                 }
                 else
                 {
