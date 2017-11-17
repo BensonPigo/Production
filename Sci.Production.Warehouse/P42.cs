@@ -180,8 +180,8 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 	) tmp),'yyyy/MM/dd') as ETA
 	,format(MIN(a.SewInLine),'yyyy/MM/dd') as FstSewinline
     ,b.Special AS cutType
-	,qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), iif(b.StockUnit!='',(select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit),2))
-	,b.stockunit
+	,qty = round(dbo.GetUnitQty(b.POUnit, stockunit.value, b.Qty), iif(stockunit.value!='',(select unit.Round from unit WITH (NOLOCK) where id = stockunit.value),2))
+	,stockunit = stockunit.value
 	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
     ,c.TapeInline,c.TapeOffline
 	,min(a.SciDelivery) FstSCIdlv
@@ -189,6 +189,7 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 	,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
 from orders a WITH (NOLOCK) inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
+outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
 AND B.SEQ1 = 'A1'
 AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.User.Keyword);
@@ -200,7 +201,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit, stockunit.value";
 //20161215 CheckBox 選項用 checkBoxs_Status() 取代
 //            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
 //	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
