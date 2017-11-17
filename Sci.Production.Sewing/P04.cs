@@ -43,7 +43,6 @@ namespace Sci.Production.Sewing
             for (int i = 0; i < this.grid.Columns.Count; i++)
             {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                this.grid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion 
             this.findNow();
@@ -51,9 +50,10 @@ namespace Sci.Production.Sewing
 
       
 
-        private void buttonFindNow_Click(object sender, EventArgs e)
+        private void buttonRefresh_Click(object sender, EventArgs e)
         {
             this.findNow();
+
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -547,7 +547,7 @@ Inner join Orders O on OQG.id= O.id
 Inner join Factory F on O.FactoryID=F.ID
 Inner join Style_Location SL on O.styleukey=SL.Styleukey 
 outer apply (
-	select value = isnull (OQG.Qty, 0)
+	select value = IIF(OQG.Junk=0,isnull (OQG.Qty, 0),0) 
 ) ToSPQty
 outer apply (
 	select value = isnull (sum (SODDG.QAQty), 0)
@@ -582,7 +582,7 @@ outer apply(
     select value = IIF(ToSPAllSW_Out.value - ToSPConfirmPK.value < ToSPExcess.value , 'Y' ,'N')
 ) ReduceConfirmPK
 Where ToSPAllocatedQty.value > ToSPQty.value
- And O.FtyGroup =  @Factory and (OQG.junk = 0 or OQG.junk is null) ) fin_result";
+ And O.FtyGroup =  @Factory  ) fin_result";
             #endregion
             this.ShowWaitMessage("Data Loading...");
             #region Set Grid Data
