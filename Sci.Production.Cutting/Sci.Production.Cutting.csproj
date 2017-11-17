@@ -230,6 +230,12 @@
       <DependentUpon>P12.cs</DependentUpon>
     </Compile>
     <Compile Include="P12_PrintData.cs" />
+    <Compile Include="P13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13.Designer.cs">
+      <DependentUpon>P13.cs</DependentUpon>
+    </Compile>
     <Compile Include="P20_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -415,6 +421,9 @@
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Print.rdlc" />
+    <EmbeddedResource Include="P13.resx">
+      <DependentUpon>P13.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>
     </EmbeddedResource>
