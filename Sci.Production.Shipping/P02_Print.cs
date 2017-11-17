@@ -10,129 +10,155 @@ using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
 
-
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_Print
+    /// </summary>
     public partial class P02_Print : Sci.Win.Tems.PrintForm
     {
-        DataRow masterData;
-        DataTable detailData,detailSummary;
-        string reportType, handleName, managerName, destination, carrier, mdivisionName, mdivisionAddr, mdivisionTel, messrs,courierAWB,shipmentPort,destinationPort;
-        public P02_Print(DataRow MasterData, DataTable DetailData)
+        private DataRow masterData;
+        private DataTable detailData;
+        private DataTable detailSummary;
+        private string reportType;
+        private string handleName;
+        private string managerName;
+        private string destination;
+        private string carrier;
+        private string mdivisionName;
+        private string mdivisionAddr;
+        private string mdivisionTel;
+        private string messrs;
+        private string courierAWB;
+        private string shipmentPort;
+        private string destinationPort;
+
+        /// <summary>
+        /// P02_Print
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        /// <param name="detailData">detailData</param>
+        public P02_Print(DataRow masterData, DataTable detailData)
         {
-            InitializeComponent();
-            masterData = MasterData;
-            detailData = DetailData;
-            radioDetailList.Checked = true;
+            this.InitializeComponent();
+            this.masterData = masterData;
+            this.detailData = detailData;
+            this.radioDetailList.Checked = true;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            reportType = radioDetailList.Checked ? "1" : radioPackingList.Checked ? "2" : "3";
+            this.reportType = this.radioDetailList.Checked ? "1" : this.radioPackingList.Checked ? "2" : "3";
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
-                handleName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["AddName"])));
-                managerName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Manager"])));
-                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
-                carrier = MyUtility.GetValue.Lookup(string.Format("select (c.SuppID + '-' + s.AbbEN) as Supplier from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(masterData["CarrierID"])));
+                this.handleName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["AddName"])));
+                this.managerName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Manager"])));
+                this.destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["Dest"])));
+                this.carrier = MyUtility.GetValue.Lookup(string.Format("select (c.SuppID + '-' + s.AbbEN) as Supplier from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(this.masterData["CarrierID"])));
             }
             else
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["MDivisionID"])), out dr))
+                if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["MDivisionID"])), out dr))
                 {
-                    mdivisionName = MyUtility.Convert.GetString(dr["NameEN"]);
-                    mdivisionAddr = MyUtility.Convert.GetString(dr["AddressEN"]);
-                    mdivisionTel = MyUtility.Convert.GetString(dr["Tel"]);
+                    this.mdivisionName = MyUtility.Convert.GetString(dr["NameEN"]);
+                    this.mdivisionAddr = MyUtility.Convert.GetString(dr["AddressEN"]);
+                    this.mdivisionTel = MyUtility.Convert.GetString(dr["Tel"]);
                 }
                 else
                 {
-                    mdivisionName = "";
-                    mdivisionAddr = "";
-                    mdivisionTel = "";
+                    this.mdivisionName = string.Empty;
+                    this.mdivisionAddr = string.Empty;
+                    this.mdivisionTel = string.Empty;
                 }
 
-                messrs = "";
-                if (MyUtility.Convert.GetString(masterData["ToTag"]) == "1" || MyUtility.Convert.GetString(masterData["ToTag"]) == "3")
+                this.messrs = string.Empty;
+                if (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" || MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"])), out dr))
                     {
-                        messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["AbbEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
+                        this.messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["AbbEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
-                else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "4")
+                else if (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "4")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"])), out dr))
                     {
-                        messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["NameEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
+                        this.messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["NameEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
-                else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "2")
+                else if (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"])), out dr))
                     {
-                        messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["Abb"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
+                        this.messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["Abb"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
 
-                courierAWB = string.Format("{0}# {1}", MyUtility.GetValue.Lookup(string.Format("select AbbEN from Supp where ID = (select SuppID from Carrier WITH (NOLOCK) where ID = '{0}')", MyUtility.Convert.GetString(masterData["CarrierID"]))), MyUtility.Convert.GetString(masterData["BLNo"]));
-                shipmentPort = MyUtility.Convert.GetString(masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["FromSite"]))) : "";
-                destinationPort = MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"]))) : "";
+                this.courierAWB = string.Format("{0}# {1}", MyUtility.GetValue.Lookup(string.Format("select AbbEN from Supp where ID = (select SuppID from Carrier WITH (NOLOCK) where ID = '{0}')", MyUtility.Convert.GetString(this.masterData["CarrierID"]))), MyUtility.Convert.GetString(this.masterData["BLNo"]));
+                this.shipmentPort = MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["FromSite"]))) : string.Empty;
+                this.destinationPort = MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"]))) : string.Empty;
 
-                string sqlCmd = string.Format(@"select sum(Qty) as ttlQty,UnitID,sum(Qty*Price) as TtlAmount 
+                string sqlCmd = string.Format(
+                    @"select sum(Qty) as ttlQty,UnitID,sum(Qty*Price) as TtlAmount 
 from Express_Detail WITH (NOLOCK) where ID = '{0}'
-group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out detailSummary);
+group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.detailSummary);
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
                 #region Detail List
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[2, 2] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[2, 6] = MyUtility.Convert.GetString(masterData["ShipMark"]);
-                worksheet.Cells[2, 10] = MyUtility.Convert.GetString(masterData["AddName"]);
-                worksheet.Cells[2, 11] = handleName;
-                worksheet.Cells[3, 2] = MyUtility.Convert.GetString(masterData["FromTag"]) == "1" ? "Factory" : "Brand";
-                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(masterData["FromSite"]);
-                worksheet.Cells[3, 10] = MyUtility.Convert.GetString(masterData["Manager"]);
-                worksheet.Cells[3, 11] = managerName;
-                worksheet.Cells[4, 2] = MyUtility.Convert.GetString(masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(masterData["ToTag"]) == "3" ? "Supplier" : "Brand";
-                worksheet.Cells[4, 3] = MyUtility.Convert.GetString(masterData["ToSite"]);
-                worksheet.Cells[4, 4] = MyUtility.Convert.GetString(masterData["ToTag"]) == "3" ? (MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(masterData["ToSite"]), "Supp", "ID")) : MyUtility.Convert.GetString(masterData["ToTag"]) == "4" ? (MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(masterData["ToSite"]), "Brand", "ID")) : "";
-                worksheet.Cells[4, 10] = MyUtility.Convert.GetString(masterData["Dest"]);
-                worksheet.Cells[4, 11] = destination;
-                worksheet.Cells[5, 2] = MyUtility.Check.Empty(masterData["ShipDate"]) ? "" : Convert.ToDateTime(masterData["ShipDate"]).ToString("d");
-                worksheet.Cells[5, 6] = MyUtility.Convert.GetString(masterData["CarrierID"]) + "    " + carrier;
-                worksheet.Cells[5, 10] = MyUtility.Convert.GetString(masterData["ExpressACNo"]);
-                worksheet.Cells[6, 2] = MyUtility.Check.Empty(masterData["ETD"]) ? "" : Convert.ToDateTime(masterData["ETD"]).ToString("d");
-                worksheet.Cells[6, 6] = MyUtility.Convert.GetString(masterData["CTNQty"]);
-                worksheet.Cells[6, 10] = MyUtility.Convert.GetString(masterData["BLNo"]);
-                worksheet.Cells[7, 2] = MyUtility.Check.Empty(masterData["ETA"]) ? "" : Convert.ToDateTime(masterData["ETA"]).ToString("d");
-                worksheet.Cells[7, 6] = MyUtility.Convert.GetString(masterData["NW"]);
-                worksheet.Cells[7, 10] = MyUtility.Check.Empty(masterData["StatusUpdateDate"]) ? "" : Convert.ToDateTime(masterData["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)); ;
-                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(masterData["Remark"]);
-                worksheet.Cells[8, 10] = MyUtility.Check.Empty(masterData["SendDate"]) ? "" : Convert.ToDateTime(masterData["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat)); ;
+                worksheet.Cells[2, 2] = MyUtility.Convert.GetString(this.masterData["ID"]);
+                worksheet.Cells[2, 6] = MyUtility.Convert.GetString(this.masterData["ShipMark"]);
+                worksheet.Cells[2, 10] = MyUtility.Convert.GetString(this.masterData["AddName"]);
+                worksheet.Cells[2, 11] = this.handleName;
+                worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? "Factory" : "Brand";
+                worksheet.Cells[3, 3] = MyUtility.Convert.GetString(this.masterData["FromSite"]);
+                worksheet.Cells[3, 10] = MyUtility.Convert.GetString(this.masterData["Manager"]);
+                worksheet.Cells[3, 11] = this.managerName;
+                worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3" ? "Supplier" : "Brand";
+                worksheet.Cells[4, 3] = MyUtility.Convert.GetString(this.masterData["ToSite"]);
+                worksheet.Cells[4, 4] = MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3" ? MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(this.masterData["ToSite"]), "Supp", "ID") : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "4" ? MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(this.masterData["ToSite"]), "Brand", "ID") : string.Empty;
+                worksheet.Cells[4, 10] = MyUtility.Convert.GetString(this.masterData["Dest"]);
+                worksheet.Cells[4, 11] = this.destination;
+                worksheet.Cells[5, 2] = MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString("d");
+                worksheet.Cells[5, 6] = MyUtility.Convert.GetString(this.masterData["CarrierID"]) + "    " + this.carrier;
+                worksheet.Cells[5, 10] = MyUtility.Convert.GetString(this.masterData["ExpressACNo"]);
+                worksheet.Cells[6, 2] = MyUtility.Check.Empty(this.masterData["ETD"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETD"]).ToString("d");
+                worksheet.Cells[6, 6] = MyUtility.Convert.GetString(this.masterData["CTNQty"]);
+                worksheet.Cells[6, 10] = MyUtility.Convert.GetString(this.masterData["BLNo"]);
+                worksheet.Cells[7, 2] = MyUtility.Check.Empty(this.masterData["ETA"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETA"]).ToString("d");
+                worksheet.Cells[7, 6] = MyUtility.Convert.GetString(this.masterData["NW"]);
+                worksheet.Cells[7, 10] = MyUtility.Check.Empty(this.masterData["StatusUpdateDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.masterData["Remark"]);
+                worksheet.Cells[8, 10] = MyUtility.Check.Empty(this.masterData["SendDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
 
                 int rownum = 11;
                 object[,] objArray = new object[1, 15];
-                foreach (DataRow dr in detailData.Rows)
+                foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["OrderID"];
                     objArray[0, 1] = dr["Seq1"];
@@ -149,7 +175,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                     objArray[0, 12] = dr["CategoryName"];
                     objArray[0, 13] = dr["DutyNo"];
                     objArray[0, 14] = dr["Remark"];
-                    worksheet.Range[String.Format("A{0}:O{0}", rownum)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:O{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
@@ -165,88 +191,97 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 #endregion
                 #endregion
             }
-            else if (reportType == "2")
+            else if (this.reportType == "2")
             {
                 #region Packing List
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_PackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[1, 1] = mdivisionName;
-                worksheet.Cells[2, 1] = mdivisionAddr;
-                worksheet.Cells[3, 1] = mdivisionTel;
-                worksheet.Cells[5, 4] = "Date: " + (MyUtility.Check.Empty(masterData["ShipDate"]) ? "" : Convert.ToDateTime(masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
-                worksheet.Cells[6, 1] = messrs;
-                worksheet.Cells[6, 2] = "Invoice No.:" + MyUtility.Convert.GetString(masterData["FtyInvNo"]);
-                worksheet.Cells[9, 1] = courierAWB;
-                worksheet.Cells[8, 4] = MyUtility.Check.Empty(masterData["ETD"]) ? "" : Convert.ToDateTime(masterData["ETD"]).ToString("d");
-                worksheet.Cells[9, 4] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[11, 1] = shipmentPort;
-                worksheet.Cells[11, 2] = destinationPort;
+                worksheet.Cells[1, 1] = this.mdivisionName;
+                worksheet.Cells[2, 1] = this.mdivisionAddr;
+                worksheet.Cells[3, 1] = this.mdivisionTel;
+                worksheet.Cells[5, 4] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
+                worksheet.Cells[6, 1] = this.messrs;
+                worksheet.Cells[6, 2] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
+                worksheet.Cells[9, 1] = this.courierAWB;
+                worksheet.Cells[8, 4] = MyUtility.Check.Empty(this.masterData["ETD"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETD"]).ToString("d");
+                worksheet.Cells[9, 4] = MyUtility.Convert.GetString(this.masterData["ID"]);
+                worksheet.Cells[11, 1] = this.shipmentPort;
+                worksheet.Cells[11, 2] = this.destinationPort;
 
                 int rownum = 14;
-                string ctnNo = "";
+                string ctnNo = string.Empty;
                 object[,] objArray = new object[1, 7];
-                foreach (DataRow dr in detailData.Rows)
+                foreach (DataRow dr in this.detailData.Rows)
                 {
                     if (ctnNo != MyUtility.Convert.GetString(dr["CTNNo"]))
                     {
-                        worksheet.Cells[rownum, 1] = "CTN#"+MyUtility.Convert.GetString(dr["CTNNo"]);
+                        worksheet.Cells[rownum, 1] = "CTN#" + MyUtility.Convert.GetString(dr["CTNNo"]);
                         rownum++;
                         ctnNo = MyUtility.Convert.GetString(dr["CTNNo"]);
                     }
+
                     objArray[0, 0] = string.Format("{0}-{1}\r\n{2}", MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), MyUtility.Convert.GetString(dr["Description"]));
-                    objArray[0, 1] = MyUtility.Check.Empty(dr["Qty"]) ? "" : dr["Qty"];
+                    objArray[0, 1] = MyUtility.Check.Empty(dr["Qty"]) ? string.Empty : dr["Qty"];
                     objArray[0, 2] = dr["UnitID"];
                     objArray[0, 3] = "$";
-                    objArray[0, 4] = MyUtility.Check.Empty(dr["Price"]) ? "" : dr["Price"];
+                    objArray[0, 4] = MyUtility.Check.Empty(dr["Price"]) ? string.Empty : dr["Price"];
                     objArray[0, 5] = "$";
-                    objArray[0, 6] = MyUtility.Check.Empty(dr["Qty"]) || MyUtility.Check.Empty(dr["Price"]) ? "" : MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["Price"]));
-                    worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+                    objArray[0, 6] = MyUtility.Check.Empty(dr["Qty"]) || MyUtility.Check.Empty(dr["Price"]) ? string.Empty : MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["Price"]));
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
 
-                if (detailSummary != null && detailSummary.Rows.Count > 0)
+                if (this.detailSummary != null && this.detailSummary.Rows.Count > 0)
                 {
                     int count = 1;
-                    foreach (DataRow dr in detailSummary.Rows)
+                    foreach (DataRow dr in this.detailSummary.Rows)
                     {
                         if (count == 1)
                         {
                             count++;
                             worksheet.Cells[rownum, 1] = "Total";
-                            //文字靠左顯示
-                            worksheet.Range[String.Format("A{0}:A{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
+
+                            // 文字靠左顯示
+                            worksheet.Range[string.Format("A{0}:A{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
                         }
+
                         worksheet.Cells[rownum, 2] = MyUtility.Convert.GetString(dr["ttlQty"]);
                         worksheet.Cells[rownum, 3] = MyUtility.Convert.GetString(dr["UnitID"]);
-                        worksheet.Cells[rownum, 6] = MyUtility.Check.Empty(dr["TtlAmount"]) ? "" : "$";
-                        worksheet.Cells[rownum, 7] = MyUtility.Check.Empty(dr["TtlAmount"]) ? "" : MyUtility.Convert.GetString(dr["TtlAmount"]);
+                        worksheet.Cells[rownum, 6] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : "$";
+                        worksheet.Cells[rownum, 7] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlAmount"]);
                         rownum++;
                     }
                 }
+
                 rownum++;
                 worksheet.Cells[rownum, 1] = "Samples of No Commercial Value, the value for Customs Purpose only.";
                 rownum = rownum + 3;
-                worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(masterData["CTNQty"]);
-                worksheet.Cells[rownum+1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(masterData["NW"]);
-                worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(masterData["NW"]) + MyUtility.Convert.GetDecimal(masterData["CTNNW"]));
+                worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(this.masterData["CTNQty"]);
+                worksheet.Cells[rownum + 1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(this.masterData["NW"]);
+                worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]));
 
-                worksheet.Range[String.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[String.Format("A{0}:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("A{0}:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
-                worksheet.Range[String.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[String.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
-                //合併儲存格,文字置左
-                worksheet.Range[String.Format("C{0}:G{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
-                worksheet.Range[String.Format("C{0}:G{0}", MyUtility.Convert.GetString(rownum + 4))].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("A{0}:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A{0}:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+                worksheet.Range[string.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("G14:G{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
+
+                // 合併儲存格,文字置左
+                worksheet.Range[string.Format("C{0}:G{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
+                worksheet.Range[string.Format("C{0}:G{0}", MyUtility.Convert.GetString(rownum + 4))].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                 worksheet.Cells[rownum + 4, 3] = "            BY:";
-                worksheet.Range[String.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
+                worksheet.Range[string.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("E{0}:F{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_PackingList");
@@ -264,24 +299,28 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 #region Detail Packing List
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P02_Print_DetailPackingList.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                worksheet.Cells[1, 1] = mdivisionName;
-                worksheet.Cells[2, 1] = mdivisionAddr;
-                worksheet.Cells[3, 1] = mdivisionTel;
-                worksheet.Cells[5, 9] = "Date: " + (MyUtility.Check.Empty(masterData["ShipDate"]) ? "" : Convert.ToDateTime(masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
-                worksheet.Cells[6, 1] = messrs;
-                worksheet.Cells[6, 9] = "Invoice No.:" + MyUtility.Convert.GetString(masterData["FtyInvNo"]);
-                worksheet.Cells[9, 1] = courierAWB;
-                worksheet.Cells[8, 9] = MyUtility.Check.Empty(masterData["ETD"]) ? "" : Convert.ToDateTime(masterData["ETD"]).ToString("d");
-                worksheet.Cells[9, 9] = MyUtility.Convert.GetString(masterData["ID"]);
-                worksheet.Cells[11, 1] = shipmentPort;
-                worksheet.Cells[11, 7] = destinationPort;
+                worksheet.Cells[1, 1] = this.mdivisionName;
+                worksheet.Cells[2, 1] = this.mdivisionAddr;
+                worksheet.Cells[3, 1] = this.mdivisionTel;
+                worksheet.Cells[5, 9] = "Date: " + (MyUtility.Check.Empty(this.masterData["ShipDate"]) ? string.Empty : Convert.ToDateTime(this.masterData["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)));
+                worksheet.Cells[6, 1] = this.messrs;
+                worksheet.Cells[6, 9] = "Invoice No.:" + MyUtility.Convert.GetString(this.masterData["FtyInvNo"]);
+                worksheet.Cells[9, 1] = this.courierAWB;
+                worksheet.Cells[8, 9] = MyUtility.Check.Empty(this.masterData["ETD"]) ? string.Empty : Convert.ToDateTime(this.masterData["ETD"]).ToString("d");
+                worksheet.Cells[9, 9] = MyUtility.Convert.GetString(this.masterData["ID"]);
+                worksheet.Cells[11, 1] = this.shipmentPort;
+                worksheet.Cells[11, 7] = this.destinationPort;
 
                 int rownum = 14;
                 object[,] objArray = new object[1, 12];
-                foreach (DataRow dr in detailData.Rows)
+                foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["CTNNo"];
                     objArray[0, 1] = string.Format("{0}-{1}", MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]));
@@ -289,62 +328,66 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                     objArray[0, 3] = dr["StyleID"];
                     objArray[0, 4] = dr["RefNo"];
                     objArray[0, 5] = dr["Description"];
-                    objArray[0, 6] = MyUtility.Check.Empty(dr["Qty"]) ? "" : dr["Qty"];
+                    objArray[0, 6] = MyUtility.Check.Empty(dr["Qty"]) ? string.Empty : dr["Qty"];
                     objArray[0, 7] = dr["UnitID"];
                     objArray[0, 8] = "$";
-                    objArray[0, 9] = MyUtility.Check.Empty(dr["Price"]) ? "" : dr["Price"];
+                    objArray[0, 9] = MyUtility.Check.Empty(dr["Price"]) ? string.Empty : dr["Price"];
                     objArray[0, 10] = "$";
-                    objArray[0, 11] = MyUtility.Check.Empty(dr["Qty"]) || MyUtility.Check.Empty(dr["Price"]) ? "" : MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["Price"]));
-                    worksheet.Range[String.Format("A{0}:L{0}", rownum)].Value2 = objArray;
+                    objArray[0, 11] = MyUtility.Check.Empty(dr["Qty"]) || MyUtility.Check.Empty(dr["Price"]) ? string.Empty : MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["Price"]));
+                    worksheet.Range[string.Format("A{0}:L{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
 
-                if (detailSummary != null && detailSummary.Rows.Count > 0)
+                if (this.detailSummary != null && this.detailSummary.Rows.Count > 0)
                 {
                     int count = 1;
-                    foreach (DataRow dr in detailSummary.Rows)
+                    foreach (DataRow dr in this.detailSummary.Rows)
                     {
-                        worksheet.Range[String.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
+                        worksheet.Range[string.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum))].Merge(Type.Missing);
                         if (count == 1)
                         {
                             count++;
                             worksheet.Cells[rownum, 1] = "Total";
-                            //文字靠左顯示
-                            worksheet.Range[String.Format("A{0}:F{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
+
+                            // 文字靠左顯示
+                            worksheet.Range[string.Format("A{0}:F{0}", rownum)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
                         }
+
                         worksheet.Cells[rownum, 7] = MyUtility.Convert.GetString(dr["ttlQty"]);
                         worksheet.Cells[rownum, 8] = MyUtility.Convert.GetString(dr["UnitID"]);
-                        worksheet.Cells[rownum, 11] = MyUtility.Check.Empty(dr["TtlAmount"]) ? "" : "$";
-                        worksheet.Cells[rownum, 12] = MyUtility.Check.Empty(dr["TtlAmount"]) ? "" : MyUtility.Convert.GetString(dr["TtlAmount"]);
+                        worksheet.Cells[rownum, 11] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : "$";
+                        worksheet.Cells[rownum, 12] = MyUtility.Check.Empty(dr["TtlAmount"]) ? string.Empty : MyUtility.Convert.GetString(dr["TtlAmount"]);
                         rownum++;
                     }
                 }
+
                 for (int i = 0; i < 7; i++)
                 {
-                    worksheet.Range[String.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum + i))].Merge(Type.Missing);
+                    worksheet.Range[string.Format("A{0}:F{0}", MyUtility.Convert.GetString(rownum + i))].Merge(Type.Missing);
                 }
-                    
+
                 rownum++;
                 worksheet.Cells[rownum, 1] = "Samples of No Commercial Value, the value for Customs Purpose only.";
                 rownum = rownum + 3;
-                worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(masterData["CTNQty"]);
-                worksheet.Cells[rownum + 1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(masterData["NW"]);
-                worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(masterData["NW"]) + MyUtility.Convert.GetDecimal(masterData["CTNNW"]));
+                worksheet.Cells[rownum, 1] = "Total Carton Qty: " + MyUtility.Convert.GetString(this.masterData["CTNQty"]);
+                worksheet.Cells[rownum + 1, 1] = "Total N.W.: " + MyUtility.Convert.GetString(this.masterData["NW"]);
+                worksheet.Cells[rownum + 2, 1] = "Total G.W.: " + MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["NW"]) + MyUtility.Convert.GetDecimal(this.masterData["CTNNW"]));
 
-                worksheet.Range[String.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[String.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
-                worksheet.Range[String.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
-                worksheet.Range[String.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
-                //合併儲存格,文字置左
-                worksheet.Range[String.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
-                worksheet.Range[String.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A5:A{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("A{0}:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft).LineStyle = 1;
+                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("L14:L{0}", rownum + 2)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight).LineStyle = 1;
+
+                // 合併儲存格,文字置左
+                worksheet.Range[string.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].Merge(Type.Missing);
+                worksheet.Range[string.Format("H{0}:L{0}", MyUtility.Convert.GetString(rownum + 4))].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                 worksheet.Cells[rownum + 4, 8] = "            BY:";
-                worksheet.Range[String.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; //1: 虛線, 2:實線, 3:粗體線
-                worksheet.Range[String.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
+                worksheet.Range[string.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).Weight = 2; // 1: 虛線, 2:實線, 3:粗體線
+                worksheet.Range[string.Format("J{0}:K{0}", rownum + 5)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = 1;
 
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P02_Print_DetailPackingList");

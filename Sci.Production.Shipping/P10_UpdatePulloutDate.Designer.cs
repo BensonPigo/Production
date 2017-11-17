@@ -95,7 +95,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(27, 32);
             this.pictureBox1.TabIndex = 5;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // labelPulloutDate
             // 
@@ -126,7 +126,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // datePulloutDate
             // 
@@ -134,7 +134,7 @@
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(130, 23);
             this.datePulloutDate.TabIndex = 0;
-            this.datePulloutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePulloutDate_Validating);
+            this.datePulloutDate.Validating += new System.ComponentModel.CancelEventHandler(this.DatePulloutDate_Validating);
             // 
             // panel5
             // 

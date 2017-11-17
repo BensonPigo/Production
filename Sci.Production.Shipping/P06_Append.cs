@@ -8,24 +8,48 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P06_Append
+    /// </summary>
     public partial class P06_Append : Sci.Win.Subs.Base
     {
-        public DateTime pulloutDate;
-        public P06_Append()
+        private DateTime pulloutDate;
+
+        /// <summary>
+        /// PulloutDate
+        /// </summary>
+        public DateTime PulloutDate
         {
-            InitializeComponent();
+            get
+            {
+                return this.pulloutDate;
+            }
+
+            set
+            {
+                this.pulloutDate = value;
+            }
         }
 
-        //OK
-        private void btnOK_Click(object sender, EventArgs e)
+        /// <summary>
+        /// P06_Append
+        /// </summary>
+        public P06_Append()
         {
-            if (MyUtility.Check.Empty(datePulloutDate.Value))
+            this.InitializeComponent();
+        }
+
+        // OK
+        private void BtnOK_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.datePulloutDate.Value))
             {
                 MyUtility.Msg.WarningBox("Pull-out Date can't empty!!");
                 return;
             }
-            pulloutDate = (DateTime)datePulloutDate.Value;
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+
+            this.PulloutDate = (DateTime)this.datePulloutDate.Value;
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

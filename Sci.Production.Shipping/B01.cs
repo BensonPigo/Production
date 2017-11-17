@@ -11,14 +11,22 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B01
+    /// </summary>
     public partial class B01 : Sci.Win.Tems.Input6
     {
+        /// <summary>
+        /// B01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             this.txtbrand.IsSupportEditMode = false;
@@ -27,32 +35,34 @@ namespace Sci.Production.Shipping
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("WhseNo", header: "Warehouse#", width: Widths.AnsiChars(50))
                 .EditText("Address", header: "Address", width: Widths.AnsiChars(30));
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
-                txtbrand.Focus();
+                this.txtbrand.Focus();
                 MyUtility.Msg.WarningBox("< Brand > can not be empty!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"].ToString()))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"].ToString()))
             {
-                txtShipMode.Focus();
+                this.txtShipMode.Focus();
                 MyUtility.Msg.WarningBox("< Ship Mode > can not be empty!");
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Forwarder"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Forwarder"].ToString()))
             {
                 this.txtubconForwarder.Focus();
                 MyUtility.Msg.WarningBox("< Forwarder > can not be empty!");
@@ -60,13 +70,14 @@ namespace Sci.Production.Shipping
             }
 
             int recordCount = 0;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["WhseNo"]))
                 {
                     dr.Delete();
                     continue;
                 }
+
                 recordCount += 1;
             }
 
@@ -82,6 +93,7 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             this.txtbrand.IsSupportEditMode = true;

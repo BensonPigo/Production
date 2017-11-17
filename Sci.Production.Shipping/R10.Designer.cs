@@ -168,7 +168,7 @@
             this.radioRowMaterial.TabStop = true;
             this.radioRowMaterial.Text = "Row Material";
             this.radioRowMaterial.UseVisualStyleBackColor = true;
-            this.radioRowMaterial.CheckedChanged += new System.EventHandler(this.radioRowMaterial_CheckedChanged);
+            this.radioRowMaterial.CheckedChanged += new System.EventHandler(this.RadioRowMaterial_CheckedChanged);
             // 
             // radioGarment
             // 
@@ -181,7 +181,7 @@
             this.radioGarment.TabStop = true;
             this.radioGarment.Text = "Garment";
             this.radioGarment.UseVisualStyleBackColor = true;
-            this.radioGarment.CheckedChanged += new System.EventHandler(this.radioGarment_CheckedChanged);
+            this.radioGarment.CheckedChanged += new System.EventHandler(this.RadioGarment_CheckedChanged);
             // 
             // datePulloutDate
             // 

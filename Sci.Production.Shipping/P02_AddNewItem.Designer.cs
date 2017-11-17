@@ -225,7 +225,7 @@
             this.txtCTNNo.Name = "txtCTNNo";
             this.txtCTNNo.Size = new System.Drawing.Size(90, 23);
             this.txtCTNNo.TabIndex = 5;
-            this.txtCTNNo.Validated += new System.EventHandler(this.txtCTNNo_Validated);
+            this.txtCTNNo.Validated += new System.EventHandler(this.TxtCTNNo_Validated);
             // 
             // labelCTNNo
             // 
@@ -297,8 +297,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.txtSPNo_Validated);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
             // labelRemark
             // 
@@ -382,7 +382,7 @@
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 1;
-            this.txtseason.Validated += new System.EventHandler(this.txtseason_Validated);
+            this.txtseason.Validated += new System.EventHandler(this.Txtseason_Validated);
             // 
             // txtstyle
             // 
@@ -394,7 +394,7 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
-            this.txtstyle.Validated += new System.EventHandler(this.txtstyle_Validated);
+            this.txtstyle.Validated += new System.EventHandler(this.Txtstyle_Validated);
             // 
             // txtbrand
             // 
@@ -415,9 +415,9 @@
             this.txtTeamLeader.Name = "txtTeamLeader";
             this.txtTeamLeader.Size = new System.Drawing.Size(74, 23);
             this.txtTeamLeader.TabIndex = 10;
-            this.txtTeamLeader.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtTeamLeader_PopUp);
-            this.txtTeamLeader.Validating += new System.ComponentModel.CancelEventHandler(this.txtTeamLeader_Validating);
-            this.txtTeamLeader.Validated += new System.EventHandler(this.txtTeamLeader_Validated);
+            this.txtTeamLeader.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtTeamLeader_PopUp);
+            this.txtTeamLeader.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTeamLeader_Validating);
+            this.txtTeamLeader.Validated += new System.EventHandler(this.TxtTeamLeader_Validated);
             // 
             // displayTeamLeader
             // 

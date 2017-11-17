@@ -11,32 +11,42 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P07
+    /// </summary>
     public partial class P07 : Sci.Win.Tems.Input6
     {
+        /// <summary>
+        /// P07
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboReason, 2, 1, "1,Wrong Price,2,Wrong Qty,3,Wrong Price & Qty,4,NoPullout");
+            MyUtility.Tool.SetupCombox(this.comboReason, 2, 1, "1,Wrong Price,2,Wrong Qty,3,Wrong Price & Qty,4,NoPullout");
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format("select *,IIF(NewItem = 1,'Y','') as New from InvAdjust_Qty WITH (NOLOCK) where ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            
-            Helper.Controls.Grid.Generator(this.detailgrid)
+
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("OrderQty", header: "Order Q'ty", decimal_places: 0, iseditingreadonly: true)
@@ -46,16 +56,16 @@ namespace Sci.Production.Shipping
                 .Text("New", header: "New", width: Widths.AnsiChars(1), iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numOriginalSurchargeAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"]);
-            numChangetoSurchargeAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"]);
-            numOriginalCommAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]);
-            numChangetoCommAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]);
-            numOriginalTotalAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["OrigAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]), 2);
-            numChangetoTotalAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]), 2);
-
+            this.numOriginalSurchargeAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigSurcharge"]);
+            this.numChangetoSurchargeAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustSurcharge"]);
+            this.numOriginalCommAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigCommission"]);
+            this.numChangetoCommAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustCommission"]);
+            this.numOriginalTotalAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigSurcharge"])) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["OrigCommission"]), 2);
+            this.numChangetoTotalAmt.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustSurcharge"])) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["AdjustCommission"]), 2);
         }
     }
 }

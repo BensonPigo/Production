@@ -104,7 +104,7 @@
             this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtbrand
             // 
@@ -204,7 +204,7 @@
             this.btnEmptyNLCodetoExcel.TabIndex = 7;
             this.btnEmptyNLCodetoExcel.Text = "Empty Customs Code (to Excel)";
             this.btnEmptyNLCodetoExcel.UseVisualStyleBackColor = true;
-            this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.btnEmptyNLCodetoExcel_Click);
+            this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.BtnEmptyNLCodetoExcel_Click);
             // 
             // btnClose
             // 
@@ -224,7 +224,7 @@
             this.btnCreate.TabIndex = 5;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
+            this.btnCreate.Click += new System.EventHandler(this.BtnCreate_Click);
             // 
             // pictureBox2
             // 
@@ -234,7 +234,7 @@
             this.pictureBox2.Size = new System.Drawing.Size(22, 30);
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.pictureBox2.Click += new System.EventHandler(this.PictureBox2_Click);
             // 
             // dateCdate
             // 
@@ -251,7 +251,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(24, 30);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // txtVNContractID
             // 
@@ -261,8 +261,8 @@
             this.txtVNContractID.Name = "txtVNContractID";
             this.txtVNContractID.Size = new System.Drawing.Size(140, 23);
             this.txtVNContractID.TabIndex = 1;
-            this.txtVNContractID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtVNContractID_PopUp);
-            this.txtVNContractID.Validating += new System.ComponentModel.CancelEventHandler(this.txtVNContractID_Validating);
+            this.txtVNContractID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtVNContractID_PopUp);
+            this.txtVNContractID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtVNContractID_Validating);
             // 
             // btnAutoCustomSPNo
             // 
@@ -272,7 +272,7 @@
             this.btnAutoCustomSPNo.TabIndex = 0;
             this.btnAutoCustomSPNo.Text = "Auto Custom SP#";
             this.btnAutoCustomSPNo.UseVisualStyleBackColor = true;
-            this.btnAutoCustomSPNo.Click += new System.EventHandler(this.btnAutoCustomSPNo_Click);
+            this.btnAutoCustomSPNo.Click += new System.EventHandler(this.BtnAutoCustomSPNo_Click);
             // 
             // panel5
             // 

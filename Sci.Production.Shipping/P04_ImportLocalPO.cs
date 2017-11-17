@@ -12,23 +12,32 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P04_ImportLocalPO
+    /// </summary>
     public partial class P04_ImportLocalPO : Sci.Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataTable detailData;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable detailData;
+
+        /// <summary>
+        /// P04_ImportLocalPO
+        /// </summary>
+        /// <param name="dt">dt</param>
         public P04_ImportLocalPO(DataTable dt)
         {
-            InitializeComponent();
-            detailData = dt;
+            this.InitializeComponent();
+            this.detailData = dt;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             this.gridImport.IsEditingReadOnly = false;
-            gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("LocalPOID", header: "Local Purchase#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -42,23 +51,23 @@ namespace Sci.Production.Shipping
                 .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
         }
 
-        //Qurey
-        private void btnQuery_Click(object sender, EventArgs e)
+        // Qurey
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text) && MyUtility.Check.Empty(txtLocalPurchase.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtLocalPurchase.Text))
             {
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 MyUtility.Msg.WarningBox("< SP# > or < Local Purchase# > can't be empty!");
                 return;
             }
 
-            if (MyUtility.Convert.GetString(txtSPNo.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(this.txtSPNo.Text).IndexOf("'") != -1)
             {
                 MyUtility.Msg.WarningBox("SP# can not enter the  '  character!!");
                 return;
             }
 
-            if (MyUtility.Convert.GetString(txtLocalPurchase.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(this.txtLocalPurchase.Text).IndexOf("'") != -1)
             {
                 MyUtility.Msg.WarningBox("Local Purchase# can not enter the  '  character!!");
                 return;
@@ -71,18 +80,21 @@ o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as Factor
 from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
       from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) 
 	  where l.Id = ld.Id");
-            if (!MyUtility.Check.Empty(txtLocalPurchase.Text))
+            if (!MyUtility.Check.Empty(this.txtLocalPurchase.Text))
             {
-                sqlCmd.Append(string.Format(" and l.id = '{0}'",txtLocalPurchase.Text.Trim()));
+                sqlCmd.Append(string.Format(" and l.id = '{0}'", this.txtLocalPurchase.Text.Trim()));
             }
-            if (!MyUtility.Check.Empty(txtSPNo.Text))
+
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and ld.OrderId = '{0}'",txtSPNo.Text.Trim()));
+                sqlCmd.Append(string.Format(" and ld.OrderId = '{0}'", this.txtSPNo.Text.Trim()));
             }
-            if (!MyUtility.Check.Empty(txtSubconSupplier.TextBox1.Text))
+
+            if (!MyUtility.Check.Empty(this.txtSubconSupplier.TextBox1.Text))
             {
-                sqlCmd.Append(string.Format(" and l.LocalSuppID = '{0}'",txtSubconSupplier.TextBox1.Text.Trim()));
+                sqlCmd.Append(string.Format(" and l.LocalSuppID = '{0}'", this.txtSubconSupplier.TextBox1.Text.Trim()));
             }
+
             sqlCmd.Append(@") lo
 left join Orders o on o.ID = lo.POID
 left join LocalItem li on li.RefNo = lo.Refno
@@ -91,22 +103,24 @@ left join LocalSupp ls on ls.ID = lo.SuppID");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query error."+result.ToString());
+                MyUtility.Msg.ErrorBox("Query error." + result.ToString());
                 return;
             }
+
             if (selectData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
             }
-            listControlBindingSource1.DataSource = selectData;
+
+            this.listControlBindingSource1.DataSource = selectData;
         }
 
-        //Import
-        private void btnImport_Click(object sender, EventArgs e)
+        // Import
+        private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
+            this.listControlBindingSource1.EndEdit();
+            DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data!");
@@ -118,12 +132,12 @@ left join LocalSupp ls on ls.ID = lo.SuppID");
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = detailData.Select(string.Format("POID = '{0}' and SCIRefNo = '{1}' and RefNo = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["SCIRefNo"]), MyUtility.Convert.GetString(currentRow["RefNo"])));
+                    DataRow[] findrow = this.detailData.Select(string.Format("POID = '{0}' and SCIRefNo = '{1}' and RefNo = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["SCIRefNo"]), MyUtility.Convert.GetString(currentRow["RefNo"])));
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
                         currentRow.SetAdded();
-                        detailData.ImportRow(currentRow);
+                        this.detailData.ImportRow(currentRow);
                     }
                     else
                     {
@@ -133,6 +147,7 @@ left join LocalSupp ls on ls.ID = lo.SuppID");
                     }
                 }
             }
+
             MyUtility.Msg.InfoBox("Import completed!");
         }
     }

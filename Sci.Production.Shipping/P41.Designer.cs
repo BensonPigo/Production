@@ -240,7 +240,7 @@
             this.txtInvNo.Name = "txtInvNo";
             this.txtInvNo.Size = new System.Drawing.Size(200, 23);
             this.txtInvNo.TabIndex = 1;
-            this.txtInvNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtInvNo_Validating);
+            this.txtInvNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInvNo_Validating);
             // 
             // labelContractNo
             // 
@@ -278,8 +278,8 @@
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
             this.txtContractNo.TabIndex = 2;
-            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtContractNo_PopUp);
-            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtContractNo_Validating);
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtContractNo_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtContractNo_Validating);
             // 
             // txtPortofExport
             // 
@@ -290,9 +290,9 @@
             this.txtPortofExport.Name = "txtPortofExport";
             this.txtPortofExport.Size = new System.Drawing.Size(100, 23);
             this.txtPortofExport.TabIndex = 3;
-            this.txtPortofExport.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtPortofExport_PopUp);
-            this.txtPortofExport.TextChanged += new System.EventHandler(this.txtPortofExport_TextChanged);
-            this.txtPortofExport.Validating += new System.ComponentModel.CancelEventHandler(this.txtPortofExport_Validating);
+            this.txtPortofExport.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortofExport_PopUp);
+            this.txtPortofExport.TextChanged += new System.EventHandler(this.TxtPortofExport_TextChanged);
+            this.txtPortofExport.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPortofExport_Validating);
             // 
             // displayPortofExport
             // 
@@ -322,7 +322,7 @@
             this.btnReCalculate.TabIndex = 8;
             this.btnReCalculate.Text = "Re-Calculate";
             this.btnReCalculate.UseVisualStyleBackColor = true;
-            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            this.btnReCalculate.Click += new System.EventHandler(this.BtnReCalculate_Click);
             // 
             // labelQty
             // 

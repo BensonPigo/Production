@@ -698,7 +698,7 @@
             this.btnExpenseData.TabIndex = 42;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.btnExpenseData_Click);
+            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
             // btnShippingMark
             // 
@@ -708,7 +708,7 @@
             this.btnShippingMark.TabIndex = 43;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.BtnShippingMark_Click);
             // 
             // labelLocateSPNo
             // 
@@ -758,7 +758,7 @@
             this.btnFind.TabIndex = 48;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // txttpeuserHandle
             // 

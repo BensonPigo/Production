@@ -157,8 +157,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.txtSPNo_Validated);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSPNo_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.TxtSPNo_Validated);
             // 
             // displaySPNo
             // 
@@ -230,7 +230,7 @@
             this.txtCTNNo.Name = "txtCTNNo";
             this.txtCTNNo.Size = new System.Drawing.Size(90, 23);
             this.txtCTNNo.TabIndex = 3;
-            this.txtCTNNo.Validated += new System.EventHandler(this.txtCTNNo_Validated);
+            this.txtCTNNo.Validated += new System.EventHandler(this.TxtCTNNo_Validated);
             // 
             // numQty
             // 
@@ -353,7 +353,7 @@
             this.txtAirPPNo.Name = "txtAirPPNo";
             this.txtAirPPNo.Size = new System.Drawing.Size(120, 23);
             this.txtAirPPNo.TabIndex = 9;
-            this.txtAirPPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtAirPPNo_Validating);
+            this.txtAirPPNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtAirPPNo_Validating);
             // 
             // txttpeuserTeamLeader
             // 

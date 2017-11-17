@@ -13,49 +13,63 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R13
+    /// </summary>
     public partial class R13 : Sci.Win.Tems.PrintForm
     {
-        DateTime? buyerDlv1, buyerDlv2;
-        string brand, Shipper, factory,category;
-        DataTable printData;
+        private DateTime? buyerDlv1;
+        private DateTime? buyerDlv2;
+        private string brand;
+        private string Shipper;
+        private string factory;
+        private string category;
+        private DataTable printData;
+
+        /// <summary>
+        /// R13
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();           
-            DataTable ShipperID, factory;
-            DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out ShipperID);
-            MyUtility.Tool.SetupCombox(comboShipper, 1, ShipperID);
-            comboShipper.Text = Sci.Env.User.Keyword;
+            this.InitializeComponent();
+            DataTable shipperID, factory;
+            DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out shipperID);
+            MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
+            this.comboShipper.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            dateBuyerDelivery.Value1 = DateTime.Today;
-            //comboBox2.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.dateBuyerDelivery.Value1 = DateTime.Today;
+
+            // comboBox2.SelectedIndex = -1;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery can't all empty!!");
                 return false;
             }
-            if(MyUtility.Check.Empty(txtdropdownlistCategory.Text))
+
+            if (MyUtility.Check.Empty(this.txtdropdownlistCategory.Text))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
-            
-            buyerDlv1 = dateBuyerDelivery.Value1;
-            buyerDlv2 = dateBuyerDelivery.Value2;
-            brand = txtbrand.Text;
-            Shipper = comboShipper.Text.ToString().Trim();
-            factory = comboFactory.Text;
-            category = txtdropdownlistCategory.SelectedValue.ToString();
+
+            this.buyerDlv1 = this.dateBuyerDelivery.Value1;
+            this.buyerDlv2 = this.dateBuyerDelivery.Value2;
+            this.brand = this.txtbrand.Text;
+            this.Shipper = this.comboShipper.Text.ToString().Trim();
+            this.factory = this.comboFactory.Text;
+            this.category = this.txtdropdownlistCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -101,51 +115,52 @@ outer apply
 ) cpucost
 Where o.LocalOrder = 0 ");
 
-            if (!MyUtility.Check.Empty(buyerDlv1))
+            if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(buyerDlv2))
+            if (!MyUtility.Check.Empty(this.buyerDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDlv2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(brand))
-            {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Shipper))
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and fd.ShipperID = '{0}'", Shipper));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(this.Shipper))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and fd.ShipperID = '{0}'", this.Shipper));
             }
 
-            if (category == "B")
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
+            }
+
+            if (this.category == "B")
             {
                 sqlCmd.Append(" and o.Category = 'B'");
             }
-            else if (category == "S")
+            else if (this.category == "S")
             {
                 sqlCmd.Append(" and o.Category = 'S'");
             }
-            else if (category == "BS")
+            else if (this.category == "BS")
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
-            else if (category == "BF")
+            else if (this.category == "BF")
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.IsForecast = 1)");
             }
-            else if (category == "SF")
+            else if (this.category == "SF")
             {
                 sqlCmd.Append(" and (o.Category = 'S' or o.IsForecast = 1)");
             }
-            else if (category == "BSF")
+            else if (this.category == "BSF")
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast = 1)");
             }
@@ -156,39 +171,48 @@ Where o.LocalOrder = 0 ");
                             ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
                             from cte");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R13_FactoryCMTForecast.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Shipping_R13_FactoryCMTForecast.xltx", 3, false, null, objApp);
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_R13_FactoryCMTForecast.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R13_FactoryCMTForecast.xltx", 3, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            string Buyer_Delivery=" ~ ";
-            if (!MyUtility.Check.Empty(buyerDlv1)) Buyer_Delivery = buyerDlv1.Value.ToShortDateString() + Buyer_Delivery;
-            if (!MyUtility.Check.Empty(buyerDlv2)) Buyer_Delivery = Buyer_Delivery + buyerDlv2.Value.ToShortDateString();
-            objSheets.Cells[2, 2] = MyUtility.Convert.GetString(Buyer_Delivery);
-            objSheets.Cells[2, 5] = MyUtility.Convert.GetString(brand);
-            objSheets.Cells[2, 7] = MyUtility.Convert.GetString(Shipper);
-            objSheets.Cells[2, 9] = MyUtility.Convert.GetString(factory);
-            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(txtdropdownlistCategory.Text.ToString().Replace(category+"-",""));
+            string buyer_Delivery = " ~ ";
+            if (!MyUtility.Check.Empty(this.buyerDlv1))
+            {
+                buyer_Delivery = this.buyerDlv1.Value.ToShortDateString() + buyer_Delivery;
+            }
+
+            if (!MyUtility.Check.Empty(this.buyerDlv2))
+            {
+                buyer_Delivery = buyer_Delivery + this.buyerDlv2.Value.ToShortDateString();
+            }
+
+            objSheets.Cells[2, 2] = MyUtility.Convert.GetString(buyer_Delivery);
+            objSheets.Cells[2, 5] = MyUtility.Convert.GetString(this.brand);
+            objSheets.Cells[2, 7] = MyUtility.Convert.GetString(this.Shipper);
+            objSheets.Cells[2, 9] = MyUtility.Convert.GetString(this.factory);
+            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.txtdropdownlistCategory.Text.ToString().Replace(this.category + "-", string.Empty));
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");

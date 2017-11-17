@@ -12,61 +12,75 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P05_ExpenseData
+    /// </summary>
     public partial class P05_ExpenseData : Sci.Win.Subs.Base
     {
-        private string id,columnName,sqlCmd;
+        private string id;
+        private string columnName;
+        private string sqlCmd;
         private DualResult result;
         private DataTable gridData;
-        public P05_ExpenseData(string ID, string ColumnName)
+
+        /// <summary>
+        /// P05_ExpenseData
+        /// </summary>
+        /// <param name="iD">iD</param>
+        /// <param name="columnName">columnName</param>
+        public P05_ExpenseData(string iD, string columnName)
         {
-            InitializeComponent();
-            id = ID;
-            columnName = ColumnName;
+            this.InitializeComponent();
+            this.id = iD;
+            this.columnName = columnName;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            switch (columnName)
+            switch (this.columnName)
             {
                 case "InvNo":
-                    sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+                    this.sqlCmd = string.Format(
+                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
-where se.InvNo = '{0}'", id);
+where se.InvNo = '{0}'", this.id);
                     break;
                 case "WKNo":
-                    sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+                    this.sqlCmd = string.Format(
+                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
-where se.WKNo = '{0}'", id);
+where se.WKNo = '{0}'", this.id);
                     break;
                 default:
-                    sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
+                    this.sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
                     break;
             }
-            if (result = DBProxy.Current.Select(null, sqlCmd, out gridData))
+
+            if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out this.gridData))
             {
-                listControlBindingSource1.DataSource = gridData;
+                this.listControlBindingSource1.DataSource = this.gridData;
             }
             else
             {
                 MyUtility.Msg.ErrorBox("Query data fail!!");
             }
 
-            //Grid設定
+            // Grid設定
             this.gridExpenseData.IsEditingReadOnly = true;
-            this.gridExpenseData.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridExpenseData)
+            this.gridExpenseData.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridExpenseData)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(33))
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3))
-                .Numeric("Amount",header: "Expense",decimal_places: 2)
+                .Numeric("Amount", header: "Expense", decimal_places: 2)
                 .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15));
-
         }
 
-        //Close
-        private void btnClose_Click(object sender, EventArgs e)
+        // Close
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

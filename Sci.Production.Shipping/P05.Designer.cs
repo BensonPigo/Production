@@ -433,7 +433,7 @@
             this.txtInvSerial.Name = "txtInvSerial";
             this.txtInvSerial.Size = new System.Drawing.Size(100, 23);
             this.txtInvSerial.TabIndex = 1;
-            this.txtInvSerial.Validated += new System.EventHandler(this.txtInvSerial_Validated);
+            this.txtInvSerial.Validated += new System.EventHandler(this.TxtInvSerial_Validated);
             // 
             // dateInvDate
             // 
@@ -442,7 +442,7 @@
             this.dateInvDate.Name = "dateInvDate";
             this.dateInvDate.Size = new System.Drawing.Size(130, 23);
             this.dateInvDate.TabIndex = 2;
-            this.dateInvDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateInvDate_Validating);
+            this.dateInvDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateInvDate_Validating);
             // 
             // dateFCRDate
             // 
@@ -451,7 +451,7 @@
             this.dateFCRDate.Name = "dateFCRDate";
             this.dateFCRDate.Size = new System.Drawing.Size(130, 23);
             this.dateFCRDate.TabIndex = 4;
-            this.dateFCRDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateFCRDate_Validating);
+            this.dateFCRDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateFCRDate_Validating);
             // 
             // displayDescription
             // 
@@ -818,7 +818,7 @@
             this.dateETD.Name = "dateETD";
             this.dateETD.Size = new System.Drawing.Size(130, 23);
             this.dateETD.TabIndex = 17;
-            this.dateETD.Validating += new System.ComponentModel.CancelEventHandler(this.dateETD_Validating);
+            this.dateETD.Validating += new System.ComponentModel.CancelEventHandler(this.DateETD_Validating);
             // 
             // dateETA
             // 
@@ -827,7 +827,7 @@
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(130, 23);
             this.dateETA.TabIndex = 18;
-            this.dateETA.Validating += new System.ComponentModel.CancelEventHandler(this.dateETA_Validating);
+            this.dateETA.Validating += new System.ComponentModel.CancelEventHandler(this.DateETA_Validating);
             // 
             // dateSendtoTPE
             // 
@@ -856,7 +856,7 @@
             this.btnAirPPList.TabIndex = 64;
             this.btnAirPPList.Text = "AirPP List";
             this.btnAirPPList.UseVisualStyleBackColor = true;
-            this.btnAirPPList.Click += new System.EventHandler(this.btnAirPPList_Click);
+            this.btnAirPPList.Click += new System.EventHandler(this.BtnAirPPList_Click);
             // 
             // btnExpenseData
             // 
@@ -867,7 +867,7 @@
             this.btnExpenseData.TabIndex = 65;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.btnExpenseData_Click);
+            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
             // btnContainerTruck
             // 
@@ -878,7 +878,7 @@
             this.btnContainerTruck.TabIndex = 66;
             this.btnContainerTruck.Text = "Container/Truck";
             this.btnContainerTruck.UseVisualStyleBackColor = true;
-            this.btnContainerTruck.Click += new System.EventHandler(this.btnContainerTruck_Click);
+            this.btnContainerTruck.Click += new System.EventHandler(this.BtnContainerTruck_Click);
             // 
             // btnCFM
             // 
@@ -890,7 +890,7 @@
             this.btnCFM.TabIndex = 67;
             this.btnCFM.Text = "CFM";
             this.btnCFM.UseVisualStyleBackColor = true;
-            this.btnCFM.Click += new System.EventHandler(this.btnCFM_Click);
+            this.btnCFM.Click += new System.EventHandler(this.BtnCFM_Click);
             // 
             // btnH
             // 
@@ -902,7 +902,7 @@
             this.btnH.TabIndex = 68;
             this.btnH.Text = "H";
             this.btnH.UseVisualStyleBackColor = true;
-            this.btnH.Click += new System.EventHandler(this.btnH_Click);
+            this.btnH.Click += new System.EventHandler(this.BtnH_Click);
             // 
             // btnImportfrompackinglist
             // 
@@ -914,7 +914,7 @@
             this.btnImportfrompackinglist.TabIndex = 19;
             this.btnImportfrompackinglist.Text = "Import from packing list";
             this.btnImportfrompackinglist.UseVisualStyleBackColor = true;
-            this.btnImportfrompackinglist.Click += new System.EventHandler(this.btnImportfrompackinglist_Click);
+            this.btnImportfrompackinglist.Click += new System.EventHandler(this.BtnImportfrompackinglist_Click);
             // 
             // displayShipPlanNo
             // 
@@ -935,9 +935,9 @@
             this.txtCustCD.Name = "txtCustCD";
             this.txtCustCD.Size = new System.Drawing.Size(125, 23);
             this.txtCustCD.TabIndex = 5;
-            this.txtCustCD.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCustCD_PopUp);
-            this.txtCustCD.Validating += new System.ComponentModel.CancelEventHandler(this.txtCustCD_Validating);
-            this.txtCustCD.Validated += new System.EventHandler(this.txtCustCD_Validated);
+            this.txtCustCD.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCustCD_PopUp);
+            this.txtCustCD.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustCD_Validating);
+            this.txtCustCD.Validated += new System.EventHandler(this.TxtCustCD_Validated);
             // 
             // comboContainerType
             // 
@@ -961,8 +961,8 @@
             this.txtTerminalWhse.ReadOnly = true;
             this.txtTerminalWhse.Size = new System.Drawing.Size(164, 23);
             this.txtTerminalWhse.TabIndex = 14;
-            this.txtTerminalWhse.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtTerminalWhse_PopUp);
-            this.txtTerminalWhse.Validating += new System.ComponentModel.CancelEventHandler(this.txtTerminalWhse_Validating);
+            this.txtTerminalWhse.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtTerminalWhse_PopUp);
+            this.txtTerminalWhse.Validating += new System.ComponentModel.CancelEventHandler(this.TxtTerminalWhse_Validating);
             // 
             // txtCutoffDate
             // 
@@ -973,7 +973,7 @@
             this.txtCutoffDate.ReadOnly = true;
             this.txtCutoffDate.Size = new System.Drawing.Size(153, 23);
             this.txtCutoffDate.TabIndex = 15;
-            this.txtCutoffDate.Validating += new System.ComponentModel.CancelEventHandler(this.txtCutoffDate_Validating);
+            this.txtCutoffDate.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutoffDate_Validating);
             // 
             // txtSubconForwarder
             // 
@@ -1048,7 +1048,7 @@
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 3;
-            this.txtbrand.Validated += new System.EventHandler(this.txtbrand_Validated);
+            this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
             // 
             // txtfactoryShipper
             // 
@@ -1059,8 +1059,8 @@
             this.txtfactoryShipper.Name = "txtfactoryShipper";
             this.txtfactoryShipper.Size = new System.Drawing.Size(64, 23);
             this.txtfactoryShipper.TabIndex = 0;
-            this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtfactoryShipper_PopUp);
-            this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.txtfactoryShipper_Validating);
+            this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtfactoryShipper_PopUp);
+            this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtfactoryShipper_Validating);
             // 
             // P05
             // 

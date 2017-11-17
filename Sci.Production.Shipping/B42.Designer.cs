@@ -215,7 +215,7 @@
             this.btnCalculate.TabIndex = 55;
             this.btnCalculate.Text = "Calculate";
             this.btnCalculate.UseVisualStyleBackColor = true;
-            this.btnCalculate.Click += new System.EventHandler(this.btnCalculate_Click);
+            this.btnCalculate.Click += new System.EventHandler(this.BtnCalculate_Click);
             // 
             // btnSketch
             // 
@@ -226,7 +226,7 @@
             this.btnSketch.TabIndex = 54;
             this.btnSketch.Text = "Sketch";
             this.btnSketch.UseVisualStyleBackColor = true;
-            this.btnSketch.Click += new System.EventHandler(this.btnSketch_Click);
+            this.btnSketch.Click += new System.EventHandler(this.BtnSketch_Click);
             // 
             // editSizeGroup
             // 
@@ -240,7 +240,7 @@
             this.editSizeGroup.ReadOnly = true;
             this.editSizeGroup.Size = new System.Drawing.Size(150, 39);
             this.editSizeGroup.TabIndex = 53;
-            this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editSizeGroup_PopUp);
+            this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditSizeGroup_PopUp);
             // 
             // editColorway
             // 
@@ -254,7 +254,7 @@
             this.editColorway.ReadOnly = true;
             this.editColorway.Size = new System.Drawing.Size(204, 66);
             this.editColorway.TabIndex = 52;
-            this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editColorway_PopUp);
+            this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditColorway_PopUp);
             // 
             // numBalanceQty
             // 
@@ -331,7 +331,7 @@
             this.txtSize.ReadOnly = true;
             this.txtSize.Size = new System.Drawing.Size(60, 23);
             this.txtSize.TabIndex = 4;
-            this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSize_PopUp);
+            this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSize_PopUp);
             // 
             // txtContractNo
             // 
@@ -342,8 +342,8 @@
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
             this.txtContractNo.TabIndex = 1;
-            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtContractNo_PopUp);
-            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtContractNo_Validating);
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtContractNo_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtContractNo_Validating);
             // 
             // comboCategory
             // 
@@ -389,7 +389,7 @@
             this.txtStyle.ReadOnly = true;
             this.txtStyle.Size = new System.Drawing.Size(150, 23);
             this.txtStyle.TabIndex = 42;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
             // 
             // txtCustomSPNo
             // 

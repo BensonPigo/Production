@@ -11,29 +11,40 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B51
+    /// </summary>
     public partial class B51 : Sci.Win.Tems.Input6
     {
-        DataTable WrongUnitID;
+        private DataTable WrongUnitID;
+
+        /// <summary>
+        /// B51
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B51(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select kd.*,kd.Qty*kd.Price as TotalPrice,kh.GoodsDescription,kh.Category
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = string.Format(
+                @"select kd.*,kd.Qty*kd.Price as TotalPrice,kh.GoodsDescription,kh.Category
 from KHContract_Detail kd WITH (NOLOCK) 
 left join KHGoodsHSCode kh WITH (NOLOCK) on kd.NLCode = kh.NLCode
 where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len(Seq)))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("NLCode", header: "No.", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("GoodsDescription", header: "Description of Goods", width: Widths.AnsiChars(50), iseditingreadonly: true)
@@ -44,84 +55,94 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                 .Numeric("TotalPrice", header: "Total Price", decimal_places: 2, iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This CDC already confirmed, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This CDC already confirmed, can't delete!!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["StartDate"]))
             {
-                dateStartDate.Focus();
+                this.dateStartDate.Focus();
                 MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["EndDate"]))
             {
-                dateEndDate.Focus();
+                this.dateEndDate.Focus();
                 MyUtility.Msg.WarningBox("End Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                txtCDCNo.Focus();
+                this.txtCDCNo.Focus();
                 MyUtility.Msg.WarningBox("CDC No. can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
-                txtFactory.Focus();
+                this.txtFactory.Focus();
                 MyUtility.Msg.WarningBox("Factory can't empty!!");
                 return false;
             }
-            
             #endregion
 
             #region 檢查日期正確性
-            //End Date：輸入日期一定不能小於Start Date
-            if (dateEndDate.Value < dateStartDate.Value)
+
+            // End Date：輸入日期一定不能小於Start Date
+            if (this.dateEndDate.Value < this.dateStartDate.Value)
             {
-                dateEndDate.Focus();
+                this.dateEndDate.Focus();
                 MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 return false;
             }
             #endregion
 
             #region 如果有做Import Data，檢查匯入的的Unit是否正確
-            if (WrongUnitID != null && WrongUnitID.Rows.Count > 0)
+            if (this.WrongUnitID != null && this.WrongUnitID.Rows.Count > 0)
             {
                 StringBuilder wrongunit = new StringBuilder();
-                foreach (DataRow dr in WrongUnitID.Rows)
+                foreach (DataRow dr in this.WrongUnitID.Rows)
                 {
                     if (wrongunit.ToString().IndexOf(MyUtility.Convert.GetString(dr["UnitID"])) <= 0)
                     {
                         wrongunit.Append(string.Format("Unit: {0}\r\n", MyUtility.Convert.GetString(dr["UnitID"])));
                     }
                 }
+
                 MyUtility.Msg.WarningBox(string.Format("Below data is 'Unit' not correct.\r\n{0}", wrongunit.ToString()));
                 return false;
             }
@@ -130,12 +151,14 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             return base.ClickSaveBefore();
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string updateCmds = string.Format("update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -143,16 +166,17 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-           
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
-            string updateCmds = string.Format("update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                            Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update KHContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -160,12 +184,10 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
-
-           
         }
 
-        //Import Data
-        private void btnImportData_Click(object sender, EventArgs e)
+        // Import Data
+        private void BtnImportData_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -174,16 +196,19 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
 
-            DataTable ExcelDataTable, UpdateData;
+            DataTable excelDataTable, updateData;
             string sqlCmd = "select *,0.0 as TotalPrice,'' as GoodsDescription,'' as Category from KHContract_Detail WITH (NOLOCK) where 1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
 
             sqlCmd = "select UnitID from KHContract_Detail WITH (NOLOCK) where 1 = 0";
-            result = DBProxy.Current.Select(null, sqlCmd, out WrongUnitID);
+            result = DBProxy.Current.Select(null, sqlCmd, out this.WrongUnitID);
 
-            UpdateData = ((DataTable)gridbs.DataSource).Clone();
+            updateData = ((DataTable)this.gridbs.DataSource).Clone();
 
             this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
@@ -198,16 +223,15 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             DataRow seekData;
             StringBuilder emptyNLCode = new StringBuilder();
 
-
             while (intRowsRead < intRowsCount)
             {
                 intRowsRead++;
 
-                range = worksheet.Range[String.Format("A{0}:F{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
                 objCellArray = range.Value;
                 if (MyUtility.Check.Seek(string.Format("select * from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C")).ToUpper()), out seekData))
                 {
-                    DataRow newRow = ExcelDataTable.NewRow();
+                    DataRow newRow = excelDataTable.NewRow();
                     newRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C")) + "-" + MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
                     newRow["GoodsDescription"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
                     newRow["NLCode"] = seekData["NLCode"];
@@ -218,11 +242,12 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                     newRow["TotalPrice"] = MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "N")) * MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N"));
                     if (!MyUtility.Check.Seek(MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C")), "Unit", "ID"))
                     {
-                        DataRow unitRow = WrongUnitID.NewRow();
+                        DataRow unitRow = this.WrongUnitID.NewRow();
                         unitRow["UnitID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
-                        WrongUnitID.Rows.Add(unitRow);
+                        this.WrongUnitID.Rows.Add(unitRow);
                     }
-                    ExcelDataTable.Rows.Add(newRow);
+
+                    excelDataTable.Rows.Add(newRow);
                 }
                 else
                 {
@@ -234,17 +259,18 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             excel.Quit();
             excel = null;
 
-            //刪除表身Grid資料
-            foreach (DataRow dr in DetailDatas)
+            // 刪除表身Grid資料
+            foreach (DataRow dr in this.DetailDatas)
             {
                 dr.Delete();
             }
 
-            //將Excel寫入表身Grid
-            foreach (DataRow dr in ExcelDataTable.Rows)
+            // 將Excel寫入表身Grid
+            foreach (DataRow dr in excelDataTable.Rows)
             {
-                ((DataTable)detailgridbs.DataSource).ImportRow(dr);
+                ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
+
             this.HideWaitMessage();
             if (MyUtility.Check.Empty(emptyNLCode.ToString()))
             {

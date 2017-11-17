@@ -12,55 +12,70 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R01
+    /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string shipper, brand, shipmode, shipterm, dest, status,reportType;
-        DateTime? invdate1, invdate2, etd1, etd2;
-        DataTable printData;
+        private string shipper;
+        private string brand;
+        private string shipmode;
+        private string shipterm;
+        private string dest;
+        private string status;
+        private string reportType;
+        private DateTime? invdate1;
+        private DateTime? invdate2;
+        private DateTime? etd1;
+        private DateTime? etd2;
+        private DataTable printData;
 
+        /// <summary>
+        /// R01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboShipper, 1, factory);
-            comboShipper.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "All,Confirmed,UnConfirmed");
-            comboStatus.SelectedIndex = 0;
-            txtshipmodeShippingMode.SelectedIndex = -1;
-            radioMainList.Checked = true;
+            MyUtility.Tool.SetupCombox(this.comboShipper, 1, factory);
+            this.comboShipper.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboStatus, 1, 1, "All,Confirmed,UnConfirmed");
+            this.comboStatus.SelectedIndex = 0;
+            this.txtshipmodeShippingMode.SelectedIndex = -1;
+            this.radioMainList.Checked = true;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
+            // if (MyUtility.Check.Empty(dateRange1.Value1))
+            // {
             //    MyUtility.Msg.WarningBox("Invoice Date can't empty!!");
             //    return false;
-            //}
+            // }
+            this.shipper = this.comboShipper.Text;
+            this.brand = this.txtbrand.Text;
+            this.shipmode = this.txtshipmodeShippingMode.Text;
+            this.shipterm = this.txtshiptermShipmentTerm.Text;
+            this.dest = this.txtcountryDestination.TextBox1.Text;
+            this.status = this.comboStatus.Text;
+            this.reportType = this.radioMainList.Checked ? "1" : "2";
+            this.invdate1 = this.dateInvoiceDate.Value1;
+            this.invdate2 = this.dateInvoiceDate.Value2;
+            this.etd1 = this.dateETD.Value1;
+            this.etd2 = this.dateETD.Value2;
 
-            shipper = comboShipper.Text;
-            brand = txtbrand.Text;
-            shipmode = txtshipmodeShippingMode.Text;
-            shipterm = txtshiptermShipmentTerm.Text;
-            dest = txtcountryDestination.TextBox1.Text;
-            status = comboStatus.Text;
-            reportType = radioMainList.Checked ? "1" : "2";
-            invdate1 = dateInvoiceDate.Value1;
-            invdate2 = dateInvoiceDate.Value2;
-            etd1 = dateETD.Value1;
-            etd2 = dateETD.Value2;
-           
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            if (reportType == "1")
+            if (this.reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select g.ID,g.Shipper,g.BrandID,g.InvDate,g.FCRDate,g.CustCDID,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,g.ShipModeID,g.ShipTermID,
 g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder,g.Vessel,g.ETD,g.ETA,g.SONo,g.SOCFMDate,g.TotalShipQty,g.TotalCTNQty,
@@ -86,86 +101,101 @@ left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 where pl.ID<>'' and 1=1 "));
             }
-            if (!MyUtility.Check.Empty(invdate1))
+
+            if (!MyUtility.Check.Empty(this.invdate1))
             {
-                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(invdate1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(invdate2))
-            {
-                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(invdate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(shipper))
+            if (!MyUtility.Check.Empty(this.invdate2))
             {
-                sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", shipper));
+                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(brand))
+
+            if (!MyUtility.Check.Empty(this.shipper))
             {
-                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", brand));
+                sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
             }
-            if (!MyUtility.Check.Empty(shipmode))
+
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", shipmode));
+                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
-            if (!MyUtility.Check.Empty(shipterm))
+
+            if (!MyUtility.Check.Empty(this.shipmode))
             {
-                sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", shipterm));
+                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
             }
-            if (!MyUtility.Check.Empty(dest))
+
+            if (!MyUtility.Check.Empty(this.shipterm))
             {
-                sqlCmd.Append(string.Format(" and g.Dest = '{0}'", dest));
+                sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
             }
-            if (!MyUtility.Check.Empty(etd1))
+
+            if (!MyUtility.Check.Empty(this.dest))
             {
-                sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(etd1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
-            if (!MyUtility.Check.Empty(etd2))
+
+            if (!MyUtility.Check.Empty(this.etd1))
             {
-                sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(etd2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("d")));
             }
-            if (status == "Confirmed")
+
+            if (!MyUtility.Check.Empty(this.etd2))
+            {
+                sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+            }
+
+            if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
             }
-            else if (status == "UnConfirmed")
+            else if (this.status == "UnConfirmed")
             {
                 sqlCmd.Append(" and g.Status <> 'Confirmed'");
             }
+
             sqlCmd.Append(" order by g.ID");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == "1" ? "\\Shipping_R01_MainList.xltx" : "\\Shipping_R01_DetailList.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            
-            //填內容值
-            if (reportType == "1")
+
+            // 填內容值
+            if (this.reportType == "1")
             {
                 int intRowsStart = 3;
                 object[,] objArray = new object[1, 24];
-                foreach (DataRow dr in printData.Rows)
+                foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
                     objArray[0, 1] = dr["Shipper"];
@@ -191,7 +221,7 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 21] = dr["AddDate"];
                     objArray[0, 22] = dr["ConfirmDate"];
                     objArray[0, 23] = dr["Remark"];
-                    worksheet.Range[String.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
@@ -199,7 +229,7 @@ where pl.ID<>'' and 1=1 "));
             {
                 int intRowsStart = 3;
                 object[,] objArray = new object[1, 21];
-                foreach (DataRow dr in printData.Rows)
+                foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
                     objArray[0, 1] = dr["Shipper"];
@@ -222,16 +252,17 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 18] = dr["AddName"];
                     objArray[0, 19] = dr["AddDate"];
                     objArray[0, 20] = dr["Remark"];
-                    worksheet.Range[String.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
+                    worksheet.Range[string.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList"));
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == "1" ? "Shipping_R01_MainList" : "Shipping_R01_DetailList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);

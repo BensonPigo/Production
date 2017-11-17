@@ -12,49 +12,59 @@ using Sci;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_EditFromPO
+    /// </summary>
     public partial class P02_EditFromPO : Sci.Win.Subs.Input2A
     {
+        /// <summary>
+        /// P02_EditFromPO
+        /// </summary>
         public P02_EditFromPO()
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "4,Material");
-            txtsupplierID.TextBox1.ReadOnly = true;
-            txtsupplierID.TextBox1.IsSupportEditMode = false;
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "4,Material");
+            this.txtsupplierID.TextBox1.ReadOnly = true;
+            this.txtsupplierID.TextBox1.IsSupportEditMode = false;
         }
 
-        //CTN No.
-        private void txtCTNNo_Validated(object sender, EventArgs e)
+        // CTN No.
+        private void TxtCTNNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
+            if (this.EditMode && this.txtCTNNo.OldValue != this.txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
+                this.CurrentData["CTNNo"] = this.txtCTNNo.Text.Trim();
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
+            if (MyUtility.Check.Empty(this.CurrentData["CTNNo"]))
             {
-                txtCTNNo.Focus();
+                this.txtCTNNo.Focus();
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Qty"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Qty"]))
             {
-                numQty.Focus();
+                this.numQty.Focus();
                 MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["NW"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["NW"]))
             {
-                numNW.Focus();
+                this.numNW.Focus();
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Receiver"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Receiver"]))
             {
-                txtReceiver.Focus();
+                this.txtReceiver.Focus();
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
@@ -63,25 +73,29 @@ namespace Sci.Production.Shipping
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
     }

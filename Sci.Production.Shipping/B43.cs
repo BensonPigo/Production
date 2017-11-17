@@ -11,25 +11,34 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B43
+    /// </summary>
     public partial class B43 : Sci.Win.Tems.Input6
     {
+        /// <summary>
+        /// B43
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B43(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -40,102 +49,114 @@ namespace Sci.Production.Shipping
                 .CheckBox("NecessaryItem", header: "Cons. Necessary item", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            if (!EditMode)
+            if (!this.EditMode)
             {
-                if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    btnAddNewNLCode.Enabled = true;
+                    this.btnAddNewNLCode.Enabled = true;
                     this.lab_status.Text = "Confirmed";
                 }
                 else
                 {
-                    btnAddNewNLCode.Enabled = false;
+                    this.btnAddNewNLCode.Enabled = false;
                     this.lab_status.Text = "New";
                 }
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Status"] = "New";
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
 
-            dateStartDate.ReadOnly = true;
-            dateEndDate.ReadOnly = true;
-            txtContractNo.ReadOnly = true;
-            numGrandTotalQty.ReadOnly = true;
+            this.dateStartDate.ReadOnly = true;
+            this.dateEndDate.ReadOnly = true;
+            this.txtContractNo.ReadOnly = true;
+            this.numGrandTotalQty.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This contract already confirmed, can't edit!!");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This contract already confirmed, can't delete!!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
             {
-                txtContractNo.Focus();
+                this.txtContractNo.Focus();
                 MyUtility.Msg.WarningBox("Contract No. can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["StartDate"]))
             {
-                dateStartDate.Focus();
+                this.dateStartDate.Focus();
                 MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["EndDate"]))
             {
-                dateEndDate.Focus();
+                this.dateEndDate.Focus();
                 MyUtility.Msg.WarningBox("End Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["TotalQty"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["TotalQty"]))
             {
-                numGrandTotalQty.Focus();
+                this.numGrandTotalQty.Focus();
                 MyUtility.Msg.WarningBox("Grand Total Q'ty can't empty!!");
                 return false;
             }
             #endregion
 
             #region 檢查日期正確性
-            //Start Date：輸入的日期年份一定要跟建檔當天同一年
-            if (Convert.ToDateTime(dateStartDate.Value).Year != DateTime.Today.Year)
+
+            // Start Date：輸入的日期年份一定要跟建檔當天同一年
+            if (Convert.ToDateTime(this.dateStartDate.Value).Year != DateTime.Today.Year)
             {
-                dateStartDate.Focus();
+                this.dateStartDate.Focus();
                 MyUtility.Msg.WarningBox("Pls double check the start date!!");
                 return false;
             }
 
-            //End Date：輸入的日期年份一定要是建檔當天的隔年
-            if (Convert.ToDateTime(dateEndDate.Value).Year != DateTime.Today.Year + 1)
+            // End Date：輸入的日期年份一定要是建檔當天的隔年
+            if (Convert.ToDateTime(this.dateEndDate.Value).Year != DateTime.Today.Year + 1)
             {
-                dateEndDate.Focus();
+                this.dateEndDate.Focus();
                 MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 return false;
             }
@@ -143,13 +164,14 @@ namespace Sci.Production.Shipping
 
             #region 檢查表身Unit是否有輸入錯誤
             StringBuilder wrongUnit = new StringBuilder();
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(dr["WrongUnit"]) == "1")
                 {
                     wrongUnit.Append(string.Format("Customs Code: {0}, Unit: {1}\r\n", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["UnitID"])));
                 }
             }
+
             if (!MyUtility.Check.Empty(wrongUnit.ToString()))
             {
                 MyUtility.Msg.WarningBox(string.Format("Below data is 'Unit' not correct.\r\n{0}", wrongUnit.ToString()));
@@ -160,12 +182,14 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string updateCmds = string.Format("update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID,MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -173,16 +197,17 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-          
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
-            string updateCmds = string.Format("update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                            Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNContract set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -190,12 +215,10 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
-
-            
         }
 
-        //Import Data
-        private void btnImportData_Click(object sender, EventArgs e)
+        // Import Data
+        private void BtnImportData_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -204,13 +227,16 @@ namespace Sci.Production.Shipping
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
-            if (excel == null) return;
+            if (excel == null)
+            {
+                return;
+            }
 
-            DataTable ExcelDataTable, UpdateData;
+            DataTable excelDataTable, updateData;
             string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out excelDataTable);
 
-            UpdateData = ((DataTable)gridbs.DataSource).Clone();
+            updateData = ((DataTable)this.gridbs.DataSource).Clone();
 
             this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
@@ -227,10 +253,10 @@ namespace Sci.Production.Shipping
             {
                 intRowsRead++;
 
-                range = worksheet.Range[String.Format("A{0}:H{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:H{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                DataRow newRow = ExcelDataTable.NewRow();
+                DataRow newRow = excelDataTable.NewRow();
                 newRow["HSCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                 newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                 newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
@@ -247,38 +273,40 @@ namespace Sci.Production.Shipping
                 {
                     newRow["WrongUnit"] = 1;
                 }
+
                 newRow["AddName"] = Sci.Env.User.UserID;
                 newRow["AddDate"] = DateTime.Now;
-                ExcelDataTable.Rows.Add(newRow);
+                excelDataTable.Rows.Add(newRow);
             }
 
             excel.Workbooks.Close();
             excel.Quit();
             excel = null;
 
-            //刪除表身Grid資料
-            foreach (DataRow dr in DetailDatas)
+            // 刪除表身Grid資料
+            foreach (DataRow dr in this.DetailDatas)
             {
                 dr.Delete();
             }
-            
-            //將Excel寫入表身Grid
-            foreach (DataRow dr in ExcelDataTable.Rows)
+
+            // 將Excel寫入表身Grid
+            foreach (DataRow dr in excelDataTable.Rows)
             {
-                ((DataTable)detailgridbs.DataSource).ImportRow(dr);
+                ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
+
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
         }
 
-        //Add New NL Code
-        private void btnAddNewNLCode_Click(object sender, EventArgs e)
+        // Add New NL Code
+        private void BtnAddNewNLCode_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B43_AddNLCode callNextForm = new Sci.Production.Shipping.B43_AddNLCode(CurrentMaintain);
+            Sci.Production.Shipping.B43_AddNLCode callNextForm = new Sci.Production.Shipping.B43_AddNLCode(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                RenewData();
+                this.RenewData();
             }
         }
     }

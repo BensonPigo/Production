@@ -12,78 +12,94 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R03
+    /// </summary>
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        DateTime? pulloutDate1, pulloutDate2;
-        string brand, mDivision, factory, category;
-        DataTable printData;
+        private DateTime? pulloutDate1;
+        private DateTime? pulloutDate2;
+        private string brand;
+        private string mDivision;
+        private string factory;
+        private string category;
+        private DataTable printData;
+
+        /// <summary>
+        /// R03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.SelectedIndex = -1;
-            comboCategory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
+            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.SelectedIndex = -1;
+            this.comboCategory.SelectedIndex = 0;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
+            // if (MyUtility.Check.Empty(dateRange1.Value1))
+            // {
             //    MyUtility.Msg.WarningBox("Pullout Date can't empty!!");
             //    return false;
-            //}
-
-            mDivision = comboM.Text;
-            pulloutDate1 = datePulloutDate.Value1;
-            pulloutDate2 = datePulloutDate.Value2;
-            brand = txtbrand.Text;
-            factory = comboFactory.Text;
-            category = comboCategory.Text;
+            // }
+            this.mDivision = this.comboM.Text;
+            this.pulloutDate1 = this.datePulloutDate.Value1;
+            this.pulloutDate2 = this.datePulloutDate.Value2;
+            this.brand = this.txtbrand.Text;
+            this.factory = this.comboFactory.Text;
+            this.category = this.comboCategory.Text;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            string sqlWhere = "";
+            string sqlWhere = string.Empty;
             List<string> sqlList = new List<string>();
 
             #region 組Where 條件
-            if (!MyUtility.Check.Empty(pulloutDate1))
+            if (!MyUtility.Check.Empty(this.pulloutDate1))
             {
-                sqlList.Add(string.Format(" p.PulloutDate >= '{0}' ", Convert.ToDateTime(pulloutDate1).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.pulloutDate1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(pulloutDate2))
+
+            if (!MyUtility.Check.Empty(this.pulloutDate2))
             {
-                sqlList.Add(string.Format(" p.PulloutDate <= '{0}' ", Convert.ToDateTime(pulloutDate2).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.pulloutDate2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(brand))
+
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlList.Add(string.Format(" o.BrandID = '{0}'", brand));
+                sqlList.Add(string.Format(" o.BrandID = '{0}'", this.brand));
             }
-            if (!MyUtility.Check.Empty(mDivision))
+
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlList.Add(string.Format(" o.MDivisionID = '{0}'", mDivision));
+                sqlList.Add(string.Format(" o.MDivisionID = '{0}'", this.mDivision));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlList.Add(string.Format(" o.FtyGroup = '{0}'", factory));
+                sqlList.Add(string.Format(" o.FtyGroup = '{0}'", this.factory));
             }
-            if (category == "Bulk")
+
+            if (this.category == "Bulk")
             {
                 sqlList.Add(" o.Category = 'B'");
             }
-            else if (category == "Sample")
+            else if (this.category == "Sample")
             {
                 sqlList.Add(" o.Category = 'S'");
             }
@@ -91,7 +107,7 @@ namespace Sci.Production.Shipping
             {
                 sqlList.Add(" (o.Category = 'B' or o.Category = 'S')");
             }
-           
+
             #endregion
 
             sqlWhere = string.Join(" and ", sqlList);
@@ -99,6 +115,7 @@ namespace Sci.Production.Shipping
             {
                 sqlWhere = " and " + sqlWhere;
             }
+
             sqlCmd.Append(string.Format(
 @"
 select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') as CustPONo,
@@ -125,7 +142,7 @@ select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') 
 	left join Country c WITH (NOLOCK) on o.Dest = c.ID
 	left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
 	where p.Status <> 'New'
-	and 1=1" +sqlWhere+@"  
+	and 1=1" + sqlWhere + @"  
 	
 
 	select PulloutDate,BuyerDelivery,OrderID,CustPONo,StyleID,Qty,
@@ -146,24 +163,23 @@ order by PulloutDate,OrderID
 drop table #temp1,#temp2
 "));
 
-          
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -172,13 +188,17 @@ drop table #temp1,#temp2
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            //填內容值
+            // 填內容值
             int intRowsStart = 2;
             object[,] objArray = new object[1, 19];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["PulloutDate"];
                 objArray[0, 1] = dr["BuyerDelivery"];
@@ -199,7 +219,7 @@ drop table #temp1,#temp2
                 objArray[0, 16] = dr["FactoryID"];
                 objArray[0, 17] = dr["ShipmodeID"];
                 objArray[0, 18] = dr["Alias"];
-                worksheet.Range[String.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

@@ -10,65 +10,87 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_BatchPrint
+    /// </summary>
     public partial class P02_BatchPrint : Sci.Win.Tems.PrintForm
     {
-        string receiver,incharge,ctnno,orderid,seq1,seq2;
-        DataRow masterData;
-        DataTable printData;
-        public P02_BatchPrint(DataRow MasterData)
+        private string receiver;
+        private string incharge;
+        private string ctnno;
+        private string orderid;
+        private string seq1;
+        private string seq2;
+        private DataRow masterData;
+        private DataTable printData;
+
+        /// <summary>
+        /// P02_BatchPrint
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        public P02_BatchPrint(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
+            this.InitializeComponent();
+            this.masterData = masterData;
         }
 
-        private void txtReceiver_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtReceiver_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"]));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", txtReceiver.Text, false, ",");
+            string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ID"]));
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", this.txtReceiver.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtReceiver.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReceiver.Text = item.GetSelectedString();
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            receiver = txtReceiver.Text;
-            incharge= txtUserInCharge.TextBox1.Text;
-            ctnno = txtCNo.Text;
-            orderid = txtSPNo.Text;
-            seq1 = txtSeqStart.Text;
-            seq2 = txtSeqEnd.Text;
-            ReportResourceName = "P02_BatchPrint.rdlc";
+            this.receiver = this.txtReceiver.Text;
+            this.incharge = this.txtUserInCharge.TextBox1.Text;
+            this.ctnno = this.txtCNo.Text;
+            this.orderid = this.txtSPNo.Text;
+            this.seq1 = this.txtSeqStart.Text;
+            this.seq2 = this.txtSeqEnd.Text;
+            this.ReportResourceName = "P02_BatchPrint.rdlc";
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string sqlCmd = string.Format(@"select OrderID,Seq1,Seq2,BrandID,Receiver,'*'+ID+OrderID+Seq1+Seq2+Category+'*' as BarCode 
+            string sqlCmd = string.Format(
+                @"select OrderID,Seq1,Seq2,BrandID,Receiver,'*'+ID+OrderID+Seq1+Seq2+Category+'*' as BarCode 
 from Express_Detail WITH (NOLOCK) 
 where ID = '{0}'
-Order by CTNNo,Seq1,seq2", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(receiver) ? "" : " and Receiver = '" + receiver + "'", MyUtility.Check.Empty(incharge) ? "" : " and InCharge = '" + incharge + "'",
-                 MyUtility.Check.Empty(ctnno)?"":" and CTNNo = '"+ctnno+"'",MyUtility.Check.Empty(orderid)?"":" and OrderID = '"+orderid+"'",
-                 MyUtility.Check.Empty(seq1)?"":" and Seq1 >= '"+seq1+"'",MyUtility.Check.Empty(seq2)?"":" and Seq1 <= '"+seq2+"'");
+Order by CTNNo,Seq1,seq2", MyUtility.Convert.GetString(this.masterData["ID"]),
+                MyUtility.Check.Empty(this.receiver) ? string.Empty : " and Receiver = '" + this.receiver + "'",
+                MyUtility.Check.Empty(this.incharge) ? string.Empty : " and InCharge = '" + this.incharge + "'",
+                MyUtility.Check.Empty(this.ctnno) ? string.Empty : " and CTNNo = '" + this.ctnno + "'",
+                MyUtility.Check.Empty(this.orderid) ? string.Empty : " and OrderID = '" + this.orderid + "'",
+                MyUtility.Check.Empty(this.seq1) ? string.Empty : " and Seq1 >= '" + this.seq1 + "'",
+                MyUtility.Check.Empty(this.seq2) ? string.Empty : " and Seq1 <= '" + this.seq2 + "'");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
 
-            e.Report.ReportDataSource = printData;
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("hcNo", MyUtility.Convert.GetString(masterData["ID"])));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("awbNo", MyUtility.Convert.GetString(masterData["BLNo"])));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(masterData["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(masterData["FromSite"])+")"));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(masterData["ToTag"]) == "3"?"Supplier":"Brand") + "(" + MyUtility.Convert.GetString(masterData["ToSite"]) + ")"));
+            e.Report.ReportDataSource = this.printData;
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("hcNo", MyUtility.Convert.GetString(this.masterData["ID"])));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("awbNo", MyUtility.Convert.GetString(this.masterData["BLNo"])));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(this.masterData["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["FromSite"]) + ")"));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.masterData["ToSite"]) + ")"));
 
             return Result.True;
         }
-
     }
 }
