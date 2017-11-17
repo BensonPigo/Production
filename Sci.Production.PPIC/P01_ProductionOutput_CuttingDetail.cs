@@ -116,7 +116,9 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             else
             {
                 sqlCmd = string.Format(
-@"select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno, sum(wd.Qty) as CutQty, Status
+@"select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno
+        , CASE WHEN Status is null THEN 0 ELSE sum(wd.Qty) END AS CutQty
+        , Status
  from Orders o WITH (NOLOCK) 
  left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
  left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
