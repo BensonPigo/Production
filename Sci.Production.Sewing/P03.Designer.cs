@@ -88,6 +88,20 @@
             // 
             // dateRangeBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeBuyerDelivery.DateBox1.Name = "";
+            this.dateRangeBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeBuyerDelivery.DateBox2.Name = "";
+            this.dateRangeBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateRangeBuyerDelivery.IsRequired = false;
             this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(105, 38);
             this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
@@ -190,7 +204,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P03";
-            this.Text = "P03 Auto Split Sewing Daily Output";
+            this.Text = "P03. Assing Garment Order Sewing output";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid, 0);
             this.Controls.SetChildIndex(this.buttonSave, 0);
