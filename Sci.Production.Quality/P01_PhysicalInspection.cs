@@ -197,7 +197,20 @@ namespace Sci.Production.Quality
 
                     if (def_locT < ActualYdsF && def_locT - def_locF != 4)
                     {
-                        Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
+                        /*  
+                         *  如果DefectLocation的相同範圍內有２筆資料,就必須把舊的給刪除
+                         *  ex: 080-083 汙點D1, 080-084 汙點A1/D1 ,就必須要080-083給刪除
+                         *  不然將080-083 改為080-084 Pkey就會重複
+                        */
+                        DataRow[] Ary = Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", CurrentData["NewKey"].ToString(), def_locF));
+                        if (Ary.Length > 1)
+                        {
+                            Fir_physical_Defect.Rows[i].Delete();
+                        }
+                        else
+                        {
+                            Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
+                        }
                     }
                 }
             }
