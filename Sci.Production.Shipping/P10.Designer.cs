@@ -195,7 +195,7 @@
             this.btnUpdatePulloutDate.TabIndex = 3;
             this.btnUpdatePulloutDate.Text = "Update Pullout Date";
             this.btnUpdatePulloutDate.UseVisualStyleBackColor = true;
-            this.btnUpdatePulloutDate.Click += new System.EventHandler(this.btnUpdatePulloutDate_Click);
+            this.btnUpdatePulloutDate.Click += new System.EventHandler(this.BtnUpdatePulloutDate_Click);
             // 
             // btnImportData
             // 
@@ -206,7 +206,7 @@
             this.btnImportData.TabIndex = 0;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
-            this.btnImportData.Click += new System.EventHandler(this.btnImportData_Click);
+            this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
             // gridDetail
             // 

@@ -341,7 +341,7 @@
             this.txtPortofLoading.ReadOnly = true;
             this.txtPortofLoading.Size = new System.Drawing.Size(185, 23);
             this.txtPortofLoading.TabIndex = 14;
-            this.txtPortofLoading.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtPortofLoading_PopUp);
+            this.txtPortofLoading.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortofLoading_PopUp);
             // 
             // txtPortofDischarge
             // 
@@ -355,7 +355,7 @@
             this.txtPortofDischarge.ReadOnly = true;
             this.txtPortofDischarge.Size = new System.Drawing.Size(185, 23);
             this.txtPortofDischarge.TabIndex = 15;
-            this.txtPortofDischarge.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtPortofDischarge_PopUp);
+            this.txtPortofDischarge.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortofDischarge_PopUp);
             // 
             // displayPortofLoading
             // 
@@ -388,7 +388,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(393, 25);
             this.radioPanel1.TabIndex = 0;
-            this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
             // radioLocalPurchase
             // 
@@ -711,7 +711,7 @@
             this.btnExpenseData.TabIndex = 43;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.btnExpenseData_Click);
+            this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
             // 
             // btnImportData
             // 
@@ -723,7 +723,7 @@
             this.btnImportData.TabIndex = 12;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
-            this.btnImportData.Click += new System.EventHandler(this.btnImportData_Click);
+            this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
             // txtUserHandle
             // 

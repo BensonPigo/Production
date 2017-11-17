@@ -163,7 +163,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             seperCmdkpi2 = this.seperate ? " left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id" : string.Empty;
             sqlCmd.Append(@"
 with tmpOrders as (
-    select  o.ID
+    select DISTINCT o.ID
             , o.MDivisionID
             , o.FtyGroup
             , o.FactoryID
@@ -390,7 +390,6 @@ with tmpOrders as (
             {
                 sqlCmd.Append(" and o.Category = ''");
             }
-            
 
             sqlCmd.Append(@"
 ),

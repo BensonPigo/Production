@@ -11,25 +11,35 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P10_UpdatePulloutDate
+    /// </summary>
     public partial class P10_UpdatePulloutDate : Sci.Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        Ict.Win.UI.DataGridViewDateBoxColumn col_pulldate;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_pulldate;
         private DataRow masterDate;
-        public P10_UpdatePulloutDate(DataRow MasterData)
+
+        /// <summary>
+        /// P10_UpdatePulloutDate
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        public P10_UpdatePulloutDate(DataRow masterData)
         {
-            InitializeComponent();
-            masterDate = MasterData;
+            this.InitializeComponent();
+            this.masterDate = masterData;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sqlCmd = string.Format(@"select 0 as Selected,p.INVNo as GMTBookingID,p.ID as PackingListID,iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
+            string sqlCmd = string.Format(
+                @"select 0 as Selected,p.INVNo as GMTBookingID,p.ID as PackingListID,iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
 p.PulloutDate,p.Status,p.CTNQty,p.InspDate,p.InspStatus,(select isnull(sum(CTNQty),0) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogQty,p.MDivisionID
 from PackingList p WITH (NOLOCK) 
-where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
+where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]));
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
@@ -37,16 +47,16 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
                 MyUtility.Msg.ErrorBox("Loading error\r\n" + result.ToString());
             }
 
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
 
             this.gridUpdatePulloutDate.IsEditingReadOnly = false;
-            this.gridUpdatePulloutDate.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridUpdatePulloutDate)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridUpdatePulloutDate.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridUpdatePulloutDate)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("GMTBookingID", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("PackingListID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Date("PulloutDate", header: "Pullout Date").Get(out col_pulldate)
+                .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulldate)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "CTN Qty")
@@ -54,26 +64,28 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
                 .Date("InspDate", header: "est. Inspection Date", iseditingreadonly: true)
                 .Text("InspStatus", header: "Inspection Status", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
-            gridUpdatePulloutDate.CellValidating += (s, e) =>
+            this.gridUpdatePulloutDate.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
                     DataRow dr = this.gridUpdatePulloutDate.GetDataRow<DataRow>(e.RowIndex);
-                    //輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
-                    if (gridUpdatePulloutDate.Columns[e.ColumnIndex].DataPropertyName == col_pulldate.DataPropertyName)
+
+                    // 輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
+                    if (this.gridUpdatePulloutDate.Columns[e.ColumnIndex].DataPropertyName == this.col_pulldate.DataPropertyName)
                     {
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
-                            if (!MyUtility.Check.Empty(dr["PulloutDate"]) && CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
+                            if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout((DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
-                                PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
+                                this.PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(dr["PulloutDate"]));
                                 e.Cancel = true;
                                 dr.EndEdit();
                                 return;
                             }
-                            if (!MyUtility.Check.Empty(e.FormattedValue) && CheckPullout((DateTime)MyUtility.Convert.GetDate(e.FormattedValue), MyUtility.Convert.GetString(dr["MDivisionID"])))
+
+                            if (!MyUtility.Check.Empty(e.FormattedValue) && this.CheckPullout((DateTime)MyUtility.Convert.GetDate(e.FormattedValue), MyUtility.Convert.GetString(dr["MDivisionID"])))
                             {
-                                PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(e.FormattedValue));
+                                this.PulloutMsg(dr, (DateTime)MyUtility.Convert.GetDate(e.FormattedValue));
                                 e.Cancel = true;
                                 dr.EndEdit();
                                 return;
@@ -84,20 +96,20 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
             };
         }
 
-        //Pullout Date的Validating
-        private void datePulloutDate_Validating(object sender, CancelEventArgs e)
+        // Pullout Date的Validating
+        private void DatePulloutDate_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(datePulloutDate.Value) && datePulloutDate.OldValue != datePulloutDate.Value)
+            if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.datePulloutDate.OldValue != this.datePulloutDate.Value)
             {
-                if (CheckPullout((DateTime)MyUtility.Convert.GetDate(datePulloutDate.Value), MyUtility.Convert.GetString(Sci.Env.User.Keyword)))
+                if (this.CheckPullout((DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value), MyUtility.Convert.GetString(Sci.Env.User.Keyword)))
                 {
-                    PulloutMsg(null, (DateTime)MyUtility.Convert.GetDate(datePulloutDate.Value));
-                    datePulloutDate.Value = null;
+                    this.PulloutMsg(null, (DateTime)MyUtility.Convert.GetDate(this.datePulloutDate.Value));
+                    this.datePulloutDate.Value = null;
                 }
             }
         }
 
-        //檢查Pullout report是否已經Confirm
+        // 檢查Pullout report是否已經Confirm
         private bool CheckPullout(DateTime pulloutDate, string mdivisionid)
         {
             if (MyUtility.Check.Empty(mdivisionid))
@@ -110,7 +122,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
             }
         }
 
-        //Process Pullout Date Message
+        // Process Pullout Date Message
         private void PulloutMsg(DataRow dr, DateTime dt)
         {
             MyUtility.Msg.WarningBox("Pullout date:" + Convert.ToDateTime(dt).ToString("d") + " already exist pullout report and have been confirmed, can't modify!");
@@ -120,49 +132,55 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
             }
         }
 
-        //Update Pullout Date
-        private void pictureBox1_Click(object sender, EventArgs e)
+        // Update Pullout Date
+        private void PictureBox1_Click(object sender, EventArgs e)
         {
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
             StringBuilder warningMsg = new StringBuilder();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count == 0) return;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
             DataRow[] drfound = dt.Select("Selected = 1");
             foreach (DataRow dr in drfound)
             {
-                if (!MyUtility.Check.Empty(dr["PulloutDate"]) && CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
-                {
-                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), Convert.ToDateTime(dr["PulloutDate"]).ToString("d")));
-                    continue;
-                }
-                if (!MyUtility.Check.Empty(datePulloutDate.Value) && CheckPullout(Convert.ToDateTime(datePulloutDate.Value), MyUtility.Convert.GetString(dr["MDivisionID"])))
+                if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {
                     warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), Convert.ToDateTime(dr["PulloutDate"]).ToString("d")));
                     continue;
                 }
 
-                if (MyUtility.Check.Empty(datePulloutDate.Value))
+                if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.CheckPullout(Convert.ToDateTime(this.datePulloutDate.Value), MyUtility.Convert.GetString(dr["MDivisionID"])))
+                {
+                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), Convert.ToDateTime(dr["PulloutDate"]).ToString("d")));
+                    continue;
+                }
+
+                if (MyUtility.Check.Empty(this.datePulloutDate.Value))
                 {
                     dr["PulloutDate"] = DBNull.Value;
                 }
                 else
                 {
-                    dr["PulloutDate"] = datePulloutDate.Value;
+                    dr["PulloutDate"] = this.datePulloutDate.Value;
                 }
             }
+
             if (warningMsg.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Below record's pullout report already confirmed, can't be update pullout date!\r\n" + warningMsg.ToString());
             }
         }
 
-        //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        // Save
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             IList<string> updateCmds = new List<string>();
-            gridUpdatePulloutDate.ValidateControl();
-            listControlBindingSource1.EndEdit();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            this.gridUpdatePulloutDate.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             foreach (DataRow dr in dt.Rows)
             {
                 if (MyUtility.Check.Empty(dr["PulloutDate"]))
@@ -186,7 +204,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
                 }
             }
 
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }

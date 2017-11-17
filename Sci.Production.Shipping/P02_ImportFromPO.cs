@@ -13,23 +13,33 @@ using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_ImportFromPO
+    /// </summary>
     public partial class P02_ImportFromPO : Sci.Win.Subs.Base
     {
-        DataRow masterData;
-        public P02_ImportFromPO(DataRow MasterData)
+        private DataRow masterData;
+
+        /// <summary>
+        /// P02_ImportFromPO
+        /// </summary>
+        /// <param name="masterData">masterData</param>
+        public P02_ImportFromPO(DataRow masterData)
         {
-            InitializeComponent();
-            masterData = MasterData;
-            displayCategory.Value = "Material";
+            this.InitializeComponent();
+            this.masterData = masterData;
+            this.displayCategory.Value = "Material";
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ctnno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings receiver = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-            //CTNNo要Trim掉空白字元
+
+            // CTNNo要Trim掉空白字元
             ctnno.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
@@ -40,9 +50,9 @@ namespace Sci.Production.Shipping
             };
             receiver.CharacterCasing = CharacterCasing.Normal;
             this.gridImport.IsEditingReadOnly = false;
-            gridImport.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridImport)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Seq2", header: "Seq2#", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -56,38 +66,40 @@ namespace Sci.Production.Shipping
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
 
-            gridImport.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            gridImport.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            this.gridImport.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            this.gridImport.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            this.gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            this.gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
         }
 
-        //Find Now
-        private void btnFindNow_Click(object sender, EventArgs e)
+        // Find Now
+        private void BtnFindNow_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtSPNo.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                txtSPNo.Focus();
+                this.txtSPNo.Focus();
                 MyUtility.Msg.WarningBox("SP# can't empty!!");
                 return;
             }
-            if (MyUtility.Convert.GetString(txtSPNo.Text).IndexOf("'") != -1)
+
+            if (MyUtility.Convert.GetString(this.txtSPNo.Text).IndexOf("'") != -1)
             {
-                txtSPNo.Text = txtSPNo.Text.Replace("'","");
+                this.txtSPNo.Text = this.txtSPNo.Text.Replace("'", string.Empty);
             }
 
-            if (MyUtility.Convert.GetString(txtSEQ1.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(this.txtSEQ1.Text).IndexOf("'") != -1)
             {
-                txtSEQ1.Text = txtSEQ1.Text.Replace("'", "");
+                this.txtSEQ1.Text = this.txtSEQ1.Text.Replace("'", string.Empty);
             }
 
-            if (MyUtility.Convert.GetString(txtSEQ2.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(this.txtSEQ2.Text).IndexOf("'") != -1)
             {
-                txtSEQ2.Text = txtSEQ2.Text.Replace("'", "");
+                this.txtSEQ2.Text = this.txtSEQ2.Text.Replace("'", string.Empty);
             }
 
-            string sqlCmd = string.Format(@"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
+            string sqlCmd = string.Format(
+                @"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
 from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
 isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
@@ -99,8 +111,11 @@ left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
 left join Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtility.Check.Empty(txtSEQ1.Text) ? "" : " and psd.SEQ1 = '" + txtSEQ1.Text+"'",
-                               MyUtility.Check.Empty(txtSEQ2.Text) ? "" : " and psd.SEQ2 = '" + txtSEQ2.Text+"'");
+where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
+                this.txtSPNo.Text,
+                MyUtility.Check.Empty(this.txtSEQ1.Text) ? string.Empty : " and psd.SEQ1 = '" + this.txtSEQ1.Text + "'",
+                MyUtility.Check.Empty(this.txtSEQ2.Text) ? string.Empty : " and psd.SEQ2 = '" + this.txtSEQ2.Text + "'");
+
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
@@ -108,21 +123,22 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtili
                 MyUtility.Msg.ErrorBox("Query error." + result.ToString());
                 return;
             }
-            if(selectData.Rows.Count<=0)
+
+            if (selectData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
             }
 
-            listControlBindingSource1.DataSource = selectData;
+            this.listControlBindingSource1.DataSource = selectData;
         }
 
-        //Update
-        private void btnUpdate_Click(object sender, EventArgs e)
+        // Update
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
-            listControlBindingSource1.EndEdit();
+            this.listControlBindingSource1.EndEdit();
 
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data, can't update!");
@@ -136,24 +152,26 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtili
                 return;
             }
 
-            if (MyUtility.Check.Empty(txtRemark.Text))
+            if (MyUtility.Check.Empty(this.txtRemark.Text))
             {
-                txtRemark.Focus();
+                this.txtRemark.Focus();
                 MyUtility.Msg.WarningBox("Remark can't empty!!");
                 return;
             }
 
             DataTable checkData;
-            //檢查重複資料
+
+            // 檢查重複資料
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2", string.Format("select e.ID,e.Seq1,e.Seq2 from #tmp e inner join Express_Detail ed on ed.ID = '{0}' and ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2 where e.Selected = 1",MyUtility.Convert.GetString(masterData["ID"])), out checkData);
+                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2", string.Format("select e.ID,e.Seq1,e.Seq2 from #tmp e inner join Express_Detail ed on ed.ID = '{0}' and ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2 where e.Selected = 1", MyUtility.Convert.GetString(this.masterData["ID"])), out checkData);
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox("Check duplicate data error.\r\n" + ex.ToString());
                 return;
             }
+
             if (checkData.Rows.Count > 0)
             {
                 StringBuilder msgStr = new StringBuilder();
@@ -161,6 +179,7 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtili
                 {
                     msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
+
                 msgStr.Append("Data already exists!!");
                 MyUtility.Msg.WarningBox(msgStr.ToString());
                 return;
@@ -194,36 +213,54 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtili
                     chkQty.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
 
-                insertCmds.Add(string.Format(@"insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
+                insertCmds.Add(string.Format(
+                    @"insert into Express_Detail(ID,OrderID,Seq1,Seq2,Qty,NW,CTNNo,Category,SuppID,Price,UnitID,Receiver,BrandID,Leader,Remark,InCharge,AddName,AddDate)
  values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
-                                            MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), MyUtility.Convert.GetString(dr["Qty"]),
-                                            MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["SuppID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["LeaderID"]), txtRemark.Text, Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(this.masterData["ID"]),
+                                            MyUtility.Convert.GetString(dr["ID"]),
+                                            MyUtility.Convert.GetString(dr["Seq1"]),
+                                            MyUtility.Convert.GetString(dr["Seq2"]),
+                                            MyUtility.Convert.GetString(dr["Qty"]),
+                                            MyUtility.Convert.GetString(dr["NW"]),
+                                            MyUtility.Convert.GetString(dr["CTNNo"]),
+                                            MyUtility.Convert.GetString(dr["SuppID"]),
+                                            MyUtility.Convert.GetString(dr["Price"]),
+                                            MyUtility.Convert.GetString(dr["UnitID"]),
+                                            MyUtility.Convert.GetString(dr["Receiver"]),
+                                            MyUtility.Convert.GetString(dr["BrandID"]),
+                                            MyUtility.Convert.GetString(dr["LeaderID"]),
+                                            this.txtRemark.Text,
+                                            Sci.Env.User.UserID));
             }
 
-            //Qty不可為0
+            // Qty不可為0
             if (chkQty.Length > 0)
             {
-                MyUtility.Msg.WarningBox("Q'ty can't be 0!!\r\n"+chkQty.ToString());
+                MyUtility.Msg.WarningBox("Q'ty can't be 0!!\r\n" + chkQty.ToString());
                 return;
             }
 
-            //檢查Total Qty是否有超過PO Qty
+            // 檢查Total Qty是否有超過PO Qty
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2,Qty,POQty", @"select a.ID,a.Seq1,a.Seq2
+                MyUtility.Tool.ProcessWithDatatable(
+                    dt,
+                    "Selected,ID,Seq1,Seq2,Qty,POQty",
+                    string.Format(@"select a.ID,a.Seq1,a.Seq2
 from (
 select e.ID,e.Seq1,e.Seq2,e.POQty,
 e.Qty+(select isnull(sum(ed.Qty),0) as Qty from Express_Detail ed WITH (NOLOCK) where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2) as TtlQty
 from #tmp e
 where e.Selected = 1) a
-where a.TtlQty > a.POQty", out checkData);
+where a.TtlQty > a.POQty"),
+                    out checkData);
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox("Check total qty error.\r\n" + ex.ToString());
                 return;
             }
+
             if (checkData == null || checkData.Rows.Count > 0)
             {
                 StringBuilder msgStr = new StringBuilder();
@@ -231,17 +268,19 @@ where a.TtlQty > a.POQty", out checkData);
                 {
                     msgStr.Append(string.Format("SP#:{0}, Seq1#:{1}, Seq2#:{2}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"])));
                 }
+
                 msgStr.Append("Total Qty > PO Qty, pls check!!");
                 MyUtility.Msg.WarningBox(msgStr.ToString());
                 return;
             }
+
             DualResult result1, result2;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
                 {
                     result1 = DBProxy.Current.Executes(null, insertCmds);
-                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(masterData["ID"])));
+                    result2 = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.masterData["ID"])));
                     if (result1 && result2)
                     {
                         transactionScope.Complete();
@@ -256,10 +295,11 @@ where a.TtlQty > a.POQty", out checkData);
                 catch (Exception ex)
                 {
                     transactionScope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
+
             MyUtility.Msg.InfoBox("Update complete!!");
         }
     }

@@ -290,7 +290,7 @@
             this.btnImportData.TabIndex = 13;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
-            this.btnImportData.Click += new System.EventHandler(this.btnImportData_Click);
+            this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
             // btnAddNewNLCode
             // 
@@ -301,7 +301,7 @@
             this.btnAddNewNLCode.TabIndex = 14;
             this.btnAddNewNLCode.Text = "Add New Customs Code";
             this.btnAddNewNLCode.UseVisualStyleBackColor = true;
-            this.btnAddNewNLCode.Click += new System.EventHandler(this.btnAddNewNLCode_Click);
+            this.btnAddNewNLCode.Click += new System.EventHandler(this.BtnAddNewNLCode_Click);
             // 
             // lab_status
             // 

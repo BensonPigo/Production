@@ -11,57 +11,67 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R42
+    /// </summary>
     public partial class R42 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? date1, date2;
-        string mDivision, factory;
-        int category;
+        private DataTable printData;
+        private DateTime? date1;
+        private DateTime? date2;
+        private string mDivision;
+        private string factory;
+        private int category;
+
+        /// <summary>
+        /// R42
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboCategory.SelectedIndex = 2;
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboCategory.SelectedIndex = 2;
+            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.SelectedIndex = -1;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            //if (MyUtility.Check.Empty(dateRange1.Value1))
-            //{
+            // if (MyUtility.Check.Empty(dateRange1.Value1))
+            // {
             //    MyUtility.Msg.WarningBox("Date can't empty!!");
             //    dateRange1.TextBox1.Focus();
             //    return false;
-            //}
-
-            if (comboCategory.SelectedIndex == -1)
+            // }
+            if (this.comboCategory.SelectedIndex == -1)
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 
-            date1 = dateBuyerDelivery.Value1;
-            date2 = dateBuyerDelivery.Value2;
-            category = comboCategory.SelectedIndex;
-            mDivision = comboM.Text;
-            factory = comboFactory.Text;
+            this.date1 = this.dateBuyerDelivery.Value1;
+            this.date2 = this.dateBuyerDelivery.Value2;
+            this.category = this.comboCategory.SelectedIndex;
+            this.mDivision = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,
 [qty]= sum(Qty),
 IIF(CustomSP = '','',SUBSTRING(CustomSP,0,len(CustomSP))) as CustomSP
@@ -86,30 +96,33 @@ where 1=1
 and {0}
 and o.LocalOrder = 0
 and o.Junk = 0
-and oqd.Qty > 0", category == 0 ? "o.Category = 'B'" : category == 1 ? "o.Category = 'S'" : "(o.Category = 'B' or o.Category = 'S')"));
+and oqd.Qty > 0", this.category == 0 ? "o.Category = 'B'" : this.category == 1 ? "o.Category = 'S'" : "(o.Category = 'B' or o.Category = 'S')"));
 
-            if (!MyUtility.Check.Empty(date1))
+            if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(date2))
+
+            if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
             }
-            
-            if (!MyUtility.Check.Empty(mDivision))
+
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", this.factory));
             }
+
             sqlCmd.Append(@") a
 group by  MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,CustomSP,a.ASeq,a.SSeq
 order by a.ID,a.BuyerDelivery,a.ASeq,a.SSeq");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -119,21 +132,24 @@ order by a.ID,a.BuyerDelivery,a.ASeq,a.SSeq");
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "Shipping_R42_QtyBDownByColorwaySize.xltx", headerRow: 1);
-            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "Shipping_R42_QtyBDownByColorwaySize.xltx", headerRow: 1);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+            }
 
             this.HideWaitMessage();
             return true;

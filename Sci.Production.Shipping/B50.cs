@@ -8,57 +8,67 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B50
+    /// </summary>
     public partial class B50 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B50
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B50(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "FABRIC,ACCESSORY,CHEMICAL,MACHINERY,OTHETS");
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "FABRIC,ACCESSORY,CHEMICAL,MACHINERY,OTHETS");
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            comboCategory.SelectedIndex = -1;
+            this.comboCategory.SelectedIndex = -1;
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtDescriptionofGoods.ReadOnly = true;
+            this.txtDescriptionofGoods.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            //檢查必輸欄位
-            if (MyUtility.Check.Empty(txtDescriptionofGoods.Text))
+            // 檢查必輸欄位
+            if (MyUtility.Check.Empty(this.txtDescriptionofGoods.Text))
             {
-                txtDescriptionofGoods.Focus();
+                this.txtDescriptionofGoods.Focus();
                 MyUtility.Msg.WarningBox("Description of Goods can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(txtHSCode.Text))
+            if (MyUtility.Check.Empty(this.txtHSCode.Text))
             {
-                txtHSCode.Focus();
+                this.txtHSCode.Focus();
                 MyUtility.Msg.WarningBox("HS Code can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(comboCategory.Text))
+            if (MyUtility.Check.Empty(this.comboCategory.Text))
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 
-            //填入NL Code
-            if (IsDetailInserting)
+            // 填入NL Code
+            if (this.IsDetailInserting)
             {
                 string nlcode = MyUtility.GetValue.Lookup("select CONVERT(int,isnull(max(NLCode),0)) from KHGoodsHSCode WITH (NOLOCK) ");
-                CurrentMaintain["NLCode"] = (MyUtility.Convert.GetInt(nlcode)+1).ToString("00000");
+                this.CurrentMaintain["NLCode"] = (MyUtility.Convert.GetInt(nlcode) + 1).ToString("00000");
             }
 
             return base.ClickSaveBefore();

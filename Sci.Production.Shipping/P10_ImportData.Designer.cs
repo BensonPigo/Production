@@ -122,7 +122,7 @@
             this.btnQuery.TabIndex = 16;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // txtSPNo
             // 
@@ -389,7 +389,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnImportData
             // 
@@ -399,7 +399,7 @@
             this.btnImportData.TabIndex = 0;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
-            this.btnImportData.Click += new System.EventHandler(this.btnImportData_Click);
+            this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
             // P10_ImportData
             // 

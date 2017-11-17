@@ -11,21 +11,30 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P06_ReviseHistory
+    /// </summary>
     public partial class P06_ReviseHistory : Sci.Win.Subs.Base
     {
-        string pulloutID;
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings oldqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings newqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        public P06_ReviseHistory(String pulloutID)
+        private string pulloutID;
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings oldqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings newqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+
+        /// <summary>
+        /// P06_ReviseHistory
+        /// </summary>
+        /// <param name="pulloutID">pulloutID</param>
+        public P06_ReviseHistory(string pulloutID)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.pulloutID = pulloutID;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            oldqty.CellMouseDoubleClick += (s, e) =>
+            this.oldqty.CellMouseDoubleClick += (s, e) =>
                 {
                     DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (e.Button == System.Windows.Forms.MouseButtons.Left)
@@ -35,7 +44,7 @@ namespace Sci.Production.Shipping
                     }
                 };
 
-            newqty.CellMouseDoubleClick += (s, e) =>
+            this.newqty.CellMouseDoubleClick += (s, e) =>
             {
                 DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
@@ -46,13 +55,13 @@ namespace Sci.Production.Shipping
             };
 
             this.gridReviseHistory.IsEditingReadOnly = true;
-            gridReviseHistory.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.gridReviseHistory)
+            this.gridReviseHistory.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridReviseHistory)
                 .DateTime("AddDate", header: "Edit Date", width: Widths.AnsiChars(20))
                 .Text("ReviseStatus", header: "Revise Status", width: Widths.AnsiChars(7))
                 .Text("OrderID", header: "SP no.", width: Widths.AnsiChars(15))
-                .Numeric("OldShipQty", header: "Ship Q'ty (Old)", width: Widths.AnsiChars(6), settings: oldqty)
-                .Numeric("NewShipQty", header: "Ship Q'ty (Revised)", width: Widths.AnsiChars(6), settings: newqty)
+                .Numeric("OldShipQty", header: "Ship Q'ty (Old)", width: Widths.AnsiChars(6), settings: this.oldqty)
+                .Numeric("NewShipQty", header: "Ship Q'ty (Revised)", width: Widths.AnsiChars(6), settings: this.newqty)
                 .Text("OldStatusExp", header: "Status (Old)", width: Widths.AnsiChars(8))
                 .Text("NewStatusExp", header: "Status (New)", width: Widths.AnsiChars(8))
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15))
@@ -65,7 +74,8 @@ namespace Sci.Production.Shipping
                 .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(15))
                 .Text("AddName", header: "Edit Name", width: Widths.AnsiChars(10));
 
-            string sqlCmd = string.Format(@"select distinct pr.*,o.StyleID,o.BrandID,o.Dest,o.Qty as OrderQty,pd.OrderShipmodeSeq,oq.Qty as ShipModeSeqQty,
+            string sqlCmd = string.Format(
+                @"select distinct pr.*,o.StyleID,o.BrandID,o.Dest,o.Qty as OrderQty,pd.OrderShipmodeSeq,oq.Qty as ShipModeSeqQty,
 case pr.Type when 'R' then 'Revised' when 'M' then 'Missing' else 'Deleted' end as ReviseStatus,
 case pr.OldStatus when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed' when 'E' then 'Shortage' else '' end as OldStatusExp,
 case pr.NewStatus when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed' when 'E' then 'Shortage' else '' end as NewStatusExp
@@ -73,11 +83,11 @@ from Pullout_Revise pr WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on o.ID = pr.OrderID
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = pr.PackingListID and pd.OrderID = pr.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pr.OrderID and oq.Seq = pd.OrderShipmodeSeq
-where pr.ID = '{0}'", pulloutID);
+where pr.ID = '{0}'", this.pulloutID);
 
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            listControlBindingSource1.DataSource = gridData;
+            this.listControlBindingSource1.DataSource = gridData;
         }
     }
 }

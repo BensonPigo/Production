@@ -11,47 +11,62 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R40
+    /// </summary>
     public partial class R40 : Sci.Win.Tems.PrintForm
     {
-        string contract, hscode, nlcode, sp;
-        bool liguidationonly;
-        DataTable Summary, WHDetail, WIPDetail, ProdDetail, ScrapDetail;
+        private string contract;
+        private string hscode;
+        private string nlcode;
+        private string sp;
+        private bool liguidationonly;
+        private DataTable Summary;
+        private DataTable WHDetail;
+        private DataTable WIPDetail;
+        private DataTable ProdDetail;
+        private DataTable ScrapDetail;
+
+        /// <summary>
+        /// R40
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.checkLiquidationDataOnly.Checked = true;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(txtContractNo.Text))
+            if (MyUtility.Check.Empty(this.txtContractNo.Text))
             {
-                txtContractNo.Focus();
+                this.txtContractNo.Focus();
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
 
-            //if (checkLiquidationDataOnly.Checked)
-            //{
+            // if (checkLiquidationDataOnly.Checked)
+            // {
             //    if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
             //    {
             //        txtSPNoStartFrom.Focus();
             //        MyUtility.Msg.WarningBox("SP# start from can't empty!!");
             //        return false;
             //    }
-            //}
-            contract = txtContractNo.Text;
-            hscode = txtHSCode.Text;
-            nlcode = txtNLCode.Text;
-            sp = txtSPNoStartFrom.Text;
-            liguidationonly = checkLiquidationDataOnly.Checked;
+            // }
+            this.contract = this.txtContractNo.Text;
+            this.hscode = this.txtHSCode.Text;
+            this.nlcode = this.txtNLCode.Text;
+            this.sp = this.txtSPNoStartFrom.Text;
+            this.liguidationonly = this.checkLiquidationDataOnly.Checked;
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -62,7 +77,8 @@ namespace Sci.Production.Shipping
              * import & export Status = confirm
              * adjust Status != new
              */
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 DECLARE @contract VARCHAR(15)
 		,@mdivision VARCHAR(8)
 SET @contract = '{0}';
@@ -105,9 +121,11 @@ from (
 	inner join VNContractQtyAdjust_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 	where vc.VNContractID = @contract and vc.Status != 'New'
 ) a
-group by a.NLCode;", contract, Sci.Env.User.Keyword));
+group by a.NLCode;",
+                this.contract,
+                Sci.Env.User.Keyword));
 
-            if (liguidationonly)
+            if (this.liguidationonly)
             {
                 #region liguidationonly = true
                 sqlCmd.Append(@"
@@ -129,25 +147,28 @@ left join VNNLCodeDesc vcd WITH (NOLOCK) on a.NLCode = vcd.NLCode
 left join #tmpDeclare td on a.NLCode = td.NLCode
 where 1 = 1");
 
-                if (!MyUtility.Check.Empty(hscode))
+                if (!MyUtility.Check.Empty(this.hscode))
                 {
-                    sqlCmd.Append(string.Format(" and tc.HSCode = '{0}'", hscode));
+                    sqlCmd.Append(string.Format(" and tc.HSCode = '{0}'", this.hscode));
                 }
-                if (!MyUtility.Check.Empty(nlcode))
+
+                if (!MyUtility.Check.Empty(this.nlcode))
                 {
-                    sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", nlcode));
+                    sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", this.nlcode));
                 }
+
                 sqlCmd.Append(@"                                                                                                       
 order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
 
 drop table #tmpContract;
 drop table #tmpDeclare;");
-                #endregion 
+                #endregion
             }
             else
             {
                 #region liguidationonly = false
-                sqlCmd.Append(string.Format(@"
+                sqlCmd.Append(string.Format(
+                    @"
 --撈W/House資料
 select 	distinct o.POID
 		, o.MDivisionID 
@@ -263,8 +284,9 @@ from (
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     inner join FtyInventory ft on mdp.Ukey=MDivisionPoDetailUkey
 	where 1=1 and ft.StockType='O'
-    {0}", sp == "" ? "" : string.Format("and t.POID >= '{0}'", sp)));
-                sqlCmd.Append(string.Format(@"
+    {0}", this.sp == string.Empty ? string.Empty : string.Format("and t.POID >= '{0}'", this.sp)));
+                sqlCmd.Append(string.Format(
+                    @"
 	union all
 	select 	isnull(li.HSCode,'') as HSCode
 			,isnull(li.NLCode,'') as NLCode
@@ -294,8 +316,9 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1 and o.WhseClose is not null
-    {0}", sp == "" ? "" : string.Format("and o.ID >= '{0}'", sp)));
-                sqlCmd.Append(string.Format(@"
+    {0}", this.sp == string.Empty ? string.Empty : string.Format("and o.ID >= '{0}'", this.sp)));
+                sqlCmd.Append(string.Format(
+                    @"
 ) a
 
 --撈已發料數量
@@ -527,7 +550,7 @@ left join (
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = t.SizeCode
 	inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = tc.ID
 ) a on t.ID = a.ID and t.Article = a.Article and t.SizeCode = a.SizeCode
-order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty", sp));
+order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty", this.sp));
 
                 sqlCmd.Append(@"
 --整理出Summary
@@ -605,16 +628,18 @@ left join (
 ) ts on a.NLCode = ts.NLCode
 where 1 = 1");
 
-                if (!MyUtility.Check.Empty(hscode))
+                if (!MyUtility.Check.Empty(this.hscode))
                 {
-                    sqlCmd.Append(string.Format(" and tc.HSCode = '{0}'", hscode));
-                }
-                if (!MyUtility.Check.Empty(nlcode))
-                {
-                    sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", nlcode));
+                    sqlCmd.Append(string.Format(" and tc.HSCode = '{0}'", this.hscode));
                 }
 
-                sqlCmd.Append(string.Format(@"                                                                                                       
+                if (!MyUtility.Check.Empty(this.nlcode))
+                {
+                    sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", this.nlcode));
+                }
+
+                sqlCmd.Append(string.Format(
+                    @"                                                                                                       
 order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
 
 --W/H明細
@@ -627,97 +652,140 @@ select * from #tmpWIPDetail where Qty > 0 {0} {1} order by ID
 select * from #tmpProdQty where Qty > 0 {0} {1} order by ID,Article,SizeCode
 
 --Scrap明細
-select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.Check.Empty(hscode) ? "" : string.Format("and HSCode = '{0}'", hscode)
-                                                                       , MyUtility.Check.Empty(nlcode) ? "" : string.Format("and NLCode = '{0}'", nlcode)));
-                #endregion 
+select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
+                                                                       MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
+                #endregion
             }
             #endregion
 
-            DataSet AllData;
-            
-            if (!SQL.Selects("", sqlCmd.ToString(), out AllData))
+            DataSet allData;
+
+            if (!SQL.Selects(string.Empty, sqlCmd.ToString(), out allData))
             {
                 DualResult failResult = new DualResult(false, "Query data fail");
                 return failResult;
             }
-            Summary = AllData.Tables[0];
 
-            if (!liguidationonly)
+            this.Summary = allData.Tables[0];
+
+            if (!this.liguidationonly)
             {
-                WHDetail = AllData.Tables[1];
-                WIPDetail = AllData.Tables[2];
-                ProdDetail = AllData.Tables[3];
-                ScrapDetail = AllData.Tables[4];
+                this.WHDetail = allData.Tables[1];
+                this.WIPDetail = allData.Tables[2];
+                this.ProdDetail = allData.Tables[3];
+                this.ScrapDetail = allData.Tables[4];
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (Summary.Rows.Count <= 0)
+            if (this.Summary.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(Summary.Rows.Count + (liguidationonly ? 0 : WHDetail.Rows.Count + WIPDetail.Rows.Count + ProdDetail.Rows.Count + ScrapDetail.Rows.Count));
+            this.SetCount(this.Summary.Rows.Count + (this.liguidationonly ? 0 : this.WHDetail.Rows.Count + this.WIPDetail.Rows.Count + this.ProdDetail.Rows.Count + this.ScrapDetail.Rows.Count));
 
             this.ShowWaitMessage("Starting EXCEL...");
             bool result;
             this.ShowWaitMessage("Starting EXCEL...Summary");
 
-            if (!liguidationonly)
+            if (!this.liguidationonly)
             {
-                result = MyUtility.Excel.CopyToXls(Summary, "", xltfile: "Shipping_R40_Summary.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                result = MyUtility.Excel.CopyToXls(this.Summary, string.Empty, xltfile: "Shipping_R40_Summary.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
 
-                if (WHDetail.Rows.Count > 0)
+                if (this.WHDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...WHouse Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(WHDetail, "", xltfile: "Shipping_R40_WHQtyDetail.xltx", headerRow: 1);
-                    if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                    result = MyUtility.Excel.CopyToXls(this.WHDetail, string.Empty, xltfile: "Shipping_R40_WHQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
 
-                if (WIPDetail.Rows.Count > 0)
+                if (this.WIPDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...WIP Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(WIPDetail, "", xltfile: "Shipping_R40_WIPQtyDetail.xltx", headerRow: 1);
-                    if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                    result = MyUtility.Excel.CopyToXls(this.WIPDetail, string.Empty, xltfile: "Shipping_R40_WIPQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
 
-                if (ProdDetail.Rows.Count > 0)
+                if (this.ProdDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(ProdDetail, "", xltfile: "Shipping_R40_ProdQtyDetail.xltx", headerRow: 1);
-                    if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                    result = MyUtility.Excel.CopyToXls(this.ProdDetail, string.Empty, xltfile: "Shipping_R40_ProdQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
 
-                if (ScrapDetail.Rows.Count > 0)
+                if (this.ScrapDetail.Rows.Count > 0)
                 {
                     this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
-                    result = MyUtility.Excel.CopyToXls(ScrapDetail, "", xltfile: "Shipping_R40_ScrapQtyDetail.xltx", headerRow: 1);
-                    if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                    result = MyUtility.Excel.CopyToXls(this.ScrapDetail, string.Empty, xltfile: "Shipping_R40_ScrapQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.ProdDetail.Rows.Count > 0)
+                {
+                    this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
+                    result = MyUtility.Excel.CopyToXls(this.ProdDetail, string.Empty, xltfile: "Shipping_R40_ProdQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.ScrapDetail.Rows.Count > 0)
+                {
+                    this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
+                    result = MyUtility.Excel.CopyToXls(this.ScrapDetail, string.Empty, xltfile: "Shipping_R40_ScrapQtyDetail.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
                 }
             }
             else
             {
-                result = MyUtility.Excel.CopyToXls(Summary, "", xltfile: "Shipping_R40_Summary(Only Liquidation).xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                result = MyUtility.Excel.CopyToXls(this.Summary, string.Empty, xltfile: "Shipping_R40_Summary(Only Liquidation).xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
 
             this.HideWaitMessage();
             return true;
         }
 
-        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]","20,10,10",this.Text,false,",",headercaptions: "Contract No, Start Date, End Date");
+            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtContractNo.Text = item.GetSelectedString();            
-            
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtContractNo.Text = item.GetSelectedString();
         }
     }
 }

@@ -11,105 +11,117 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P40
+    /// </summary>
     public partial class P40 : Sci.Win.Tems.Input6
     {
-        Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
-        Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
-        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
-        bool localPurchase = false;
-        DataTable NoNLCode, NotInPO, UnitNotFound;
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        private bool localPurchase = false;
+        private DataTable NoNLCode;
+        private DataTable NotInPO;
+        private DataTable UnitNotFound;
 
+        /// <summary>
+        /// P40
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            //建立NoNLCode, NotInPO, UnitNotFound的結構
+            this.InitializeComponent();
+
+            // 建立NoNLCode, NotInPO, UnitNotFound的結構
             string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, sqlCmd, out NoNLCode);
+            DBProxy.Current.Select(null, sqlCmd, out this.NoNLCode);
             sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare,0.0000 as Price  from VNImportDeclaration WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, sqlCmd, out NotInPO);
+            DBProxy.Current.Select(null, sqlCmd, out this.NotInPO);
             sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, sqlCmd, out UnitNotFound);
-           
+            DBProxy.Current.Select(null, sqlCmd, out this.UnitNotFound);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            base.OnDetailEntered();              
-            if (EditMode)
+            base.OnDetailEntered();
+            if (this.EditMode)
             {
-                if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    txtCustomdeclareno.ReadOnly = false;
-                    dateDate.ReadOnly = true;
-                    txtContractNo.ReadOnly = true;
-                    txtBLNO.ReadOnly = true;
-                    txtWKNo.ReadOnly = true;
-                    txtshipmodeShipby.ReadOnly = true;
-                    txtcountryCountryfrom.TextBox1.ReadOnly = true;
-                    gridicon.Append.Enabled = false;
-                    gridicon.Insert.Enabled = false;
-                    gridicon.Remove.Enabled = false;
-                    detailgrid.IsEditingReadOnly = true;
+                    this.txtCustomdeclareno.ReadOnly = false;
+                    this.dateDate.ReadOnly = true;
+                    this.txtContractNo.ReadOnly = true;
+                    this.txtBLNO.ReadOnly = true;
+                    this.txtWKNo.ReadOnly = true;
+                    this.txtshipmodeShipby.ReadOnly = true;
+                    this.txtcountryCountryfrom.TextBox1.ReadOnly = true;
+                    this.gridicon.Append.Enabled = false;
+                    this.gridicon.Insert.Enabled = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.detailgrid.IsEditingReadOnly = true;
                 }
                 else
                 {
-                    txtCustomdeclareno.ReadOnly = true;
-                    dateDate.ReadOnly = false;
-                    txtContractNo.ReadOnly = false;
-                    txtshipmodeShipby.ReadOnly = false;
-                    txtcountryCountryfrom.TextBox1.ReadOnly = false;
-                    
-                    if (MyUtility.Convert.GetString(CurrentMaintain["IsSystemCalculate"]).ToUpper() == "TRUE")
+                    this.txtCustomdeclareno.ReadOnly = true;
+                    this.dateDate.ReadOnly = false;
+                    this.txtContractNo.ReadOnly = false;
+                    this.txtshipmodeShipby.ReadOnly = false;
+                    this.txtcountryCountryfrom.TextBox1.ReadOnly = false;
+
+                    if (MyUtility.Convert.GetString(this.CurrentMaintain["IsSystemCalculate"]).ToUpper() == "TRUE")
                     {
-                        gridicon.Append.Enabled = false;
-                        gridicon.Insert.Enabled = false;
-                        gridicon.Remove.Enabled = false;
-                        col_nlcode.IsEditingReadOnly = true;
-                        col_qty.IsEditingReadOnly = true;
+                        this.gridicon.Append.Enabled = false;
+                        this.gridicon.Insert.Enabled = false;
+                        this.gridicon.Remove.Enabled = false;
+                        this.col_nlcode.IsEditingReadOnly = true;
+                        this.col_qty.IsEditingReadOnly = true;
                     }
                     else
                     {
-                        gridicon.Append.Enabled = true;
-                        gridicon.Insert.Enabled = true;
-                        gridicon.Remove.Enabled = true;
-                        col_nlcode.IsEditingReadOnly = false;
-                        col_qty.IsEditingReadOnly = false;
+                        this.gridicon.Append.Enabled = true;
+                        this.gridicon.Insert.Enabled = true;
+                        this.gridicon.Remove.Enabled = true;
+                        this.col_nlcode.IsEditingReadOnly = false;
+                        this.col_qty.IsEditingReadOnly = false;
                     }
 
-                    if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]) && MyUtility.Check.Empty(CurrentMaintain["WKNo"]))
+                    if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) && MyUtility.Check.Empty(this.CurrentMaintain["WKNo"]))
                     {
-                        txtBLNO.ReadOnly = false;
-                        txtWKNo.ReadOnly = false;
+                        this.txtBLNO.ReadOnly = false;
+                        this.txtWKNo.ReadOnly = false;
                     }
-                    else if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
+                    else if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
                     {
-                        txtBLNO.ReadOnly = true;
-                        txtWKNo.ReadOnly = false;
+                        this.txtBLNO.ReadOnly = true;
+                        this.txtWKNo.ReadOnly = false;
                     }
                     else
                     {
-                        txtBLNO.ReadOnly = false;
-                        txtWKNo.ReadOnly = true;
+                        this.txtBLNO.ReadOnly = false;
+                        this.txtWKNo.ReadOnly = true;
                     }
                 }
-                detailgrid.EnsureStyle();                
+
+                this.detailgrid.EnsureStyle();
             }
-            
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select v.id,v.HSCode,v.NLCode,Qty = Round(v.Qty,2),v.UnitID,v.Remark,v.Price from VNImportDeclaration_Detail v WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
             #region NL Code的Validating
-            nlcode.CellValidating += (s, e) =>
+            this.nlcode.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -119,13 +131,17 @@ namespace Sci.Production.Shipping
                         if (MyUtility.Convert.GetString(dr["nlcode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                         {
                             DataRow seekData;
-                            if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
-                                MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
+                            if (!MyUtility.Check.Seek(
+                                string.Format(
+                                "select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
+                                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                                MyUtility.Convert.GetString(e.FormattedValue)),
+                                out seekData))
                             {
-                                dr["HSCode"] = "";
-                                dr["NLCode"] = "";
+                                dr["HSCode"] = string.Empty;
+                                dr["NLCode"] = string.Empty;
                                 dr["Qty"] = 0;
-                                dr["UnitID"] = "";
+                                dr["UnitID"] = string.Empty;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Customs Code not found!!");
                                 return;
@@ -140,86 +156,90 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        dr["HSCode"] = "";
-                        dr["NLCode"] = "";
+                        dr["HSCode"] = string.Empty;
+                        dr["NLCode"] = string.Empty;
                         dr["Qty"] = 0;
-                        dr["UnitID"] = "";
+                        dr["UnitID"] = string.Empty;
                     }
                 }
             };
             #endregion
 
-            qty.CellMouseDoubleClick += (s, e) =>
+            this.qty.CellMouseDoubleClick += (s, e) =>
                 {
-                    if (!EditMode)
+                    if (!this.EditMode)
                     {
                         if (e.Button == System.Windows.Forms.MouseButtons.Left)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Production.Shipping.P40_Detail callNextForm = new Sci.Production.Shipping.P40_Detail(CurrentMaintain, MyUtility.Convert.GetString(dr["NLCode"]));
+                            Sci.Production.Shipping.P40_Detail callNextForm = new Sci.Production.Shipping.P40_Detail(this.CurrentMaintain, MyUtility.Convert.GetString(dr["NLCode"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             callNextForm.Dispose();
                         }
                     }
                 };
                 base.OnDetailGridSetup();
-                Helper.Controls.Grid.Generator(this.detailgrid)
+                this.Helper.Controls.Grid.Generator(this.detailgrid)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
-                    .Numeric("Qty", header: "Stock Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
+                    .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
+                    .Numeric("Qty", header: "Stock Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
                     .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
-
-
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["CDate"] = DateTime.Today;
+            this.CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, can't delete!!");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CDate"]))
             {
-                dateDate.Focus();
+                this.dateDate.Focus();
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["VNContractID"]))
             {
-                txtContractNo.Focus();
+                this.txtContractNo.Focus();
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
             #endregion
 
             #region 檢查BL No.與WK No.不可重複
-            if (!MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and BLNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and BLNo = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]))))
                 {
                     MyUtility.Msg.WarningBox("This B/L No. already exist!!");
                     return false;
                 }
             }
-            if (!MyUtility.Check.Empty(CurrentMaintain["WKNo"]))
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["WKNo"]))
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and WKNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["WKNo"]))))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and WKNo = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["WKNo"]))))
                 {
                     MyUtility.Msg.WarningBox("This WK No. already exist!!");
                     return false;
@@ -230,15 +250,17 @@ namespace Sci.Production.Shipping
 
             #region 刪除表身NL Code與Qty為0的資料
             int recCount = 0;
-            foreach (DataRow dr in DetailDatas)
+            foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["NLCode"]) || MyUtility.Check.Empty(dr["Qty"]))
                 {
                     dr.Delete();
                     continue;
                 }
+
                 recCount++;
             }
+
             if (recCount == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't empty!!");
@@ -246,27 +268,30 @@ namespace Sci.Production.Shipping
             }
             #endregion
 
-            //Get ID
-            if (IsDetailInserting)
+            // Get ID
+            if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ID", "VNImportDeclaration", Convert.ToDateTime(CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ID", "VNImportDeclaration", Convert.ToDateTime(this.CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
                     return false;
                 }
-                CurrentMaintain["ID"] = newID;
+
+                this.CurrentMaintain["ID"] = newID;
             }
 
             return base.ClickSaveBefore();
         }
 
-        //Confirm
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string updateCmds = string.Format("update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
-                Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'Confirmed' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -274,16 +299,17 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            
         }
 
-        //Unconfirm
+        /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
 
-            string updateCmds = string.Format("update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
-                            Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string updateCmds = string.Format(
+                "update VNImportDeclaration set EditDate = GETDATE(), EditName = '{0}', Status = 'New' where ID = '{1}'",
+                Sci.Env.User.UserID,
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             DualResult result = DBProxy.Current.Execute(null, updateCmds);
             if (!result)
@@ -291,42 +317,46 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
-
-           
         }
 
+        /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "NEW")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "NEW")
             {
                 MyUtility.Msg.WarningBox("Can't Print it ,you should Confirmed first! ");
                 return false;
             }
-            Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(CurrentMaintain);
+
+            Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(this.CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
         }
 
-        //Contract No.
-        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Contract No.
+        private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
+            string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            txtContractNo.Text = item.GetSelectedString();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtContractNo.Text = item.GetSelectedString();
         }
 
-        //Contract No.
-        private void txtContractNo_Validating(object sender, CancelEventArgs e)
+        // Contract No.
+        private void TxtContractNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(txtContractNo.Text) && txtContractNo.Text != txtContractNo.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtContractNo.Text) && this.txtContractNo.Text != this.txtContractNo.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", this.txtContractNo.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", this.txtContractNo.Text, MyUtility.Check.Empty(this.CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(this.CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
-                        txtContractNo.Text = "";
+                        this.txtContractNo.Text = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("This Contract can't use.");
                         return;
@@ -334,7 +364,7 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    txtContractNo.Text = "";
+                    this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
@@ -342,84 +372,88 @@ namespace Sci.Production.Shipping
             }
         }
 
-        //B/L No.
-        private void txtBLNO_Validating(object sender, CancelEventArgs e)
+        // B/L No.
+        private void TxtBLNO_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                if (txtBLNO.Text != txtBLNO.OldValue)
+                if (this.txtBLNO.Text != this.txtBLNO.OldValue)
                 {
-                    foreach (DataRow dr in DetailDatas)
+                    foreach (DataRow dr in this.DetailDatas)
                     {
                         dr.Delete();
                     }
+
                     int isFtyExport = 0;
-                    if (MyUtility.Check.Empty(txtBLNO.Text))
+                    if (MyUtility.Check.Empty(this.txtBLNO.Text))
                     {
-                        txtWKNo.ReadOnly = false;
-                        CurrentMaintain["IsSystemCalculate"] = 0;
-                        CurrentMaintain["BLNo"] = "";
-                        CurrentMaintain["IsFtyExport"] = 0;
-                        CurrentMaintain["IsLocalPO"] = 0;
-                        CurrentMaintain["ShipModeID"] = "";
-                        CurrentMaintain["FromSite"] = "";
+                        this.txtWKNo.ReadOnly = false;
+                        this.CurrentMaintain["IsSystemCalculate"] = 0;
+                        this.CurrentMaintain["BLNo"] = string.Empty;
+                        this.CurrentMaintain["IsFtyExport"] = 0;
+                        this.CurrentMaintain["IsLocalPO"] = 0;
+                        this.CurrentMaintain["ShipModeID"] = string.Empty;
+                        this.CurrentMaintain["FromSite"] = string.Empty;
                     }
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export WITH (NOLOCK) where BLNo = '{0}'", txtBLNO.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export WITH (NOLOCK) where BLNo = '{0}'", this.txtBLNO.Text), out export))
                         {
                             isFtyExport = 0;
-                            localPurchase = false;
+                            this.localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport WITH (NOLOCK) where BLNo = '{0}'", txtBLNO.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport WITH (NOLOCK) where BLNo = '{0}'", this.txtBLNO.Text), out export))
                         {
                             isFtyExport = 1;
-                            localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
+                            this.localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
                         }
                         else
                         {
-                            CurrentMaintain["IsFtyExport"] = isFtyExport;
-                            CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;
-                            CurrentMaintain["BLNo"] = "";
-                            CurrentMaintain["ShipModeID"] = "";
-                            CurrentMaintain["FromSite"] = "";
-                            CurrentMaintain["IsSystemCalculate"] = 0;
+                            this.CurrentMaintain["IsFtyExport"] = isFtyExport;
+                            this.CurrentMaintain["IsLocalPO"] = this.localPurchase ? 1 : 0;
+                            this.CurrentMaintain["BLNo"] = string.Empty;
+                            this.CurrentMaintain["ShipModeID"] = string.Empty;
+                            this.CurrentMaintain["FromSite"] = string.Empty;
+                            this.CurrentMaintain["IsSystemCalculate"] = 0;
                             MyUtility.Msg.WarningBox("BL No. not found!!");
                             e.Cancel = true;
                             return;
                         }
-                        CurrentMaintain["BLNo"] = txtBLNO.Text;
-                        CurrentMaintain["ShipModeID"] = export["ShipModeID"];
-                        CurrentMaintain["FromSite"] = export["ExportCountry"];
-                        CurrentMaintain["IsFtyExport"] = isFtyExport;
-                        CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;
-                        CurrentMaintain["IsSystemCalculate"] = 1;
-                        txtWKNo.ReadOnly = true;
+
+                        this.CurrentMaintain["BLNo"] = this.txtBLNO.Text;
+                        this.CurrentMaintain["ShipModeID"] = export["ShipModeID"];
+                        this.CurrentMaintain["FromSite"] = export["ExportCountry"];
+                        this.CurrentMaintain["IsFtyExport"] = isFtyExport;
+                        this.CurrentMaintain["IsLocalPO"] = this.localPurchase ? 1 : 0;
+                        this.CurrentMaintain["IsSystemCalculate"] = 1;
+                        this.txtWKNo.ReadOnly = true;
                     }
                 }
-                OnDetailEntered();
+
+                this.OnDetailEntered();
             }
         }
 
-        //B/L No.
-        private void txtBLNO_Validated(object sender, EventArgs e)
+        // B/L No.
+        private void TxtBLNO_Validated(object sender, EventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
+            if (this.EditMode && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
             {
-                if (!QueryNonNLData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))))
+                if (!this.QueryNonNLData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]))))
                 {
                     return;
                 }
-                 if (NoNLCode.Rows.Count > 0 || NotInPO.Rows.Count > 0)
+
+                 if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(NoNLCode, NotInPO, UnitNotFound, CurrentMaintain);
+                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
-                            NotInPO = callNextForm.notInPo;
+                            this.NotInPO = callNextForm.NotInPo;
                             callNextForm.Dispose();
-                            CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
+                            this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                         }
                         else
                         {
@@ -428,138 +462,144 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
+                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                     }
             }
         }
 
-        //WK No.
-        private void txtWKNo_Validating(object sender, CancelEventArgs e)
+        // WK No.
+        private void TxtWKNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                if (txtWKNo.Text != txtWKNo.OldValue)
+                if (this.txtWKNo.Text != this.txtWKNo.OldValue)
                 {
-                    foreach (DataRow dr in DetailDatas)
+                    foreach (DataRow dr in this.DetailDatas)
                     {
                         dr.Delete();
                     }
 
-                    if (MyUtility.Check.Empty(txtWKNo.Text))
+                    if (MyUtility.Check.Empty(this.txtWKNo.Text))
                     {
-                        txtBLNO.ReadOnly = false;
-                        CurrentMaintain["IsSystemCalculate"] = 0;
-                        CurrentMaintain["WKNo"] = "";
-                        CurrentMaintain["IsFtyExport"] = 0;
-                        CurrentMaintain["IsLocalPO"] = 0;
-                        CurrentMaintain["ShipModeID"] = "";
-                        CurrentMaintain["FromSite"] = "";
+                        this.txtBLNO.ReadOnly = false;
+                        this.CurrentMaintain["IsSystemCalculate"] = 0;
+                        this.CurrentMaintain["WKNo"] = string.Empty;
+                        this.CurrentMaintain["IsFtyExport"] = 0;
+                        this.CurrentMaintain["IsLocalPO"] = 0;
+                        this.CurrentMaintain["ShipModeID"] = string.Empty;
+                        this.CurrentMaintain["FromSite"] = string.Empty;
                     }
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export WITH (NOLOCK) where ID = '{0}'", txtWKNo.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export WITH (NOLOCK) where ID = '{0}'", this.txtWKNo.Text), out export))
                         {
                             if (!MyUtility.Check.Empty(export["BLNo"]))
                             {
-                                CurrentMaintain["BLNo"] = export["BLNo"];
-                                CurrentMaintain["WKNo"] = "";
-                                txtBLNO.ReadOnly = false;
-                                txtWKNo.ReadOnly = true;
+                                this.CurrentMaintain["BLNo"] = export["BLNo"];
+                                this.CurrentMaintain["WKNo"] = string.Empty;
+                                this.txtBLNO.ReadOnly = false;
+                                this.txtWKNo.ReadOnly = true;
                             }
                             else
                             {
-                                txtBLNO.ReadOnly = true;
-                                CurrentMaintain["WKNo"] = txtWKNo.Text;
+                                this.txtBLNO.ReadOnly = true;
+                                this.CurrentMaintain["WKNo"] = this.txtWKNo.Text;
                             }
-                            CurrentMaintain["IsFtyExport"] = 0;
-                            CurrentMaintain["IsLocalPO"] = 0;
-                            CurrentMaintain["ShipModeID"] = export["ShipModeID"];
-                            CurrentMaintain["FromSite"] = export["ExportCountry"];
-                            CurrentMaintain["IsSystemCalculate"] = 1;
-                            localPurchase = false;
+
+                            this.CurrentMaintain["IsFtyExport"] = 0;
+                            this.CurrentMaintain["IsLocalPO"] = 0;
+                            this.CurrentMaintain["ShipModeID"] = export["ShipModeID"];
+                            this.CurrentMaintain["FromSite"] = export["ExportCountry"];
+                            this.CurrentMaintain["IsSystemCalculate"] = 1;
+                            this.localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport WITH (NOLOCK) where ID = '{0}'", txtWKNo.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport WITH (NOLOCK) where ID = '{0}'", this.txtWKNo.Text), out export))
                         {
                             if (MyUtility.Convert.GetString(export["Type"]) == "1")
                             {
-                                CurrentMaintain["WKNo"] = "";
-                                CurrentMaintain["ShipModeID"] = "";
-                                CurrentMaintain["FromSite"] = "";
-                                CurrentMaintain["IsSystemCalculate"] = 0;
-                                CurrentMaintain["IsLocalPO"] = 0;
+                                this.CurrentMaintain["WKNo"] = string.Empty;
+                                this.CurrentMaintain["ShipModeID"] = string.Empty;
+                                this.CurrentMaintain["FromSite"] = string.Empty;
+                                this.CurrentMaintain["IsSystemCalculate"] = 0;
+                                this.CurrentMaintain["IsLocalPO"] = 0;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("The Fty WK No. is < 3rd Country>!!");
                                 return;
                             }
+
                             if (MyUtility.Convert.GetString(export["Type"]) == "3")
                             {
-                                CurrentMaintain["WKNo"] = "";
-                                CurrentMaintain["ShipModeID"] = "";
-                                CurrentMaintain["FromSite"] = "";
-                                CurrentMaintain["IsSystemCalculate"] = 0;
-                                CurrentMaintain["IsLocalPO"] = 0;
+                                this.CurrentMaintain["WKNo"] = string.Empty;
+                                this.CurrentMaintain["ShipModeID"] = string.Empty;
+                                this.CurrentMaintain["FromSite"] = string.Empty;
+                                this.CurrentMaintain["IsSystemCalculate"] = 0;
+                                this.CurrentMaintain["IsLocalPO"] = 0;
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("The Fty WK No. is < Transfer Out>!!");
                                 return;
                             }
-                            localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
+
+                            this.localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
                             if (!MyUtility.Check.Empty(export["BLNo"]))
                             {
-                                CurrentMaintain["BLNo"] = export["BLNo"];
-                                CurrentMaintain["WKNo"] = "";
-                                txtBLNO.ReadOnly = false;
-                                txtWKNo.ReadOnly = true;
+                                this.CurrentMaintain["BLNo"] = export["BLNo"];
+                                this.CurrentMaintain["WKNo"] = string.Empty;
+                                this.txtBLNO.ReadOnly = false;
+                                this.txtWKNo.ReadOnly = true;
                             }
                             else
                             {
-                                txtBLNO.ReadOnly = true;
-                                CurrentMaintain["WKNo"] = txtWKNo.Text;
+                                this.txtBLNO.ReadOnly = true;
+                                this.CurrentMaintain["WKNo"] = this.txtWKNo.Text;
                             }
-                            CurrentMaintain["IsFtyExport"] = 1;
-                            CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;
-                            CurrentMaintain["ShipModeID"] = export["ShipModeID"];
-                            CurrentMaintain["FromSite"] = export["ExportCountry"];
-                            CurrentMaintain["IsSystemCalculate"] = 1;
+
+                            this.CurrentMaintain["IsFtyExport"] = 1;
+                            this.CurrentMaintain["IsLocalPO"] = this.localPurchase ? 1 : 0;
+                            this.CurrentMaintain["ShipModeID"] = export["ShipModeID"];
+                            this.CurrentMaintain["FromSite"] = export["ExportCountry"];
+                            this.CurrentMaintain["IsSystemCalculate"] = 1;
                         }
                         else
                         {
-                            CurrentMaintain["IsFtyExport"] = 0;
-                            CurrentMaintain["IsLocalPO"] = 0;
-                            CurrentMaintain["WKNo"] = "";
-                            CurrentMaintain["ShipModeID"] = "";
-                            CurrentMaintain["FromSite"] = "";
-                            CurrentMaintain["IsSystemCalculate"] = 0;
+                            this.CurrentMaintain["IsFtyExport"] = 0;
+                            this.CurrentMaintain["IsLocalPO"] = 0;
+                            this.CurrentMaintain["WKNo"] = string.Empty;
+                            this.CurrentMaintain["ShipModeID"] = string.Empty;
+                            this.CurrentMaintain["FromSite"] = string.Empty;
+                            this.CurrentMaintain["IsSystemCalculate"] = 0;
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("WK No. not found!!");
                             return;
                         }
                     }
                 }
-                OnDetailEntered();
+
+                this.OnDetailEntered();
             }
         }
 
-        //WK No.
-        private void txtWKNo_Validated(object sender, EventArgs e)
+        // WK No.
+        private void TxtWKNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
                 {
-                    if (!QueryNonNLData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))))
+                    if (!this.QueryNonNLData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]))))
                     {
                         return;
                     }
-                    if (NoNLCode.Rows.Count > 0 || NotInPO.Rows.Count > 0)
+
+                    if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(NoNLCode, NotInPO, UnitNotFound, CurrentMaintain);
+                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
-                            NotInPO = callNextForm.notInPo;
+                            this.NotInPO = callNextForm.NotInPo;
                             callNextForm.Dispose();
-                            CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
+                            this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                         }
                         else
                         {
@@ -568,24 +608,25 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
+                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                     }
                 }
-                else if (!MyUtility.Check.Empty(CurrentMaintain["WKNo"]))
+                else if (!MyUtility.Check.Empty(this.CurrentMaintain["WKNo"]))
                 {
-                    if(!QueryNonNLData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["WKNo"]))))
+                    if (!this.QueryNonNLData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["WKNo"]))))
                     {
                         return;
                     }
-                    if (NoNLCode.Rows.Count > 0 || NotInPO.Rows.Count > 0)
+
+                    if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(NoNLCode, NotInPO, UnitNotFound, CurrentMaintain);
+                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
                         DialogResult result = callNextForm.ShowDialog(this);
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
-                            NotInPO = callNextForm.notInPo;
+                            this.NotInPO = callNextForm.NotInPo;
                             callNextForm.Dispose();
-                            CalaulateData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["WKNo"])));
+                            this.CalaulateData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["WKNo"])));
                         }
                         else
                         {
@@ -594,7 +635,7 @@ namespace Sci.Production.Shipping
                     }
                     else
                     {
-                        CalaulateData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["WKNo"])));
+                        this.CalaulateData(string.Format("e.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["WKNo"])));
                     }
                 }
             }
@@ -602,17 +643,18 @@ namespace Sci.Production.Shipping
 
         private bool QueryNonNLData(string sqlWhere)
         {
-            //先將tmpe table清空
-            NoNLCode.Clear();
-            NotInPO.Clear();
-            UnitNotFound.Clear();
+            // 先將tmpe table清空
+            this.NoNLCode.Clear();
+            this.NotInPO.Clear();
+            this.UnitNotFound.Clear();
             string sqlCmd;
             #region 組撈資料Sql
-            if (MyUtility.Convert.GetString(CurrentMaintain["IsFtyExport"]).ToUpper() == "TRUE")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["IsFtyExport"]).ToUpper() == "TRUE")
             {
-                if (localPurchase)
+                if (this.localPurchase)
                 {
-                    sqlCmd = string.Format(@"
+                    sqlCmd = string.Format(
+                        @"
 select e.ID
 	   , ed.POID
 	   , Seq1 = ''
@@ -650,7 +692,8 @@ where {0}", sqlWhere);
                 }
                 else
                 {
-                    sqlCmd = string.Format(@"
+                    sqlCmd = string.Format(
+                        @"
 select e.ID
 	   , ed.PoID
 	   , ed.Seq1
@@ -691,7 +734,8 @@ where {0}", sqlWhere);
             }
             else
             {
-                sqlCmd = string.Format(@"
+                sqlCmd = string.Format(
+                    @"
 select e.ID
 	   , ed.PoID
 	   , ed.Seq1
@@ -732,15 +776,15 @@ where {0}", sqlWhere);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Query data fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Query data fail!!\r\n" + result.ToString());
                 return false;
             }
-            
+
             foreach (DataRow dr in tmpData.Rows)
             {
                 if (MyUtility.Check.Empty(dr["POSeq"]))
                 {
-                    DataRow newRow = NotInPO.NewRow();
+                    DataRow newRow = this.NotInPO.NewRow();
                     newRow["ID"] = dr["ID"];
                     newRow["POID"] = dr["POID"];
                     newRow["Seq1"] = dr["Seq1"];
@@ -757,16 +801,16 @@ where {0}", sqlWhere);
                     newRow["PcsKg"] = dr["PcsKg"];
                     newRow["NoDeclare"] = dr["NoDeclare"];
                     newRow["Price"] = dr["Price"];
-                    NotInPO.Rows.Add(newRow);
+                    this.NotInPO.Rows.Add(newRow);
                 }
                 else
                 {
                     if (MyUtility.Check.Empty(dr["NLCode"]))
                     {
-                        DataRow[] findrow = NoNLCode.Select(string.Format("SCIRefno = '{0}'", MyUtility.Convert.GetString(dr["SCIRefno"])));
+                        DataRow[] findrow = this.NoNLCode.Select(string.Format("SCIRefno = '{0}'", MyUtility.Convert.GetString(dr["SCIRefno"])));
                         if (findrow.Length == 0)
                         {
-                            DataRow newRow = NoNLCode.NewRow();
+                            DataRow newRow = this.NoNLCode.NewRow();
                             newRow["SCIRefno"] = dr["SCIRefno"];
                             newRow["Refno"] = dr["Refno"];
                             newRow["BrandID"] = dr["BrandID"];
@@ -779,23 +823,24 @@ where {0}", sqlWhere);
                             newRow["PcsLength"] = dr["PcsLength"];
                             newRow["PcsKg"] = dr["PcsKg"];
                             newRow["NoDeclare"] = dr["NoDeclare"];
-                            NoNLCode.Rows.Add(newRow);
+                            this.NoNLCode.Rows.Add(newRow);
                         }
                     }
                 }
+
                 if ((MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Check.Empty(dr["M2UnitRate"])) ||
                     (MyUtility.Convert.GetString(dr["Type"]) == "F" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() != "M2" && MyUtility.Check.Empty(dr["UnitRate"])) ||
                     (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M" && dr["PcsLength"].ToString().EqualDecimal(0)) ||
                     (MyUtility.Convert.GetString(dr["Type"]) == "A" && MyUtility.Convert.GetString(dr["OriUnit"]) != MyUtility.Convert.GetString(dr["CustomsUnit"]) && MyUtility.Convert.GetString(dr["CustomsUnit"]).ToUpper() == "M2" && MyUtility.Convert.GetString(dr["OriUnit"]).ToUpper() != "M" && MyUtility.Check.Empty(dr["UnitRate"]) && dr["PcsLength"].ToString().EqualDecimal(0)))
                 {
-                    DataRow[] findrow = UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
+                    DataRow[] findrow = this.UnitNotFound.Select(string.Format("OriUnit = '{0}' and CustomsUnit = '{1}'", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"])));
                     if (findrow.Length == 0)
                     {
-                        DataRow newRow = UnitNotFound.NewRow();
+                        DataRow newRow = this.UnitNotFound.NewRow();
                         newRow["OriUnit"] = dr["OriUnit"];
                         newRow["CustomsUnit"] = dr["CustomsUnit"];
                         newRow["Refno"] = dr["Refno"];
-                        UnitNotFound.Rows.Add(newRow);
+                        this.UnitNotFound.Rows.Add(newRow);
                     }
                     else
                     {
@@ -807,6 +852,7 @@ where {0}", sqlWhere);
                     }
                 }
             }
+
             return true;
         }
 
@@ -817,11 +863,12 @@ where {0}", sqlWhere);
 with ExportDetail as (
 ");
             #region 組撈資料Sql
-            if (MyUtility.Convert.GetString(CurrentMaintain["IsFtyExport"]).ToUpper() == "TRUE")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["IsFtyExport"]).ToUpper() == "TRUE")
             {
-                if (localPurchase)
+                if (this.localPurchase)
                 {
-                    sqlCmd.Append(string.Format(@"
+                    sqlCmd.Append(string.Format(
+                        @"
     select e.ID
 	       , ed.POID
 	       , Seq1 = ''
@@ -867,7 +914,8 @@ with ExportDetail as (
                 }
                 else
                 {
-                    sqlCmd.Append(string.Format(@"
+                    sqlCmd.Append(string.Format(
+                        @"
     select e.ID
 	       , ed.PoID
 	       , ed.Seq1
@@ -913,7 +961,8 @@ with ExportDetail as (
             }
             else
             {
-                sqlCmd.Append(string.Format(@"
+                sqlCmd.Append(string.Format(
+                    @"
     select e.ID
 	       , ed.PoID
 	       , ed.Seq1
@@ -1040,28 +1089,31 @@ from (
 group by NLCode, HSCode, CustomsUnit");
 
             DataTable selectedData;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(NotInPO, null, sqlCmd.ToString(), out selectedData);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.NotInPO, null, sqlCmd.ToString(), out selectedData);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Calculate fail!!\r\n"+result.ToString());
+                MyUtility.Msg.WarningBox("Calculate fail!!\r\n" + result.ToString());
                 return;
             }
 
             // 將Not in po的資料加入
-            DataTable GroupNoInPOData;
+            DataTable groupNoInPOData;
 
-            //將資料做排序
+            // 將資料做排序
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(selectedData, @"NLCode,HSCode,CustomsUnit,NewQty,Price",
-                    @"
+                MyUtility.Tool.ProcessWithDatatable(
+                    selectedData,
+                    @"NLCode,HSCode,CustomsUnit,NewQty,Price",
+                    string.Format(@"
 select NLCode
 	   , HSCode
 	   , CustomsUnit
 	   , NewQty
 	   , Price = Price / NewQty
 from #tmp
-order by CONVERT(int, SUBSTRING(NLCode, 3, 3))", out GroupNoInPOData);
+order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
+                    out groupNoInPOData);
             }
             catch (Exception ex)
             {
@@ -1069,45 +1121,47 @@ order by CONVERT(int, SUBSTRING(NLCode, 3, 3))", out GroupNoInPOData);
                 return;
             }
 
-            //刪除表身Grid資料
-            foreach (DataRow dr in DetailDatas)
+            // 刪除表身Grid資料
+            foreach (DataRow dr in this.DetailDatas)
             {
                 dr.Delete();
             }
 
-            //將資料填入表身Grid中
-            foreach (DataRow dr in GroupNoInPOData.Rows)
+            // 將資料填入表身Grid中
+            foreach (DataRow dr in groupNoInPOData.Rows)
             {
-                DataRow  newRow = ((DataTable)detailgridbs.DataSource).NewRow();
-                newRow["ID"] = "";
+                DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
+                newRow["ID"] = string.Empty;
                 newRow["NLCode"] = dr["NLCode"];
                 newRow["HSCode"] = dr["HSCode"];
                 newRow["Qty"] = dr["NewQty"];
                 newRow["UnitID"] = dr["CustomsUnit"];
                 newRow["Price"] = dr["Price"];
-                newRow["Remark"] = "";
-                ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
+                newRow["Remark"] = string.Empty;
+                ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
             }
 
-            if (QueryNonNLData(sqlWhere))
+            if (this.QueryNonNLData(sqlWhere))
             {
                 StringBuilder wrongData = new StringBuilder();
-                if (NoNLCode.Rows.Count > 0)
+                if (this.NoNLCode.Rows.Count > 0)
                 {
                     wrongData.Append("Below data is no Customs Code in B40, B41:\r\n");
-                    foreach (DataRow dr in NoNLCode.Rows)
+                    foreach (DataRow dr in this.NoNLCode.Rows)
                     {
                         wrongData.Append(string.Format("RefNo: {0}, Brand: {1}\r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["BrandID"])));
                     }
                 }
-                if (UnitNotFound.Rows.Count > 0)
+
+                if (this.UnitNotFound.Rows.Count > 0)
                 {
                     wrongData.Append("Below data is no transfer formula. Please contact with Taipei MIS.\r\n");
-                    foreach (DataRow dr in UnitNotFound.Rows)
+                    foreach (DataRow dr in this.UnitNotFound.Rows)
                     {
                         wrongData.Append(string.Format("Unit: {0} Transfer to Unit: {1} RefNo:{2}\r\n", MyUtility.Convert.GetString(dr["OriUnit"]), MyUtility.Convert.GetString(dr["CustomsUnit"]), MyUtility.Convert.GetString(dr["RefNo"])));
                     }
                 }
+
                 if (wrongData.Length > 0)
                 {
                     MyUtility.Msg.WarningBox(wrongData.ToString());

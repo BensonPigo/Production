@@ -12,28 +12,37 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B03_PrintReviseList
+    /// </summary>
     public partial class B03_PrintReviseList : Sci.Win.Tems.PrintForm
     {
-        private string reviseDate1, reviseDate2;
-        DataTable printData;
+        private string reviseDate1;
+        private string reviseDate2;
+        private DataTable printData;
+
+        /// <summary>
+        /// B03_PrintReviseList
+        /// </summary>
         public B03_PrintReviseList()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            reviseDate1 = MyUtility.Check.Empty(dateReviseDate.Value1) ? "" : Convert.ToDateTime(dateReviseDate.Value1).ToString("d");
-            reviseDate2 = MyUtility.Check.Empty(dateReviseDate.Value2) ? "" : Convert.ToDateTime(dateReviseDate.Value2).ToString("d");
+            this.reviseDate1 = MyUtility.Check.Empty(this.dateReviseDate.Value1) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value1).ToString("d");
+            this.reviseDate2 = MyUtility.Check.Empty(this.dateReviseDate.Value2) ? string.Empty : Convert.ToDateTime(this.dateReviseDate.Value2).ToString("d");
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string sqlCmd = string.Format(@"with tmpCode
+            string sqlCmd = string.Format(
+                @"with tmpCode
 as(
 select a.ID,a.EditDate from (
 select ID, max(EditDate) as EditDate
@@ -65,23 +74,27 @@ left join Last2Record l2 on l.ID = l2.ID
 left join ShipExpense s WITH (NOLOCK) on s.ID = l.ID
 WHERE s.Junk = 0
 and l2.LocalSuppID is not null
-order by l.EditDate,l.ID", (MyUtility.Check.Empty(reviseDate1) ? "" : " and a.EditDate >= '" + reviseDate1 + "'"), (MyUtility.Check.Empty(reviseDate2) ? "" : " and a.EditDate <= '" + reviseDate2 + "'"));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
+order by l.EditDate,l.ID",
+                MyUtility.Check.Empty(this.reviseDate1) ? string.Empty : " and a.EditDate >= '" + this.reviseDate1 + "'",
+                MyUtility.Check.Empty(this.reviseDate2) ? string.Empty : " and a.EditDate <= '" + this.reviseDate2 + "'");
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -89,12 +102,16 @@ order by l.EditDate,l.ID", (MyUtility.Check.Empty(reviseDate1) ? "" : " and a.Ed
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B03_PrintReviseList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart = 2;
             int rownum = 0, counter = 0;
             object[,] objArray = new object[1, 7];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 rownum = intRowsStart + counter;
                 objArray[0, 0] = Convert.ToDateTime(dr["EditDate"]).ToString("d");
@@ -104,8 +121,8 @@ order by l.EditDate,l.ID", (MyUtility.Check.Empty(reviseDate1) ? "" : " and a.Ed
                 objArray[0, 4] = MyUtility.Convert.GetString(dr["CurrencyID"]) + " / " + MyUtility.Convert.GetString(dr["LastCurrencyID"]);
                 objArray[0, 5] = MyUtility.Convert.GetString(dr["Price"]) + " / " + MyUtility.Convert.GetString(dr["LastPrice"]);
                 objArray[0, 6] = MyUtility.Check.Empty(dr["Price"]) ? 0 : (MyUtility.Convert.GetDecimal(dr["LastPrice"]) - MyUtility.Convert.GetDecimal(dr["Price"])) / MyUtility.Convert.GetDecimal(dr["Price"]);
-                
-                worksheet.Range[String.Format("A{0}:G{0}", rownum)].Value2 = objArray;
+
+                worksheet.Range[string.Format("A{0}:G{0}", rownum)].Value2 = objArray;
                 counter++;
             }
 

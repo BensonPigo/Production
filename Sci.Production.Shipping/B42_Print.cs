@@ -13,58 +13,69 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// B42_Print
+    /// </summary>
     public partial class B42_Print : Sci.Win.Tems.PrintForm
     {
-        string reportType, customSP1, customSP2;
-        DateTime? date1, date2;
-        DataTable printData;
-        int recCount;
+        private string reportType;
+        private string customSP1;
+        private string customSP2;
+        private DateTime? date1;
+        private DateTime? date2;
+        private DataTable printData;
+        private int recCount;
+
+        /// <summary>
+        /// B42_Print
+        /// </summary>
         public B42_Print()
         {
-            InitializeComponent();
-            radioFormForCustomSystem.Checked = true;
+            this.InitializeComponent();
+            this.radioFormForCustomSystem.Checked = true;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateDate.Value1) && MyUtility.Check.Empty(dateDate.Value2))
+            if (MyUtility.Check.Empty(this.dateDate.Value1) && MyUtility.Check.Empty(this.dateDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Date can't be empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(txtCustomSPNoStart.Text) != MyUtility.Check.Empty(txtCustomSPNoEnd.Text))
+            if (MyUtility.Check.Empty(this.txtCustomSPNoStart.Text) != MyUtility.Check.Empty(this.txtCustomSPNoEnd.Text))
             {
-               
-                if (MyUtility.Check.Empty(txtCustomSPNoStart.Text))
+                if (MyUtility.Check.Empty(this.txtCustomSPNoStart.Text))
                 {
-                    txtCustomSPNoStart.Focus();
+                    this.txtCustomSPNoStart.Focus();
                 }
                 else
                 {
-                    txtCustomSPNoEnd.Focus();
+                    this.txtCustomSPNoEnd.Focus();
                 }
+
                 MyUtility.Msg.WarningBox("Custom SP# can't be empty!!");
                 return false;
             }
 
-            date1 = dateDate.Value1;
-            date2 = dateDate.Value2;
-            customSP1 = txtCustomSPNoStart.Text;
-            customSP2 = txtCustomSPNoEnd.Text;
-            reportType = radioFormForCustomSystem.Checked ? "1" : radioEachConsumption.Checked ? "2" : "3";
+            this.date1 = this.dateDate.Value1;
+            this.date2 = this.dateDate.Value2;
+            this.customSP1 = this.txtCustomSPNoStart.Text;
+            this.customSP2 = this.txtCustomSPNoEnd.Text;
+            this.reportType = this.radioFormForCustomSystem.Checked ? "1" : this.radioEachConsumption.Checked ? "2" : "3";
 
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;
-            // 	Form for custom system
-            if (reportType == "1")
+
+            // Form for custom system
+            if (this.reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select vc.CustomSP,vcd.NLCode,vcd.Qty,isnull(vcd.Waste,0)*100 as Waste,Round(vcd.Qty * (isnull(vcd.Waste,0)+1),4) as CCOA,vncd.DescVI as Remark
 from VNConsumption vc WITH (NOLOCK) 
@@ -73,48 +84,55 @@ left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.
 left join (select iif(NLCode = 'VNBUY' ,1,0) as LocalPurchase,DescVI from VNNLCodeDesc  WITH (NOLOCK)  where NLCode in ('VNBUY','NOVNBUY')) vncd on vd.LocalPurchase = vncd.LocalPurchase
 where 1=1 and vc.Status = 'Confirmed'"));
 
-                if (!MyUtility.Check.Empty(date1))
+                if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(date2))
+
+                if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(customSP1))
+
+                if (!MyUtility.Check.Empty(this.customSP1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
+                    sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
                 }
+
                 sqlCmd.Append(" order by CustomSP,CONVERT(int,SUBSTRING(vcd.NLCode,3,3))");
 
-                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                     return failResult;
                 }
             }
-            //	Each consumption
-            else if (reportType == "2")
+
+            // Each consumption
+            else if (this.reportType == "2")
             {
                 sqlCmd.Append(string.Format(@"select count(CustomSP) as RecCount
 from VNConsumption WITH (NOLOCK) 
 where Status = 'Confirmed'
 and 1=1"));
 
-                if (!MyUtility.Check.Empty(date1))
+                if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(date2))
+
+                if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(customSP1))
+
+                if (!MyUtility.Check.Empty(this.customSP1))
                 {
-                    sqlCmd.Append(string.Format(" and CustomSP between '{0}' and '{1}'", customSP1, customSP2));
+                    sqlCmd.Append(string.Format(" and CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
                 }
-                recCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd.ToString()));
+
+                this.recCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd.ToString()));
                 sqlCmd.Clear();
                 sqlCmd.Append(string.Format(@"select vc.VNContractID,v.StartDate,v.EndDate,isnull(v.SubConName,'') as SubConName,
 isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
@@ -130,23 +148,24 @@ left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
 left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
 and 1=1 "));
-                if (!MyUtility.Check.Empty(date1))
+                if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(date2))
+
+                if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
                 }
-                
-                if (!MyUtility.Check.Empty(customSP1))
+
+                if (!MyUtility.Check.Empty(this.customSP1))
                 {
-                    sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
+                    sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
                 }
 
                 sqlCmd.Append(" order by CustomSP,NLCode");
 
-                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -168,21 +187,22 @@ left join Reason r2 WITH (NOLOCK) on r2.ReasonTypeID = 'Style_Apparel_Type' and 
 where v.Status = 'Confirmed' 
 and 1=1"));
 
-                if (!MyUtility.Check.Empty(date1))
+                if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(date2))
-                {
-                    sqlCmd.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
-                }
-                
-                if (!MyUtility.Check.Empty(customSP1))
-                {
-                    sqlCmd.Append(string.Format(" and v.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
+                    sqlCmd.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
                 }
 
-                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+                if (!MyUtility.Check.Empty(this.date2))
+                {
+                    sqlCmd.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.customSP1))
+                {
+                    sqlCmd.Append(string.Format(" and v.CustomSP between '{0}' and '{1}'", this.customSP1, this.customSP2));
+                }
+
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -193,13 +213,13 @@ and 1=1"));
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -207,61 +227,71 @@ and 1=1"));
 
             this.ShowWaitMessage("Starting EXCEL...");
 
-            //填內容值
-            if (reportType == "1")
+            // 填內容值
+            if (this.reportType == "1")
             {
-                bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "Shipping_B42_FormForCustomSystem.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "Shipping_B42_FormForCustomSystem.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
-            else if (reportType == "2")
+            else if (this.reportType == "2")
             {
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_B42_EachConsumption.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-                if (excel == null) return false;
+                if (excel == null)
+                {
+                    return false;
+                }
+
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-                //有幾筆Custom SP就新增幾個WorkSheet
-                for (int i = 1; i < recCount; i++)
+                // 有幾筆Custom SP就新增幾個WorkSheet
+                for (int i = 1; i < this.recCount; i++)
                 {
                     worksheet.Copy(Type.Missing, worksheet);
                 }
+
                 worksheet.Select();
-                string customSP = MyUtility.Convert.GetString(printData.Rows[0]["CustomSP"]);
-                worksheet.Name = MyUtility.Convert.GetString(printData.Rows[0]["CustomSP"]) + "-" + MyUtility.Convert.GetString(printData.Rows[0]["StyleID"]); //更改Sheet Name
+                string customSP = MyUtility.Convert.GetString(this.printData.Rows[0]["CustomSP"]);
+                worksheet.Name = MyUtility.Convert.GetString(this.printData.Rows[0]["CustomSP"]) + "-" + MyUtility.Convert.GetString(this.printData.Rows[0]["StyleID"]); // 更改Sheet Name
                 int customSPCount = 1;
                 int stt = 0;
-                string picPath = "",pic1 = "", pic2 = "";
-                object[,]  objArray = new object[1, 10];
-                foreach (DataRow dr in printData.Rows)
+                string picPath = string.Empty, pic1 = string.Empty, pic2 = string.Empty;
+                object[,] objArray = new object[1, 10];
+                foreach (DataRow dr in this.printData.Rows)
                 {
                     if (customSP != MyUtility.Convert.GetString(dr["CustomSP"]))
                     {
-                        //刪除多的一行
+                        // 刪除多的一行
                         Microsoft.Office.Interop.Excel.Range rngToDelete = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 14)), Type.Missing).EntireRow;
                         rngToDelete.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                        //貼圖
+
+                        // 貼圖
                         if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
                         {
-                            string excelRng1 = string.Format("B{0}",MyUtility.Convert.GetString(stt+20));
+                            string excelRng1 = string.Format("B{0}", MyUtility.Convert.GetString(stt + 20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
                             rngToInsert1.Select();
-                            float PicLeft, PicTop;
-                            PicLeft = Convert.ToSingle(rngToInsert1.Left);
-                            PicTop = Convert.ToSingle(rngToInsert1.Top);
-                            string targetFile = picPath+pic1;
-                            worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                            float picLeft, picTop;
+                            picLeft = Convert.ToSingle(rngToInsert1.Left);
+                            picTop = Convert.ToSingle(rngToInsert1.Top);
+                            string targetFile = picPath + pic1;
+                            worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft, picTop, 450, 400);
                             Marshal.ReleaseComObject(rngToInsert1);
                         }
+
                         if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
                         {
                             string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
                             rngToInsert2.Select();
-                            float PicLeft, PicTop;
-                            PicLeft = Convert.ToSingle(rngToInsert2.Left);
-                            PicTop = Convert.ToSingle(rngToInsert2.Top);
-                            string targetFile = picPath+pic2;
-                            worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                            float picLeft1, picTop1;
+                            picLeft1 = Convert.ToSingle(rngToInsert2.Left);
+                            picTop1 = Convert.ToSingle(rngToInsert2.Top);
+                            string targetFile = picPath + pic2;
+                            worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft1, picTop1, 450, 400);
                             Marshal.ReleaseComObject(rngToInsert2);
                         }
 
@@ -269,72 +299,79 @@ and 1=1"));
                         stt = 0;
                         customSP = MyUtility.Convert.GetString(dr["CustomSP"]);
                         worksheet = excel.ActiveWorkbook.Worksheets[customSPCount];
-                        worksheet.Name = MyUtility.Convert.GetString(dr["CustomSP"]) + "-" + MyUtility.Convert.GetString(dr["StyleID"]); //更改Sheet Name
+
+                        // 更改Sheet Name
+                        worksheet.Name = MyUtility.Convert.GetString(dr["CustomSP"]) + "-" + MyUtility.Convert.GetString(dr["StyleID"]);
                         worksheet.Select();
                     }
+
                     if (stt == 0)
                     {
                         worksheet.Cells[3, 3] = MyUtility.Convert.GetString(dr["VNContractID"]);
-                        worksheet.Cells[3, 7] = MyUtility.Check.Empty(dr["StartDate"]) ? "" : Convert.ToDateTime(dr["StartDate"]).ToString("d");
-                        worksheet.Cells[3, 9] = MyUtility.Check.Empty(dr["EndDate"]) ? "" : Convert.ToDateTime(dr["EndDate"]).ToString("d");
+                        worksheet.Cells[3, 7] = MyUtility.Check.Empty(dr["StartDate"]) ? string.Empty : Convert.ToDateTime(dr["StartDate"]).ToString("d");
+                        worksheet.Cells[3, 9] = MyUtility.Check.Empty(dr["EndDate"]) ? string.Empty : Convert.ToDateTime(dr["EndDate"]).ToString("d");
                         worksheet.Cells[5, 2] = "Bªn thuª gia c«ng: " + MyUtility.Convert.GetString(dr["SubConName"]);
                         worksheet.Cells[5, 6] = "§Þa chØ: " + MyUtility.Convert.GetString(dr["SubConAddress"]);
                         worksheet.Cells[7, 7] = MyUtility.Convert.GetString(dr["TotalQty"]);
                         worksheet.Cells[8, 2] = "M· hµng gia c«ng: " + MyUtility.Convert.GetString(dr["CustomSP"]);
                         worksheet.Cells[8, 7] = MyUtility.Convert.GetString(dr["GMTQty"]);
                     }
+
                     stt++;
                     if (stt > 1)
                     {
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt+13)), Type.Missing).EntireRow;
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 13)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
                     }
+
                     objArray[0, 0] = stt;
                     objArray[0, 1] = dr["DescVI"];
                     objArray[0, 2] = dr["NLCode"];
                     objArray[0, 3] = dr["UnitVI"];
                     objArray[0, 4] = dr["Qty"];
-                    objArray[0, 5] = "";
+                    objArray[0, 5] = string.Empty;
                     objArray[0, 6] = dr["Waste"];
-                    objArray[0, 7] = string.Format("=E{0}+ROUND((E{0}*(G{0}/100)),3)",MyUtility.Convert.GetString(stt+13));
+                    objArray[0, 7] = string.Format("=E{0}+ROUND((E{0}*(G{0}/100)),3)", MyUtility.Convert.GetString(stt + 13));
                     objArray[0, 8] = dr["Original"];
-                    objArray[0, 9] = "";
-                    worksheet.Range[String.Format("A{0}:J{0}", stt + 13)].Value2 = objArray;
+                    objArray[0, 9] = string.Empty;
+                    worksheet.Range[string.Format("A{0}:J{0}", stt + 13)].Value2 = objArray;
                     pic1 = MyUtility.Convert.GetString(dr["Picture1"]);
                     pic2 = MyUtility.Convert.GetString(dr["Picture2"]);
                     picPath = MyUtility.Convert.GetString(dr["PicPath"]);
                 }
 
-                //刪除多的一行
+                // 刪除多的一行
                 Microsoft.Office.Interop.Excel.Range rngToDelete1 = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 14)), Type.Missing).EntireRow;
                 rngToDelete1.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToDelete1);
-                //貼圖
+
+                // 貼圖
                 if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
                 {
                     string excelRng1 = string.Format("B{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
                     rngToInsert1.Select();
-                    float PicLeft, PicTop;
-                    PicLeft = Convert.ToSingle(rngToInsert1.Left);
-                    PicTop = Convert.ToSingle(rngToInsert1.Top);
+                    float picLeft2, picTop2;
+                    picLeft2 = Convert.ToSingle(rngToInsert1.Left);
+                    picTop2 = Convert.ToSingle(rngToInsert1.Top);
                     string targetFile = picPath + pic1;
-                    worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                    worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft2, picTop2, 450, 400);
                 }
+
                 if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
                 {
                     string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
                     rngToInsert2.Select();
-                    float PicLeft, PicTop;
-                    PicLeft = Convert.ToSingle(rngToInsert2.Left);
-                    PicTop = Convert.ToSingle(rngToInsert2.Top);
+                    float picLeft3, picTop3;
+                    picLeft3 = Convert.ToSingle(rngToInsert2.Left);
+                    picTop3 = Convert.ToSingle(rngToInsert2.Top);
                     string targetFile = picPath + pic2;
-                    worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
+                    worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, picLeft3, picTop3, 450, 400);
                 }
 
-                //最後顯示前將Sheet切換到第一頁
+                // 最後顯示前將Sheet切換到第一頁
                 worksheet = excel.ActiveWorkbook.Worksheets[1];
                 worksheet.Select();
 
@@ -350,9 +387,13 @@ and 1=1"));
             }
             else
             {
-                bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "Shipping_B42_ANNEX.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+                bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "Shipping_B42_ANNEX.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                }
             }
+
             this.HideWaitMessage();
             return true;
         }

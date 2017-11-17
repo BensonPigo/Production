@@ -11,38 +11,58 @@ using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// R12
+    /// </summary>
     public partial class R12 : Sci.Win.Tems.PrintForm
     {
-        DateTime? FCR_date1, FCR_date2, Inv_date1, Inv_date2, Pull_date1, Pull_date2;
-        string GB1, GB2, Buyer, Brand, CustCD, Dest, category;
-        DataTable printData;
+        private DateTime? FCR_date1;
+        private DateTime? FCR_date2;
+        private DateTime? Inv_date1;
+        private DateTime? Inv_date2;
+        private DateTime? Pull_date1;
+        private DateTime? Pull_date2;
+        private string GB1;
+        private string GB2;
+        private string Buyer;
+        private string Brand;
+        private string CustCD;
+        private string Dest;
+        private string category;
+        private DataTable printData;
+
+        /// <summary>
+        /// R12
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();           
-            //dateRange1.Value1 = DateTime.Today;
+            this.InitializeComponent();
+
+            // dateRange1.Value1 = DateTime.Today;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            FCR_date1 = dateFCRDate.Value1;
-            FCR_date2 = dateFCRDate.Value2;
-            Inv_date1 = dateInvoiceDate.Value1;
-            Inv_date2 = dateInvoiceDate.Value2;
-            Pull_date1 = datePulloutDate.Value1;
-            Pull_date2 = datePulloutDate.Value2;
-            GB1 = txtGBNoStart.Text;
-            GB2 = txtGBNoEnd.Text;
-            Buyer = txtbuyer.Text;
-            Brand = txtbrand.Text;
-            CustCD = txtcustcd.Text;
-            Dest = txtcountryDestination.TextBox1.Text;
-            category = txtdropdownlistCategory.SelectedValue.ToString();
+            this.FCR_date1 = this.dateFCRDate.Value1;
+            this.FCR_date2 = this.dateFCRDate.Value2;
+            this.Inv_date1 = this.dateInvoiceDate.Value1;
+            this.Inv_date2 = this.dateInvoiceDate.Value2;
+            this.Pull_date1 = this.datePulloutDate.Value1;
+            this.Pull_date2 = this.datePulloutDate.Value2;
+            this.GB1 = this.txtGBNoStart.Text;
+            this.GB2 = this.txtGBNoEnd.Text;
+            this.Buyer = this.txtbuyer.Text;
+            this.Brand = this.txtbrand.Text;
+            this.CustCD = this.txtcustcd.Text;
+            this.Dest = this.txtcountryDestination.TextBox1.Text;
+            this.category = this.txtdropdownlistCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -100,71 +120,75 @@ outer apply
 ) cpucost
 Where 1=1 ");
 
-            if (!MyUtility.Check.Empty(FCR_date1))
+            if (!MyUtility.Check.Empty(this.FCR_date1))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(FCR_date1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(FCR_date2))
-            {
-                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(FCR_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.FCR_date1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Inv_date1))
+            if (!MyUtility.Check.Empty(this.FCR_date2))
             {
-                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}'", Convert.ToDateTime(Inv_date1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(Inv_date2))
-            {
-                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}'", Convert.ToDateTime(Inv_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.FCR_date2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Pull_date1))
+            if (!MyUtility.Check.Empty(this.Inv_date1))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(Pull_date1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(Pull_date2))
-            {
-                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(Pull_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}'", Convert.ToDateTime(this.Inv_date1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(GB1))
+            if (!MyUtility.Check.Empty(this.Inv_date2))
             {
-                sqlCmd.Append(string.Format(" and g.Id >= '{0}'", GB1));
-            }
-            if (!MyUtility.Check.Empty(GB2))
-            {
-                sqlCmd.Append(string.Format(" and g.Id <= '{0}'", GB2));
+                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}'", Convert.ToDateTime(this.Inv_date2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Buyer))
+            if (!MyUtility.Check.Empty(this.Pull_date1))
             {
-                sqlCmd.Append(string.Format(" and  b.BuyerID = '{0}'", Buyer));
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.Pull_date1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(Brand))
+            if (!MyUtility.Check.Empty(this.Pull_date2))
             {
-                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", Brand));
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.Pull_date2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(CustCD))
+            if (!MyUtility.Check.Empty(this.GB1))
             {
-                sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", CustCD));
+                sqlCmd.Append(string.Format(" and g.Id >= '{0}'", this.GB1));
             }
 
-            if (!MyUtility.Check.Empty(Dest))
+            if (!MyUtility.Check.Empty(this.GB2))
             {
-                sqlCmd.Append(string.Format(" and g.Dest = '{0}'", Dest));
+                sqlCmd.Append(string.Format(" and g.Id <= '{0}'", this.GB2));
             }
 
-            if (category == "B")
+            if (!MyUtility.Check.Empty(this.Buyer))
+            {
+                sqlCmd.Append(string.Format(" and  b.BuyerID = '{0}'", this.Buyer));
+            }
+
+            if (!MyUtility.Check.Empty(this.Brand))
+            {
+                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.Brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.CustCD))
+            {
+                sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.CustCD));
+            }
+
+            if (!MyUtility.Check.Empty(this.Dest))
+            {
+                sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.Dest));
+            }
+
+            if (this.category == "B")
             {
                 sqlCmd.Append(" and o.Category = 'B'");
             }
-            else if (category == "S")
+            else if (this.category == "S")
             {
                 sqlCmd.Append(" and o.Category = 'S'");
             }
-            else if (category == "BS")
+            else if (this.category == "BS")
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
@@ -175,29 +199,30 @@ Where 1=1 ");
                             ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
                             from cte");
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            MyUtility.Excel.CopyToXls(printData, "", "Shipping_R12_FactoryCMTReport.xltx", 2, true, null, null);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R12_FactoryCMTReport.xltx", 2, true, null, null);
             this.HideWaitMessage();
             return true;
         }

@@ -13,86 +13,95 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
+    /// <summary>
+    /// P02_AddNewItem
+    /// </summary>
     public partial class P02_AddNewItem : Sci.Win.Subs.Input2A
     {
-
+        /// <summary>
+        /// P02_AddNewItem
+        /// </summary>
         public P02_AddNewItem()
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (OperationMode != 2)
+            if (this.OperationMode != 2)
             {
-                txtSPNo.ReadOnly = true;
-                txtSPNo.IsSupportEditMode = false;
-                editDescription.ReadOnly = true;
-                editDescription.IsSupportEditMode = false;
+                this.txtSPNo.ReadOnly = true;
+                this.txtSPNo.IsSupportEditMode = false;
+                this.editDescription.ReadOnly = true;
+                this.editDescription.IsSupportEditMode = false;
             }
-            GetLeaderName();
+
+            this.GetLeaderName();
         }
 
-        //SP#
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
+        // SP#
+        private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
+            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
-                //sql參數
-                //System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
-
+                // sql參數
+                // System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(new SqlParameter("@id", txtSPNo.Text));
+                cmds.Add(new SqlParameter("@id", this.txtSPNo.Text));
 
                 string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
-                DataTable OrderData;
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
+                DataTable orderData;
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
 
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-                    CurrentData["OrderID"] = "";
+                    this.CurrentData["OrderID"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
-                if (OrderData.Rows.Count == 0)
+
+                if (orderData.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!!!");
-                    CurrentData["OrderID"] = "";
+                    this.CurrentData["OrderID"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
             }
         }
 
-        //SP#
-        private void txtSPNo_Validated(object sender, EventArgs e)
+        // SP#
+        private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
+            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
-                DataRow OrderData;
-                if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
+                DataRow orderData;
+                if (MyUtility.Check.Seek(
+                    string.Format(
+                    @"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
+from Orders WITH (NOLOCK) where ID = '{0}'", this.txtSPNo.Text), out orderData))
                 {
-                    CurrentData["OrderID"] = txtSPNo.Text;
-                    CurrentData["SeasonID"] = OrderData["SeasonID"];
-                    CurrentData["StyleID"] = OrderData["StyleID"];
-                    CurrentData["BrandID"] = OrderData["BrandID"];
-                    CurrentData["Leader"] = OrderData["SMR"];
-                    if (MyUtility.Check.Empty(CurrentData["Description"]))
+                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
+                    this.CurrentData["SeasonID"] = orderData["SeasonID"];
+                    this.CurrentData["StyleID"] = orderData["StyleID"];
+                    this.CurrentData["BrandID"] = orderData["BrandID"];
+                    this.CurrentData["Leader"] = orderData["SMR"];
+                    if (MyUtility.Check.Empty(this.CurrentData["Description"]))
                     {
-                        CurrentData["Description"] = OrderData["Description"];
+                        this.CurrentData["Description"] = orderData["Description"];
                     }
                 }
                 else
                 {
-                    CurrentData["OrderID"] = txtSPNo.Text;
-                    CurrentData["SeasonID"] = "";
-                    CurrentData["StyleID"] = "";
-                    CurrentData["BrandID"] = "";
-                    CurrentData["Leader"] = "";
+                    this.CurrentData["OrderID"] = this.txtSPNo.Text;
+                    this.CurrentData["SeasonID"] = string.Empty;
+                    this.CurrentData["StyleID"] = string.Empty;
+                    this.CurrentData["BrandID"] = string.Empty;
+                    this.CurrentData["Leader"] = string.Empty;
                 }
             }
         }
@@ -100,154 +109,176 @@ from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
         private void GetLeaderAndDesc()
         {
             DataRow dr;
-            if (MyUtility.Check.Seek(string.Format(@"select s.BulkSMR,[dbo].[getBOFMtlDesc](s.Ukey) as Description
-from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.Text, txtseason.Text), out dr))
+            if (MyUtility.Check.Seek(
+                string.Format(
+                @"select s.BulkSMR,[dbo].[getBOFMtlDesc](s.Ukey) as Description
+from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'",
+                this.txtstyle.Text,
+                this.txtseason.Text), out dr))
             {
-                CurrentData["Leader"] = dr["BulkSMR"];
-                CurrentData["Description"] = dr["Description"];
+                this.CurrentData["Leader"] = dr["BulkSMR"];
+                this.CurrentData["Description"] = dr["Description"];
             }
         }
 
-        //Season
-        private void txtseason_Validated(object sender, EventArgs e)
+        // Season
+        private void Txtseason_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtseason.OldValue != txtseason.Text && !MyUtility.Check.Empty(txtseason.Text) && !MyUtility.Check.Empty(txtstyle.Text))
+            if (this.EditMode && this.txtseason.OldValue != this.txtseason.Text && !MyUtility.Check.Empty(this.txtseason.Text) && !MyUtility.Check.Empty(this.txtstyle.Text))
             {
-                GetLeaderAndDesc();
+                this.GetLeaderAndDesc();
             }
         }
 
-        //Style
-        private void txtstyle_Validated(object sender, EventArgs e)
+        // Style
+        private void Txtstyle_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtstyle.OldValue != txtstyle.Text && !MyUtility.Check.Empty(txtstyle.Text) && !MyUtility.Check.Empty(txtseason.Text))
+            if (this.EditMode && this.txtstyle.OldValue != this.txtstyle.Text && !MyUtility.Check.Empty(this.txtstyle.Text) && !MyUtility.Check.Empty(this.txtseason.Text))
             {
-                GetLeaderAndDesc();
+                this.GetLeaderAndDesc();
             }
         }
 
-        //CTN No.
-        private void txtCTNNo_Validated(object sender, EventArgs e)
+        // CTN No.
+        private void TxtCTNNo_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
+            if (this.EditMode && this.txtCTNNo.OldValue != this.txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
+                this.CurrentData["CTNNo"] = this.txtCTNNo.Text.Trim();
             }
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(CurrentData["Description"]))
+            if (MyUtility.Check.Empty(this.CurrentData["Description"]))
             {
-                editDescription.Focus();
+                this.editDescription.Focus();
                 MyUtility.Msg.WarningBox("Description can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["CTNNo"]))
             {
-                txtCTNNo.Focus();
+                this.txtCTNNo.Focus();
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["NW"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["NW"]))
             {
-                numNW.Focus();
+                this.numNW.Focus();
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Category"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Category"]))
             {
-                comboCategory.Focus();
+                this.comboCategory.Focus();
                 MyUtility.Msg.WarningBox("Category can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Receiver"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Receiver"]))
             {
-                txtReceiver.Focus();
+                this.txtReceiver.Focus();
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["Leader"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["Leader"]))
             {
-                txtTeamLeader.Focus();
+                this.txtTeamLeader.Focus();
                 MyUtility.Msg.WarningBox("Team Leader can't empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentData["BrandID"]))
+
+            if (MyUtility.Check.Empty(this.CurrentData["BrandID"]))
             {
-                txtbrand.Focus();
+                this.txtbrand.Focus();
                 MyUtility.Msg.WarningBox("Brand can't empty!");
                 return false;
             }
 
-            if (MyUtility.Convert.GetString(CurrentData["Category"]) == "7")
+            if (MyUtility.Convert.GetString(this.CurrentData["Category"]) == "7")
             {
-                if (MyUtility.Check.Empty(CurrentData["StyleID"]))
+                if (MyUtility.Check.Empty(this.CurrentData["StyleID"]))
                 {
-                    txtstyle.Focus();
+                    this.txtstyle.Focus();
                     MyUtility.Msg.WarningBox("Style can't empty!");
                     return false;
                 }
             }
             #endregion
 
-            //新增帶值
-            if (OperationMode == 2)
+            // 新增帶值
+            if (this.OperationMode == 2)
             {
-                DataRow Seq;
-                if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
+                DataRow seq;
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                    @"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
+from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(this.CurrentData["ID"])), out seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;
                 }
-                CurrentData["Seq1"] = Seq["Seq1"];
-                CurrentData["InCharge"] = Sci.Env.User.UserID;
+
+                this.CurrentData["Seq1"] = seq["Seq1"];
+                this.CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
             return true;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnSavePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDeletePost()
         {
-            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(CurrentData["ID"])));
+            DualResult result = DBProxy.Current.Execute(null, PublicPrg.Prgs.ReCalculateExpress(MyUtility.Convert.GetString(this.CurrentData["ID"])));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-Calculate fail!! Pls try again.\r\n" + result.ToString());
                 return failResult;
             }
+
             return Result.True;
         }
 
-        //Team Leader
-        private void txtTeamLeader_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Team Leader
+        private void TxtTeamLeader_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", txtTeamLeader.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", this.txtTeamLeader.Text);
             DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtTeamLeader.Text = item.GetSelectedString();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtTeamLeader.Text = item.GetSelectedString();
         }
 
-        //Team Leader
-        private void txtTeamLeader_Validating(object sender, CancelEventArgs e)
+        // Team Leader
+        private void TxtTeamLeader_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
+            if (this.EditMode && this.txtTeamLeader.OldValue != this.txtTeamLeader.Text)
             {
-                if (!MyUtility.Check.Seek(txtTeamLeader.Text, "TPEPass1", "ID"))
+                if (!MyUtility.Check.Seek(this.txtTeamLeader.Text, "TPEPass1", "ID"))
                 {
-                    CurrentData["Leader"] = "";
+                    this.CurrentData["Leader"] = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!!");
                     return;
@@ -255,30 +286,30 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             }
         }
 
-        //Team Leader
-        private void txtTeamLeader_Validated(object sender, EventArgs e)
+        // Team Leader
+        private void TxtTeamLeader_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
+            if (this.EditMode && this.txtTeamLeader.OldValue != this.txtTeamLeader.Text)
             {
-                GetLeaderName();
+                this.GetLeaderName();
             }
         }
 
         private void GetLeaderName()
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", MyUtility.Convert.GetString(CurrentData["Leader"]));
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", MyUtility.Convert.GetString(this.CurrentData["Leader"]));
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
-                displayTeamLeader.Text = MyUtility.Convert.GetString(dr["Name"]);
+                this.displayTeamLeader.Text = MyUtility.Convert.GetString(dr["Name"]);
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
-                    displayTeamLeader.Text = this.displayTeamLeader.Text + " #" + MyUtility.Convert.GetString(dr["extNo"]);
+                    this.displayTeamLeader.Text = this.displayTeamLeader.Text + " #" + MyUtility.Convert.GetString(dr["extNo"]);
                 }
             }
             else
             {
-                displayTeamLeader.Text = "";
+                this.displayTeamLeader.Text = string.Empty;
             }
         }
     }

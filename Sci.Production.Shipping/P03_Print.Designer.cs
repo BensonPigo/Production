@@ -109,7 +109,7 @@
             this.radioListReport.TabStop = true;
             this.radioListReport.Text = "List Report";
             this.radioListReport.UseVisualStyleBackColor = true;
-            this.radioListReport.CheckedChanged += new System.EventHandler(this.radioListReport_CheckedChanged);
+            this.radioListReport.CheckedChanged += new System.EventHandler(this.RadioListReport_CheckedChanged);
             // 
             // radioDetailReport
             // 
