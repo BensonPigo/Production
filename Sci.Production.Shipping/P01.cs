@@ -68,7 +68,7 @@ namespace Sci.Production.Shipping
                     @"select o.FactoryID,o.BrandID,o.StyleID,o.Dest,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(oq.Qty,0) as Qty,oq.BuyerDelivery,isnull(s.Description,'') as Description
 from Orders o WITH (NOLOCK) 
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID and oq.Seq = '{1}'
-left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkeyS
+left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 where o.Id = '{0}'",
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]),
                     MyUtility.Convert.GetString(this.CurrentMaintain["OrderShipmodeSeq"])),
