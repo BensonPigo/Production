@@ -35,6 +35,9 @@
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.labelLocation = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.panel1 = new Sci.Win.UI.Panel();
@@ -94,7 +97,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(69, 23);
@@ -103,6 +105,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnUpdateAllLocation);
+            this.groupBox2.Controls.Add(this.txtLocation);
+            this.groupBox2.Controls.Add(this.labelLocation);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -111,6 +116,40 @@
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
+            // 
+            // btnUpdateAllLocation
+            // 
+            this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(307, 17);
+            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
+            this.btnUpdateAllLocation.Size = new System.Drawing.Size(142, 30);
+            this.btnUpdateAllLocation.TabIndex = 10;
+            this.btnUpdateAllLocation.Text = "Update All Location";
+            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
+            // 
+            // txtLocation
+            // 
+            this.txtLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtLocation.IsSupportEditMode = false;
+            this.txtLocation.Location = new System.Drawing.Point(82, 21);
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.ReadOnly = true;
+            this.txtLocation.Size = new System.Drawing.Size(222, 23);
+            this.txtLocation.TabIndex = 9;
+            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation_MouseDown);
+            // 
+            // labelLocation
+            // 
+            this.labelLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLocation.Location = new System.Drawing.Point(9, 21);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(69, 23);
+            this.labelLocation.TabIndex = 11;
+            this.labelLocation.Text = "Location";
             // 
             // groupBox1
             // 
@@ -177,6 +216,7 @@
             this.Name = "P24_Import";
             this.Text = "P24. Import Detail";
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -199,5 +239,8 @@
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Class.txtSeq txtSeq;
+        private Win.UI.Button btnUpdateAllLocation;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Label labelLocation;
     }
 }
