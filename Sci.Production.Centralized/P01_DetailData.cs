@@ -10,18 +10,26 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// P01_DetailData
+    /// </summary>
     public partial class P01_DetailData : Sci.Win.Subs.Base
     {
+        /// <summary>
+        /// P01_DetailData
+        /// </summary>
+        /// <param name="showDt">showDt</param>
         public P01_DetailData(DataTable showDt)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.listControlBindingSource1.DataSource = showDt;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Helper.Controls.Grid.Generator(grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("ID", header: "SP#", iseditingreadonly: true)
                 .Text("Category", header: "Category", iseditingreadonly: true)
                 .Text("EType", header: "EType", iseditingreadonly: true)
@@ -55,14 +63,15 @@ namespace Sci.Production.Centralized
                 .Text("PotentialDelayRisk", header: "Potential" + Environment.NewLine + "Delay Risk", iseditingreadonly: true)
                 .Text("SMR", header: "SMR", iseditingreadonly: true)
                 .Text("MRHandle", header: "MR", iseditingreadonly: true);
-            grid1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);     
+            this.grid1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);

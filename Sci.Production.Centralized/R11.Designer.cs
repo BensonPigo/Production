@@ -129,7 +129,7 @@
             this.dateCloseDate1.Name = "dateCloseDate1";
             this.dateCloseDate1.Size = new System.Drawing.Size(130, 23);
             this.dateCloseDate1.TabIndex = 0;
-            this.dateCloseDate1.Validated += new System.EventHandler(this.dateCloseDate1_Validated);
+            this.dateCloseDate1.Validated += new System.EventHandler(this.DateCloseDate1_Validated);
             // 
             // label9
             // 
@@ -152,7 +152,7 @@
             this.dateApproveDate1.Name = "dateApproveDate1";
             this.dateApproveDate1.Size = new System.Drawing.Size(130, 23);
             this.dateApproveDate1.TabIndex = 2;
-            this.dateApproveDate1.Validated += new System.EventHandler(this.dateApproveDate1_Validated);
+            this.dateApproveDate1.Validated += new System.EventHandler(this.DateApproveDate1_Validated);
             // 
             // label10
             // 

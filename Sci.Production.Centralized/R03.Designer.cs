@@ -99,7 +99,7 @@
             this.groupBox1.Size = new System.Drawing.Size(419, 297);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
             // 
             // comboLocal
             // 
@@ -199,7 +199,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 14;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
             // txtSeason1
             // 

@@ -53,7 +53,7 @@ namespace Sci.Production.Centralized
             this.btnAppend.TabIndex = 2;
             this.btnAppend.Text = "Append";
             this.btnAppend.UseVisualStyleBackColor = true;
-            this.btnAppend.Click += new System.EventHandler(this.btnAppend_Click);
+            this.btnAppend.Click += new System.EventHandler(this.BtnAppend_Click);
             // 
             // btnDelete
             // 
@@ -64,7 +64,7 @@ namespace Sci.Production.Centralized
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // btnUndo
             // 
@@ -75,7 +75,7 @@ namespace Sci.Production.Centralized
             this.btnUndo.TabIndex = 2;
             this.btnUndo.Text = "Undo";
             this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            this.btnUndo.Click += new System.EventHandler(this.BtnUndo_Click);
             // 
             // btnSave
             // 
@@ -86,7 +86,7 @@ namespace Sci.Production.Centralized
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // grid
             // 
@@ -130,7 +130,7 @@ namespace Sci.Production.Centralized
             this.btnEdit.TabIndex = 4;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnClose
             // 
@@ -141,7 +141,7 @@ namespace Sci.Production.Centralized
             this.btnClose.TabIndex = 5;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // Thread_B06
             // 

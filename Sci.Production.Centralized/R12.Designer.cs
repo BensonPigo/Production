@@ -69,7 +69,7 @@
             this.dateShipDate1.Name = "dateShipDate1";
             this.dateShipDate1.Size = new System.Drawing.Size(130, 23);
             this.dateShipDate1.TabIndex = 0;
-            this.dateShipDate1.Validated += new System.EventHandler(this.dateShipDate1_Validated);
+            this.dateShipDate1.Validated += new System.EventHandler(this.DateShipDate1_Validated);
             // 
             // label1
             // 
@@ -151,7 +151,7 @@
             this.dateApproveDate1.Name = "dateApproveDate1";
             this.dateApproveDate1.Size = new System.Drawing.Size(130, 23);
             this.dateApproveDate1.TabIndex = 2;
-            this.dateApproveDate1.Validated += new System.EventHandler(this.dateApproveDate1_Validated);
+            this.dateApproveDate1.Validated += new System.EventHandler(this.DateApproveDate1_Validated);
             // 
             // dateApproveDate2
             // 
