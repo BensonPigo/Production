@@ -44,7 +44,6 @@ namespace Sci.Production.IE
             this.DetailSelectCommand = string.Format(
                 @"
 select  ld.*
-        , OriNo = No
         , o.DescEN as Description
         , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
@@ -92,6 +91,7 @@ order by ld.No, ld.GroupKey", masterID);
             Ict.Win.DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings operatorid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_No;
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -275,7 +275,7 @@ order by ld.No, ld.GroupKey", masterID);
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
+                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
                 .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
@@ -295,6 +295,8 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            cbb_No.MaxLength = 4;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -868,8 +870,8 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 string sqlCmd = string.Format(
                     @"
 select ID = null
-	   , OriNo = ld.No
-	   , No = ''
+	   , OriNo = ld.OriNo
+	   , No = ld.No
 	   , ld.Annotation
 	   , ld.GSD
 	   , ld.TotalGSD

@@ -136,10 +136,10 @@
             262144});
             this.numPrice4.MaxLength = 13;
             this.numPrice4.Minimum = new decimal(new int[] {
+            99999,
             0,
             0,
-            0,
-            65536});
+            -2147483648});
             this.numPrice4.Name = "numPrice4";
             this.numPrice4.NullValue = new decimal(new int[] {
             0,
@@ -168,10 +168,10 @@
             262144});
             this.numPrice3.MaxLength = 13;
             this.numPrice3.Minimum = new decimal(new int[] {
+            99999,
             0,
             0,
-            0,
-            65536});
+            -2147483648});
             this.numPrice3.Name = "numPrice3";
             this.numPrice3.NullValue = new decimal(new int[] {
             0,
@@ -200,10 +200,10 @@
             262144});
             this.numPrice2.MaxLength = 13;
             this.numPrice2.Minimum = new decimal(new int[] {
+            99999,
             0,
             0,
-            0,
-            65536});
+            -2147483648});
             this.numPrice2.Name = "numPrice2";
             this.numPrice2.NullValue = new decimal(new int[] {
             0,
@@ -232,10 +232,10 @@
             262144});
             this.numPrice1.MaxLength = 13;
             this.numPrice1.Minimum = new decimal(new int[] {
+            99999,
             0,
             0,
-            0,
-            65536});
+            -2147483648});
             this.numPrice1.Name = "numPrice1";
             this.numPrice1.NullValue = new decimal(new int[] {
             0,
