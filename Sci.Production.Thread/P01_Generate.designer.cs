@@ -42,6 +42,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.checkOnlyShowNotYetAssignCombination = new Sci.Win.UI.CheckBox();
             this.labelMachineType = new Sci.Win.UI.Label();
+            this.displayBoxEdit = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -72,6 +74,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.displayBoxEdit);
+            this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.btnBatchUpdate);
             this.panel2.Controls.Add(this.labelThreadCombination);
             this.panel2.Controls.Add(this.txtthreadcomb);
@@ -97,7 +101,6 @@
             // labelThreadCombination
             // 
             this.labelThreadCombination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelThreadCombination.Lines = 0;
             this.labelThreadCombination.Location = new System.Drawing.Point(624, 12);
             this.labelThreadCombination.Name = "labelThreadCombination";
             this.labelThreadCombination.Size = new System.Drawing.Size(133, 23);
@@ -186,12 +189,28 @@
             // 
             // labelMachineType
             // 
-            this.labelMachineType.Lines = 0;
             this.labelMachineType.Location = new System.Drawing.Point(57, 17);
             this.labelMachineType.Name = "labelMachineType";
             this.labelMachineType.Size = new System.Drawing.Size(95, 23);
             this.labelMachineType.TabIndex = 13;
             this.labelMachineType.Text = "Machine Type";
+            // 
+            // displayBoxEdit
+            // 
+            this.displayBoxEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.Location = new System.Drawing.Point(81, 40);
+            this.displayBoxEdit.Name = "displayBoxEdit";
+            this.displayBoxEdit.Size = new System.Drawing.Size(309, 23);
+            this.displayBoxEdit.TabIndex = 21;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Edit By:";
             // 
             // P01_Generate
             // 
@@ -226,5 +245,7 @@
         private Win.UI.Button btnBatchUpdate;
         private Win.UI.TextBox txtMachineType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.DisplayBox displayBoxEdit;
+        private Win.UI.Label label1;
     }
 }

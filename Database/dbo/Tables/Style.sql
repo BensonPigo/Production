@@ -58,8 +58,12 @@
     [CPUAdjusted]         NUMERIC (6, 4) CONSTRAINT [DF_Style_CPUAdjusted] DEFAULT ((0)) NULL,
     [Phase]               VARCHAR (10)   CONSTRAINT [DF_Style_Phase1] DEFAULT ('') NULL,
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
+    [ThreadEditname]      VARCHAR (10)   NULL,
+    [ThreadEditdate]      DATETIME       NULL,
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
+
+
 
 
 
@@ -322,4 +326,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 GO
 CREATE NONCLUSTERED INDEX [StyleUkey]
     ON [dbo].[Style]([Ukey] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditname';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditdate';
 
