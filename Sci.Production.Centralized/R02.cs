@@ -23,53 +23,67 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// R02
+    /// </summary>
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        string temfile;
-        Microsoft.Office.Interop.Excel.Application excel = null;
+        private string temfile;
+        private Microsoft.Office.Interop.Excel.Application excel = null;
 
-        decimal? gdclYear = 0;
+        private decimal? gdclYear = 0;
 
+        /// <summary>
+        /// R02
+        /// </summary>
         public R02()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// R02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            EditMode = true;
+            this.InitializeComponent();
+            this.EditMode = true;
         }
 
-
+        /// <inheritdoc/>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             this.Text = PrivUtils.getVersion(this.Text);
-            print.Visible = false;
-            numericUpDown1.Value = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
-            gdclYear = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
+            this.print.Visible = false;
+            this.numericUpDown1.Value = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
+            this.gdclYear = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
             this.Text = PrivUtils.getVersion(this.Text);
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             DualResult result = Result.True;
-            if (excel == null)
+            if (this.excel == null)
+            {
                 return true;
-            ShowInfo("Completed.");
+            }
+
+            this.ShowInfo("Completed.");
             #region Save & Show Excel
-            Excel.Workbook workbook = excel.Workbooks[1];
+            Excel.Workbook workbook = this.excel.Workbooks[1];
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R02.CPULoadingReport", Sci.Production.Class.ExcelFileNameExtension.Xlsm);
             workbook.SaveAs(strExcelName, Excel.XlFileFormat.xlOpenXMLWorkbookMacroEnabled);
             workbook.Close();
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
+            this.excel.Quit();
+            Marshal.ReleaseComObject(this.excel);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
 
@@ -78,7 +92,6 @@ namespace Sci.Production.Centralized
             rngCell.MergeCells = true;
             rngCell.HorizontalAlignment = HorizontalAlignment.Center;
             rngCell.VerticalAlignment = HorizontalAlignment.Center;
-
         }
 
         private void SetRangeLineStyle(Range rngCell)
@@ -91,6 +104,7 @@ namespace Sci.Production.Centralized
             rngCell.Borders[XlBordersIndex.xlInsideHorizontal].LineStyle = XlLineStyle.xlContinuous;
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             try
@@ -137,21 +151,24 @@ WHERE   1=1
         and Orders.Junk = 0 
         and Orders.Category IN ('B', 'S')
         and Factory.KPICode <> ''  ");
-                strSQL_Loading += string.Format(@" 
-        and Orders.SCIDELIVERY BETWEEN '{0}/01/08' AND '{1}/01/07' ", gdclYear, gdclYear + 1);
-                if (txtFactory1.Text != "")
+                strSQL_Loading += string.Format(
+                    @" 
+        and Orders.SCIDELIVERY BETWEEN '{0}/01/08' AND '{1}/01/07' ",
+        this.gdclYear,
+        this.gdclYear + 1);
+                if (this.txtFactory1.Text != string.Empty)
                 {
-                    strSQL_Loading += string.Format(@" 
-        and Factory.KPICode = '{0}'  ", txtFactory1.Text);
+                    strSQL_Loading += string.Format(@"  and Factory.KPICode = '{0}'  ", this.txtFactory1.Text);
                 }
-                if (txtCountry1.TextBox1.Text != "")
+
+                if (this.txtCountry1.TextBox1.Text != string.Empty)
                 {
-                    strSQL_Loading += string.Format(@" 
-        and Factory.CountryID = '{0}'  ", txtCountry1.TextBox1.Text);
+                    strSQL_Loading += string.Format(@"   and Factory.CountryID = '{0}'  ", this.txtCountry1.TextBox1.Text);
                 }
                 #endregion
                 #region strSQL_Output
-                string strSQL_Output = string.Format(@" 
+                string strSQL_Output = string.Format(
+                    @" 
 Select  ID = IIF (LoadingList.ID is null, SewingOutput.ID, LoadingList.ID)
         , SewingOutput.OutputDate 
         ,  Factory.KPICode 
@@ -179,20 +196,24 @@ WHERE   1=1
         and Sewingoutput.Shift <> 'I'
         and Factory.IsProduceFty = '1'
         and Factory.KPICode <> ''
-        and SewingOutput.OutputDate between '{1}/01/01' and '{1}/12/31'", strSQL_Loading_b, gdclYear);
-                if (txtFactory1.Text != "")
+        and SewingOutput.OutputDate between '{1}/01/01' and '{1}/12/31'",
+        strSQL_Loading_b,
+        this.gdclYear);
+                if (this.txtFactory1.Text != string.Empty)
                 {
-                    strSQL_Output += string.Format(@" 
-        and Factory.KPICode = '{0}'  ", txtFactory1.Text);
+                    strSQL_Output += string.Format(
+                        @" 
+        and Factory.KPICode = '{0}'  ", this.txtFactory1.Text);
                 }
-                if (txtCountry1.TextBox1.Text != "")
+
+                if (this.txtCountry1.TextBox1.Text != string.Empty)
                 {
-                    strSQL_Output += string.Format(@" 
-        and Factory.CountryID = '{0}'  ", txtCountry1.TextBox1.Text);
+                    strSQL_Output += string.Format(@"    and Factory.CountryID = '{0}'  ", this.txtCountry1.TextBox1.Text);
                 }
                 #endregion
                 #region strSQL_Master
-                string strSQL_Master = string.Format(@" 
+                string strSQL_Master = string.Format(
+                    @" 
 SELECT  *
 FROM (
     Select  Sum(TotalCpu ) as SumLoadingCPU 
@@ -214,8 +235,9 @@ FROM (
     ) OutputList 
     Group by KPICode, OutputMonth
 ) AAA  
-ORDER BY KPICode, LoadingMonth, STRTYPE"
-                    , strSQL_Loading, strSQL_Output); //where and LoadingMonth='01'
+ORDER BY KPICode, LoadingMonth, STRTYPE",
+                    strSQL_Loading,
+                    strSQL_Output); // where and LoadingMonth='01'
                 #endregion
                 #region --由 appconfig 抓各個連線路徑
                 this.SetLoadingText("Load connections... ");
@@ -225,7 +247,7 @@ ORDER BY KPICode, LoadingMonth, STRTYPE"
                 foreach (string ss in strSevers)
                 {
                     #region 選擇單一工廠時，只需保留該工廠的連線
-                    if (!txtFactory1.Text.ToString().Empty())
+                    if (!this.txtFactory1.Text.ToString().Empty())
                     {
                         /*
                          * 將 strSevers 切割成 0 : 連線 1 : 連線中所有的工廠
@@ -237,8 +259,10 @@ ORDER BY KPICode, LoadingMonth, STRTYPE"
                              * 判斷該連線中，是否有與畫面中相同的工廠名稱
                              */
                             string[] mFactory = m[1].Split(new char[] { ',' });
-                            if (!mFactory.AsEnumerable().Any(f => f.EqualString(txtFactory1.Text.ToString())))
+                            if (!mFactory.AsEnumerable().Any(f => f.EqualString(this.txtFactory1.Text.ToString())))
+                            {
                                 continue;
+                            }
                         }
                         else
                         {
@@ -246,10 +270,11 @@ ORDER BY KPICode, LoadingMonth, STRTYPE"
                         }
                     }
                     #endregion
-                    var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                    connectionString.Add(Connections);
+                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                    connectionString.Add(connections);
                 }
-                if (null == connectionString || connectionString.Count == 0)
+
+                if (connectionString == null || connectionString.Count == 0)
                 {
                     return new DualResult(false, "no connection loaded.");
                 }
@@ -259,10 +284,13 @@ ORDER BY KPICode, LoadingMonth, STRTYPE"
                 {
                     System.Data.DataTable connDtData, connDtMaster;
                     string conString = connectionString[i];
-                    //跳提示視窗顯示跑到第幾筆連線
+
+                    // 跳提示視窗顯示跑到第幾筆連線
                     this.SetLoadingText(
-                        string.Format("Load data from connection {0}/{1} "
-                       , (i + 1), connectionString.Count));
+                        string.Format(
+                            "Load data from connection {0}/{1} ",
+                       i + 1,
+                       connectionString.Count));
                     SqlConnection conn;
                     using (conn = new SqlConnection(conString))
                     {
@@ -273,6 +301,7 @@ ORDER BY KPICode, LoadingMonth, STRTYPE"
                         {
                             return result;
                         }
+
                         if ((connDtData != null) && (connDtData.Rows.Count > 0))
                         {
                             if (dtData != null)
@@ -309,6 +338,7 @@ WHERE 1 = 0 ";
                         {
                             return result;
                         }
+
                         if (dtMaster != null)
                         {
                             dtMaster.Merge(connDtMaster);
@@ -347,24 +377,36 @@ WHERE 1 = 0 ";
                         drMaster_Loding["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Loding["B"] = "Loading";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Loding[intIndex_C] = 0;
+                        }
+
                         drMaster_Output = dtMaster.NewRow();
                         drMaster_Output["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Output["B"] = "Output";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Output[intIndex_C] = 0;
+                        }
+
                         drMaster_Variation = dtMaster.NewRow();
                         drMaster_Variation["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Variation["B"] = "Variation";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Variation[intIndex_C] = 0;
+                        }
+
                         drMaster_AccVariation = dtMaster.NewRow();
                         drMaster_AccVariation["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_AccVariation["B"] = "AccVariation";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_AccVariation[intIndex_C] = 0;
+                        }
+
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_Loading");
-                        intIndex_R = lstKeys.Count - 1;//下一個 Factory 的起始index
+                        intIndex_R = lstKeys.Count - 1; // 下一個 Factory 的起始index
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_Output");
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_Variation");
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_AccVariation");
@@ -374,30 +416,43 @@ WHERE 1 = 0 ";
                         dtMaster.Rows.Add(drMaster_AccVariation);
                     }
                     #endregion initial drMaster_Loding, drMaster_Output, drMaster_Variation, drMaster_AccVariation;
-                    decimal? _OrderCapacity = null;
-                    _OrderCapacity = decimal.Parse((dtData.Rows[intIndex]["SumLoadingCPU"].ToString() == "" ? "0" : dtData.Rows[intIndex]["SumLoadingCPU"].ToString()));
+                    decimal? orderCapacity = null;
+                    orderCapacity = decimal.Parse(dtData.Rows[intIndex]["SumLoadingCPU"].ToString() == string.Empty ? "0" : dtData.Rows[intIndex]["SumLoadingCPU"].ToString());
                     if (dtData.Rows[intIndex]["STRTYPE"].ToString() == "0")
                     {
-                        drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1] = Convert.ToDecimal(drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1]) + _OrderCapacity;
+                        drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1] = Convert.ToDecimal(drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1]) + orderCapacity;
                     }
                     else if (dtData.Rows[intIndex]["STRTYPE"].ToString() == "1")
                     {
-                        drMaster_Output[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1] = Convert.ToDecimal(drMaster_Output[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1]) + _OrderCapacity;
+                        drMaster_Output[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1] = Convert.ToDecimal(drMaster_Output[Convert.ToInt32(dtData.Rows[intIndex]["LoadingMonth"].ToString()) + 1]) + orderCapacity;
                     }
                 }
+
                 int intIndex_M = 0;
                 foreach (string sKey in lstKeys)
                 {
                     if (sKey.Contains("_Loading"))
                     {
                         if (dtMaster.Rows[intIndex_M]["B"].ToString() == "Loading")
+                        {
                             drMaster_Loding = dtMaster.Rows[intIndex_M];
+                        }
+
                         if (dtMaster.Rows[intIndex_M + 1]["B"].ToString() == "Output")
+                        {
                             drMaster_Output = dtMaster.Rows[intIndex_M + 1];
+                        }
+
                         if (dtMaster.Rows[intIndex_M + 2]["B"].ToString() == "Variation")
+                        {
                             drMaster_Variation = dtMaster.Rows[intIndex_M + 2];
+                        }
+
                         if (dtMaster.Rows[intIndex_M + 3]["B"].ToString() == "AccVariation")
+                        {
                             drMaster_AccVariation = dtMaster.Rows[intIndex_M + 3];
+                        }
+
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
                         {
                             drMaster_Variation[intIndex_C] = Convert.ToDecimal(drMaster_Output[intIndex_C].ToString()) - Convert.ToDecimal(drMaster_Loding[intIndex_C].ToString());
@@ -411,6 +466,7 @@ WHERE 1 = 0 ";
                                     break;
                             }
                         }
+
                         decimal kk = 0;
                         for (int intIndex_C = 2; intIndex_C < 14; intIndex_C++)
                         {
@@ -419,50 +475,62 @@ WHERE 1 = 0 ";
                             drMaster_Output[14] = Convert.ToDecimal(drMaster_Output[14].ToString()) + Convert.ToDecimal(drMaster_Output[intIndex_C].ToString());
                             drMaster_Variation[14] = Convert.ToDecimal(drMaster_Variation[14].ToString()) + Convert.ToDecimal(drMaster_Variation[intIndex_C].ToString());
                         }
+
                         intIndex_M += 4;
                     }
                 }
                 #region Export Sum Data
                 string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
-                temfile = strPath + @"\Centralized_R02.CPULoadingReport.xltm";
+                this.temfile = strPath + @"\Centralized_R02.CPULoadingReport.xltm";
 
                 string[] aryHeaders = new string[] { "Factory", "Data", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Total" };
-                if (!(result = PrivUtils.Excels.CreateExcel(temfile, out excel))) return result;
+                if (!(result = PrivUtils.Excels.CreateExcel(this.temfile, out this.excel)))
+                {
+                    return result;
+                }
 
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet = excel.Workbooks[1].Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
                 wsSheet.Name = "Summary";
 
                 for (int intIndex_e = 0; intIndex_e < aryHeaders.Length; intIndex_e++)
                 {
-                    wsSheet.Cells[1, (intIndex_e + 1)].Value = aryHeaders[intIndex_e];
-                    SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_e] + "1"]);
-                    if (intIndex_e == 1) wsSheet.Range[aryAlpha[intIndex_e] + "1"].ColumnWidth = 16;
+                    wsSheet.Cells[1, intIndex_e + 1].Value = aryHeaders[intIndex_e];
+                    this.SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_e] + "1"]);
+                    if (intIndex_e == 1)
+                    {
+                        wsSheet.Range[aryAlpha[intIndex_e] + "1"].ColumnWidth = 16;
+                    }
                 }
+
                 for (int intIndex = 0; intIndex < dtMaster.Rows.Count; intIndex++)
                 {
                     for (int intIndex_C = 0; intIndex_C < dtMaster.Columns.Count; intIndex_C++)
                     {
                         if ((intIndex_C == 0) && (dtMaster.Rows[intIndex][intIndex_C + 1].ToString() != "Loading"))
                         {
-                            wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = "";
+                            wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = string.Empty;
                         }
                         else
                         {
                             wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = dtMaster.Rows[intIndex][intIndex_C].ToString();
                         }
-                        SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_C] + (intIndex + 2).ToString()]);
+
+                        this.SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_C] + (intIndex + 2).ToString()]);
                         if ((intIndex_C == 0) && (dtMaster.Rows[intIndex][intIndex_C + 1].ToString() == "AccVariation"))
-                            SetRangeMerageCell(wsSheet.Range["A" + (intIndex - 1).ToString(), "A" + (intIndex + 2).ToString()]);
+                        {
+                            this.SetRangeMerageCell(wsSheet.Range["A" + (intIndex - 1).ToString(), "A" + (intIndex + 2).ToString()]);
+                        }
                     }
                 }
-                wsSheet.Range[String.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))].WrapText = false;
-                wsSheet.get_Range(String.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))).EntireColumn.AutoFit();
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].HorizontalAlignment = Excel.Constants.xlCenter;
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828;// 10092441;
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+
+                wsSheet.Range[string.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))].WrapText = false;
+                wsSheet.get_Range(string.Format("B:{0}", PrivUtils.getPosition(aryHeaders.Length))).EntireColumn.AutoFit();
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].HorizontalAlignment = Excel.Constants.xlCenter;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
                 #endregion Export Sum Data
 
-                if (checkBox1.Checked)
+                if (this.checkBox1.Checked)
                 {
                     int intSheetIndex = 2;
                     #region Export Loading Detail
@@ -471,10 +539,13 @@ WHERE 1 = 0 ";
                     {
                         System.Data.DataTable connDtData;
                         string conString = connectionString[i];
-                        //跳提示視窗顯示跑到第幾筆連線
+
+                        // 跳提示視窗顯示跑到第幾筆連線
                         this.SetLoadingText(
-                            string.Format("Load data from connection {0}/{1} "
-                           , (i + 1), connectionString.Count));
+                            string.Format(
+                                "Load data from connection {0}/{1} ",
+                           i + 1,
+                           connectionString.Count));
                         SqlConnection conn;
                         using (conn = new SqlConnection(conString))
                         {
@@ -496,9 +567,10 @@ WHERE 1 = 0 ";
                             }
                         }
                     }
+
                     if ((dtData != null) && (dtData.Rows.Count != 0))
                     {
-                        ExportDetailData(ref intSheetIndex, dtData, "Loading Detail. ", 0);
+                        this.ExportDetailData(ref intSheetIndex, dtData, "Loading Detail. ", 0);
                     }
                     #endregion Export Loading Detail
                     #region Export OutPut Detail
@@ -507,10 +579,10 @@ WHERE 1 = 0 ";
                     {
                         System.Data.DataTable connDtData;
                         string conString = connectionString[i];
-                        //跳提示視窗顯示跑到第幾筆連線
+
+                        // 跳提示視窗顯示跑到第幾筆連線
                         this.SetLoadingText(
-                            string.Format("Load data from connection {0}/{1} "
-                           , (i + 1), connectionString.Count));
+                            string.Format("Load data from connection {0}/{1} ", i + 1, connectionString.Count));
                         SqlConnection conn;
                         using (conn = new SqlConnection(conString))
                         {
@@ -532,28 +604,30 @@ WHERE 1 = 0 ";
                             }
                         }
                     }
+
                     if ((dtData != null) && (dtData.Rows.Count != 0))
                     {
-                        ExportDetailData(ref intSheetIndex, dtData, "OutPut Detail. ", 1);
+                        this.ExportDetailData(ref intSheetIndex, dtData, "OutPut Detail. ", 1);
                     }
                     #endregion Export OutPut Detail
                 }
+
                 return result;
             }
-            catch (Exception EEE)
+            catch (Exception eEE)
             {
-                return new DualResult(false, EEE);
+                return new DualResult(false, eEE);
             }
-
         }
 
         private void ExportDetailData(ref int intSheetindex, System.Data.DataTable dtData, string strSheetName, int intDetailType)
         {
             #region Export Detail Data
-            if (checkBox1.Checked)
+            if (this.checkBox1.Checked)
             {
                 Microsoft.Office.Interop.Excel.Worksheet wsSheet = null;
-                //#region Export Detail Data
+
+                // #region Export Detail Data
                 string[] aryHeaders_D = new string[] { "SP No", "SCI Delivery", "KPI Group", "Factory", "Country", "Program", "OrderType", "Qty", "CPU", "Rate", "Total Cpu", "Category" };
                 string[] aryFields_D = new string[] { "ID", "SCIDelivery", "KPICode", "FactoryID", "CountryID", "ProgramID", "OrderTypeID", "Qty", "CPU", "CPURate", "TotalCPU", "nm_Category" };
                 string[] aryHeaders_D1 = new string[] { "SP No", "Output Date", "Factory Group", "Factory", "Country", "Color", "Size", "QAQty", "CPU", "Rate", "SuitRate ", "Total Cpu", "EType" };
@@ -561,150 +635,183 @@ WHERE 1 = 0 ";
 
                 #region 將資料放入陣列並寫入Excel範例檔
                 int intRowsCount = dtData.Rows.Count;
-                int intRowsStart = 2;//匯入起始位置
-                int rownum = intRowsStart; //每筆資料匯入之位置 
-                int intColumns = aryHeaders_D.Length;//匯入欄位數
+                int intRowsStart = 2; // 匯入起始位置
+                int rownum = intRowsStart; // 每筆資料匯入之位置
+                int intColumns = aryHeaders_D.Length; // 匯入欄位數
                 if (intDetailType == 1)
-                    intColumns = aryHeaders_D1.Length;//匯入欄位數
-                object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                {
+                    intColumns = aryHeaders_D1.Length; // 匯入欄位數
+                }
+
+                object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                 if (rownum + intRowsCount > 33000)
                 {
-                    objArray = new object[33000, intColumns];//每列匯入欄位區間
+                    objArray = new object[33000, intColumns]; // 每列匯入欄位區間
                 }
+
                 int intsheet = intSheetindex;
-                if (excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
+                if (this.excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
                 {
-                    wsSheet = excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
-                    Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = excel.ActiveWorkbook.Worksheets[excel.Workbooks[1].Worksheets.Count];
+                    wsSheet = this.excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
+                    Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
                     ((Excel.Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
                 }
                 else
-                    wsSheet = excel.Workbooks[1].Worksheets[intsheet];
+                {
+                    wsSheet = this.excel.Workbooks[1].Worksheets[intsheet];
+                }
+
                 int intSheetIndex_0 = 1;
                 wsSheet.Name = strSheetName + " " + intSheetIndex_0.ToString();
-                //欄位 title
+
+                // 欄位 title
                 for (int intIndex_0 = 0; intIndex_0 < intColumns; intIndex_0++)
                 {
                     if (intDetailType == 0)
+                    {
                         objArray[0, intIndex_0] = aryHeaders_D[intIndex_0];
+                    }
                     else
+                    {
                         objArray[0, intIndex_0] = aryHeaders_D1[intIndex_0];
+                    }
                 }
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].NumberFormatLocal = "@";
-                wsSheet.Range[String.Format("B:B")].NumberFormatLocal = "yyyy/m/d";// "yyyy/MM/dd";
+
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Value2 = objArray;
+                wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].NumberFormatLocal = "@";
+                wsSheet.Range[string.Format("B:B")].NumberFormatLocal = "yyyy/m/d"; // "yyyy/MM/dd";
                 if (intDetailType == 0)
                 {
-                    wsSheet.Range[String.Format("H:H")].NumberFormatLocal = "#,##0";
-                    wsSheet.Range[String.Format("I:I")].NumberFormatLocal = "#,##0.000";
-                    wsSheet.Range[String.Format("J:J")].NumberFormatLocal = "#,##0.00";
-                    wsSheet.Range[String.Format("K:K")].NumberFormatLocal = "#,##0.00";
+                    wsSheet.Range[string.Format("H:H")].NumberFormatLocal = "#,##0";
+                    wsSheet.Range[string.Format("I:I")].NumberFormatLocal = "#,##0.000";
+                    wsSheet.Range[string.Format("J:J")].NumberFormatLocal = "#,##0.00";
+                    wsSheet.Range[string.Format("K:K")].NumberFormatLocal = "#,##0.00";
                 }
                 else
                 {
-                    wsSheet.Range[String.Format("H:H")].NumberFormatLocal = "#,##0";
-                    wsSheet.Range[String.Format("I:I")].NumberFormatLocal = "#,##0.000";
-                    wsSheet.Range[String.Format("J:J")].NumberFormatLocal = "#,##0.00";
-                    wsSheet.Range[String.Format("K:K")].NumberFormatLocal = "#,##0.00";
-                    wsSheet.Range[String.Format("L:L")].NumberFormatLocal = "#,##0.000";
+                    wsSheet.Range[string.Format("H:H")].NumberFormatLocal = "#,##0";
+                    wsSheet.Range[string.Format("I:I")].NumberFormatLocal = "#,##0.000";
+                    wsSheet.Range[string.Format("J:J")].NumberFormatLocal = "#,##0.00";
+                    wsSheet.Range[string.Format("K:K")].NumberFormatLocal = "#,##0.00";
+                    wsSheet.Range[string.Format("L:L")].NumberFormatLocal = "#,##0.000";
                 }
-                //欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
+
+                // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
                 PrivUtils.Excels.setFormat(wsSheet, rownum);
-                //
                 int ii = 0, jj = 0;
-                int intRowsCountT = intRowsCount;//用於筆數超過一頁(65536)
+                int intRowsCountT = intRowsCount; // 用於筆數超過一頁(65536)
                 for (int i = 0; i < intRowsCountT; i += 1)
                 {
                     DataRow dr = dtData.Rows[i];
                     if (i > 0 && (rownum + ii + jj) % PrivUtils.getPageNum() == 0)
                     {
-                        wsSheet.Range[String.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                        //欄寬調整  
-                        wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                        wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
-                        wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828;// 10092441;
-                        wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
+
+                        // 欄寬調整
+                        wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                        wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
 
                         ii = 0;
                         jj = 0;
                         intsheet++;
-                        if (excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
+                        if (this.excel.Workbooks[1].Worksheets.Count <= intsheet - 1)
                         {
-                            wsSheet = excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
-                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = excel.ActiveWorkbook.Worksheets[excel.Workbooks[1].Worksheets.Count];
+                            wsSheet = this.excel.Workbooks[1].Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, XlSheetType.xlWorksheet);
+                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[this.excel.Workbooks[1].Worksheets.Count];
                             ((Excel.Worksheet)wsSheet).Move(Type.Missing, wsSheet_o);
                         }
                         else
-                            wsSheet = excel.Workbooks[1].Worksheets[intsheet];
+                        {
+                            wsSheet = this.excel.Workbooks[1].Worksheets[intsheet];
+                        }
+
                         intSheetIndex_0++;
                         wsSheet.Name = strSheetName + " " + intSheetIndex_0.ToString();
 
-                        //欄寬調整  
-                        wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                        wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
-                        wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828;// 10092441;
-                        wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
-                        //欄位 title
+                        // 欄寬調整
+                        wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                        wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+
+                        // 欄位 title
                         for (int intIndex_0 = 0; intIndex_0 < intColumns; intIndex_0++)
                         {
                             if (intDetailType == 0)
+                            {
                                 objArray[0, intIndex_0] = aryHeaders_D[intIndex_0];
+                            }
                             else
+                            {
                                 objArray[0, intIndex_0] = aryHeaders_D1[intIndex_0];
+                            }
                         }
-                        wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                        wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].NumberFormatLocal = "@";
-                        wsSheet.Range[String.Format("B:B")].NumberFormatLocal = "yyyy/m/d";// "yyyy/MM/dd";
+
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Value2 = objArray;
+                        wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].NumberFormatLocal = "@";
+                        wsSheet.Range[string.Format("B:B")].NumberFormatLocal = "yyyy/m/d"; // "yyyy/MM/dd";
                         if (intDetailType == 0)
                         {
-                            wsSheet.Range[String.Format("H:H")].NumberFormatLocal = "#,##0";
-                            wsSheet.Range[String.Format("I:I")].NumberFormatLocal = "#,##0.000";
-                            wsSheet.Range[String.Format("J:J")].NumberFormatLocal = "#,##0.00";
-                            wsSheet.Range[String.Format("K:K")].NumberFormatLocal = "#,##0.00";
+                            wsSheet.Range[string.Format("H:H")].NumberFormatLocal = "#,##0";
+                            wsSheet.Range[string.Format("I:I")].NumberFormatLocal = "#,##0.000";
+                            wsSheet.Range[string.Format("J:J")].NumberFormatLocal = "#,##0.00";
+                            wsSheet.Range[string.Format("K:K")].NumberFormatLocal = "#,##0.00";
                         }
                         else
                         {
-                            wsSheet.Range[String.Format("H:H")].NumberFormatLocal = "#,##0";
-                            wsSheet.Range[String.Format("I:I")].NumberFormatLocal = "#,##0.000";
-                            wsSheet.Range[String.Format("J:J")].NumberFormatLocal = "#,##0.00";
-                            wsSheet.Range[String.Format("K:K")].NumberFormatLocal = "#,##0.00";
-                            wsSheet.Range[String.Format("L:L")].NumberFormatLocal = "#,##0.000";
+                            wsSheet.Range[string.Format("H:H")].NumberFormatLocal = "#,##0";
+                            wsSheet.Range[string.Format("I:I")].NumberFormatLocal = "#,##0.000";
+                            wsSheet.Range[string.Format("J:J")].NumberFormatLocal = "#,##0.00";
+                            wsSheet.Range[string.Format("K:K")].NumberFormatLocal = "#,##0.00";
+                            wsSheet.Range[string.Format("L:L")].NumberFormatLocal = "#,##0.000";
                         }
-                        //欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
+
+                        // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
                         PrivUtils.Excels.setFormat(wsSheet, rownum);
                     }
+
                     for (int k = 0; k < intColumns; k++)
                     {
-                        objArray[ii, k] = "";
+                        objArray[ii, k] = string.Empty;
                     }
 
                     for (int k = 0; k < intColumns; k++)
                     {
-
                         if (intDetailType == 0)
+                        {
                             objArray[ii, k] = dr[aryFields_D[k]];
+                        }
                         else
+                        {
                             objArray[ii, k] = dr[aryFields_D1[k]];
+                        }
                     }
+
                     if (ii == 32999)
                     {
-                        int rownumjj = rownum + jj; jj += ii; ;
+                        int rownumjj = rownum + jj;
+                        jj += ii;
                         ii = 0;
-                        object[,] objArray1 = new object[33000, intColumns];//每列匯入欄位區間
+                        object[,] objArray1 = new object[33000, intColumns]; // 每列匯入欄位區間
                         objArray1 = objArray;
-                        wsSheet.Range[String.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
                     }
+
                     ii++;
                 }
-                intRowsCount = ii; //實際寫入筆數
-                wsSheet.Range[String.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                //欄寬調整  
-                wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828;// 10092441;
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
 
-                //欄位Focus 
+                intRowsCount = ii; // 實際寫入筆數
+                wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
+
+                // 欄寬調整
+                wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(intColumns))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+
+                // 欄位Focus
                 PrivUtils.Excels.setPosition_Focus(wsSheet, rownum);
                 #endregion
                 intSheetindex = intsheet + 1;
@@ -715,8 +822,8 @@ WHERE 1 = 0 ";
         /// <summary>
         /// 備份舊的程式碼… 2016.10.17 BLAKE
         /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
         protected DualResult OnAsyncDataLoad_BK(ReportEventArgs e)
         {
             try
@@ -726,7 +833,8 @@ WHERE 1 = 0 ";
                 System.Data.DataTable dtData, dtMaster, dtTradeSystem;
 
                 #region tmpOrder1
-                string strSQL = string.Format(@"
+                string strSQL = string.Format(
+                    @"
 Select  Orders.ID
         , Orders.FactoryID 
         , Orders.OrderTypeID 
@@ -758,20 +866,23 @@ Select  Orders.ID
 from Orders WITH (NOLOCK) 
 Left Join Factory WITH (NOLOCK) on Orders.FactoryID = Factory.ID 
 WHERE DATEPART(YEAR, DATEADD(DAY, -7, Orders.SCIDelivery)) = '{0}'
-      and Orders.Category != 'G' ", gdclYear);
-                if (txtFactory1.Text != "")
+      and Orders.Category != 'G' ", this.gdclYear);
+                if (this.txtFactory1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Orders.FactoryID = '{0}'  ", txtFactory1.Text);
+                    strSQL += string.Format(" AND Orders.FactoryID = '{0}'  ", this.txtFactory1.Text);
                 }
-                if (txtCountry1.TextBox1.Text != "")
+
+                if (this.txtCountry1.TextBox1.Text != string.Empty)
                 {
-                    strSQL += string.Format(" AND Factory.CountryID = '{0}'  ", txtCountry1.TextBox1.Text);
+                    strSQL += string.Format(" AND Factory.CountryID = '{0}'  ", this.txtCountry1.TextBox1.Text);
                 }
+
                 result = DBProxy.Current.Select(null, strSQL, out dtData);
                 if (!result)
                 {
                     return result;
                 }
+
                 if ((dtData == null) || (dtData.Rows.Count == 0))
                 {
                     return new DualResult(false, "查不到任何資料！");
@@ -801,14 +912,17 @@ WHERE 1 = 0 ";
                 {
                     return result;
                 }
+
                 strSQL = @"Select * from TradeSystem ";
                 result = DBProxy.Current.Select(null, strSQL, out dtTradeSystem);
                 if (!result)
                 {
                     return result;
                 }
+
                 System.Data.DataTable dt_ref = null;
-                strSQL = string.Format(@"
+                strSQL = string.Format(
+                    @"
 Select  OrderID
         , Sewingoutput_Detail.QAQty 
         , Sewingoutput_Detail.InlineQty 
@@ -825,11 +939,15 @@ inner join Orders With(NoLock) on SewingOutput_Detail.OrderID = orders.ID
 where   orders.Category != 'G'
         and DATEPART (YEAR, DATEADD (DAY, -7, Sewingoutput.OutputDate)) = '{0}'  
         --Sewingoutput_Detail.OrderID = '{0}'
-                                                            ", gdclYear);
+                                                            ", this.gdclYear);
 
                 result = DBProxy.Current.Select(null, strSQL, out dt_ref);
-                if (!result) return result;
-                IDictionary<String, IList<DataRow>> id_to_Sewingoutput_Detail = dt_ref.ToDictionaryList((x) => x.Val<String>("OrderID"));
+                if (!result)
+                {
+                    return result;
+                }
+
+                IDictionary<string, IList<DataRow>> id_to_Sewingoutput_Detail = dt_ref.ToDictionaryList((x) => x.Val<string>("OrderID"));
 
                 List<string> lstKeys = new List<string>();
                 DataRow drMaster_Loding, drMaster_Output, drMaster_Variation, drMaster_AccVariation;
@@ -851,22 +969,34 @@ where   orders.Category != 'G'
                         drMaster_Loding["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Loding["B"] = "Loading";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Loding[intIndex_C] = 0;
+                        }
+
                         drMaster_Output = dtMaster.NewRow();
                         drMaster_Output["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Output["B"] = "Output";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Output[intIndex_C] = 0;
+                        }
+
                         drMaster_Variation = dtMaster.NewRow();
                         drMaster_Variation["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_Variation["B"] = "Variation";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_Variation[intIndex_C] = 0;
+                        }
+
                         drMaster_AccVariation = dtMaster.NewRow();
                         drMaster_AccVariation["A"] = dtData.Rows[intIndex]["KpiCode"].ToString();
                         drMaster_AccVariation["B"] = "AccVariation";
                         for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
+                        {
                             drMaster_AccVariation[intIndex_C] = 0;
+                        }
+
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_Loading");
                         intIndex_R = lstKeys.Count - 1;
                         lstKeys.Add(dtData.Rows[intIndex]["KpiCode"].ToString() + "_Output");
@@ -878,10 +1008,10 @@ where   orders.Category != 'G'
                         dtMaster.Rows.Add(drMaster_AccVariation);
                     }
                     #endregion initial drMaster_Loding, drMaster_Output, drMaster_Variation, drMaster_AccVariation;
-                    decimal? mRate = 1, _OrderCapacity = null;
+                    decimal? mRate = 1, orderCapacity = null;
 
-                    _OrderCapacity = decimal.Parse((dtData.Rows[intIndex]["OrderCapacity"].ToString() == "" ? "0" : dtData.Rows[intIndex]["OrderCapacity"].ToString()));
-                    drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["OrderYYMM"].ToString().Substring(4, 2)) + 1] = Convert.ToDecimal(drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["OrderYYMM"].ToString().Substring(4, 2)) + 1]) + _OrderCapacity;
+                    orderCapacity = decimal.Parse(dtData.Rows[intIndex]["OrderCapacity"].ToString() == string.Empty ? "0" : dtData.Rows[intIndex]["OrderCapacity"].ToString());
+                    drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["OrderYYMM"].ToString().Substring(4, 2)) + 1] = Convert.ToDecimal(drMaster_Loding[Convert.ToInt32(dtData.Rows[intIndex]["OrderYYMM"].ToString().Substring(4, 2)) + 1]) + orderCapacity;
 
                     if (id_to_Sewingoutput_Detail.ContainsKey(dtData.Rows[intIndex]["ID"].ToString()))
                     {
@@ -892,6 +1022,7 @@ where   orders.Category != 'G'
                             drMaster_Output[Convert.ToInt32(dr_temp["SewingYYMM"].ToString().Substring(4, 2)) + 1] = Convert.ToDecimal(drMaster_Output[Convert.ToInt32(dr_temp["SewingYYMM"].ToString().Substring(4, 2)) + 1]) + dclSewCapacity;
                         }
                     }
+
                     for (int intIndex_C = 2; intIndex_C < 15; intIndex_C++)
                     {
                         drMaster_Variation[intIndex_C] = Convert.ToDecimal(drMaster_Output[intIndex_C].ToString()) - Convert.ToDecimal(drMaster_Loding[intIndex_C].ToString());
@@ -905,144 +1036,168 @@ where   orders.Category != 'G'
                                 break;
                         }
                     }
+
                     for (int intIndex_C = 2; intIndex_C < 14; intIndex_C++)
                     {
                         drMaster_Loding[14] = Convert.ToDecimal(drMaster_Loding[14].ToString()) + Convert.ToDecimal(drMaster_Loding[intIndex_C].ToString());
                         drMaster_Output[14] = Convert.ToDecimal(drMaster_Output[14].ToString()) + Convert.ToDecimal(drMaster_Output[intIndex_C].ToString());
                         drMaster_Variation[14] = Convert.ToDecimal(drMaster_Variation[14].ToString()) + Convert.ToDecimal(drMaster_Variation[intIndex_C].ToString());
                     }
-
                 }
                 #region Export Sum Data
                 string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
-                temfile = strPath + @"\Centralized-R02.CPULoadingReport.xltm";
+                this.temfile = strPath + @"\Centralized-R02.CPULoadingReport.xltm";
 
                 string[] aryHeaders = new string[] { "Factory", "Data", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Total" };
-                if (!(result = PrivUtils.Excels.CreateExcel(temfile, out excel))) return result;
+                if (!(result = PrivUtils.Excels.CreateExcel(this.temfile, out this.excel)))
+                {
+                    return result;
+                }
 
-                Microsoft.Office.Interop.Excel.Worksheet wsSheet = excel.Workbooks[1].Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet wsSheet = this.excel.Workbooks[1].Worksheets[1];
                 wsSheet.Name = "Summary";
 
                 for (int intIndex_e = 0; intIndex_e < aryHeaders.Length; intIndex_e++)
                 {
-                    wsSheet.Cells[1, (intIndex_e + 1)].Value = aryHeaders[intIndex_e];
-                    SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_e] + "1"]);
-                    if (intIndex_e == 1) wsSheet.Range[aryAlpha[intIndex_e] + "1"].ColumnWidth = 16;
+                    wsSheet.Cells[1, intIndex_e + 1].Value = aryHeaders[intIndex_e];
+                    this.SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_e] + "1"]);
+                    if (intIndex_e == 1)
+                    {
+                        wsSheet.Range[aryAlpha[intIndex_e] + "1"].ColumnWidth = 16;
+                    }
                 }
+
                 for (int intIndex = 0; intIndex < dtMaster.Rows.Count; intIndex++)
                 {
                     for (int intIndex_C = 0; intIndex_C < dtMaster.Columns.Count; intIndex_C++)
                     {
                         if ((intIndex_C == 0) && (dtMaster.Rows[intIndex][intIndex_C + 1].ToString() != "Loading"))
                         {
-                            wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = "";
+                            wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = string.Empty;
                         }
                         else
+                        {
                             wsSheet.Cells[intIndex + 2, intIndex_C + 1].Value = dtMaster.Rows[intIndex][intIndex_C].ToString();
-                        SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_C] + (intIndex + 2).ToString()]);
+                        }
+
+                        this.SetRangeLineStyle(wsSheet.Range[aryAlpha[intIndex_C] + (intIndex + 2).ToString()]);
                         if ((intIndex_C == 0) && (dtMaster.Rows[intIndex][intIndex_C + 1].ToString() == "AccVariation"))
-                            SetRangeMerageCell(wsSheet.Range["A" + (intIndex - 1).ToString(), "A" + (intIndex + 2).ToString()]);
+                        {
+                            this.SetRangeMerageCell(wsSheet.Range["A" + (intIndex - 1).ToString(), "A" + (intIndex + 2).ToString()]);
+                        }
                     }
                 }
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828;// 10092441;
-                wsSheet.Range[String.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
+
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.getPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, Excel.XlAutoFilterOperator.xlFilterValues);
 
                 #endregion Export Sum Data
 
-                excel.Workbooks[1].Worksheets[2].Visible = false;
-                if (checkBox1.Checked)
+                this.excel.Workbooks[1].Worksheets[2].Visible = false;
+                if (this.checkBox1.Checked)
                 {
-                    excel.Workbooks[1].Worksheets[2].Visible = true;
+                    this.excel.Workbooks[1].Worksheets[2].Visible = true;
 
                     string[] aryHeaders_D = new string[] { "SP No", "SCI Delivery", "KPI Group", "Factory", "Country", "Program", "OrderType", "Qty", "Rate", "Total Cpu", "Category" };
                     string[] aryFields_D = new string[] { "ID", "SCIDelivery", "KPICode", "FactoryID", "FactoryCountryID", "ProgramID", "OrderTypeID", "OrderQty", "CPURate", "OrderCapacity", "nm_Category" };
 
                     #region 將資料放入陣列並寫入Excel範例檔
                     int intRowsCount = dtData.Rows.Count;
-                    int intRowsStart = 2;//匯入起始位置
-                    int rownum = intRowsStart; //每筆資料匯入之位置 
-                    int intColumns = 11;//匯入欄位數
-                    object[,] objArray = new object[intRowsCount, intColumns];//每列匯入欄位區間
+                    int intRowsStart = 2; // 匯入起始位置
+                    int rownum = intRowsStart; // 每筆資料匯入之位置
+                    int intColumns = 11; // 匯入欄位數
+                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
                     if (rownum + intRowsCount > 33000)
                     {
-                        objArray = new object[33000, intColumns];//每列匯入欄位區間
+                        objArray = new object[33000, intColumns]; // 每列匯入欄位區間
                     }
-                    //欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
+
+                    // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
                     PrivUtils.Excels.setFormat(wsSheet, rownum);
-                    //
                     int intsheet = 2;
-                    if (excel.Workbooks[1].Worksheets.Count <= 1)
-                        wsSheet = excel.Workbooks[1].Worksheets.Add(Type.Missing, (wsSheet == null ? Type.Missing : wsSheet), Type.Missing, XlSheetType.xlWorksheet);
+                    if (this.excel.Workbooks[1].Worksheets.Count <= 1)
+                    {
+                        wsSheet = this.excel.Workbooks[1].Worksheets.Add(Type.Missing, wsSheet == null ? Type.Missing : wsSheet, Type.Missing, XlSheetType.xlWorksheet);
+                    }
                     else
-                        wsSheet = excel.Workbooks[1].Worksheets[intsheet];
+                    {
+                        wsSheet = this.excel.Workbooks[1].Worksheets[intsheet];
+                    }
+
                     wsSheet.Name = "Detail Sheet. 1";
 
                     int ii = 0, jj = 0;
-                    int intRowsCountT = intRowsCount;//用於筆數超過一頁(65536)
+                    int intRowsCountT = intRowsCount; // 用於筆數超過一頁(65536)
 
                     for (int i = 0; i < intRowsCountT; i += 1)
                     {
                         DataRow dr = dtData.Rows[i];
                         if (i > 0 && (rownum + ii + jj) % PrivUtils.getPageNum() == 0)
                         {
-                            wsSheet.Range[String.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                            //欄寬調整  
-                            wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                            wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
+
+                            // 欄寬調整
+                            wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                            wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
                             ii = 0;
-                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = excel.ActiveWorkbook.Worksheets[intsheet];
+                            Microsoft.Office.Interop.Excel.Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[intsheet];
                             ((Excel.Worksheet)wsSheet_o).Select();
                             wsSheet.Copy(wsSheet_o);
-                            intsheet = excel.ActiveWorkbook.Worksheets.Count;
-                            //
-                            ((Excel.Worksheet)wsSheet_o).Move(excel.Worksheets[intsheet - 1]);//copy 的sheet 會產生在前 , 因此原本的Sheet要往前移
-                            wsSheet = excel.ActiveWorkbook.Worksheets[intsheet];
+                            intsheet = this.excel.ActiveWorkbook.Worksheets.Count;
+                            ((Excel.Worksheet)wsSheet_o).Move(this.excel.Worksheets[intsheet - 1]); // copy 的sheet 會產生在前 , 因此原本的Sheet要往前移
+                            wsSheet = this.excel.ActiveWorkbook.Worksheets[intsheet];
                             wsSheet.Name = "Detail Sheet. " + (intsheet - 1).ToString();
-                            //
                             ((Excel.Worksheet)wsSheet).Select();
-                            Microsoft.Office.Interop.Excel.Range formatRange1 = wsSheet.get_Range(String.Format("A{0}:{2}{1}", rownum, PrivUtils.getPageNum() - 1, PrivUtils.getPosition(intColumns)));
+                            Microsoft.Office.Interop.Excel.Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtils.getPageNum() - 1, PrivUtils.getPosition(intColumns)));
                             formatRange1.Select();
                             formatRange1.Delete(Microsoft.Office.Interop.Excel.XlDeleteShiftDirection.xlShiftUp);
                         }
+
                         for (int k = 0; k < intColumns; k++)
                         {
-                            objArray[ii, k] = "";
+                            objArray[ii, k] = string.Empty;
                         }
+
                         for (int k = 0; k < intColumns; k++)
                         {
                             objArray[ii, k] = dr[aryFields_D[k]];
                         }
+
                         ii++;
                         if (ii == 32999)
                         {
-                            int rownumjj = rownum + jj; jj += ii; ;
+                            int rownumjj = rownum + jj;
+                            jj += ii;
                             ii = 0;
-                            object[,] objArray1 = new object[33000, intColumns];//每列匯入欄位區間
+                            object[,] objArray1 = new object[33000, intColumns]; // 每列匯入欄位區間
                             objArray1 = objArray;
-                            wsSheet.Range[String.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray1;
                         }
                     }
-                    intRowsCount = ii; //實際寫入筆數
-                    wsSheet.Range[String.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
-                    //欄寬調整  
-                    wsSheet.Range[String.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(String.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
-                    //欄位Focus 
+
+                    intRowsCount = ii; // 實際寫入筆數
+                    wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.getPosition(intColumns))].Value2 = objArray;
+
+                    // 欄寬調整
+                    wsSheet.Range[string.Format("A:{0}", PrivUtils.getPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.getPosition(intColumns))).EntireColumn.AutoFit();
+
+                    // 欄位Focus
                     PrivUtils.Excels.setPosition_Focus(wsSheet, rownum);
                     #endregion
                 }
+
                 return result;
             }
-            catch (Exception EEE)
+            catch (Exception eEE)
             {
-                return new DualResult(false, EEE);
+                return new DualResult(false, eEE);
             }
-
         }
 
-        private void numericBox1_Leave(object sender, EventArgs e)
+        private void NumericBox1_Leave(object sender, EventArgs e)
         {
-            gdclYear = numericUpDown1.Value;
+            this.gdclYear = this.numericUpDown1.Value;
         }
     }
 }

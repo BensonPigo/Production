@@ -88,7 +88,7 @@
             this.btnQuery.TabIndex = 3;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // label3
             // 
@@ -172,7 +172,7 @@
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.Size = new System.Drawing.Size(833, 361);
             this.grid1.TabIndex = 2;
-            this.grid1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_CellDoubleClick);
+            this.grid1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid1_CellDoubleClick);
             // 
             // panel2
             // 
@@ -204,7 +204,7 @@
             this.comboBoxValue.Name = "comboBoxValue";
             this.comboBoxValue.Size = new System.Drawing.Size(174, 24);
             this.comboBoxValue.TabIndex = 1;
-            this.comboBoxValue.SelectedIndexChanged += new System.EventHandler(this.comboBoxValue_SelectedIndexChanged);
+            this.comboBoxValue.SelectedIndexChanged += new System.EventHandler(this.ComboBoxValue_SelectedIndexChanged);
             // 
             // comboBoxDisplayBy
             // 
@@ -220,7 +220,7 @@
             this.comboBoxDisplayBy.Name = "comboBoxDisplayBy";
             this.comboBoxDisplayBy.Size = new System.Drawing.Size(98, 24);
             this.comboBoxDisplayBy.TabIndex = 0;
-            this.comboBoxDisplayBy.SelectedIndexChanged += new System.EventHandler(this.comboBoxDisplayBy_SelectedIndexChanged);
+            this.comboBoxDisplayBy.SelectedIndexChanged += new System.EventHandler(this.ComboBoxDisplayBy_SelectedIndexChanged);
             // 
             // btnClose
             // 
@@ -231,7 +231,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // labelValue
             // 

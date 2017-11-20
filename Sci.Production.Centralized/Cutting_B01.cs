@@ -1,34 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// Cutting_B01
+    /// </summary>
     public partial class Cutting_B01 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// Cutting_B01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public Cutting_B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(txtID.Text.Trim()) || MyUtility.Check.Empty(txtShowSeq.Text.Trim()))
+            if (MyUtility.Check.Empty(this.txtID.Text.Trim()) || MyUtility.Check.Empty(this.txtShowSeq.Text.Trim()))
             {
                 MyUtility.Msg.InfoBox("'ID' and 'Show Seq' can not empty");
                 return false;
             }
-            return base.ClickSaveBefore();            
+
+            return base.ClickSaveBefore();
         }
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtID.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
     }
 }

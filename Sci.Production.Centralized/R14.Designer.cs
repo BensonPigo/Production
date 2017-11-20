@@ -80,7 +80,7 @@
             this.dateApproveDate1.Name = "dateApproveDate1";
             this.dateApproveDate1.Size = new System.Drawing.Size(130, 23);
             this.dateApproveDate1.TabIndex = 2;
-            this.dateApproveDate1.Validated += new System.EventHandler(this.dateApproveDate1_Validated);
+            this.dateApproveDate1.Validated += new System.EventHandler(this.DateApproveDate1_Validated);
             // 
             // datePulloutDate2
             // 
@@ -95,7 +95,7 @@
             this.datePulloutDate1.Name = "datePulloutDate1";
             this.datePulloutDate1.Size = new System.Drawing.Size(130, 23);
             this.datePulloutDate1.TabIndex = 0;
-            this.datePulloutDate1.Validated += new System.EventHandler(this.datePulloutDate1_Validated);
+            this.datePulloutDate1.Validated += new System.EventHandler(this.DatePulloutDate1_Validated);
             // 
             // label2
             // 

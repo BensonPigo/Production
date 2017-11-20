@@ -16,52 +16,64 @@ using Ict.Win;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// P01
+    /// </summary>
     public partial class P01 : Sci.Win.Tems.QueryForm
     {
-        DataTable detailDt, byMDt, byBrandDt;
-        Sci.Win.MatrixHelper _matrix;
+        private DataTable detailDt;
+        private DataTable byMDt;
+        private DataTable byBrandDt;
+        private Sci.Win.MatrixHelper _matrix;
+
+        /// <summary>
+        /// P01
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.dateSewingOutput.Value = DateTime.Today.AddDays(-1);
             this.comboBoxDisplayBy.SelectedItem = "M";
             this.comboBoxValue.SelectedItem = "Delay Qty / Total Qty";
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            detailDt = null;
-            byMDt = null;
-            byBrandDt = null;
-            grid1.DataSource = null;
+            this.detailDt = null;
+            this.byMDt = null;
+            this.byBrandDt = null;
+            this.grid1.DataSource = null;
             DataTable tmpDetailDt = null, tmpMDt = null, tmpBrandDt = null;
             #region Sewing Output & Buyer Delivery 必須都輸入
-            if (dateRangeBuyerDelivery.Value1.Empty() || dateRangeBuyerDelivery.Value2.Empty())
+            if (this.dateRangeBuyerDelivery.Value1.Empty() || this.dateRangeBuyerDelivery.Value2.Empty())
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery can't all be empty!!");
                 return;
             }
-            if (dateSewingOutput.Value.Empty())
+
+            if (this.dateSewingOutput.Value.Empty())
             {
                 MyUtility.Msg.WarningBox("Sewing Output can't be empty!!");
                 return;
             }
-            #endregion 
+            #endregion
             #region set SQL Parameter
             List<SqlParameter> listParameter = new List<SqlParameter>();
             listParameter.Add(new SqlParameter("@StartBuyerDelivery", ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             listParameter.Add(new SqlParameter("@EndBuyerDelivery", ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             listParameter.Add(new SqlParameter("@SewingOutput", ((DateTime)this.dateSewingOutput.Value).ToString("yyyy/MM/dd")));
             listParameter.Add(new SqlParameter("@CountryID", this.txtcountry.TextBox1.Text));
-            #endregion 
+            #endregion
             #region SQL Filte
             Dictionary<string, string> sqlFilte = new Dictionary<string, string>();
-            sqlFilte.Add("CountryID", this.txtcountry.TextBox1.Text.Empty() ? "" : "and f.CountryID = @CountryID");
-            #endregion 
+            sqlFilte.Add("CountryID", this.txtcountry.TextBox1.Text.Empty() ? string.Empty : "and f.CountryID = @CountryID");
+            #endregion
             #region SQL Command
-            StringBuilder sqlCmd = new StringBuilder("");
-            sqlCmd.Append(string.Format(@"
+            StringBuilder sqlCmd = new StringBuilder(string.Empty);
+            sqlCmd.Append(string.Format(
+                @"
 with temporder AS (
 	select	StdOutput = isnull ((select top 1 stdq from getstdq(o.ID)), 0)
 			, o.* 
@@ -246,7 +258,7 @@ outer apply (
 ) Variance
 order by O.FactoryID, O.ID
 ", sqlFilte["CountryID"]));
-            #endregion 
+            #endregion
             #region 由 appconfig 取得所有連線路徑
             this.ShowWaitMessage("Load connections...");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
@@ -254,21 +266,23 @@ order by O.FactoryID, O.ID
             List<string> connectionString = new List<string>();
             foreach (string ss in strServers)
             {
-                var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[]{':'})[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(Connections);
+                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                connectionString.Add(connections);
             }
-            if (null == connectionString || connectionString.Count == 0)
+
+            if (connectionString == null || connectionString.Count == 0)
             {
                 MyUtility.Msg.WarningBox("no connection loaded.");
                 return;
-            }        
+            }
+
             this.HideWaitMessage();
-            #endregion 
+            #endregion
             #region SQL Processing
             for (int i = 0; i < connectionString.Count; i++)
             {
                 string conString = connectionString[i];
-                this.ShowWaitMessage(string.Format("Load data from connection {0}/{1} ", (i + 1), connectionString.Count));
+                this.ShowWaitMessage(string.Format("Load data from connection {0}/{1} ", i + 1, connectionString.Count));
                 SqlConnection conn;
                 using (conn = new SqlConnection(conString))
                 {
@@ -280,14 +294,20 @@ order by O.FactoryID, O.ID
                         this.HideWaitMessage();
                         return;
                     }
+
                     if (tmpDetailDt == null)
+                    {
                         tmpDetailDt = outDt;
+                    }
                     else
+                    {
                         tmpDetailDt.Merge(outDt);
+                    }
                 }
             }
+
             this.HideWaitMessage();
-            #endregion             
+            #endregion
             if (tmpDetailDt == null || tmpDetailDt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!");
@@ -410,91 +430,94 @@ from (
     ) Variance
 ) Brand";
                 DataTable[] outArrayDt;
-                MyUtility.Tool.ProcessWithDatatable(tmpDetailDt, "", str, out outArrayDt, "#detailTmp");
+                MyUtility.Tool.ProcessWithDatatable(tmpDetailDt, string.Empty, str, out outArrayDt, "#detailTmp");
                 tmpMDt = outArrayDt[0];
                 tmpBrandDt = outArrayDt[1];
-                #endregion 
-                detailDt = tmpDetailDt;
-                byMDt = tmpMDt;
-                byBrandDt = tmpBrandDt;
-                gridMatrixChange();
+                #endregion
+                this.detailDt = tmpDetailDt;
+                this.byMDt = tmpMDt;
+                this.byBrandDt = tmpBrandDt;
+                this.GridMatrixChange();
             }
         }
 
-        private void comboBoxDisplayBy_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxDisplayBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            gridMatrixChange();
+            this.GridMatrixChange();
         }
 
-        private void comboBoxValue_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxValue_SelectedIndexChanged(object sender, EventArgs e)
         {
-            gridMatrixChange();
+            this.GridMatrixChange();
         }
 
-        private void gridMatrixChange()
+        private void GridMatrixChange()
         {
-            DataTable MatrixDataDt;
-            string DisplayBy = "", ShowValue = "";
+            DataTable matrixDataDt;
+            string displayBy = string.Empty, showValue = string.Empty;
             switch (this.comboBoxDisplayBy.Text)
-            {                   
+            {
                 case "Brand":
-                    if (byBrandDt == null || byBrandDt.Rows.Count == 0)
+                    if (this.byBrandDt == null || this.byBrandDt.Rows.Count == 0)
                     {
                         return;
                     }
-                    MatrixDataDt = byBrandDt;
-                    DisplayBy = "Brand";
-                    break;            
+
+                    matrixDataDt = this.byBrandDt;
+                    displayBy = "Brand";
+                    break;
                 case "M":
                 default:
-                    if (byMDt == null || byMDt.Rows.Count == 0)
+                    if (this.byMDt == null || this.byMDt.Rows.Count == 0)
                     {
                         return;
                     }
-                    MatrixDataDt = byMDt;
-                    DisplayBy = "M";
+
+                    matrixDataDt = this.byMDt;
+                    displayBy = "M";
                     break;
             }
 
             switch (this.comboBoxValue.Text)
             {
                 case "CPU":
-                    ShowValue = "Cpu";
+                    showValue = "Cpu";
                     break;
                 case "Qty":
-                    ShowValue = "Qty";
+                    showValue = "Qty";
                     break;
                 case "Delay CPU / Total CPU":
-                    ShowValue = "strDelayCpuDividedByCpu";
+                    showValue = "strDelayCpuDividedByCpu";
                     break;
                 case "Delay Qty / Total Qty":
-                    ShowValue = "strDelayQtyDividedByQty";
+                    showValue = "strDelayQtyDividedByQty";
                     break;
                 case "% (delay cpu / total cpu)":
-                    ShowValue = "DelayCpuDividedByCpu";
+                    showValue = "DelayCpuDividedByCpu";
                     break;
                 default:
-                    ShowValue = "strDelayQtyDividedByQty";
+                    showValue = "strDelayQtyDividedByQty";
                     break;
             }
 
-            grid1.DataSource = listControlBindingSource1;
-            _matrix = new Sci.Win.MatrixHelper(this, grid1, listControlBindingSource1);
-            _matrix.XMap.Name = "BuyerDelivery";
-            _matrix.YMap.Name = DisplayBy;
-            _matrix
-                .SetColDef(ShowValue, width: Widths.AnsiChars(4))
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this._matrix = new Sci.Win.MatrixHelper(this, this.grid1, this.listControlBindingSource1);
+            this._matrix.XMap.Name = "BuyerDelivery";
+            this._matrix.YMap.Name = displayBy;
+            this._matrix
+                .SetColDef(showValue, width: Widths.AnsiChars(4))
                 .AddXColDef("BuyerDelivery")
-                .AddYColDef(DisplayBy, header: DisplayBy, width: Widths.AnsiChars(4))
+                .AddYColDef(displayBy, header: displayBy, width: Widths.AnsiChars(4))
                 ;
-            _matrix.IsXColEditable = false;
-            _matrix.IsYColEditable = false;
+            this._matrix.IsXColEditable = false;
+            this._matrix.IsYColEditable = false;
 
             DataTable dtX, dtY;
             string strX = @"
 select  distinct BuyerDelivery
 from #tmp";
-            string strY = string.Format(@"
+            string strY = string.Format(
+                @"
 select *
 from (
     select  distinct {0}
@@ -504,40 +527,45 @@ from (
     union all
     select  {0} = 'Total'
 ) Y
-", DisplayBy);
-            MyUtility.Tool.ProcessWithDatatable(MatrixDataDt, "", strX, out dtX);
-            MyUtility.Tool.ProcessWithDatatable(MatrixDataDt, "", strY, out dtY);
-             _matrix.Clear();
-            try 
+", displayBy);
+            MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strX, out dtX);
+            MyUtility.Tool.ProcessWithDatatable(matrixDataDt, string.Empty, strY, out dtY);
+             this._matrix.Clear();
+            try
             {
-                _matrix.Sets(MatrixDataDt, dtX, dtY);
+                this._matrix.Sets(matrixDataDt, dtX, dtY);
             }
-            catch (Exception ex) 
-            { 
-                this.ShowErr(ex); 
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
             }
+
             ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();
-            grid1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            this.grid1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
-        private void grid1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void Grid1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.ColumnIndex > 0)
             {
-                string RowHeader = grid1.Rows[e.RowIndex].Cells[0].Value.ToString()
-                        , ColumnHeader = grid1.Columns[e.ColumnIndex].HeaderText;
+                string rowHeader = this.grid1.Rows[e.RowIndex].Cells[0].Value.ToString(),
+                        columnHeader = this.grid1.Columns[e.ColumnIndex].HeaderText;
 
                 DataTable showDt = null;
+
                 // Click => 都是 Total 則全顯示
-                if (RowHeader.EqualString("Total") && ColumnHeader.EqualString("Total"))
+                if (rowHeader.EqualString("Total") && columnHeader.EqualString("Total"))
                 {
-                    showDt = detailDt.AsEnumerable().Where(row => true).CopyToDataTable(); ;
+                    showDt = this.detailDt.AsEnumerable().Where(row => true).CopyToDataTable();
                 }
+
                 // Click => 只有 M & Brand 是 Total，則挑出指定的 BuyerDelivery
-                else if (RowHeader.EqualString("Total") && !ColumnHeader.EqualString("Total"))
+                else if (rowHeader.EqualString("Total") && !columnHeader.EqualString("Total"))
                 {
-                    if (detailDt.AsEnumerable().Any(row => row["BuyerDelivery"].EqualString(ColumnHeader)))
-                        showDt = detailDt.AsEnumerable().Where(row => row["BuyerDelivery"].EqualString(ColumnHeader)).CopyToDataTable();
+                    if (this.detailDt.AsEnumerable().Any(row => row["BuyerDelivery"].EqualString(columnHeader)))
+                    {
+                        showDt = this.detailDt.AsEnumerable().Where(row => row["BuyerDelivery"].EqualString(columnHeader)).CopyToDataTable();
+                    }
                 }
                 else
                 {
@@ -552,19 +580,26 @@ from (
                             filteBy = "MDivisionID";
                             break;
                     }
+
                     // Click => 有指定的 M or Brand 但是 BuyerDelivery = Total，則指挑出指定的 M or Brand
-                    if (ColumnHeader.EqualString("Total"))
+                    if (columnHeader.EqualString("Total"))
                     {
-                        if (detailDt.AsEnumerable().Any(row => row[filteBy].EqualString(RowHeader)))
-                            showDt = detailDt.AsEnumerable().Where(row => row[filteBy].EqualString(RowHeader)).CopyToDataTable();
+                        if (this.detailDt.AsEnumerable().Any(row => row[filteBy].EqualString(rowHeader)))
+                        {
+                            showDt = this.detailDt.AsEnumerable().Where(row => row[filteBy].EqualString(rowHeader)).CopyToDataTable();
+                        }
                     }
+
                     // Click => 有指定的 【M or Brand】& 【BuyerDelivery】
                     else
                     {
-                        if (detailDt.AsEnumerable().Any(row => row[filteBy].EqualString(RowHeader) && row["BuyerDelivery"].EqualString(ColumnHeader)))
-                            showDt = detailDt.AsEnumerable().Where(row => row[filteBy].EqualString(RowHeader) && row["BuyerDelivery"].EqualString(ColumnHeader)).CopyToDataTable();
+                        if (this.detailDt.AsEnumerable().Any(row => row[filteBy].EqualString(rowHeader) && row["BuyerDelivery"].EqualString(columnHeader)))
+                        {
+                            showDt = this.detailDt.AsEnumerable().Where(row => row[filteBy].EqualString(rowHeader) && row["BuyerDelivery"].EqualString(columnHeader)).CopyToDataTable();
+                        }
                     }
                 }
+
                 if (showDt != null && showDt.Rows.Count > 0)
                 {
                     P01_DetailData p1 = new P01_DetailData(showDt);
@@ -574,7 +609,7 @@ from (
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
