@@ -1,16 +1,19 @@
 ﻿CREATE TABLE [dbo].[Bundle_Detail] (
-    [BundleNo]    VARCHAR (10)  CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
-    [Id]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
-    [BundleGroup] NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
-    [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
+    [BundleNo]    VARCHAR (10)   CONSTRAINT [DF_Bundle_Detail_BundleNo] DEFAULT ('') NOT NULL,
+    [Id]          VARCHAR (13)   CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
+    [BundleGroup] NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
+    [Patterncode] VARCHAR (20)   CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
     [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Bundle_Detail_PatternDesc] DEFAULT ('') NOT NULL,
-    [SizeCode]    VARCHAR (8)   CONSTRAINT [DF_Bundle_Detail_SizeCode] DEFAULT ('') NULL,
-    [Qty]         NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Qty] DEFAULT ((0)) NULL,
-    [Parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Parts] DEFAULT ((0)) NULL,
-    [Farmin]      NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Farmin] DEFAULT ((0)) NULL,
-    [FarmOut]     NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
+    [SizeCode]    VARCHAR (8)    CONSTRAINT [DF_Bundle_Detail_SizeCode] DEFAULT ('') NULL,
+    [Qty]         NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_Qty] DEFAULT ((0)) NULL,
+    [Parts]       NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_Parts] DEFAULT ((0)) NULL,
+    [Farmin]      NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_Farmin] DEFAULT ((0)) NULL,
+    [FarmOut]     NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
+    [PrintDate]   DATETIME       NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC)
 );
+
+
 
 
 

@@ -54,6 +54,7 @@ namespace Sci.Production.Cutting
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
+                .Date("PrintDate", header: "Print Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
@@ -213,6 +214,7 @@ select *
 from(
     select 
         Convert(bit,0) as selected
+        , a.PrintDate
         ,a.BundleNo [Bundle]
         ,b.CutRef [CutRef]
         ,b.POID [POID]
@@ -260,6 +262,7 @@ from(
 
     select DISTINCT 
         Convert(bit,0) as selected
+        , a.PrintDate
         ,a.BundleNo [Bundle]
         ,b.CutRef [CutRef]
         ,b.POID [POID]
@@ -328,6 +331,7 @@ select *
 from(
     select 
         Convert(bit,0) as selected
+        , a.PrintDate
         ,a.BundleNo [Bundle]
         ,b.CutRef [CutRef]
         ,b.POID [POID]
@@ -375,6 +379,7 @@ from(
 
     select DISTINCT 
         Convert(bit,0) as selected
+        , a.PrintDate
         ,a.BundleNo [Bundle]
         ,b.CutRef [CutRef]
         ,b.POID [POID]
@@ -638,6 +643,14 @@ outer apply
             StringBuilder ups = new StringBuilder();
             foreach (var item in res2)
             {
+                ups.Append(string.Format(
+                    @"
+update bd
+set bd.PrintDate = GETDATE()
+from Bundle_Detail bd
+where bd.BundleNo = '{0}'",
+                    item.Barcode));
+
                 ups.Append(string.Format(@"
                             update b
                             set b.PrintDate = GETDATE()
