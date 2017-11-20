@@ -23,6 +23,7 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             drCurrentMaintain = _drCurrentMaintain;
             currentdetailTable = dt;
+            txtfactory1.FilteMDivision = true;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -117,6 +118,7 @@ namespace Sci.Production.Cutting
             string rfidDate1 = dateRFID.Value1.ToString();
             string rfidDate2 = dateRFID.Value2.ToString();
             string spno = this.txtSP.Text;
+            string factory = txtfactory1.Text;
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
 
@@ -158,6 +160,10 @@ where BIO.subprocessid='SORTING'
             if (!MyUtility.Check.Empty(spno))
             {
                 sqlcmd.Append(string.Format(@" and B.orderid='{0}'", spno));
+            }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlcmd.Append(string.Format(@" and WO.factoryid='{0}'", factory));
             }
             sqlcmd.Append(" )");
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd.ToString(), out detailTable);
