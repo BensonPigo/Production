@@ -12,59 +12,88 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// R03
+    /// </summary>
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        DateTime? output1, output2, buyerDel1, buyerDel2, sciDel1, sciDel2;
-        string season, brand, mDivision, factory, chx, style, category;
-        DataTable Factory, Brand, BrandFactory, Style, CD, FactoryLine, BrandFactoryCD, POCombo, Program, FactoryLineCD;
+        private DateTime? output1;
+        private DateTime? output2;
+        private DateTime? buyerDel1;
+        private DateTime? buyerDel2;
+        private DateTime? sciDel1;
+        private DateTime? sciDel2;
+        private string season;
+        private string brand;
+        private string mDivision;
+        private string factory;
+        private string chx;
+        private string style;
+        private string category;
+        private DataTable Factory;
+        private DataTable Brand;
+        private DataTable BrandFactory;
+        private DataTable Style;
+        private DataTable CD;
+        private DataTable FactoryLine;
+        private DataTable BrandFactoryCD;
+        private DataTable POCombo;
+        private DataTable Program;
+        private DataTable FactoryLineCD;
 
+        /// <summary>
+        /// R03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.Text = Sci.Env.User.Factory;
-            comboDropDownListCategory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboDropDownListCategory.SelectedIndex = 0;
 
-            MyUtility.Tool.SetupCombox(comboLocal, 1, 1, "Exclude,Include");
-            comboLocal.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboLocal, 1, 1, "Exclude,Include");
+            this.comboLocal.SelectedIndex = 0;
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (comboDropDownListCategory.SelectedIndex == -1)
+            if (this.comboDropDownListCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
-            output1 = dateSewingOutputDate.Value1;
-            output2 = dateSewingOutputDate.Value2;
-            buyerDel1 = dateBuyerDelivery.Value1;
-            buyerDel2 = dateBuyerDelivery.Value2;
-            sciDel1 = dateSCIDelivery.Value1;
-            sciDel2 = dateSCIDelivery.Value2;
-            season = txtseason.Text;
-            brand = txtbrand.Text;
-            mDivision = comboM.Text;
-            factory = comboFactory.Text;
-            chx = comboLocal.Text;
-            style = txtstyle.Text;
-            category = comboDropDownListCategory.SelectedValue.ToString();
+
+            this.output1 = this.dateSewingOutputDate.Value1;
+            this.output2 = this.dateSewingOutputDate.Value2;
+            this.buyerDel1 = this.dateBuyerDelivery.Value1;
+            this.buyerDel2 = this.dateBuyerDelivery.Value2;
+            this.sciDel1 = this.dateSCIDelivery.Value1;
+            this.sciDel2 = this.dateSCIDelivery.Value2;
+            this.season = this.txtseason.Text;
+            this.brand = this.txtbrand.Text;
+            this.mDivision = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+            this.chx = this.comboLocal.Text;
+            this.style = this.txtstyle.Text;
+            this.category = this.comboDropDownListCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈基礎資料的SQL
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 with tmp1stData as (
     select  o.ID
             , o.ProgramID
@@ -98,42 +127,68 @@ with tmp1stData as (
 --                                                  and sl.Location = sod.ComboType
     where   1=1
             and so.Shift <> 'O'
-            and o.Category in ({0})", category));
-            if (chx == "Exclude")
+            and o.Category in ({0})",
+                this.category));
+
+            if (this.chx == "Exclude")
+            {
                 sqlCmd.Append(" and o.LocalOrder = 0 ");
+            }
 
-            if (!MyUtility.Check.Empty(output1))
-                sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(output1).ToString("d")));
+            if (!MyUtility.Check.Empty(this.output1))
+            {
+                sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(this.output1).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(output2))
-                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(output2).ToString("d")));
+            if (!MyUtility.Check.Empty(this.output2))
+            {
+                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(this.output2).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(buyerDel1))
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDel1).ToString("d")));
+            if (!MyUtility.Check.Empty(this.buyerDel1))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDel1).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(buyerDel2))
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("d")));
+            if (!MyUtility.Check.Empty(this.buyerDel2))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDel2).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(sciDel1))
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDel1).ToString("d")));
+            if (!MyUtility.Check.Empty(this.sciDel1))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDel1).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(sciDel2))
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDel2).ToString("d")));
+            if (!MyUtility.Check.Empty(this.sciDel2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDel2).ToString("d")));
+            }
 
-            if (!MyUtility.Check.Empty(season))
-                sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'", season));
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'", this.season));
+            }
 
-            if (!MyUtility.Check.Empty(brand))
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
+            }
 
-            if (!MyUtility.Check.Empty(mDivision))
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+            if (!MyUtility.Check.Empty(this.mDivision))
+            {
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
+            }
 
-            if (!MyUtility.Check.Empty(factory))
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
+            }
 
-            if (!MyUtility.Check.Empty(style))
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", style));
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.style));
+            }
 
             sqlCmd.Append(@"
 ), forttlcpu as(
@@ -202,8 +257,9 @@ with tmp1stData as (
             string querySql;
             DualResult result;
 
-            # region By Factory
-            querySql = string.Format(@"
+            #region By Factory
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  MDivisionID
             , FactoryID 
@@ -221,8 +277,10 @@ select  MDivisionID
         , PPH = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
         ,EFF = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2))
 from tmp4thData
-Order by MDivisionID,FactoryID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out Factory);
+Order by MDivisionID,FactoryID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.Factory);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory data fail\r\n" + result.ToString());
@@ -230,8 +288,9 @@ Order by MDivisionID,FactoryID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Brand
-            querySql = string.Format(@"
+            #region By Brand
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  BrandID
             , sum(Output) AS TtlQty
@@ -247,8 +306,10 @@ select  BrandID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by BrandID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out Brand);
+Order by BrandID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.Brand);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Brand data fail\r\n" + result.ToString());
@@ -256,8 +317,9 @@ Order by BrandID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Brand-Factory
-            querySql = string.Format(@"
+            #region By Brand-Factory
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  BrandID
             , MDivisionID
@@ -277,8 +339,10 @@ select  BrandID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by BrandID, MDivisionID, FactoryID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out BrandFactory);
+Order by BrandID, MDivisionID, FactoryID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.BrandFactory);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Brand-Factory data fail\r\n" + result.ToString());
@@ -286,8 +350,9 @@ Order by BrandID, MDivisionID, FactoryID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Style
-            querySql = string.Format(@"
+            #region By Style
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  StyleID
             , ModularParent
@@ -316,8 +381,10 @@ select  StyleID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by StyleID, SeasonID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out Style);
+Order by StyleID, SeasonID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.Style);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Style data fail\r\n" + result.ToString());
@@ -325,8 +392,9 @@ Order by StyleID, SeasonID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By CD
-            querySql = string.Format(@"
+            #region By CD
+            querySql = string.Format(
+                @"
 {0} tmp4thData as (
     select  CdCodeID
             , CDDesc
@@ -342,8 +410,10 @@ select  CdCodeID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by CdCodeID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out CD);
+Order by CdCodeID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.CD);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By CD data fail\r\n" + result.ToString());
@@ -351,8 +421,9 @@ Order by CdCodeID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Factory-Line
-            querySql = string.Format(@"
+            #region By Factory-Line
+            querySql = string.Format(
+                @"
 {0} tmp4thData as (
     select  MDivisionID
             , FactoryID
@@ -371,8 +442,10 @@ select  MDivisionID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by MDivisionID, FactoryID, SewingLineID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out FactoryLine);
+Order by MDivisionID, FactoryID, SewingLineID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.FactoryLine);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory-Line data fail\r\n" + result.ToString());
@@ -380,8 +453,9 @@ Order by MDivisionID, FactoryID, SewingLineID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Brand-Factory-CD
-            querySql = string.Format(@"
+            #region By Brand-Factory-CD
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  BrandID
             , MDivisionID
@@ -404,8 +478,10 @@ select  BrandID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by BrandID, MDivisionID, FactoryID, CdCodeID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out BrandFactoryCD);
+Order by BrandID, MDivisionID, FactoryID, CdCodeID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.BrandFactoryCD);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Brand-Factory-CD data fail\r\n" + result.ToString());
@@ -413,8 +489,9 @@ Order by BrandID, MDivisionID, FactoryID, CdCodeID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By PO Combo
-            querySql = string.Format(@"
+            #region By PO Combo
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  POID
             , StyleID
@@ -445,8 +522,10 @@ select  POID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by POID, StyleID, BrandID, CdCodeID, SeasonID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out POCombo);
+Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.POCombo);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By PO Combo data fail\r\n" + result.ToString());
@@ -454,8 +533,9 @@ Order by POID, StyleID, BrandID, CdCodeID, SeasonID", sqlCmd.ToString());
             }
             #endregion
 
-            # region By Program
-            querySql = string.Format(@"
+            #region By Program
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  ProgramID
             , StyleID
@@ -482,8 +562,10 @@ select  ProgramID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
-Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out Program);
+Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.Program);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Program data fail\r\n" + result.ToString());
@@ -492,7 +574,8 @@ Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID", sqlCmd.ToString());
             #endregion
 
             #region By Factory-Line-CD
-            querySql = string.Format(@"
+            querySql = string.Format(
+                @"
 {0}tmp4thData as (
     select  MDivisionID
             , FactoryID
@@ -516,23 +599,25 @@ select  MDivisionID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF
 from tmp4thData
-Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToString());
-            result = DBProxy.Current.Select(null, querySql, out FactoryLineCD);
+Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc",
+                sqlCmd.ToString());
+
+            result = DBProxy.Current.Select(null, querySql, out this.FactoryLineCD);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory-Line-CD data fail\r\n" + result.ToString());
                 return failResult;
             }
-            #endregion 
+            #endregion
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            int totalCount = Factory.Rows.Count + Brand.Rows.Count + BrandFactory.Rows.Count + Style.Rows.Count + CD.Rows.Count + FactoryLine.Rows.Count + BrandFactoryCD.Rows.Count + POCombo.Rows.Count + Program.Rows.Count;
-            SetCount(totalCount);
+            int totalCount = this.Factory.Rows.Count + this.Brand.Rows.Count + this.BrandFactory.Rows.Count + this.Style.Rows.Count + this.CD.Rows.Count + this.FactoryLine.Rows.Count + this.BrandFactoryCD.Rows.Count + this.POCombo.Rows.Count + this.Program.Rows.Count;
+            this.SetCount(totalCount);
 
             if (totalCount <= 0)
             {
@@ -543,14 +628,19 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
+            if (excel == null)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsStart;
-            //填內容值
+
+            // 填內容值
             #region By Factory
             intRowsStart = 2;
             object[,] objArray = new object[1, 7];
-            foreach (DataRow dr in Factory.Rows)
+            foreach (DataRow dr in this.Factory.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
@@ -559,10 +649,11 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 4] = dr["TtlManhour"];
                 objArray[0, 5] = dr["PPH"];
                 objArray[0, 6] = dr["EFF"];
-                
-                worksheet.Range[String.Format("A{0}:G{0}", intRowsStart)].Value2 = objArray;
+
+                worksheet.Range[string.Format("A{0}:G{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -572,7 +663,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 6];
-            foreach (DataRow dr in Brand.Rows)
+            foreach (DataRow dr in this.Brand.Rows)
             {
                 objArray[0, 0] = dr["BrandID"];
                 objArray[0, 1] = dr["TtlQty"];
@@ -581,9 +672,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 4] = dr["PPH"];
                 objArray[0, 5] = dr["EFF"];
 
-                worksheet.Range[String.Format("A{0}:F{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:F{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -593,7 +685,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 8];
-            foreach (DataRow dr in BrandFactory.Rows)
+            foreach (DataRow dr in this.BrandFactory.Rows)
             {
                 objArray[0, 0] = dr["BrandID"];
                 objArray[0, 1] = dr["MDivisionID"];
@@ -604,9 +696,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 6] = dr["PPH"];
                 objArray[0, 7] = dr["EFF"];
 
-                worksheet.Range[String.Format("A{0}:H{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:H{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -616,7 +709,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 13];
-            foreach (DataRow dr in Style.Rows)
+            foreach (DataRow dr in this.Style.Rows)
             {
                 objArray[0, 0] = dr["StyleID"];
                 objArray[0, 1] = dr["ModularParent"];
@@ -631,9 +724,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 10] = dr["TtlManhour"];
                 objArray[0, 11] = dr["PPH"];
                 objArray[0, 12] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -643,7 +737,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 7];
-            foreach (DataRow dr in CD.Rows)
+            foreach (DataRow dr in this.CD.Rows)
             {
                 objArray[0, 0] = dr["CdCodeID"];
                 objArray[0, 1] = dr["CDDesc"];
@@ -652,9 +746,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 4] = dr["TtlManhour"];
                 objArray[0, 5] = dr["PPH"];
                 objArray[0, 6] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:G{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:G{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -664,7 +759,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 8];
-            foreach (DataRow dr in FactoryLine.Rows)
+            foreach (DataRow dr in this.FactoryLine.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
@@ -674,9 +769,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 5] = dr["TtlManhour"];
                 objArray[0, 6] = dr["PPH"];
                 objArray[0, 7] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:H{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:H{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -686,7 +782,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 10];
-            foreach (DataRow dr in BrandFactoryCD.Rows)
+            foreach (DataRow dr in this.BrandFactoryCD.Rows)
             {
                 objArray[0, 0] = dr["BrandID"];
                 objArray[0, 1] = dr["MDivisionID"];
@@ -698,9 +794,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 7] = dr["TtlManhour"];
                 objArray[0, 8] = dr["PPH"];
                 objArray[0, 9] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -710,7 +807,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 13];
-            foreach (DataRow dr in POCombo.Rows)
+            foreach (DataRow dr in this.POCombo.Rows)
             {
                 objArray[0, 0] = dr["POID"];
                 objArray[0, 1] = dr["StyleID"];
@@ -725,9 +822,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 10] = dr["TtlManhour"];
                 objArray[0, 11] = dr["PPH"];
                 objArray[0, 12] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -737,7 +835,7 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 12];
-            foreach (DataRow dr in Program.Rows)
+            foreach (DataRow dr in this.Program.Rows)
             {
                 objArray[0, 0] = dr["ProgramID"];
                 objArray[0, 1] = dr["StyleID"];
@@ -751,9 +849,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 9] = dr["TtlManhour"];
                 objArray[0, 10] = dr["PPH"];
                 objArray[0, 11] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -763,8 +862,8 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             worksheet.Select();
             intRowsStart = 2;
             objArray = new object[1, 10];
-            foreach (DataRow dr in FactoryLineCD.Rows)
-            { 
+            foreach (DataRow dr in this.FactoryLineCD.Rows)
+            {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["SewingLineID"];
@@ -775,9 +874,10 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
                 objArray[0, 7] = dr["TtlManhour"];
                 objArray[0, 8] = dr["PPH"];
                 objArray[0, 9] = dr["EFF"];
-                worksheet.Range[String.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             #endregion
@@ -796,7 +896,6 @@ Order by MDivisionID, FactoryID, SewingLineID, CdCodeID, CDDesc", sqlCmd.ToStrin
             #endregion
             this.HideWaitMessage();
             return true;
-
         }
     }
 }

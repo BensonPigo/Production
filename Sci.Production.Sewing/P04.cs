@@ -14,15 +14,23 @@ using System.Transactions;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// P04
+    /// </summary>
     public partial class P04 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// P04
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P04(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.grid.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -39,30 +47,27 @@ namespace Sci.Production.Sewing
                 .Numeric("ToSPConfirmPK", header: "To SP" + Environment.NewLine + "Confirm Packing Qty", iseditingreadonly: true)
                 .Numeric("ToSPAllSW_Out", header: "To SP All" + Environment.NewLine + "SewingOutput Qty", iseditingreadonly: true)
                 .Text("ReduceConfirmPK", header: "Is Must reduce" + Environment.NewLine + "Confirm Packing Qty", iseditingreadonly: true);
-             
+
             for (int i = 0; i < this.grid.Columns.Count; i++)
             {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
-            #endregion 
-            this.findNow();
+            #endregion
+            this.FindNow();
         }
 
-      
-
-        private void buttonRefresh_Click(object sender, EventArgs e)
+        private void ButtonRefresh_Click(object sender, EventArgs e)
         {
-            this.findNow();
-
+            this.FindNow();
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void ButtonSave_Click(object sender, EventArgs e)
         {
-            DataTable dtSelectData = (DataTable)((BindingSource)(this.grid.DataSource)).DataSource;
+            DataTable dtSelectData = (DataTable)((BindingSource)this.grid.DataSource).DataSource;
             #region Select Data
             if (dtSelectData.Select("do_flag = 'Y'").Length > 0)
             {
-                dtSelectData = dtSelectData.AsEnumerable().Where(row => row["do_flag"].Equals("Y") ).CopyToDataTable();
+                dtSelectData = dtSelectData.AsEnumerable().Where(row => row["do_flag"].Equals("Y")).CopyToDataTable();
             }
             else
             {
@@ -70,14 +75,14 @@ namespace Sci.Production.Sewing
                 return;
             }
             #endregion
-            
-           setSewingOutput(dtSelectData);
+
+            this.SetSewingOutput(dtSelectData);
 
             if (dtSelectData != null)
             {
                var form = new P04_SaveComplete(dtSelectData);
                form.ShowDialog();
-               this.findNow();
+                this.FindNow();
             }
         }
 
@@ -85,7 +90,7 @@ namespace Sci.Production.Sewing
         /// Get SewingOutput Data
         /// </summary>
         /// <param name="dtSelectData">ID</param>
-        private void setSewingOutput(DataTable dtSelectData)
+        private void SetSewingOutput(DataTable dtSelectData)
         {
             DualResult boolResult;
             DataTable[] dtOrdersReceive;
@@ -435,13 +440,11 @@ DROP TABLE #tmp3;
 DROP TABLE #SewingID;
 DROP TABLE #updateChild;
 DROP TABLE #Child;");
-            #endregion 
-   
+            #endregion
 
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-
                 boolResult = MyUtility.Tool.ProcessWithDatatable(dtSelectData, null, strSqlCmd.ToString(), out dtOrdersReceive);
                 if (!boolResult)
                 {
@@ -449,33 +452,34 @@ DROP TABLE #Child;");
                     MyUtility.Msg.WarningBox(boolResult.ToString());
                 }
 
-                #region 
-                //                #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
+                #region
+
+                // #region Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量
                 //                strSqlCmd = @"
                 //-- Check 母單 PackingList = Confirmed，必須保證拆單後，母單剩餘數量大於 Packing 數量 --
                 //-- checkValue => Packing > Sewing = 0 數量不足
-                //--				 Packing <= Sewing = 1 數量足夠
-                //declare @PackingTtlQty int = 0;
-                //declare @SewingTtlQty int = 0;
+                //--                 Packing <= Sewing = 1 數量足夠
+                // declare @PackingTtlQty int = 0;
+                // declare @SewingTtlQty int = 0;
 
-                //select	@PackingTtlQty = isnull (sum (pld.ShipQty), 0)
-                //from PackingList pl
-                //inner join PackingList_Detail pld on pl.ID = pld.ID							  
-                //where	pld.OrderID = @FromOrderID
-                //		and pl.Status = 'Confirmed'		
+                // select   @PackingTtlQty = isnull (sum (pld.ShipQty), 0)
+                // from PackingList pl
+                // inner join PackingList_Detail pld on pl.ID = pld.ID
+                // where    pld.OrderID = @FromOrderID
+                // and pl.Status = 'Confirmed'
 
-                //select	@SewingTtlQty = isnull (sum (sodd.QAQty), 0)
-                //from PackingList pl
-                //inner join PackingList_Detail pld on pl.ID = pld.ID
-                //inner join SewingOutput_Detail sod on pl.OrderID = sod.OrderId
-                //inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
-                //											  and pld.Article = sodd.Article
-                //											  and pld.SizeCode = sodd.SizeCode											  
-                //where	pl.OrderID = @FromOrderID
-                //		and pl.Status = 'Confirmed'
+                // select   @SewingTtlQty = isnull (sum (sodd.QAQty), 0)
+                // from PackingList pl
+                // inner join PackingList_Detail pld on pl.ID = pld.ID
+                // inner join SewingOutput_Detail sod on pl.OrderID = sod.OrderId
+                // inner join SewingOutput_Detail_Detail sodd on sod.UKey = sodd.SewingOutput_DetailUKey
+                // and pld.Article = sodd.Article
+                // and pld.SizeCode = sodd.SizeCode
+                // where    pl.OrderID = @FromOrderID
+                // and pl.Status = 'Confirmed'
 
-                //select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
-                //													    , 0)";
+                // select checkValue = iif (@SewingTtlQty >= @PackingTtlQty, 1
+                // , 0)";
                 //                #endregion
                 //                if (MyUtility.GetValue.Lookup(strSqlCmd, listSqlPara).Equals("0"))
                 //                {
@@ -484,25 +488,25 @@ DROP TABLE #Child;");
                 //                    return false;
                 //                }
 
-                //                #region Check 拆單後的數量，總數不得超過子單 Order_Qty
+                // #region Check 拆單後的數量，總數不得超過子單 Order_Qty
                 //                strSqlCmd = @"
                 //-- Check 拆單後的數量，總數不得超過子單 Order_Qty --
-                //select	*
-                //from Order_Qty oq
-                //cross apply (
-                //	select value = MIN(value)
-                //	from (
-                //		select value = sum(sodd.QaQty)
-                //		from SewingOutput_Detail_Detail sodd 
-                //		where oq.Article = sodd.Article
-                //			  and oq.SizeCode = sodd.SizeCode
-                //			  and oq.ID = sodd.OrderId		  
-                //		group by ComboType
-                //	)x
-                //) SewingQty
-                //where	oq.id = @ToOrderID
-                //		and oq.Qty < SewingQty.value";
-                //                #endregion                
+                // select   *
+                // from Order_Qty oq
+                // cross apply (
+                // select value = MIN(value)
+                // from (
+                // select value = sum(sodd.QaQty)
+                // from SewingOutput_Detail_Detail sodd
+                // where oq.Article = sodd.Article
+                // and oq.SizeCode = sodd.SizeCode
+                // and oq.ID = sodd.OrderId
+                // group by ComboType
+                // )x
+                // ) SewingQty
+                // where    oq.id = @ToOrderID
+                // and oq.Qty < SewingQty.value";
+                //                #endregion
                 //                if (MyUtility.Check.Seek(strSqlCmd, listSqlPara))
                 //                {
                 //                    transactionscope.Dispose();
@@ -514,15 +518,14 @@ DROP TABLE #Child;");
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
-            
         }
 
-        private void findNow()
+        private void FindNow()
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
-            #endregion 
+            #endregion
             #region SQL Command
             string strSqlCmd = $@"
 select *,

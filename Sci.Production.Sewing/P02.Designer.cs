@@ -219,7 +219,7 @@
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
             this.dateDate.TabIndex = 0;
-            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateDate_Validating);
+            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateDate_Validating);
             // 
             // displayFactory
             // 
@@ -297,7 +297,7 @@
             0,
             0,
             0});
-            this.numManpower.Validated += new System.EventHandler(this.numManpower_Validated);
+            this.numManpower.Validated += new System.EventHandler(this.NumManpower_Validated);
             // 
             // numWHours
             // 
@@ -329,7 +329,7 @@
             0,
             0,
             0});
-            this.numWHours.Validated += new System.EventHandler(this.numWHours_Validated);
+            this.numWHours.Validated += new System.EventHandler(this.NumWHours_Validated);
             // 
             // numManhours
             // 
@@ -516,7 +516,7 @@
             this.btnShareWworkingHoursToSP.TabIndex = 4;
             this.btnShareWworkingHoursToSP.Text = "Share < working hours > to SP#";
             this.btnShareWworkingHoursToSP.UseVisualStyleBackColor = true;
-            this.btnShareWworkingHoursToSP.Click += new System.EventHandler(this.btnShareWworkingHoursToSP_Click);
+            this.btnShareWworkingHoursToSP.Click += new System.EventHandler(this.BtnShareWworkingHoursToSP_Click);
             // 
             // label12
             // 
