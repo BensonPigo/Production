@@ -18,6 +18,7 @@ namespace Sci.Production.Planning
         private decimal months;
         private string factory;
         private string mdivision;
+        private string category;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DataTable printData;
@@ -58,6 +59,7 @@ namespace Sci.Production.Planning
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
             this.selectindex = this.txtdropdownlist1.SelectedIndex;
+            this.category = this.txtdropdownlist1.Text;
             this.months = this.numNewStyleBaseOn.Value;
 
             DualResult result;
@@ -108,7 +110,7 @@ namespace Sci.Production.Planning
             sqlCmd.Append(string.Format(@"
 SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.StyleUkey,o.id
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
-    ,oa.Article
+    ,oa.Article,o.brandid
 into #tmpo
 FROM Orders o
 outer apply(
@@ -163,37 +165,32 @@ Where 1=1 and ( o.junk = 0 or o.junk is null) "));
             {
                 case 0:
                     sqlCmd.Append(@" and o.Category = 'B' ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 1:
                     sqlCmd.Append(@" and o.Category = 'S' ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 2:
                     sqlCmd.Append(@" and o.Category = 'M' ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 3:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 4:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 case 5:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
-                    this.condition.Append(string.Format(@"    Category : {0}", this.txtdropdownlist1.Items[this.selectindex]));
                     break;
                 default:
 
                     break;
             }
 
+            this.condition.Append(string.Format(@"    Category : {0}", this.category));
             #endregion
 
             sqlCmd.Append(string.Format(@"
-select distinct o.FtyGroup,o.Styleid,oa.Article,
+select distinct o.FtyGroup,o.Styleid,oa.Article,oa.Brand,
 o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
 into #tmpol
 from #tmpo o
@@ -201,9 +198,14 @@ outer apply(
 	select Article= STUFF((select distinct CONCAT(',',Article) 
 					from #tmpo oa
 					where oa.styleid=o.styleid
-					for xml path('')),1,1,'')
+					for xml path('')),1,1,''),
+           Brand = STUFF((select distinct CONCAT(',',Brandid) 
+					from #tmpo oa
+					where oa.styleid=o.styleid
+					for xml path('')) ,1,1,'')
+           
 ) oa
-group by o.FtyGroup,o.Styleid,oa.Article,o.SeasonID,o.CdCodeID,o.CPU
+group by o.FtyGroup,o.Styleid,oa.Article,oa.Brand,o.SeasonID,o.CdCodeID,o.CPU
 --
 select 
 	o.StyleID
@@ -305,7 +307,7 @@ pivot
     sum(price_tms)
     for artworktypeid in ( [SEWING],[BONDING (MACHINE)],[BONDING (HAND)],[LASER],[SEAMSEAL],[ULTRASONIC],[HEAT TRANSFER],[WELDED],[CUTTING],[DOWN],[INSPECTION],[DIE CUT],[SUBLIMATION PRINT],[QUILTING(AT)],[SUBLIMATION SPRAY],[SUBLIMATION ROLLER],[AT],[PRESSING],[PACKING],[FEEDOFARM],[FLATLOCK],[4FLATLOCK-S],[4FLATLOCK-H],[3FLATLOCK],[EYEBUTTON],[SMALL HOT PRESS],[BIG HOT PRESS],[DOWN FILLING],[ZIG ZAG],[QUILTING(HAND)],[D-chain ZIG ZAG],[REAL FLATSEAM],[Fusible],[BIG HOT FOR BONDING],[EMBROIDERY],[PRINTING],[EMBOSS/DEBOSS],[GMT WASH],[PAD PRINTING],[Garment Dye],[HEAT SET PLEAT],[SP_THREAD],[CARTON])
 )as pvt 
-select o.FtyGroup,o.StyleID,o.Article,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
+select o.FtyGroup,o.StyleID,o.Article,o.Brand,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
 ,a.A,isnull(r.R,'New Style') as R,W = iif(w.P=0 or w.P is null,'N','Y'),isnull([SEWING],0)[SEWING],isnull([BONDING (MACHINE)],0)[BONDING (MACHINE)],isnull([BONDING (HAND)],0)[BONDING (HAND)],isnull([LASER],0)[LASER],isnull([SEAMSEAL],0)[SEAMSEAL],isnull([ULTRASONIC],0)[ULTRASONIC],isnull([HEAT TRANSFER],0)[HEAT TRANSFER],isnull([WELDED],0)[WELDED],isnull([CUTTING],0)[CUTTING],isnull([DOWN],0)[DOWN],isnull([INSPECTION],0)[INSPECTION],isnull([DIE CUT],0)[DIE CUT],isnull([SUBLIMATION PRINT],0)[SUBLIMATION PRINT],isnull([QUILTING(AT)],0)[QUILTING(AT)],isnull([SUBLIMATION SPRAY],0)[SUBLIMATION SPRAY],isnull([SUBLIMATION ROLLER],0)[SUBLIMATION ROLLER],
 isnull([AT],0)[AT],
 isnull([PRESSING],0)[PRESSING],

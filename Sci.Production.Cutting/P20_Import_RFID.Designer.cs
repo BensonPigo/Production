@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTOP = new Sci.Win.UI.Panel();
+            this.dateRFID = new Sci.Win.UI.DateRange();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
             this.labelRFIDDate = new Sci.Win.UI.Label();
@@ -38,7 +39,8 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.gridImport = new Sci.Win.UI.Grid();
-            this.dateRFID = new Sci.Win.UI.DateRange();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
@@ -46,6 +48,8 @@
             // 
             // panelTOP
             // 
+            this.panelTOP.Controls.Add(this.txtfactory1);
+            this.panelTOP.Controls.Add(this.lbFactory);
             this.panelTOP.Controls.Add(this.dateRFID);
             this.panelTOP.Controls.Add(this.txtSP);
             this.panelTOP.Controls.Add(this.labelLocateForSP);
@@ -56,6 +60,28 @@
             this.panelTOP.Name = "panelTOP";
             this.panelTOP.Size = new System.Drawing.Size(883, 44);
             this.panelTOP.TabIndex = 1;
+            // 
+            // dateRFID
+            // 
+            // 
+            // 
+            // 
+            this.dateRFID.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRFID.DateBox1.Name = "";
+            this.dateRFID.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRFID.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRFID.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRFID.DateBox2.Name = "";
+            this.dateRFID.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRFID.DateBox2.TabIndex = 1;
+            this.dateRFID.IsRequired = false;
+            this.dateRFID.Location = new System.Drawing.Point(115, 11);
+            this.dateRFID.Name = "dateRFID";
+            this.dateRFID.Size = new System.Drawing.Size(280, 23);
+            this.dateRFID.TabIndex = 19;
             // 
             // txtSP
             // 
@@ -139,14 +165,14 @@
             this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridImport.Location = new System.Drawing.Point(0, 44);
             this.gridImport.Name = "gridImport";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
@@ -155,35 +181,32 @@
             this.gridImport.TabIndex = 9;
             this.gridImport.TabStop = false;
             // 
-            // dateRFID
+            // lbFactory
             // 
+            this.lbFactory.Location = new System.Drawing.Point(589, 11);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(58, 23);
+            this.lbFactory.TabIndex = 20;
+            this.lbFactory.Text = "Factory:";
             // 
+            // txtfactory1
             // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(650, 11);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 21;
             // 
-            this.dateRFID.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateRFID.DateBox1.Name = "";
-            this.dateRFID.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateRFID.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateRFID.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateRFID.DateBox2.Name = "";
-            this.dateRFID.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateRFID.DateBox2.TabIndex = 1;
-            this.dateRFID.IsRequired = false;
-            this.dateRFID.Location = new System.Drawing.Point(115, 11);
-            this.dateRFID.Name = "dateRFID";
-            this.dateRFID.Size = new System.Drawing.Size(280, 23);
-            this.dateRFID.TabIndex = 19;
-            // 
-            // P20_Import_FRID
+            // P20_Import_RFID
             // 
             this.ClientSize = new System.Drawing.Size(883, 457);
             this.Controls.Add(this.gridImport);
             this.Controls.Add(this.panelBOTTOM);
             this.Controls.Add(this.panelTOP);
-            this.Name = "P20_Import_FRID";
+            this.Name = "P20_Import_RFID";
             this.Text = "Import From RFID";
             this.panelTOP.ResumeLayout(false);
             this.panelTOP.PerformLayout();
@@ -205,5 +228,7 @@
         private Win.UI.Button btnImport;
         private Win.UI.Grid gridImport;
         private Win.UI.DateRange dateRFID;
+        private Class.txtfactory txtfactory1;
+        private Win.UI.Label lbFactory;
     }
 }
