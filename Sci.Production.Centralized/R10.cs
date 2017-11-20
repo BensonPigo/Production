@@ -17,19 +17,27 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Centralized
 {
-    internal partial class R10 : Sci.Win.Tems.PrintForm
+    /// <summary>
+    /// R10
+    /// </summary>
+    internal partial class R10 : Win.Tems.PrintForm
     {
-        string tsql_Summary;
-        string tsql_detail;
-        DataTable dtSummary;
-        DataTable dtDetail;
+        private string tsql_Summary;
+        private string tsql_detail;
+        private DataTable dtSummary;
+        private DataTable dtDetail;
 
+        /// <summary>
+        /// R10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();  
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -38,11 +46,12 @@ namespace Sci.Production.Centralized
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            string sqlWhere = "";
-            string sqlFactory = "";    //要抓工廠的資料
-            string sqlProduction = "";
+            string sqlWhere = string.Empty;
+            string sqlFactory = string.Empty;    // 要抓工廠的資料
+            string sqlProduction = string.Empty;
             List<string> sqlWheres = new List<string>();
             List<string> sqlFactorys = new List<string>();
             List<string> sqlProductions = new List<string>();
@@ -54,12 +63,14 @@ namespace Sci.Production.Centralized
                 this.dateOutputDateStart.Focus();
                 return false;
             }
+
             if (this.dateOutputDateEnd.Value.Empty())
             {
                 MyUtility.Msg.ErrorBox("[End Output Date] can not be Empty!!");
                 this.dateOutputDateEnd.Focus();
                 return false;
             }
+
             if (this.comboExchangeRate.Text.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Exchange Rate] can not be Empty!!");
@@ -71,21 +82,27 @@ namespace Sci.Production.Centralized
             sqlWheres.Add("pod.Category != 'G'");
             if (!this.dateOutputDateStart.Value.Empty() && !this.dateOutputDateEnd.Value.Empty())
             {
-                sqlWheres.Add(string.Format("so.OutputDate between '{0}' and '{1}'"
-                    , ((DateTime)this.dateOutputDateStart.Value).ToShortDateString()
-                    , ((DateTime)this.dateOutputDateEnd.Value).ToShortDateString()));
+                sqlWheres.Add(string.Format(
+                    "so.OutputDate between '{0}' and '{1}'",
+                    ((DateTime)this.dateOutputDateStart.Value).ToShortDateString(),
+                    ((DateTime)this.dateOutputDateEnd.Value).ToShortDateString()));
             }
+
             if (!this.txtCentralizedFactory1.Text.Empty())
             {
-                sqlWheres.Add(string.Format("so.FactoryID ='{0}'"
-                    , this.txtCentralizedFactory1.Text));
-                sqlFactorys.Add(string.Format("Factory.ID ='{0}'"
-                    , this.txtCentralizedFactory1.Text));                
+                sqlWheres.Add(string.Format(
+                    "so.FactoryID ='{0}'",
+                    this.txtCentralizedFactory1.Text));
+                sqlFactorys.Add(string.Format(
+                    "Factory.ID ='{0}'",
+                    this.txtCentralizedFactory1.Text));
             }
+
             if (!this.txtcountry1.TextBox1.Text.Empty())
             {
-                sqlWheres.Add(string.Format("so.FactoryID in(select ID from Factory where CountryID='{0}')"
-                    , this.txtcountry1.TextBox1.Text));
+                sqlWheres.Add(string.Format(
+                    "so.FactoryID in(select ID from Factory where CountryID='{0}')",
+                    this.txtcountry1.TextBox1.Text));
             }
 
             if (this.checkIncludeLocalOrder.Checked == false)
@@ -94,15 +111,19 @@ namespace Sci.Production.Centralized
             }
 
             sqlWhere = string.Join(" and ", sqlWheres);
-            sqlProduction = string.Join("", sqlProductions);
+            sqlProduction = string.Join(string.Empty, sqlProductions);
             if (sqlFactorys.Count() > 0)
+            {
                 sqlFactory = " and " + string.Join(" and ", sqlFactorys);
+            }
             else
-                sqlFactory = "";
+            {
+                sqlFactory = string.Empty;
+            }
             #endregion
 
             #region Detail SQL
-            tsql_detail = string.Format(
+            this.tsql_detail = string.Format(
 @"
 select so.FactoryID,so.OutputDate,f.CountryID,pod.BrandID,sodd.OrderId,GetCategory.Category,pod.CurrencyID,CValue.Article,CValue.Size,CValue.EType,CValue.OutputQty,
        CPU = round(iif(CValue.EType is null,CValue.CPU,CValue.CPU*GetSuitRate.SuitRate),3),
@@ -134,7 +155,7 @@ order by FactoryID,sodd.OrderId
             #endregion
 
             #region Summary SQL
-            tsql_Summary =
+            this.tsql_Summary =
 @"
 select FactoryID,BrandID,
 	   QAQty = sum(OutputQty),
@@ -149,30 +170,32 @@ order by FactoryID
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            //把DataTable的值清空
-            dtSummary = null;
-            dtDetail = null;
+            // 把DataTable的值清空
+            this.dtSummary = null;
+            this.dtDetail = null;
 
             #region --由Factory.PmsPath抓各個連線路徑
             this.SetLoadingText("Load connections... ");
             XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>(); //←主要是要重組 List connectionString 
+            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
             foreach (string ss in strSevers)
             {
-                //判斷工廠的欄位選項是否有值,有值代表只需要撈單獨一個System
-                if (!MyUtility.Check.Empty(txtCentralizedFactory1.Text))
+                // 判斷工廠的欄位選項是否有值,有值代表只需要撈單獨一個System
+                if (!MyUtility.Check.Empty(this.txtCentralizedFactory1.Text))
                 {
-                    //只取:後的FactoryID 
+                    // 只取:後的FactoryID
                     string[] m = ss.Split(new char[] { ':' });
                     if (m.Count() > 1)
                     {
-                        //判斷是否有同畫面上的工廠名稱
+                        // 判斷是否有同畫面上的工廠名稱
                         string[] mFactory = m[1].Split(new char[] { ',' });
-                        //如果不同,就換下一個System,直到相同為止才跳出去
-                        if (!mFactory.AsEnumerable().Any(f => f.EqualString(txtCentralizedFactory1.Text.ToString())))
+
+                        // 如果不同,就換下一個System,直到相同為止才跳出去
+                        if (!mFactory.AsEnumerable().Any(f => f.EqualString(this.txtCentralizedFactory1.Text.ToString())))
                         {
                             continue;
                         }
@@ -182,16 +205,16 @@ order by FactoryID
                         continue;
                     }
                 }
-                var Connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-            connectionString.Add(Connections);
+
+                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+            connectionString.Add(connections);
             }
-            if (null == connectionString || connectionString.Count == 0)
+
+            if (connectionString == null || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
             }
 #endregion
-
-
 
             // 依各個連線抓該DB的資料, 並且合併到 dt_All
             DataTable tmpSummary = new DataTable();
@@ -199,92 +222,110 @@ order by FactoryID
             {
                 string conString = connectionString[i];
                 this.SetLoadingText(
-                    string.Format("Load data from connection {0}/{1} "
-                    , (i + 1), connectionString.Count));
+                    string.Format(
+                        "Load data from connection {0}/{1} ",
+                    i + 1,
+                    connectionString.Count));
 
                 // 跨資料庫連線，將所需資料存到TempTable，再給不同資料庫使用
-                SqlConnection PmsConn;
-                using (PmsConn = new SqlConnection(conString))
+                SqlConnection pmsConn;
+                using (pmsConn = new SqlConnection(conString))
                 {
-                    PmsConn.Open();
+                    pmsConn.Open();
                     DataTable tmpDetails;
                     DualResult result3;
 
-                    string DetailList = "FactoryID,OutputDate,CountryID,BrandID,OrderId,Category,CurrencyID,Article,Size,EType,OutputQty,CPU,CpuRate,SuitRate,CurrencyRate,TotalCpu,TotalFOB";
+                    string detailList = "FactoryID,OutputDate,CountryID,BrandID,OrderId,Category,CurrencyID,Article,Size,EType,OutputQty,CPU,CpuRate,SuitRate,CurrencyRate,TotalCpu,TotalFOB";
                     SqlConnection tradeConn;
-                    result3 = DBProxy.Current.OpenConnection("", out tradeConn);
-                    if (!result3) { return result3; }
-
-                    result3 = DBProxy.Current.SelectByConn(PmsConn, tsql_detail, out tmpDetails);
-                    if (!result3) { return result3; }
-
-                    result3 = MyUtility.Tool.ProcessWithDatatable(tmpDetails, DetailList, tsql_Summary, out tmpSummary, "#Detail", tradeConn);
-                    if (!result3) { return result3; }     
-
-                    if (dtSummary == null || dtSummary.Rows.Count == 0)
+                    result3 = DBProxy.Current.OpenConnection(string.Empty, out tradeConn);
+                    if (!result3)
                     {
-                        dtSummary = tmpSummary;
+                        return result3;
+                    }
+
+                    result3 = DBProxy.Current.SelectByConn(pmsConn, this.tsql_detail, out tmpDetails);
+                    if (!result3)
+                    {
+                        return result3;
+                    }
+
+                    result3 = MyUtility.Tool.ProcessWithDatatable(tmpDetails, detailList, this.tsql_Summary, out tmpSummary, "#Detail", tradeConn);
+                    if (!result3)
+                    {
+                        return result3;
+                    }
+
+                    if (this.dtSummary == null || this.dtSummary.Rows.Count == 0)
+                    {
+                        this.dtSummary = tmpSummary;
                     }
                     else
                     {
-                        dtSummary.Merge(tmpSummary);
+                        this.dtSummary.Merge(tmpSummary);
                     }
 
-                    if (dtDetail == null || dtDetail.Rows.Count == 0)
+                    if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
                     {
-                        dtDetail = tmpDetails;
+                        this.dtDetail = tmpDetails;
                     }
                     else
                     {
-                        dtDetail.Merge(tmpDetails);
+                        this.dtDetail.Merge(tmpDetails);
                     }
                 }
             }
 
             #region 加總Total
             int startIndex = 2;
-            
-            //最後一列Total
-            DataRow totalrow = dtSummary.NewRow();
+
+            // 最後一列Total
+            DataRow totalrow = this.dtSummary.NewRow();
             totalrow[0] = "Total";
 
-            //for dt每個欄位
-            decimal TTColumnAMT = 0;
-            for (int colIdx = startIndex; colIdx < dtSummary.Columns.Count; colIdx++)
+            // for dt每個欄位
+            decimal tTColumnAMT = 0;
+            for (int colIdx = startIndex; colIdx < this.dtSummary.Columns.Count; colIdx++)
             {
-                TTColumnAMT = 0;
-                //for dt每一列
-                for (int rowIdx = 0; rowIdx < dtSummary.Rows.Count; rowIdx++)
+                tTColumnAMT = 0;
+
+                // for dt每一列
+                for (int rowIdx = 0; rowIdx < this.dtSummary.Rows.Count; rowIdx++)
                 {
-                    TTColumnAMT += Convert.ToDecimal(dtSummary.Rows[rowIdx][colIdx]);
+                    tTColumnAMT += Convert.ToDecimal(this.dtSummary.Rows[rowIdx][colIdx]);
                 }
-                totalrow[colIdx] = TTColumnAMT;
+
+                totalrow[colIdx] = tTColumnAMT;
             }
-            dtSummary.Rows.Add(totalrow);
+
+            this.dtSummary.Rows.Add(totalrow);
             #endregion
 
             return Result.True;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dtSummary == null || dtSummary.Rows.Count == 0)
+            if (this.dtSummary == null || this.dtSummary.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("data not found");
                 return false;
             }
-            if (dtDetail == null || dtDetail.Rows.Count == 0)
+
+            if (this.dtDetail == null || this.dtDetail.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("data not found");
                 return false;
             }
             #region Save & Show Excel
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
-            MyUtility.Excel.CopyToXls(dtSummary, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
-            MyUtility.Excel.CopyToXls(dtDetail, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
-            for (int i = 1; i <= 2; i++){
+            MyUtility.Excel.CopyToXls(this.dtSummary, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(this.dtDetail, null, "Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp, wSheet: objApp.Sheets[2]);
+            for (int i = 1; i <= 2; i++)
+            {
                 objApp.Sheets[i].Columns.AutoFit();
             }
+
             Excel.Workbook workbook = objApp.Workbooks[1];
             string strFileName = Sci.Production.Class.MicrosoftFile.GetName("Centralized_R10_OutputSummaryWithFOBReport(Summary_Detail).xltx");
             workbook.SaveAs(strFileName);
@@ -292,7 +333,7 @@ order by FactoryID
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
             strFileName.OpenFile();
-            #endregion 
+            #endregion
             return true;
         }
     }

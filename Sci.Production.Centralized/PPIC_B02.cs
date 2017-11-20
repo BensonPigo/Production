@@ -8,35 +8,46 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// PPIC_B02
+    /// </summary>
     public partial class PPIC_B02 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// PPIC_B02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public PPIC_B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboType, 2, 1, "L,Lacking,R,Replacement");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "L,Lacking,R,Replacement");
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtID.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Type"] = "AL";
+            this.CurrentMaintain["Type"] = "AL";
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< ID > can not be empty!");
                 this.txtID.Focus();
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
     }

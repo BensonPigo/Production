@@ -12,65 +12,85 @@ using Sci.Data;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// WH_B03
+    /// </summary>
     public partial class WH_B03 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// WH_B03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public WH_B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        //存檔前檢查
+        // 存檔前檢查
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             DataTable whseReasonDt;
             Ict.DualResult cbResult;
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Desc > can not be empty!");
                 this.txtDesc.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["ActionCode"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["ActionCode"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Action Code > can not be empty!");
                 this.txtActionCode.Focus();
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["id"].ToString()))
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
-                CurrentMaintain["type"] = "RR";
+                this.CurrentMaintain["type"] = "RR";
                 if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from whsereason WITH (NOLOCK) where type='RR'", out whseReasonDt))
                 {
                     string id = whseReasonDt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
-                    { CurrentMaintain["id"] = "00001"; }
+                    {
+                        this.CurrentMaintain["id"] = "00001";
+                    }
                     else
                     {
                         int newID = int.Parse(id) + 1;
-                        CurrentMaintain["id"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
+                        this.CurrentMaintain["id"] = Convert.ToString(newID).ToString().PadLeft(5, '0');
                     }
                 }
-                else { ShowErr(cbResult); }
-
+                else
+                {
+                    this.ShowErr(cbResult);
+                }
             }
+
             return base.ClickSaveBefore();
         }
 
-        //copy前清空id
+        // copy前清空id
+
+        /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
-            CurrentMaintain["id"] = string.Empty;
+            this.CurrentMaintain["id"] = string.Empty;
         }
 
-        private void txtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtActionCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", txtDesc.Text, true, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", this.txtDesc.Text, true, ",");
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.CurrentMaintain["ActionCode"] = item.GetSelectedString();
         }
     }

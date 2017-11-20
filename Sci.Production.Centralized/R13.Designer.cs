@@ -133,7 +133,7 @@
             this.datePulloutDate1.Name = "datePulloutDate1";
             this.datePulloutDate1.Size = new System.Drawing.Size(130, 23);
             this.datePulloutDate1.TabIndex = 0;
-            this.datePulloutDate1.Validated += new System.EventHandler(this.datePulloutDate1_Validated);
+            this.datePulloutDate1.Validated += new System.EventHandler(this.DatePulloutDate1_Validated);
             // 
             // label8
             // 
@@ -156,7 +156,7 @@
             this.dateApproveDate1.Name = "dateApproveDate1";
             this.dateApproveDate1.Size = new System.Drawing.Size(130, 23);
             this.dateApproveDate1.TabIndex = 2;
-            this.dateApproveDate1.Validated += new System.EventHandler(this.dateApproveDate1_Validated);
+            this.dateApproveDate1.Validated += new System.EventHandler(this.DateApproveDate1_Validated);
             // 
             // label9
             // 
@@ -179,7 +179,7 @@
             this.dateOnboardDate1.Name = "dateOnboardDate1";
             this.dateOnboardDate1.Size = new System.Drawing.Size(130, 23);
             this.dateOnboardDate1.TabIndex = 4;
-            this.dateOnboardDate1.Validated += new System.EventHandler(this.dateOnboardDate1_Validated);
+            this.dateOnboardDate1.Validated += new System.EventHandler(this.DateOnboardDate1_Validated);
             // 
             // label10
             // 
