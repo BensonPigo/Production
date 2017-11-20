@@ -44,7 +44,6 @@ namespace Sci.Production.IE
             this.DetailSelectCommand = string.Format(
                 @"
 select  ld.*
-        , OriNo = No
         , o.DescEN as Description
         , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
@@ -868,8 +867,8 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 string sqlCmd = string.Format(
                     @"
 select ID = null
-	   , OriNo = ld.No
-	   , No = ''
+	   , OriNo = ld.OriNo
+	   , No = ld.No
 	   , ld.Annotation
 	   , ld.GSD
 	   , ld.TotalGSD
