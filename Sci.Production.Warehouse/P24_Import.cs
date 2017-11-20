@@ -299,5 +299,22 @@ WHERE   StockType='{0}'
 
             this.Close();
         }
+
+        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow dr2 in ((DataTable)listControlBindingSource1.DataSource).Select("selected = 1"))
+            {
+                if (dr2["selected"].ToString() == "1")
+                    dr2["tolocation"] = this.txtLocation.Text;
+            }
+        }
+
+        private void txtLocation_MouseDown(object sender, MouseEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("O", "");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            txtLocation.Text = item.GetSelectedString();
+        }
     }
 }
