@@ -54,7 +54,7 @@ namespace Sci.Production.Cutting
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
-                .Date("PrintDate", header: "Print Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("PrintDate", header: "Print Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
