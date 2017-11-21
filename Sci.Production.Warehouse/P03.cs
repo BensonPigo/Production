@@ -358,6 +358,9 @@ namespace Sci.Production.Warehouse
             this.gridMaterialStatus.ColumnFrozen(gridMaterialStatus.Columns["fabrictype2"].Index); 
             gridMaterialStatus.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["FinalETA"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            gridMaterialStatus.Columns["CurrencyID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            gridMaterialStatus.Columns["ShipFOC"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            gridMaterialStatus.Columns["InputQty"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             gridMaterialStatus.Columns["seq1"].Width = 40;
             this.gridMaterialStatus.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
 
@@ -383,7 +386,7 @@ namespace Sci.Production.Warehouse
                 //若不相同資料為17090101PP002,17090101PP003, 呈現17090101PP002/PP003
                 string new_orderidlist = "";
                 string before_orderid = dr["id"].ToString();
-                if (!dr["OrderIdList"].ToString().Equals(string.Empty))
+                if (!dr["OrderIdList"].ToString().Equals(string.Empty) && !dr["From_Program"].ToString().Equals("P04"))
                 {
                     foreach (string order_id in dr["OrderIdList"].ToString().Split('/'))
                     {
@@ -731,7 +734,7 @@ where ROW_NUMBER_D =1
        select 
 			1 as ROW_NUMBER_D
 			, [ukey] = null
-           , [id] = l.OrderID
+           , [id] = o.POID
            , [seq1] = '-'
            , [seq2] = '-'
 			, [StyleID] = '-'
@@ -772,9 +775,10 @@ where ROW_NUMBER_D =1
            , [currencyid] = '-'
            , [FIR] = '-'
            , [Remark] = '-'
-           , [OrderIdList] = '-'
+           , [OrderIdList] = l.OrderID
            , [From_Program] = 'P04'
            from LocalInventory l
+           left join orders o on o.id = l.orderid
            left join LocalItem b on l.Refno=b.RefNo
            left join LocalSupp c on b.LocalSuppid=c.ID
             where l.OrderID like @id + '%'      
