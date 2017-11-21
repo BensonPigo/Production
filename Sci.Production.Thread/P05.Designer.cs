@@ -256,7 +256,7 @@
             this.comboForwardBack.Name = "comboForwardBack";
             this.comboForwardBack.Size = new System.Drawing.Size(86, 24);
             this.comboForwardBack.TabIndex = 1;
-            this.comboForwardBack.SelectionChangeCommitted += new System.EventHandler(this.comboForwardBack_SelectionChangeCommitted);
+            this.comboForwardBack.SelectionChangeCommitted += new System.EventHandler(this.ComboForwardBack_SelectionChangeCommitted);
             // 
             // labelForwardBack
             // 
@@ -274,7 +274,7 @@
             this.btnFind.TabIndex = 5;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // labelRefnoLocation
             // 
@@ -303,7 +303,7 @@
             this.btnImport.TabIndex = 46;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnCopyBookQtyToInventoryQty
             // 
@@ -314,7 +314,7 @@
             this.btnCopyBookQtyToInventoryQty.TabIndex = 47;
             this.btnCopyBookQtyToInventoryQty.Text = "Copy \"Book Qty\" to \"Inventory Qty\"";
             this.btnCopyBookQtyToInventoryQty.UseVisualStyleBackColor = true;
-            this.btnCopyBookQtyToInventoryQty.Click += new System.EventHandler(this.btnCopyBookQtyToInventoryQty_Click);
+            this.btnCopyBookQtyToInventoryQty.Click += new System.EventHandler(this.BtnCopyBookQtyToInventoryQty_Click);
             // 
             // displayAdjustID
             // 

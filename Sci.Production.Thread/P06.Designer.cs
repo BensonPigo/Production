@@ -244,7 +244,7 @@
             this.btnFind.TabIndex = 42;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // labelRefnoLocation
             // 
@@ -273,7 +273,7 @@
             this.btnImportFromStock.TabIndex = 46;
             this.btnImportFromStock.Text = "Import from stock";
             this.btnImportFromStock.UseVisualStyleBackColor = true;
-            this.btnImportFromStock.Click += new System.EventHandler(this.button3_Click);
+            this.btnImportFromStock.Click += new System.EventHandler(this.Button3_Click);
             // 
             // displayInventoryID
             // 

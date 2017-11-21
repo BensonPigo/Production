@@ -13,16 +13,24 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// P02_QtyBreakdownByColorway
+    /// </summary>
     public partial class P02_QtyBreakdownByColorway : Sci.Win.Subs.Base
     {
         private DataRow P02CurrentMaintain = null;
 
-        public P02_QtyBreakdownByColorway(DataRow P02CurrentMaintain)
+        /// <summary>
+        /// P02_QtyBreakdownByColorway
+        /// </summary>
+        /// <param name="p02CurrentMaintain">p02CurrentMaintain</param>
+        public P02_QtyBreakdownByColorway(DataRow p02CurrentMaintain)
         {
-            InitializeComponent();
-            this.P02CurrentMaintain = P02CurrentMaintain;
+            this.InitializeComponent();
+            this.P02CurrentMaintain = p02CurrentMaintain;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -37,7 +45,8 @@ namespace Sci.Production.Thread
             }
             #endregion
             #region SQL Command
-            string strSQLCmd = string.Format(@"
+            string strSQLCmd = string.Format(
+                @"
 select  oa.Article
         , ttl = isnull (sum(oq.Qty), 0)
 from Order_Article oa WITH (NOLOCK) 
@@ -45,8 +54,8 @@ inner join Order_Qty oq WITH (NOLOCK) on oa.ID = oq.ID
 									     and oa.Article = oq.Article
 inner join Orders o on oa.id=o.ID
 where o.POID = '{0}'
-group by oa.Article
-", this.P02CurrentMaintain["OrderID"]);
+group by oa.Article",
+                this.P02CurrentMaintain["OrderID"]);
             #endregion
             #region SQL Process
             DataTable dtResult;
@@ -68,7 +77,7 @@ group by oa.Article
             this.listControlBindingSource.DataSource = dtResult;
         }
 
-        private void buttonClose_Click(object sender, EventArgs e)
+        private void ButtonClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

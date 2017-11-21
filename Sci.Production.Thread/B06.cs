@@ -13,22 +13,30 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// B06
+    /// </summary>
     public partial class B06 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// B06
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            resetGridData();
+            this.InitializeComponent();
+            this.ResetGridData();
             this.grid.IsEditingReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Allowance = null;
 
-            Helper.Controls.Grid.Generator(this.grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("ID", header: "Seq", iseditingreadonly: true)
                 .Numeric("LowerBound", header: "LowerBound", iseditingreadonly: true)
                 .Numeric("UpperBound", header: "UpperBound", iseditingreadonly: true)
@@ -39,12 +47,12 @@ namespace Sci.Production.Thread
             col_Allowance.Maximum = (decimal)999.99;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void resetGridData()
+        private void ResetGridData()
         {
             DataTable gridDt;
             DualResult result = DBProxy.Current.Select(null, "select * from ThreadAllowanceScale", out gridDt);

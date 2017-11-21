@@ -13,19 +13,27 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// R20
+    /// </summary>
     public partial class R20 : Sci.Win.Tems.PrintForm
     {
-        string sp1; string sp2; DateTime? EstBook1; DateTime? EstBook2; DateTime? EstArr1; DateTime? EstArr2; string fac; string M;
-        List<SqlParameter> lis;
-        DataTable dt; string cmd;
+        private string sp1; private string sp2; private DateTime? EstBook1; private DateTime? EstBook2; private DateTime? EstArr1; private DateTime? EstArr2; private string fac; private string M;
+        private List<SqlParameter> lis;
+        private DataTable dt; private string cmd;
+
+        /// <summary>
+        /// R20
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT FTYGroup FROM DBO.Factory WITH (NOLOCK) ");
-            DBProxy.Current.Select("", sqlcmd, out factory);
-            factory.Rows.Add(new string[] { "" });
+            string sqlcmd = @"select DISTINCT FTYGroup FROM DBO.Factory WITH (NOLOCK) ";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out factory);
+            factory.Rows.Add(new string[] { string.Empty });
             factory.DefaultView.Sort = "FTYGroup";
             this.comboFactory.DataSource = factory;
             this.comboFactory.ValueMember = "FTYGroup";
@@ -34,9 +42,10 @@ namespace Sci.Production.Thread
             this.comboFactory.Text = Sci.Env.User.Factory;
 
             this.comboMDivision.setDefalutIndex(true);
-            print.Enabled = false;
+            this.print.Enabled = false;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             bool sp_Empty1 = this.txtSPNoStart.Text.Empty(), sp_Empty2 = this.txtSPNoEnd.Text.Empty(), dateRange1_Empty = !this.dateEstBooking.HasValue, dateRange2_Empty = !this.dateEstArrived.HasValue;
@@ -44,20 +53,22 @@ namespace Sci.Production.Thread
             {
                 MyUtility.Msg.ErrorBox("You must enter the SP No,Est.booking,Est.Arrived");
 
-                txtSPNoStart.Focus();
+                this.txtSPNoStart.Focus();
 
                 return false;
             }
-            sp1 = txtSPNoStart.Text.ToString();
-            sp2 = txtSPNoEnd.Text.ToString();
-            EstBook1 = dateEstBooking.Value1;
-            EstBook2 = dateEstBooking.Value2;
-            EstArr1 = dateEstArrived.Value1;
-            EstArr2 = dateEstArrived.Value2;
-            fac = comboFactory.SelectedValue.ToString();
-            M = comboMDivision.Text.ToString();
-            lis = new List<SqlParameter>();
-            string sqlWhere = ""; string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
+
+            this.sp1 = this.txtSPNoStart.Text.ToString();
+            this.sp2 = this.txtSPNoEnd.Text.ToString();
+            this.EstBook1 = this.dateEstBooking.Value1;
+            this.EstBook2 = this.dateEstBooking.Value2;
+            this.EstArr1 = this.dateEstArrived.Value1;
+            this.EstArr2 = this.dateEstArrived.Value2;
+            this.fac = this.comboFactory.SelectedValue.ToString();
+            this.M = this.comboMDivision.Text.ToString();
+            this.lis = new List<SqlParameter>();
+            string sqlWhere = string.Empty;
+            string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text.ToString()) || !MyUtility.Check.Empty(this.txtSPNoEnd.Text.ToString()))
@@ -65,57 +76,65 @@ namespace Sci.Production.Thread
                 if (!MyUtility.Check.Empty(this.txtSPNoStart.Text.ToString()))
                 {
                     sqlWheres.Add("t.OrderID >= @spNo1 ");
-                    lis.Add(new SqlParameter("@spNo1", sp1));
+                    this.lis.Add(new SqlParameter("@spNo1", this.sp1));
                 }
+
                 if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text.ToString()))
                 {
                     sqlWheres.Add("t.OrderID <= @spNo2 ");
-                    lis.Add(new SqlParameter("@spNo2", sp2));
-                }                         
+                    this.lis.Add(new SqlParameter("@spNo2", this.sp2));
+                }
             }
-            if (!MyUtility.Check.Empty(EstBook1) || !MyUtility.Check.Empty(EstBook2))
+
+            if (!MyUtility.Check.Empty(this.EstBook1) || !MyUtility.Check.Empty(this.EstBook2))
             {
-                if (!MyUtility.Check.Empty(EstBook1))
+                if (!MyUtility.Check.Empty(this.EstBook1))
                 {
                     sqlWheres.Add("@EstBook1 <= t.EstBookDate");
-                    lis.Add(new SqlParameter("@EstBook1", EstBook1));
+                    this.lis.Add(new SqlParameter("@EstBook1", this.EstBook1));
                 }
-                if (!MyUtility.Check.Empty(EstBook2))
+
+                if (!MyUtility.Check.Empty(this.EstBook2))
                 {
                     sqlWheres.Add("t.EstBookDate <= @EstBook2");
-                    lis.Add(new SqlParameter("@EstBook2", EstBook2));
+                    this.lis.Add(new SqlParameter("@EstBook2", this.EstBook2));
                 }
-            } 
-            if (!MyUtility.Check.Empty(EstArr1) || !MyUtility.Check.Empty(EstArr2))
+            }
+
+            if (!MyUtility.Check.Empty(this.EstArr1) || !MyUtility.Check.Empty(this.EstArr2))
             {
-                if (!MyUtility.Check.Empty(EstArr1))
+                if (!MyUtility.Check.Empty(this.EstArr1))
                 {
                     sqlWheres.Add("@EstArr1 <= t.EstArriveDate");
-                    lis.Add(new SqlParameter("@EstArr1", EstArr1));
+                    this.lis.Add(new SqlParameter("@EstArr1", this.EstArr1));
                 }
-                if (!MyUtility.Check.Empty(EstArr2))
+
+                if (!MyUtility.Check.Empty(this.EstArr2))
                 {
                     sqlWheres.Add("t.EstArriveDate <= @EstArr2");
-                    lis.Add(new SqlParameter("@EstArr2", EstArr2));
+                    this.lis.Add(new SqlParameter("@EstArr2", this.EstArr2));
                 }
-            } 
+            }
+
             if (!this.comboFactory.Text.Empty())
             {
                 sqlWheres.Add("t.FactoryID = @fac");
-                lis.Add(new SqlParameter("@fac", fac));
-                
+                this.lis.Add(new SqlParameter("@fac", this.fac));
             }
+
             if (!this.M.Empty())
             {
                 sqlWheres.Add("t.MDivisionID = @M");
-                lis.Add(new SqlParameter("@M", M));
+                this.lis.Add(new SqlParameter("@M", this.M));
             }
 
-            if(sqlWheres.Count > 0)
+            if (sqlWheres.Count > 0)
+            {
                 sqlWhere = " where t.Status = 'Approved' and " + sqlWheres.JoinToString(" and ");
+            }
             #endregion
 
-            cmd = string.Format(@"
+            this.cmd = string.Format(@"
              select distinct
                t.FactoryID,t.BrandID,t.StyleID,t.SeasonID,t.EstBookDate,t.EstArriveDate,t.OrderID,o.SciDelivery,o.SewInLine
                ,(select li.ThreadTypeID from dbo.LocalItem li WITH (NOLOCK) where li.RefNo = td.Refno) [ThreadTypeID]
@@ -130,31 +149,33 @@ namespace Sci.Production.Thread
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            res = DBProxy.Current.Select("", cmd, lis, out dt);
+            res = DBProxy.Current.Select(string.Empty, this.cmd, this.lis, out this.dt);
             if (!res)
             {
                 return res;
             }
+
             return res;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dt == null || dt.Rows.Count == 0)
+            if (this.dt == null || this.dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
 
-
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
+            this.SetCount(this.dt.Rows.Count);
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Thread_R20.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(this.dt, string.Empty, "Thread_R20.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
@@ -174,5 +195,4 @@ namespace Sci.Production.Thread
             return true;
         }
     }
-    
 }

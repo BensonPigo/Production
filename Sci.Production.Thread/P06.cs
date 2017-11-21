@@ -13,30 +13,44 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// P06
+    /// </summary>
     public partial class P06 : Sci.Win.Tems.Input6
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+
+        /// <summary>
+        /// P06
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            this.DefaultFilter = string.Format("mDivisionid = '{0}'", keyWord);
-            InitializeComponent();
+            this.DefaultFilter = string.Format("mDivisionid = '{0}'", this.keyWord);
+            this.InitializeComponent();
         }
+
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.*,b.description,c.description as colordesc,
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(
+                @"select a.*,b.description,c.description as colordesc,
             b.threadTex,b.category,b.Localsuppid,newcone - newconebook as newConevar,usedcone - usedconebook as usedConevar,b.threadtypeid,
             (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
             from ThreadAdjust_Detail a WITH (NOLOCK) 
             left join Localitem b WITH (NOLOCK) on a.refno = b.refno 
-            left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID);
+            left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'",
+                masterID);
+
             return base.OnDetailSelectCommandPrepare(e);
         }
+
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-
             DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocation = new DataGridViewGeneratorTextColumnSettings();
@@ -45,143 +59,184 @@ namespace Sci.Production.Thread
             #region Refno Cell
             refno.CellValidating += (s, e) =>
             {
+                if (!this.EditMode || e.RowIndex == -1)
+                {
+                    return;
+                }
 
-                if (!this.EditMode || e.RowIndex == -1) return;
-                string oldvalue = CurrentDetailData["refno"].ToString();
+                string oldvalue = this.CurrentDetailData["refno"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 DataRow refdr;
                 if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
                 {
-                    CurrentDetailData["Description"] = refdr["Description"];
-                    CurrentDetailData["Refno"] = refdr["refno"];
-                    CurrentDetailData["category"] = refdr["category"];
-                    CurrentDetailData["ThreadTex"] = refdr["ThreadTex"];
-                    CurrentDetailData["LocalSuppid"] = refdr["LocalSuppid"];
-                    CurrentDetailData["Supp"] = refdr["LocalSuppid"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", refdr["LocalSuppid"].ToString(), "LocalSupp", "ID");
-                    CurrentDetailData["ThreadTypeid"] = refdr["ThreadTypeid"];
-                    CurrentDetailData["NewCone"] = 0;
-                    CurrentDetailData["UsedCone"] = 0;
-
+                    this.CurrentDetailData["Description"] = refdr["Description"];
+                    this.CurrentDetailData["Refno"] = refdr["refno"];
+                    this.CurrentDetailData["category"] = refdr["category"];
+                    this.CurrentDetailData["ThreadTex"] = refdr["ThreadTex"];
+                    this.CurrentDetailData["LocalSuppid"] = refdr["LocalSuppid"];
+                    this.CurrentDetailData["Supp"] = refdr["LocalSuppid"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", refdr["LocalSuppid"].ToString(), "LocalSupp", "ID");
+                    this.CurrentDetailData["ThreadTypeid"] = refdr["ThreadTypeid"];
+                    this.CurrentDetailData["NewCone"] = 0;
+                    this.CurrentDetailData["UsedCone"] = 0;
                 }
                 else
                 {
-                    CurrentDetailData["Description"] = "";
-                    CurrentDetailData["Refno"] = "";
-                    CurrentDetailData["category"] = "";
-                    CurrentDetailData["ThreadTex"] = 0;
-                    CurrentDetailData["LocalSuppid"] = "";
-                    CurrentDetailData["Supp"] = "";
-                    CurrentDetailData["ThreadTypeid"] = "";
-                    CurrentDetailData["NewCone"] = 0;
-                    CurrentDetailData["UsedCone"] = 0;
+                    this.CurrentDetailData["Description"] = string.Empty;
+                    this.CurrentDetailData["Refno"] = string.Empty;
+                    this.CurrentDetailData["category"] = string.Empty;
+                    this.CurrentDetailData["ThreadTex"] = 0;
+                    this.CurrentDetailData["LocalSuppid"] = string.Empty;
+                    this.CurrentDetailData["Supp"] = string.Empty;
+                    this.CurrentDetailData["ThreadTypeid"] = string.Empty;
+                    this.CurrentDetailData["NewCone"] = 0;
+                    this.CurrentDetailData["UsedCone"] = 0;
                 }
-                string sql = string.Format("Select newcone, usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["threadColorid"], newvalue, CurrentDetailData["threadlocationid"], keyWord);
+
+                string sql = string.Format("Select newcone, usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["threadColorid"], newvalue, this.CurrentDetailData["threadlocationid"], this.keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
-                    CurrentDetailData["newconebook"] = refdr["newcone"];
-                    CurrentDetailData["usedconebook"] = refdr["usedcone"];
-                    reqty();
+                    this.CurrentDetailData["newconebook"] = refdr["newcone"];
+                    this.CurrentDetailData["usedconebook"] = refdr["usedcone"];
+                    this.Reqty();
                 }
                 else
                 {
-                    CurrentDetailData["newconebook"] = 0;
-                    CurrentDetailData["usedconebook"] = 0;
-                    reqty();
+                    this.CurrentDetailData["newconebook"] = 0;
+                    this.CurrentDetailData["usedconebook"] = 0;
+                    this.Reqty();
                 }
-                CurrentDetailData.EndEdit();
+
+                this.CurrentDetailData.EndEdit();
             };
             #endregion
             #region Color Cell
             thcolor.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || e.RowIndex == -1) return;
-                string oldvalue = CurrentDetailData["threadcolorid"].ToString();
+                if (!this.EditMode || e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                string oldvalue = this.CurrentDetailData["threadcolorid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
-                
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 DataRow refdr;
                 if (MyUtility.Check.Seek(string.Format("Select * from ThreadColor WITH (NOLOCK) where id = '{0}' and junk = 0", newvalue), out refdr))
                 {
-                    CurrentDetailData["ThreadColorid"] = refdr["ID"];
-                    CurrentDetailData["Colordesc"] = refdr["Description"];
+                    this.CurrentDetailData["ThreadColorid"] = refdr["ID"];
+                    this.CurrentDetailData["Colordesc"] = refdr["Description"];
                 }
                 else
                 {
-                    CurrentDetailData["ThreadColorid"] = "";
-                    CurrentDetailData["Colordesc"] = "";
-
+                    this.CurrentDetailData["ThreadColorid"] = string.Empty;
+                    this.CurrentDetailData["Colordesc"] = string.Empty;
                 }
-                string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], newvalue, CurrentDetailData["threadlocationid"], keyWord);
+
+                string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["Refno"], newvalue, this.CurrentDetailData["threadlocationid"], this.keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
-                    CurrentDetailData["newconebook"] = refdr["newcone"];
-                    CurrentDetailData["usedconebook"] = refdr["usedcone"];
-                    reqty();
+                    this.CurrentDetailData["newconebook"] = refdr["newcone"];
+                    this.CurrentDetailData["usedconebook"] = refdr["usedcone"];
+                    this.Reqty();
                 }
                 else
                 {
-                    CurrentDetailData["newconebook"] = 0;
-                    CurrentDetailData["usedconebook"] = 0;
-                    reqty();
+                    this.CurrentDetailData["newconebook"] = 0;
+                    this.CurrentDetailData["usedconebook"] = 0;
+                    this.Reqty();
                 }
-                CurrentDetailData.EndEdit();
+
+                this.CurrentDetailData.EndEdit();
             };
             #endregion
             #region location
             thlocation.CellValidating += (s, e) =>
                 {
-                    if (!this.EditMode ||e.RowIndex==-1) return;
-                    string oldvalue = CurrentDetailData["threadlocationid"].ToString();
+                    if (!this.EditMode || e.RowIndex == -1)
+                    {
+                        return;
+                    }
+
+                    string oldvalue = this.CurrentDetailData["threadlocationid"].ToString();
                     string newvalue = e.FormattedValue.ToString();
-                    if (oldvalue == newvalue) return;
+                    if (oldvalue == newvalue)
+                    {
+                        return;
+                    }
+
                     DataRow refdr;
 
-                    string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], CurrentDetailData["threadcolorid"], newvalue, keyWord);
+                    string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["Refno"], this.CurrentDetailData["threadcolorid"], newvalue, this.keyWord);
                     if (MyUtility.Check.Seek(sql, out refdr))
                     {
-                        CurrentDetailData["newconebook"] = refdr["newcone"];
-                        CurrentDetailData["usedconebook"] = refdr["usedcone"];
-                        reqty();
+                        this.CurrentDetailData["newconebook"] = refdr["newcone"];
+                        this.CurrentDetailData["usedconebook"] = refdr["usedcone"];
+                        this.Reqty();
                     }
                     else
                     {
-                        CurrentDetailData["newconebook"] = 0;
-                        CurrentDetailData["usedconebook"] = 0;
-                        reqty();
+                        this.CurrentDetailData["newconebook"] = 0;
+                        this.CurrentDetailData["usedconebook"] = 0;
+                        this.Reqty();
                     }
-                    if(MyUtility.Check.Seek(newvalue,"ThreadLocation","ID")) CurrentDetailData["ThreadLocationid"] = newvalue;
-                    else CurrentDetailData["ThreadLocationid"] = "";
-                    CurrentDetailData.EndEdit();
+
+                    if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID"))
+                    {
+                        this.CurrentDetailData["ThreadLocationid"] = newvalue;
+                    }
+                    else
+                    {
+                        this.CurrentDetailData["ThreadLocationid"] = string.Empty;
+                    }
+
+                    this.CurrentDetailData.EndEdit();
                 };
-            
 
             #endregion
             #region Qty
             qty.CellValidating += (s, e) =>
                 {
-                    if (!this.EditMode || e.RowIndex == -1) return;
+                    if (!this.EditMode || e.RowIndex == -1)
+                    {
+                        return;
+                    }
 
-                    if (detailgrid.Columns[e.ColumnIndex].HeaderText.ToString() == "New Cone") CurrentDetailData["newCone"] = e.FormattedValue;
-                    if (detailgrid.Columns[e.ColumnIndex].HeaderText.ToString() == "Used Cone") CurrentDetailData["UsedCone"] = e.FormattedValue;
-                    reqty();
-                    CurrentDetailData.EndEdit();
+                    if (this.detailgrid.Columns[e.ColumnIndex].HeaderText.ToString() == "New Cone")
+                    {
+                        this.CurrentDetailData["newCone"] = e.FormattedValue;
+                    }
+
+                    if (this.detailgrid.Columns[e.ColumnIndex].HeaderText.ToString() == "Used Cone")
+                    {
+                        this.CurrentDetailData["UsedCone"] = e.FormattedValue;
+                    }
+
+                    this.Reqty();
+                    this.CurrentDetailData.EndEdit();
                 };
             #endregion
             #region setup Grid
 
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(20), settings: refno)
             .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), settings: thcolor)
             .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), settings: thlocation)
-            .Numeric("NewConebook", header: "New Cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 3,iseditingreadonly:true)
+            .Numeric("NewConebook", header: "New Cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
-            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditable:false)
+            .Numeric("NewConeVar", header: "New Cone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditable: false)
 
-            .Numeric("UsedConebook", header: "Used cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: 
-            true)
+            .Numeric("UsedConebook", header: "Used cone\nperbooks", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
             .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5, settings: qty)
              .Numeric("UsedConeVar", header: "Used CSone\nVariance", width: Widths.AnsiChars(5), integer_places: 5, iseditable: false)
             .Text("ThreadTypeid", header: "Thread Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -199,64 +254,74 @@ namespace Sci.Production.Thread
 
             return base.OnGridSetup();
         }
-        
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.label7.Text = CurrentMaintain["Status"].ToString();
+            this.label7.Text = this.CurrentMaintain["Status"].ToString();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["Status"] = "New";
-            CurrentMaintain["cDate"] = DateTime.Now;
-            CurrentMaintain["AddName"] = loginID;
-            CurrentMaintain["AddDate"] = DateTime.Now;
-            CurrentMaintain["mDivisionid"] = keyWord;
-            
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["cDate"] = DateTime.Now;
+            this.CurrentMaintain["AddName"] = this.loginID;
+            this.CurrentMaintain["AddDate"] = DateTime.Now;
+            this.CurrentMaintain["mDivisionid"] = this.keyWord;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't be deleted.", "Warning");
                 return false;
             }
+
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (CurrentMaintain["Status"].ToString() != "New")
+            if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't be modify", "Warning");
                 return false;
             }
+
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["cDate"].ToString()))
             {
                 this.dateDate.Focus();
-                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");return false;
+                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
+                return false;
             }
+
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["Refno"]) )
+                if (MyUtility.Check.Empty(dr["Refno"]))
                 {
                     MyUtility.Msg.WarningBox("<Refno> can not be empty!", "Warning");
                     return false;
                 }
+
                 if (MyUtility.Check.Empty(dr["ThreadColorid"]))
                 {
                     MyUtility.Msg.WarningBox("<Thread Color> can not be empty!", "Warning");
                     return false;
                 }
-                if (MyUtility.Check.Empty(dr["ThreadLocationid"]) )
+
+                if (MyUtility.Check.Empty(dr["ThreadLocationid"]))
                 {
                     MyUtility.Msg.WarningBox("<Location> can not be empty!", "Warning");
                     return false;
@@ -272,25 +337,28 @@ namespace Sci.Production.Thread
             #region 填入ID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(keyWord + "TA", "ThreadAdjust", (DateTime)CurrentMaintain["cDate"]);
+                string id = MyUtility.GetValue.GetID(this.keyWord + "TA", "ThreadAdjust", (DateTime)this.CurrentMaintain["cDate"]);
 
                 if (string.IsNullOrWhiteSpace(id))
                 {
                     return false;
                 }
-                CurrentMaintain["ID"] = id;
+
+                this.CurrentMaintain["ID"] = id;
             }
             #endregion
 
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
-            dateDate.ReadOnly = true;
+            this.dateDate.ReadOnly = true;
         }
 
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -298,83 +366,93 @@ namespace Sci.Production.Thread
             List<string> stockSqlupLi = new List<string>();
             List<string> stockSqlQuLi = new List<string>();
             string checksql;
-            string sql, insertSql = "";            
-            sql = String.Format("Update ThreadAdjust set Status = 'Confirmed',editname='{0}', editdate = GETDATE() where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
+            string sql, insertSql = string.Empty;
+            sql = string.Format("Update ThreadAdjust set Status = 'Confirmed',editname='{0}', editdate = GETDATE() where id='{1}'", this.loginID, this.CurrentMaintain["ID"].ToString());
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["threadlocationid"], dr["threadcolorid"], keyWord);
+                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["threadlocationid"], dr["threadcolorid"], this.keyWord);
                 if (MyUtility.Check.Seek(checksql))
                 {
-                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], dr["refno"], keyWord, dr["ThreadColorid"], dr["ThreadLocationid"]);
+                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], dr["refno"], this.keyWord, dr["ThreadColorid"], dr["ThreadLocationid"]);
                 }
                 else
                 {
-                    insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"],keyWord,dr["ThreadColorid"], dr["ThreadLocationid"],(decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"],loginID );
+                    insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"], this.keyWord, dr["ThreadColorid"], dr["ThreadLocationid"], (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], this.loginID);
                 }
-
             }
             #region update Inqty,Status
             DualResult upResult;
-            TransactionScope _transactionscope = new TransactionScope();
-            using (_transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
             {
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, insertSql)))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(insertSql, upResult);
+                        transactionscope.Dispose();
+                        this.ShowErr(insertSql, upResult);
                         return;
                     }
+
                     if (!(upResult = DBProxy.Current.Execute(null, sql)))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sql, upResult);
+                        transactionscope.Dispose();
+                        this.ShowErr(sql, upResult);
                         return;
                     }
-                    _transactionscope.Complete();
+
+                    transactionscope.Complete();
                 }
                 catch (Exception ex)
                 {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    transactionscope.Dispose();
+                    this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
+
+            transactionscope.Dispose();
+            transactionscope = null;
 
             #endregion
-           
+
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
-            //移到指定那筆
-            string refno = txtRefnoLocation.Text;
-            int index = detailgridbs.Find("Refno", refno);
+            // 移到指定那筆
+            string refno = this.txtRefnoLocation.Text;
+            int index = this.detailgridbs.Find("Refno", refno);
             if (index == -1)
             {
-                int index2 = detailgridbs.Find("ThreadLocationid", refno);
-                if (index2 == -1) MyUtility.Msg.WarningBox("Data not found.");
-                else detailgridbs.Position = index2;
+                int index2 = this.detailgridbs.Find("ThreadLocationid", refno);
+                if (index2 == -1)
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
+                }
+                else
+                {
+                    this.detailgridbs.Position = index2;
+                }
             }
             else
-            { detailgridbs.Position = index; }
+            {
+                this.detailgridbs.Position = index;
+            }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
-            DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
-            Form P06_import = new Sci.Production.Thread.P06_Import(detTable);
-            P06_import.ShowDialog();
+            DataTable detTable = (DataTable)this.detailgridbs.DataSource;
+            Form p06_import = new Sci.Production.Thread.P06_Import(detTable);
+            p06_import.ShowDialog();
         }
 
-        private void reqty()
+        private void Reqty()
         {
-            CurrentDetailData["newConeVar"] = (decimal)CurrentDetailData["newcone"] - (decimal)CurrentDetailData["newconebook"];
-            CurrentDetailData["usedConeVar"] = (decimal)CurrentDetailData["usedcone"] - (decimal)CurrentDetailData["usedconebook"];
+            this.CurrentDetailData["newConeVar"] = (decimal)this.CurrentDetailData["newcone"] - (decimal)this.CurrentDetailData["newconebook"];
+            this.CurrentDetailData["usedConeVar"] = (decimal)this.CurrentDetailData["usedcone"] - (decimal)this.CurrentDetailData["usedconebook"];
         }
     }
 }
