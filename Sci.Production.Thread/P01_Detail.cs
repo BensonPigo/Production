@@ -39,7 +39,7 @@ namespace Sci.Production.Thread
             displaySeason.Value = masterrow["Seasonid"].ToString();
             displayThreadCombination.Value = detailrow["ThreadCombID"].ToString();
             combdetail_id = detailrow["id"].ToString();
-            
+            displayBoxEdit.Text = MyUtility.Convert.GetString(masterrow["ThreadEditname"])+" "+ (MyUtility.Convert.GetString(masterrow["ThreadEditdate"])=="" ?"":((DateTime)MyUtility.Convert.GetDate(masterrow["ThreadEditdate"])).ToString("yyyy/MM/dd HH:mm:ss"));
             btnEdit.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             btnEdit.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             //建立Gird
@@ -291,73 +291,18 @@ namespace Sci.Production.Thread
                         }
                     }
                 }
-                #region 舊做法
-//                foreach (DataRow dr in gridTable.Rows)
-//                {
-//                    if (!MyUtility.Check.Empty(dr["Refno"])) linsert = true; //判斷若僅輸入Refno 就必須新增一筆Data
-//                    else linsert = false;
-//                    msg = true;
-//                    if (dr.RowState == DataRowState.Modified)
-//                    {
-//                        foreach (DataRow drcol in tbArticle.Rows)
-//                        {
-//                            article = drcol["article"].ToString().Trim(); 
-//                            if (MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr[article]))
-//                            {
-//                                msg = false; //有color無Refno 不可產生
-//                            }
-//                            if (!MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr[article]))
-//                            {
-//                                linsert = false; //只要有Color 就不需要新增
-//                            }
-//                            if (MyUtility.Check.Empty(dr[article + "Ukey"]))
-//                            {
-//                                if (!MyUtility.Check.Empty(dr[article])) //Color 有值就新增空白Ukey
-//                                {
-//                                    insertSql = insertSql + string.Format("Insert into ThreadColorComb_Detail(id,Machinetypeid,ThreadCombid,Refno,Article,ThreadColorid,SEQ,ThreadLocationID) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}');", detailRow["ID"], detailRow["Machinetypeid"], detailRow["Threadcombid"], dr["Refno"], article, dr[article], dr["SEQ"], dr["ThreadLocation"]);
-//                                }
-//                            }
-//                            else
-//                            {
-//                                seekSql = string.Format("Select * from ThreadColorComb_Detail where Ukey = {0}", dr[article + "Ukey"]);
-//                                if (MyUtility.Check.Seek(seekSql, out seekRow)) //存在Ukey 判斷只要有不同的Refno,Color 就update
-//                                {
-//                                    if (seekRow["ThreadColorid"].ToString() != dr[article].ToString() || seekRow["Refno"].ToString() != dr["Refno"].ToString())
-//                                    {
-//                                        if (MyUtility.Check.Empty(dr["Refno"]) && MyUtility.Check.Empty(dr[article]))
-//                                        { //只要Refno 跟Color 都是空白就刪除資料 否則就更新
-//                                            delSql = delSql + string.Format("Delete from ThreadColorComb_Detail where Ukey = {0}", dr[article + "Ukey"]);
-//                                        }
-//                                        else
-//                                        {
-//                                            updateSql = updateSql + string.Format("Update ThreadColorComb_Detail set threadcolorid ='{0}', Refno='{1}' where Ukey = {2};", dr[article].ToString(), dr["Refno"].ToString(), dr[article + "Ukey"]);
-//                                        }
+                string StyleEdit = string.Format(@"
+update s set 
+    ThreadEditname ='{3}',ThreadEditdate='{4}' 
+from style s 
+where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
+masterRow["id"].ToString(), 
+masterRow["BrandID"].ToString(), 
+masterRow["SeasonID"].ToString(),
+Sci.Env.User.UserID,
+DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+);
 
-//                                    }
-//                                }
-
-//                            }
-//                        }
-//                    }
-//                    if (!msg)
-//                    {
-//                        MyUtility.Msg.WarningBox("If has thread color, thread refno can't empty.");
-//                        return;
-//                    }
-//                    if (linsert)
-//                    {
-//                        seekSql = string.Format(@"Select * from ThreadColorComb_Detail 
-//                        where id = {0} and Machinetypeid = '{1}' and ThreadCombid='{2}' and Refno = '{3}' and 
-//                        Article = '{4}' and SEQ ='{5}' and ThreadLocationID= '{6}'", 
-//                        detailRow["ID"], detailRow["Machinetypeid"], detailRow["Threadcombid"], 
-//                        dr["Refno"], tbArticle.Rows[0]["article"].ToString().Trim(), dr["SEQ"], dr["ThreadLocation"]);
-//                        if (!MyUtility.Check.Seek(seekSql)) //存在Ukey 判斷只要有不同的Refno,Color 就update
-//                        {
-//                            insertSql = insertSql + string.Format(@"Insert into ThreadColorComb_Detail(id,Machinetypeid,ThreadCombid,Refno,Article,ThreadColorid,SEQ,ThreadLocationID) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}');", detailRow["ID"], detailRow["Machinetypeid"], detailRow["Threadcombid"], dr["Refno"], tbArticle.Rows[i]["article"].ToString().Trim(), dr[tbArticle.Rows[i]["article"].ToString().Trim()], dr["SEQ"], dr["ThreadLocation"]);
-//                        }
-//                    }
-//                }
-#endregion
                 DualResult result;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
@@ -386,7 +331,6 @@ namespace Sci.Production.Thread
                         }
                         if (!MyUtility.Check.Empty(insertSql.ToString()))
                         {
-
                             result = DBProxy.Current.Execute(null, insertSql.ToString());
                             if (!result)
                             {
@@ -394,6 +338,13 @@ namespace Sci.Production.Thread
                                 ShowErr(insertSql.ToString(), result);
                                 return;
                             }
+                        }
+                        result = DBProxy.Current.Execute(null, StyleEdit);
+                        if (!result)
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(StyleEdit, result);
+                            return;
                         }
                         _transactionscope.Complete();
                     }
@@ -411,6 +362,13 @@ namespace Sci.Production.Thread
                 btnEdit.Text = "Edit";
                 EditMode = false;
                 gridDetail.IsEditingReadOnly = !EditMode;
+                displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(@"
+select ThreadEditname = concat(ThreadEditname ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
+from style s 
+where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
+masterRow["id"].ToString(),
+masterRow["BrandID"].ToString(),
+masterRow["SeasonID"].ToString()));
             }
         }
     }
