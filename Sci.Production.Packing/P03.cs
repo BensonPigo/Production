@@ -106,7 +106,7 @@ namespace Sci.Production.Packing
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            //this.ReloadTimeoutSeconds = 900;
+            this.ReloadTimeoutSeconds = 900;
 
             #region CTN# 排序
             this.detailgrid.CellClick += (s, e) =>
