@@ -41,6 +41,8 @@
             this.labelStyleNo = new Sci.Win.UI.Label();
             this.displayMachineType = new Sci.Win.UI.DisplayBox();
             this.labelMachineType = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBoxEdit = new Sci.Win.UI.DisplayBox();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.panel1.SuspendLayout();
@@ -48,6 +50,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.displayBoxEdit);
+            this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Controls.Add(this.btnEdit);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -80,7 +84,6 @@
             // 
             // label2
             // 
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(448, 17);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(133, 23);
@@ -147,7 +150,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(286, 17);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(63, 23);
@@ -165,7 +167,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(20, 17);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(69, 23);
@@ -183,12 +184,28 @@
             // 
             // labelMachineType
             // 
-            this.labelMachineType.Lines = 0;
             this.labelMachineType.Location = new System.Drawing.Point(726, 17);
             this.labelMachineType.Name = "labelMachineType";
             this.labelMachineType.Size = new System.Drawing.Size(95, 23);
             this.labelMachineType.TabIndex = 13;
             this.labelMachineType.Text = "Machine Type";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(20, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Edit By:";
+            // 
+            // displayBoxEdit
+            // 
+            this.displayBoxEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.Location = new System.Drawing.Point(92, 13);
+            this.displayBoxEdit.Name = "displayBoxEdit";
+            this.displayBoxEdit.Size = new System.Drawing.Size(309, 23);
+            this.displayBoxEdit.TabIndex = 19;
             // 
             // P01_Detail
             // 
@@ -200,6 +217,7 @@
             this.Name = "P01_Detail";
             this.Text = "P01_Detail";
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -222,5 +240,7 @@
         private Win.UI.DisplayBox displayStyleNo;
         private Win.UI.Label labelStyleNo;
         private Win.UI.DisplayBox displayMachineType;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBoxEdit;
     }
 }
