@@ -151,7 +151,7 @@ namespace Sci.Production.Warehouse
 			                                where a.id=@ID  
                                             union all
                                             select 
-                                                 [sp] = l.OrderID
+                                                 [sp] = o.POID
                                              , [StyleID] = '-'
                                                 , [SEQ] = '-'
                                                 , [Supp]  = c.ID 
@@ -179,7 +179,7 @@ namespace Sci.Production.Warehouse
                                              , [Cmplt] = null
                                              , [Act. Eta] = '-'
                                              , [WK#] = '-'
-                                             , [Order List] = '-'
+                                             , [Order List] =  l.OrderID
                                              , [Arrived Qty] = isnull(l.InQty,0)
                                              , [StockUnitUnit]  = l.UnitID
                                              , [Released Qty] = isnull(l.OutQty,0)
@@ -193,6 +193,7 @@ namespace Sci.Production.Warehouse
                                              , [Remark] = '-'
                                              , [junk]  = 'false'
                                               from LocalInventory l
+                                                left join orders o on o.id = l.orderid
                                                 left join LocalItem b on l.Refno=b.RefNo
                                                 left join LocalSupp c on b.LocalSuppid=c.ID
                                                  where l.OrderID = @ID     ) as a " + junk_where + order_by, pars, out dt);			       
