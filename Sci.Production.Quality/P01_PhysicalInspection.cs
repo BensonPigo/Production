@@ -158,13 +158,25 @@ namespace Sci.Production.Quality
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
             #endregion
         }
-        private void redefect()
+
+        /// <summary>
+        /// 刪除第三層資料
+        /// By Ukey
+        /// </summary>
+        /// <param name="strDetailUkey">需要刪除第三層所對應的 Ukey</param>
+        private void cleanDefect(string strDetailUkey)
         {
-            string str_defect = string.Format("Select a.* ,b.NewKey from Fir_physical_Defect a WITH (NOLOCK) ,#tmp b Where a.id = b.id and a.FIR_PhysicalDetailUKey = b.DetailUkey");
+            for (int i = Fir_physical_Defect.Rows.Count - 1; i >= 0; i--)
+            {
+                if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted 
+                    && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUKey"].EqualString(strDetailUkey))
+                {
+                    Fir_physical_Defect.Rows[i].Delete();
+                }
+            }     
 
-            MyUtility.Tool.ProcessWithDatatable(datas2, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
+            get_total_point();
         }
-
 
         protected void get_total_point() {
             double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
@@ -177,7 +189,8 @@ namespace Sci.Production.Quality
             //foreach (DataRow dr in Fir_physical_Defect)
             for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++)
             {
-                if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
+                if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted
+                    && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUKey"].EqualString(CurrentData["DetailUKey"]))
                 {
                     // if (dr.RowState != DataRowState.Deleted)
                     //{
@@ -214,8 +227,6 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-
-          
 
             Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
@@ -261,7 +272,10 @@ where	WEAVETYPEID = '{0}'
                 P01_PhysicalInspection_Defect frm = new P01_PhysicalInspection_Defect(Fir_physical_Defect,maindr,this.EditMode);
                 frm.Set(EditMode, Datas, grid.GetDataRow(e.RowIndex));
                 frm.ShowDialog(this);
-                if(EditMode) get_total_point();
+                if (EditMode)
+                {
+                    get_total_point();
+                }
             };
             #endregion
             #region Roll
@@ -273,11 +287,22 @@ where	WEAVETYPEID = '{0}'
                 {
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string originRoll = dr["Roll"].ToString();
+                    string strDetailUkey = dr["DetailUkey"].ToString();
+
                     SelectItem sele;
                     string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' order by dyelot", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",",columndecimals:"0,0,2");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }                    
+                    if (result == DialogResult.Cancel) {
+                        return;
+                    }
+                    else if (originRoll.EqualString(sele.GetSelecteds()[0]["Roll"].ToString().Trim()))
+                    {
+                        dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
+                        return;
+                    }
+                          
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                     dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
@@ -297,7 +322,7 @@ where	WEAVETYPEID = '{0}'
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
                         dr["totalpoint"] = 0.00;
-                        redefect();
+                        cleanDefect(strDetailUkey);
                         dr.EndEdit();
                     }
                     else
@@ -315,7 +340,7 @@ where	WEAVETYPEID = '{0}'
                         dr["Grade"] = "";
                         dr["moisture"] = 0;
                         dr["Remark"] = "";
-                        redefect();
+                        cleanDefect(strDetailUkey);
                         dr.EndEdit();
                         return;
                     }  
@@ -324,6 +349,7 @@ where	WEAVETYPEID = '{0}'
             Rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
+                string strDetailUkey = dr["DetailUkey"].ToString();
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -344,7 +370,7 @@ where	WEAVETYPEID = '{0}'
                     dr["Grade"] = "";
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
-                    redefect();
+                    cleanDefect(strDetailUkey);
                     dr.EndEdit();
                     return;
                 }
@@ -364,7 +390,7 @@ where	WEAVETYPEID = '{0}'
                     dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
-                    redefect();
+                    cleanDefect(strDetailUkey);
                     dr.EndEdit();
                 }
                 else
@@ -383,7 +409,7 @@ where	WEAVETYPEID = '{0}'
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
                     dr.EndEdit();
-                    redefect();
+                    cleanDefect(strDetailUkey);
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
@@ -393,11 +419,14 @@ where	WEAVETYPEID = '{0}'
             #region Act Yds
             Ydscell.CellValidating += (s, e) =>
             {
-
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Actualyds"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
                 //判斷Actualyds調整範圍後Fir_physical_Defect會被清掉的話需要提示
                 double double_ActualYds = Convert.ToDouble( newvalue);
                 double def_loc = 0d;
@@ -426,24 +455,14 @@ where	WEAVETYPEID = '{0}'
                     }
 
                 }
-              
-             
+
+                // 若新的 Act.Yds\nInspected = 0，則第三層必須清空
+                if (newvalue.EqualDecimal(0))
+                {
+                    cleanDefect(dr["DetailUkey"].ToString());
+                }
+
                 dr["Actualyds"] = e.FormattedValue;
-
-              
-
-
-                //dr["totalpoint"] = 0.00;
-
-
-                //redefect();
-                //string oldvalue = dr["actualyds"].ToString();
-                //string newvalue = e.FormattedValue.ToString();
-                //if (this.EditMode == false) return;
-                //if (oldvalue == newvalue) return;
-                //double pointrate = Math.Round((MyUtility.Convert.GetDouble(dr["totalpoint"]) / MyUtility.Convert.GetDouble(e.FormattedValue)) * 100, 2);
-                //dr["pointrate"] = pointrate;
-                //dr["actualyds"] = newvalue;
                 dr.EndEdit();
                 get_total_point();
             };
@@ -466,8 +485,6 @@ where	WEAVETYPEID = '{0}'
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector",header:"Inspector", width: Widths.AnsiChars(10),userNamePropertyName:"Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true);
-
-
 
             grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["Actualyds"].DefaultCellStyle.BackColor = Color.MistyRose;
