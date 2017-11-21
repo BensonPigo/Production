@@ -86,6 +86,9 @@ with tmp1stData as (
             , CDDesc = c.Description
             , s.ModularParent
             , s.CPUAdjusted
+            ,o.Category,OutputDate,Shift,Team,OrderId,sod.ComboType,LocalOrder
+			,ManPower1= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
+		, SCategory = so.Category
     from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
@@ -133,6 +136,28 @@ with tmp1stData as (
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", style));
 
             sqlCmd.Append(@"
+), forttlcpu as(
+	select OutputDate,Category
+		   , Shift
+		   , SewingLineID
+		   , Team
+		   , OrderId
+		   , ComboType
+		   , WorkHour = sum(WorkHour)
+		   , QAQty = sum(QAQty)
+		   , SCategory
+		   , LocalOrder
+		   , FactoryID
+		   , ProgramID
+		   , CPU
+		   , CPUFactor
+		   , StyleID
+		   , Rate
+		   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
+		   , MDivisionID
+	from tmp1stData
+	where Shift <> 'O' and LocalOrder = 0  
+	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
 ),tmp2ndData as (
     Select  ProgramID
             , StyleID
@@ -144,7 +169,7 @@ with tmp1stData as (
             , StyleDesc
             , CDDesc
             , POID
-            , CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,3)
+            , CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,2)
             , SewingLineID
             , ManHour = Manpower * WorkHour 
             , RateOutput = QAQty -- * Rate
@@ -164,10 +189,11 @@ with tmp1stData as (
             , SewingLineID
             , ModularParent
             , CPUAdjusted
-            , TotalCPU = Sum(CPUOutput)
+            , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  from forttlcpu f 
+			where  f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
             , TtlManhour = Sum(ManHour)
             , Output = Sum(RateOutput)  
-    from tmp2ndData 
+    from tmp2ndData a
     group by ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID
              , CdCodeID, StyleDesc, CDDesc, POID, SewingLineID, ModularParent
              , CPUAdjusted
