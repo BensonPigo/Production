@@ -650,7 +650,7 @@ Where a.id = '{0}'", masterID);
 
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
+            string Remark = row["Remark"].ToString().Trim().Replace("\r"," ").Replace("\n"," ");
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
