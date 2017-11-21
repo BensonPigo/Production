@@ -278,7 +278,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value EvaluationMode="Constant">Gro.</Value>
+                                      <Value EvaluationMode="Constant">Grp.</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -1429,7 +1429,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value EvaluationMode="Constant">Gro.</Value>
+                                      <Value EvaluationMode="Constant">Grp.</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -2581,7 +2581,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value EvaluationMode="Constant">Gro.</Value>
+                                      <Value EvaluationMode="Constant">Grp.</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
