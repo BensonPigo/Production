@@ -4246,12 +4246,6 @@
             <param name="columns">IList of  IGridColumn.</param>
             <returns>Result of process.</returns>
         </member>
-        <member name="M:Sci.Win.PrivUtils.CreateTransactionScope">
-            <summary>
-            Sci 預設的TransactionScope 設定
-            </summary>
-            <returns>TransactionScope </returns>
-        </member>
         <member name="T:Sci.Win.QueryBuilderOperator">
             <summary>
             Compare operation list.
@@ -4420,11 +4414,6 @@
         <member name="P:Sci.Win.Subs.Base.DefaultControl">
             <summary>
             set/get Default control.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Subs.Base.TransactionScopeTimeoutSeconds">
-            <summary>
-            Save/ Delete 中使用的TransactionScope timeout 的時間(seconds)
             </summary>
         </member>
         <member name="M:Sci.Win.Subs.Base.GetDefaultControl">
@@ -7634,11 +7623,6 @@
             Property of IsSupportJunk.
             </summary>
         </member>
-        <member name="P:Sci.Win.Tems.Base.TransactionScopeTimeoutSeconds">
-            <summary>
-            Save/ Delete 中使用的TransactionScope timeout 的時間(seconds)
-            </summary>
-        </member>
         <member name="M:Sci.Win.Tems.Base.GetDefaultControl">
             <summary>
             Get the first control of page.
@@ -9093,12 +9077,6 @@
             </summary>
             <param name="data">DataRow</param>
             <param name="movingdirection">Data navigate direction.</param>
-        </member>
-        <member name="P:Sci.Win.Tems.Input1.ReloadTimeoutSeconds">
-            <summary>
-            設定Browse 頁面Reload data的timeout時間(秒)
-            <para>0 代表使用DBProxy.Current.DefaultTimeout</para>
-            </summary>
         </member>
         <member name="M:Sci.Win.Tems.Input1.ReloadDatas">
             <summary>
