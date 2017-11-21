@@ -33,6 +33,13 @@ namespace Sci.Production.Thread
             strseason = str_season;
             strbrandid = str_brandid;
 
+            displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(@"
+select ThreadEditname = concat(ThreadEditname ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
+from style s 
+where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
+strstyleid,
+strbrandid,
+strseason));
             string sql = string.Format(
             @"
 with a as (
@@ -248,6 +255,23 @@ select tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorCo
                     ShowErr(DResult);
                     return;
                 }
+            }
+            string StyleEdit = string.Format(@"
+update s set 
+    ThreadEditname ='{3}',ThreadEditdate='{4}' 
+from style s 
+where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
+strstyleid,
+strbrandid,
+strseason,
+Sci.Env.User.UserID,
+DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+);
+            DualResult result = DBProxy.Current.Execute(null, StyleEdit);
+            if (!result)
+            {
+                ShowErr(StyleEdit, result);
+                return;
             }
             this.Close();
         }
