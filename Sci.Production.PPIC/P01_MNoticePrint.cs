@@ -3,15 +3,14 @@ using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using System.Diagnostics;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.PPIC
 {
@@ -20,6 +19,8 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P01_MNoticePrint : Sci.Win.Tems.PrintForm
     {
+        private const bool Excel = true;
+        private const bool PDF = false;
         private string _id;
 
         // private string _username;
@@ -72,6 +73,20 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override bool ToExcel()
         {
+            this.ExcelProcess(Excel);
+            return true;
+        }
+
+        private void BtnToPDF_Click(object sender, EventArgs e)
+        {
+            this.ExcelProcess(PDF);
+        }
+
+        private void ExcelProcess(bool process)
+        {
+            string strFileName = string.Empty;
+            string strPDFFileName = string.Empty;
+
             this.ShowWaitMessage("Data processing, please wait ...");
             if (this.radioMNotice.Checked == true)
             {
@@ -83,11 +98,12 @@ namespace Sci.Production.PPIC
                 {
                     this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("data not found!!");
-                    return true;
+                    return;
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
+                sxr.BoOpenFile = false;
                 sxr.AddPrintRange = true;
                 sxr.FontName = "Times New Roman";
                 sxr.FontSize = 14;
@@ -106,7 +122,7 @@ namespace Sci.Production.PPIC
                 sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
                 {
-                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
+                    sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
                     xcinfo.NumberFormate = "@";
                     xltTbl.LisColumnInfo.Add(xcinfo);
                 }
@@ -122,7 +138,7 @@ namespace Sci.Production.PPIC
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
                     this.HideWaitMessage();
-                    return true;
+                    return;
                 }
 
                 sxr.CopySheet.Add(2, dt.Rows.Count - 1);
@@ -183,10 +199,14 @@ namespace Sci.Production.PPIC
                     }
                 }
 
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice"));
+                strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
+                strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
+
+                sxr.Save(strFileName);
+                sxr.FinishSave();
             }
 
-             // M/Notict (Combo by ComboID)
+            // M/Notict (Combo by ComboID)
             else
             {
                 string ordercomboid = MyUtility.GetValue.Lookup("select ordercomboid FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
@@ -197,11 +217,12 @@ namespace Sci.Production.PPIC
                 {
                     MyUtility.Msg.WarningBox("data not found!!");
                     this.HideWaitMessage();
-                    return true;
+                    return;
                 }
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath);
+                sxr.BoOpenFile = false;
                 sxr.AddPrintRange = true;
                 sxr.FontName = "Times New Roman";
                 sxr.FontSize = 14;
@@ -225,7 +246,7 @@ namespace Sci.Production.PPIC
                     {
                         this.HideWaitMessage();
                         MyUtility.Msg.WarningBox("data not found!!");
-                        return true;
+                        return;
                     }
 
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW" + idxStr, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -244,7 +265,7 @@ namespace Sci.Production.PPIC
                     sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
                     for (int i = 3; i <= 18; i++)
                     {
-                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
+                        sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
                         xcinfo.NumberFormate = "@";
                         xltTbl.LisColumnInfo.Add(xcinfo);
                     }
@@ -328,12 +349,29 @@ namespace Sci.Production.PPIC
                 // #if DEBUG
                 //                sxr.ExcelApp.Visible = true;
                 // #endif
-                sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04"));
+                strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04");
+                strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_Report04", Sci.Production.Class.PDFFileNameExtension.PDF);
+
+                sxr.Save(strFileName);
+                sxr.FinishSave();
+            }
+
+            switch (process)
+            {
+                case Excel:
+                    strFileName.OpenFile();
+                    break;
+                case PDF:
+                    if (ConvertToPDF.ExcelToPDF(strFileName, strPDFFileName))
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
+                        Process.Start(startInfo);
+                    }
+
+                    break;
             }
 
             this.HideWaitMessage();
-            return true;
         }
 
         private System.Data.DataTable GetDtByComboID(string poid)
@@ -371,13 +409,13 @@ WHERE MNOrder.ordercomboid = @POID";
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             }
 
             for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
             {
                 // oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                oSheet.Cells[4, colIdx].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             }
         }
 

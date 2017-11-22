@@ -32,6 +32,7 @@
             this.checkAdditionally = new Sci.Win.UI.CheckBox();
             this.radioByOrderCombo = new Sci.Win.UI.RadioButton();
             this.radioMNotice = new Sci.Win.UI.RadioButton();
+            this.btnToPDF = new Sci.Win.UI.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,9 +88,21 @@
             this.radioMNotice.Text = "M/Notice";
             this.radioMNotice.UseVisualStyleBackColor = true;
             // 
+            // btnToPDF
+            // 
+            this.btnToPDF.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnToPDF.Location = new System.Drawing.Point(535, 13);
+            this.btnToPDF.Name = "btnToPDF";
+            this.btnToPDF.Size = new System.Drawing.Size(80, 30);
+            this.btnToPDF.TabIndex = 97;
+            this.btnToPDF.Text = "To PDF";
+            this.btnToPDF.UseVisualStyleBackColor = true;
+            this.btnToPDF.Click += new System.EventHandler(this.BtnToPDF_Click);
+            // 
             // P01_MNoticePrint
             // 
             this.ClientSize = new System.Drawing.Size(627, 200);
+            this.Controls.Add(this.btnToPDF);
             this.Controls.Add(this.groupBox1);
             this.Name = "P01_MNoticePrint";
             this.Text = "P01.M/Notice Print";
@@ -97,6 +110,7 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.btnToPDF, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -110,7 +124,6 @@
         private Win.UI.CheckBox checkAdditionally;
         private Win.UI.RadioButton radioByOrderCombo;
         private Win.UI.RadioButton radioMNotice;
-
-
+        private Win.UI.Button btnToPDF;
     }
 }
