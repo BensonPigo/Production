@@ -1200,7 +1200,7 @@ where POID = @poid group by POID,b.spno";
                         from PO_Supp_Detail A WITH (NOLOCK) 
                         left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
                         inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
-                        where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty + B.LInvQty)",
+                        where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)",
                         this.CurrentMaintain["MDivisionID"],
                         this.CurrentMaintain["POID"]);
 
