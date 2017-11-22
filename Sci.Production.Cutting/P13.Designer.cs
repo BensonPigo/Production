@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelPOID = new Sci.Win.UI.Label();
             this.checkBoxExtendAllParts = new Sci.Win.UI.CheckBox();
             this.buttonQuery = new Sci.Win.UI.Button();
@@ -39,6 +39,10 @@
             this.buttonPrint = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
+            this.labelPatternPanel = new Sci.Win.UI.Label();
+            this.labelCreateDate = new Sci.Win.UI.Label();
+            this.textBoxPatterPanel = new Sci.Win.UI.TextBox();
+            this.dateRangeCreateDate = new Sci.Win.UI.DateRange();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -55,7 +59,7 @@
             // 
             this.checkBoxExtendAllParts.AutoSize = true;
             this.checkBoxExtendAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxExtendAllParts.Location = new System.Drawing.Point(201, 15);
+            this.checkBoxExtendAllParts.Location = new System.Drawing.Point(851, 572);
             this.checkBoxExtendAllParts.Name = "checkBoxExtendAllParts";
             this.checkBoxExtendAllParts.Size = new System.Drawing.Size(126, 21);
             this.checkBoxExtendAllParts.TabIndex = 1;
@@ -133,14 +137,14 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(9, 45);
             this.grid.Name = "grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
@@ -148,11 +152,60 @@
             this.grid.Size = new System.Drawing.Size(1226, 515);
             this.grid.TabIndex = 6;
             // 
+            // labelPatternPanel
+            // 
+            this.labelPatternPanel.Location = new System.Drawing.Point(187, 12);
+            this.labelPatternPanel.Name = "labelPatternPanel";
+            this.labelPatternPanel.Size = new System.Drawing.Size(82, 23);
+            this.labelPatternPanel.TabIndex = 1;
+            this.labelPatternPanel.Text = "PatterPanel";
+            // 
+            // labelCreateDate
+            // 
+            this.labelCreateDate.Location = new System.Drawing.Point(349, 12);
+            this.labelCreateDate.Name = "labelCreateDate";
+            this.labelCreateDate.Size = new System.Drawing.Size(79, 23);
+            this.labelCreateDate.TabIndex = 1;
+            this.labelCreateDate.Text = "CreateDate";
+            // 
+            // textBoxPatterPanel
+            // 
+            this.textBoxPatterPanel.BackColor = System.Drawing.Color.White;
+            this.textBoxPatterPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBoxPatterPanel.Location = new System.Drawing.Point(273, 12);
+            this.textBoxPatterPanel.Name = "textBoxPatterPanel";
+            this.textBoxPatterPanel.Size = new System.Drawing.Size(73, 23);
+            this.textBoxPatterPanel.TabIndex = 7;
+            // 
+            // dateRangeCreateDate
+            // 
+            // 
+            // 
+            // 
+            this.dateRangeCreateDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeCreateDate.DateBox1.Name = "";
+            this.dateRangeCreateDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeCreateDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeCreateDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeCreateDate.DateBox2.Name = "";
+            this.dateRangeCreateDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeCreateDate.DateBox2.TabIndex = 1;
+            this.dateRangeCreateDate.IsRequired = false;
+            this.dateRangeCreateDate.Location = new System.Drawing.Point(432, 12);
+            this.dateRangeCreateDate.Name = "dateRangeCreateDate";
+            this.dateRangeCreateDate.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeCreateDate.TabIndex = 8;
+            // 
             // P13
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1244, 599);
+            this.Controls.Add(this.dateRangeCreateDate);
+            this.Controls.Add(this.textBoxPatterPanel);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.buttonPrint);
             this.Controls.Add(this.buttonToExcel);
@@ -160,11 +213,15 @@
             this.Controls.Add(this.textBoxPOID);
             this.Controls.Add(this.buttonQuery);
             this.Controls.Add(this.checkBoxExtendAllParts);
+            this.Controls.Add(this.labelCreateDate);
+            this.Controls.Add(this.labelPatternPanel);
             this.Controls.Add(this.labelPOID);
             this.EditMode = true;
             this.Name = "P13";
             this.Text = "P13. Batch Print Bundle Check List";
             this.Controls.SetChildIndex(this.labelPOID, 0);
+            this.Controls.SetChildIndex(this.labelPatternPanel, 0);
+            this.Controls.SetChildIndex(this.labelCreateDate, 0);
             this.Controls.SetChildIndex(this.checkBoxExtendAllParts, 0);
             this.Controls.SetChildIndex(this.buttonQuery, 0);
             this.Controls.SetChildIndex(this.textBoxPOID, 0);
@@ -172,6 +229,8 @@
             this.Controls.SetChildIndex(this.buttonToExcel, 0);
             this.Controls.SetChildIndex(this.buttonPrint, 0);
             this.Controls.SetChildIndex(this.grid, 0);
+            this.Controls.SetChildIndex(this.textBoxPatterPanel, 0);
+            this.Controls.SetChildIndex(this.dateRangeCreateDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -190,5 +249,9 @@
         private Win.UI.Button buttonPrint;
         private Win.UI.Grid grid;
         private Win.UI.BindingSource bindingSource1;
+        private Win.UI.Label labelPatternPanel;
+        private Win.UI.Label labelCreateDate;
+        private Win.UI.TextBox textBoxPatterPanel;
+        private Win.UI.DateRange dateRangeCreateDate;
     }
 }
