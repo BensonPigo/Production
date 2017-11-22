@@ -39,7 +39,8 @@ namespace Sci.Production.Thread
             displaySeason.Value = masterrow["Seasonid"].ToString();
             displayThreadCombination.Value = detailrow["ThreadCombID"].ToString();
             combdetail_id = detailrow["id"].ToString();
-            displayBoxEdit.Text = MyUtility.Convert.GetString(masterrow["ThreadEditname"])+" "+ (MyUtility.Convert.GetString(masterrow["ThreadEditdate"])=="" ?"":((DateTime)MyUtility.Convert.GetDate(masterrow["ThreadEditdate"])).ToString("yyyy/MM/dd HH:mm:ss"));
+            string n = MyUtility.GetValue.Lookup(string.Format(@"select name from pass1 where id ='{0}'", MyUtility.Convert.GetString(masterrow["ThreadEditname"])));
+            displayBoxEdit.Text = MyUtility.Convert.GetString(masterrow["ThreadEditname"]) + "-" + n + " " + (MyUtility.Convert.GetString(masterrow["ThreadEditdate"]) == "" ? "" : ((DateTime)MyUtility.Convert.GetDate(masterrow["ThreadEditdate"])).ToString("yyyy/MM/dd HH:mm:ss"));
             btnEdit.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             btnEdit.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             //建立Gird
@@ -363,9 +364,10 @@ DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
                 EditMode = false;
                 gridDetail.IsEditingReadOnly = !EditMode;
                 displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(@"
-select ThreadEditname = concat(ThreadEditname ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
-from style s 
-where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
+select ThreadEditname = concat(ThreadEditname,'-',p.name ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
+from style s ,pass1 p
+where s.ThreadEditname = p.id and
+s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
 masterRow["id"].ToString(),
 masterRow["BrandID"].ToString(),
 masterRow["SeasonID"].ToString()));

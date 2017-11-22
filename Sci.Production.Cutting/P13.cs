@@ -51,12 +51,30 @@ namespace Sci.Production.Cutting
         }
         
         private void buttonQuery_Click(object sender, EventArgs e)
-        {
+        {            
             if (this.textBoxPOID.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("POID can not be empty.");
                 this.bindingSource1.DataSource = null;
                 return;
+            }
+
+            string strPatternPanelFilter = string.Empty;
+            string strCreateDateFilter = string.Empty;
+
+            if (this.textBoxPatterPanel.Text.Empty() == false)
+            {
+                strPatternPanelFilter = $"and PatternPanel = '{this.textBoxPatterPanel.Text}'";
+            }
+
+            if (this.dateRangeCreateDate.Value1.Empty() == false)
+            {
+                strCreateDateFilter = $"and '{((DateTime)this.dateRangeCreateDate.Value1).ToString("yyyy/MM/dd")}' <= CDate ";
+            }
+
+            if (this.dateRangeCreateDate.Value2.Empty() == false)
+            {
+                strCreateDateFilter += $"and CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             string strQuerySQL = $@"
@@ -89,7 +107,9 @@ select Sel = 0
 	   , PrintDate
        , SewingCell
 from Bundle
-where POID = '{this.textBoxPOID.Text}'";
+where POID = '{this.textBoxPOID.Text}'
+      {strPatternPanelFilter}
+      {strCreateDateFilter}";
 
             DataTable resultDt;
             DualResult result = DBProxy.Current.Select(null, strQuerySQL, out resultDt);
