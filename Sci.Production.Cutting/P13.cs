@@ -74,7 +74,7 @@ namespace Sci.Production.Cutting
 
             if (this.dateRangeCreateDate.Value2.Empty() == false)
             {
-                strCreateDateFilter += $"and <= CDate '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
+                strCreateDateFilter += $"and CDate <= '{((DateTime)this.dateRangeCreateDate.Value2).ToString("yyyy/MM/dd")}'";
             }
 
             string strQuerySQL = $@"
