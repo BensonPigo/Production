@@ -34,7 +34,7 @@ namespace Sci.Production.Thread
             strbrandid = str_brandid;
 
             displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(@"
-select ThreadEditname = concat(ThreadEditname,' ',p.name ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
+select ThreadEditname = concat(ThreadEditname,'-',p.name ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
 from style s ,pass1 p
 where s.ThreadEditname = p.id and
 s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
