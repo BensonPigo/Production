@@ -81,7 +81,7 @@ with tmp1stData as (
             , sod.WorkHour
             , sod.QAQty
             , o.CPUFactor
-            , Rate = isnull([dbo].[GetStyleLocation_Rate]( s.Ukey ,sod.ComboType)/100,0) 
+            , Rate = isnull([dbo].[GetStyleLocation_Rate]( s.Ukey ,sod.ComboType)/100,1) 
             , StyleDesc = s.Description
             , CDDesc = c.Description
             , s.ModularParent
@@ -156,7 +156,6 @@ with tmp1stData as (
 		   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
 		   , MDivisionID
 	from tmp1stData
-	where Shift <> 'O' and LocalOrder = 0  
 	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
 ),tmp2ndData as (
     Select  ProgramID
