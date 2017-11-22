@@ -461,9 +461,20 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                             Convert.ToDouble(dr["balanceqty"]) > 0 &&
                             !dr["MTLTYPEID"].ToString().Equals("THREAD") &&
                             !dr["MTLTYPEID"].ToString().Equals("CARTON") &&
-                            dr["Orderlist_chk"] != DBNull.Value) 
+                            dr["Orderlist_chk"] != DBNull.Value)
                         {
                             dr["Selected"] = 1;
+                        }
+                        else {
+                            //沒有default 打勾的話output要清掉因為在BOA裡面 所以會被帶出來可是實際上我不需要這些物料 所以不用計算
+                            dr["Output"] = "";
+                            //連同detail資料也顯示0
+                            if (tmp.Rows.Count > 0 && Convert.ToDouble(dr["qty"]) > 0)
+                            {
+                                foreach (DataRow tmp_dr in tmp.Rows) {
+                                    tmp_dr["qty"] = 0;
+                                }
+                            }
                         }
 
                         if (tmp.Rows.Count > 0)
