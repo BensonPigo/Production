@@ -165,15 +165,17 @@ namespace Sci.Production.Centralized
             {
                 string strSQL = @"
 Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.BrandID , Orders.FactoryID, 
-Orders.POID , Orders.Category, Orders.CdCodeID , Orders.CPU, 
-CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
-Orders.BuyerDelivery, Orders.SCIDelivery, 
-SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
-QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty  
-, TotalCPUOut  = Round(((SELECT  dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty ) * ((SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU),6) 
-, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
-, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
-, STYLE.ModularParent, STYLE.CPUAdjusted
+	Orders.POID , Orders.Category, Orders.CdCodeID , Orders.CPU, 
+	CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
+	Orders.BuyerDelivery, Orders.SCIDelivery, 
+	SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
+	QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty  
+	, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
+	, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
+	, STYLE.ModularParent, STYLE.CPUAdjusted
+	,OutputDate,Shift, Team,SCategory = SewingOutput.Category, CPUFactor, Orders.MDivisionID,orderid
+	 , Rate = isnull([dbo].[GetStyleLocation_Rate]( Style.Ukey ,SewingOutput_Detail.ComboType)/100,1) 
+into #stmp
 FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
 Where SewingOutput_Detail.OrderID = Orders.ID 
 And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
@@ -237,7 +239,7 @@ and Factory.IsProduceFty = '1'
 
                 if (this.gstrCategory != string.Empty)
                 {
-                        strSQL += string.Format(" AND Orders.Category in ({0})", this.gstrCategory);
+                    strSQL += string.Format(" AND Orders.Category in ({0})", this.gstrCategory);
                 }
 
                 if (this.chx == "Exclude")
@@ -249,8 +251,43 @@ and Factory.IsProduceFty = '1'
                 {
                     strSQL += string.Format(" AND Factory.CountryID = '{0}' ", this.txtCountry1.TextBox1.Text);
                 }
+
+                strSQL += @"
+select OutputDate,Category, Shift, SewingLineID, Team, OrderId , ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate, MDivisionID
+		, QAQty = sum(QAQty)
+into #stmp2		
+from #stmp
+group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+
+select 
+a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID 
+, CPU = sum(a.CPU), CPURate = sum(a.CPURate)
+,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
+, ManPower = sum(a.ManPower), WorkHour = sum(a.WorkHour) , QARate = sum(a.QARate)
+, TotalManHour = sum(a.TotalManHour )
+, a.CDDesc, a.StyleDesc
+, a.ModularParent, CPUAdjusted = sum(a.CPUAdjusted)
+,QAQty = 
+	(select sum(QAQty)  
+	from #stmp2 f 
+	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	and f.orderid = a.orderid
+	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
+	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+,TotalCPUOut =
+	(select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
+	from #stmp2 f 
+	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	and f.orderid = a.orderid
+	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
+	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+into #tmpz
+from #stmp a
+group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
+, a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent,OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+";
                 #region 1.	By Factory
-                string strFactory = string.Format(@"Select FactoryID AS A, QARate, TotalCPUOut, TotalManHour FROM ({0} ) AAA ", strSQL);
+                string strFactory = string.Format(@"{0} Select FactoryID AS A, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -276,7 +313,7 @@ from #tmp Group BY A order by A ";
                 #endregion 1.	By Factory
 
                 #region 2.	By Brand
-                string strBrand = string.Format(@" Select BrandID AS A, QARate,TotalCPUOut,TotalManHour FROM ({0} ) AAA ", strSQL);
+                string strBrand = string.Format(@"{0}  Select BrandID AS A, QARate,TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -303,8 +340,9 @@ F=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalMan
                 #region 3.	By Brand + Factory
                 string strFBrand = string.Format(
                     @"
+{0} 
 Select BrandID AS A, FactoryID AS B, QARate, TotalCPUOut,TotalManHour
-FROM ({0} ) AAA ",
+FROM #tmpz ",
 strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -333,9 +371,10 @@ from #tmp Group BY A,B order by A,B";
                 #region 4.	By Style
                 string strStyle = string.Format(
                     @"
+{0} 
 Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F
 , QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M
-FROM ({0} ) AAA ",
+FROM #tmpz ",
 strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -366,7 +405,7 @@ from #tmp Group BY A,B,C,D,E,F,L,M order by A,B,C,E";
                 #endregion 4.	By Style
 
                 #region 5.	By CD
-                string strCdCodeID = string.Format(@" Select CdCodeID AS A, CDDesc AS B, QARate, TotalCPUOut,TotalManHour FROM ({0} ) AAA ", strSQL);
+                string strCdCodeID = string.Format(@"{0}  Select CdCodeID AS A, CDDesc AS B, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -392,7 +431,7 @@ from #tmp Group BY A,B order by A";
                 #endregion 5.	By CD
 
                 #region 6.	By Factory Line
-                string strFactoryLine = string.Format(@" Select FactoryID AS A, SewingLineID AS B, QARate, TotalCPUOut,TotalManHour FROM ({0} ) AAA ", strSQL);
+                string strFactoryLine = string.Format(@"{0}  Select FactoryID AS A, SewingLineID AS B, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -419,8 +458,8 @@ from #tmp Group BY A,B order by A,B";
 
                 #region 7.	By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
-                    @" Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, QARate, TotalCPUOut,TotalManHour
-FROM ({0} ) AAA  ",
+                    @"{0}  Select BrandID AS A, FactoryID AS B, CdCodeID AS C, CDDesc AS D, QARate, TotalCPUOut,TotalManHour
+FROM #tmpz  ",
                     strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -449,8 +488,9 @@ from #tmp Group BY A,B,C,D order by A,B,C";
                 #region 8.	By PO Combo
                 string strPOCombo = string.Format(
                     @"
+{0} 
 Select POID AS A, StyleID AS B, BrandID AS C, CdCodeID AS D, CDDesc AS E, StyleDesc AS F, SeasonID AS G, ProgramID AS H, QARate, TotalCPUOut, TotalManHour
-FROM ({0} ) AAA  ",
+FROM #tmpz  ",
 strSQL);
                 foreach (string conString in connectionString)
                 {
@@ -478,7 +518,7 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,G";
                 #endregion 8.	By PO Combo
 
                 #region 9.	By Program
-                string strProgram = string.Format(@" Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, QARate,TotalCPUOut, TotalManHour FROM ({0} ) AAA ", strSQL);
+                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, FactoryID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F, StyleDesc AS G, SeasonID AS H, QARate,TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -757,14 +797,14 @@ from #tmp Group BY A,B,C,D,E,F,G,H order by A,B,C,D,E,H";
             }
             catch (Exception ex)
             {
-               if (this.excel != null)
+                if (this.excel != null)
                 {
                     this.excel.DisplayAlerts = false;
                     this.excel.Quit();
                 }
 
                 this.Clear();
-               return new DualResult(false, "Export excel error.", ex);
+                return new DualResult(false, "Export excel error.", ex);
             }
 
             this.Clear();
