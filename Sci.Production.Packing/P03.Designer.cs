@@ -140,7 +140,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 269);
+            this.masterpanel.Size = new System.Drawing.Size(892, 269);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -194,7 +194,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 269);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 249);
+            this.detailpanel.Size = new System.Drawing.Size(892, 80);
             // 
             // gridicon
             // 
@@ -207,7 +207,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 249);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 80);
             // 
             // detail2
             // 
@@ -223,16 +223,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 556);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 518);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 518);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -779,6 +779,7 @@
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PackingList";
+            this.WorkView = "View_PackingP03";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
