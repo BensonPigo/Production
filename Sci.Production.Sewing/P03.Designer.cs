@@ -73,7 +73,7 @@
             this.buttonFindNow.TabIndex = 3;
             this.buttonFindNow.Text = "Find Now";
             this.buttonFindNow.UseVisualStyleBackColor = true;
-            this.buttonFindNow.Click += new System.EventHandler(this.buttonFindNow_Click);
+            this.buttonFindNow.Click += new System.EventHandler(this.ButtonFindNow_Click);
             // 
             // buttonNewSearch
             // 
@@ -84,7 +84,7 @@
             this.buttonNewSearch.TabIndex = 3;
             this.buttonNewSearch.Text = "New Search";
             this.buttonNewSearch.UseVisualStyleBackColor = true;
-            this.buttonNewSearch.Click += new System.EventHandler(this.buttonNewSearch_Click);
+            this.buttonNewSearch.Click += new System.EventHandler(this.ButtonNewSearch_Click);
             // 
             // dateRangeBuyerDelivery
             // 
@@ -159,7 +159,7 @@
             this.buttonSave.TabIndex = 3;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // grid
             // 

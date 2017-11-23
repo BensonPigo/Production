@@ -19,28 +19,43 @@ using System.Linq;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// P01_Generate
+    /// </summary>
     public partial class P01_Generate : Sci.Win.Subs.Base
     {
         private DataTable gridTable;
-        private string styleUkey, strstyleid, strseason, strbrandid;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private string styleUkey;
+        private string strstyleid;
+        private string strseason;
+        private string strbrandid;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <summary>
+        /// P01_Generate
+        /// </summary>
+        /// <param name="str_styleukey">str_styleukey</param>
+        /// <param name="str_styleid">str_styleid</param>
+        /// <param name="str_season">str_season</param>
+        /// <param name="str_brandid">str_brandid</param>
         public P01_Generate(string str_styleukey, string str_styleid, string str_season, string str_brandid)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            styleUkey = str_styleukey;
-            strstyleid = str_styleid;
-            strseason = str_season;
-            strbrandid = str_brandid;
-
-            displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(@"
+            this.styleUkey = str_styleukey;
+            this.strstyleid = str_styleid;
+            this.strseason = str_season;
+            this.strbrandid = str_brandid;
+            this.displayBoxEdit.Text = MyUtility.GetValue.Lookup(string.Format(
+                @"
 select ThreadEditname = concat(ThreadEditname,'-',p.name ,' ',format(ThreadEditdate,'yyyy/MM/dd HH:mm:ss' ))
 from style s ,pass1 p
 where s.ThreadEditname = p.id and
 s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
-strstyleid,
-strbrandid,
-strseason));
+                this.strstyleid,
+                this.strbrandid,
+                this.strseason));
+
             string sql = string.Format(
             @"
 with a as (
@@ -59,24 +74,28 @@ select 0 as sel,a.id,b.*,a.threadcombid
 from b WITH (NOLOCK) 
 left join a WITH (NOLOCK) on a.operationid = b.operationid and b.styleid = a.styleid 
 and a.seasonid  = b.seasonid and a.brandid = b.brandid and a.combotype= b.ComboType and a.seq=b.Seq
-order by seq"
-, str_styleid, str_season, str_brandid);
-            DualResult dResult = DBProxy.Current.Select(null, sql, out gridTable);
+order by seq",
+            str_styleid,
+            str_season,
+            str_brandid);
+
+            DualResult dResult = DBProxy.Current.Select(null, sql, out this.gridTable);
             if (dResult)
             {
-                this.listControlBindingSource1.DataSource = gridTable;
+                this.listControlBindingSource1.DataSource = this.gridTable;
             }
             else
             {
-                ShowErr(sql);
+                this.ShowErr(sql);
                 return;
             }
 
             DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
-            //自動複製相同machinetypeid && operationid的Threadcombid到第二筆，JK：不需此功能，先註解掉
+
+            // 自動複製相同machinetypeid && operationid的Threadcombid到第二筆，JK：不需此功能，先註解掉
             //// DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
-            //threadcombcell.CellValidating += (s, e) =>
-            //{
+            // threadcombcell.CellValidating += (s, e) =>
+            // {
             //    string newValue = e.FormattedValue.ToString();
             //    string operationid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["operationid"].ToString();
             //    string machinetypeid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["machinetypeid"].ToString();
@@ -89,11 +108,10 @@ order by seq"
             //        }
             //    }
 
-            //};
-
-            this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Helper.Controls.Grid.Generator(this.gridDetail)
-            .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+            // };
+            this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+            .CheckBox("Sel", header: string.Empty, width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Text("ComboType", header: "ComboType", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
@@ -103,64 +121,74 @@ order by seq"
            .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
             .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
-            gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void btnFilter_Click(object sender, EventArgs e)
+        private void BtnFilter_Click(object sender, EventArgs e)
         {
-            gridDetail.ValidateControl();
-            if (MyUtility.Check.Empty(txtMachineType.Text))
+            this.gridDetail.ValidateControl();
+            if (MyUtility.Check.Empty(this.txtMachineType.Text))
             {
-                gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? "Threadcombid is null" : "";
+                this.gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? "Threadcombid is null" : string.Empty;
             }
             else
             {
-                gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", txtMachineType.Text) : string.Format("MachineTypeid = '{0}'", txtMachineType.Text);
+                this.gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", this.txtMachineType.Text) : string.Format("MachineTypeid = '{0}'", this.txtMachineType.Text);
             }
         }
-        //close
-        private void btnClose_Click(object sender, EventArgs e)
+
+        // close
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        //save到DB
-        private void btnGenerate_Click(object sender, EventArgs e)
+
+        // save到DB
+        private void BtnGenerate_Click(object sender, EventArgs e)
         {
-            gridDetail.ValidateControl();
+            this.gridDetail.ValidateControl();
             DataTable groupTable, operTable, gridTable3;
 
-            gridTable3 = gridTable.Clone();//複製結構
+            gridTable3 = this.gridTable.Clone(); // 複製結構
             #region 準備有輸入資料的row到gridTable3,並判斷Threadcombid是否符合規則
-            if (gridTable.AsEnumerable().Any(row => !MyUtility.Check.Empty(row["Threadcombid"])))//Threadcombid任一筆有值則true
+
+            // Threadcombid任一筆有值則true
+            if (this.gridTable.AsEnumerable().Any(row => !MyUtility.Check.Empty(row["Threadcombid"])))
             {
-                //Threadcombid欄位有資料複製到gridTable3
-                gridTable3 = gridTable.Select("threadcombid is not null and Threadcombid <> ''").CopyToDataTable();
+                // Threadcombid欄位有資料複製到gridTable3
+                gridTable3 = this.gridTable.Select("threadcombid is not null and Threadcombid <> ''").CopyToDataTable();
             }
             #endregion
-            DualResult DResult;
-            //準備未改變前ThreadColorComb_Detail的ID (Table)
+            DualResult dResult;
+
+            // 準備未改變前ThreadColorComb_Detail的ID (Table)
             DataTable old_Detail;
-            string old_Detailsql = string.Format("select distinct tcd.id,tcd.Machinetypeid,tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}", styleUkey);
-            DResult = DBProxy.Current.Select(null, old_Detailsql, out old_Detail);
-            if (!DResult)
+            string old_Detailsql = string.Format("select distinct tcd.id,tcd.Machinetypeid,tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}", this.styleUkey);
+            dResult = DBProxy.Current.Select(null, old_Detailsql, out old_Detail);
+            if (!dResult)
             {
-                ShowErr(DResult);
+                this.ShowErr(dResult);
                 return;
             }
-            //先Delete threadcolorcomb_operation,在更新ThreadColorComb之前,要先刪除threadcolorcomb_operation
-            //因為更新ThreadColorComb後ID會更新,threadcolorcomb_operation需要用未變更前的ID當條件,去清乾淨
-            string deleteo_peration = string.Format("Delete from threadcolorcomb_operation where id in (select id from ThreadColorComb where styleukey = {0})", styleUkey);
-            DResult = DBProxy.Current.Execute(null, deleteo_peration);
-            if (!DResult)
+
+            // 先Delete threadcolorcomb_operation,在更新ThreadColorComb之前,要先刪除threadcolorcomb_operation
+            // 因為更新ThreadColorComb後ID會更新,threadcolorcomb_operation需要用未變更前的ID當條件,去清乾淨
+            string deleteo_peration = string.Format("Delete from threadcolorcomb_operation where id in (select id from ThreadColorComb where styleukey = {0})", this.styleUkey);
+            dResult = DBProxy.Current.Execute(null, deleteo_peration);
+            if (!dResult)
             {
-                ShowErr(DResult);
+                this.ShowErr(dResult);
                 return;
             }
-            //更新ThreadColorComb
-            //先準備#source,  id一樣update欄位,沒有的新增,多餘的刪去,再撈出更新後的表身
-            DResult = MyUtility.Tool.ProcessWithDatatable(gridTable3, "id,threadcombid,Machinetypeid,seamlength,Frequency",
-                                    string.Format(@"
+
+            // 更新ThreadColorComb
+            // 先準備#source,  id一樣update欄位,沒有的新增,多餘的刪去,再撈出更新後的表身
+            dResult = MyUtility.Tool.ProcessWithDatatable(
+                gridTable3,
+                "id,threadcombid,Machinetypeid,seamlength,Frequency",
+                string.Format(
+                    @"
 select id = iif(id = LAG(id,1) over(order by id),'',id),threadcombid,Machinetypeid,styleUkey,Length
 into #source
 from
@@ -184,19 +212,22 @@ when not matched by target then
 when not matched by source and t.StyleUkey = {0} then
 	delete;
 
-select * from ThreadColorComb where StyleUkey = {0}"
-                , styleUkey), out groupTable);
-            if (!DResult)
+select * from ThreadColorComb where StyleUkey = {0}",
+                    this.styleUkey),
+                out groupTable);
+
+            if (!dResult)
             {
-                ShowErr(DResult);
+                this.ShowErr(dResult);
                 return;
             }
 
-            //threadcolorcomb_Operation 其他欄位先用grid上的table組好, 但id要從已經存到DB的ThreadColorComb
-        
-
-            MyUtility.Tool.ProcessWithDatatable(gridTable3, "operationid,ComboType,SEQ,threadcombid,Machinetypeid,Frequency",
-                                    string.Format(@"
+            // threadcolorcomb_Operation 其他欄位先用grid上的table組好, 但id要從已經存到DB的ThreadColorComb
+            MyUtility.Tool.ProcessWithDatatable(
+                gridTable3,
+                "operationid,ComboType,SEQ,threadcombid,Machinetypeid,Frequency",
+                string.Format(
+                    @"
 Select distinct operationid,ComboType,SEQ,threadcombid,Machinetypeid,Frequency
 into #new
 from #tmp
@@ -206,11 +237,13 @@ select t.id,n.operationid,n.ComboType,n.SEQ,n.Frequency
 from #new n inner join ThreadColorComb t on t.threadcombid = n.threadcombid and t.Machinetypeid = n.Machinetypeid
 where t.styleukey = {0}
 
-select tco.* from threadcolorcomb_Operation tco inner join ThreadColorComb t on t.id = tco.Id where  styleukey = {0}"
-                , styleUkey), out operTable);
+select tco.* from threadcolorcomb_Operation tco inner join ThreadColorComb t on t.id = tco.Id where  styleukey = {0}",
+                    this.styleUkey),
+                out operTable);
 
-            //更新ThreadColorComb.ConsPC, 要在更新threadcolorcomb_Operation之後做
-            string computeConsPC = string.Format(@"
+            // 更新ThreadColorComb.ConsPC, 要在更新threadcolorcomb_Operation之後做
+            string computeConsPC = string.Format(
+                @"
 update Tcc
 	Set ConsPC = ROUND(ConsPC.ConsPC, 2)
 from ThreadColorComb Tcc
@@ -221,19 +254,25 @@ Outer Apply(
     left join MachineType_ThreadRatio MtTr on Tcc.Machinetypeid = MtTr.ID
     where   Tcc.ID = TccO.Id
 ) ConsPC
-where Tcc.StyleUkey = '{0}'", styleUkey);
-            DResult = DBProxy.Current.Execute(null, computeConsPC);
-            if (!DResult)
+where Tcc.StyleUkey = '{0}'",
+                this.styleUkey);
+
+            dResult = DBProxy.Current.Execute(null, computeConsPC);
+            if (!dResult)
             {
-                ShowErr(DResult);
+                this.ShowErr(dResult);
                 return;
             }
-            //更新ThreadColorComb_Detail,只會有兩種況狀,減少就Delete, ThreadCombid變動就更新
+
+            // 更新ThreadColorComb_Detail,只會有兩種況狀,減少就Delete, ThreadCombid變動就更新
             DataTable tcc_Detail;
             if (old_Detail.Rows.Count > 0)
             {
-                DResult = MyUtility.Tool.ProcessWithDatatable(old_Detail, "id,Machinetypeid,ThreadCombid",
-                    string.Format(@"
+                dResult = MyUtility.Tool.ProcessWithDatatable(
+                    old_Detail,
+                    "id,Machinetypeid,ThreadCombid",
+                    string.Format(
+                        @"
 delete ThreadColorComb_Detail where id in
 (
     select a.id
@@ -248,83 +287,100 @@ from ThreadColorComb_Detail tcd inner join ThreadColorComb t on tcd.Machinetypei
 where styleukey = {0} and tcd.id in (select distinct id from #tmp)
 
 select tcd.ThreadCombid from ThreadColorComb_Detail tcd inner join ThreadColorComb t on t.id = tcd.Id where styleukey = {0}
-"
-                , styleUkey), out tcc_Detail);
-                
-                if (!DResult)
+",
+                        this.styleUkey),
+                    out tcc_Detail);
+
+                if (!dResult)
                 {
-                    ShowErr(DResult);
+                    this.ShowErr(dResult);
                     return;
                 }
             }
-            string StyleEdit = string.Format(@"
+
+            string styleEdit = string.Format(
+                @"
 update s set 
     ThreadEditname ='{3}',ThreadEditdate='{4}' 
 from style s 
 where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
-strstyleid,
-strbrandid,
-strseason,
-Sci.Env.User.UserID,
-DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
-);
-            DualResult result = DBProxy.Current.Execute(null, StyleEdit);
+                this.strstyleid,
+                this.strbrandid,
+                this.strseason,
+                Sci.Env.User.UserID,
+                DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            DualResult result = DBProxy.Current.Execute(null, styleEdit);
             if (!result)
             {
-                ShowErr(StyleEdit, result);
+                this.ShowErr(styleEdit, result);
                 return;
             }
+
             this.Close();
         }
 
-        private void btnBatchUpdate_Click(object sender, EventArgs e)
+        private void BtnBatchUpdate_Click(object sender, EventArgs e)
         {
-
-            foreach (DataRowView dr in gridTable.DefaultView)
+            foreach (DataRowView dr in this.gridTable.DefaultView)
             {
                 if (dr["Sel"].ToString() == "1")
                 {
-                    dr["ThreadCombid"] = txtthreadcomb.Text;
+                    dr["ThreadCombid"] = this.txtthreadcomb.Text;
                     dr["Sel"] = false;
                     dr.EndEdit();
                 }
-
             }
-            gridDetail.ValidateControl();
+
+            this.gridDetail.ValidateControl();
         }
 
-        private void txtMachineType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtMachineType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                string.Format(
+                    @"Select distinct d.MachineTypeID
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
             join operation e WITH (NOLOCK) on e.id = d.operationid
-            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.txtMachineType.Text, false, ",");
-            //
+            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 ",
+                    this.strstyleid,
+                    this.strseason,
+                    this.strbrandid),
+                "23",
+                this.txtMachineType.Text,
+                false,
+                ",");
+
             DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             this.txtMachineType.Text = item.GetSelectedString();
         }
 
-        private void txtMachineType_Validating(object sender, CancelEventArgs e)
+        private void TxtMachineType_Validating(object sender, CancelEventArgs e)
         {
-            base.OnValidating(e);
+            this.OnValidating(e);
             string str = this.txtMachineType.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.txtMachineType.OldValue)
             {
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    this.txtMachineType.Text = "";
+                    this.txtMachineType.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
                     return;
                 }
-                //string cjunk = MyUtility.GetValue.Lookup("Junk", str, "Machinetype", "id");
-                //if (cjunk == "True")
-                //{
+
+                // string cjunk = MyUtility.GetValue.Lookup("Junk", str, "Machinetype", "id");
+                // if (cjunk == "True")
+                // {
                 //    MyUtility.Msg.WarningBox(string.Format("Machine Type already junk, you can't choose!!"));
                 //    this.textBox1.Text = "";
-                //}
+                // }
             }
         }
     }

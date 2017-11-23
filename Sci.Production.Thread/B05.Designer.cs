@@ -360,7 +360,7 @@
             this.btnFilter.TabIndex = 14;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
+            this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
             // 
             // btnRecalculateStockQty
             // 
@@ -370,7 +370,7 @@
             this.btnRecalculateStockQty.TabIndex = 15;
             this.btnRecalculateStockQty.Text = "Re-calculate stock qty";
             this.btnRecalculateStockQty.UseVisualStyleBackColor = true;
-            this.btnRecalculateStockQty.Click += new System.EventHandler(this.btnRecalculateStockQty_Click);
+            this.btnRecalculateStockQty.Click += new System.EventHandler(this.BtnRecalculateStockQty_Click);
             // 
             // labelTransactionDate
             // 
@@ -397,7 +397,7 @@
             this.btnQuery.TabIndex = 16;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // B05
             // 

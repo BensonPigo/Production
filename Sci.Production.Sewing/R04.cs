@@ -9,42 +9,56 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 
-
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// R04
+    /// </summary>
     public partial class R04 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? date1, date2;
-        string category, mDivision, factory, brand, cdcode;
+        private DataTable printData;
+        private DateTime? date1;
+        private DateTime? date2;
+        private string category;
+        private string mDivision;
+        private string factory;
+        private string brand;
+        private string cdcode;
+
+        /// <summary>
+        /// R04
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
+            this.InitializeComponent();
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboCategory.SelectedIndex = 0;
-            comboM.Text = Sci.Env.User.Keyword;
-            comboFactory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboCategory.SelectedIndex = 0;
+            this.comboM.Text = Sci.Env.User.Keyword;
+            this.comboFactory.SelectedIndex = 0;
         }
-        // 驗證輸入條件
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            date1 = dateOoutputDate.Value1;
-            date2 = dateOoutputDate.Value2;
-            category = comboCategory.Text;
-            mDivision = comboM.Text;
-            factory = comboFactory.Text;
-            brand = txtbrand.Text;
-            cdcode = txtCDCode.Text;
+            this.date1 = this.dateOoutputDate.Value1;
+            this.date2 = this.dateOoutputDate.Value2;
+            this.category = this.comboCategory.Text;
+            this.mDivision = this.comboM.Text;
+            this.factory = this.comboFactory.Text;
+            this.brand = this.txtbrand.Text;
+            this.cdcode = this.txtCDCode.Text;
 
             return base.ValidateInput();
         }
-        // 非同步取資料
+
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
@@ -72,23 +86,27 @@ outer apply
 ) r
 where 1=1 "));
 
-            if (!MyUtility.Check.Empty(date1))
+            if (!MyUtility.Check.Empty(this.date1))
             {
-                sqlCmd.Append(string.Format(" and s.OutputDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.OutputDate >= '{0}' ", Convert.ToDateTime(this.date1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(date2))
+
+            if (!MyUtility.Check.Empty(this.date2))
             {
-                sqlCmd.Append(string.Format(" and s.OutputDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and s.OutputDate <= '{0}' ", Convert.ToDateTime(this.date2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(mDivision))
+
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", this.mDivision));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", this.factory));
             }
-            if (!MyUtility.Check.Empty(category) && category.ToUpper() == "MOCKUP")
+
+            if (!MyUtility.Check.Empty(this.category) && this.category.ToUpper() == "MOCKUP")
             {
                 sqlCmd.Append(" and s.Category = 'M'");
             }
@@ -141,25 +159,25 @@ left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c
 				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType
 left join Factory f on t.FactoryID = f.ID
 where 1=1");
-            if (!MyUtility.Check.Empty(category) && category != "Mockup")
+            if (!MyUtility.Check.Empty(this.category) && this.category != "Mockup")
             {
-                if (category == "Bulk")
+                if (this.category == "Bulk")
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'B'");
                 }
-                else if (category == "Sample")
+                else if (this.category == "Sample")
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'S'");
                 }
-                else if (category == "Garment")
+                else if (this.category == "Garment")
                 {
                     sqlCmd.Append(" and t.OrderCategory in ('G')");
                 }
-                else if (category == "Bulk+Sample")
+                else if (this.category == "Bulk+Sample")
                 {
                     sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
                 }
-                else if (category == "Bulk+Sample+Garment")
+                else if (this.category == "Bulk+Sample+Garment")
                 {
                     sqlCmd.Append(" and t.OrderCategory in ('B', 'S', 'G')");
                 }
@@ -168,13 +186,15 @@ where 1=1");
                     sqlCmd.Append(" and t.LocalOrder = 1");
                 }
             }
-            if (!MyUtility.Check.Empty(brand))
+
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                sqlCmd.Append(string.Format(" and (t.OrderBrandID = '{0}' or t.MockupBrandID = '{0}')", brand));
+                sqlCmd.Append(string.Format(" and (t.OrderBrandID = '{0}' or t.MockupBrandID = '{0}')", this.brand));
             }
-            if (!MyUtility.Check.Empty(cdcode))
+
+            if (!MyUtility.Check.Empty(this.cdcode))
             {
-                sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", cdcode));
+                sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", this.cdcode));
             }
 
             sqlCmd.Append(@"-----Artwork
@@ -289,23 +309,23 @@ drop table #AT,#atall,#idat,#tmpSewingDetail,#oid_at,#tmp1stFilter,#tmpSewingGro
 '
 EXEC sp_executesql @lastSql
 ");
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -313,18 +333,23 @@ EXEC sp_executesql @lastSql
 
             this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile);//開excelapp
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            for (int i = 35; i < printData.Columns.Count; i++)
+            for (int i = 35; i < this.printData.Columns.Count; i++)
             {
-                objSheets.Cells[1, i + 1] = printData.Columns[i].ColumnName;
+                objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName;
             }
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(printData.Columns.Count);
+
+            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData.Columns.Count);
             objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
             objSheets.get_Range("A1", r + "1").AutoFilter(1);
-            bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: excelFile, headerRow: 1, excelApp: objApp);
+            bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
 
-            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+            }
+
             this.HideWaitMessage();
             return true;
         }

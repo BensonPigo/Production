@@ -15,26 +15,34 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// R07
+    /// </summary>
     public partial class R07 : Sci.Win.Tems.PrintForm
     {
-        string sql;
-        DataTable printData;
-        List<SqlParameter> sqlPar;
-        Dictionary<string, string> excelHead = new Dictionary<string, string>();
+        private string sql;
+        private DataTable printData;
+        private List<SqlParameter> sqlPar;
+        private Dictionary<string, string> excelHead = new Dictionary<string, string>();
 
+        /// <summary>
+        /// R07
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.comboMDivision.setDefalutIndex(true);
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            excelHead = new Dictionary<string, string>();
-            sqlPar = new List<SqlParameter>();
-            printData = null;
-            sql = @"SELECT 
+            this.excelHead = new Dictionary<string, string>();
+            this.sqlPar = new List<SqlParameter>();
+            this.printData = null;
+            this.sql = @"SELECT 
                       Date = ti.AddDate,
                       IncomingNo = ti.ID,
                       RefNo = tid.Refno,
@@ -58,96 +66,104 @@ namespace Sci.Production.Thread
 
             List<string> sqlWhere = new List<string>();
 
-            if (MyUtility.Check.Empty(dateDate.Value1.ToString()) && MyUtility.Check.Empty(dateDate.Value2.ToString()))
+            if (MyUtility.Check.Empty(this.dateDate.Value1.ToString()) && MyUtility.Check.Empty(this.dateDate.Value2.ToString()))
             {
                 MyUtility.Msg.ErrorBox("Date can not be empty!!");
                 return false;
             }
             else
             {
-                string date1 = "", date2 = "";
-                if (!MyUtility.Check.Empty(dateDate.Value1.ToString()))
+                string date1 = string.Empty, date2 = string.Empty;
+                if (!MyUtility.Check.Empty(this.dateDate.Value1.ToString()))
                 {
                     sqlWhere.Add("@date1 <= Convert(datetime, convert(varchar(10), ti.AddDate, 126))");
-                    sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(dateDate.Value1).ToString("d")));
-                    date1 = Convert.ToDateTime(dateDate.Value1).ToString("d");
+                    this.sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(this.dateDate.Value1).ToString("d")));
+                    date1 = Convert.ToDateTime(this.dateDate.Value1).ToString("d");
                 }
-                if (!MyUtility.Check.Empty(dateDate.Value2.ToString()))
+
+                if (!MyUtility.Check.Empty(this.dateDate.Value2.ToString()))
                 {
                     sqlWhere.Add("Convert(datetime, convert(varchar(10), ti.AddDate, 126)) <= @date2");
-                    sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(dateDate.Value2).ToString("d")));
-                    date2 = Convert.ToDateTime(dateDate.Value2).ToString("d");
-                }               
-                
-                excelHead.Add("Date", date1 + " ~ " + date2);
+                    this.sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(this.dateDate.Value2).ToString("d")));
+                    date2 = Convert.ToDateTime(this.dateDate.Value2).ToString("d");
+                }
+
+                this.excelHead.Add("Date", date1 + " ~ " + date2);
             }
 
-            if (!MyUtility.Check.Empty(txtRefNoStart.Text.ToString()) || !MyUtility.Check.Empty(txtRefNoEnd.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.txtRefNoStart.Text.ToString()) || !MyUtility.Check.Empty(this.txtRefNoEnd.Text.ToString()))
             {
-                if (!MyUtility.Check.Empty(txtRefNoStart.Text.ToString()))
+                if (!MyUtility.Check.Empty(this.txtRefNoStart.Text.ToString()))
                 {
                     sqlWhere.Add("tid.Refno >= @refno1");
-                    sqlPar.Add(new SqlParameter("@refno1", txtRefNoStart.Text.ToString()));
+                    this.sqlPar.Add(new SqlParameter("@refno1", this.txtRefNoStart.Text.ToString()));
                 }
-                if (!MyUtility.Check.Empty(txtRefNoEnd.Text.ToString()))
+
+                if (!MyUtility.Check.Empty(this.txtRefNoEnd.Text.ToString()))
                 {
                     sqlWhere.Add("tid.Refno <= @refno2");
-                    sqlPar.Add(new SqlParameter("@refno2", txtRefNoEnd.Text.ToString()));
-                }                
-                excelHead.Add("Refno", txtRefNoStart.Text.ToString() + " ~ " + txtRefNoEnd.Text.ToString());
+                    this.sqlPar.Add(new SqlParameter("@refno2", this.txtRefNoEnd.Text.ToString()));
+                }
+
+                this.excelHead.Add("Refno", this.txtRefNoStart.Text.ToString() + " ~ " + this.txtRefNoEnd.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(txtShade.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.txtShade.Text.ToString()))
             {
                 sqlWhere.Add("tid.ThreadColorid = @shade");
-                sqlPar.Add(new SqlParameter("@shade", txtShade.Text.ToString()));
-                excelHead.Add("Shade", txtShade.Text.ToString());
+                this.sqlPar.Add(new SqlParameter("@shade", this.txtShade.Text.ToString()));
+                this.excelHead.Add("Shade", this.txtShade.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(txtType.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.txtType.Text.ToString()))
             {
                 sqlWhere.Add("li.Category = @type");
-                sqlPar.Add(new SqlParameter("@type", txtType.Text.ToString()));
-                excelHead.Add("Type", txtType.Text.ToString());
+                this.sqlPar.Add(new SqlParameter("@type", this.txtType.Text.ToString()));
+                this.excelHead.Add("Type", this.txtType.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(txtThreadItem.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.txtThreadItem.Text.ToString()))
             {
                 sqlWhere.Add("li.ThreadTypeID = @Item");
-                sqlPar.Add(new SqlParameter("@Item", txtThreadItem.Text.ToString()));
-                excelHead.Add("Item", txtThreadItem.Text.ToString());
+                this.sqlPar.Add(new SqlParameter("@Item", this.txtThreadItem.Text.ToString()));
+                this.excelHead.Add("Item", this.txtThreadItem.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(txtLocationStart.Text.ToString()) || !MyUtility.Check.Empty(txtLocationEnd.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.txtLocationStart.Text.ToString()) || !MyUtility.Check.Empty(this.txtLocationEnd.Text.ToString()))
             {
-                if (!MyUtility.Check.Empty(txtLocationStart.Text.ToString()) )
+                if (!MyUtility.Check.Empty(this.txtLocationStart.Text.ToString()))
                 {
                     sqlWhere.Add(" tid.ThreadLocationid >= @loc1 ");
-                    sqlPar.Add(new SqlParameter("@loc1", txtLocationStart.Text.ToString()));
+                    this.sqlPar.Add(new SqlParameter("@loc1", this.txtLocationStart.Text.ToString()));
                 }
-                if (!MyUtility.Check.Empty(txtLocationEnd.Text.ToString()))
+
+                if (!MyUtility.Check.Empty(this.txtLocationEnd.Text.ToString()))
                 {
                     sqlWhere.Add(" tid.ThreadLocationid <= @loc2 ");
-                    sqlPar.Add(new SqlParameter("@loc2", txtLocationEnd.Text.ToString()));
-                }                                
-                excelHead.Add("Location", txtLocationStart.Text.ToString() + " ~ " + txtLocationEnd.Text.ToString());
+                    this.sqlPar.Add(new SqlParameter("@loc2", this.txtLocationEnd.Text.ToString()));
+                }
+
+                this.excelHead.Add("Location", this.txtLocationStart.Text.ToString() + " ~ " + this.txtLocationEnd.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(comboMDivision.Text.ToString()))
+            if (!MyUtility.Check.Empty(this.comboMDivision.Text.ToString()))
             {
                 sqlWhere.Add("ti.MDivisionID = @M");
-                sqlPar.Add(new SqlParameter("@M", comboMDivision.Text.ToString()));
+                this.sqlPar.Add(new SqlParameter("@M", this.comboMDivision.Text.ToString()));
             }
 
-            if (radioDetail.Checked == true)
+            if (this.radioDetail.Checked == true)
             {
                 if (sqlWhere.Count > 0)
-                    sql += " where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
-                sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid";
+                {
+                    this.sql += " where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
+                }
+
+                this.sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid";
             }
-            else if (radioSummary.Checked == true)
+            else if (this.radioSummary.Checked == true)
             {
-                sql = @"SELECT 
+                this.sql = @"SELECT 
                           RefNo = tid.Refno,
                           Description = li.Description,
                           Type = li.Category,
@@ -161,83 +177,117 @@ namespace Sci.Production.Thread
                         left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
                         left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id
                         where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
-                sql += @" Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description
+                this.sql += @" Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description
                           Order by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
             }
-            
 
             return base.ValidateInput();
         }
 
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            DualResult result = DBProxy.Current.Select(null, sql, sqlPar, out printData);
+            DualResult result = DBProxy.Current.Select(null, this.sql, this.sqlPar, out this.printData);
             return result;
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (printData == null || printData.Rows.Count <= 0)
+            if (this.printData == null || this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
             Excel.Application objApp;
-            if (radioDetail.Checked == true)
+            if (this.radioDetail.Checked == true)
             {
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(printData, "", "Thread_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); // 預先開啟excel app
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
             }
             else
             {
                 objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07_Summary.xltx");
-                MyUtility.Excel.CopyToXls(printData, "", "Thread_R07_Summary.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Thread_R07_Summary.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);
             }
-
-            
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            if (radioDetail.Checked == true)
+            if (this.radioDetail.Checked == true)
             {
-                if (excelHead.ContainsKey("Date"))
-                    worksheet.Cells[2, 2] = excelHead["Date"];
-                if (excelHead.ContainsKey("Refno"))
-                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
-                if (excelHead.ContainsKey("Shade"))
-                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
-                if (excelHead.ContainsKey("Type"))
-                    worksheet.Cells[2, 8] = excelHead["Type"]; ;
-                if (excelHead.ContainsKey("Item"))
-                    worksheet.Cells[2, 10] = excelHead["Item"]; ;
-                if (excelHead.ContainsKey("Location"))
-                    worksheet.Cells[2, 12] = excelHead["Location"];
+                if (this.excelHead.ContainsKey("Date"))
+                {
+                    worksheet.Cells[2, 2] = this.excelHead["Date"];
+                }
+
+                if (this.excelHead.ContainsKey("Refno"))
+                {
+                    worksheet.Cells[2, 4] = this.excelHead["Refno"];
+                }
+
+                if (this.excelHead.ContainsKey("Shade"))
+                {
+                    worksheet.Cells[2, 6] = this.excelHead["Shade"];
+                }
+
+                if (this.excelHead.ContainsKey("Type"))
+                {
+                    worksheet.Cells[2, 8] = this.excelHead["Type"];
+                }
+
+                if (this.excelHead.ContainsKey("Item"))
+                {
+                    worksheet.Cells[2, 10] = this.excelHead["Item"];
+                }
+
+                if (this.excelHead.ContainsKey("Location"))
+                {
+                    worksheet.Cells[2, 12] = this.excelHead["Location"];
+                }
             }
             else
             {
-                if (excelHead.ContainsKey("Date"))
-                    worksheet.Cells[2, 2] = excelHead["Date"];
-                if (excelHead.ContainsKey("Refno"))
-                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
-                if (excelHead.ContainsKey("Shade"))
-                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
-                if (excelHead.ContainsKey("Type"))
-                    worksheet.Cells[3, 2] = excelHead["Type"]; ;
-                if (excelHead.ContainsKey("Item"))
-                    worksheet.Cells[3, 4] = excelHead["Item"]; ;
-                if (excelHead.ContainsKey("Location"))
-                    worksheet.Cells[3, 6] = excelHead["Location"];
+                if (this.excelHead.ContainsKey("Date"))
+                {
+                    worksheet.Cells[2, 2] = this.excelHead["Date"];
+                }
+
+                if (this.excelHead.ContainsKey("Refno"))
+                {
+                    worksheet.Cells[2, 4] = this.excelHead["Refno"];
+                }
+
+                if (this.excelHead.ContainsKey("Shade"))
+                {
+                    worksheet.Cells[2, 6] = this.excelHead["Shade"];
+                }
+
+                if (this.excelHead.ContainsKey("Type"))
+                {
+                    worksheet.Cells[3, 2] = this.excelHead["Type"];
+                }
+
+                if (this.excelHead.ContainsKey("Item"))
+                {
+                    worksheet.Cells[3, 4] = this.excelHead["Item"];
+                }
+
+                if (this.excelHead.ContainsKey("Location"))
+                {
+                    worksheet.Cells[3, 6] = this.excelHead["Location"];
+                }
             }
 
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
-            
+
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(radioDetail.Checked == true ? "Thread_R07" : "Thread_R07_Summary");
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Thread_R07" : "Thread_R07_Summary");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
@@ -249,7 +299,7 @@ namespace Sci.Production.Thread
             return true;
         }
 
-        private void txtShade_MouseDown(object sender, MouseEventArgs e)
+        private void TxtShade_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -260,12 +310,16 @@ namespace Sci.Production.Thread
                                order by threadcolorid ";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtShade.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtShade.Text = item.GetSelectedString();
             }
         }
 
-        private void txtType_MouseDown(object sender, MouseEventArgs e)
+        private void TxtType_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -276,12 +330,16 @@ namespace Sci.Production.Thread
                                order by l.category";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtType.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtType.Text = item.GetSelectedString();
             }
         }
 
-        private void txtThreadItem_MouseDown(object sender, MouseEventArgs e)
+        private void TxtThreadItem_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -292,12 +350,16 @@ namespace Sci.Production.Thread
                                order by l.ThreadTypeID ";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtThreadItem.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtThreadItem.Text = item.GetSelectedString();
             }
         }
 
-        private void txtRefNoStart_MouseDown(object sender, MouseEventArgs e)
+        private void TxtRefNoStart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -308,12 +370,16 @@ namespace Sci.Production.Thread
                                order by Refno";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtRefNoStart.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtRefNoStart.Text = item.GetSelectedString();
             }
         }
 
-        private void txtRefNoEnd_MouseDown(object sender, MouseEventArgs e)
+        private void TxtRefNoEnd_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -324,12 +390,16 @@ namespace Sci.Production.Thread
                                order by Refno";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtRefNoEnd.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtRefNoEnd.Text = item.GetSelectedString();
             }
         }
 
-        private void txtLocationStart_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocationStart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -340,12 +410,16 @@ namespace Sci.Production.Thread
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtLocationStart.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtLocationStart.Text = item.GetSelectedString();
             }
         }
 
-        private void txtLocationEnd_MouseDown(object sender, MouseEventArgs e)
+        private void TxtLocationEnd_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -356,8 +430,12 @@ namespace Sci.Production.Thread
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
                 DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                txtLocationEnd.Text = item.GetSelectedString();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtLocationEnd.Text = item.GetSelectedString();
             }
         }
     }

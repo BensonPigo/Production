@@ -129,7 +129,7 @@
             this.dateDateStart.Name = "dateDateStart";
             this.dateDateStart.Size = new System.Drawing.Size(98, 23);
             this.dateDateStart.TabIndex = 0;
-            this.dateDateStart.Validated += new System.EventHandler(this.dateDateStart_Validated);
+            this.dateDateStart.Validated += new System.EventHandler(this.DateDateStart_Validated);
             // 
             // dateDateEnd
             // 
@@ -161,7 +161,7 @@
             this.txtSewingLineStart.Name = "txtSewingLineStart";
             this.txtSewingLineStart.Size = new System.Drawing.Size(41, 23);
             this.txtSewingLineStart.TabIndex = 2;
-            this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLineStart_PopUp);
+            this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineStart_PopUp);
             // 
             // label9
             // 
@@ -184,7 +184,7 @@
             this.txtSewingLineEnd.Name = "txtSewingLineEnd";
             this.txtSewingLineEnd.Size = new System.Drawing.Size(41, 23);
             this.txtSewingLineEnd.TabIndex = 3;
-            this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLineEnd_PopUp);
+            this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineEnd_PopUp);
             // 
             // comboHoliday
             // 
@@ -218,7 +218,7 @@
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 6;
-            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboReportType_SelectedIndexChanged);
+            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.ComboReportType_SelectedIndexChanged);
             // 
             // comboFactory
             // 

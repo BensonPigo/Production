@@ -14,25 +14,33 @@ using System.Transactions;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// P03
+    /// </summary>
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// P03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P03(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             #region Set Default Data
             this.dateRangeBuyerDelivery.Value1 = DateTime.Today;
             this.dateRangeBuyerDelivery.Value2 = DateTime.Today.AddMonths(1);
-            #endregion 
+            #endregion
             this.grid.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             #region Grid Setting
             this.Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("sel", header: "", trueValue: 1, falseValue: 0, iseditable: true)
+                .CheckBox("sel", header: string.Empty, trueValue: 1, falseValue: 0, iseditable: true)
                 .Text("ID", header: "SP", iseditingreadonly: true)
                 .Text("StyleLocation", header: "*", iseditingreadonly: true)
                 .Text("OrderIDFrom", header: "From SP", iseditingreadonly: true)
@@ -52,26 +60,26 @@ namespace Sci.Production.Sewing
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 this.grid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            #endregion 
-            this.findNow();
+            #endregion
+            this.FindNow();
         }
 
-        private void buttonNewSearch_Click(object sender, EventArgs e)
+        private void ButtonNewSearch_Click(object sender, EventArgs e)
         {
-            this.textBoxToSpNum.Text = "";
-            this.textBoxFromSpNum.Text = "";
+            this.textBoxToSpNum.Text = string.Empty;
+            this.textBoxFromSpNum.Text = string.Empty;
             this.dateRangeBuyerDelivery.Value1 = null;
             this.dateRangeBuyerDelivery.Value2 = null;
         }
 
-        private void buttonFindNow_Click(object sender, EventArgs e)
+        private void ButtonFindNow_Click(object sender, EventArgs e)
         {
-            this.findNow();
+            this.FindNow();
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void ButtonSave_Click(object sender, EventArgs e)
         {
-            DataTable dtSelectData = (DataTable)((BindingSource)(this.grid.DataSource)).DataSource;
+            DataTable dtSelectData = (DataTable)((BindingSource)this.grid.DataSource).DataSource;
             #region Select Data
             if (dtSelectData.AsEnumerable().Any(row => row["Sel"].EqualDecimal(1)))
             {
@@ -84,21 +92,22 @@ namespace Sci.Production.Sewing
             }
             #endregion
 
-            DataTable[] dtOrdersReceive = setSewingOutput(dtSelectData);
+            DataTable[] dtOrdersReceive = this.SetSewingOutput(dtSelectData);
 
             if (dtOrdersReceive != null)
             {
                 var form = new P03_SaveComplete(dtOrdersReceive[0]);
                 form.ShowDialog();
-                this.findNow();
+                this.FindNow();
             }
         }
 
         /// <summary>
-        /// Get SewingOutput Data
+        /// SetSewingOutput
         /// </summary>
-        /// <param name="dtSelectData">ID</param>
-        private DataTable[] setSewingOutput(DataTable dtSelectData)
+        /// <param name="dtSelectData">dtSelectData</param>
+        /// <returns>DataTable[]</returns>
+        private DataTable[] SetSewingOutput(DataTable dtSelectData)
         {
             DualResult boolResult;
             DataTable[] dtOrdersReceive;
@@ -613,7 +622,6 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-
                 boolResult = MyUtility.Tool.ProcessWithDatatable(dtSelectData, null, strSqlCmd.ToString(), out dtOrdersReceive);
                 if (!boolResult)
                 {
@@ -625,23 +633,23 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
                 transactionscope.Complete();
                 transactionscope.Dispose();
             }
-            
+
             return dtOrdersReceive;
         }
 
-        private void findNow()
+        private void FindNow()
         {
             #region SQL Parameter
             List<SqlParameter> listSqlParameter = new List<SqlParameter>();
             listSqlParameter.Add(new SqlParameter("@ToSP", this.textBoxToSpNum.Text));
             listSqlParameter.Add(new SqlParameter("@FromSP", this.textBoxFromSpNum.Text));
-            listSqlParameter.Add(new SqlParameter("@StartDate", (this.dateRangeBuyerDelivery.Value1.Empty()) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
-            listSqlParameter.Add(new SqlParameter("@EndDate", (this.dateRangeBuyerDelivery.Value2.Empty()) ? "" : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
+            listSqlParameter.Add(new SqlParameter("@StartDate", this.dateRangeBuyerDelivery.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
+            listSqlParameter.Add(new SqlParameter("@EndDate", this.dateRangeBuyerDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             listSqlParameter.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
-            #endregion 
+            #endregion
             #region SQL Filte
             #region BuyerDelivery Filte
-            string strBuyerDeliveryFilte = "";
+            string strBuyerDeliveryFilte = string.Empty;
             if (!this.dateRangeBuyerDelivery.Value1.Empty() && !this.dateRangeBuyerDelivery.Value2.Empty())
             {
                 strBuyerDeliveryFilte = "and ToSPOrders.BuyerDelivery between @StartDate and @EndDate";
@@ -654,12 +662,12 @@ drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp
             {
                 strBuyerDeliveryFilte = "and ToSPOrders.BuyerDelivery <= @EndDate";
             }
-            #endregion 
+            #endregion
             Dictionary<string, string> dicSqlFilte = new Dictionary<string, string>();
-            dicSqlFilte.Add("ToSP", (this.textBoxToSpNum.Text.Empty()) ? "" : "and OQG.ID = @ToSP");
-            dicSqlFilte.Add("FromSP", (this.textBoxFromSpNum.Text.Empty()) ? "" : "and OQG.OrderIDFrom = @FromSP");
+            dicSqlFilte.Add("ToSP", this.textBoxToSpNum.Text.Empty() ? string.Empty : "and OQG.ID = @ToSP");
+            dicSqlFilte.Add("FromSP", this.textBoxFromSpNum.Text.Empty() ? string.Empty : "and OQG.OrderIDFrom = @FromSP");
             dicSqlFilte.Add("BuyerDelivery", strBuyerDeliveryFilte);
-            #endregion 
+            #endregion
             #region SQL Command
             string strSqlCmd = $@"
 select	sel = 0
@@ -724,9 +732,9 @@ where	ToSPBalance.value > 0
 		-- ToSP
 		{dicSqlFilte["ToSP"]}
         -- FromSP
-        { dicSqlFilte["FromSP"]}
+        {dicSqlFilte["FromSP"]}
         --BuyerDelivery
-        { dicSqlFilte["BuyerDelivery"]}
+        {dicSqlFilte["BuyerDelivery"]}
 order by OQG.OrderIDFrom, ToSPOrders.BuyerDelivery";
             #endregion
             this.ShowWaitMessage("Data Loading...");

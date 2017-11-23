@@ -16,63 +16,72 @@ using Ict.Data;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// P06_Import
+    /// </summary>
     public partial class P06_Import : Sci.Win.Subs.Base
     {
         private DataTable detTable;
         private DataTable gridTable;
         private string keyword = Sci.Env.User.Keyword;
+
+        /// <summary>
+        /// P06_Import
+        /// </summary>
+        /// <param name="detTable">detTable</param>
         public P06_Import(DataTable detTable)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.detTable = detTable;
-            
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sql = string.Format(@"Select 1 as sel,a.*,'' as description,'' as colordesc,'' as threadtypeid,0 as threadtex,'' as category,'' as localsuppid , '' as supp, 0 as newconevar,0 as UsedConevar from threadInventory_Detail a WITH (NOLOCK) where 1!=1", keyword);
-            DBProxy.Current.Select("Production", sql, out gridTable);
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridTable;
-            
-            Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            string sql = string.Format(@"Select 1 as sel,a.*,'' as description,'' as colordesc,'' as threadtypeid,0 as threadtex,'' as category,'' as localsuppid , '' as supp, 0 as newconevar,0 as UsedConevar from threadInventory_Detail a WITH (NOLOCK) where 1!=1", this.keyword);
+            DBProxy.Current.Select("Production", sql, out this.gridTable);
+            this.grid1.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.grid1.DataSource = this.gridTable;
+
+            this.Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("NewConebook", header: "New Cone\nper books", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-                .Numeric("UsedConebook", header: "Used cone\nper books", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly:
-                true)
+                .Numeric("UsedConebook", header: "Used cone\nper books", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
                 .Text("threadtypeid", header: "Thread Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
                 .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true);
             this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
             string threadlocation1 = this.txtthreadlocationStart.Text, threadlocation2 = this.txtthreadlocationEnd.Text;
-            string thradrefno1 = txtlocalitemStart.Text, thradrefno2 = txtlocalitemEnd.Text;
-            string color1 = txtthreadcolorStart.Text, color2 = txtthreadcolorEnd.Text;
+            string thradrefno1 = this.txtlocalitemStart.Text, thradrefno2 = this.txtlocalitemEnd.Text;
+            string color1 = this.txtthreadcolorStart.Text, color2 = this.txtthreadcolorEnd.Text;
             if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2))
             {
                 MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
                 this.txtlocalitemStart.Focus();
                 return;
             }
-            string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
+
+            string sql = string.Format(
+                @"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
                     isnull(a.newcone,0) as newconebook,0 as newCone,-(a.newCone) as NewconeVar,
                     isnull(a.usedcone,0) as usedconebook,0 as usedCone,-(a.usedCone) as UsedconeVar,
                     b.description,c.description as colordesc,
                     b.category,b.Localsuppid,b.threadtypeid,b.ThreadTex,
                     (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
                     from Localitem b  WITH (NOLOCK) 
-                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
+                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'",
+                this.keyword);
 
             if (!MyUtility.Check.Empty(threadlocation1) || !MyUtility.Check.Empty(threadlocation2))
             {
@@ -83,43 +92,47 @@ namespace Sci.Production.Thread
             {
                 sql = sql + string.Format(" and a.Threadcolorid >= '{0}' and a.Threadcolorid <= '{1}'", color1, color2);
             }
+
             sql = sql + " left join ThreadColor c WITH (NOLOCK) on c.id = a.threadcolorid ";
             sql = sql + " where (a.newcone !=0 or a.usedcone!=0)";
             if (!MyUtility.Check.Empty(thradrefno1) || !MyUtility.Check.Empty(thradrefno2))
             {
                 sql = sql + string.Format(" and a.refno >= '{0}' and a.refno <= '{1}'", thradrefno1, thradrefno2);
             }
-            gridTable.Clear();
+
+            this.gridTable.Clear();
             try
             {
-                DBProxy.Current.Select("Production", sql, out gridTable);
-                if (gridTable.Rows.Count == 0)
+                DBProxy.Current.Select("Production", sql, out this.gridTable);
+                if (this.gridTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found.");
                     return;
                 }
-                this.grid1.DataSource = gridTable;
-                
+
+                this.grid1.DataSource = this.gridTable;
             }
             catch (Exception ex)
             {
-                ShowErr("Commit transaction error.", ex);
+                this.ShowErr("Commit transaction error.", ex);
                 return;
             }
-
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnImport_Click(object sender, EventArgs e)
+        private void BtnImport_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
-            if (MyUtility.Check.Empty(gridTable) || gridTable.Rows.Count == 0) return;
+            this.grid1.ValidateControl();
+            if (MyUtility.Check.Empty(this.gridTable) || this.gridTable.Rows.Count == 0)
+            {
+                return;
+            }
 
-            DataRow[] dr2 = gridTable.Select("Sel= 1");
+            DataRow[] dr2 = this.gridTable.Select("Sel= 1");
             if (dr2.Length > 0)
             {
                 foreach (DataRow dr in dr2)
@@ -147,7 +160,7 @@ namespace Sci.Production.Thread
                         ndr["UsedCone"] = 0;
                         this.detTable.Rows.Add(ndr);
                     }
-                    else 
+                    else
                     {
                         findrow[0]["NewConeBook"] = dr["NewConeBook"];
                         findrow[0]["UsedConeBook"] = dr["UsedConeBook"];
@@ -163,6 +176,7 @@ namespace Sci.Production.Thread
                 MyUtility.Msg.WarningBox("Please select data first!", "Warnning");
                 return;
             }
+
             this.Close();
         }
     }

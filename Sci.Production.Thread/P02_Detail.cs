@@ -9,33 +9,41 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// P02_Detail
+    /// </summary>
     public partial class P02_Detail : Sci.Win.Subs.Input8A
     {
+        /// <summary>
+        /// P02_Detail
+        /// </summary>
         public P02_Detail()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
-        
+
         private void P02_Detail_Load(object sender, EventArgs e)
         {
-            Cal();
+            this.Cal();
         }
 
         private void Cal()
         {
-            decimal a=0;
-            foreach (DataRow dr in CurrentSubDetailDatas.Rows)
+            decimal a = 0;
+            foreach (DataRow dr in this.CurrentSubDetailDatas.Rows)
             {
                 a += Convert.ToDecimal(dr["TotalLength"]);
             }
-            txtTotalLength.Text = a.ToString();        
+
+            this.txtTotalLength.Text = a.ToString();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region set grid
-            //this.grid.ReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid)
+            // this.grid.ReadOnly = true;
+            this.Helper.Controls.Grid.Generator(this.grid)
            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("ThreadCombid", header: "Thread Comb.", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("Threadcombdesc", header: "Thread Comb Desc", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -51,6 +59,5 @@ namespace Sci.Production.Thread
             #endregion
             return true;
         }
-
     }
 }

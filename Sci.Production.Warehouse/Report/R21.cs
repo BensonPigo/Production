@@ -327,8 +327,8 @@ where 1=1
                     sqlcmd_dtail = sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", printData_yyyy.Rows[i][0].ToString() + "0101", printData_yyyy.Rows[i][0].ToString() + "1231");
                     strExcelName = Sci.Production.Class.MicrosoftFile.GetName((ReportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + printData_yyyy.Rows[i][0].ToString());
                     exl_name[i] = strExcelName;
-                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + reportname);
-                    com = new Sci.Utility.Report.ExcelCOM("", objApp);
+                    com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null);
+                    objApp = com.ExcelApp;
                     com.TransferArray_Limit = 10000;
                     com.ColumnsAutoFit = false;
                     sheet_cnt = 1;
@@ -442,8 +442,8 @@ where 1=1
                     return result;
                 }
                 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + reportname);
-                Sci.Utility.Report.ExcelCOM com =  new Sci.Utility.Report.ExcelCOM("", objApp); ;
+                Sci.Utility.Report.ExcelCOM com =  new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\" + reportname, null); 
+                Excel.Application objApp = com.ExcelApp;
                 //MyUtility.Excel.CopyToXls(printData, "", reportname, 1, showExcel: false, excelApp: objApp);
                 com.WriteTable(printData, 2);
                 #region Save & Show Excel
