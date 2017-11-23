@@ -135,8 +135,8 @@
             this.txtLocationEnd.Name = "txtLocationEnd";
             this.txtLocationEnd.Size = new System.Drawing.Size(113, 23);
             this.txtLocationEnd.TabIndex = 6;
-            this.txtLocationEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocationEnd_PopUp);
-            this.txtLocationEnd.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocationEnd_Validating);
+            this.txtLocationEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLocationEnd_PopUp);
+            this.txtLocationEnd.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLocationEnd_Validating);
             // 
             // txtLocationStart
             // 
@@ -146,8 +146,8 @@
             this.txtLocationStart.Name = "txtLocationStart";
             this.txtLocationStart.Size = new System.Drawing.Size(113, 23);
             this.txtLocationStart.TabIndex = 5;
-            this.txtLocationStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLocationStart_PopUp);
-            this.txtLocationStart.Validating += new System.ComponentModel.CancelEventHandler(this.txtLocationStart_Validating);
+            this.txtLocationStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLocationStart_PopUp);
+            this.txtLocationStart.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLocationStart_Validating);
             // 
             // txtThreadItem
             // 
@@ -157,8 +157,8 @@
             this.txtThreadItem.Name = "txtThreadItem";
             this.txtThreadItem.Size = new System.Drawing.Size(127, 23);
             this.txtThreadItem.TabIndex = 4;
-            this.txtThreadItem.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtThreadItem_PopUp);
-            this.txtThreadItem.Validating += new System.ComponentModel.CancelEventHandler(this.txtThreadItem_Validating);
+            this.txtThreadItem.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtThreadItem_PopUp);
+            this.txtThreadItem.Validating += new System.ComponentModel.CancelEventHandler(this.TxtThreadItem_Validating);
             // 
             // txtType
             // 
@@ -168,8 +168,8 @@
             this.txtType.Name = "txtType";
             this.txtType.Size = new System.Drawing.Size(135, 23);
             this.txtType.TabIndex = 3;
-            this.txtType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtType_PopUp);
-            this.txtType.Validating += new System.ComponentModel.CancelEventHandler(this.txtType_Validating);
+            this.txtType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtType_PopUp);
+            this.txtType.Validating += new System.ComponentModel.CancelEventHandler(this.TxtType_Validating);
             // 
             // txtShade
             // 
@@ -179,8 +179,8 @@
             this.txtShade.Name = "txtShade";
             this.txtShade.Size = new System.Drawing.Size(122, 23);
             this.txtShade.TabIndex = 2;
-            this.txtShade.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtShade_PopUp);
-            this.txtShade.Validating += new System.ComponentModel.CancelEventHandler(this.txtShade_Validating);
+            this.txtShade.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtShade_PopUp);
+            this.txtShade.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShade_Validating);
             // 
             // txtRefnoEnd
             // 
@@ -190,8 +190,8 @@
             this.txtRefnoEnd.Name = "txtRefnoEnd";
             this.txtRefnoEnd.Size = new System.Drawing.Size(148, 23);
             this.txtRefnoEnd.TabIndex = 1;
-            this.txtRefnoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtRefnoEnd_PopUp);
-            this.txtRefnoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.txtRefnoEnd_Validating);
+            this.txtRefnoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefnoEnd_PopUp);
+            this.txtRefnoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefnoEnd_Validating);
             // 
             // txtRefnoStart
             // 
@@ -201,8 +201,8 @@
             this.txtRefnoStart.Name = "txtRefnoStart";
             this.txtRefnoStart.Size = new System.Drawing.Size(148, 23);
             this.txtRefnoStart.TabIndex = 0;
-            this.txtRefnoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtRefnoStart_PopUp);
-            this.txtRefnoStart.Validating += new System.ComponentModel.CancelEventHandler(this.txtRefnoStart_Validating);
+            this.txtRefnoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefnoStart_PopUp);
+            this.txtRefnoStart.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefnoStart_Validating);
             // 
             // labelLocation
             // 

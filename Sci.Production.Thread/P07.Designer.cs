@@ -229,7 +229,7 @@
             this.btnImportFromStock.TabIndex = 3;
             this.btnImportFromStock.Text = "Import from stock";
             this.btnImportFromStock.UseVisualStyleBackColor = true;
-            this.btnImportFromStock.Click += new System.EventHandler(this.btnImportFromStock_Click);
+            this.btnImportFromStock.Click += new System.EventHandler(this.BtnImportFromStock_Click);
             // 
             // P07
             // 

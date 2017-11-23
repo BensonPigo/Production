@@ -306,7 +306,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(108, 23);
             this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSP_Validating);
             // 
             // labelSP
             // 
@@ -334,7 +334,7 @@
             this.buttonQtyBreakdown.TabIndex = 40;
             this.buttonQtyBreakdown.Text = "Q\'ty breakdown by colorway";
             this.buttonQtyBreakdown.UseVisualStyleBackColor = true;
-            this.buttonQtyBreakdown.Click += new System.EventHandler(this.buttonQtyBreakdown_Click);
+            this.buttonQtyBreakdown.Click += new System.EventHandler(this.ButtonQtyBreakdown_Click);
             // 
             // P02
             // 

@@ -8,26 +8,38 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// B02
+    /// </summary>
     public partial class B02 : Sci.Win.Tems.Input1
     {
+        /// <summary>
+        /// B02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
+
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtThreadColor.ReadOnly = true;
+            this.txtThreadColor.ReadOnly = true;
         }
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {  
-                txtThreadColor.Focus();
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                this.txtThreadColor.Focus();
                 MyUtility.Msg.WarningBox("<Thread Color> can not be empty.");
                 return false;
             }
+
             return base.ClickSaveBefore();
         }
     }

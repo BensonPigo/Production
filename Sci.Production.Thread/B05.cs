@@ -12,55 +12,67 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Thread
 {
+    /// <summary>
+    /// B05
+    /// </summary>
     public partial class B05 : Sci.Win.Tems.Input6
     {
         private string keyWord = Sci.Env.User.Keyword;
         private DataTable gridTb;
-        bool gtbflag=false;
+        private bool gtbflag = false;
+
+        /// <summary>
+        /// B05
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.DefaultFilter = "category like '%Thread%'";
 
-            InitializeComponent();
-            Dictionary<String, String> comboBox1_RowSource2 = new Dictionary<string, string>();
+            this.InitializeComponent();
+            Dictionary<string, string> comboBox1_RowSource2 = new Dictionary<string, string>();
             comboBox1_RowSource2.Add("ThreadColor", "Thread Color");
             comboBox1_RowSource2.Add("Location", "Thread Location");
 
-            comboThreadColorLocation.ValueMember = "Key";
-            comboThreadColorLocation.DisplayMember = "Value";
-            comboThreadColorLocation.DataSource = new BindingSource(comboBox1_RowSource2, null);
-            dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
+            this.comboThreadColorLocation.ValueMember = "Key";
+            this.comboThreadColorLocation.DisplayMember = "Value";
+            this.comboThreadColorLocation.DataSource = new BindingSource(comboBox1_RowSource2, null);
+            this.dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            this.dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
         }
 
+        /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["refno"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["refno"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.*,b.description as colordesc
+            this.DetailSelectCommand = string.Format(
+                @"select a.*,b.description as colordesc
             from threadstock a WITH (NOLOCK)
             left join threadcolor b WITH (NOLOCK)on a.threadcolorid = b.id 
-            where a.refno = '{0}' and mDivisionid = '{1}'", masterID, keyWord);
+            where a.refno = '{0}' and mDivisionid = '{1}'",
+                masterID,
+                this.keyWord);
 
-//            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
-//                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
+// string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
+//                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname
 //                            from ThreadIncoming a where 1=0";
 //            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-             Helper.Controls.Grid.Generator(this.detailgrid)
+             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Threadcolorid", header: "Thread Color", width: Widths.AnsiChars(15))
             .Text("colordesc", header: "Color Description", width: Widths.AnsiChars(20))
             .Text("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10))
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5)
             .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5);
 
-             Helper.Controls.Grid.Generator(this.grid1)
+             this.Helper.Controls.Grid.Generator(this.grid1)
              .Date("cDate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("ID", header: "Transaction#", width: Widths.AnsiChars(13), iseditingreadonly: true)
              .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
@@ -74,124 +86,157 @@ namespace Sci.Production.Thread
              return base.OnGridSetup();
         }
 
+        /// <inheritdoc/>
         protected override void OnRefreshClick()
         {
-            int dgi = detailgrid.GetSelectedRowIndex();
-            //base.OnRefreshClick();
-            //RenewData();
-            OnDetailEntered();
-            //detailgridbs.Filter = ""; //清空Filter
-            //dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            //dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
-            //transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
-            //grid1.DataSource = gridTb; //因重新Generator 所以要重給
-            detailgrid.SelectRowTo(dgi);
-            //OnDetailGridRowChanged();
+            int dgi = this.detailgrid.GetSelectedRowIndex();
+
+            // base.OnRefreshClick();
+            // RenewData();
+            this.OnDetailEntered();
+
+            // detailgridbs.Filter = ""; //清空Filter
+            // dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            // dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
+            // transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
+            // grid1.DataSource = gridTb; //因重新Generator 所以要重給
+            this.detailgrid.SelectRowTo(dgi);
+
+            // OnDetailGridRowChanged();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
                             0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
                             from ThreadIncoming a WITH (NOLOCK)where 1=0";
-            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
-            grid1.DataSource = gridTb; //因重新Generator 所以要重給
-            detailgridbs.Filter = ""; //清空Filter
-            dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
-            transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
-            OnDetailGridRowChanged();
-            grid1.DataSource = gridTb; //重新Binding Grid1
+            DualResult sqlReault = DBProxy.Current.Select(null, sql, out this.gridTb);
+            this.grid1.DataSource = this.gridTb; // 因重新Generator 所以要重給
+            this.detailgridbs.Filter = string.Empty; // 清空Filter
+            this.dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            this.dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
+            this.Transrecord(this.dateTransactionDate.TextBox1.Text, this.dateTransactionDate.TextBox2.Text);
+            this.OnDetailGridRowChanged();
+            this.grid1.DataSource = this.gridTb; // 重新Binding Grid1
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
             base.OnDetailGridRowChanged();
 
             int index = this.gridbs.Position;
-            if (index == -1) index = 0;
-            if (CurrentDetailData == null || MyUtility.Check.Empty(gridTb)) return;
-            gridTb.DefaultView.RowFilter = string.Format("ThreadColorid = '{0}' and ThreadLocationid = '{1}'", CurrentDetailData["ThreadColorid"], CurrentDetailData["ThreadLocationid"]);
+            if (index == -1)
+            {
+                index = 0;
+            }
+
+            if (this.CurrentDetailData == null || MyUtility.Check.Empty(this.gridTb))
+            {
+                return;
+            }
+
+            this.gridTb.DefaultView.RowFilter = string.Format("ThreadColorid = '{0}' and ThreadLocationid = '{1}'", this.CurrentDetailData["ThreadColorid"], this.CurrentDetailData["ThreadLocationid"]);
         }
 
-        private void initqty(string date2, int recal=0) //Init Qty
+        private void Initqty(string date2, int recal = 0) // Init Qty
         {
             string date = Convert.ToDateTime(date2).AddDays(-1).ToShortDateString();
-            if (recal == 1) date = date2;            
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", CurrentMaintain["Refno"], keyWord, "", date);
-            DataTable tb,inittb;
+            if (recal == 1)
+            {
+                date = date2;
+            }
+
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, string.Empty, date);
+            DataTable tb, inittb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             MyUtility.Tool.ProcessWithDatatable(tb, "ThreadColorid,ThreadLocationid,Newin,NewOut,UsedIn,UsedOut,NewBalance,UsedBalance", @"Select ThreadColorid,ThreadLocationid,(isnull(sum(NewIn),0)-isnull(sum(NewOut),0)) as NewBalance,(isnull(sum(Usedin),0)-isnull(sum(UsedOut),0)) as UsedBalance from #tmp group by ThreadColorid,ThreadLocationid", out inittb);
-            string updatestock = "";
+            string updatestock = string.Empty;
             foreach (DataRow dr in inittb.Rows)
             {
                 if (recal == 1)
                 {
-                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' and mDivisionid = '{5}';", dr["NewBalance"], dr["UsedBalance"], CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"], keyWord);
+                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' and mDivisionid = '{5}';", dr["NewBalance"], dr["UsedBalance"], this.CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"], this.keyWord);
                 }
                 else
                 {
-                    DataRow ndr = gridTb.NewRow();
+                    DataRow ndr = this.gridTb.NewRow();
                     ndr["Name"] = "Init";
                     ndr["ThreadColorid"] = dr["ThreadColorid"];
                     ndr["ThreadLocationid"] = dr["ThreadLocationid"];
                     ndr["Newbalance"] = dr["NewBalance"];
                     ndr["Usedbalance"] = dr["UsedBalance"];
-                    gridTb.Rows.Add(ndr);
-                    if (!gtbflag) gtbflag = true;
+                    this.gridTb.Rows.Add(ndr);
+                    if (!this.gtbflag)
+                    {
+                        this.gtbflag = true;
+                    }
                 }
             }
+
             if (recal == 1)
             {
                 #region update Inqty,Status
                 DualResult upResult;
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
+                TransactionScope transactionscope = new TransactionScope();
+                using (transactionscope)
                 {
                     try
                     {
                         if (!(upResult = DBProxy.Current.Execute(null, updatestock)))
                         {
-                            _transactionscope.Dispose();
+                            transactionscope.Dispose();
                             MessageBox.Show("No data re-calculate ");
                             return;
                         }
 
-                        _transactionscope.Complete();
+                        transactionscope.Complete();
                     }
                     catch (Exception ex)
                     {
-                        _transactionscope.Dispose();
-                        ShowErr("Commit transaction error.", ex);
+                        transactionscope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
                         return;
                     }
                 }
-                _transactionscope.Dispose();
-                _transactionscope = null;
+
+                transactionscope.Dispose();
+                transactionscope = null;
                 #endregion
             }
         }
 
-        private void transrecord(string date1, string date2)
+        private void Transrecord(string date1, string date2)
         {
-            initqty(date1); //計算Init
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", CurrentMaintain["Refno"], keyWord, date1, date2);
+            this.Initqty(date1); // 計算Init
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, date1, date2);
             DataTable tb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             if (res)
             {
-                decimal  newIn, newOut, usedIn, usedOut,newbal,usedbal, newbalance =0, usedbalance=0 ;
-                if (gtbflag) gridTb.Merge(tb);
-                else gridTb=tb.Copy();
-                gtbflag = false;
-                foreach (DataRow drg in DetailDatas)
+                decimal newIn, newOut, usedIn, usedOut, newbal, usedbal, newbalance = 0, usedbalance = 0;
+                if (this.gtbflag)
+                {
+                    this.gridTb.Merge(tb);
+                }
+                else
+                {
+                    this.gridTb = tb.Copy();
+                }
+
+                this.gtbflag = false;
+                foreach (DataRow drg in this.DetailDatas)
                 {
                     newbalance = 0;
-                    usedbalance = 0 ;
-                    foreach (DataRow dr in gridTb.Rows)
+                    usedbalance = 0;
+                    foreach (DataRow dr in this.gridTb.Rows)
                     {
-                        if (drg["ThreadColorid"].ToString() != dr["ThreadColorid"].ToString() || drg["ThreadLocationid"].ToString() != dr["ThreadLocationid"].ToString()) continue; //group by 計算
+                        if (drg["ThreadColorid"].ToString() != dr["ThreadColorid"].ToString() || drg["ThreadLocationid"].ToString() != dr["ThreadLocationid"].ToString())
+                        {
+                            continue; // group by 計算
+                        }
 
                         newIn = 0;
                         newOut = 0;
@@ -199,12 +244,36 @@ namespace Sci.Production.Thread
                         usedOut = 0;
                         newbal = 0;
                         usedbal = 0;
-                        if (!MyUtility.Check.Empty(dr["newIn"])) newIn = (decimal)dr["newIn"];
-                        if (!MyUtility.Check.Empty(dr["newOut"])) newOut = (decimal)dr["newOut"];
-                        if (!MyUtility.Check.Empty(dr["usedIn"])) usedIn = (decimal)dr["usedIn"];
-                        if (!MyUtility.Check.Empty(dr["usedOut"])) usedOut = (decimal)dr["usedOut"];
-                        if (!MyUtility.Check.Empty(dr["Newbalance"])) newbal = (decimal)dr["Newbalance"];
-                        if (!MyUtility.Check.Empty(dr["Usedbalance"])) usedbal = (decimal)dr["Usedbalance"];
+                        if (!MyUtility.Check.Empty(dr["newIn"]))
+                        {
+                            newIn = (decimal)dr["newIn"];
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["newOut"]))
+                        {
+                            newOut = (decimal)dr["newOut"];
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["usedIn"]))
+                        {
+                            usedIn = (decimal)dr["usedIn"];
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["usedOut"]))
+                        {
+                            usedOut = (decimal)dr["usedOut"];
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["Newbalance"]))
+                        {
+                            newbal = (decimal)dr["Newbalance"];
+                        }
+
+                        if (!MyUtility.Check.Empty(dr["Usedbalance"]))
+                        {
+                            usedbal = (decimal)dr["Usedbalance"];
+                        }
+
                         newbalance = newbalance + newIn - newOut + newbal;
                         usedbalance = usedbalance + usedIn - usedOut + usedbal;
                         dr["Newbalance"] = newbalance;
@@ -214,30 +283,39 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void btnQuery_Click(object sender, EventArgs e)
+        private void BtnQuery_Click(object sender, EventArgs e)
         {
-            gridTb.Clear();
-            transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
-            this.grid1.DataSource = gridTb;
-            OnDetailGridRowChanged();
+            this.gridTb.Clear();
+            this.Transrecord(this.dateTransactionDate.TextBox1.Text, this.dateTransactionDate.TextBox2.Text);
+            this.grid1.DataSource = this.gridTb;
+            this.OnDetailGridRowChanged();
         }
 
-        private void btnFilter_Click(object sender, EventArgs e)
+        private void BtnFilter_Click(object sender, EventArgs e)
         {
-            //移到指定那筆
-            string refno = txtThreadColorLocation.Text;
-            string filter = comboThreadColorLocation.Text;
-            if(filter =="Thread Color")
-                detailgridbs.Filter = string.Format("ThreadColorid = '{0}'", refno);
+            // 移到指定那筆
+            string refno = this.txtThreadColorLocation.Text;
+            string filter = this.comboThreadColorLocation.Text;
+            if (filter == "Thread Color")
+            {
+                this.detailgridbs.Filter = string.Format("ThreadColorid = '{0}'", refno);
+            }
+
             if (filter == "Thread Location")
-                detailgridbs.Filter = string.Format("ThreadLocationid = '{0}'", refno);
-            if (MyUtility.Check.Empty(refno)) detailgridbs.Filter = ""; //清空Filter
+            {
+                this.detailgridbs.Filter = string.Format("ThreadLocationid = '{0}'", refno);
+            }
+
+            if (MyUtility.Check.Empty(refno))
+            {
+                this.detailgridbs.Filter = string.Empty; // 清空Filter
+            }
         }
 
-        private void btnRecalculateStockQty_Click(object sender, EventArgs e)
+        private void BtnRecalculateStockQty_Click(object sender, EventArgs e)
         {
-            initqty(DateTime.Now.ToShortDateString(), 1);
-            OnRefreshClick();
+            this.Initqty(DateTime.Now.ToShortDateString(), 1);
+            this.OnRefreshClick();
         }
     }
 }
