@@ -23,7 +23,6 @@ namespace Sci.Production.PublicPrg
                 application = new Microsoft.Office.Interop.Excel.Application();
                 application.Visible = false;
                 workBook = application.Workbooks.Open(excelPath);
-                workBook.SaveAs();
                 workBook.ExportAsFixedFormat(targetType, pdfPath);
                 result = true;
             }
@@ -71,7 +70,6 @@ namespace Sci.Production.PublicPrg
                 application = new Microsoft.Office.Interop.Word.Application();
                 application.Visible = false;
                 document = application.Documents.Open(wordPath);
-                document.SaveAs2();
                 document.ExportAsFixedFormat(pdfPath, exportFormat);
                 result = true;
             }
