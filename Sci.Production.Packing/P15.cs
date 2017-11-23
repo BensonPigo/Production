@@ -117,14 +117,15 @@ from (
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    left join PackingList_Detail pd WITH (NOLOCK) on  pd.ID = t.PackingListID 
+    inner join PackingList_Detail pd WITH (NOLOCK) on  pd.ID = t.PackingListID 
                                                         and pd.OrderID = t.OrderID 
                                                         and pd.CTNStartNo = t.CTNStartNo 
                                                         and pd.CTNQty > 0
-                                                        and pd.ReceiveDate is null
+                                                        and pd.ReceiveDate is null             
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
-    where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+    where t.TransferSlipNo <> ''
+    and t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
@@ -154,7 +155,6 @@ from (
             if (this.gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
-                return;
             }
 
             this.listControlBindingSource1.DataSource = this.gridData;
