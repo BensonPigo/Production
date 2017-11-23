@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelPOID = new Sci.Win.UI.Label();
             this.checkBoxExtendAllParts = new Sci.Win.UI.CheckBox();
             this.buttonQuery = new Sci.Win.UI.Button();
@@ -62,7 +62,7 @@
             this.checkBoxExtendAllParts.Location = new System.Drawing.Point(851, 572);
             this.checkBoxExtendAllParts.Name = "checkBoxExtendAllParts";
             this.checkBoxExtendAllParts.Size = new System.Drawing.Size(126, 21);
-            this.checkBoxExtendAllParts.TabIndex = 1;
+            this.checkBoxExtendAllParts.TabIndex = 4;
             this.checkBoxExtendAllParts.Text = "Extend All Parts";
             this.checkBoxExtendAllParts.UseVisualStyleBackColor = true;
             // 
@@ -72,7 +72,7 @@
             this.buttonQuery.Location = new System.Drawing.Point(1155, 9);
             this.buttonQuery.Name = "buttonQuery";
             this.buttonQuery.Size = new System.Drawing.Size(80, 30);
-            this.buttonQuery.TabIndex = 2;
+            this.buttonQuery.TabIndex = 3;
             this.buttonQuery.Text = "Query";
             this.buttonQuery.UseVisualStyleBackColor = true;
             this.buttonQuery.Click += new System.EventHandler(this.buttonQuery_Click);
@@ -92,7 +92,7 @@
             this.buttonClose.Location = new System.Drawing.Point(1155, 566);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(80, 30);
-            this.buttonClose.TabIndex = 5;
+            this.buttonClose.TabIndex = 7;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -103,7 +103,7 @@
             this.buttonToExcel.Location = new System.Drawing.Point(1069, 566);
             this.buttonToExcel.Name = "buttonToExcel";
             this.buttonToExcel.Size = new System.Drawing.Size(80, 30);
-            this.buttonToExcel.TabIndex = 4;
+            this.buttonToExcel.TabIndex = 6;
             this.buttonToExcel.Text = "ToExcel";
             this.buttonToExcel.UseVisualStyleBackColor = true;
             this.buttonToExcel.Click += new System.EventHandler(this.buttonToExcel_Click);
@@ -114,7 +114,7 @@
             this.buttonPrint.Location = new System.Drawing.Point(983, 566);
             this.buttonPrint.Name = "buttonPrint";
             this.buttonPrint.Size = new System.Drawing.Size(80, 30);
-            this.buttonPrint.TabIndex = 3;
+            this.buttonPrint.TabIndex = 5;
             this.buttonPrint.Text = "Print";
             this.buttonPrint.UseVisualStyleBackColor = true;
             this.buttonPrint.Click += new System.EventHandler(this.buttonPrint_Click);
@@ -137,20 +137,20 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(9, 45);
             this.grid.Name = "grid";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.Size = new System.Drawing.Size(1226, 515);
-            this.grid.TabIndex = 6;
+            this.grid.TabIndex = 8;
             // 
             // labelPatternPanel
             // 
@@ -175,7 +175,7 @@
             this.textBoxPatterPanel.Location = new System.Drawing.Point(273, 12);
             this.textBoxPatterPanel.Name = "textBoxPatterPanel";
             this.textBoxPatterPanel.Size = new System.Drawing.Size(73, 23);
-            this.textBoxPatterPanel.TabIndex = 7;
+            this.textBoxPatterPanel.TabIndex = 1;
             // 
             // dateRangeCreateDate
             // 
@@ -197,7 +197,7 @@
             this.dateRangeCreateDate.Location = new System.Drawing.Point(432, 12);
             this.dateRangeCreateDate.Name = "dateRangeCreateDate";
             this.dateRangeCreateDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeCreateDate.TabIndex = 8;
+            this.dateRangeCreateDate.TabIndex = 2;
             // 
             // P13
             // 
