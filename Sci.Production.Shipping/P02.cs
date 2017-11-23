@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
-using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using Sci.Win;
 using System.Reflection;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -78,7 +77,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record - ", onclick: (s, e) => this.MenuDelete()).Get(out this.delete);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail - ", onclick: (s, e) => this.MenuEdit()).Get(out this.edit);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Separator();
-            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Print", onclick: (s, e) => this.Print()).Get(out this.print);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Print", onclick: (s, e) => this.Print(new DataRow[] { this.CurrentDetailData }, false)).Get(out this.print);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Batch Print", onclick: (s, e) => this.BatchPrint()).Get(out this.batchprint);
             this.SetContextMenuStatus(false); // 預設先將Context ment設定為disable
         }
@@ -96,22 +95,56 @@ namespace Sci.Production.Shipping
             this.batchprint.Enabled = status;
         }
 
+        // 比對detail table差異
+        private void CompareDetailPrint(DataTable after_dt, DataTable before_dt)
+        {
+            DataTable result_dt;
+            if (before_dt.Rows.Count > 0)
+            {
+                var idsNotInB = after_dt.AsEnumerable().Select(r => r.Field<string>("ID") + r.Field<string>("OrderID") + r.Field<string>("Seq1") + r.Field<string>("Seq2") + r.Field<string>("Category"))
+              .Except(before_dt.AsEnumerable().Select(r => r.Field<string>("ID") + r.Field<string>("OrderID") + r.Field<string>("Seq1") + r.Field<string>("Seq2") + r.Field<string>("Category"))).ToList();
+                if (idsNotInB.Count == 0)
+                {
+                    return;
+                }
+
+                result_dt = (from r in after_dt.AsEnumerable()
+                                 join id in idsNotInB
+                                 on r.Field<string>("ID") + r.Field<string>("OrderID") + r.Field<string>("Seq1") + r.Field<string>("Seq2") + r.Field<string>("Category") equals id
+                                 select r).CopyToDataTable();
+            }
+            else
+            {
+                result_dt = after_dt;
+            }
+
+            if (result_dt.Rows.Count > 0)
+            {
+                this.Print(result_dt.Select(), true);
+            }
+        }
+
         // Context Menu選擇Import from FOC PL# (Garment FOC)
         private void ImportFromFOCPL()
         {
             Sci.Production.Shipping.P02_ImportFromFOCPackingList callFOCPLForm = new Sci.Production.Shipping.P02_ImportFromFOCPackingList(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
             this.RenewData();
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
         // Context Menu選擇Import from purchase (Material)
         private void ImportFromPurchase()
         {
             Sci.Production.Shipping.P02_ImportFromPO callPurchaseForm = new Sci.Production.Shipping.P02_ImportFromPO(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
             this.RenewData();
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
         // Context Menu選擇Add by PO# item (Garment Chargeable)
@@ -120,10 +153,13 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPOItemForm.SetInsert(dr);
             callPOItemForm.ShowDialog(this);
+
             this.RenewData();
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
         // Context Menu選擇Add new Item
@@ -132,15 +168,22 @@ namespace Sci.Production.Shipping
             Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
             DataRow dr = ((DataTable)this.detailgridbs.DataSource).NewRow();
             dr["ID"] = this.CurrentMaintain["ID"];
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callNewItemForm.SetInsert(dr);
             callNewItemForm.ShowDialog(this);
             this.RenewData();
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
         }
 
         // Context Menu選擇Edit this Record's detail
         private void MenuEdit()
         {
+            string before_orderid = this.CurrentDetailData["OrderId"].ToString();
+            string before_seq1 = this.CurrentDetailData["Seq1"].ToString();
+            string before_seq2 = this.CurrentDetailData["Seq2"].ToString();
+            string before_category = this.CurrentDetailData["Category"].ToString();
+            DialogResult edit_result = DialogResult.No;
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "1" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "2" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "3")
             {
                 Sci.Production.Shipping.P02_AddByPOItem callPOItemForm = new Sci.Production.Shipping.P02_AddByPOItem();
@@ -150,21 +193,21 @@ namespace Sci.Production.Shipping
                 }
 
                 callPOItemForm.SetUpdate(this.CurrentDetailData);
-                callPOItemForm.ShowDialog(this);
+                edit_result = callPOItemForm.ShowDialog(this);
             }
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "4")
             {
                 Sci.Production.Shipping.P02_EditFromPO callEditPOForm = new Sci.Production.Shipping.P02_EditFromPO();
                 callEditPOForm.SetUpdate(this.CurrentDetailData);
-                callEditPOForm.ShowDialog(this);
+                edit_result = callEditPOForm.ShowDialog(this);
             }
 
             if (MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "5" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "6" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "7" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "8" || MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) == "9")
             {
                 Sci.Production.Shipping.P02_AddNewItem callNewItemForm = new Sci.Production.Shipping.P02_AddNewItem();
                 callNewItemForm.SetUpdate(this.CurrentDetailData);
-                callNewItemForm.ShowDialog(this);
+                edit_result = callNewItemForm.ShowDialog(this);
             }
             #region 重新計算ttl Carton Weight
             if (this.CurrentMaintain == null)
@@ -236,6 +279,17 @@ where ID = '{0}'", this.CurrentMaintain["ID"]);
             #endregion
             this.RenewData();
             this.numericBox4.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+
+            DataRow[] after_row = ((DataTable)this.detailgridbs.DataSource).Select(string.Format(" OrderId = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Category = '{3}' ", before_orderid, before_seq1, before_seq2, before_category));
+            if (after_row.Length == 0)
+            {
+                return;
+            }
+
+            if (edit_result == DialogResult.OK)
+            {
+                this.Print(after_row, true);
+            }
         }
 
         // Context Menu選擇Delete this Record
@@ -336,7 +390,7 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         }
 
         // Context Menu選擇Print
-        private void Print()
+        private void Print(DataRow[] drlist, bool print_flag)
         {
             DualResult result;
             IReportResource reportresource;
@@ -348,17 +402,38 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             else
             {
                 rd.ReportResource = reportresource;
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("barCode", '*' + MyUtility.Convert.GetString(this.CurrentDetailData["ID"]) + MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) + '*'));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) + ")"));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]) + ")"));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("hcNo", MyUtility.Convert.GetString(this.CurrentDetailData["ID"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("serialNo", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]) + "-" + MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]) + "-" + MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("brand", MyUtility.Convert.GetString(this.CurrentDetailData["BrandID"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("incharge", MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentDetailData["InCharge"])))));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("teamLeader", MyUtility.Convert.GetString(this.CurrentDetailData["LeaderName"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("receiver", MyUtility.Convert.GetString(this.CurrentDetailData["ReceiverName"])));
+
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("barCode", '*' + MyUtility.Convert.GetString(this.CurrentDetailData["ID"]) + MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"]) + MyUtility.Convert.GetString(this.CurrentDetailData["Category"]) + '*'));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("from", (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) + ")"));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("to", (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]) + ")"));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("hcNo", MyUtility.Convert.GetString(this.CurrentDetailData["ID"])));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("serialNo", MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]) + "-" + MyUtility.Convert.GetString(this.CurrentDetailData["Seq1"]) + "-" + MyUtility.Convert.GetString(this.CurrentDetailData["Seq2"])));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("brand", MyUtility.Convert.GetString(this.CurrentDetailData["BrandID"])));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("incharge", MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentDetailData["InCharge"])))));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("teamLeader", MyUtility.Convert.GetString(this.CurrentDetailData["LeaderName"])));
+                // rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("receiver", MyUtility.Convert.GetString(this.CurrentDetailData["ReceiverName"])));
+                List<P02_PrintData> data = new List<P02_PrintData>();
+                P02_PrintData data_item;
+                foreach (DataRow dr in drlist)
+                {
+                    data_item = new P02_PrintData();
+                    data_item.BarCode = '*' + MyUtility.Convert.GetString(dr["ID"]) + MyUtility.Convert.GetString(dr["OrderID"]) + MyUtility.Convert.GetString(dr["Seq1"]) + MyUtility.Convert.GetString(dr["Seq2"]) + MyUtility.Convert.GetString(dr["Category"]) + '*';
+                    data_item.From = (MyUtility.Convert.GetString(this.CurrentMaintain["FromTag"]) == "1" ? "Factory" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]) + ")";
+                    data_item.To = (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "1" ? "SCI" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "2" ? "Factory" : MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3" ? "Supplier" : "Brand") + "(" + MyUtility.Convert.GetString(this.CurrentMaintain["ToSite"]) + ")";
+                    data_item.HcNo = MyUtility.Convert.GetString(dr["ID"]);
+                    data_item.SerialNo = MyUtility.Convert.GetString(dr["OrderID"]) + "-" + MyUtility.Convert.GetString(dr["Seq1"]) + "-" + MyUtility.Convert.GetString(dr["Seq2"]);
+                    data_item.Brand = MyUtility.Convert.GetString(dr["BrandID"]);
+                    data_item.Incharge = MyUtility.GetValue.Lookup(string.Format("select Name+ iif(ExtNo <> '',' #' + ExtNo,'') as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(dr["InCharge"])));
+                    data_item.TeamLeader = MyUtility.Convert.GetString(dr["LeaderName"]);
+                    data_item.Receiver = MyUtility.Convert.GetString(dr["ReceiverName"]);
+                    data.Add(data_item);
+                }
+
+                rd.ReportDataSource = data;
+
                 using (var frm = new Sci.Win.Subs.ReportView(rd))
                 {
+                    frm.DirectPrint = print_flag;
                     frm.ShowDialog(this);
                 }
             }
