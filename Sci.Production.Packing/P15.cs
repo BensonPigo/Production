@@ -121,6 +121,7 @@ from (
                                                         and pd.OrderID = t.OrderID 
                                                         and pd.CTNStartNo = t.CTNStartNo 
                                                         and pd.CTNQty > 0
+                                                        and pd.ReceiveDate is null
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
     where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
