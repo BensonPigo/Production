@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -233,7 +234,17 @@ where id in (select id from #tmp) ";
 
                 transactionscope = null;
                 #endregion
-                this.Query();
+
+                // this.Query();
+                if (dtGrid.AsEnumerable().Any(row => !row["selected"].EqualDecimal(1)))
+                {
+                    this.listControlBindingSource1.DataSource = dtGrid.AsEnumerable().Where(row => !row["selected"].EqualDecimal(1)).CopyToDataTable();
+                }
+                else
+                {
+                    this.listControlBindingSource1.DataSource = null;
+                }
+
                 this.HideWaitMessage();
             }
         }
