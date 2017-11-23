@@ -12,23 +12,31 @@ using Sci.Data;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// P01_QAOutput
+    /// </summary>
     public partial class P01_QAOutput : Sci.Win.Subs.Input8A
     {
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qaqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+
+        /// <summary>
+        /// P01_QAOutput
+        /// </summary>
         public P01_QAOutput()
         {
-            InitializeComponent();
-            
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
         }
 
+        /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
-            grid.ValidateControl();
+            this.grid.ValidateControl();
             foreach (DataRow row in this.CurrentSubDetailDatas.Rows)
             {
                 if (row.RowState != DataRowState.Deleted)
@@ -37,51 +45,63 @@ namespace Sci.Production.Sewing
                     {
                         row["ID"] = this.CurrentDetailData["ID"];
                     }
-                }                
+                }
             }
+
             return base.OnSaveBefore();
         }
-        
+
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
-            prev.Visible = false;
-            next.Visible = false;
+
+            this.prev.Visible = false;
+            this.next.Visible = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnAttached()
         {
             base.OnAttached();
-            string strFilter = string.Format("OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'", CurrentDetailData["OrderID"]
-                                                                                                        , CurrentDetailData["ComboType"]
-                                                                                                        , CurrentDetailData["Article"]);
-            gridbs.Filter = strFilter;
-            displaySPNo.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
-            displaySPNo2.Value = MyUtility.Convert.GetString(CurrentDetailData["ComboType"]);
-            displayArticle.Value = MyUtility.Convert.GetString(CurrentDetailData["Article"]);
-            displayColor.Value = MyUtility.Convert.GetString(CurrentDetailData["Color"]);
-            numTotalOrderQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(OrderQty)", strFilter));
-            numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", strFilter));
-            numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", strFilter));
-            CalculateTotal();
-            //this.grid.AutoResizeColumns();
+            string strFilter = string.Format(
+                "OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'",
+                this.CurrentDetailData["OrderID"],
+                this.CurrentDetailData["ComboType"],
+                this.CurrentDetailData["Article"]);
+
+            this.gridbs.Filter = strFilter;
+            this.displaySPNo.Value = MyUtility.Convert.GetString(this.CurrentDetailData["OrderID"]);
+            this.displaySPNo2.Value = MyUtility.Convert.GetString(this.CurrentDetailData["ComboType"]);
+            this.displayArticle.Value = MyUtility.Convert.GetString(this.CurrentDetailData["Article"]);
+            this.displayColor.Value = MyUtility.Convert.GetString(this.CurrentDetailData["Color"]);
+            this.numTotalOrderQty.Value = MyUtility.Convert.GetInt(((DataTable)this.gridbs.DataSource).Compute("SUM(OrderQty)", strFilter));
+            this.numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)this.gridbs.DataSource).Compute("SUM(AccumQty)", strFilter));
+            this.numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)this.gridbs.DataSource).Compute("SUM(Variance)", strFilter));
+            this.CalculateTotal();
+
+            // this.grid.AutoResizeColumns();
         }
 
+        /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
             #region QA Q'ty的Validatng
-            qaqty.CellValidating += (s, e) =>
+            this.qaqty.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
-                {                    
-                    DataRow dr = grid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Convert.GetInt(e.FormattedValue) == MyUtility.Convert.GetInt(dr["QAQty"])) return;                   
+                {
+                    DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Convert.GetInt(e.FormattedValue) == MyUtility.Convert.GetInt(dr["QAQty"]))
+                    {
+                        return;
+                    }
+
                     if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["Variance"]))
                     {
                         MyUtility.Msg.WarningBox("< QA Q'ty > can't exceed < Variance >");
                         dr["QAQty"] = 0;
-                        e.Cancel = true;                        
+                        e.Cancel = true;
                     }
                     else
                     {
@@ -89,38 +109,43 @@ namespace Sci.Production.Sewing
                         {
                             dr.SetAdded();
                         }
+
                         dr["QAQty"] = e.FormattedValue;
                     }
+
                     dr["BalQty"] = MyUtility.Convert.GetInt(dr["Variance"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
                     dr.EndEdit();
-                    CalculateTotal();
+                    this.CalculateTotal();
                 }
-                
             };
             #endregion
-            Helper.Controls.Grid.Generator(grid)
+            this.Helper.Controls.Grid.Generator(this.grid)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("AccumQty", header: "Accum. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("QAQty", header: "QA Q'ty", width: Widths.AnsiChars(10), iseditingreadonly:false, settings: qaqty)
+                .Numeric("QAQty", header: "QA Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: this.qaqty)
                 .Numeric("BalQty", header: "Bal. Q'ty", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
-            for (int i = 0; i < grid.ColumnCount; i++)
+            for (int i = 0; i < this.grid.ColumnCount; i++)
             {
-                grid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.grid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
             return true;
         }
 
-        //計算Total QA Q'ty, Total Bal. Q'ty
+        // 計算Total QA Q'ty, Total Bal. Q'ty
         private void CalculateTotal()
         {
-            string strFilter = string.Format("OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'", CurrentDetailData["OrderID"]
-                                                                                                        , CurrentDetailData["ComboType"]
-                                                                                                        , CurrentDetailData["Article"]);
-            numTotalQAQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(QAQty)", strFilter));
-            numTotalBalQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(BalQty)", strFilter));
+            string strFilter = string.Format(
+                "OrderID = '{0}' and ComboType = '{1}' and Article = '{2}'",
+                this.CurrentDetailData["OrderID"],
+                this.CurrentDetailData["ComboType"],
+                this.CurrentDetailData["Article"]);
+
+            this.numTotalQAQty.Value = MyUtility.Convert.GetInt(((DataTable)this.gridbs.DataSource).Compute("SUM(QAQty)", strFilter));
+            this.numTotalBalQty.Value = MyUtility.Convert.GetInt(((DataTable)this.gridbs.DataSource).Compute("SUM(BalQty)", strFilter));
         }
     }
 }

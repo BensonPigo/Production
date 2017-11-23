@@ -12,74 +12,99 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
+    /// <summary>
+    /// R02
+    /// </summary>
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        string line1, line2, factory, factoryName, mDivision;
-        DateTime? date1, date2;
-        int excludeHolday, excludeSubconin, reportType, orderby;
-        DataTable SewOutPutData, printData, excludeInOutTotal, cpuFactor, subprocessData, subconData,vphData;
+        private string line1;
+        private string line2;
+        private string factory;
+        private string factoryName;
+        private string mDivision;
+        private DateTime? date1;
+        private DateTime? date2;
+        private int excludeHolday;
+        private int excludeSubconin;
+        private int reportType;
+        private int orderby;
+        private DataTable SewOutPutData;
+        private DataTable printData;
+        private DataTable excludeInOutTotal;
+        private DataTable cpuFactor;
+        private DataTable subprocessData;
+        private DataTable subconData;
+        private DataTable vphData;
+
+        /// <summary>
+        /// R02
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-            label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
+            this.InitializeComponent();
+            this.label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
             DataTable factory, mDivision;
-            DBProxy.Current.Select(null, @"select '' as FtyGroup 
+            DBProxy.Current.Select(
+                null,
+                string.Format(@"select '' as FtyGroup 
 union all
-select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
+select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
+                out factory);
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(comboHoliday, 1, 1, "Included,Excluded");
-            MyUtility.Tool.SetupCombox(comboSubconIn, 1, 1, "Included,Excluded");
-            MyUtility.Tool.SetupCombox(comboReportType, 1, 1, "By Date,By Sewing Line");
-            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
-            comboHoliday.SelectedIndex = 0;
-            comboSubconIn.SelectedIndex = 0;
-            comboReportType.SelectedIndex = 0;
-            comboFactory.Text = Sci.Env.User.Factory;
-            comboOrderBy.SelectedIndex = 0;
-            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(this.comboHoliday, 1, 1, "Included,Excluded");
+            MyUtility.Tool.SetupCombox(this.comboSubconIn, 1, 1, "Included,Excluded");
+            MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line");
+            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
+            this.comboHoliday.SelectedIndex = 0;
+            this.comboSubconIn.SelectedIndex = 0;
+            this.comboReportType.SelectedIndex = 0;
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboOrderBy.SelectedIndex = 0;
+            this.comboM.Text = Sci.Env.User.Keyword;
         }
 
-        //Date
-        private void dateDateStart_Validated(object sender, EventArgs e)
+        // Date
+        private void DateDateStart_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateDateStart.Value))
+            if (MyUtility.Check.Empty(this.dateDateStart.Value))
             {
-                dateDateEnd.Value = null;
+                this.dateDateEnd.Value = null;
             }
             else
             {
-                dateDateEnd.Value = (Convert.ToDateTime(dateDateStart.Value).AddDays(1 - Convert.ToDateTime(dateDateStart.Value).Day)).AddMonths(1).AddDays(-1);
+                this.dateDateEnd.Value = Convert.ToDateTime(this.dateDateStart.Value).AddDays(1 - Convert.ToDateTime(this.dateDateStart.Value).Day).AddMonths(1).AddDays(-1);
             }
         }
 
-        //Report Type
-        private void comboReportType_SelectedIndexChanged(object sender, EventArgs e)
+        // Report Type
+        private void ComboReportType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboReportType.SelectedIndex == 0)
+            if (this.comboReportType.SelectedIndex == 0)
             {
-                labelOrderBy.Visible = false;
-                comboOrderBy.Visible = false;
+                this.labelOrderBy.Visible = false;
+                this.comboOrderBy.Visible = false;
             }
             else
             {
-                labelOrderBy.Visible = true;
-                comboOrderBy.Visible = true;
+                this.labelOrderBy.Visible = true;
+                this.comboOrderBy.Visible = true;
             }
         }
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboFactory.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
-                return "";
+                return string.Empty;
             }
             else
             {
@@ -87,79 +112,81 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
             }
         }
 
-        //Sewing Line
-        private void txtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Sewing Line
+        private void TxtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
+            this.txtSewingLineStart.Text = this.SelectSewingLine(this.txtSewingLineStart.Text);
         }
 
-        //Sewing Line
-        private void txtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        // Sewing Line
+        private void TxtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
+            this.txtSewingLineEnd.Text = this.SelectSewingLine(this.txtSewingLineEnd.Text);
         }
 
-        // 驗證輸入條件
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateDateStart.Value))
+            if (MyUtility.Check.Empty(this.dateDateStart.Value))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
-            if (comboHoliday.SelectedIndex == -1)
+            if (this.comboHoliday.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Holiday can't empty!!");
                 return false;
             }
 
-            if (comboSubconIn.SelectedIndex == -1)
+            if (this.comboSubconIn.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Subcon-in can't empty!!");
                 return false;
             }
 
-            if (comboReportType.SelectedIndex == -1)
+            if (this.comboReportType.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Report type can't empty!!");
                 return false;
             }
 
-            if (comboReportType.SelectedIndex == 1)
+            if (this.comboReportType.SelectedIndex == 1)
             {
-                if (comboFactory.SelectedIndex == -1 || comboFactory.SelectedIndex == 0)
+                if (this.comboFactory.SelectedIndex == -1 || this.comboFactory.SelectedIndex == 0)
                 {
                     MyUtility.Msg.WarningBox("Factory can't empty!!");
                     return false;
                 }
 
-                if (comboOrderBy.SelectedIndex == -1)
+                if (this.comboOrderBy.SelectedIndex == -1)
                 {
                     MyUtility.Msg.WarningBox("Order by can't empty!!");
                     return false;
                 }
             }
-            date1 = dateDateStart.Value;
-            date2 = dateDateEnd.Value;
-            line1 = txtSewingLineStart.Text;
-            line2 = txtSewingLineEnd.Text;
-            factory = comboFactory.Text;
-            mDivision = comboM.Text;
-            excludeHolday = comboHoliday.SelectedIndex;
-            excludeSubconin = comboSubconIn.SelectedIndex;
-            reportType = comboReportType.SelectedIndex;
-            orderby = comboOrderBy.SelectedIndex;
+
+            this.date1 = this.dateDateStart.Value;
+            this.date2 = this.dateDateEnd.Value;
+            this.line1 = this.txtSewingLineStart.Text;
+            this.line2 = this.txtSewingLineEnd.Text;
+            this.factory = this.comboFactory.Text;
+            this.mDivision = this.comboM.Text;
+            this.excludeHolday = this.comboHoliday.SelectedIndex;
+            this.excludeSubconin = this.comboSubconIn.SelectedIndex;
+            this.reportType = this.comboReportType.SelectedIndex;
+            this.orderby = this.comboOrderBy.SelectedIndex;
             return base.ValidateInput();
         }
 
-        // 非同步取資料
+        /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult failResult;
             #region 組撈全部Sewing output data SQL
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select  s.OutputDate
 		, s.Category
 		, s.Shift
@@ -192,27 +219,33 @@ left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --											 and sl.Location = sd.ComboType
 left join factory f WITH (NOLOCK) on f.id=s.FactoryID
-where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category='M')"
-                , Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
-            if (!MyUtility.Check.Empty(line1))
+where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category='M')",
+                Convert.ToDateTime(this.date1).ToString("d"),
+                Convert.ToDateTime(this.date2).ToString("d")));
+
+            if (!MyUtility.Check.Empty(this.line1))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'",line1));
+                sqlCmd.Append(string.Format(" and s.SewingLineID >= '{0}'", this.line1));
             }
-            if (!MyUtility.Check.Empty(line2))
+
+            if (!MyUtility.Check.Empty(this.line2))
             {
-                sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'",line2));
+                sqlCmd.Append(string.Format(" and s.SewingLineID <= '{0}'", this.line2));
             }
-            if (!MyUtility.Check.Empty(factory))
+
+            if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'",factory));
+                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'", this.factory));
             }
-            if (!MyUtility.Check.Empty(mDivision))
+
+            if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", this.mDivision));
             }
-            if (checkSampleFty.Checked)
+
+            if (this.checkSampleFty.Checked)
             {
-                sqlCmd.Append(string.Format(" and f.type <> 'S' ", mDivision));
+                sqlCmd.Append(string.Format(" and f.type <> 'S' ", this.mDivision));
             }
 
             sqlCmd.Append(@"
@@ -256,19 +289,21 @@ left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID
 									  and w.Date = t.OutputDate 
 									  and w.SewingLineID = t.SewingLineID
 where 1 = 1");
-            if (excludeSubconin == 1)
+            if (this.excludeSubconin == 1)
             {
                 sqlCmd.Append(" and t.LastShift <> 'I'");
             }
+
             sqlCmd.Append(@"
 select * 
 into #tmp2ndFilter
 from #tmp1stFilter t
 where 1 = 1");
-            if (excludeHolday == 1)
+            if (this.excludeHolday == 1)
             {
                 sqlCmd.Append(" and Holiday = 0");
             }
+
             sqlCmd.Append(@"
 select OutputDate
 	   , Shift = IIF(LastShift = 'D', 'Day'
@@ -295,7 +330,7 @@ select OutputDate
 	   , FactoryID
 from #tmp2ndFilter");
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out SewOutPutData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.SewOutPutData);
             if (!result)
             {
                 failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
@@ -303,13 +338,15 @@ from #tmp2ndFilter");
             }
 
             #region 整理列印資料
-            if (reportType == 0)
+            if (this.reportType == 0)
             {
                 try
                 {
                     #region 組SQL
-                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category"
-                        , @"
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                        string.Format(@"
 ;with AllOutputDate as (
     select distinct OutputDate		   
 	from #tmp
@@ -394,7 +431,9 @@ left join tmpTtlCPU tc on aDate.OutputDate = tc.OutputDate
 left join tmpSubconInCPU ic on aDate.OutputDate = ic.OutputDate
 left join tmpSubconOutCPU oc on aDate.OutputDate = oc.OutputDate
 left join tmpTtlManPower mp on aDate.OutputDate = mp.OutputDate
-order by aDate.OutputDate", out printData);
+order by aDate.OutputDate"),
+                        out this.printData);
+
                     if (failResult == false)
                     {
                         return failResult;
@@ -412,7 +451,8 @@ order by aDate.OutputDate", out printData);
                 try
                 {
                     #region 組SQL
-                    string sqlcommand = string.Format(@"
+                    string sqlcommand = string.Format(
+                        @"
 ;with AllSewingLine as (
     select distinct SewingLineID		   
 	from #tmp
@@ -479,9 +519,14 @@ left join tmpTtlCPU tc on aLine.SewingLineID = tc.SewingLineID
 left join tmpSubconInCPU ic on aLine.SewingLineID = ic.SewingLineID
 left join tmpSubconOutCPU oc on aLine.SewingLineID = oc.SewingLineID
 left join tmpTtlManPower mp on aLine.SewingLineID = mp.SewingLineID
-order by {0}", orderby == 0 ? "aLine.SewingLineID" : "CPUSewer");
-                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
-                        sqlcommand,  out printData);
+order by {0}",
+                        this.orderby == 0 ? "aLine.SewingLineID" : "CPUSewer");
+
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                        sqlcommand,
+                        out this.printData);
 
                     if (failResult == false)
                     {
@@ -501,8 +546,10 @@ order by {0}", orderby == 0 ? "aLine.SewingLineID" : "CPUSewer");
             try
             {
                 #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
-                    @"
+                failResult = MyUtility.Tool.ProcessWithDatatable(
+                    this.SewOutPutData,
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                    string.Format(@"
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -536,7 +583,9 @@ select q.QAQty
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
-left join tmpTtlManPower mp on 1 = 1", out excludeInOutTotal);
+left join tmpTtlManPower mp on 1 = 1"),
+                    out this.excludeInOutTotal);
+
                 if (failResult == false)
                 {
                     return failResult;
@@ -548,14 +597,16 @@ left join tmpTtlManPower mp on 1 = 1", out excludeInOutTotal);
                 failResult = new DualResult(false, "Query total data fail\r\n" + ex.ToString());
                 return failResult;
             }
-            #endregion 
+            #endregion
 
             #region 整理CPU Factor
             try
             {
                 #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
-                    @"
+                failResult = MyUtility.Tool.ProcessWithDatatable(
+                    this.SewOutPutData,
+                    "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
+                    string.Format(@"
 ;with tmpData as (
 	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
 		   , QAQty
@@ -586,8 +637,8 @@ select q.*
 	   , s.Style
 from tmpSumQAQty q
 left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
-left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
-                    out cpuFactor);
+left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
+                    out this.cpuFactor);
 
                 if (failResult == false)
                 {
@@ -603,12 +654,15 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
             #endregion
 
             #region 整理Subprocess資料
-            if (printData.Rows.Count > 0)
+            if (this.printData.Rows.Count > 0)
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
-@";with tmpArtwork as(
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OrderId,ComboType,QAQty,LastShift",
+                        string.Format(@"
+;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
@@ -637,8 +691,8 @@ select ArtworkTypeID = t1.ID
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
-order by t1.ID",
-                        out subprocessData);
+order by t1.ID"),
+                        out this.subprocessData);
 
                     if (failResult == false)
                     {
@@ -654,12 +708,14 @@ order by t1.ID",
             #endregion
 
             #region 整理Subcon資料
-            if (printData.Rows.Count > 0)
+            if (this.printData.Rows.Count > 0)
             {
                 try
                 {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
-                        @"
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
+                        string.Format(@"
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
@@ -682,8 +738,8 @@ tmpSubconOut as (
 )
 select * from tmpSubconIn
 union all
-select * from tmpSubconOut",
-                        out subconData);
+select * from tmpSubconOut"),
+                        out this.subconData);
 
                     if (failResult == false)
                     {
@@ -697,10 +753,11 @@ select * from tmpSubconOut",
                 }
             }
             #endregion
-            factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
+            this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
 
             sqlCmd.Clear();
-            sqlCmd.Append(string.Format(@"
+            sqlCmd.Append(string.Format(
+                @"
 select f.id
 	   , m.ActiveManpower
 	   , SumA = SUM(m.ActiveManpower) over() 
@@ -708,24 +765,30 @@ from Factory f
 left join Manpower m on m.FactoryID = f.ID 
 		  				and m.Year = {0} 
 		  				and m.Month = {1}
-where f.Junk = 0", date1.Value.Year, date1.Value.Month));
-            if (factory != "")
+where f.Junk = 0",
+                this.date1.Value.Year,
+                this.date1.Value.Month));
+
+            if (this.factory != string.Empty)
             {
-                sqlCmd.Append(string.Format(" and f.id= '{0}'",factory));
+                sqlCmd.Append(string.Format(" and f.id= '{0}'", this.factory));
             }
-            if (mDivision!="")
+
+            if (this.mDivision != string.Empty)
             {
-                sqlCmd.Append(string.Format(" and f.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and f.MDivisionID = '{0}'", this.mDivision));
             }
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out vphData);
+
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.vphData);
             if (!result)
             {
                 failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
                 return failResult;
             }
-            if (factory != "")
+
+            if (this.factory != string.Empty)
             {
-                foreach (DataRow dr in vphData.Rows)
+                foreach (DataRow dr in this.vphData.Rows)
                 {
                     if (dr["ActiveManpower"].Empty())
                     {
@@ -734,40 +797,47 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                     }
                 }
             }
+
             return Result.True;
         }
 
-        // 產生Excel
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            this.SetCount(this.printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null) return false;
-            //excel.Visible = true;
+            if (excel == null)
+            {
+                return false;
+            }
+
+            // excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[2, 1] = string.Format("Fm:{0}",factoryName);
-            worksheet.Cells[3, 1] = string.Format("{0} Monthly CMP Report, MTH:{1} (Excluded Subcon-Out,{2}{3}) {4}"
-                , MyUtility.Check.Empty(factory) ? "All Factory" : factory
-                , Convert.ToDateTime(date1).ToString("yyyy/MM")
-                , excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday"
-                , excludeSubconin == 0 ? ", Subcon-In" : ""
-                , reportType == 0 ? "" : "By Sewing Line");
-            worksheet.Cells[4, 3] = excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
+            worksheet.Cells[2, 1] = string.Format("Fm:{0}", this.factoryName);
+            worksheet.Cells[3, 1] = string.Format(
+                "{0} Monthly CMP Report, MTH:{1} (Excluded Subcon-Out,{2}{3}) {4}",
+                MyUtility.Check.Empty(this.factory) ? "All Factory" : this.factory,
+                Convert.ToDateTime(this.date1).ToString("yyyy/MM"),
+                this.excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday",
+                this.excludeSubconin == 0 ? ", Subcon-In" : string.Empty,
+                this.reportType == 0 ? string.Empty : "By Sewing Line");
+
+            worksheet.Cells[4, 3] = this.excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
 
             int insertRow = 5;
             object[,] objArray = new object[1, 11];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr[0];
                 objArray[0, 1] = dr[1];
@@ -779,18 +849,20 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                objArray[0, 10] = "";
-                worksheet.Range[String.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
+                objArray[0, 10] = string.Empty;
+                worksheet.Range[string.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
                 insertRow++;
-                //插入一筆Record
+
+                // 插入一筆Record
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
-            //將多出來的Record刪除
-            DeleteExcelRow(2, insertRow, excel);
 
-            //Total
+            // 將多出來的Record刪除
+            this.DeleteExcelRow(2, insertRow, excel);
+
+            // Total
             worksheet.Cells[insertRow, 2] = string.Format("=SUM(B5:B{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
@@ -799,59 +871,61 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             worksheet.Cells[insertRow, 7] = string.Format("=ROUND(I{0}/H{0},2)", MyUtility.Convert.GetString(insertRow));
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)",insertRow);
+            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
             insertRow++;
-            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["QAQty"]);
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["TotalCPU"]);
-            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["CPUSewer"]);
-            worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["AvgWorkHour"]);
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManPower"]);
-            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString(excludeInOutTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
+            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["ManPower"]);
+            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["ManHour"]);
             worksheet.Cells[insertRow, 10] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
-            
-            //CPU Factor
+
+            // CPU Factor
             insertRow = insertRow + 2;
-            worksheet.Cells[insertRow, 3] = excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
+            worksheet.Cells[insertRow, 3] = this.excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
             insertRow++;
-            if (cpuFactor.Rows.Count > 2)
+            if (this.cpuFactor.Rows.Count > 2)
             {
-                //插入Record
-                for (int i = 0; i < cpuFactor.Rows.Count - 2; i++)
+                // 插入Record
+                for (int i = 0; i < this.cpuFactor.Rows.Count - 2; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
+
             objArray = new object[1, 4];
-            foreach (DataRow dr in cpuFactor.Rows)
+            foreach (DataRow dr in this.cpuFactor.Rows)
             {
-                objArray[0, 0] = string.Format("CPU * {0}",MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["CPUFactor"]),1)));
+                objArray[0, 0] = string.Format("CPU * {0}", MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["CPUFactor"]), 1)));
                 objArray[0, 1] = dr["QAQty"];
                 objArray[0, 2] = dr["CPU"];
                 objArray[0, 3] = dr["Style"];
-                
-                worksheet.Range[String.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
+
+                worksheet.Range[string.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
 
-            DeleteExcelRow(2, insertRow, excel);
-            //insertRow
+            this.DeleteExcelRow(2, insertRow, excel);
 
-            //Borders.LineStyle 儲存格邊框線
-            //Microsoft.Office.Interop.Excel.Range excelRange 
+            // insertRow
+
+            // Borders.LineStyle 儲存格邊框線
+            // Microsoft.Office.Interop.Excel.Range excelRange
             //    = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing);
-            //excelRange.Borders.LineStyle = 3;
-            //excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle 
+            // excelRange.Borders.LineStyle = 3;
+            // excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle
             //    = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
-            //Subprocess
+            // Subprocess
             insertRow = insertRow + 2;
             int insertRec = 0;
-            foreach (DataRow dr in subprocessData.Rows)
+            foreach (DataRow dr in this.subprocessData.Rows)
             {
                 insertRec++;
                 if (insertRec % 2 == 1)
@@ -864,60 +938,66 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                     worksheet.Cells[insertRow, 6] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
                     worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(dr["Price"]);
                     insertRow++;
-                    //插入一筆Record
+
+                    // 插入一筆Record
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
             }
+
             insertRow = insertRow + 3;
-            decimal ttlm = MyUtility.Convert.GetDecimal(printData.Compute("sum(ManPower)", ""));
-            decimal c = MyUtility.Convert.GetDecimal(printData.Compute("sum(TotalCPU)", "")) / MyUtility.Convert.GetDecimal(printData.Compute("sum(ManHour)", ""));
+            decimal ttlm = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
+            decimal c = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty)) / MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
             worksheet.Cells[insertRow, 1] = "VPH";
 
-            //[VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
+            // [VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
             c = Sci.MyUtility.Math.Round(c, 2);
-            // WorkDay => 
+
+            // WorkDay =>
             int intWorkDay;
             DataTable dtWorkDay;
             string strWorkDay = @"
 select Distinct OutputDate
 from #tmp
 where LastShift <> 'O'";
-            DualResult failResult = MyUtility.Tool.ProcessWithDatatable(SewOutPutData, null, strWorkDay, out dtWorkDay);
+            DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
             if (failResult == false)
             {
                 MyUtility.Msg.WarningBox(failResult.ToString());
                 intWorkDay = 0;
-            }else
+            }
+            else
             {
                 intWorkDay = dtWorkDay.Rows.Count;
             }
-            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2) / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]),2);
+
+            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2) / MyUtility.Convert.GetDecimal(this.vphData.Rows[0]["SumA"]), 2);
 
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
+            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 9] = "/Total work day:";
             worksheet.Cells[insertRow, 11] = intWorkDay;
-            //Subcon
+
+            // Subcon
             insertRow = insertRow + 2;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
-            if (subconData.Rows.Count > 0)
+            if (this.subconData.Rows.Count > 0)
             {
-                foreach (DataRow dr in subconData.Rows)
+                foreach (DataRow dr in this.subconData.Rows)
                 {
                     if (MyUtility.Convert.GetString(dr["Type"]) == "I")
                     {
                         insertRow++;
                         insertSubconIn = 1;
                         objArray[0, 0] = dr["Company"];
-                        objArray[0, 1] = "";
+                        objArray[0, 1] = string.Empty;
                         objArray[0, 2] = dr["TtlCPU"];
-                        worksheet.Range[String.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
 
-                        //插入一筆Record
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
+                        // 插入一筆Record
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
                     }
@@ -927,13 +1007,13 @@ where LastShift <> 'O'";
                         {
                             if (insertSubconIn == 0)
                             {
-                                //刪除資料
-                                DeleteExcelRow(5, insertRow, excel);
+                                // 刪除資料
+                                this.DeleteExcelRow(5, insertRow, excel);
                             }
                             else
                             {
-                                //刪除資料
-                                DeleteExcelRow(2, insertRow+1, excel);
+                                // 刪除資料
+                                this.DeleteExcelRow(2, insertRow + 1, excel);
                                 insertRow = insertRow + 3;
                             }
                         }
@@ -941,39 +1021,39 @@ where LastShift <> 'O'";
                         insertSubconOut = 1;
                         insertRow++;
                         objArray[0, 0] = dr["Company"];
-                        objArray[0, 1] = "";
+                        objArray[0, 1] = string.Empty;
                         objArray[0, 2] = dr["TtlCPU"];
-                        worksheet.Range[String.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
 
-                        //插入一筆Record
+                        // 插入一筆Record
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                        Marshal.ReleaseComObject(rngToInsert);        
+                        Marshal.ReleaseComObject(rngToInsert);
                     }
-
                 }
+
                 if (insertSubconOut == 0)
                 {
-                    //刪除資料
-                    DeleteExcelRow(2, insertRow + 1, excel);
+                    // 刪除資料
+                    this.DeleteExcelRow(2, insertRow + 1, excel);
                     insertRow = insertRow + 3;
-                    DeleteExcelRow(4, insertRow, excel);
+                    this.DeleteExcelRow(4, insertRow, excel);
                 }
                 else
                 {
-                    //刪除資料
-                    DeleteExcelRow(2, insertRow + 1, excel);
+                    // 刪除資料
+                    this.DeleteExcelRow(2, insertRow + 1, excel);
                 }
             }
             else
             {
-                DeleteExcelRow(9, insertRow, excel);
+                this.DeleteExcelRow(9, insertRow, excel);
             }
 
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine"));
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.reportType == 0 ? "Sewing_R02_MonthlyReportByDate" : "Sewing_R02_MonthlyReportBySewingLine");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
@@ -984,12 +1064,13 @@ where LastShift <> 'O'";
             return true;
         }
 
-        private void DeleteExcelRow(int rowCount, int rowLocation,Microsoft.Office.Interop.Excel.Application excel)
+        private void DeleteExcelRow(int rowCount, int rowLocation, Microsoft.Office.Interop.Excel.Application excel)
         {
             for (int i = 1; i <= rowCount; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[rowLocation];
-                //rng.Select();
+
+                // rng.Select();
                 rng.Delete();
             }
         }
