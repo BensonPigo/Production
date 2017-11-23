@@ -169,7 +169,7 @@ Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.Bran
 	CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
 	Orders.BuyerDelivery, Orders.SCIDelivery, 
 	SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
-	QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty  
+	QARate = SewingOutput_Detail.QAQty  
 	, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
 	, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
 	, STYLE.ModularParent, STYLE.CPUAdjusted
@@ -253,27 +253,19 @@ and Factory.IsProduceFty = '1'
                 }
 
                 strSQL += @"
-select OutputDate,Category, Shift, SewingLineID, Team, OrderId , ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate, MDivisionID
-		, QAQty = sum(QAQty)
-into #stmp2		
-from #stmp
+select OutputDate,Category, Shift, SewingLineID, Team, OrderId , ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate, MDivisionID, QAQty = sum(QAQty)
+into #stmp2		from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
 
 select 
 a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID 
 , CPU = sum(a.CPU), CPURate = sum(a.CPURate)
 ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
-, ManPower = sum(a.ManPower), WorkHour = sum(a.WorkHour) , QARate = sum(a.QARate)
+, ManPower = sum(a.ManPower), WorkHour = sum(a.WorkHour) , QARate = convert(numeric(12,2),sum(a.QARate))
 , TotalManHour = sum(a.TotalManHour )
 , a.CDDesc, a.StyleDesc
 , a.ModularParent, CPUAdjusted = sum(a.CPUAdjusted)
-,QAQty = 
-	(select sum(QAQty)  
-	from #stmp2 f 
-	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
-	and f.orderid = a.orderid
-	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
-	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+,QAQty = sum(a.QAQty) 
 ,TotalCPUOut =
 	(select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
 	from #stmp2 f 
