@@ -252,6 +252,7 @@ select	distinct p.id as [poid]
         , p.StockUnit
         , f.BomTypeCalculate
         , ColorMultipleID = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
+        , f.MTLTYPEID
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
@@ -306,6 +307,8 @@ from (
             , Qty = 0.00
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
             , b.ColorMultipleID
+            , b.MTLTYPEID
+            , Orderlist_chk = psdo.Orderid
     from #tmpPO_supp_detail b
     left join (
         select tmpB.*
@@ -317,6 +320,10 @@ from (
             and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
             and (b.ColorID = tb.ColorID)
             and b.Seq1 = tb.Seq1
+    left join dbo.po_supp_detail_orderlist psdo with (NOLOCK) on psdo.ID = b.poid and
+                                                             psdo.seq1 = b.seq1 and
+                                                             psdo.seq2 = b.seq2 and
+                                                             psdo.orderid = '{2}'
 ) x
 left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
@@ -448,9 +455,26 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                         }
 
                         //若數量有大於零才勾選
-                        if (Convert.ToDouble(dr["qty"]) != 0)
+                        //MTLTYPEID不為THREAD,CARTON才勾選
+                        //表頭orderid需存在orderlist(po_supp_detail_orderlist)中才勾選
+                        if (Convert.ToDouble(dr["qty"]) != 0 &&
+                            Convert.ToDouble(dr["balanceqty"]) > 0 &&
+                            !dr["MTLTYPEID"].ToString().Equals("THREAD") &&
+                            !dr["MTLTYPEID"].ToString().Equals("CARTON") &&
+                            dr["Orderlist_chk"] != DBNull.Value)
                         {
                             dr["Selected"] = 1;
+                        }
+                        else {
+                            //沒有default 打勾的話output要清掉因為在BOA裡面 所以會被帶出來可是實際上我不需要這些物料 所以不用計算
+                            dr["Output"] = "";
+                            //連同detail資料也顯示0
+                            if (tmp.Rows.Count > 0 && Convert.ToDouble(dr["qty"]) > 0)
+                            {
+                                foreach (DataRow tmp_dr in tmp.Rows) {
+                                    tmp_dr["qty"] = 0;
+                                }
+                            }
                         }
 
                         if (tmp.Rows.Count > 0)
