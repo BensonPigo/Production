@@ -308,6 +308,7 @@ from (
             , concat (Ltrim (Rtrim (b.seq1)), ' ', b.seq2) as seq
             , b.ColorMultipleID
             , b.MTLTYPEID
+            , checkOrderListEmpty = checkOrderListEmpty.value
             , Orderlist_chk = psdo.Orderid
     from #tmpPO_supp_detail b
     left join (
@@ -320,10 +321,20 @@ from (
             and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
             and (b.ColorID = tb.ColorID)
             and b.Seq1 = tb.Seq1
-    left join dbo.po_supp_detail_orderlist psdo with (NOLOCK) on psdo.ID = b.poid and
-                                                             psdo.seq1 = b.seq1 and
-                                                             psdo.seq2 = b.seq2 and
-                                                             psdo.orderid = '{2}'
+    outer apply (
+        select value = case count (1)
+                            when 0 then 'Y'
+                            else 'N'
+                       end
+        from dbo.po_supp_detail_orderlist psdo with (NOLOCK)
+        where psdo.id = b.poid
+	          and psdo.seq1 = b.seq1
+	          and psdo.seq2 = b.seq2
+    ) checkOrderListEmpty
+    left join dbo.po_supp_detail_orderlist psdo with (NOLOCK) on psdo.ID = b.poid 
+                                                                 and psdo.seq1 = b.seq1
+                                                                 and psdo.seq2 = b.seq2
+                                                                 and psdo.orderid = '{2}'
 ) x
 left join dbo.FtyInventory Fty with(NoLock) on Fty.poid = x.poid
                                                 and Fty.seq1 = x.seq1 
@@ -454,20 +465,25 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                             #endregion 
                         }
 
-                        //若數量有大於零才勾選
-                        //MTLTYPEID不為THREAD,CARTON才勾選
-                        //表頭orderid需存在orderlist(po_supp_detail_orderlist)中才勾選
-                        if (Convert.ToDouble(dr["qty"]) != 0 &&
-                            Convert.ToDouble(dr["balanceqty"]) > 0 &&
-                            !dr["MTLTYPEID"].ToString().Equals("THREAD") &&
-                            !dr["MTLTYPEID"].ToString().Equals("CARTON") &&
-                            dr["Orderlist_chk"] != DBNull.Value)
+                        /*
+                         * 1. 若數量有大於零才勾選
+                         * 2. MTLTYPEID不為THREAD,CARTON才勾選
+                         * 3. 表頭 orderid 需存在 orderlist(po_supp_detail_orderlist)中才勾選
+                         *    若 orderlist 為空，表示全部都要帶出
+                         */
+                        if (Convert.ToDouble(dr["qty"]) != 0
+                            && Convert.ToDouble(dr["balanceqty"]) > 0
+                            && dr["MTLTYPEID"].ToString().Equals("THREAD") == false
+                            && dr["MTLTYPEID"].ToString().Equals("CARTON") == false
+                            && (dr["Orderlist_chk"] != DBNull.Value
+                                || dr["checkOrderListEmpty"].EqualString("Y")))
                         {
                             dr["Selected"] = 1;
                         }
                         else {
                             //沒有default 打勾的話output要清掉因為在BOA裡面 所以會被帶出來可是實際上我不需要這些物料 所以不用計算
                             dr["Output"] = "";
+                            dr["Qty"] = 0;
                             //連同detail資料也顯示0
                             if (tmp.Rows.Count > 0 && Convert.ToDouble(dr["qty"]) > 0)
                             {
