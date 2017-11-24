@@ -293,7 +293,7 @@ outer apply(
 	where poid= t.POID and ArtworkTypeID= t.artworktypeid
 	group by orders.poid,ArtworkTypeID
 ) y
-where ap_qty > 0 and aa.category in ('B')
+where ap_qty > 0 
 ", ratetype));
             #endregion
 
