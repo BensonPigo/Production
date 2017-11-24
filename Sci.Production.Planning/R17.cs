@@ -78,10 +78,11 @@ SELECT   A = A2.CountryID
        , B = A2.KpiCode
        , C = A1.FactoryID 
        , D = A1.ID
-       , E = A1.BRANDID
-       , F = Convert(varchar,A1.BuyerDelivery )
-       , G = Convert(varchar,cast( Order_QS.FtyKPI as date)) 
-       , H = (SELECT strData + ',' 
+       , E = Order_QS.seq
+       , F = A1.BRANDID
+       , G = Convert(varchar,A1.BuyerDelivery )
+       , H = Convert(varchar,cast( Order_QS.FtyKPI as date)) 
+       , I = (SELECT strData + ',' 
               FROM (
                 SELECT strData = Convert(varchar, Order_QtyShip.ShipmodeID) 
                                  + '-' 
@@ -92,31 +93,31 @@ SELECT   A = A2.CountryID
                 FROM Order_QtyShip WITH (NOLOCK) 
                 where id = A1.ID
               ) t for xml path('')) 
-       , I = Order_QS.QTY
-       , J = Cast(isnull(pd.Qty,0) as int)
-	   , K = Cast(isnull(pd.FailQty,0) as int)
-       , L = (select strData + ',' 
+       , J = Order_QS.QTY
+       , K = Cast(isnull(pd.Qty,0) as int)
+	   , L = Cast(isnull(pd.FailQty,0) as int)
+       , M = (select strData + ',' 
               from (
                 Select strData = REPLACE(convert(varchar,PulloutDate), '-', '/') 
                 from Pullout_Detail WITH (NOLOCK) 
                 where OrderID = A1.ID
               ) t for xml path(''))       
-       , M = t.strData
-       , N = (Select CountPullOut = Count(id) 
+       , N = t.strData
+       , O = (Select CountPullOut = Count(id) 
               from Pullout_Detail WITH (NOLOCK) 
               where OrderID = A1.ID)
-       , O = CASE 
+       , P = CASE 
                 WHEN A1.GMTComplete = 'C' OR A1.GMTComplete = 'S' THEN 'Y' 
                 ELSE '' 
              END
-	   , P= Order_QS.ReasonID
-	   , Q = case A1.Category when 'B' then r.Name
+	   , Q = Order_QS.ReasonID
+	   , R = case A1.Category when 'B' then r.Name
 		 when 'S' then rs.Name
 		 else '' end 
-       , R = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
-       , S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
-       , T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
-       , U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
+       , S = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
+       , T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
+       , U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
+       , V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
 FROM ORDERS A1 WITH (NOLOCK) 
 inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
                                          and A1.OrderTypeID = ot.ID
@@ -195,7 +196,7 @@ WHERE ot.IsGMTMaster = 0";
                         strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
 
-                    strSQL += " AND A1.Category in ('B', 'G')";
+                    strSQL += " AND A1.Category ='B'";
                 }
                 else if (this.radioSample.Checked)
                 {
@@ -210,9 +211,18 @@ WHERE ot.IsGMTMaster = 0";
 
                     strSQL += " AND A1.Category='S'";
                 }
+                else
+                {
+                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                    {
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
+                    }
+
+                    strSQL += " AND A1.Category='G'";
+                }
 
                 strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
+GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID,Order_QS.seq,A1.BRANDID
 , A1.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
 , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
 , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo 
@@ -261,9 +271,9 @@ ORDER BY A1.ID";
                         drSDP = this.gdtSDP.Rows[intIndex_SDP];
                     }
 
-                    drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["I"].ToString() != string.Empty ? Convert.ToDecimal(drData["I"].ToString()) : 0);
-                    drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["J"].ToString() != string.Empty ? Convert.ToDecimal(drData["J"].ToString()) : 0);
-                    drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
+                    drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["J"].ToString() != string.Empty ? Convert.ToDecimal(drData["J"].ToString()) : 0);
+                    drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
+                    drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["L"].ToString() != string.Empty ? Convert.ToDecimal(drData["L"].ToString()) : 0);
                     drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
                     #endregion Calc SDP Data
                 }
@@ -275,23 +285,24 @@ SELECT   A= A2.CountryID
 		,B = A2.KpiCode
 		,C = A1.FactoryID 
 		,D = A1.ID 
-		,E = A1.BRANDID
-		,F = Convert(varchar,Order_QS.BuyerDelivery)  
-		,G = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
-		,H = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-		,I = Order_QS.QTY  
-		,J = Sum(A4.ShipQty) - dbo.getInvAdjQtyByDate(A1.ID,null,Order_QS.FtyKPI,'<=')
-		,K = ISNULL(Sum(A5.ShipQty),0)  - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
-		,L = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
-		,M = t.strData 
-		,N = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
-		,O = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
-		,P = A1.KPIChangeReason 
-		,Q = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
-		,R = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
-		,S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
-		,T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
-		,U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
+        ,E = Order_QS.seq
+		,F = A1.BRANDID
+		,G = Convert(varchar,Order_QS.BuyerDelivery)  
+		,H = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
+		,I = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
+		,J = Order_QS.QTY  
+		,K = Sum(A4.ShipQty) - dbo.getInvAdjQtyByDate(A1.ID,null,Order_QS.FtyKPI,'<=')
+		,L = ISNULL(Sum(A5.ShipQty),0)  - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
+		,M = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
+		,N = t.strData 
+		,O = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
+		,P = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
+		,Q = A1.KPIChangeReason 
+		,R = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
+		,S = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
+		,T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
+		,U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
+		,V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
 FROM ORDERS A1 WITH (NOLOCK) 
 inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
                                          and A1.OrderTypeID = ot.ID
@@ -346,7 +357,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                         strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                     }
 
-                    strSQL += " AND A1.Category in ('B', 'G')";
+                    strSQL += " AND A1.Category ='B'";
                 }
                 else if (this.radioSample.Checked)
                 {
@@ -361,9 +372,18 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 
                     strSQL += " AND A1.Category='S'";
                 }
+                else
+                {
+                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                    {
+                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
+                    }
+
+                    strSQL += " AND A1.Category='G'";
+                }
 
                 strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChangeReason
+GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, Order_QS.seq , A1.BRANDID,A1.KPIChangeReason
 , Order_QS.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
 , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
 , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
@@ -386,12 +406,13 @@ SELECT   A = A2.CountryID
 		,B = A2.KpiCode 
 		,C = A1.FactoryID   
 		,D = A1.ID 
-		,E = Convert(varchar,cast(Order_QS.FtyKPI as date))
-		,F = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path(''))  
-		,G = Order_QS.QTY  
-		,H = isnull(opd.sQty,0)
-		,I = Convert(varchar,pd.PulloutDate)
-		,J = (SELECT distinct oq.ShipmodeID+','
+        ,E = Order_QS.seq
+		,F = Convert(varchar,cast(Order_QS.FtyKPI as date))
+		,G = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path(''))  
+		,H = Order_QS.QTY  
+		,I = isnull(opd.sQty,0)
+		,J = Convert(varchar,pd.PulloutDate)
+		,K = (SELECT distinct oq.ShipmodeID+','
 from Order_QtyShip oq WITH (NOLOCK) 
 where oq.id=a1.id 
 for xml path(''))                                               
@@ -432,7 +453,7 @@ WHERE ot.IsGMTMaster = 0
                             strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category in ('B', 'G')";
+                        strSQL += " AND A1.Category ='B'";
                     }
                     else if (this.radioSample.Checked)
                     {
@@ -447,6 +468,15 @@ WHERE ot.IsGMTMaster = 0
 
                         strSQL += " AND A1.Category='S'";
                     }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='G'";
+                    }
 
                     strSQL += @" 
 ORDER BY A1.ID";
@@ -460,21 +490,23 @@ ORDER BY A1.ID";
 
                     #region Fail Detail
                     strSQL = @" 
-SELECT distinct A =A2.CountryID 
+SELECT distinct 
+ A =A2.CountryID 
 ,B = A2.KpiCode 
 ,C = A1.FactoryID  
 ,D = A1.ID 
-,E = Convert(varchar,cast(Order_QS.FtyKPI as date))  
-,F = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-,G = Order_QS.QTY 
-,H = isnull(opd.sQty,0) 
-,I = Convert(varchar,pd.PulloutDate ) 
-,J = (SELECT distinct oq.ShipmodeID+','
+,E = Order_QS.seq
+,F = Convert(varchar,cast(Order_QS.FtyKPI as date))  
+,G = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
+,H = Order_QS.QTY 
+,I = isnull(opd.sQty,0) 
+,J = Convert(varchar,pd.PulloutDate ) 
+,K = (SELECT distinct oq.ShipmodeID+','
     from Order_QtyShip oq WITH (NOLOCK) 
     where oq.id=a1.id 
     for xml path('')) 
-,K = concat(Order_QS.ReasonID,'') 
-,L = case a1.Category when 'B' then r.Name
+,L = concat(Order_QS.ReasonID,'') 
+,M = case a1.Category when 'B' then r.Name
            when 'S' then rs.Name
            else '' end                                               
 FROM ORDERS A1 WITH (NOLOCK) 
@@ -517,7 +549,7 @@ WHERE ot.IsGMTMaster = 0
                             strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category in ('B', 'G')";
+                        strSQL += " AND A1.Category ='B' ";
                     }
                     else if (this.radioSample.Checked)
                     {
@@ -531,6 +563,15 @@ WHERE ot.IsGMTMaster = 0
                         }
 
                         strSQL += " AND A1.Category='S'";
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
+                        }
+
+                        strSQL += " AND A1.Category='G'";
                     }
 
                     strSQL += @" 
@@ -549,23 +590,24 @@ SELECT   A= A2.CountryID
 		,B = A2.KpiCode
 		,C = A1.FactoryID 
 		,D = A1.ID 
-		,E = A1.BRANDID
-		,F = Convert(varchar,Order_QS.BuyerDelivery)  
-		,G = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
-		,H = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-		,I = Order_QS.QTY  
-		,J = Sum(A4.ShipQty)   - dbo.getInvAdjQtyByDate(A1.ID, null,Order_QS.FtyKPI,'<=') 
-		,K = ISNULL(Sum(A5.ShipQty),0) - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
-		,L = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
-		,M = t.strData 
-		,N = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
-		,O = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
-		,P = A1.KPIChangeReason 
-		,Q = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
-		,R = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
-		,S = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
-		,T = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
-		,U = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
+        ,E = Order_QS.seq
+		,F = A1.BRANDID
+		,G = Convert(varchar,Order_QS.BuyerDelivery)  
+		,H = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
+		,I = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
+		,J = Order_QS.QTY  
+		,K = Sum(A4.ShipQty)   - dbo.getInvAdjQtyByDate(A1.ID, null,Order_QS.FtyKPI,'<=') 
+		,L = ISNULL(Sum(A5.ShipQty),0) - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
+		,M = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
+		,N = t.strData 
+		,O = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
+		,P = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
+		,Q = A1.KPIChangeReason 
+		,R = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
+		,S = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
+		,T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
+		,U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
+		,V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
 FROM ORDERS A1 WITH (NOLOCK) 
 inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
                                          and A1.OrderTypeID = ot.ID
@@ -620,10 +662,9 @@ WHERE ot.IsGMTMaster = 0 ";
                             strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='B' ) ", this.txtFactory.Text);
                         }
 
-                        strSQL += " AND A1.Category in ('B', 'G')";
+                        strSQL += " AND A1.Category ='B'";
                     }
-
-                    if (this.radioSample.Checked)
+                    else if (this.radioSample.Checked)
                     {
                         if (MyUtility.Check.Empty(this.txtFactory.Text))
                         {
@@ -636,8 +677,17 @@ WHERE ot.IsGMTMaster = 0 ";
 
                         strSQL += " AND A1.Category='S'";
                     }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", this.txtFactory.Text);
+                        }
 
-                    strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChangeReason
+                        strSQL += " AND A1.Category ='G'";
+                    }
+
+                    strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, Order_QS.seq,A1.BRANDID,A1.KPIChangeReason
 , Order_QS.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
 , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
 , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
@@ -736,7 +786,7 @@ ORDER BY A1.ID";
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -761,9 +811,9 @@ ORDER BY A1.ID";
 
                     worksheet.Columns.AutoFit();
                     worksheet.Cells[rc + 2, 2] = "Total:";
-                    worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
+                    worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
 
                     // 設定分割列數
                     excel.ActiveWindow.SplitRow = 1;
@@ -779,7 +829,7 @@ ORDER BY A1.ID";
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -799,15 +849,15 @@ ORDER BY A1.ID";
                             }
 
                             worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                            
-                            worksheet.Range[string.Format("F{0}:G{0}", intIndex + 2)].NumberFormatLocal = "yyyy/MM/dd";
+
+                            worksheet.Range[string.Format("G{0}:H{0}", intIndex + 2)].NumberFormatLocal = "yyyy/MM/dd";
                         }
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -822,7 +872,7 @@ ORDER BY A1.ID";
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -833,8 +883,8 @@ ORDER BY A1.ID";
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
-                        excel.ActiveWorkbook.Worksheets[4].Columns(5).NumberFormatlocal = "yyyy/MM/dd";
-                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveWorkbook.Worksheets[4].Columns(6).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(10).NumberFormatlocal = "yyyy/MM/dd";
 
                         int rc = this.gdtPullOut.Rows.Count;
                         for (int intIndex = 0; intIndex < rc; intIndex++)
@@ -849,8 +899,8 @@ ORDER BY A1.ID";
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -865,7 +915,7 @@ ORDER BY A1.ID";
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Factory KPI", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -877,8 +927,8 @@ ORDER BY A1.ID";
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
-                        excel.ActiveWorkbook.Worksheets[5].Columns(5).NumberFormatlocal = "yyyy/MM/dd";
-                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveWorkbook.Worksheets[5].Columns(6).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(10).NumberFormatlocal = "yyyy/MM/dd";
                         int rc = this.gdtFailDetail.Rows.Count;
                         for (int intIndex = 0; intIndex < rc; intIndex++)
                         {
@@ -892,9 +942,9 @@ ORDER BY A1.ID";
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 7] = string.Format("=SUM(G2:G{0})", MyUtility.Convert.GetString(rc + 1));
-
                         worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
+
+                        worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;

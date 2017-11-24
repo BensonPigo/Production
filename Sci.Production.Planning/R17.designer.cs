@@ -40,6 +40,7 @@
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtFactory = new Sci.Production.Class.txtfactory();
             this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.radioGarment = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -62,7 +63,7 @@
             this.radioBulk.AutoSize = true;
             this.radioBulk.Checked = true;
             this.radioBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBulk.Location = new System.Drawing.Point(139, 17);
+            this.radioBulk.Location = new System.Drawing.Point(109, 17);
             this.radioBulk.Name = "radioBulk";
             this.radioBulk.Size = new System.Drawing.Size(53, 21);
             this.radioBulk.TabIndex = 0;
@@ -74,7 +75,7 @@
             // 
             this.radioSample.AutoSize = true;
             this.radioSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSample.Location = new System.Drawing.Point(226, 17);
+            this.radioSample.Location = new System.Drawing.Point(168, 17);
             this.radioSample.Name = "radioSample";
             this.radioSample.Size = new System.Drawing.Size(73, 21);
             this.radioSample.TabIndex = 1;
@@ -84,6 +85,20 @@
             // 
             // dateFactoryKPIDate
             // 
+            // 
+            // 
+            // 
+            this.dateFactoryKPIDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFactoryKPIDate.DateBox1.Name = "";
+            this.dateFactoryKPIDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFactoryKPIDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFactoryKPIDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFactoryKPIDate.DateBox2.Name = "";
+            this.dateFactoryKPIDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFactoryKPIDate.DateBox2.TabIndex = 1;
             this.dateFactoryKPIDate.IsRequired = false;
             this.dateFactoryKPIDate.Location = new System.Drawing.Point(139, 55);
             this.dateFactoryKPIDate.Name = "dateFactoryKPIDate";
@@ -184,9 +199,22 @@
             this.txtCountry.TextBox1Binding = "";
             this.txtCountry.Visible = false;
             // 
+            // radioGarment
+            // 
+            this.radioGarment.AutoSize = true;
+            this.radioGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioGarment.Location = new System.Drawing.Point(247, 17);
+            this.radioGarment.Name = "radioGarment";
+            this.radioGarment.Size = new System.Drawing.Size(81, 21);
+            this.radioGarment.TabIndex = 106;
+            this.radioGarment.TabStop = true;
+            this.radioGarment.Text = "Garment";
+            this.radioGarment.UseVisualStyleBackColor = true;
+            // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(537, 199);
+            this.Controls.Add(this.radioGarment);
             this.Controls.Add(this.labelType);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.labelM);
@@ -218,6 +246,7 @@
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labelType, 0);
+            this.Controls.SetChildIndex(this.radioGarment, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,5 +266,6 @@
         private Win.UI.Label labelM;
         private Class.txtMdivision txtMdivision;
         private Win.UI.Label labelType;
+        private Win.UI.RadioButton radioGarment;
     }
 }
