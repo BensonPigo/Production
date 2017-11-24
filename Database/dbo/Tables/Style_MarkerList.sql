@@ -13,7 +13,7 @@
     [StraightLength]      VARCHAR (15)    CONSTRAINT [DF_Style_MarkerList_StraightLength] DEFAULT ('') NULL,
     [CurvedLength]        VARCHAR (15)    CONSTRAINT [DF_Style_MarkerList_CurvedLength] DEFAULT ('') NULL,
     [Efficiency]          VARCHAR (9)     CONSTRAINT [DF_Style_MarkerList_Efficiency] DEFAULT ('') NULL,
-    [Remark]              NVARCHAR (100)  CONSTRAINT [DF_Style_MarkerList_Remark] DEFAULT ('') NULL,
+    [Remark]              NVARCHAR (250)  CONSTRAINT [DF_Style_MarkerList_Remark] DEFAULT ('') NULL,
     [MixedSizeMarker]     VARCHAR (1)     CONSTRAINT [DF_Style_MarkerList_MixedSizeMarker] DEFAULT ('') NULL,
     [MarkerNo]            VARCHAR (10)    CONSTRAINT [DF_Style_MarkerList_MarkerNo] DEFAULT ('') NULL,
     [MarkerUpdate]        DATETIME        NULL,
