@@ -133,7 +133,7 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select(string.Empty, "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select(string.Empty, "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY , CustCdID as CustCD, CustPONo as pono, BuyerDelivery as delDate,Customize1 from MNOrder WITH (NOLOCK) where ordercomboid = @ordercomboid order by ID", new List<SqlParameter> { new SqlParameter("ordercomboid", ordercomboid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
