@@ -193,7 +193,7 @@ where POID = '{this.textBoxPOID.Text}'
             {
                 #region ExtendAllParts = true
                 strExcelDataSQL = @"
-select [Group]
+select distinct [Group]
      , [Bundle]
      , [Size]
      , [Cutpart]
@@ -305,7 +305,7 @@ order by x.[Bundle]";
             {
                 #region ExtendAllPart = False
                 strExcelDataSQL = @"
-select [Group]
+select distinct [Group]
 	   , [Bundle]
 	   , [Size]
 	   , [Cutpart]
