@@ -169,7 +169,7 @@ Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.Bran
 	CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
 	Orders.BuyerDelivery, Orders.SCIDelivery, 
 	SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
-    QARate = (SELECT dbo.GetSuitRate(CDCODE.combopcs, SewingOutput_Detail.ComboType)) * SewingOutput_Detail.QAQty
+    QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetStyleLocation_Rate](Style.Ukey ,SewingOutput_Detail.ComboType)/100,1)
 	, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
 	, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
 	, STYLE.ModularParent, STYLE.CPUAdjusted
