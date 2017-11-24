@@ -65,7 +65,7 @@ namespace Sci.Production.Cutting
                 {
                     #region SQL
                     scmd = string.Format(@"
-select *
+select distinct *
 from (
     select a.BundleGroup [Group_right]
 	    ,c.FactoryID  [Group_left]
@@ -159,7 +159,7 @@ order by x.[Barcode]");
                 {
                     #region SQL
                     scmd = string.Format(@"
-select *
+select distinct *
 from (
 	select a.BundleGroup [Group_right]
 			,c.FactoryID  [Group_left]
@@ -262,7 +262,7 @@ order by x.[Barcode]");
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
-select [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
 		,b.Orderid [SP]
@@ -340,7 +340,7 @@ order by x.[Bundle]");
                 {
                     #region SQL
                     sqlcmd = string.Format(@"
-select [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
+select distinct [Group],[Bundle],[Size],[Cutpart],[Description],[SubProcess],[Parts],[Qty]
 from (
 	select b.id [Bundle_ID]
 			,b.Orderid [SP]

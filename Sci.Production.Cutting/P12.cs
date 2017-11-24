@@ -210,7 +210,7 @@ namespace Sci.Production.Cutting
             {
                 #region SQL
                 sqlcmd = string.Format(@"
-select *
+select distinct *
 from(
     select 
         Convert(bit,0) as selected
@@ -327,7 +327,7 @@ outer apply
             {
                 #region SQL
                 sqlcmd = string.Format(@"
-select *
+select distinct *
 from(
     select 
         Convert(bit,0) as selected

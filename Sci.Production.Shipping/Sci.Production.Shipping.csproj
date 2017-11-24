@@ -339,6 +339,7 @@
     <Compile Include="P02_Print.Designer.cs">
       <DependentUpon>P02_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_PrintData.cs" />
     <Compile Include="P03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -958,6 +959,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\P02_PrintData.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -47,19 +47,35 @@ namespace Sci.Production.Subcon
             StringBuilder sql2 = new StringBuilder();
             sql.Append(@"
 Select 
-	o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,bd.SizeCode,bd.Qty,
-	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item ,b.AddDate,B.AddName,B.EditDate,b.EditName
+	o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,sub.sub,bd.SizeCode,bd.Qty,
+	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item  ,b.AddDate,B.AddName,B.EditDate,b.EditName
 From Bundle_Detail BD 
 Left join bundle b on (bd.Id = b.ID)
 Left join Orders O on(b.Orderid = O.id)
-Where 1=1
+outer apply(
+	select sub= stuff((
+	Select distinct concat('+', bda.SubprocessId)
+	from Bundle_Detail_Art bda WITH (NOLOCK) 
+	where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PatternCode=bd.Patterncode
+	for xml path('')
+	),1,1,'')
+) as sub
+Where sub.sub like '%PRT%'   
 ");
             sql2.Append(@"
 Select count(*) ct
 From Bundle_Detail BD 
 Left join bundle b on (bd.Id = b.ID)
 Left join Orders O on(b.Orderid = O.id)
-Where 1=1
+outer apply(
+	select sub= stuff((
+	Select distinct concat('+', bda.SubprocessId)
+	from Bundle_Detail_Art bda WITH (NOLOCK) 
+	where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PatternCode=bd.Patterncode
+	for xml path('')
+	),1,1,'')
+) as sub
+Where sub.sub like '%PRT%'   
 ");
             if (!MyUtility.Check.Empty(Date1))
             {

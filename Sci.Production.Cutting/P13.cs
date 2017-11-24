@@ -193,7 +193,7 @@ where POID = '{this.textBoxPOID.Text}'
             {
                 #region ExtendAllParts = true
                 strExcelDataSQL = @"
-select [Group]
+select distinct [Group]
      , [Bundle]
      , [Size]
      , [Cutpart]
@@ -288,10 +288,10 @@ outer apply (
                                                                and msso.OrderComboID = m.id 
                                                                and msi.SizeItem = msso.SizeItem 
                                                                and msso.SizeCode = msc.SizeCode
-  outer apply (
-    select value = iif (msso.SizeSpec is not null, msso.SizeSpec
-                           , mss.SizeSpec)
-  ) SizeSpec
+outer apply (
+		select value = iif(mss.SizeCode is not null, mss.SizeCode
+												    , msso.SizeCode)
+	) SizeSpec
   where (mss.SizeCode is not null or msso.SizeCode  is not null) 
       and msi.SizeItem = 'S01' 
       and m.ID = x.[SP]
@@ -305,7 +305,7 @@ order by x.[Bundle]";
             {
                 #region ExtendAllPart = False
                 strExcelDataSQL = @"
-select [Group]
+select distinct [Group]
 	   , [Bundle]
 	   , [Size]
 	   , [Cutpart]

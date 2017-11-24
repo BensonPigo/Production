@@ -17,6 +17,11 @@ namespace Sci.Production.Class
         public const string Docx = ".docx";
     }
 
+    public static class PDFFileNameExtension
+    {
+        public const string PDF = ".pdf";
+    }
+
     public static class MicrosoftFile
     {
         /// <summary>
@@ -24,7 +29,7 @@ namespace Sci.Production.Class
         /// </summary>
         /// <param name="ProcessName">主檔名</param>
         /// <param name="NameExtension">副檔名，預設 xlsx</param>
-        /// <returns></returns>
+        /// <returns>路徑+檔名+副檔名</returns>
         public static string GetName(string ProcessName, string NameExtension = ExcelFileNameExtension.Xlsx)
         {
             string fileName = ProcessName.Trim()
