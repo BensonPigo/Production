@@ -707,6 +707,7 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , inqty - OutQty + AdjustQty balanceqty
         , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
                                                             rows between unbounded preceding and current row) 
+        , num = ROW_NUMBER()over(order by a.Dyelot)
         --,c.GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
@@ -791,61 +792,122 @@ where   poid = '{1}'
                 }
                 else
                 {
-                    #region AutoPick
-                    foreach (DataRow dr2 in dt.Rows)
+                    if (isIssue == false && stocktype == "B")//P28 Auto Pick
                     {
-                        if ((decimal)dr2["running_total"] < request)
+                        if (dt.AsEnumerable().Any(row => ((decimal)row["running_total"]).EqualDecimal(request)))
                         {
-                            items.Add(dr2);
-                            accu_issue = decimal.Parse(dr2["running_total"].ToString());
+
+                        }
+
+                        if (dt.AsEnumerable().Any(row => (decimal)row["qty"] > request))
+                        {
+                            items.Add(dt.AsEnumerable().Where(row => (decimal)row["qty"]> request).OrderBy(row => (decimal)row["qty"]).First());
                         }
                         else
                         {
-                            //依照最後一塊料的Dyelot來找到對應的Group來取得最後一塊料
-                            findrow = dt.AsEnumerable().Where(row => row["Dyelot"].EqualString(dr2["Dyelot"].ToString())).CopyToDataTable();
-                            break;
-                        }
-                    }
+                            decimal balance = request - accu_issue;
+                            List<long> num = new List<long>();
 
-                    if (accu_issue < request && findrow != null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
-                    {
-                        decimal balance = request - accu_issue;
-                        //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
-                        for (int i = findrow.Rows.Count - 1; i >= 0; i--)
-                        {
-                            DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
-                            if (MyUtility.Check.Empty(find))// if overlape
+                            while (balance>0)
                             {
-                                if (balance > 0m)
+                                var maxdyelot = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"])).OrderByDescending(row => (decimal)row["qty"]).First().GetValue("Dyelot");
+                                var frow = dt.AsEnumerable().Where(row => ((string)row["Dyelot"]).EqualString(maxdyelot.ToString())).OrderByDescending(z => (decimal)z["qty"]);
+                                
+                                foreach (var item in frow)
                                 {
-                                    if (balance >= (decimal)findrow.Rows[i]["qty"])
+                                    if (frow.Any(n => ((decimal)n["qty"]).EqualDecimal(balance) && !num.Contains((long)n["num"])))
                                     {
-                                        items.Add(findrow.Rows[i]);
-                                        balance -= (decimal)findrow.Rows[i]["qty"];
+                                        items.Add(frow.Where(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])).First());
+                                        balance = 0m;
+                                        break;
                                     }
-                                    else//最後裁切
+                                    else
                                     {
-                                        //P10最後裁切若有小數點需無條件進位
-                                        if (isIssue)
+                                        if (frow.Any(n => (decimal)n["qty"] > balance && !num.Contains((long)n["num"])))
                                         {
-                                            if (Math.Ceiling(balance) >= (decimal)findrow.Rows[i]["qty"])
-                                            {
-                                                items.Add(findrow.Rows[i]);
-                                                balance = 0m;
-                                            }
-                                            else
-                                            {
-                                                findrow.Rows[i]["qty"] = Math.Ceiling(balance);
-                                                items.Add(findrow.Rows[i]);
-                                                balance = 0m;
-                                            }
+                                            items.Add(frow.Where(n => (decimal)n["qty"] > balance && !num.Contains((long)n["num"])).OrderBy(row => (decimal)row["qty"]).First());
+                                            balance = 0m;
+                                            break;
                                         }
                                         else
                                         {
-                                            findrow.Rows[i]["qty"] = balance;
-                                            items.Add(findrow.Rows[i]);
-                                            balance = 0m;
+                                            items.Add(item);
+                                            num.Add((long)item.GetValue("num")); // 紀錄已經用過的
+                                            balance -= (decimal)(item.GetValue("qty"));
                                         }
+                                    }
+                                }
+                                if (balance>0m && dt.AsEnumerable().Any(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])))
+                                {
+                                    items.Add(dt.AsEnumerable().Where(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])).First());
+                                    balance = 0m;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        #region AutoPick
+                        foreach (DataRow dr2 in dt.Rows)
+                        {
+                            if ((decimal)dr2["running_total"] < request)
+                            {
+                                items.Add(dr2);
+                                accu_issue = decimal.Parse(dr2["running_total"].ToString());
+                            }
+                            else
+                            {
+                                //依照最後一塊料的Dyelot來找到對應的Group來取得最後一塊料
+                                findrow = dt.AsEnumerable().Where(row => row["Dyelot"].EqualString(dr2["Dyelot"].ToString())).CopyToDataTable();
+                                break;
+                            }
+                        }
+
+                        if (accu_issue < request && findrow != null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
+                        {
+                            decimal balance = request - accu_issue;
+                            //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
+                            for (int i = findrow.Rows.Count - 1; i >= 0; i--)
+                            {
+                                DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
+                                if (MyUtility.Check.Empty(find))// if overlape
+                                {
+                                    if (balance > 0m)
+                                    {
+                                        if (balance >= (decimal)findrow.Rows[i]["qty"])
+                                        {
+                                            items.Add(findrow.Rows[i]);
+                                            balance -= (decimal)findrow.Rows[i]["qty"];
+                                        }
+                                        else//最後裁切
+                                        {
+                                            //P10最後裁切若有小數點需無條件進位
+                                            if (isIssue)
+                                            {
+                                                if (Math.Ceiling(balance) >= (decimal)findrow.Rows[i]["qty"])
+                                                {
+                                                    items.Add(findrow.Rows[i]);
+                                                    balance = 0m;
+                                                }
+                                                else
+                                                {
+                                                    findrow.Rows[i]["qty"] = Math.Ceiling(balance);
+                                                    items.Add(findrow.Rows[i]);
+                                                    balance = 0m;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                findrow.Rows[i]["qty"] = balance;
+                                                items.Add(findrow.Rows[i]);
+                                                balance = 0m;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
                                     }
                                 }
                                 else
@@ -853,13 +915,9 @@ where   poid = '{1}'
                                     break;
                                 }
                             }
-                            else
-                            {
-                                break;
-                            }
                         }
+                        #endregion
                     }
-                    #endregion 
                 }
             }
             return items;
