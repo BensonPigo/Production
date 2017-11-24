@@ -226,7 +226,7 @@ with tmp1stData as (
             , CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,2)
             , SewingLineID
             , ManHour = Manpower * WorkHour 
-            , RateOutput = QAQty -- * Rate
+            , RateOutput = QAQty  * Rate
             , ModularParent,CPUAdjusted 
     from tmp1stData
 ),tmp3rdData as (
