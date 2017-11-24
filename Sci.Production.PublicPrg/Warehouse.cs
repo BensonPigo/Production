@@ -708,7 +708,7 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
                                                             rows between unbounded preceding and current row) 
         , num = ROW_NUMBER()over(order by a.Dyelot)
-        --,c.GroupQty
+        ,c.GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                   and p.seq1 = a.Seq1 
@@ -786,65 +786,99 @@ where   poid = '{1}'
                  * 若有則該項直接帶出
                  * 否則用 AutoPick 規則挑選
                  */
-                if (dt.AsEnumerable().Any(row => ((decimal)row["qty"]).EqualDecimal(request)))
+                if (isIssue == false && stocktype == "B")//P28 Auto Pick
                 {
-                    items.Add(dt.AsEnumerable().Where(row => ((decimal)row["qty"]).EqualDecimal(request)).CopyToDataTable().Rows[0]);
-                }
-                else
-                {
-                    if (isIssue == false && stocktype == "B")//P28 Auto Pick
+                    decimal blance = request - accu_issue;
+                    List<long> num = new List<long>(); // 紀錄已分配
+
+                    while (blance > 0)
                     {
-                        if (dt.AsEnumerable().Any(row => ((decimal)row["running_total"]).EqualDecimal(request)))
+                        #region 未分配且, 任何一筆有=剩餘blance
+                        if (blance > 0m && dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])))
                         {
-
+                            items.Add(dt.AsEnumerable().Where(n => ((decimal)n["qty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])).First());
+                            blance = 0m;
+                            break;
                         }
+                        #endregion
 
-                        if (dt.AsEnumerable().Any(row => (decimal)row["qty"] > request))
+                        #region 未分配且, 任何一Dyelot總和=剩餘blance
+                        if (dt.AsEnumerable().Any(n => ((decimal)n["groupqty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])))
                         {
-                            items.Add(dt.AsEnumerable().Where(row => (decimal)row["qty"]> request).OrderBy(row => (decimal)row["qty"]).First());
-                        }
-                        else
-                        {
-                            decimal balance = request - accu_issue;
-                            List<long> num = new List<long>();
-
-                            while (balance>0)
+                            var dyelotS = dt.AsEnumerable().Where(n => ((decimal)n["groupqty"]).EqualDecimal(blance) && !num.Contains((long)n["num"]));
+                            // 找出符合的dyelot資料, 筆數最小,若筆數一樣要qty的標準差最小 ,直接order by第一筆即是結果
+                            string s = "select  top 1 dyelot,c=count(1),std = stdev(qty) from #tmp group by dyelot order by c ,std";
+                            DataTable ct_std;
+                            DualResult Result = MyUtility.Tool.ProcessWithObject(dyelotS, "", s, out ct_std);
+                            if (!Result)
                             {
-                                var maxdyelot = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"])).OrderByDescending(row => (decimal)row["qty"]).First().GetValue("Dyelot");
-                                var frow = dt.AsEnumerable().Where(row => ((string)row["Dyelot"]).EqualString(maxdyelot.ToString())).OrderByDescending(z => (decimal)z["qty"]);
-                                
-                                foreach (var item in frow)
+                                MyUtility.Msg.ErrorBox(Result.ToString());
+                                break;
+                            }
+
+                            var dyelot = ct_std.Rows[0]["dyelot"].ToString();
+                            var dyelotRows = dt.AsEnumerable().Where(n => ((string)n["Dyelot"]).EqualString(dyelot.ToString()));
+                            foreach (var item in dyelotRows)
+                            {
+                                items.Add(item);
+                            }
+                            blance = 0m;
+                            break;
+                        }
+                        #endregion
+
+                        #region 未分配且, 任何一筆有 > blance
+                        if (dt.AsEnumerable().Any(n => (decimal)n["qty"] > blance && !num.Contains((long)n["num"])))
+                        {
+                            DataRow x = dt.AsEnumerable().Where(n => (decimal)n["qty"] > blance && !num.Contains((long)n["num"])).OrderBy(n => (decimal)n["qty"]).First();
+                            x["qty"] = blance;
+                            items.Add(x);
+                            blance = 0m;
+                            break;
+                        }
+                        #endregion
+
+                        #region 未分配且, 為最大qty的dyelot
+                        var maxdyelot = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"]) && !num.Contains((long)n["num"])).OrderByDescending(n => (decimal)n["qty"]).First().GetValue("Dyelot");
+                        var frow = dt.AsEnumerable().Where(n => ((string)n["Dyelot"]).EqualString(maxdyelot.ToString()) && !num.Contains((long)n["num"])).OrderByDescending(z => (decimal)z["qty"]);
+
+                        foreach (var item in frow)
+                        {
+                            if (frow.Any(n => ((decimal)n["qty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])))
+                            {
+                                items.Add(frow.Where(n => ((decimal)n["qty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])).First());
+                                blance = 0m;
+                                break;
+                            }
+                            else
+                            {
+                                if (frow.Any(n => (decimal)n["qty"] > blance && !num.Contains((long)n["num"])))
                                 {
-                                    if (frow.Any(n => ((decimal)n["qty"]).EqualDecimal(balance) && !num.Contains((long)n["num"])))
-                                    {
-                                        items.Add(frow.Where(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])).First());
-                                        balance = 0m;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        if (frow.Any(n => (decimal)n["qty"] > balance && !num.Contains((long)n["num"])))
-                                        {
-                                            items.Add(frow.Where(n => (decimal)n["qty"] > balance && !num.Contains((long)n["num"])).OrderBy(row => (decimal)row["qty"]).First());
-                                            balance = 0m;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            items.Add(item);
-                                            num.Add((long)item.GetValue("num")); // 紀錄已經用過的
-                                            balance -= (decimal)(item.GetValue("qty"));
-                                        }
-                                    }
-                                }
-                                if (balance>0m && dt.AsEnumerable().Any(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])))
-                                {
-                                    items.Add(dt.AsEnumerable().Where(row => ((decimal)row["qty"]).EqualDecimal(balance) && !num.Contains((long)row["num"])).First());
-                                    balance = 0m;
+                                    DataRow x = frow.Where(n => (decimal)n["qty"] > blance && !num.Contains((long)n["num"])).OrderBy(n => (decimal)n["qty"]).First();
+                                    x["qty"] = blance;
+                                    items.Add(x);
+                                    blance = 0m;
                                     break;
+                                }
+                                else
+                                {
+                                    if ((blance- (decimal)item.GetValue("qty")) >0)
+                                    {
+                                        items.Add(item);
+                                        num.Add((long)item.GetValue("num")); // 紀錄已經用過的
+                                        blance -= (decimal)(item.GetValue("qty"));
+                                    }
                                 }
                             }
                         }
+                        #endregion
+                    }
+                }
+                else
+                {
+                    if (dt.AsEnumerable().Any(n => ((decimal)n["qty"]).EqualDecimal(request)))
+                    {
+                        items.Add(dt.AsEnumerable().Where(n => ((decimal)n["qty"]).EqualDecimal(request)).CopyToDataTable().Rows[0]);
                     }
                     else
                     {
@@ -918,7 +952,7 @@ where   poid = '{1}'
                         }
                         #endregion
                     }
-                }
+                }                
             }
             return items;
         }
