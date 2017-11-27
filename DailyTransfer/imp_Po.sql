@@ -551,97 +551,101 @@ drop table #Trade_To_Pms_PO
 UPDATE a
 SET  
        -- a.SCIRefno	 =b.SCIRefno
-      a.BrandID	      =b.BrandID
-      ,a.Refno	      =b.Refno
-      ,a.Width	      =b.Width
-      ,a.Junk	      =b.Junk
-      ,a.Type	      =b.Type
-      ,a.MtltypeId	      =b.MtltypeId
-      ,a.BomTypeCalculate	      =b.BomTypeCalculate
-      ,a.Description	      =b.Description
-      ,a.DescDetail	      =b.DescDetail
-      ,a.LossType	      =b.LossType
-      ,a.LossPercent	      =b.LossPercent
-      ,a.LossQty	      =b.LossQty
-      ,a.LossStep	      =b.LossStep
-      ,a.UsageUnit	      =b.UsageUnit
-      ,a.Weight	      =b.Weight
-      ,a.WeightM2	      =b.WeightM2
-      ,a.CBMWeight	      =b.CBMWeight
-      ,a.CBM	      =b.CBM
-      ,a.NoSizeUnit	      =b.NoSizeUnit
-      ,a.BomTypeSize	      =b.BomTypeSize
-      ,a.BomTypeColor	      =b.BomTypeColor
-      ,a.ConstructionID	      =b.ConstructionID
-      ,a.MatchFabric	      =b.MatchFabric
-      ,a.WeaveTypeID	      =b.WeaveTypeID
-      ,a.AddName	      =b.AddName
-      ,a.AddDate	      =b.AddDate
-      ,a.EditName	      =b.EditName
-      ,a.EditDate	      =b.EditDate
-from Production.dbo.Fabric as a inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
+      a.BrandID	            = b.BrandID
+      , a.Refno	            = b.Refno
+      , a.Width	            = b.Width
+      , a.Junk	            = b.Junk
+      , a.Type	            = b.Type
+      , a.MtltypeId	      = b.MtltypeId
+      , a.BomTypeCalculate	= b.BomTypeCalculate
+      , a.Description	      = b.Description
+      , a.DescDetail	      = b.DescDetail
+      , a.LossType	      = b.LossType
+      , a.LossPercent	      = b.LossPercent
+      , a.LossQty	            = b.LossQty
+      , a.LossStep	      = b.LossStep
+      , a.UsageUnit	      = b.UsageUnit
+      , a.Weight	            = b.Weight
+      , a.WeightM2	      = b.WeightM2
+      , a.CBMWeight	      = b.CBMWeight
+      , a.CBM	            = b.CBM
+      , a.NoSizeUnit	      = b.NoSizeUnit
+      , a.BomTypeSize	      = b.BomTypeSize
+      , a.BomTypeColor	      = b.BomTypeColor
+      , a.ConstructionID	= b.ConstructionID
+      , a.MatchFabric	      = b.MatchFabric
+      , a.WeaveTypeID	      = b.WeaveTypeID
+      , a.AddName	            = b.AddName
+      , a.AddDate	            = b.AddDate
+      , a.EditName	      = b.EditName
+      , a.EditDate	      = b.EditDate
+      , a.preshrink           = b.preshrink
+from Production.dbo.Fabric as a 
+inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Fabric(
        SCIRefno
-      ,BrandID
-      ,Refno
-      ,Width
-      ,Junk
-      ,Type
-      ,MtltypeId
-      ,BomTypeCalculate
-      ,Description
-      ,DescDetail
-      ,LossType
-      ,LossPercent
-      ,LossQty
-      ,LossStep
-      ,UsageUnit
-      ,Weight
-      ,WeightM2
-      ,CBMWeight
-      ,CBM
-      ,NoSizeUnit
-      ,BomTypeSize
-      ,BomTypeColor
-      ,ConstructionID
-      ,MatchFabric
-      ,WeaveTypeID
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+       , BrandID
+       , Refno
+       , Width
+       , Junk
+       , Type
+       , MtltypeId
+       , BomTypeCalculate
+       , Description
+       , DescDetail
+       , LossType
+       , LossPercent
+       , LossQty
+       , LossStep
+       , UsageUnit
+       , Weight
+       , WeightM2
+       , CBMWeight
+       , CBM
+       , NoSizeUnit
+       , BomTypeSize
+       , BomTypeColor
+       , ConstructionID
+       , MatchFabric
+       , WeaveTypeID
+       , AddName
+       , AddDate
+       , EditName
+       , EditDate
+       , preshrink
 )
 select 
       SCIRefno
-      ,BrandID
-      ,Refno
-      ,Width
-      ,Junk
-      ,Type
-      ,MtltypeId
-      ,BomTypeCalculate
-      ,Description
-      ,DescDetail
-      ,LossType
-      ,LossPercent
-      ,LossQty
-      ,LossStep
-      ,UsageUnit
-      ,Weight
-      ,WeightM2
-      ,CBMWeight
-      ,CBM
-      ,NoSizeUnit
-      ,BomTypeSize
-      ,BomTypeColor
-      ,ConstructionID
-      ,MatchFabric
-      ,WeaveTypeID
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+      , BrandID
+      , Refno
+      , Width
+      , Junk
+      , Type
+      , MtltypeId
+      , BomTypeCalculate
+      , Description
+      , DescDetail
+      , LossType
+      , LossPercent
+      , LossQty
+      , LossStep
+      , UsageUnit
+      , Weight
+      , WeightM2
+      , CBMWeight
+      , CBM
+      , NoSizeUnit
+      , BomTypeSize
+      , BomTypeColor
+      , ConstructionID
+      , MatchFabric
+      , WeaveTypeID
+      , AddName
+      , AddDate
+      , EditName
+      , EditDate
+      , preshrink
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 
