@@ -7,6 +7,9 @@ using Sci.Data;
 using Ict;
 using Sci.Win;
 using System.Runtime.InteropServices;
+using Sci.Production.Class;
+using System.Linq;
+using Sci.Production.Class.Commons;
 
 namespace Sci.Production.Planning
 {
@@ -59,6 +62,18 @@ namespace Sci.Production.Planning
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (MyUtility.Check.Empty(this.dateFactoryKPIDate.Value1))
+            {
+                MyUtility.Msg.ErrorBox("Begin Factory KPI Date can not empty!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.dateFactoryKPIDate.Value2))
+            {
+                MyUtility.Msg.ErrorBox("End Factory KPI Date can not empty!");
+                return false;
+            }
+
             return base.ValidateInput();
         }
 
@@ -69,111 +84,103 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
             DualResult result = new DualResult(true);
             try
             {
                 #region Order Detail
                 string strSQL = @" 
-SELECT   A = A2.CountryID
-       , B = A2.KpiCode
-       , C = A1.FactoryID 
-       , D = A1.ID
-       , E = Order_QS.seq
-       , F = A1.BRANDID
-       , G = Convert(varchar,A1.BuyerDelivery )
-       , H = Convert(varchar,cast( Order_QS.FtyKPI as date)) 
-       , I = (SELECT strData + ',' 
-              FROM (
-                SELECT strData = Convert(varchar, Order_QtyShip.ShipmodeID) 
-                                 + '-' 
-                                 + Convert(varchar, Order_QtyShip.Qty) 
-                                 + '(' 
-                                 +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery), '-', '/') 
-                                 + ')'
-                FROM Order_QtyShip WITH (NOLOCK) 
-                where id = A1.ID
-              ) t for xml path('')) 
-       , J = Order_QS.QTY
-       , K = Cast(isnull(pd.Qty,0) as int)
-	   , L = Cast(isnull(pd.FailQty,0) as int)
-       , M = (select strData + ',' 
-              from (
-                Select strData = REPLACE(convert(varchar,PulloutDate), '-', '/') 
-                from Pullout_Detail WITH (NOLOCK) 
-                where OrderID = A1.ID
-              ) t for xml path(''))       
-       , N = t.strData
-       , O = (Select CountPullOut = Count(id) 
-              from Pullout_Detail WITH (NOLOCK) 
-              where OrderID = A1.ID)
-       , P = CASE 
-                WHEN A1.GMTComplete = 'C' OR A1.GMTComplete = 'S' THEN 'Y' 
-                ELSE '' 
-             END
-	   , Q = Order_QS.ReasonID
-	   , R = case A1.Category when 'B' then r.Name
-		 when 'S' then rs.Name
-		 else '' end 
-       , S = dbo.getTPEPass1(A1.MRHandle) + vs1.ExtNo
-       , T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo
-       , U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo
-       , V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo
-FROM ORDERS A1 WITH (NOLOCK) 
-inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
-                                         and A1.OrderTypeID = ot.ID
-LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
-LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
-outer apply(
-	select * from Reason
-	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery'
-)r
-outer apply(
-	select * from Reason
-	where id=Order_QS.ReasonID and ReasonTypeID='Order_BuyerDelivery_sample'
-)rs
-OUTER APPLY(
-   select strData = stuff ((Select DISTINCT concat(',', ShipmodeID)
-                            from Order_QtyShip WITH (NOLOCK) 
-                            where id = A1.ID  
-                            Group by ShipModeID
-                            for xml path('')
-                            )
-                           , 1, 1, '')
-) t
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A1.MRHandle 
-) vs1
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A1.SMR 
-) vs2
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A6.POHandle 
-) vs3
-outer apply (
-  SELECT ExtNo = ' #' + ExtNo 
-  from dbo.TPEPASS1 a WITH (NOLOCK) 
-  where a.ID = A6.POSMR 
-) vs4
+SELECT
+ A = F.CountryID
+,B = F.KpiCode
+,C = o.FactoryID
+,D = o.ID
+,E = Order_QS.seq
+,F = o.BRANDID
+,G = convert(varchar(10),Order_QS.BuyerDelivery,111)
+,H = convert(varchar(10),Order_QS.FtyKPI,111)
+,I = Order_QS.ShipmodeID
+,J = Cast(Order_QS.QTY as int)
+,K = Cast(isnull(pd.Qty,0) as int) -- +isnull(os.Qty,0) 沒這table
+,L = Cast(isnull(pd.FailQty,Order_QS.QTY) as int)
+,M = CONVERT(char(10), p.PulloutDate, 20)
+,N = Order_QS.ShipmodeID
+,O = Cast(isnull(op.PulloutDate,0) as int)
+,P = CASE WHEN o.GMTComplete   = 'C' OR o.GMTComplete   = 'S' THEN 'Y' ELSE '' END
+,Q = Order_QS.ReasonID
+,R = case o.Category when 'B' then r.Name
+  when 'S' then rs.Name
+  else '' end
+,S = o.MRHandle
+,T = o.SMR
+,U = PO.POHandle
+,V = PO.POSMR
+,W = c.alias
+FROM Orders o WITH (NOLOCK)
+LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
+LEFT JOIN Factory f ON o.FACTORYID = f.ID 
+LEFT JOIN Country c ON F.COUNTRYID = c.ID 
+inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
+LEFT JOIN PO ON o.POID = PO.ID
+LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
+LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
+--outer apply (select sum(qty) Qty from Order_Specdetail os where o.id = os.id and os.Respons = 'P' group by os.id) os -- 沒這table
 outer apply (
 	Select 
-		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( A1.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
-		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( A1.ID ,Order_QS.Seq,Order_QS.FtyKPI,'>')
+		Qty = Sum(rA.Qty),
+		FailQty = Sum(rB.Qty)
 	From Pullout_Detail pd
 	Outer apply (Select Qty = IIF(pd.PulloutDate <= Order_QS.FtyKPI, pd.shipqty, 0)) rA
 	Outer apply (Select Qty = IIF(pd.PulloutDate >  Order_QS.FtyKPI, pd.shipqty, 0)) rB
-	where pd.OrderID = A1.ID 
+	where pd.OrderID = o.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
-WHERE ot.IsGMTMaster = 0";
+outer apply (
+	select COUNT(op.PulloutDate) PulloutDate 
+	from Pullout_Detail op 
+	where op.OrderID = o.id 
+	and op.OrderShipmodeSeq = Order_QS.Seq
+) op 
+outer apply (select top 1 PulloutDate from Pullout_Detail pd where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
+Order by PulloutDate desc) p
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
+
+                // 依據Factory,Country and Mdivision 是否有值塞入SQL中
+                string strwhere = @"AND o.FACTORYID IN ( select KPICode from Factory where 1=1 ";
+                if (!MyUtility.Check.Empty(this.txtFactory.Text))
+                {
+                    strwhere += string.Format(@"and ID='{0}' ", this.txtFactory.Text);
+                }
+
+                if (!MyUtility.Check.Empty(this.txtCountry.TextBox1.Text))
+                {
+                    strwhere += string.Format(@"and CountryID='{0}' ", this.txtCountry.TextBox1.Text);
+                }
+
+                if (!MyUtility.Check.Empty(this.txtMdivision.Text))
+                {
+                    strwhere += string.Format(@"and MDivisionID='{0}' ", this.txtMdivision.Text);
+                }
+
+                strwhere += "and KPICode !='' ";
+
+                // 補上 Orders.Cateory and Factory.Type 判斷
+                if (this.radioBulk.Checked)
+                {
+                    strwhere += "and Type='B' ) ";
+                    strSQL += strwhere + "AND o.Category ='B' ";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strwhere += "and Type='S' ) ";
+                    strSQL += strwhere + "AND o.Category ='S' ";
+                }
+                else
+                {
+                    strwhere += " ) ";
+                    strSQL += strwhere + "AND o.Category ='G' ";
+                }
+
                 if (this.dateFactoryKPIDate.Value1 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
@@ -184,51 +191,9 @@ WHERE ot.IsGMTMaster = 0";
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
                 }
 
-                // 補上 Orders.Cateory and Factory.Type 判斷
-                if (this.radioBulk.Checked)
-                {
-                    if (MyUtility.Check.Empty(this.txtFactory.Text))
-                    {
-                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                    }
-                    else
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
-                    }
+                strSQL += @"
+ORDER BY  o.ID, f.CountryID, f.KpiCode";
 
-                    strSQL += " AND A1.Category ='B'";
-                }
-                else if (this.radioSample.Checked)
-                {
-                    if (MyUtility.Check.Empty(this.txtFactory.Text))
-                    {
-                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                    }
-                    else
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
-                    }
-
-                    strSQL += " AND A1.Category='S'";
-                }
-                else
-                {
-                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
-                    }
-
-                    strSQL += " AND A1.Category='G'";
-                }
-
-                strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID,Order_QS.seq,A1.BRANDID
-, A1.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
-, CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-, A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo 
-,Order_QS.ReasonID,A1.Category,r.Name,rs.Name,PD.Qty,PD.FailQty ";
-                strSQL += @" 
-ORDER BY A1.ID";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
                 if (!result)
                 {
@@ -250,21 +215,268 @@ ORDER BY A1.ID";
                     return result;
                 }
 
+                #endregion
+
+                #region Fail Order List by SP
+                strSQL = @" 
+SELECT  '' AS A
+, '' AS B
+, '' AS C
+, '' AS D
+, '' AS E
+, '' AS F
+, '' AS G
+, '' AS H
+, '' AS I
+, 0 AS J
+, 0 AS K
+, 0 AS L
+, '' AS M
+, '' AS N
+, '' AS O
+, '' AS P
+, '' AS Q
+, '' AS R
+, '' AS S
+, '' AS T
+, '' AS U
+, '' AS V 
+, '' AS W
+FROM ORDERS
+WHERE 1 = 0 ";
+                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
+                if (!result)
+                {
+                    return result;
+                }
+
+                #endregion Fail Order List by SP
+
+                #region get Order_QtyShip Data
+                System.Data.DataTable dtOrder_QtyShip;
+                strSQL = @"
+Select Order_QS.ID
+, Convert(varchar, Order_QS.ShipmodeID) + '-' + Convert(varchar, Order_QS.Qty) + '(' +  convert(varchar(10),Order_QS.BuyerDelivery,111) + ')' as strData
+,Order_QS.ShipmodeID 
+From Order_QtyShip Order_QS, Orders o
+Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+Left Join Factory f On o.FactoryID = f.ID 
+Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+";
+
+                if (this.radioBulk.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='S'";
+                }
+                else
+                {
+                    strSQL += strwhere + " AND o.Category ='G'";
+                }
+
+                if (this.dateFactoryKPIDate.Value1 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.dateFactoryKPIDate.Value2 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtOrder_QtyShip)))
+                {
+                    return result;
+                }
+
+                IDictionary<string, IList<DataRow>> dictionary_Order_QtyShipIDs = dtOrder_QtyShip.ToDictionaryList((x) => x.Val<string>("ID"));
+                #endregion get Order_QtyShip Data
+
+                #region Get pullout Data
+                System.Data.DataTable dtPullout_Detail;
+                strSQL = @"
+Select o.ID 
+, convert(varchar(10),pd.PulloutDate,111)  as strData 
+From Pullout_Detail pd, Orders o 
+Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
+Left Join Factory f ON o.FACTORYID = f.ID 
+Where pd.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+";
+                if (this.radioBulk.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='S'";
+                }
+                else
+                {
+                    strSQL += strwhere + " AND o.Category ='G'";
+                }
+
+                if (this.dateFactoryKPIDate.Value1 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.dateFactoryKPIDate.Value2 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                strSQL += " GROUP BY o.ID ,pd.PulloutDate";
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtPullout_Detail)))
+                {
+                    return result;
+                }
+
+                IDictionary<string, IList<DataRow>> dictionary_Pullout_DetailIDs = dtPullout_Detail.ToDictionaryList((x) => x.Val<string>("ID"));
+                #endregion  Get pullout Data
+
+                #region Get Pullout Data
+                System.Data.DataTable dtPullout;
+                strSQL = @"Select o.ID , COUNT(*) as strData 
+From Pullout_Detail p, ORDERS o 
+Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
+Left Join Factory f ON o.FactoryID = f.ID 
+Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
+                if (this.radioBulk.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='S'";
+                }
+                else
+                {
+                    strSQL += strwhere + " AND o.Category ='G'";
+                }
+
+                if (this.dateFactoryKPIDate.Value1 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.dateFactoryKPIDate.Value2 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                strSQL += " GROUP BY o.ID ";
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtPullout)))
+                {
+                    return result;
+                }
+
+                IDictionary<string, DataRow> dictionary_PulloutIDs = dtPullout.ToDictionary((x) => x.Val<string>("ID"));
+                #endregion  Get Pullout Data
+
+                #region Get TradeHis_Order Data
+                System.Data.DataTable dtTradeHis_Order;
+                strSQL = @"Select o.ID
+, TH_Order.ReasonID 
+, r.Name
+, TH_Order.Remark 
+from TradeHis_Order TH_Order, Reason r, ORDERS o 
+Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
+Left Join Factory f ON o.FACTORYID = f.ID 
+Where TH_Order.SourceID = o.ID 
+AND TH_Order.HisType = 'Delivery' 
+AND r.ReasonTypeID = TH_Order.ReasonTypeID 
+AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
+                if (this.radioBulk.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='B'";
+                }
+                else if (this.radioSample.Checked)
+                {
+                    strSQL += strwhere + " AND o.Category ='S'";
+                }
+                else
+                {
+                    strSQL += strwhere + " AND o.Category ='G'";
+                }
+
+                if (this.dateFactoryKPIDate.Value1 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.dateFactoryKPIDate.Value2 != null)
+                {
+                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                strSQL += "  order by TH_Order.AddDate desc ";
+                if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtTradeHis_Order)))
+                {
+                    return result;
+                }
+
+                var groupQty = this.gdtOrderDetail.AsEnumerable().Select(row => new
+                {
+                    PoId = row.Field<string>("D"),
+                    OrderQty = row.Field<int>("J"),
+                    PullQty = row.Field<int>("K"),
+                    FailQty = row.Field<int>("L"),
+                    P = row.Field<int>("O")
+                }).GroupBy(group => group.PoId).Select(g => new
+                {
+                    PoID = g.Key,
+                    sumOrderQty = g.Sum(r => r.OrderQty),
+                    sumPullQty = g.Sum(r => r.PullQty),
+                    sumFailQty = g.Sum(r => r.FailQty),
+                    sumP = g.Sum(r => r.P)
+                }).ToArray();
+
+                IDictionary<string, IList<DataRow>> dictionary_TradeHis_OrderIDs = dtTradeHis_Order.ToDictionaryList((x) => x.Val<string>("ID"));
+                #endregion  Get pullout Data
+
                 List<string> lstSDP = new List<string>();
+                List<string> lstSP = new List<string>();
+                string poid = string.Empty;
                 for (int intIndex = 0; intIndex < this.gdtOrderDetail.Rows.Count; intIndex++)
                 {
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
                     string handleName = string.Empty;
+                    if (UserPrg.GetName(drData["S"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
+                    {
+                        drData["S"] = handleName;
+                    }
+
+                    if (UserPrg.GetName(drData["T"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
+                    {
+                        drData["T"] = handleName;
+                    }
+
+                    if (UserPrg.GetName(drData["U"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
+                    {
+                        drData["U"] = handleName;
+                    }
+
+                    if (UserPrg.GetName(drData["V"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
+                    {
+                        drData["V"] = handleName;
+                    }
+
                     #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["A"].ToString());
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["W"].ToString()); // A
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
                         drSDP = this.gdtSDP.NewRow();
                         drSDP["A"] = drData["B"].ToString();
-                        drSDP["B"] = MyUtility.GetValue.Lookup("ALIAS", drData["A"].ToString(), "Country", "ID");
+                        drSDP["B"] = drData["W"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["B"].ToString() + "___" + drData["A"].ToString()); // A
+                        lstSDP.Add(drData["B"].ToString() + "___" + drData["W"].ToString()); // A
                     }
                     else
                     {
@@ -276,210 +488,140 @@ ORDER BY A1.ID";
                     drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["L"].ToString() != string.Empty ? Convert.ToDecimal(drData["L"].ToString()) : 0);
                     drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
                     #endregion Calc SDP Data
-                }
-                #endregion
 
-                #region Fail Order List by SP
-                strSQL = @"
-SELECT   A= A2.CountryID 
-		,B = A2.KpiCode
-		,C = A1.FactoryID 
-		,D = A1.ID 
-        ,E = Order_QS.seq
-		,F = A1.BRANDID
-		,G = Convert(varchar,Order_QS.BuyerDelivery)  
-		,H = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
-		,I = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-		,J = Order_QS.QTY  
-		,K = Sum(A4.ShipQty) - dbo.getInvAdjQtyByDate(A1.ID,null,Order_QS.FtyKPI,'<=')
-		,L = ISNULL(Sum(A5.ShipQty),0)  - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
-		,M = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
-		,N = t.strData 
-		,O = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
-		,P = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
-		,Q = A1.KPIChangeReason 
-		,R = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
-		,S = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
-		,T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
-		,U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
-		,V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
-FROM ORDERS A1 WITH (NOLOCK) 
-inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
-                                         and A1.OrderTypeID = ot.ID
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
-LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= Order_QS.FtyKPI AND A4.UKey=AP.UKey
-LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
-OUTER APPLY(
-SELECT  ShipQty FROM PullOut_Detail WITH (NOLOCK) 
-WHERE A1.ID = ORDERID AND PullOutDate > Order_QS.FtyKPI
-AND UKey=AP.UKey
-UNION 
-SELECT  Qty AS ShipQty FROM Orders WITH (NOLOCK) 
-WHERE A1.ID = ID AND KPIChangeReason=0005
-AND NOT EXISTS(SELECT 1 FROM   pullout_detail 
-          WHERE  orderid = A1.id)
-) A5
-OUTER APPLY(
-  select strData =stuff(( 
-    Select DISTINCT concat(',',ShipmodeID)
-    from Order_QtyShip 
-    WITH (NOLOCK) where id = A1.ID  Group by ShipModeID
-    for xml path('')
-  ),1,1,'')
-) t
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
- WHERE ot.IsGMTMaster = 0";
-                if (this.dateFactoryKPIDate.Value1 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                }
+                    #region Calc Fail Order List by SP Data
 
-                if (this.dateFactoryKPIDate.Value2 != null)
-                {
-                    strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                }
-
-                // 補上 Orders.Cateory and Factory.Type 判斷
-                if (this.radioBulk.Checked)
-                {
-                    if (MyUtility.Check.Empty(this.txtFactory.Text))
+                    // By SP# 明細, group by SPNO 顯示
+                    if ((drData["L"].ToString() != string.Empty) && (Convert.ToDecimal(drData["L"].ToString()) > 0) && poid != drData["D"].ToString())
                     {
-                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                    }
-                    else
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
-                    }
+                        DataRow drSP = this.gdtSP.NewRow();
+                        drSP.ItemArray = drData.ItemArray;
+                        poid = drData["D"].ToString();
+                        foreach (var i in groupQty)
+                        {
+                            if (i.sumFailQty > 0)
+                            {
+                                if (i.PoID == drData["D"].ToString())
+                                {
+                                    drSP["J"] = i.sumOrderQty;
+                                    drSP["K"] = i.sumPullQty;
+                                    drSP["L"] = i.sumFailQty;
+                                    drSP["O"] = i.sumP;
+                                }
+                            }
+                        }
 
-                    strSQL += " AND A1.Category ='B'";
+                        this.gdtSP.Rows.Add(drSP);
+                    }
+                    #endregion
                 }
-                else if (this.radioSample.Checked)
+
+                // shipmode
+                if (this.gdtSP != null)
                 {
-                    if (MyUtility.Check.Empty(this.txtFactory.Text))
+                    IList<DataRow> lstDataRows;
+                    for (int index = 0; index < this.gdtSP.Rows.Count; index++)
                     {
-                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
+                        DataRow dtData = this.gdtSP.Rows[index];
+                        lstDataRows = null;
+                        if (dictionary_Order_QtyShipIDs.TryGetValue(dtData["D"].ToString(), out lstDataRows))
+                        {
+                            if (lstDataRows != null)
+                            {
+                                string strTemp = string.Empty, strShipmodeID = string.Empty;
+                                for (int index_1 = 0; index_1 < lstDataRows.Count; index_1++)
+                                {
+                                    strTemp += strTemp == string.Empty ? lstDataRows[index_1]["strData"].ToString() : ", " + lstDataRows[index_1]["strData"].ToString();
+                                    if (strShipmodeID.IndexOf(lstDataRows[index_1]["ShipmodeID"].ToString()) < 0)
+                                    {
+                                        strShipmodeID += strShipmodeID == string.Empty ? lstDataRows[index_1]["ShipmodeID"].ToString() : ", " + lstDataRows[index_1]["ShipmodeID"].ToString();
+                                    }
+                                }
+
+                                dtData["I"] = strTemp;
+                                dtData["N"] = strShipmodeID;
+                            }
+                        }
                     }
-                    else
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
-                    }
-
-                    strSQL += " AND A1.Category='S'";
                 }
-                else
-                {
-                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                    {
-                        strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
-                    }
-
-                    strSQL += " AND A1.Category='G'";
-                }
-
-                strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, Order_QS.seq , A1.BRANDID,A1.KPIChangeReason
-, Order_QS.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
-, CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-, A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
-HAVING Sum(A5.ShipQty) > 0 ";
-                strSQL += @" 
-ORDER BY A1.ID";
-                result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
-                if (!result)
-                {
-                    return result;
-                }
-
-                #endregion Fail Order List by SP
 
                 if (this.checkExportDetailData.Checked)
                 {
                     #region On time Order List by PullOut
-                    strSQL = @" 
-SELECT   A = A2.CountryID 
-		,B = A2.KpiCode 
-		,C = A1.FactoryID   
-		,D = A1.ID 
-        ,E = Order_QS.seq
-		,F = Convert(varchar,cast(Order_QS.FtyKPI as date))
-		,G = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path(''))  
-		,H = Order_QS.QTY  
-		,I = isnull(opd.sQty,0)
-		,J = Convert(varchar,pd.PulloutDate)
-		,K = (SELECT distinct oq.ShipmodeID+','
-from Order_QtyShip oq WITH (NOLOCK) 
-where oq.id=a1.id 
-for xml path(''))                                               
-FROM ORDERS A1 WITH (NOLOCK) 
-inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
-                                         and A1.OrderTypeID = ot.ID
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-OUTER APPLY (select sum(ShipQty)  - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ,Order_QS.FtyKPI,'<=') as sQty 
-             from Pullout_Detail pd 
-             where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= Order_QS.FtyKPI ) opd
-OUTER APPLY (select top 1 PulloutDate 
-			from Pullout_Detail pd 
-			where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
-Order by pulloutDate desc) pd 
-WHERE ot.IsGMTMaster = 0
-      and opd.sQty <>0  ";
-                    if (this.dateFactoryKPIDate.Value1 != null)
+                    // 依據Factory,Country and Mdivision 是否有值塞入SQL中
+                    string where = @" AND o.FACTORYID IN ( select KPICode from Factory where 1=1 ";
+                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
                     {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                        where += string.Format(@"and ID='{0}' ", this.txtFactory.Text);
                     }
 
-                    if (this.dateFactoryKPIDate.Value2 != null)
+                    if (!MyUtility.Check.Empty(this.txtCountry.TextBox1.Text))
                     {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                        where += string.Format(@"and CountryID='{0}' ", this.txtCountry.TextBox1.Text);
                     }
+
+                    if (!MyUtility.Check.Empty(this.txtMdivision.Text))
+                    {
+                        where += string.Format(@"and MDivisionID='{0}' ", this.txtMdivision.Text);
+                    }
+
+                    where += " and KPICode!='' ";
 
                     // 補上 Orders.Cateory and Factory.Type 判斷
                     if (this.radioBulk.Checked)
                     {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category ='B'";
+                        where += "and Type='B' )";
+                        where += " AND o.Category ='B' ";
                     }
                     else if (this.radioSample.Checked)
                     {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category='S'";
+                        where += "and Type='S' ) ";
+                        where += " AND o.Category ='S' ";
                     }
                     else
                     {
-                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category='G'";
+                        where += " ) ";
+                        where += " AND o.Category ='G' ";
                     }
 
-                    strSQL += @" 
-ORDER BY A1.ID";
+                    if (this.dateFactoryKPIDate.Value1 != null)
+                    {
+                        where += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    }
+
+                    if (this.dateFactoryKPIDate.Value2 != null)
+                    {
+                        where += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    }
+
+                    strSQL = $@" 
+SELECT A = c.alias 
+     , B =  f.KpiCode
+     , C = o.FactoryID
+     , D = o.ID
+     , E = Order_QS.Seq
+     , F = convert(varchar(10),Order_QS.FtyKPI ,111)
+     , G = Order_QS.ShipmodeID
+     , H = Order_QS.QTY
+     , I = isnull(opd.sQty,0)
+     , J = convert(varchar(10),pd.PulloutDate,111) 
+     , K = Order_QS.ShipmodeID
+     , L = ''                                                 
+FROM ORDERS o WITH (NOLOCK)
+LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+LEFT JOIN FACTORY f ON o.FACTORYID = f.ID 
+LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID 
+INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
+OUTER APPLY (select sum(ShipQty) as sQty 
+             from Pullout_Detail pd 
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= Order_QS.FtyKPI ) opd
+OUTER APPLY (select top 1 PulloutDate 
+             from Pullout_Detail pd 
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
+             Order by PulloutDate desc) pd 
+where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+{where}
+";
                     result = DBProxy.Current.Select(null, strSQL, null, out this.gdtPullOut);
                     if (!result)
                     {
@@ -489,227 +631,77 @@ ORDER BY A1.ID";
                     #endregion On time Order List by PullOut
 
                     #region Fail Detail
-                    strSQL = @" 
-SELECT distinct 
- A =A2.CountryID 
-,B = A2.KpiCode 
-,C = A1.FactoryID  
-,D = A1.ID 
-,E = Order_QS.seq
-,F = Convert(varchar,cast(Order_QS.FtyKPI as date))  
-,G = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-,H = Order_QS.QTY 
-,I = isnull(opd.sQty,0) 
-,J = Convert(varchar,pd.PulloutDate ) 
-,K = (SELECT distinct oq.ShipmodeID+','
-    from Order_QtyShip oq WITH (NOLOCK) 
-    where oq.id=a1.id 
-    for xml path('')) 
-,L = concat(Order_QS.ReasonID,'') 
-,M = case a1.Category when 'B' then r.Name
+                    strSQL = $@" 
+SELECT A = c.alias 
+     , B =  f.KpiCode
+     , C = o.FactoryID
+     , D = o.ID
+     , E = Order_QS.Seq
+     , F = convert(varchar(10),Order_QS.FtyKPI ,111)
+     , G = Order_QS.ShipmodeID
+     , H = Order_QS.QTY
+     , I = isnull(opd.sQty, Order_QS.QTY)
+     , J = convert(varchar(10),pd.PulloutDate,111)
+     , K = Order_QS.ShipmodeID
+     , L = Order_QS.ReasonID
+     , M = case o.Category when 'B' then r.Name
            when 'S' then rs.Name
-           else '' end                                               
-FROM ORDERS A1 WITH (NOLOCK) 
-inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
-                                         and A1.OrderTypeID = ot.ID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID 
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
+           else '' end 
+     , N = ''                                                 
+FROM ORDERS o WITH (NOLOCK)
+LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
+LEFT JOIN FACTORY f ON o.FACTORYID = f.ID 
+LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID 
+INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
-OUTER APPLY (select sum(ShipQty)   - dbo.getInvAdjQtyByDate( A1.ID, Order_QS.SEQ,Order_QS.FtyKPI,'>')  as sQty 
+OUTER APPLY (select sum(ShipQty) as sQty 
              from Pullout_Detail pd 
-             where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate > Order_QS.FtyKPI ) opd
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate > Order_QS.FtyKPI ) opd
 OUTER APPLY (select top 1 PulloutDate 
-from Pullout_Detail pd where pd.OrderID = A1.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
-Order by pulloutDate desc) pd
-WHERE ot.IsGMTMaster = 0
-      and (opd.sQty > 0 or pd.PulloutDate is null)  
-";
-                    if (this.dateFactoryKPIDate.Value1 != null)
-                    {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    }
+             from Pullout_Detail pd where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
+             Order by PulloutDate desc) pd
+where Order_QS.Qty > 0 and (opd.sQty > 0 or pd.PulloutDate is null) and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') {where}";
 
-                    if (this.dateFactoryKPIDate.Value2 != null)
-                    {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    }
-
-                    // 補上 Orders.Cateory and Factory.Type 判斷
-                    if (this.radioBulk.Checked)
-                    {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='B')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category ='B' ";
-                    }
-                    else if (this.radioSample.Checked)
-                    {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!=''))";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}' and Type='S')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category='S'";
-                    }
-                    else
-                    {
-                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN (select KPICode from Factory where ID='{0}')", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category='G'";
-                    }
-
-                    strSQL += @" 
-ORDER BY A1.ID";
                     result = DBProxy.Current.Select(null, strSQL, null, out this.gdtFailDetail);
                     if (!result)
                     {
                         return result;
                     }
 
+                    if (this.gdtFailDetail != null)
+                    {
+                        IList<DataRow> lstDataRows;
+                        for (int intIndex = 0; intIndex < this.gdtFailDetail.Rows.Count; intIndex++)
+                        {
+                            DataRow drData = this.gdtFailDetail.Rows[intIndex];
+                            #region Set P、Q Column Data
+                            lstDataRows = null;
+                            if (dictionary_TradeHis_OrderIDs.TryGetValue(drData["D"].ToString(), out lstDataRows))
+                            {
+                                if ((lstDataRows != null) && (lstDataRows.Count > 0))
+                                {
+                                    drData["L"] = lstDataRows[0]["ReasonID"].ToString();
+                                    drData["M"] = lstDataRows[0]["Name"].ToString();
+                                    drData["N"] = lstDataRows[0]["Remark"].ToString();
+                                }
+                            }
+                            #endregion Set P、Q Column Data
+                        }
+                    }
                     #endregion Fail Detail
 
-                    #region Fail Order List by SP
-                    strSQL = @" 
-SELECT   A= A2.CountryID 
-		,B = A2.KpiCode
-		,C = A1.FactoryID 
-		,D = A1.ID 
-        ,E = Order_QS.seq
-		,F = A1.BRANDID
-		,G = Convert(varchar,Order_QS.BuyerDelivery)  
-		,H = Convert(varchar,cast(Order_QS.FtyKPI as date)) 
-		,I = (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) 
-		,J = Order_QS.QTY  
-		,K = Sum(A4.ShipQty)   - dbo.getInvAdjQtyByDate(A1.ID, null,Order_QS.FtyKPI,'<=') 
-		,L = ISNULL(Sum(A5.ShipQty),0) - dbo.getInvAdjQtyByDate( A1.ID , null,Order_QS.FtyKPI,'>') 
-		,M = (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) 
-		,N = t.strData 
-		,O = (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) 
-		,P = CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END 
-		,Q = A1.KPIChangeReason 
-		,R = (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) 
-		,S = dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  
-		,T = dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  
-		,U = dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  
-		,V = dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  
-FROM ORDERS A1 WITH (NOLOCK) 
-inner join OrderType ot with (NoLock) on A1.BrandID = ot.BrandID
-                                         and A1.OrderTypeID = ot.ID
-LEFT JOIN Order_QtyShip Order_QS WITH (NOLOCK) ON Order_QS.id=A1.ID
-LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
-LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
-LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= Order_QS.FtyKPI AND A4.UKey=AP.UKey
-LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
-OUTER APPLY(
-SELECT  ShipQty FROM PullOut_Detail WITH (NOLOCK) 
-WHERE A1.ID = ORDERID AND PullOutDate > Order_QS.FtyKPI
-AND UKey=AP.UKey
-UNION 
-SELECT  Qty AS ShipQty FROM Orders WITH (NOLOCK) 
-WHERE A1.ID = ID AND KPIChangeReason=0005
-AND NOT EXISTS(SELECT 1 FROM   pullout_detail 
-          WHERE  orderid = A1.id)
-) A5
-OUTER APPLY(
-  select strData =stuff(( 
-    Select DISTINCT concat(',',ShipmodeID)
-    from Order_QtyShip 
-    WITH (NOLOCK) where id = A1.ID  Group by ShipModeID
-    for xml path('')
-  ),1,1,'')
-) t
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
-outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
-WHERE ot.IsGMTMaster = 0 ";
-                    if (this.dateFactoryKPIDate.Value1 != null)
-                    {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI >= '{0}' ", this.dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
-                    }
-
-                    if (this.dateFactoryKPIDate.Value2 != null)
-                    {
-                        strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-                    }
-
-                    // 補上　Orders.Category and Factory.Type 判斷
-                    if (this.radioBulk.Checked)
-                    {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='B' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='B' ) ", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category ='B'";
-                    }
-                    else if (this.radioSample.Checked)
-                    {
-                        if (MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and Type='S' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
-                        }
-                        else
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' and Type='S' ) ", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category='S'";
-                    }
-                    else
-                    {
-                        if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                        {
-                            strSQL += string.Format(" AND A1.FACTORYID IN ( select KPICode from Factory where ID='{0}' ) ", this.txtFactory.Text);
-                        }
-
-                        strSQL += " AND A1.Category ='G'";
-                    }
-
-                    strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, Order_QS.seq,A1.BRANDID,A1.KPIChangeReason
-, Order_QS.BuyerDelivery, Order_QS.FtyKPI, Order_QS.QTY 
-, CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-, A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
-                                                        HAVING Sum(A5.ShipQty) > 0 ";
-                    strSQL += @" 
-ORDER BY A1.ID";
-                    result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
-                    if (!result)
-                    {
-                        return result;
-                    }
-
-                    #endregion Fail Order List by SP
                 }
 
-                #region 產生EXCEL
+                #region 顯示筆數
+
+                this.SetCount(this.gdtOrderDetail.Rows.Count);
+
                 if (!(result = this.TransferToExcel()))
                 {
                     return result;
                 }
                 #endregion
-
             }
             catch (Exception ex)
             {

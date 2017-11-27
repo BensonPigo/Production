@@ -37,25 +37,25 @@
             this.labelFactoryKPIDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
+            this.radioGarment = new Sci.Win.UI.RadioButton();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtFactory = new Sci.Production.Class.txtfactory();
             this.txtCountry = new Sci.Production.Class.txtcountry();
-            this.radioGarment = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(445, 12);
+            this.print.Location = new System.Drawing.Point(451, 12);
             this.print.TabIndex = 7;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(445, 48);
+            this.toexcel.Location = new System.Drawing.Point(451, 48);
             this.toexcel.TabIndex = 8;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(445, 84);
+            this.close.Location = new System.Drawing.Point(451, 84);
             this.close.TabIndex = 9;
             // 
             // radioBulk
@@ -107,7 +107,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(18, 91);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(75, 23);
@@ -116,8 +115,7 @@
             // 
             // labelCountry
             // 
-            this.labelCountry.Lines = 0;
-            this.labelCountry.Location = new System.Drawing.Point(18, 133);
+            this.labelCountry.Location = new System.Drawing.Point(18, 120);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(75, 23);
             this.labelCountry.TabIndex = 99;
@@ -137,7 +135,6 @@
             // 
             // labelFactoryKPIDate
             // 
-            this.labelFactoryKPIDate.Lines = 0;
             this.labelFactoryKPIDate.Location = new System.Drawing.Point(18, 55);
             this.labelFactoryKPIDate.Name = "labelFactoryKPIDate";
             this.labelFactoryKPIDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -152,8 +149,7 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
-            this.labelM.Location = new System.Drawing.Point(344, 133);
+            this.labelM.Location = new System.Drawing.Point(344, 120);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(75, 23);
             this.labelM.TabIndex = 104;
@@ -162,42 +158,11 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(18, 19);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(75, 23);
             this.labelType.TabIndex = 105;
             this.labelType.Text = "Type";
-            // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(422, 133);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 3;
-            this.txtMdivision.Visible = false;
-            // 
-            // txtFactory
-            // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.Location = new System.Drawing.Point(96, 91);
-            this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory.TabIndex = 4;
-            this.txtFactory.IssupportJunk = true;
-            // 
-            // txtCountry
-            // 
-            this.txtCountry.DisplayBox1Binding = "";
-            this.txtCountry.Location = new System.Drawing.Point(96, 133);
-            this.txtCountry.Name = "txtCountry";
-            this.txtCountry.Size = new System.Drawing.Size(232, 38);
-            this.txtCountry.TabIndex = 5;
-            this.txtCountry.TextBox1Binding = "";
-            this.txtCountry.Visible = false;
             // 
             // radioGarment
             // 
@@ -211,9 +176,40 @@
             this.radioGarment.Text = "Garment";
             this.radioGarment.UseVisualStyleBackColor = true;
             // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(422, 120);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 3;
+            this.txtMdivision.Visible = false;
+            // 
+            // txtFactory
+            // 
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IssupportJunk = true;
+            this.txtFactory.Location = new System.Drawing.Point(96, 91);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory.TabIndex = 4;
+            // 
+            // txtCountry
+            // 
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(96, 120);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(232, 38);
+            this.txtCountry.TabIndex = 5;
+            this.txtCountry.TextBox1Binding = "";
+            this.txtCountry.Visible = false;
+            // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(537, 199);
+            this.ClientSize = new System.Drawing.Size(543, 181);
             this.Controls.Add(this.radioGarment);
             this.Controls.Add(this.labelType);
             this.Controls.Add(this.txtMdivision);
