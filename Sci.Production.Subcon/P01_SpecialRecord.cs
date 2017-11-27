@@ -100,33 +100,33 @@ Select  0 as Selected
         , '' as id
         , aaa.id as orderid
         , sum(bbb.qty) poqty 
-        , unitprice = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
-        , price = iif(ccc.isArtwork = 1,oa.Cost,bb.price)
-        , amount = sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,bb.price)
+        , unitprice = isnull(iif(ccc.isArtwork = 1,oa.Cost,bb.price),0)
+        , price = isnull(iif(ccc.isArtwork = 1,oa.Cost,bb.price),0)
+        , amount = isnull(sum(bbb.qty) * iif(ccc.isArtwork = 1,oa.Cost,bb.price),0)
         , 1 as qtygarment
         , 0.0000 as pricegmt
         , ccc.id as artworktypeid
         , rtrim(ccc.id) as artworkid
-        , patterncode = (select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
-        , patterndesc = (select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterncode = isnull((select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
+        , patterndesc = isnull((select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
         , Style = aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
 from orders aaa WITH (NOLOCK) 
 inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
-inner join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-,artworktype  ccc WITH (NOLOCK)
-        , (Select   a.id orderid
-                    , c.id as artworktypeid
-                    , rtrim(c.id) as artwork
-                    , c.id as  patterncode 
-           from orders a WITH (NOLOCK) 
-                , artworktype  c WITH (NOLOCK) 
-                , factory WITH (NOLOCK) 
-           where c.id = '{0}'            
-           and a.FactoryID = factory.id and factory.IsProduceFty = 1
-		   and a.Category  in ('B','S')", dr["artworktypeid"]);
+left join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode
+left join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+inner join (
+	Select   a.id orderid
+			, c.id as artworktypeid
+			, rtrim(c.id) as artwork
+			, c.id as  patterncode 
+	from orders a WITH (NOLOCK) 
+		, artworktype  c WITH (NOLOCK) 
+		, factory WITH (NOLOCK) 
+        where c.id = '{0}'            
+        and a.FactoryID = factory.id and factory.IsProduceFty = 1
+		and a.Category  in ('B','S')", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
                 strSQLCmd +=" EXCEPT"+
@@ -141,9 +141,9 @@ inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTyp
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and b1.OrderID = '{0}'", poid); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
                  strSQLCmd += @"
-           ) as aa
+) as aa on aaa.ID = aa.orderid
+left join artworktype  ccc WITH (NOLOCK) on  ccc.ID = aa.artworktypeid
 outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = aa.artworktypeid and ott.id = aa.orderid)bb
-where  aaa.ID = aa.orderid and ccc.ID = aa.artworktypeid
 group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc.isArtwork ,oa.Cost,bb.Price";
 
 
