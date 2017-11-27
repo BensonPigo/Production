@@ -64,7 +64,7 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S')
+and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
 ),
 canNotClose
 as
@@ -75,9 +75,9 @@ where o.Finished = 0
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S')
+and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
 )
-select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle
+select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle,o.Category
 from (select * from wantToClose
 	  except
 	  select * from canNotClose) a
@@ -243,6 +243,41 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 return;
             }
 
+            string sqlCmds;
+            foreach (DataRow item in dr)
+            {
+                if (MyUtility.Convert.GetString(item["Category"]) == "M")
+                {
+                    if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(item["POID"]))))
+                    {
+                        sqlCmds = string.Format(
+                            @"select A.ID
+                        from PO_Supp_Detail A WITH (NOLOCK) 
+                        left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+                        inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
+                        where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)",
+                            Sci.Env.User.Keyword,
+                            item["POID"]);
+
+                        if (MyUtility.Check.Seek(sqlCmds))
+                        {
+                            this.ShowWarning(string.Format("SP#:{0}，Warehouse still have material, so can't finish shipment.", MyUtility.Convert.GetString(item["POID"])));
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    sqlCmds = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(item["POID"]));
+                    string spList = MyUtility.GetValue.Lookup(sqlCmds);
+                    if (!MyUtility.Check.Empty(spList))
+                    {
+                        this.ShowWarning(string.Format("SP#:{0}，Below combined SP# not yet ship!!\r\n", MyUtility.Convert.GetString(item["POID"])) + spList.Substring(0, spList.Length - 1));
+                        return;
+                    }
+                }
+            }
+
             #region 更新Orders, Chgover資料
             IList<string> updateCmds = new List<string>();
 
@@ -295,7 +330,7 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S')
+and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
 ),
 canNotClose
 as
@@ -306,7 +341,7 @@ where o.Finished = 0
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S')
+and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
 )
 select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle
 from (select * from wantToClose

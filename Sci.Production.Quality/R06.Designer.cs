@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtRef = new Sci.Win.UI.TextBox();
@@ -38,12 +39,12 @@
             this.labelRef = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.dateArriveWHDate = new Sci.Win.UI.DateRange();
-            this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Controls.Add(this.txtseason);
             this.panel1.Controls.Add(this.txtbrand);
             this.panel1.Controls.Add(this.txtRef);
@@ -53,11 +54,24 @@
             this.panel1.Controls.Add(this.labelRef);
             this.panel1.Controls.Add(this.labelSupplier);
             this.panel1.Controls.Add(this.dateArriveWHDate);
-            this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Location = new System.Drawing.Point(29, 24);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(477, 242);
             this.panel1.TabIndex = 94;
+            // 
+            // labelArriveWHDate
+            // 
+            this.labelArriveWHDate.Location = new System.Drawing.Point(16, 23);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelArriveWHDate.RectStyle.BorderWidth = 1F;
+            this.labelArriveWHDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelArriveWHDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelArriveWHDate.Size = new System.Drawing.Size(113, 23);
+            this.labelArriveWHDate.TabIndex = 97;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
+            this.labelArriveWHDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelArriveWHDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtseason
             // 
@@ -98,7 +112,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(16, 186);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(113, 23);
@@ -107,7 +120,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(16, 141);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(113, 23);
@@ -116,7 +128,6 @@
             // 
             // labelRef
             // 
-            this.labelRef.Lines = 0;
             this.labelRef.Location = new System.Drawing.Point(16, 100);
             this.labelRef.Name = "labelRef";
             this.labelRef.Size = new System.Drawing.Size(113, 23);
@@ -125,7 +136,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(16, 60);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(113, 23);
@@ -134,20 +144,25 @@
             // 
             // dateArriveWHDate
             // 
+            // 
+            // 
+            // 
+            this.dateArriveWHDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateArriveWHDate.DateBox1.Name = "";
+            this.dateArriveWHDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateArriveWHDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateArriveWHDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateArriveWHDate.DateBox2.Name = "";
+            this.dateArriveWHDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateArriveWHDate.DateBox2.TabIndex = 1;
             this.dateArriveWHDate.IsRequired = false;
             this.dateArriveWHDate.Location = new System.Drawing.Point(141, 23);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
             this.dateArriveWHDate.TabIndex = 17;
-            // 
-            // labelArriveWHDate
-            // 
-            this.labelArriveWHDate.Lines = 0;
-            this.labelArriveWHDate.Location = new System.Drawing.Point(16, 23);
-            this.labelArriveWHDate.Name = "labelArriveWHDate";
-            this.labelArriveWHDate.Size = new System.Drawing.Size(113, 23);
-            this.labelArriveWHDate.TabIndex = 16;
-            this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
             // R06
             // 
@@ -170,7 +185,6 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.DateRange dateArriveWHDate;
-        private Win.UI.Label labelArriveWHDate;
         private Class.txtseason txtseason;
         private Class.txtbrand txtbrand;
         private Win.UI.TextBox txtRef;
@@ -179,5 +193,6 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelRef;
         private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelArriveWHDate;
     }
 }

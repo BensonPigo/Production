@@ -67,7 +67,6 @@ Select
 ,[sCSSE] = o.SeasonID
 ,[sCSNM] = o.BrandID
 ,[sCUNM] = CUNM.NameEN
-,[sCUSY] = o.OrderTypeID
 ,[sCFTY] = o.StyleID
 ,[sSYD1] = SYD1.Description
 ,[sGTMH] = GTMH.GTMH
@@ -95,6 +94,8 @@ Select
 ,o.Junk
 ,o.PulloutComplete
 ,o.Finished
+,[sCUSY] = isnull(MasterStyleID1.MasterStyleID,MasterStyleID2.MasterStyleID)
+,[sCUSTOMERORDERNO] = o.orderTypeID
 into #tmp
 From [Production].dbo.Orders o
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
@@ -156,6 +157,8 @@ outer apply(
 		for xml path('''')
 	)
 ) PRGM
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = o.StyleUkey)MasterStyleID1
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = o.StyleUkey)MasterStyleID2
 Where 
 (o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
@@ -180,7 +183,6 @@ update t set
 	,[CSSE] = s.[sCSSE]
 	,[CSNM] = s.[sCSNM]
 	,[CUNM] = s.[sCUNM]
-	,[CUSY] = s.[sCUSY]
 	,[CFTY] = s.[sCFTY]
 	,[SYD1] = s.[sSYD1]
 	,[GTMH] = s.[sGTMH]
@@ -206,6 +208,8 @@ update t set
 	,[PPRO] = s.[sPPRO]
 	,[PRGM] = s.[sPRGM]
 	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
+	,[CUSY] =[sCUSY]
+	,[CUSTOMERORDERNO] = [sCUSTOMERORDERNO]
 from #tmp2 s,'+@SerDbDboTb+N't
 where C is not null and PulloutComplete = 0 and Finished = 0
 and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
@@ -221,23 +225,26 @@ and (
 	or isnull(GTMH,0) != isnull(sGTMH,0)
 	or isnull(PPRO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPPRO,'''')
 	or isnull(ODST,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sODST,'''')
-	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
 	or isnull(SMOD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSMOD,'''')
 	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
 	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
 	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')	
 	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0,''N'',''Y'')
+	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
+	or isnull(CUSTOMERORDERNO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSTOMERORDERNO,'''')
 )
 
 insert into '+@SerDbDboTb+N'
-([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CUSY],[CFTY],[SYD1]
+([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
-,[PPRO],[PRGM],UPDT)
-select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCUSY],[sCFTY],[sSYD1]
+,[PPRO],[PRGM],UPDT
+,[CUSY],[CUSTOMERORDERNO])
+select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
-,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
+,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd''
+,[sCUSY],[sCUSTOMERORDERNO])
 from #tmp2
 where C is null--目標沒有
 
