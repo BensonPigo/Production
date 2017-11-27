@@ -55,6 +55,7 @@ namespace Sci.Production.Cutting
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
                 .DateTime("PrintDate", header: "Print Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .Date("CreateDate", header: "Create Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
@@ -215,33 +216,34 @@ from(
     select 
         Convert(bit,0) as selected
         , a.PrintDate
-        ,a.BundleNo [Bundle]
-        ,b.CutRef [CutRef]
-        ,b.POID [POID]
-        ,b.Orderid [SP]
-        ,a.BundleGroup [Group]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,c.StyleID [Style]
-        ,b.Item [Item]
-        ,b.PatternPanel [Comb]
-        ,b.cutno [Cut]
-        ,b.Article [Article]
-        ,b.Colorid [Color]
-        ,b.Article + '\' + b.Colorid [Color2]
-        ,a.SizeCode [Size]
-        ,a.PatternCode [Cutpart]
-        ,'('+a.Patterncode+')' [Patterncode]
-        ,a.PatternDesc [Description]
+        , CreateDate = b.AddDate
+        , a.BundleNo [Bundle]
+        , b.CutRef [CutRef]
+        , b.POID [POID]
+        , b.Orderid [SP]
+        , a.BundleGroup [Group]
+        , b.Sewinglineid [Line]
+        , b.SewingCell [Cell]
+        , c.StyleID [Style]
+        , b.Item [Item]
+        , b.PatternPanel [Comb]
+        , b.cutno [Cut]
+        , b.Article [Article]
+        , b.Colorid [Color]
+        , b.Article + '\' + b.Colorid [Color2]
+        , a.SizeCode [Size]
+        , a.PatternCode [Cutpart]
+        , '('+a.Patterncode+')' [Patterncode]
+        , a.PatternDesc [Description]
         --,SubProcess.SubProcess [SubProcess]
-        ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        ,a.Parts [Parts]
-        ,a.Qty [Qty]
+        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+        , a.Parts [Parts]
+        , a.Qty [Qty]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        ,c.FactoryID  [left]
-        ,e.MarkerNo
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
+        , c.FactoryID  [left]
+        , e.MarkerNo
+        , SeasonID = concat(c.SeasonID,' ', c.dest)
+        , brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -263,33 +265,34 @@ from(
     select DISTINCT 
         Convert(bit,0) as selected
         , a.PrintDate
-        ,a.BundleNo [Bundle]
-        ,b.CutRef [CutRef]
-        ,b.POID [POID]
-        ,b.Orderid [SP]
-        ,a.BundleGroup [Group]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,c.StyleID [Style]
-        ,b.Item [Item]
-        ,b.PatternPanel [Comb]
-        ,b.cutno [Cut]
-        ,b.Article [Article]
-        ,b.Colorid [Color]
-        ,b.Article + '\' + b.Colorid [Color2]
-        ,a.SizeCode [Size]
-        ,qq.Cutpart [Cutpart]
-        ,'('+d.Patterncode+')' [Patterncode]
-        ,d.PatternDesc [Description]
+        , CreateDate = b.AddDate
+        , a.BundleNo [Bundle]
+        , b.CutRef [CutRef]
+        , b.POID [POID]
+        , b.Orderid [SP]
+        , a.BundleGroup [Group]
+        , b.Sewinglineid [Line]
+        , b.SewingCell [Cell]
+        , c.StyleID [Style]
+        , b.Item [Item]
+        , b.PatternPanel [Comb]
+        , b.cutno [Cut]
+        , b.Article [Article]
+        , b.Colorid [Color]
+        , b.Article + '\' + b.Colorid [Color2]
+        , a.SizeCode [Size]
+        , qq.Cutpart [Cutpart]
+        , '('+d.Patterncode+')' [Patterncode]
+        , d.PatternDesc [Description]
         --,SubProcess.SubProcess [SubProcess]
-        ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        ,d.Parts [Parts]
-        ,a.Qty [Qty]
+        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+        , d.Parts [Parts]
+        , a.Qty [Qty]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        ,c.FactoryID  [left]
-        ,e.MarkerNo
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
+        , c.FactoryID  [left]
+        , e.MarkerNo
+        , SeasonID = concat(c.SeasonID,' ', c.dest)
+        , brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -332,33 +335,34 @@ from(
     select 
         Convert(bit,0) as selected
         , a.PrintDate
-        ,a.BundleNo [Bundle]
-        ,b.CutRef [CutRef]
-        ,b.POID [POID]
-        ,b.Orderid [SP]
-        ,a.BundleGroup [Group]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,c.StyleID [Style]
-        ,b.Item [Item]
-        ,b.PatternPanel [Comb]
-        ,b.cutno [Cut]
-        ,b.Article [Article]
-        ,b.Colorid [Color]
-        ,b.Article + '\' + b.Colorid [Color2]
-        ,a.SizeCode [Size]
-        ,a.PatternCode [Cutpart]
-        ,'('+a.Patterncode+')' [Patterncode]
-        ,a.PatternDesc [Description]
+        , CreateDate = b.AddDate
+        , a.BundleNo [Bundle]
+        , b.CutRef [CutRef]
+        , b.POID [POID]
+        , b.Orderid [SP]
+        , a.BundleGroup [Group]
+        , b.Sewinglineid [Line]
+        , b.SewingCell [Cell]
+        , c.StyleID [Style]
+        , b.Item [Item]
+        , b.PatternPanel [Comb]
+        , b.cutno [Cut]
+        , b.Article [Article]
+        , b.Colorid [Color]
+        , b.Article + '\' + b.Colorid [Color2]
+        , a.SizeCode [Size]
+        , a.PatternCode [Cutpart]
+        , '('+a.Patterncode+')' [Patterncode]
+        , a.PatternDesc [Description]
         --,SubProcess.SubProcess [SubProcess]
-        ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        ,a.Parts [Parts]
-        ,a.Qty [Qty]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        ,c.FactoryID  [left]
-        ,e.MarkerNo
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
+        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+        , a.Parts [Parts]
+        , a.Qty [Qty]
+        ,  [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+        , c.FactoryID  [left]
+        , e.MarkerNo
+        , SeasonID = concat(c.SeasonID,' ', c.dest)
+        , brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -380,33 +384,34 @@ from(
     select DISTINCT 
         Convert(bit,0) as selected
         , a.PrintDate
-        ,a.BundleNo [Bundle]
-        ,b.CutRef [CutRef]
-        ,b.POID [POID]
-        ,b.Orderid [SP]
-        ,a.BundleGroup [Group]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,c.StyleID [Style]
-        ,b.Item [Item]
-        ,b.PatternPanel [Comb]
-        ,b.cutno [Cut]
-        ,b.Article [Article]
-        ,b.Colorid [Color]
-        ,b.Article + '\' + b.Colorid [Color2]
-        ,a.SizeCode [Size]
-        ,a.PatternCode [Cutpart]
-        ,'('+a.Patterncode+')' [Patterncode]
-        ,a.PatternDesc [Description]
+        , CreateDate = b.AddDate
+        , a.BundleNo [Bundle]
+        , b.CutRef [CutRef]
+        , b.POID [POID]
+        , b.Orderid [SP]
+        , a.BundleGroup [Group]
+        , b.Sewinglineid [Line]
+        , b.SewingCell [Cell]
+        , c.StyleID [Style]
+        , b.Item [Item]
+        , b.PatternPanel [Comb]
+        , b.cutno [Cut]
+        , b.Article [Article]
+        , b.Colorid [Color]
+        , b.Article + '\' + b.Colorid [Color2]
+        , a.SizeCode [Size]
+        , a.PatternCode [Cutpart]
+        , '('+a.Patterncode+')' [Patterncode]
+        , a.PatternDesc [Description]
         --,SubProcess.SubProcess [SubProcess]
-        ,[SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        ,a.Parts [Parts]
-        ,a.Qty [Qty]
+        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+        , a.Parts [Parts]
+        , a.Qty [Qty]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        ,c.FactoryID  [left]
-        ,e.MarkerNo
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
+        , c.FactoryID  [left]
+        , e.MarkerNo
+        , SeasonID = concat(c.SeasonID,' ', c.dest)
+        , brand=c.brandid
     from dbo.Bundle_Detail a WITH (NOLOCK)
     left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
     left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
