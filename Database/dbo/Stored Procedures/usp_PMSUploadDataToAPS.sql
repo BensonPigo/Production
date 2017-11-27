@@ -67,7 +67,6 @@ Select
 ,[sCSSE] = o.SeasonID
 ,[sCSNM] = o.BrandID
 ,[sCUNM] = CUNM.NameEN
-,[sCUSY] = o.OrderTypeID
 ,[sCFTY] = o.StyleID
 ,[sSYD1] = SYD1.Description
 ,[sGTMH] = GTMH.GTMH
@@ -184,7 +183,6 @@ update t set
 	,[CSSE] = s.[sCSSE]
 	,[CSNM] = s.[sCSNM]
 	,[CUNM] = s.[sCUNM]
-	,[CUSY] = s.[sCUSY]
 	,[CFTY] = s.[sCFTY]
 	,[SYD1] = s.[sSYD1]
 	,[GTMH] = s.[sGTMH]
@@ -227,21 +225,22 @@ and (
 	or isnull(GTMH,0) != isnull(sGTMH,0)
 	or isnull(PPRO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPPRO,'''')
 	or isnull(ODST,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sODST,'''')
-	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
 	or isnull(SMOD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSMOD,'''')
 	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
 	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
 	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')	
 	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0,''N'',''Y'')
+	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
+	or isnull(CUSTOMERORDERNO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSTOMERORDERNO,'''')
 )
 
 insert into '+@SerDbDboTb+N'
-([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CUSY],[CFTY],[SYD1]
+([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
 ,[PPRO],[PRGM],UPDT
 ,[CUSY],[CUSTOMERORDERNO])
-select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCUSY],[sCFTY],[sSYD1]
+select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
 ,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd''
