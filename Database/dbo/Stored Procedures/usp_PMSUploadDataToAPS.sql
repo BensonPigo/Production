@@ -95,6 +95,8 @@ Select
 ,o.Junk
 ,o.PulloutComplete
 ,o.Finished
+,[sCUSY] = isnull(MasterStyleID1.MasterStyleID,MasterStyleID2.MasterStyleID)
+,[sCUSTOMERORDERNO] = o.orderTypeID
 into #tmp
 From [Production].dbo.Orders o
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
@@ -156,6 +158,8 @@ outer apply(
 		for xml path('''')
 	)
 ) PRGM
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = o.StyleUkey)MasterStyleID1
+outer apply(select top 1 MasterStyleID from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = o.StyleUkey)MasterStyleID2
 Where 
 (o.SCIDelivery >= DATEADD(DAY, -15, CONVERT(date,GETDATE())) or o.EditDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 and (o.Category = ''B'' or o.Category = ''S'')
@@ -206,6 +210,8 @@ update t set
 	,[PPRO] = s.[sPPRO]
 	,[PRGM] = s.[sPRGM]
 	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
+	,[CUSY] =[sCUSY]
+	,[CUSTOMERORDERNO] = [sCUSTOMERORDERNO]
 from #tmp2 s,'+@SerDbDboTb+N't
 where C is not null and PulloutComplete = 0 and Finished = 0
 and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
@@ -233,11 +239,13 @@ insert into '+@SerDbDboTb+N'
 ([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CUSY],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
 ,[UPUS],[UPNM],[SYCO],[MASTERMATERIALDATE],[MASTERMATERIALRECEIVEDDATE],[MATERIALDATE],[MATERIALRECEIVEDDATE]
-,[PPRO],[PRGM],UPDT)
+,[PPRO],[PRGM],UPDT
+,[CUSY],[CUSTOMERORDERNO])
 select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCUSY],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
-,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
+,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd''
+,[sCUSY],[sCUSTOMERORDERNO])
 from #tmp2
 where C is null--目標沒有
 
