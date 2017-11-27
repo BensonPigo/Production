@@ -261,7 +261,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
 
                         if (MyUtility.Check.Seek(sqlCmds))
                         {
-                            MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
+                            this.ShowWarning(string.Format("SP#:{0}，Warehouse still have material, so can't finish shipment.", MyUtility.Convert.GetString(item["POID"])));
                             return;
                         }
                     }
@@ -272,7 +272,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                     string spList = MyUtility.GetValue.Lookup(sqlCmds);
                     if (!MyUtility.Check.Empty(spList))
                     {
-                        MyUtility.Msg.WarningBox("Below combined SP# not yet ship!!\r\n" + spList.Substring(0, spList.Length - 1));
+                        this.ShowWarning(string.Format("SP#:{0}，Below combined SP# not yet ship!!\r\n", MyUtility.Convert.GetString(item["POID"])) + spList.Substring(0, spList.Length - 1));
                         return;
                     }
                 }
