@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
             if (DateArr_empty)
             {
                 dateArriveWHDate.Focus();
-                MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
+                MyUtility.Msg.ErrorBox("<Arrive W/H> Cannot be empty");
                 return false;
             }
             DateArrStart = dateArriveWHDate.Value1;
