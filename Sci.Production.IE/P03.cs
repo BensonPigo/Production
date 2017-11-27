@@ -33,6 +33,13 @@ namespace Sci.Production.IE
             this.gridicon.Append.Visible = false;
         }
 
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.grid.Columns["ID"].Visible = false;
+        }
+
         /// <summary>
         /// OnDetailSelectCommandPrepare
         /// </summary>
@@ -276,13 +283,13 @@ order by ld.No, ld.GroupKey", masterID);
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
+                .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
                 .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
                 .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
                 .CheckBox("Attachment", header: "Attachment", trueValue: 1, falseValue: 0)
                 .CheckBox("Template", header: "Template", trueValue: 1, falseValue: 0)
                 .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
@@ -291,10 +298,11 @@ order by ld.No, ld.GroupKey", masterID);
                 .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
 
             // 因為資料顯示已有排序，所以按Grid Header不可以做排序
-            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            {
-                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            // mantis8880排序功能開啟
+            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            //{
+            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
 
             cbb_No.MaxLength = 4;
 
@@ -467,14 +475,6 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 MyUtility.Msg.WarningBox("Combo type can't empty");
                 this.txtStyleComboType.Focus();
-                return false;
-            }
-            #endregion
-            #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("No = '' or No is null");
-            if (findrow.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("< No. > can't empty!!");
                 return false;
             }
             #endregion
@@ -794,6 +794,17 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 return;
             }
 
+            #region 檢查表身不可為空
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("No = '' or No is null");
+            if (findrow.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("< No. > can't empty!!");
+                return;
+            }
+            #endregion
+
+            this.ComputeTaktTime();
+
             string lBRTarget = this.FindTarget("LBR");
             string lLERTarget = this.FindTarget("LLER");
             bool checkLBR = !MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(this.numLBR.Value) < Convert.ToDecimal(lBRTarget);
@@ -878,8 +889,8 @@ select ID = null
 	   , ld.Cycle
 	   , ld.TotalCycle
 	   , ld.MachineTypeID
-       , Attachment = null
-       , Template = null
+       , ld.Attachment
+       , ld.Template 
 	   , ld.OperationID
 	   , ld.MoldID
 	   , ld.GroupKey
