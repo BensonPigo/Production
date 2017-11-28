@@ -380,47 +380,7 @@ namespace Sci.Production.Warehouse
 
                 int i = index;
 
-                #region 處理orderlist欄位顯示
-                //處理orderlist欄位
-                //若前10碼相同，例如資料為18010301GG004,18010301GG005時, 呈現GG004/GG005
-                //若不相同資料為17090101PP002,17090101PP003, 呈現17090101PP002/PP003
-                string new_orderidlist = "";
-                string before_orderid = dr["id"].ToString();
-                if (!dr["OrderIdList"].ToString().Equals(string.Empty) && !dr["From_Program"].ToString().Equals("P04"))
-                {
-                    foreach (string order_id in dr["OrderIdList"].ToString().Split('/'))
-                    {
-
-                        if (order_id.Equals(dr["id"].ToString())) {
-                            before_orderid = order_id.Length < 10 ? order_id : order_id.Substring(0, 10);
-                            continue;
-                        }
-
-                        if (order_id.Length < 10 ) {
-                            new_orderidlist += "/" + order_id;
-                        }
-                        else if (order_id.Contains(dr["id"].ToString()))
-                        {
-                            new_orderidlist += "/" + order_id.Substring(8);
-                        }
-                        else if (!order_id.Contains(before_orderid))
-                        {
-                            new_orderidlist += "/" + order_id;
-                        }
-                        else
-                        {
-                            new_orderidlist += "/" + order_id.Substring(8);
-                        }
-
-                        before_orderid = order_id.Length < 10 ? order_id : order_id.Substring(0, 10);
-                    }
-                    if (!new_orderidlist.Equals(string.Empty))
-                    {
-                        dr["OrderIdList"] = new_orderidlist.Substring(1);
-
-                    }
-                }
-                #endregion
+                
 
                 
 
@@ -800,7 +760,7 @@ drop table #tmpOrder
             {
                 if (dtData.Rows.Count == 0 && !ButtonOpen)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtData;
+                listControlBindingSource1.DataSource = ReCombineOrderList(dtData);
                 grid_Filter();
                 grid1_sorting();
                 ChangeDetailColor();
@@ -812,6 +772,107 @@ drop table #tmpOrder
             }
             this.HideWaitMessage();
         }
+
+        /// <summary>
+        /// 重新組成 OrderList
+        /// 規則入下：
+        /// </summary>
+        /// <param name="dtData">需要重新組成的 DataTable</param>
+        /// <returns>重新組成的 DataTable</returns>
+        private DataTable ReCombineOrderList(DataTable dtData)
+        {
+            foreach (DataRow dr in dtData.Rows)
+            {
+                /*
+                 * 以下情況不需要重組 OrderIDList
+                 * 1. OrderIDList 是空的
+                 * 2. 該筆是 Local 物料 P04
+                 */
+                if (dr["OrderIdList"].ToString().Equals(string.Empty)
+                    || dr["From_Program"].ToString().Equals("P04"))
+                {
+                    continue;
+                }
+
+                List<string> strNewOrderList = new List<string>();
+                string[] arrayOrderList;
+                bool listHaveDiffOrderID = OrderByOrderList(dr["OrderIdList"].ToString().Split('/'), dr["id"].ToString(), out arrayOrderList);
+
+                // 搜尋的 OrderID
+                string strID = dr["id"].ToString();
+
+                // 比較的 OrderID
+                string strCompareID = dr["id"].ToString();
+                foreach (string item in arrayOrderList)
+                {
+                    // 目前比較的 ID 不存在於 item
+                    // 代表 item 讀取到新的 ID
+                    if (item.Contains(strCompareID) == false
+                        || strCompareID.Equals(string.Empty))
+                    {
+                        strCompareID = item.Substring(0, 10);
+                        strNewOrderList.Add(item);
+                    }
+                    else if (item.Equals(strCompareID))
+                    {
+                        if (item.Equals(strID))
+                        {
+                            /* 
+                             * Case 1   OrderList 存在不同的 OrderID
+                             *          則每一個新的 OrderID 都必須完整顯示
+                             * Case 2   OrderList 每一項都與搜尋的 OrderID 相同
+                             *          則不需要顯示完整的 item 
+                             *          每一項只需從第八碼開始取字串
+                             */
+                            if (listHaveDiffOrderID)
+                            {
+                                strNewOrderList.Add(item);
+                            }
+                            else
+                            {
+                                strNewOrderList.Add(item.Substring(8));
+                            }
+                        }
+                        else
+                        {
+                            strNewOrderList.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        strNewOrderList.Add(item.Substring(8));
+                    }
+                }
+
+                dr["OrderIdList"] = strNewOrderList.Aggregate((a, b) => a + "/" + b);
+            }
+
+            return dtData;
+        }
+
+        /// <summary>
+        /// 重新排序 OrderList
+        /// OrderID = ID 排在第一位
+        /// 剩下的按照順序做排序
+        /// </summary>
+        /// <param name="arrayOrderList">arrayOrderList</param>
+        /// <param name="strOrderListID">strOrderListID</param>
+        /// <param name="returnOrderList">returnOrderList</param>
+        /// <returns>是否存在不同的 OrderID</returns>
+        private bool OrderByOrderList(string[] arrayOrderList, string strOrderListID, out string[] returnOrderList)
+        {
+            returnOrderList = new string[arrayOrderList.Count()];
+            string[] arraySameAsID = arrayOrderList.AsEnumerable().Where(index => index.Contains(strOrderListID) == true).ToArray();
+            string[] arrayDiffAsID = arrayOrderList.AsEnumerable().Where(index => index.Contains(strOrderListID) == false).ToArray();
+
+            Array.Sort(arraySameAsID);
+            Array.Sort(arrayDiffAsID);
+
+            arraySameAsID.CopyTo(returnOrderList, 0);
+            arrayDiffAsID.CopyTo(returnOrderList, arraySameAsID.Length);
+            return arrayDiffAsID.Count() > 0 ? true : false;
+        }
+
         private void grid_Filter()
         {
             if (gridMaterialStatus.RowCount > 0)
