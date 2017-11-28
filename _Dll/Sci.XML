@@ -2340,6 +2340,12 @@
             <param name="data"></param>
             <returns></returns>
         </member>
+        <member name="F:Sci.Utility.Report.ExcelCOM.GridColumn_FormatTypes">
+            <summary>
+            ConvertGrid2Table_byDisplayedRow裡面會針對要轉table的column做定義, 填到GridColumn_FormatTypes
+            填入值有 numeric/date/formated/object
+            </summary>
+        </member>
         <member name="M:Sci.Utility.Report.ExcelCOM.ConvertGrid2Table_byInnerTable(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String},System.Data.DataTable@)">
             <summary>
             將Grid顯示資料轉為 DataTable , 並只取出顯示的Grid 欄位 , Table未顯示在Grid上的欄位不轉
@@ -8953,6 +8959,11 @@
             </summary>
             <returns>true or false.</returns>
         </member>
+        <member name="P:Sci.Win.Tems.Input1.DeleteClipAutomatic">
+            <summary>
+            單子刪除時, 是否連帶刪除附件
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tems.Input1.ClickDelete">
             <summary>
             On ClickDelete method.
@@ -12186,6 +12197,25 @@
             Clip subpage class.
             </summary>
         </member>
+        <member name="F:Sci.Win.Tools.Clip.mappingClipDic">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.Clip.ClipRootDir">
+            <summary>
+            should be Sci.Env.Cfg.ClipPath
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.GetClipDirYYYYMM(Sci.Win.SYS.CLIPRow,System.String@,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="dir"></param>
+            <param name="clipDir"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.Win.Tools.Clip.#ctor">
             <summary>
             Constructor of Clip.
@@ -12224,21 +12254,6 @@
             Data collection of gird.
             </summary>
         </member>
-        <member name="F:Sci.Win.Tools.Clip._firstcliptime">
-            <summary>
-            Field of first clip time.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.Clip._yyyymm">
-            <summary>
-            Clip path string.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.Clip._fullpath">
-            <summary>
-            Clip path string.
-            </summary>
-        </member>
         <member name="F:Sci.Win.Tools.Clip.savefiledialog">
             <summary>
             Save dialog object.
@@ -12269,21 +12284,6 @@
             Property of Usercode.
             </summary>
         </member>
-        <member name="P:Sci.Win.Tools.Clip.FirstClipTime">
-            <summary>
-            Property of first clip time.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.Clip.YYYYMM">
-            <summary>
-            Property of YYYYMM
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.Clip.FullPath">
-            <summary>
-            Property of FullPath.
-            </summary>
-        </member>
         <member name="M:Sci.Win.Tools.Clip.SetButton">
             <summary>
             Set buttons status.
@@ -12308,7 +12308,7 @@
             </summary>
             <returns>Row of selected.</returns>
         </member>
-        <member name="M:Sci.Win.Tools.Clip.GetClipFile(Sci.Win.SYS.CLIPRow,System.String@)">
+        <member name="M:Sci.Win.Tools.Clip.GetClipFile(Sci.Win.SYS.CLIPRow,System.String,System.Collections.Generic.Dictionary{System.String,System.String[]},System.String@)">
             <summary>
             Get file name from specified row.
             </summary>
@@ -12316,11 +12316,12 @@
             <param name="file">File name string.</param>
             <returns>Result of process.</returns>
         </member>
-        <member name="M:Sci.Win.Tools.Clip.GetOlderClipFileName(Sci.Win.SYS.CLIPRow,System.String@)">
+        <member name="M:Sci.Win.Tools.Clip.GetOlderClipFileName(Sci.Win.SYS.CLIPRow,System.String,System.Collections.Generic.Dictionary{System.String,System.String[]},System.String@)">
             <summary>
             取得舊版的 Clip 檔名
             </summary>
             <param name="data"></param>
+            <param name="clipDir"></param>
             <param name="filename"></param>
             <returns></returns>
         </member>
@@ -12383,10 +12384,37 @@
             不顯示畫面, 直接夾檔
             </summary>
             <param name="tablename">Table name</param>
-            <param name="uid">a unique value in {tablename} </param>
+            <param name="uniqueID">a unique value in {tablename} </param>
             <param name="userID">who add clip (refer to Pass1.ID )</param>
             <param name="clipFiles">one or more strings for each file (full path)</param>
+            <returns>success or not</returns>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.AddClip(System.Collections.Generic.IList{Sci.Win.SYS.CLIPRow},System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            
+            </summary>
+            <param name="datas"></param>
+            <param name="dir"></param>
+            <param name="_yyyymm"></param>
+            <param name="addTime"></param>
+            <returns>success or not</returns>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.GetAllClipFiles(System.String,System.String,System.String[]@)">
+            <summary>
+            列出所有的附檔
+            </summary>
+            <param name="tableName"></param>
+            <param name="uniqueID"></param>
+            <param name="files"></param>
             <returns></returns>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.DeleteClip(System.String,System.String)">
+            <summary>
+            隨單號 + tableName刪除其所有的副擋
+            </summary>
+            <param name="tableName">tableName</param>
+            <param name="uniqueID">單號</param>
+            <returns>ok or not</returns>
         </member>
         <member name="F:Sci.Win.Tools.Clip.components">
             <summary>
@@ -12421,7 +12449,7 @@
             </summary>
             <param name="tablename">Table name</param>
             <param name="uid">usercode of login.</param>
-            <param name="yyyymm">yyyymm sub directory.</param>
+            <param name="yyyymm">none used parameter</param>
         </member>
         <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
             <summary>
@@ -12486,26 +12514,6 @@
         <member name="P:Sci.Win.Tools.Clip01.UID">
             <summary>
             Property of usercode.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.Clip01._yyyymm">
-            <summary>
-            Field of yyyymm
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.Clip01.YYYYMM">
-            <summary>
-            Property of yyyymm.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.Clip01._fullpath">
-            <summary>
-            Field of full path name.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.Clip01.FullPath">
-            <summary>
-            Property of full path name.
             </summary>
         </member>
         <member name="P:Sci.Win.Tools.Clip01.Inserteds">
