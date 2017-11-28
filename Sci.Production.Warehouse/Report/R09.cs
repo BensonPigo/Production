@@ -128,6 +128,7 @@ inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
 inner join Orders orders on c.poid = orders.id
+inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 outer apply (select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)) v
 outer apply(
 	select qty = sum(i.qty)
