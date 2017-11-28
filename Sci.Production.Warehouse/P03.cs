@@ -689,59 +689,59 @@ from(
     ) as xxx2
 ) as xxx3
 where ROW_NUMBER_D =1 
+
 --加入P04資料
-	union all
-       select 
-			1 as ROW_NUMBER_D
-			, [ukey] = null
-           , [id] = o.POID
-           , [seq1] = '-'
-           , [seq2] = '-'
-			, [StyleID] = '-'
-           , [SuppID]  = c.ID 
-           , [SuppCountry] = '-'
-           , [eta] = '-'
-           , [RevisedETA] = '-'
-           , [Refno]		= l.Refno
-           , [SCIRefno] = '-'
-           , [FabricType] = l.UnitID
-           , [fabrictype2] = '-'
-           , [fabrictypeOrderby] = null
-           , [ColorID] = l.ThreadColorID
-           , [SizeSpec] = '-'
-           , [unitqty] = '-'
-           , [Qty] = '-'
-           , [NetQty] = '-'
-           , [useqty] = '-'
-           , [shipQty] = '-'
-           , [ShipFOC] = '-'
-           , [InputQty] = '-'
-           , [POUnit] = '-'
-           , [Complete] = '-'
-           , [FinalETA] = '-'
-           , [InQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
-           , [StockUnit] = l.UnitID 
-           , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
-           , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
-           , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
-           , [LInvQty] =  '-' 
-           , [LObQty] =  '-'
-           , [ALocation] = l.ALocation
-           , [BLocation] = '-' 
-           , [ThirdCountry] = 0
-           , [junk] = 0
-           , [BomTypeCalculate] = 0
-           , [description]  = b.Description
-           , [currencyid] = '-'
-           , [FIR] = '-'
-           , [Remark] = '-'
-           , [OrderIdList] = l.OrderID
-           , [From_Program] = 'P04'
-           from LocalInventory l
-           left join orders o on o.id = l.orderid
-           left join LocalItem b on l.Refno=b.RefNo
-           left join LocalSupp c on b.LocalSuppid=c.ID
-            where l.OrderID like @id + '%'      
+union all
+select ROW_NUMBER_D = 1
+	   , [ukey] = null
+       , [ID] = l.orderid
+       , [seq1] = '-'
+       , [seq2] = '-'
+       , [StyleID] = '-'
+       , [SuppID]  = c.ID 
+       , [SuppCountry] = '-'
+       , [eta] = '-'
+       , [RevisedETA] = '-'
+       , [Refno]		= l.Refno
+       , [SCIRefno] = '-'
+       , [FabricType] = l.UnitID
+       , [fabrictype2] = '-'
+       , [fabrictypeOrderby] = null
+       , [ColorID] = l.ThreadColorID
+       , [SizeSpec] = '-'
+       , [unitqty] = '-'
+       , [Qty] = '-'
+       , [NetQty] = '-'
+       , [useqty] = '-'
+       , [shipQty] = '-'
+       , [ShipFOC] = '-'
+       , [InputQty] = '-'
+       , [POUnit] = '-'
+       , [Complete] = '-'
+       , [FinalETA] = '-'
+       , [InQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
+       , [StockUnit] = l.UnitID 
+       , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
+       , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
+       , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
+       , [LInvQty] =  '-' 
+       , [LObQty] =  '-'
+       , [ALocation] = l.ALocation
+       , [BLocation] = '-' 
+       , [ThirdCountry] = 0
+       , [junk] = 0
+       , [BomTypeCalculate] = 0
+       , [description]  = b.Description
+       , [currencyid] = '-'
+       , [FIR] = '-'
+       , [Remark] = '-'
+       , [OrderIdList] = l.OrderID
+       , [From_Program] = 'P04'
+from LocalInventory l
+left join LocalItem b on l.Refno = b.RefNo
+left join LocalSupp c on b.LocalSuppid = c.ID
+where l.OrderID like @id + '%'
+
 drop table #tmpOrder
             ";
             #endregion
