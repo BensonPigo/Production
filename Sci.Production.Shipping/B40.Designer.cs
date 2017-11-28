@@ -519,6 +519,7 @@
             this.checkBoxPreShrink.TabIndex = 4;
             this.checkBoxPreShrink.Text = "PreShrink";
             this.checkBoxPreShrink.UseVisualStyleBackColor = true;
+            this.checkBoxPreShrink.Visible = false;
             // 
             // B40
             // 
