@@ -61,6 +61,7 @@
             this.label17 = new Sci.Win.UI.Label();
             this.checkNoNeedToDeclare = new Sci.Win.UI.CheckBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.checkBoxPreShrink = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -76,6 +77,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBrand);
+            this.detailcont.Controls.Add(this.checkBoxPreShrink);
             this.detailcont.Controls.Add(this.checkNoNeedToDeclare);
             this.detailcont.Controls.Add(this.label17);
             this.detailcont.Controls.Add(this.label16);
@@ -108,7 +110,7 @@
             this.detailcont.Controls.Add(this.labelDescription2);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelRefNo);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(737, 350);
             // 
             // detailbtm
             // 
@@ -141,7 +143,6 @@
             // 
             // labelRefNo
             // 
-            this.labelRefNo.Lines = 0;
             this.labelRefNo.Location = new System.Drawing.Point(15, 13);
             this.labelRefNo.Name = "labelRefNo";
             this.labelRefNo.Size = new System.Drawing.Size(90, 23);
@@ -150,7 +151,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(15, 45);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(90, 23);
@@ -159,7 +159,6 @@
             // 
             // labelDescription2
             // 
-            this.labelDescription2.Lines = 0;
             this.labelDescription2.Location = new System.Drawing.Point(15, 77);
             this.labelDescription2.Name = "labelDescription2";
             this.labelDescription2.Size = new System.Drawing.Size(90, 46);
@@ -169,7 +168,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(15, 154);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(90, 23);
@@ -178,7 +176,6 @@
             // 
             // labelMaterialType
             // 
-            this.labelMaterialType.Lines = 0;
             this.labelMaterialType.Location = new System.Drawing.Point(15, 186);
             this.labelMaterialType.Name = "labelMaterialType";
             this.labelMaterialType.Size = new System.Drawing.Size(90, 23);
@@ -187,7 +184,6 @@
             // 
             // labelUsageUnit
             // 
-            this.labelUsageUnit.Lines = 0;
             this.labelUsageUnit.Location = new System.Drawing.Point(15, 218);
             this.labelUsageUnit.Name = "labelUsageUnit";
             this.labelUsageUnit.Size = new System.Drawing.Size(90, 23);
@@ -196,7 +192,6 @@
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Lines = 0;
             this.labelNLCode.Location = new System.Drawing.Point(15, 250);
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(90, 23);
@@ -205,7 +200,6 @@
             // 
             // labelHSCode
             // 
-            this.labelHSCode.Lines = 0;
             this.labelHSCode.Location = new System.Drawing.Point(15, 282);
             this.labelHSCode.Name = "labelHSCode";
             this.labelHSCode.Size = new System.Drawing.Size(90, 23);
@@ -214,7 +208,6 @@
             // 
             // labelCustomsUnit
             // 
-            this.labelCustomsUnit.Lines = 0;
             this.labelCustomsUnit.Location = new System.Drawing.Point(15, 314);
             this.labelCustomsUnit.Name = "labelCustomsUnit";
             this.labelCustomsUnit.Size = new System.Drawing.Size(90, 23);
@@ -223,7 +216,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(466, 13);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(85, 23);
@@ -339,7 +331,6 @@
             // 
             // labelUsableWidth
             // 
-            this.labelUsableWidth.Lines = 0;
             this.labelUsableWidth.Location = new System.Drawing.Point(466, 154);
             this.labelUsableWidth.Name = "labelUsableWidth";
             this.labelUsableWidth.Size = new System.Drawing.Size(85, 23);
@@ -348,7 +339,6 @@
             // 
             // labelWidthPcs
             // 
-            this.labelWidthPcs.Lines = 0;
             this.labelWidthPcs.Location = new System.Drawing.Point(466, 186);
             this.labelWidthPcs.Name = "labelWidthPcs";
             this.labelWidthPcs.Size = new System.Drawing.Size(85, 23);
@@ -357,7 +347,6 @@
             // 
             // labelLengthPcs
             // 
-            this.labelLengthPcs.Lines = 0;
             this.labelLengthPcs.Location = new System.Drawing.Point(466, 218);
             this.labelLengthPcs.Name = "labelLengthPcs";
             this.labelLengthPcs.Size = new System.Drawing.Size(85, 23);
@@ -366,7 +355,6 @@
             // 
             // labelKGPcs
             // 
-            this.labelKGPcs.Lines = 0;
             this.labelKGPcs.Location = new System.Drawing.Point(466, 250);
             this.labelKGPcs.Name = "labelKGPcs";
             this.labelKGPcs.Size = new System.Drawing.Size(85, 23);
@@ -460,7 +448,6 @@
             // label15
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
-            this.label15.Lines = 0;
             this.label15.Location = new System.Drawing.Point(614, 154);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(31, 23);
@@ -474,7 +461,6 @@
             // label16
             // 
             this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Lines = 0;
             this.label16.Location = new System.Drawing.Point(634, 186);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(16, 23);
@@ -488,7 +474,6 @@
             // label17
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
-            this.label17.Lines = 0;
             this.label17.Location = new System.Drawing.Point(634, 218);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(16, 23);
@@ -520,6 +505,20 @@
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(94, 23);
             this.displayBrand.TabIndex = 33;
+            // 
+            // checkBoxPreShrink
+            // 
+            this.checkBoxPreShrink.AutoSize = true;
+            this.checkBoxPreShrink.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PreShrink", true));
+            this.checkBoxPreShrink.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBoxPreShrink.Location = new System.Drawing.Point(466, 300);
+            this.checkBoxPreShrink.Name = "checkBoxPreShrink";
+            this.checkBoxPreShrink.IsSupportEditMode = false;
+            this.checkBoxPreShrink.ReadOnly = true;
+            this.checkBoxPreShrink.Size = new System.Drawing.Size(89, 21);
+            this.checkBoxPreShrink.TabIndex = 4;
+            this.checkBoxPreShrink.Text = "PreShrink";
+            this.checkBoxPreShrink.UseVisualStyleBackColor = true;
             // 
             // B40
             // 
@@ -583,5 +582,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayBrand;
+        private Win.UI.CheckBox checkBoxPreShrink;
     }
 }
