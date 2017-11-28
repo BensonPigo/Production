@@ -353,7 +353,8 @@ with cte as(
             , qty = Round (sum (isnull (1.0 * tb.OrderQty * SizeSpec.value, 0.00) * b.UsedQty * b.RATE), 2) 
 	from #tmpPO_supp_detail b 
     left join (
-        select tmpB.*
+      select --tmpB.*
+        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
                , ob.Seq1
         from #Tmp_BoaExpend tmpB
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
@@ -558,7 +559,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
