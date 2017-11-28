@@ -104,7 +104,6 @@
             // lbRemark
             // 
             this.lbRemark.BackColor = System.Drawing.SystemColors.Control;
-            this.lbRemark.Lines = 0;
             this.lbRemark.Location = new System.Drawing.Point(3, 248);
             this.lbRemark.Name = "lbRemark";
             this.lbRemark.Size = new System.Drawing.Size(241, 23);
@@ -307,7 +306,6 @@
             // 
             // lbSource
             // 
-            this.lbSource.Lines = 0;
             this.lbSource.Location = new System.Drawing.Point(3, 207);
             this.lbSource.Name = "lbSource";
             this.lbSource.Size = new System.Drawing.Size(53, 23);
@@ -316,7 +314,6 @@
             // 
             // lbReport
             // 
-            this.lbReport.Lines = 0;
             this.lbReport.Location = new System.Drawing.Point(3, 70);
             this.lbReport.Name = "lbReport";
             this.lbReport.Size = new System.Drawing.Size(52, 23);
@@ -325,7 +322,6 @@
             // 
             // lbMonth
             // 
-            this.lbMonth.Lines = 0;
             this.lbMonth.Location = new System.Drawing.Point(133, 19);
             this.lbMonth.Name = "lbMonth";
             this.lbMonth.Size = new System.Drawing.Size(49, 23);
@@ -334,7 +330,6 @@
             // 
             // lbYear
             // 
-            this.lbYear.Lines = 0;
             this.lbYear.Location = new System.Drawing.Point(3, 19);
             this.lbYear.Name = "lbYear";
             this.lbYear.Size = new System.Drawing.Size(40, 23);
@@ -344,7 +339,6 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(334, 224);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(91, 23);
@@ -391,6 +385,7 @@
             this.btnEdit.TabIndex = 2;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Visible = false;
             this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnUndo

@@ -39,7 +39,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.EditMode = true;
+            this.EditMode = false;
             this.print.Visible = false;
 
             this.radioAGC.CheckedChanged += this.RdRportType_CheckedChanged;
