@@ -44,7 +44,7 @@ namespace PMSUploadDataToAPS.Daily
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //MDivisionID.ReadOnly = false;
+
             OnRequery();
 
             transferPMS.fromSystem = "Production";
@@ -93,8 +93,6 @@ namespace PMSUploadDataToAPS.Daily
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
-            //String toAddress = "ben.chen@sportscity.com.tw";
-            //String ccAddress = "";
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
@@ -122,9 +120,8 @@ namespace PMSUploadDataToAPS.Daily
             {
                 return AsyncUpdateExport(conn);
             });
-
-            if (issucess)
-                mymailTo();            
+            
+            mymailTo();
 
             if (!result)
             {
@@ -143,14 +140,18 @@ namespace PMSUploadDataToAPS.Daily
             #region 完成後發送Mail
             #region 組合 Desc
             desc = "UPDATE usp_PMSUploadDataToAPS " + Environment.NewLine;
-            desc += Environment.NewLine+"Dear All:" + Environment.NewLine + Environment.NewLine +
+            desc += Environment.NewLine + "Dear All:" + Environment.NewLine + Environment.NewLine +
                    "             (**Please don't reply this mail. **)" + Environment.NewLine + Environment.NewLine +
                    "PMS system already uploaded data to APS." + Environment.NewLine +
                    "Pls confirm and take notes." + Environment.NewLine +
                    "================================" +
-                    Environment.NewLine + mailTo["Content"].ToString() + Environment.NewLine +
-                    "Sql msg:" + Environment.NewLine +
+                    Environment.NewLine + mailTo["Content"].ToString() + Environment.NewLine;
+            if (sqlmsg.ToString().Contains("ERROR"))
+            {
+                desc += "Sql msg:" + Environment.NewLine +
                     sqlmsg.ToString() + Environment.NewLine;
+                issucess = false;
+            }                    
             #endregion
 
             subject = mailTo["Subject"].ToString().TrimEnd() +" - ["+ this.CurrentData["RgCode"].ToString() + "]";
@@ -180,9 +181,7 @@ namespace PMSUploadDataToAPS.Daily
             }
             catch (SqlException se)
             {
-                //return Result.F("執行資料庫預存程序時發生錯誤。", se);
                 issucess = false;
-                mymailTo();
                 return Ict.Result.F(se);
             }
             return Ict.Result.True;
