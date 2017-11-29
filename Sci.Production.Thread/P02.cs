@@ -132,6 +132,7 @@ SELECT  a.*
 						   ) art
                            for xml path('')
                           ), 1, 1, '')
+        ,tasAllowance = 0
 FROM ThreadRequisition_Detail a WITH (NOLOCK) 
 Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
 Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
@@ -196,23 +197,22 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     return;
                 }
 
-                if (this.CurrentDetailData["autoCreate"].ToString() == "True")
-                {
-                    return;
-                }
-
                 DataRow refdr;
                 if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
                 {
                     this.CurrentDetailData["Description"] = refdr["Description"];
                     this.CurrentDetailData["Refno"] = refdr["refno"];
                     this.CurrentDetailData["MeterToCone"] = refdr["MeterToCone"];
+                    this.CurrentDetailData["TotalQty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsumptionQty"]) / MyUtility.Convert.GetDecimal(refdr["MeterToCone"]));
+                    this.CurrentDetailData["AllowanceQty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(this.CurrentDetailData["TotalQty"]) * MyUtility.Convert.GetDecimal(this.CurrentDetailData["tasAllowance"]));
                 }
                 else
                 {
                     this.CurrentDetailData["Description"] = string.Empty;
                     this.CurrentDetailData["Refno"] = string.Empty;
                     this.CurrentDetailData["MeterToCone"] = 0;
+                    this.CurrentDetailData["TotalQty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsumptionQty"]) / MyUtility.Convert.GetDecimal(refdr["MeterToCone"]));
+                    this.CurrentDetailData["AllowanceQty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(this.CurrentDetailData["TotalQty"]) * MyUtility.Convert.GetDecimal(this.CurrentDetailData["tasAllowance"]));
                 }
 
                 string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, this.CurrentDetailData["ThreadColorid"].ToString(), this.keyWord);
@@ -832,6 +832,7 @@ from (
 ) tmp
 outer apply (
     select top 1 value = CEILING (TotalQty * Allowance)
+	,tasAllowance = tas.Allowance
     from ThreadAllowanceScale tas
     where tas.LowerBound <= TotalQty
           and TotalQty <= tas.UpperBound
@@ -874,6 +875,7 @@ outer apply (
                 newdr["UsedCone"] = 0;
                 newdr["UseStockQty"] = 0;
                 newdr["Article"] = dr["Article"];
+                newdr["tasAllowance"] = dr["tasAllowance"];
                 detailtb.Rows.Add(newdr);
             }
 
