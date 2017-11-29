@@ -68,14 +68,25 @@ namespace Sci.Production.Logistic
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select p.MDivisionID,o.FactoryID,pd.OrderID,pd.CTNStartNo,pd.ReceiveDate,o.CustPONo,pd.ClogLocationId,p.BrandID
+            sqlCmd.Append(@"
+select 
+p.MDivisionID
+,o.FactoryID
+,pd.OrderID
+,pd.CTNStartNo
+,pd.ReceiveDate
+,o.CustPONo
+,pd.ClogLocationId
+,p.BrandID
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
-and (p.PulloutID = '' or po.Status = 'New')");
+and (p.PulloutID = '' or po.Status = 'New')
+and o.PulloutComplete = 0
+");
 
             if (!MyUtility.Check.Empty(this.po1))
             {
