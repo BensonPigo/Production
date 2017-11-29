@@ -32,15 +32,11 @@
             this.radioSample = new Sci.Win.UI.RadioButton();
             this.dateFactoryKPIDate = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.labelCountry = new Sci.Win.UI.Label();
             this.checkExportDetailData = new Sci.Win.UI.CheckBox();
             this.labelFactoryKPIDate = new Sci.Win.UI.Label();
-            this.labelM = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.radioGarment = new Sci.Win.UI.RadioButton();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtFactory = new Sci.Production.Class.txtfactory();
-            this.txtCountry = new Sci.Production.Class.txtcountry();
             this.SuspendLayout();
             // 
             // print
@@ -113,15 +109,6 @@
             this.labelFactory.TabIndex = 98;
             this.labelFactory.Text = "Factory";
             // 
-            // labelCountry
-            // 
-            this.labelCountry.Location = new System.Drawing.Point(18, 120);
-            this.labelCountry.Name = "labelCountry";
-            this.labelCountry.Size = new System.Drawing.Size(75, 23);
-            this.labelCountry.TabIndex = 99;
-            this.labelCountry.Text = "Country ";
-            this.labelCountry.Visible = false;
-            // 
             // checkExportDetailData
             // 
             this.checkExportDetailData.AutoSize = true;
@@ -147,15 +134,6 @@
             this.labelFactoryKPIDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelFactoryKPIDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // labelM
-            // 
-            this.labelM.Location = new System.Drawing.Point(344, 120);
-            this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(75, 23);
-            this.labelM.TabIndex = 104;
-            this.labelM.Text = "M";
-            this.labelM.Visible = false;
-            // 
             // labelType
             // 
             this.labelType.Location = new System.Drawing.Point(18, 19);
@@ -176,16 +154,6 @@
             this.radioGarment.Text = "Garment";
             this.radioGarment.UseVisualStyleBackColor = true;
             // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(422, 120);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 3;
-            this.txtMdivision.Visible = false;
-            // 
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
@@ -197,28 +165,14 @@
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 4;
             // 
-            // txtCountry
-            // 
-            this.txtCountry.DisplayBox1Binding = "";
-            this.txtCountry.Location = new System.Drawing.Point(96, 120);
-            this.txtCountry.Name = "txtCountry";
-            this.txtCountry.Size = new System.Drawing.Size(232, 38);
-            this.txtCountry.TabIndex = 5;
-            this.txtCountry.TextBox1Binding = "";
-            this.txtCountry.Visible = false;
-            // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(543, 181);
+            this.ClientSize = new System.Drawing.Size(543, 149);
             this.Controls.Add(this.radioGarment);
             this.Controls.Add(this.labelType);
-            this.Controls.Add(this.txtMdivision);
-            this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelFactoryKPIDate);
             this.Controls.Add(this.txtFactory);
-            this.Controls.Add(this.txtCountry);
             this.Controls.Add(this.checkExportDetailData);
-            this.Controls.Add(this.labelCountry);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.dateFactoryKPIDate);
             this.Controls.Add(this.radioSample);
@@ -234,13 +188,9 @@
             this.Controls.SetChildIndex(this.radioSample, 0);
             this.Controls.SetChildIndex(this.dateFactoryKPIDate, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
-            this.Controls.SetChildIndex(this.labelCountry, 0);
             this.Controls.SetChildIndex(this.checkExportDetailData, 0);
-            this.Controls.SetChildIndex(this.txtCountry, 0);
             this.Controls.SetChildIndex(this.txtFactory, 0);
             this.Controls.SetChildIndex(this.labelFactoryKPIDate, 0);
-            this.Controls.SetChildIndex(this.labelM, 0);
-            this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labelType, 0);
             this.Controls.SetChildIndex(this.radioGarment, 0);
             this.ResumeLayout(false);
@@ -254,13 +204,9 @@
         private Win.UI.RadioButton radioSample;
         private Win.UI.DateRange dateFactoryKPIDate;
         private Win.UI.Label labelFactory;
-        private Win.UI.Label labelCountry;
         private Win.UI.CheckBox checkExportDetailData;
-        private Class.txtcountry txtCountry;
         private Class.txtfactory txtFactory;
         private Win.UI.Label labelFactoryKPIDate;
-        private Win.UI.Label labelM;
-        private Class.txtMdivision txtMdivision;
         private Win.UI.Label labelType;
         private Win.UI.RadioButton radioGarment;
     }

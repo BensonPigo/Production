@@ -101,7 +101,7 @@ SELECT
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
 ,I = Order_QS.ShipmodeID
 ,J = Cast(Order_QS.QTY as int)
-,K = Cast(isnull(pd.Qty,0) as int) -- +isnull(os.Qty,0) 沒這table
+,K = Cast(isnull(pd.Qty,0)+isnull(os.Qty,0) as int)
 ,L = Cast(isnull(pd.FailQty,Order_QS.QTY) as int)
 ,M = CONVERT(char(10), p.PulloutDate, 20)
 ,N = Order_QS.ShipmodeID
@@ -124,11 +124,16 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
---outer apply (select sum(qty) Qty from Order_Specdetail os where o.id = os.id and os.Respons = 'P' group by os.id) os -- 沒這table
+outer apply (
+    select sum(qty) Qty 
+    from Order_Specdetail os 
+    where o.id = os.id and os.Respons = 'P' 
+    group by os.id
+) os 
 outer apply (
 	Select 
-		Qty = Sum(rA.Qty),
-		FailQty = Sum(rB.Qty)
+		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
+		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'>')
 	From Pullout_Detail pd
 	Outer apply (Select Qty = IIF(pd.PulloutDate <= Order_QS.FtyKPI, pd.shipqty, 0)) rA
 	Outer apply (Select Qty = IIF(pd.PulloutDate >  Order_QS.FtyKPI, pd.shipqty, 0)) rB
@@ -139,46 +144,29 @@ outer apply (
 	select COUNT(op.PulloutDate) PulloutDate 
 	from Pullout_Detail op 
 	where op.OrderID = o.id 
+    and op.ShipQty> 0
 	and op.OrderShipmodeSeq = Order_QS.Seq
 ) op 
-outer apply (select top 1 PulloutDate from Pullout_Detail pd where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
-Order by PulloutDate desc) p
+outer apply (
+    select top 1 PulloutDate 
+    from Pullout_Detail pd 
+    where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
+    and pd.ShipQty> 0
+    Order by PulloutDate desc
+) p
 where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
 
-                // 依據Factory,Country and Mdivision 是否有值塞入SQL中
-                string strwhere = @"AND o.FACTORYID IN ( select KPICode from Factory where 1=1 ";
-                if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                {
-                    strwhere += string.Format(@"and ID='{0}' ", this.txtFactory.Text);
-                }
-
-                if (!MyUtility.Check.Empty(this.txtCountry.TextBox1.Text))
-                {
-                    strwhere += string.Format(@"and CountryID='{0}' ", this.txtCountry.TextBox1.Text);
-                }
-
-                if (!MyUtility.Check.Empty(this.txtMdivision.Text))
-                {
-                    strwhere += string.Format(@"and MDivisionID='{0}' ", this.txtMdivision.Text);
-                }
-
-                strwhere += "and KPICode !='' ";
-
-                // 補上 Orders.Cateory and Factory.Type 判斷
                 if (this.radioBulk.Checked)
                 {
-                    strwhere += "and Type='B' ) ";
-                    strSQL += strwhere + "AND o.Category ='B' ";
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strwhere += "and Type='S' ) ";
-                    strSQL += strwhere + "AND o.Category ='S' ";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
-                    strwhere += " ) ";
-                    strSQL += strwhere + "AND o.Category ='G' ";
+                    strSQL += " AND o.Category = 'G'";
                 }
 
                 if (this.dateFactoryKPIDate.Value1 != null)
@@ -189,6 +177,11 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += @"
@@ -266,15 +259,15 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
 
                 if (this.radioBulk.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='B'";
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
-                    strSQL += strwhere + " AND o.Category ='G'";
+                    strSQL += " AND o.Category = 'G'";
                 }
 
                 if (this.dateFactoryKPIDate.Value1 != null)
@@ -285,6 +278,11 @@ Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
                 if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtOrder_QtyShip)))
@@ -305,18 +303,19 @@ Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FACTORYID = f.ID 
 Where pd.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+and pd.ShipQty> 0 
 ";
                 if (this.radioBulk.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='B'";
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
-                    strSQL += strwhere + " AND o.Category ='G'";
+                    strSQL += " AND o.Category = 'G'";
                 }
 
                 if (this.dateFactoryKPIDate.Value1 != null)
@@ -329,7 +328,11 @@ Where pd.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
                 }
 
-                strSQL += " GROUP BY o.ID ,pd.PulloutDate";
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
+                }
+
                 if (!(result = DBProxy.Current.Select(null, strSQL, null, out dtPullout_Detail)))
                 {
                     return result;
@@ -345,18 +348,20 @@ From Pullout_Detail p, ORDERS o
 Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FactoryID = f.ID 
-Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
+Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+and p.ShipQty> 0
+";
                 if (this.radioBulk.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='B'";
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
-                    strSQL += strwhere + " AND o.Category ='G'";
+                    strSQL += " AND o.Category = 'G'";
                 }
 
                 if (this.dateFactoryKPIDate.Value1 != null)
@@ -367,6 +372,11 @@ Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += " GROUP BY o.ID ";
@@ -394,15 +404,15 @@ AND r.ReasonTypeID = TH_Order.ReasonTypeID
 AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 if (this.radioBulk.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='B'";
+                    strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
                 }
                 else if (this.radioSample.Checked)
                 {
-                    strSQL += strwhere + " AND o.Category ='S'";
+                    strSQL += " AND o.Category = 'S' AND f.Type = 'S'";
                 }
                 else
                 {
-                    strSQL += strwhere + " AND o.Category ='G'";
+                    strSQL += " AND o.Category = 'G'";
                 }
 
                 if (this.dateFactoryKPIDate.Value1 != null)
@@ -413,6 +423,11 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 if (this.dateFactoryKPIDate.Value2 != null)
                 {
                     strSQL += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                }
+
+                if (this.txtFactory.Text != string.Empty)
+                {
+                    strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
                 strSQL += "  order by TH_Order.AddDate desc ";
@@ -548,40 +563,18 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 if (this.checkExportDetailData.Checked)
                 {
                     #region On time Order List by PullOut
-                    // 依據Factory,Country and Mdivision 是否有值塞入SQL中
-                    string where = @" AND o.FACTORYID IN ( select KPICode from Factory where 1=1 ";
-                    if (!MyUtility.Check.Empty(this.txtFactory.Text))
-                    {
-                        where += string.Format(@"and ID='{0}' ", this.txtFactory.Text);
-                    }
-
-                    if (!MyUtility.Check.Empty(this.txtCountry.TextBox1.Text))
-                    {
-                        where += string.Format(@"and CountryID='{0}' ", this.txtCountry.TextBox1.Text);
-                    }
-
-                    if (!MyUtility.Check.Empty(this.txtMdivision.Text))
-                    {
-                        where += string.Format(@"and MDivisionID='{0}' ", this.txtMdivision.Text);
-                    }
-
-                    where += " and KPICode!='' ";
-
-                    // 補上 Orders.Cateory and Factory.Type 判斷
+                    string where = string.Empty;
                     if (this.radioBulk.Checked)
                     {
-                        where += "and Type='B' )";
-                        where += " AND o.Category ='B' ";
+                        where += " AND o.Category = 'B' AND f.Type = 'B'";
                     }
                     else if (this.radioSample.Checked)
                     {
-                        where += "and Type='S' ) ";
-                        where += " AND o.Category ='S' ";
+                        where += " AND o.Category = 'S' AND f.Type = 'S'";
                     }
                     else
                     {
-                        where += " ) ";
-                        where += " AND o.Category ='G' ";
+                        where += " AND o.Category = 'G'";
                     }
 
                     if (this.dateFactoryKPIDate.Value1 != null)
@@ -592,6 +585,11 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                     if (this.dateFactoryKPIDate.Value2 != null)
                     {
                         where += string.Format(" AND Order_QS.FtyKPI <= '{0}' ", this.dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    }
+
+                    if (this.txtFactory.Text != string.Empty)
+                    {
+                        where += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                     }
 
                     strSQL = $@" 
@@ -618,6 +616,7 @@ OUTER APPLY (select sum(ShipQty) as sQty
 OUTER APPLY (select top 1 PulloutDate 
              from Pullout_Detail pd 
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
+             and pd.ShipQty> 0
              Order by PulloutDate desc) pd 
 where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
 {where}
@@ -660,6 +659,7 @@ OUTER APPLY (select sum(ShipQty) as sQty
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate > Order_QS.FtyKPI ) opd
 OUTER APPLY (select top 1 PulloutDate 
              from Pullout_Detail pd where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
+             and pd.ShipQty> 0
              Order by PulloutDate desc) pd
 where Order_QS.Qty > 0 and (opd.sQty > 0 or pd.PulloutDate is null) and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') {where}";
 
