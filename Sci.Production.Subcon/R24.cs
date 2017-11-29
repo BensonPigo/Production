@@ -260,7 +260,7 @@ select distinct t.FactoryID
     ,aa.StyleID
     ,cc.BuyerID
     ,aa.BrandID
-    ,dbo.getTPEPass1(aa.SMR) smr
+    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr
     ,y.order_qty
     ,x.ap_qty
     ,x.ap_amt
