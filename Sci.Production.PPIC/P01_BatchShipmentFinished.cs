@@ -64,7 +64,19 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
+and (o.Category = 'B' or o.Category = 'S' or (
+o.Category = 'M' and
+exists(
+	select A.ID
+	from PO_Supp_Detail A WITH (NOLOCK) 
+	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='PM1'
+	inner join po p on a.id=p.ID 
+	where A.ID = o.POID and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)
+	and p.Complete=0
+	)
+  )
+)
 ),
 canNotClose
 as
@@ -330,7 +342,19 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
+and (o.Category = 'B' or o.Category = 'S' or (
+o.Category = 'M' and
+exists(
+	select A.ID
+	from PO_Supp_Detail A WITH (NOLOCK) 
+	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='PM1'
+	inner join po p on a.id=p.ID 
+	where A.ID = o.POID and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)
+	and p.Complete=0
+	)
+  )
+)
 ),
 canNotClose
 as
