@@ -269,7 +269,7 @@ select distinct t.FactoryID
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
 into #tmp2
 from #tmp t
-left join orders aa WITH (NOLOCK) on aa.poid = t.poid
+left join orders aa WITH (NOLOCK) on aa.id = t.poid
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
 left join Brand cc on aa.BrandID=cc.id
 outer apply (
