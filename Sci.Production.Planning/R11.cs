@@ -79,8 +79,16 @@ namespace Sci.Production.Planning
             this.pvtid.Clear();
             for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
             {
-                this.artworktypes.Append(string.Format(@"[{0}],", this.dtArtworkType.Rows[i]["id"].ToString()));
-                this.pvtid.Append(string.Format(@",isnull([{0}],0)[{0}]", this.dtArtworkType.Rows[i]["id"].ToString()));
+                if (i == 0)
+                {
+                    this.artworktypes.Append(string.Format(@"[{0}]", this.dtArtworkType.Rows[i]["id"].ToString()));
+                }
+                else
+                {
+                    this.artworktypes.Append(string.Format(@", [{0}]", this.dtArtworkType.Rows[i]["id"].ToString()));
+                }
+
+                this.pvtid.Append($"{"\v"}, [{this.dtArtworkType.Rows[i]["id"].ToString()}] = isnull([{this.dtArtworkType.Rows[i]["id"].ToString()}], 0) {"\n"}");
             }
 
             return base.ValidateInput();
@@ -263,8 +271,8 @@ where 1=1"));
                     break;
             }
 
-            sqlCmd.Append(string.Format(
-                @"
+            sqlCmd.Append(
+                $@"
 select a.StyleID
 	,A = IIF(Sum(a.MH) = 0,' ',format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P'))	
 into #tmp_A
@@ -305,21 +313,30 @@ from
 pivot
 (
     sum(price_tms)
-    for artworktypeid in ( [SEWING],[BONDING (MACHINE)],[BONDING (HAND)],[LASER],[SEAMSEAL],[ULTRASONIC],[HEAT TRANSFER],[WELDED],[CUTTING],[DOWN],[INSPECTION],[DIE CUT],[SUBLIMATION PRINT],[QUILTING(AT)],[SUBLIMATION SPRAY],[SUBLIMATION ROLLER],[AT],[PRESSING],[PACKING],[FEEDOFARM],[FLATLOCK],[4FLATLOCK-S],[4FLATLOCK-H],[3FLATLOCK],[EYEBUTTON],[SMALL HOT PRESS],[BIG HOT PRESS],[DOWN FILLING],[ZIG ZAG],[QUILTING(HAND)],[D-chain ZIG ZAG],[REAL FLATSEAM],[Fusible],[BIG HOT FOR BONDING],[EMBROIDERY],[PRINTING],[EMBOSS/DEBOSS],[GMT WASH],[PAD PRINTING],[Garment Dye],[HEAT SET PLEAT],[SP_THREAD],[CARTON])
+    for artworktypeid in ({this.artworktypes.ToString()})
 )as pvt 
-select o.FtyGroup,o.StyleID,o.Article,o.Brand,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
-,a.A,isnull(r.R,'New Style') as R,W = iif(w.P=0 or w.P is null,'N','Y'),isnull([SEWING],0)[SEWING],isnull([BONDING (MACHINE)],0)[BONDING (MACHINE)],isnull([BONDING (HAND)],0)[BONDING (HAND)],isnull([LASER],0)[LASER],isnull([SEAMSEAL],0)[SEAMSEAL],isnull([ULTRASONIC],0)[ULTRASONIC],isnull([HEAT TRANSFER],0)[HEAT TRANSFER],isnull([WELDED],0)[WELDED],isnull([CUTTING],0)[CUTTING],isnull([DOWN],0)[DOWN],isnull([INSPECTION],0)[INSPECTION],isnull([DIE CUT],0)[DIE CUT],isnull([SUBLIMATION PRINT],0)[SUBLIMATION PRINT],isnull([QUILTING(AT)],0)[QUILTING(AT)],isnull([SUBLIMATION SPRAY],0)[SUBLIMATION SPRAY],isnull([SUBLIMATION ROLLER],0)[SUBLIMATION ROLLER],
-isnull([AT],0)[AT],
-isnull([PRESSING],0)[PRESSING],
-isnull([PACKING],0)[PACKING],isnull([FEEDOFARM],0)[FEEDOFARM],isnull([FLATLOCK],0)[FLATLOCK],isnull([4FLATLOCK-S],0)[4FLATLOCK-S],isnull([4FLATLOCK-H],0)[4FLATLOCK-H],isnull([3FLATLOCK],0)[3FLATLOCK],isnull([EYEBUTTON],0)[EYEBUTTON],isnull([SMALL HOT PRESS],0)[SMALL HOT PRESS],isnull([BIG HOT PRESS],0)[BIG HOT PRESS],isnull([DOWN FILLING],0)[DOWN FILLING],isnull([ZIG ZAG],0)[ZIG ZAG],isnull([QUILTING(HAND)],0)[QUILTING(HAND)],isnull([D-chain ZIG ZAG],0)[D-chain ZIG ZAG],isnull([REAL FLATSEAM],0)[REAL FLATSEAM],isnull([Fusible],0)[Fusible],isnull([BIG HOT FOR BONDING],0)[BIG HOT FOR BONDING],isnull([EMBROIDERY],0)[EMBROIDERY],isnull([PRINTING],0)[PRINTING],isnull([EMBOSS/DEBOSS],0)[EMBOSS/DEBOSS],isnull([GMT WASH],0)[GMT WASH],isnull([PAD PRINTING],0)[PAD PRINTING],isnull([Garment Dye],0)[Garment Dye],isnull([HEAT SET PLEAT],0)[HEAT SET PLEAT],isnull([SP_THREAD],0)[SP_THREAD],isnull([CARTON],0)[CARTON]
+
+select o.FtyGroup
+	   , o.StyleID
+	   , o.Article
+	   , o.Brand
+	   , o.SeasonID
+	   , o.CdCodeID
+	   , CPU = format(o.CPU,'0.00')
+	   , o.TQty
+	   , TCPU = format(o.TCPU,'0.00')
+	   , a.A
+	   , R = isnull(r.R,'New Style')
+	   , W = iif(w.P=0 or w.P is null,'N','Y')
+	   {this.pvtid.ToString()}
 from #tmpol o
 left join #tmp_A a on a.StyleID = o.StyleID
 left join #tmp_R r on r.StyleID = o.StyleID
 left join #tmp_P w on w.StyleID = o.StyleID
 left join #cls s on s.StyleID = o.StyleID
 order by o.FtyGroup,o.StyleID,o.SeasonID
-drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
- ", this.pvtid.ToString()));
+
+drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
 
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
@@ -443,7 +460,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
                 }
                 #endregion
 
-                objSheets.Cells[3, 12 + i] = strArtworkType;
+                objSheets.Cells[3, 13 + i] = strArtworkType;
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
