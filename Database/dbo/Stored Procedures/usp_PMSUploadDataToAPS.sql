@@ -243,8 +243,8 @@ insert into '+@SerDbDboTb+N'
 select [sRCID],''N'',[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST],[sNCTR],[sCSSE],[sCSNM],[sCUNM],[sCFTY],[sSYD1]
 ,[sGTMH],[sOTDD],[sCOTD],[sOTTD],[sQTYN],[sFIRM],[sCOLR],[sSZE],[sSHIP],[sSMOD],[sPlcOrdDate],[sREMK],[sAOTT]
 ,[sUPUS],[sUPNM],[sSYCO],[sMASTERMATERIALDATE],[sMASTERMATERIALRECEIVEDDATE],[sMATERIALDATE],[sMATERIALRECEIVEDDATE]
-,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd''
-,[sCUSY],[sCUSTOMERORDERNO])
+,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
+,[sCUSY],[sCUSTOMERORDERNO]
 from #tmp2
 where C is null--目標沒有
 
