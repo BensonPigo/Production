@@ -75,6 +75,7 @@ namespace Sci.Production.Subcon
             #region SQL CMD
             string sqlCmd = string.Format(@"
 select	AP.ID
+       ,O.poid
 		, AP.FactoryId
 		, AP.Remark
 		, AP.Handle
@@ -117,7 +118,7 @@ Where	AP.POType='O'
             (Convert (date, AP.AddDate)  >= Convert(date, DATEADD(m, -2, GETDATE()))
 		Or Convert (date, AP.EditDate) >=Convert(date, DATEADD(d, -7, GETDATE())) )
 
-group by AP.ID, AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
+group by AP.ID, O.poid,AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
 		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
 		 , isnull(C.FirstCutDate,O.CutInLine), AP.Delivery, OA.Article,OA.Cost,O.AddDate,O.EditDate");
                 //, (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
