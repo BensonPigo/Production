@@ -132,7 +132,6 @@ SELECT  a.*
 						   ) art
                            for xml path('')
                           ), 1, 1, '')
-        ,tasAllowance = 0
 FROM ThreadRequisition_Detail a WITH (NOLOCK) 
 Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
 Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
