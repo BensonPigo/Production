@@ -351,7 +351,8 @@ namespace Sci.Production.Warehouse
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
-            .Text("Remark", header: "Remark", iseditingreadonly: true)  //34
+            .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
+            .Text("Remark", header: "Remark", iseditingreadonly: true)  //35
             ;
             #endregion
 
@@ -518,6 +519,7 @@ from(
             , description
             , currencyid
             , FIR
+            , Preshrink
             , Remark
             , OrderIdList
              , From_Program
@@ -579,6 +581,7 @@ from(
                                                                         and seq1 = m.seq1 
                                                                         and seq2 = m.seq2 
                                                                 )t order by invNo  for xml path('')),1,1,'') FIR
+                    , iif(Fabric.Preshrink=1,'V','') Preshrink
                     ,(Select cast(tmp.Remark as nvarchar)+',' 
                       from (
 			                    select b1.remark 
@@ -657,6 +660,7 @@ from(
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
                     , stuff((select Concat('/',t.Result) from (SELECT invNo, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by invNo for xml path('')),1,1,'') FIR
+                    , iif(Fabric.Preshrink=1,'V','') Preshrink
                     , (Select cast(tmp.Remark as nvarchar)+',' 
                        from (
 			                    select b1.remark 
@@ -734,6 +738,7 @@ select ROW_NUMBER_D = 1
        , [description]  = b.Description
        , [currencyid] = '-'
        , [FIR] = '-'
+       , [Preshrink]= ''
        , [Remark] = '-'
        , [OrderIdList] = l.OrderID
        , [From_Program] = 'P04'
