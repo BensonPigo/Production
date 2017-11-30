@@ -10,7 +10,7 @@
     [addr]       VARCHAR (100)  CONSTRAINT [DF_Order_SpecDetail_addr] DEFAULT ('') NULL,
     [brokers]    VARCHAR (4)    CONSTRAINT [DF_Order_SpecDetail_brokers] DEFAULT ('') NULL,
     [belong]     VARCHAR (15)   CONSTRAINT [DF_Order_SpecDetail_belong] DEFAULT ('') NULL,
-    [Ukey]       BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Ukey]       BIGINT NOT NULL,
     [AddName]    VARCHAR (10)   CONSTRAINT [DF_Order_SpecDetail_AddName] DEFAULT ('') NULL,
     [AddDate]    DATETIME       NULL,
     [EditName]   VARCHAR (10)   CONSTRAINT [DF_Order_SpecDetail_EditName] DEFAULT ('') NULL,
