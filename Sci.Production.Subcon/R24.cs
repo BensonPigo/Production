@@ -289,7 +289,7 @@ outer apply(
 	isnull(sum(orders.qty),0) order_qty
 	,sum(orders.qty*Price) order_amt 
 	from orders WITH (NOLOCK) 
-	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
+	left join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	where poid= t.POID and ArtworkTypeID= t.artworktypeid
 	group by orders.poid,ArtworkTypeID
 ) y
