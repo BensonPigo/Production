@@ -95,14 +95,15 @@ namespace Sci.Production.Warehouse
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
 
 
-            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text))
+            if (string.IsNullOrWhiteSpace(this.txtSP.Text.TrimEnd()))
             {
-                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID  can't be empty!!");
+                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                txtSP.Focus();
                 return;
             }
 
             strSQLCmd.Append(string.Format(@"
-select distinct 0 as [selected]
+select  0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
@@ -139,8 +140,6 @@ cross apply
 	from dbo.orders o1 WITH (NOLOCK) 
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
-outer apply(select distinct id from Export_Detail e where e.poid = fi.poid and e.seq1 = fi.seq1 and e.seq2 = fi.seq2) e
-outer apply(select distinct id from Receiving_Detail r where r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2) r
 where   f.MDivisionID = '{0}' 
         and fi.POID like @poid1 
 ", Sci.Env.User.Keyword));
@@ -192,16 +191,8 @@ where   f.MDivisionID = '{0}'
                 strSQLCmd.Append(string.Format(@" 
         and fi.seq2 = '{0}'", txtSeq.seq2));
             }
-            if (!MyUtility.Check.Empty(txtwkno.Text))
-            {
-                strSQLCmd.Append(string.Format(@" 
-        and e.id = '{0}'", txtwkno.Text));
-            }
-            if (!MyUtility.Check.Empty(txtReceivingid.Text))
-            {
-                strSQLCmd.Append(string.Format(@" 
-        and r.id = '{0}'", txtReceivingid.Text));
-            }
+            
+
             Ict.DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");

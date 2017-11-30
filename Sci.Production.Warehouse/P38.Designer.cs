@@ -47,10 +47,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtwkno = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtReceivingid = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
@@ -60,10 +56,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtReceivingid);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.txtwkno);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.labelSEQ);
             this.panel1.Controls.Add(this.txtSeq);
             this.panel1.Controls.Add(this.comboStockType);
@@ -76,11 +68,12 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 71);
+            this.panel1.Size = new System.Drawing.Size(1008, 45);
             this.panel1.TabIndex = 0;
             // 
             // labelSEQ
             // 
+            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(234, 10);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(59, 23);
@@ -114,6 +107,7 @@
             // 
             // labelStockType
             // 
+            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(668, 10);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(95, 23);
@@ -132,6 +126,7 @@
             // 
             // labelSP
             // 
+            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(9, 10);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(59, 23);
@@ -140,6 +135,7 @@
             // 
             // labelStatus
             // 
+            this.labelStatus.Lines = 0;
             this.labelStatus.Location = new System.Drawing.Point(415, 10);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(74, 23);
@@ -175,9 +171,9 @@
             // 
             this.panel2.Controls.Add(this.gridMaterialLock);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 71);
+            this.panel2.Location = new System.Drawing.Point(0, 45);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 590);
+            this.panel2.Size = new System.Drawing.Size(1008, 616);
             this.panel2.TabIndex = 0;
             // 
             // gridMaterialLock
@@ -201,7 +197,7 @@
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 521);
+            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 547);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
@@ -261,42 +257,6 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 23);
-            this.label1.TabIndex = 41;
-            this.label1.Text = "WK NO";
-            // 
-            // txtwkno
-            // 
-            this.txtwkno.BackColor = System.Drawing.Color.White;
-            this.txtwkno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtwkno.Location = new System.Drawing.Point(71, 39);
-            this.txtwkno.MaxLength = 13;
-            this.txtwkno.Name = "txtwkno";
-            this.txtwkno.Size = new System.Drawing.Size(122, 23);
-            this.txtwkno.TabIndex = 42;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(234, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
-            this.label2.TabIndex = 43;
-            this.label2.Text = "Receiving ID";
-            // 
-            // txtReceivingid
-            // 
-            this.txtReceivingid.BackColor = System.Drawing.Color.White;
-            this.txtReceivingid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceivingid.Location = new System.Drawing.Point(323, 39);
-            this.txtReceivingid.MaxLength = 13;
-            this.txtReceivingid.Name = "txtReceivingid";
-            this.txtReceivingid.Size = new System.Drawing.Size(122, 23);
-            this.txtReceivingid.TabIndex = 44;
-            // 
             // P38
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -340,9 +300,5 @@
         private Win.UI.Button btnExcel;
         private Class.txtSeq txtSeq;
         private Win.UI.Label labelSEQ;
-        private Win.UI.TextBox txtReceivingid;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox txtwkno;
-        private Win.UI.Label label1;
     }
 }
