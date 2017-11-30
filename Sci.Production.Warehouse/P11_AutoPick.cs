@@ -253,6 +253,7 @@ select	distinct p.id as [poid]
         , f.BomTypeCalculate
         , ColorMultipleID = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
         , f.MTLTYPEID
+        , ob.BomTypeColor
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
@@ -260,7 +261,7 @@ inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 inner join orders o With(NoLock) on p.id = o.id
 left join order_boa ob With(NoLock) on p.id = ob.id
                                        and p.SciRefno = ob.SciRefno      
-                                       and f.BomTypeCalculate = 1
+                                       --and f.BomTypeCalculate = 1
 outer apply (
     select value = case 
                         when ob.SizeItem_Elastic != '' and ob.SizeItem is not null then ob.SizeItem_Elastic
@@ -312,7 +313,8 @@ from (
             , Orderlist_chk = psdo.Orderid
     from #tmpPO_supp_detail b
     left join (
-        select tmpB.*
+         select --tmpB.*
+        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
                , ob.Seq1
         from #Tmp_BoaExpend tmpB
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
@@ -346,29 +348,50 @@ order by x.poid, x.seq1, x.seq2, x.scirefno, x.ColorID, x.SizeSpec, x.Special;
 --因為 #tmpPo_Supp_Detail 有用 Order_BoA 展開
 --計算數量時，必須根據 Poid, Seq, SizeCode 群組
 with cte as(
-    select  b.poid
+   select poid,seq1,seq2,sizecode
+	, qty = Round (sum (isnull (1.0 * OrderQty * value, 0.00) * UsedQty * RATE), 2) 
+	from
+		(
+    select distinct b.poid
             , b.seq1
             , b.seq2
-            , tb.SizeCode
-            , qty = Round (sum (isnull (1.0 * tb.OrderQty * SizeSpec.value, 0.00) * b.UsedQty * b.RATE), 2) 
-	from #tmpPO_supp_detail b 
-    left join (
-        select tmpB.*
+            , iif(b.BomTypeColor=1,tbColor.SizeCode,tbNonColor.SizeCode) SizeCode
+			, b.UsedQty
+			,b.RATE
+			, iif(b.BomTypeColor=1,tbColor.OrderQty,tbNonColor.OrderQty) OrderQty
+			, SizeSpec.value           
+	from #tmpPO_supp_detail b
+	outer apply(
+		   select --tmpB.*
+        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
                , ob.Seq1
         from #Tmp_BoaExpend tmpB
-        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
-    ) tb on b.SCIRefno = tb.SciRefno 
-            and b.poid = tb.ID 
-            and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
-            and (b.ColorID = tb.ColorID)
-            and b.Seq1 = tb.Seq1
+        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
+		where b.SCIRefno = tmpB.SciRefno 
+			and b.poid = tmpB.ID 
+            and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))     
+			and b.ColorID = tmpB.ColorID       
+            and b.Seq1 = ob.Seq1
+	) tbColor
+	outer apply(
+		 select --tmpB.*
+        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty
+               , ob.Seq1
+        from #Tmp_BoaExpend tmpB
+        left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
+		where b.SCIRefno = tmpB.SciRefno 
+			and b.poid = tmpB.ID 
+            and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))            
+            and b.Seq1 = ob.Seq1
+	) tbNonColor    
     outer apply (
         select value = case
                             when b.BomTypeCalculate != 1 then 1
-                            else dbo.GetDigitalValue(tb.SizeSpec)
+                            else iif(b.BomTypeColor=1,dbo.GetDigitalValue(tbColor.SizeSpec),dbo.GetDigitalValue(tbNonColor.SizeSpec))
                        end
-    ) SizeSpec
-    group by b.poid, b.seq1, b.seq2, tb.SizeCode
+    ) SizeSpec	
+  ) a
+  group by poid, seq1, seq2, SizeCode
 )
 select  z.*
         , qty = isnull (cte.qty, 0)
@@ -558,7 +581,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .EditText("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
