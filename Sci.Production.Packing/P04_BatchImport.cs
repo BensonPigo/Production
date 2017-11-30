@@ -73,9 +73,11 @@ namespace Sci.Production.Packing
 
             sqlCmd.Append(@"with OrderData
 as
-(select ID as OrderID,StyleID,SeasonID,CustCDID,OrderTypeID,CustPONo,POID
+(select Orders.ID as OrderID,StyleID,SeasonID,CustCDID,OrderTypeID,CustPONo,POID
  from Orders WITH (NOLOCK) 
+inner join Factory WITH (NOLOCK) on Factory.id = Orders.Factoryid
  where Category = 'S'
+ and Factory.IsProduceFty = 1
  and BrandID = @brand");
             if (!MyUtility.Check.Empty(this.txtcustcd.Text))
             {
