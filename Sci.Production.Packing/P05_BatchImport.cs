@@ -80,17 +80,17 @@ with OrderData as (
             , o.SeasonID
             , Factory = o.FtyGroup
     from    Orders o WITH (NOLOCK) 
-            , Order_QtyShip oq WITH (NOLOCK) 
-            , Order_QtyShip_Detail oqd WITH (NOLOCK) 
+    inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id
+													     and oqd.Seq = oq.Seq
+    inner join Factory f With (NoLock) on o.FactoryID = f.ID
     where   o.BrandID = @brand
             and o.MDivisionID = @mdivisionid
             and o.IsForecast = 0
             and o.PulloutComplete = 0
             and o.LocalOrder = 0
             and o.Junk = 0
-            and oq.Id = o.ID
-            and oqd.Id = oq.Id
-            and oqd.Seq = oq.Seq");
+            and f.IsProduceFty = 1");
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
                 sqlCmd.Append("\r\n and o.ID >= @orderID1");
