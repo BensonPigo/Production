@@ -20,7 +20,6 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string display;
         private string contentType;
-        private string language;
         private DataTable machineInv;
         private DataTable printData;
         private DataTable ttlCycleTime;
@@ -35,8 +34,6 @@ namespace Sci.Production.IE
         public P03_Print(DataRow masterData, decimal styleCPU)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboLanguage, 1, 1, "English,Chinese,Cambodia,Vietnam");
-            this.comboLanguage.Text = "English";
             this.masterData = masterData;
             this.styleCPU = styleCPU;
             this.radioU.Checked = true;
@@ -51,7 +48,6 @@ namespace Sci.Production.IE
         {
             this.display = this.radioU.Checked ? "U" : "Z";
             this.contentType = this.radioDescription.Checked ? "D" : "A";
-            this.language = this.comboLanguage.Text;
             return base.ValidateInput();
         }
 
@@ -113,7 +109,7 @@ order by No",
             }
 
             sqlCmd = string.Format(
-                @"select a.*,isnull(o.DescEN,'') as DescEN,isnull(od.DescCHS,'') as DescCHS,isnull(od.DescKH,'') as DescKH,isnull(od.DescVI,'') as DescVI
+                @"select a.*,isnull(o.DescEN,'') as DescEN
 from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID
 	  from LineMapping_Detail WITH (NOLOCK) 
 	  where ID = {0}
@@ -159,7 +155,7 @@ order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
             foreach (DataRow dr in this.operationCode.Rows)
             {
                 objArray[0, 0] = dr["GroupKey"];
-                objArray[0, 1] = this.contentType == "A" ? dr["Annotation"] : this.language == "English" ? dr["DescEN"] : this.language == "Chinese" ? dr["DescCHS"] : this.language == "Cambodia" ? dr["DescKH"] : dr["DescVI"];
+                objArray[0, 1] = this.contentType == "A" ? dr["Annotation"] : dr["DescEN"];
                 objArray[0, 2] = dr["GSD"];
                 objArray[0, 3] = dr["MachineTypeID"];
                 worksheet.Range[string.Format("A{0}:D{0}", intRowsStart)].Value2 = objArray;
