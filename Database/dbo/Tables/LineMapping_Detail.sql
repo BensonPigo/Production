@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[LineMapping_Detail] (
     [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
-    [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NOT NULL,
+    [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
     [GSD]           NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
     [TotalGSD]      NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
@@ -15,7 +15,8 @@
     [Attachment]    BIT            NULL,
     [Template]      BIT            NULL,
     [OriNO]         VARCHAR (4)    NULL,
-    CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [GroupKey] ASC)
+    [Ukey] BIGINT NOT NULL IDENTITY, 
+    CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
 
@@ -93,4 +94,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'員工編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping_Detail', @level2type = N'COLUMN', @level2name = N'ID';
+
+GO
+CREATE NONCLUSTERED INDEX [IX_LineMapping_Detail_OrgPK] ON [dbo].[LineMapping_Detail]
+(
+	[ID] ASC,
+	[No] ASC,
+	[GroupKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
 
