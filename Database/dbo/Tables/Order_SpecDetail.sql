@@ -14,6 +14,7 @@
     [AddName]    VARCHAR (10)   CONSTRAINT [DF_Order_SpecDetail_AddName] DEFAULT ('') NULL,
     [AddDate]    DATETIME       NULL,
     [EditName]   VARCHAR (10)   CONSTRAINT [DF_Order_SpecDetail_EditName] DEFAULT ('') NULL,
-    [EditDate]   DATETIME       NULL
+    [EditDate]   DATETIME       NULL, 
+    CONSTRAINT [PK_Order_SpecDetail] PRIMARY KEY ([Ukey])
 );
 
