@@ -64,19 +64,18 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S' or (
-o.Category = 'M' and
-exists(
-	select A.ID
+and (o.Category = 'B' or o.Category = 'S')
+union all
+select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 
 	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='PM1'
+	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
 	inner join po p on a.id=p.ID 
-	where A.ID = o.POID and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)
+	inner join orders o on o.POID=p.ID
+	where A.ID = o.POID and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty) )
 	and p.Complete=0
-	)
-  )
-)
+    and o.Finished = 0 
+	and o.Category='M'
 ),
 canNotClose
 as
@@ -87,7 +86,7 @@ where o.Finished = 0
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
+and (o.Category = 'B' or o.Category = 'S')
 )
 select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle,o.Category
 from (select * from wantToClose
@@ -342,19 +341,18 @@ from Orders o WITH (NOLOCK)
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S' or (
-o.Category = 'M' and
-exists(
-	select A.ID
+and (o.Category = 'B' or o.Category = 'S')
+union all
+select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 
 	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='PM1'
+	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
 	inner join po p on a.id=p.ID 
-	where A.ID = o.POID and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)
+	inner join orders o on o.POID=p.ID
+	where A.ID = o.POID and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty) )
 	and p.Complete=0
-	)
-  )
-)
+    and o.Finished = 0 
+	and o.Category='M'
 ),
 canNotClose
 as
@@ -365,9 +363,9 @@ where o.Finished = 0
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
 and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
+and (o.Category = 'B' or o.Category = 'S')
 )
-select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle
+select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle,o.Category
 from (select * from wantToClose
 	  except
 	  select * from canNotClose) a
