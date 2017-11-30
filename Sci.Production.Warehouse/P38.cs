@@ -95,15 +95,14 @@ namespace Sci.Production.Warehouse
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
 
 
-            if (string.IsNullOrWhiteSpace(this.txtSP.Text.TrimEnd()))
+            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text))
             {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSP.Focus();
+                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID  can't be empty!!");
                 return;
             }
 
             strSQLCmd.Append(string.Format(@"
-select  0 as [selected]
+select 0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
@@ -191,8 +190,18 @@ where   f.MDivisionID = '{0}'
                 strSQLCmd.Append(string.Format(@" 
         and fi.seq2 = '{0}'", txtSeq.seq2));
             }
-            
-
+            if (!MyUtility.Check.Empty(txtwkno.Text))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and exists (select 1 from Export_Detail e where e.poid = fi.poid and e.seq1 = fi.seq1 and e.seq2 = fi.seq2 and e.id = '{0}')",
+txtwkno.Text));
+            }
+            if (!MyUtility.Check.Empty(txtReceivingid.Text))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and exists (select 1 from Receiving_Detail r where r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2 and r.Roll = fi.Roll and r.Dyelot = fi.Dyelot and r.id = '{0}' )",
+txtReceivingid.Text));
+            }
             Ict.DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
