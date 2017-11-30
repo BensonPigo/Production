@@ -1706,10 +1706,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Functions\GetPriceFromMtl.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Functions\getPass1.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2236,6 +2232,7 @@
     <Build Include="dbo\Tables\TradeHIS_Order.sql" />
     <Build Include="dbo\Stored Procedures\usp_RemoveScrapById.sql" />
     <Build Include="dbo\Views\View_PackingP03.sql" />
+    <Build Include="dbo\Tables\Order_SpecDetail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -196,7 +196,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     return;
                 }
 
-                if (this.CurrentDetailData["autoCreate"].ToString() == "True")
+                if (MyUtility.Check.Empty(newvalue))
                 {
                     return;
                 }
@@ -230,6 +230,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 this.ReQty(this.CurrentDetailData);
                 this.CurrentDetailData.EndEdit();
                 this.Update_detailgrid_CellValidated(e.RowIndex);
+                this.detailgrid.ValidateControl();
             };
             #endregion
             #region Color Cell
@@ -1213,7 +1214,15 @@ drop table #tmp_P01",
         private void ReQty(DataRow dr) // 重算Qty
         {
             dr["TotalQty"] = Convert.ToDecimal(dr["MeterToCone"]) != 0 ? Math.Ceiling(Convert.ToDecimal(dr["ConsumptionQty"]) / Convert.ToDecimal(dr["MeterToCone"])) : 0;
-            dr["AllowanceQty"] = Convert.ToDouble(dr["TotalQty"]) * 0.2;
+            string a = string.Format(
+                        @"
+select top 1 value = CEILING ({0} * Allowance)
+from ThreadAllowanceScale tas
+where tas.LowerBound <= {0}
+and {0} <= tas.UpperBound",
+                        this.CurrentDetailData["TotalQty"]);
+            decimal allowance = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(a));
+            this.CurrentDetailData["AllowanceQty"] = allowance;
             dr["PurchaseQty"] = Convert.ToDecimal(dr["TotalQty"]) + Convert.ToDecimal(dr["AllowanceQty"]) - Convert.ToDecimal(dr["UseStockQty"]);
         }
 
