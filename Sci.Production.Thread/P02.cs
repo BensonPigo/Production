@@ -1223,7 +1223,7 @@ where tas.LowerBound <= {0}
 and {0} <= tas.UpperBound",
                         this.CurrentDetailData["TotalQty"]);
             decimal allowance = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(a));
-            this.CurrentDetailData["AllowanceQty"] = Math.Ceiling(MyUtility.Convert.GetDecimal(this.CurrentDetailData["TotalQty"]) * allowance);
+            this.CurrentDetailData["AllowanceQty"] = allowance;
             dr["PurchaseQty"] = Convert.ToDecimal(dr["TotalQty"]) + Convert.ToDecimal(dr["AllowanceQty"]) - Convert.ToDecimal(dr["UseStockQty"]);
         }
 
