@@ -64,7 +64,7 @@ with a as (
     where a.id = b.id and a.styleukey = f.ukey and 
     f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'
 ),b as(
-    Select c.ComboType,seq,operationid,annotation,e.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid,d.Frequency
+    Select c.ComboType,seq,operationid,d.annotation,e.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid,d.Frequency
     from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK)  
     join operation e on e.id = d.operationid left join MachineType f on d.MachineTypeID=f.id
     where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 and f.isThread=1

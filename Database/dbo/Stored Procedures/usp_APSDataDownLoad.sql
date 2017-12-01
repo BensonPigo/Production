@@ -407,13 +407,19 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 	BEGIN
 	--撈APS的Sewing Schedule Detail
 	CREATE TABLE #tmpAPSSchedule (ID int,POID int,SALESORDERNO varchar(20),REFNO varchar(100),NAME varchar(50),STARTTIME datetime,ENDTIME datetime,UPDATEDATE datetime,POCOLOR char(60),POSIZE varchar(30),PLANAMOUNT numeric(24,10),DURATION numeric(24,10),CAPACITY numeric(24,10),EFFICIENCY numeric(24,10));
-	SET @cmd = 'insert into #tmpAPSSchedule SELECT p.ID, pd.POID, po.SALESORDERNO, po.REFNO, fa.NAME, p.STARTTIME, p.ENDTIME, p.UPDATEDATE, pd.POCOLOR, pd.POSIZE, pd.PLANAMOUNT, p.DURATION, po.CAPACITY, pd.EFFICIENCY
-	from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PO po, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL pd
-	where fa.FACTORYID = f.ID 
+	SET @cmd = 'insert into #tmpAPSSchedule
+SELECT p.ID, pd.POID, po.SALESORDERNO, po.REFNO, fa.NAME, p.STARTTIME, p.ENDTIME, p.UPDATEDATE, pd.POCOLOR, pd.POSIZE, pd.PLANAMOUNT, p.DURATION, po.CAPACITY, pd.EFFICIENCY
+from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT p
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory f
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility fa
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.PO po
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL pd
+where fa.FACTORYID = f.ID 
 	and p.FACILITYID = fa.ID 
 	and po.ID = pd.POID 
 	and pd.PRODUCTIONEVENTID = p.ID 
-	and EXISTS (SELECT 1 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT aa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE()))) and bb.POID=po.ID)
+	and EXISTS (SELECT 1 from ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENT aa, ['+ @apsservername + '].'+@apsdatabasename+'.dbo.PRODUCTIONEVENTDETAIL bb where aa.ID=bb.PRODUCTIONEVENTID and (CONVERT(DATE,aa.ENDTIME) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE())) OR CONVERT(DATE,aa.UPDATEDATE) >= CONVERT(DATE,DATEADD(DAY,-90,GETDATE()))) 
+	and bb.POID=po.ID)
 	and f.Code = '''+ @factoryid + ''''
 	execute (@cmd)
 
@@ -510,7 +516,12 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 
 				SET @apseff = null
 				--否有設定LearningCurve
-				SET @cmd = 'insert into #LnEff Select Max(ld.Snvalue) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
+				SET @cmd = 'insert into #LnEff 
+Select Max(ld.Snvalue) as lnEff 
+From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld 
+where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 				execute (@cmd)
 				select @apseff = isnull((lnEff/100),0) from #LnEff
 
@@ -521,7 +532,13 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 
 				SET @apseff = null
 				--是否有設定動態效率
-				SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
+				SET @cmd = 'insert into #DynamicEff 
+Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff 
+From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa 
+where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
 				execute (@cmd)
 				select @apseff = Eff from #DynamicEff
 				
@@ -580,7 +597,7 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 						select @sewingscheduleid = ID from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
 
 						DECLARE cursor_apsscheduledetail CURSOR FOR
-						SELECT POCOLOR, POSIZE, PLANAMOUNT from #tmpAPSSchedule where ID = @apsno and SALESORDERNO = @orderid and POID = @apspoid
+						SELECT POCOLOR, POSIZE, PLANAMOUNT = SUM(PLANAMOUNT) from #tmpAPSSchedule where ID = @apsno and SALESORDERNO = @orderid and POID = @apspoid GROUP BY POCOLOR, POSIZE
 
 						OPEN cursor_apsscheduledetail
 						FETCH NEXT FROM cursor_apsscheduledetail INTO @article,@sizecode,@detailalloqty
@@ -627,7 +644,12 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 
 						SET @apseff = null
 						--否有設定LearningCurve
-						SET @cmd = 'insert into #LnEff Select CONVERT(numeric(24,10),Max(ld.Snvalue)) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
+						SET @cmd = 'insert into #LnEff 
+Select CONVERT(numeric(24,10),Max(ld.Snvalue)) as lnEff 
+From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld 
+where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 						execute (@cmd)
 						select @apseff = isnull((lnEff/100),0) from #LnEff
 						
@@ -638,7 +660,14 @@ order by E.Code, D.Name,A.ENABLEDATE desc'
 
 						SET @apseff = null
 						--是否有設定動態效率
-						SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
+						SET @cmd = 'insert into #DynamicEff 
+Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff 
+From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f
+	,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa 
+where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' 
+Order by fe.BeginDate Desc'
 						execute (@cmd)
 						select @apseff = Eff from #DynamicEff
 						
