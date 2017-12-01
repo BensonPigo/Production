@@ -79,15 +79,15 @@
         </Field>
         <Field Name="CutRef">
           <DataField>CutRef</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="CutRef2">
           <DataField>CutRef2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="CutRef3">
           <DataField>CutRef3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="Desc">
           <DataField>Desc</DataField>

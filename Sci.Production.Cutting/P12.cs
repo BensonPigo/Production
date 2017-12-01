@@ -489,27 +489,27 @@ outer apply
             dt3 = dtt.Clone();
             dtSelect = dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
-                .OrderBy(row=>row["CutRef"].ToString())
+                .OrderBy(row=>row["Cut"])
                 .CopyToDataTable();
 
-            var names = new string[]{
-                "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
-                "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
+            //var names = new string[]{
+            //    "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
+            //    "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
 
             List<P12_PrintData> data = new List<P12_PrintData>();
             bool changeGroup = true;
             for (int i = 0; i< dtSelect.Rows.Count;)
             {
-                string thisGroupCutRef;
+                int thisGroupCut;
                 if (checkChangepagebyCut.Checked)
                 {
-                    thisGroupCutRef = dtSelect.Rows[i]["CutRef"].ToString();
+                    thisGroupCut = MyUtility.Convert.GetInt(dtSelect.Rows[i]["Cut"]);
                 }
                 else
                 {
-                    thisGroupCutRef = "1";
+                    thisGroupCut = 1;
                 }
-                string tmpCutRef = null;
+                int tmpCut = -1;
                 var pdata = new P12_PrintData();
                 data.Add(pdata);
                 int j = 0;
@@ -518,14 +518,14 @@ outer apply
                     DataRow dr = dtSelect.Rows[i + j];
                     if (checkChangepagebyCut.Checked)
                     {
-                        tmpCutRef = dr["CutRef"].ToString();
+                        tmpCut = MyUtility.Convert.GetInt(dr["cut"]);
                     }
                     else
                     {
-                        tmpCutRef = "1";
+                        tmpCut = 1;
                     }
                     
-                    if (changeGroup && tmpCutRef != thisGroupCutRef)
+                    if (changeGroup && tmpCut != thisGroupCut)
                     {
                         break;
                     }
@@ -553,7 +553,7 @@ outer apply
                         pdata.Season = dr["Seasonid"].ToString();
                         pdata.brand = dr["brand"].ToString();
                         pdata.item = dr["item"].ToString();
-                        pdata.CutRef = tmpCutRef;
+                        pdata.CutRef = tmpCut;
                     }
                     else if (j == 1)
                     {
@@ -578,7 +578,7 @@ outer apply
                         pdata.Season2 = dr["Seasonid"].ToString();
                         pdata.brand2 = dr["brand"].ToString();
                         pdata.item2 = dr["item"].ToString();
-                        pdata.CutRef2 = tmpCutRef;
+                        pdata.CutRef2 = tmpCut;
                     }
                     else
                     {
@@ -603,11 +603,11 @@ outer apply
                         pdata.Season3 = dr["Seasonid"].ToString();
                         pdata.brand3 = dr["brand"].ToString();
                         pdata.item3 = dr["item"].ToString();
-                        pdata.CutRef3 = tmpCutRef;
+                        pdata.CutRef3 = tmpCut;
                     }
                 }
                 
-                if (changeGroup && tmpCutRef != thisGroupCutRef)
+                if (changeGroup && tmpCut != thisGroupCut)
                 {
                     i += j;
                 }
