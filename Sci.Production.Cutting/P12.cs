@@ -489,27 +489,27 @@ outer apply
             dt3 = dtt.Clone();
             dtSelect = dtt.AsEnumerable()
                 .Where(row => (bool)row["selected"])
-                .OrderBy(row=>row["Cut"].ToString())
+                .OrderBy(row=>row["Cut"])
                 .CopyToDataTable();
 
-            var names = new string[]{
-                "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
-                "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
+            //var names = new string[]{
+            //    "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
+            //    "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
 
             List<P12_PrintData> data = new List<P12_PrintData>();
             bool changeGroup = true;
             for (int i = 0; i< dtSelect.Rows.Count;)
             {
-                string thisGroupCut;
+                int thisGroupCut;
                 if (checkChangepagebyCut.Checked)
                 {
-                    thisGroupCut = dtSelect.Rows[i]["Cut"].ToString();
+                    thisGroupCut = MyUtility.Convert.GetInt(dtSelect.Rows[i]["Cut"]);
                 }
                 else
                 {
-                    thisGroupCut = "1";
+                    thisGroupCut = 1;
                 }
-                string tmpCut = null;
+                int tmpCut = -1;
                 var pdata = new P12_PrintData();
                 data.Add(pdata);
                 int j = 0;
@@ -518,11 +518,11 @@ outer apply
                     DataRow dr = dtSelect.Rows[i + j];
                     if (checkChangepagebyCut.Checked)
                     {
-                        tmpCut = dr["cut"].ToString();
+                        tmpCut = MyUtility.Convert.GetInt(dr["cut"]);
                     }
                     else
                     {
-                        tmpCut = "1";
+                        tmpCut = 1;
                     }
                     
                     if (changeGroup && tmpCut != thisGroupCut)
