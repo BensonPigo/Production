@@ -84,7 +84,6 @@ FOR XML PATH('')", MyUtility.Convert.GetString(this.masterData["ID"]),
 td.Annotation,o.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join OperationDesc od WITH (NOLOCK) on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}{1}

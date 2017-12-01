@@ -413,10 +413,11 @@
             // 
             this.checkImportFromGSD.AutoSize = true;
             this.checkImportFromGSD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromGSD", true));
-            this.checkImportFromGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkImportFromGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkImportFromGSD.IsSupportEditMode = false;
             this.checkImportFromGSD.Location = new System.Drawing.Point(313, 14);
             this.checkImportFromGSD.Name = "checkImportFromGSD";
+            this.checkImportFromGSD.ReadOnly = true;
             this.checkImportFromGSD.Size = new System.Drawing.Size(132, 21);
             this.checkImportFromGSD.TabIndex = 13;
             this.checkImportFromGSD.Text = "Import from GSD";

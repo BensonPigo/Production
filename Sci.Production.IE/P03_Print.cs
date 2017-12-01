@@ -115,7 +115,6 @@ from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID
 	  where ID = {0}
 	  group by GroupKey,OperationID,Annotation,MachineTypeID) a
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
-left join OperationDesc od WITH (NOLOCK) on od.ID = a.OperationID
 order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
