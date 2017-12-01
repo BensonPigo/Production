@@ -790,7 +790,7 @@ where   poid = '{1}'
                 {
                     decimal blance = request - accu_issue;
                     List<long> num = new List<long>(); // 紀錄已分配
-
+                    num.Add(0); // 預設0
                     while (blance > 0)
                     {
                         #region 未分配且, 任何一筆有=剩餘blance
