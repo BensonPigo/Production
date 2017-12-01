@@ -166,7 +166,7 @@
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
             this.btnToExcel.TabIndex = 7;
-            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.Text = "Print";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
@@ -279,6 +279,7 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(719, 327);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
