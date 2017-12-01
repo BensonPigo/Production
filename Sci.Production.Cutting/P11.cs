@@ -950,7 +950,8 @@ order by ArticleGroup", patternukey);
 
                 i++;
             }
-            Double TotalCutQty = Convert.ToDouble(dr["Cutoutput"]);
+            // Double TotalCutQty = Convert.ToDouble(dr["Cutoutput"]);
+            Double TotalCutQty = MyUtility.Convert.GetDouble(label_TotalQty.Text);
             DataRow[] qtyarry = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "");
             if (TotalCutQty % newcount == 0)
             {
