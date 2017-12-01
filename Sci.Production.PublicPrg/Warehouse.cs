@@ -790,7 +790,7 @@ where   poid = '{1}'
                 {
                     decimal blance = request - accu_issue;
                     List<long> num = new List<long>(); // 紀錄已分配
-                    num.Add(0); // 預設0
+
                     while (blance > 0)
                     {
                         #region 未分配且, 任何一筆有=剩餘blance
@@ -839,7 +839,12 @@ where   poid = '{1}'
                         #endregion
 
                         #region 未分配且, 為最大qty的dyelot
-                        var maxdyelot = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"]) && !num.Contains((long)n["num"])).OrderByDescending(n => (decimal)n["qty"]).First().GetValue("Dyelot");
+                        var dyelot1 = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"])).OrderByDescending(n => (decimal)n["qty"]);
+                        if (dyelot1.Count() == 0)
+                        {
+                            break;
+                        }
+                        var maxdyelot = dt.AsEnumerable().Where(n => !num.Contains((long)n["num"])).OrderByDescending(n => (decimal)n["qty"]).First().GetValue("Dyelot");
                         var frow = dt.AsEnumerable().Where(n => ((string)n["Dyelot"]).EqualString(maxdyelot.ToString()) && !num.Contains((long)n["num"])).OrderByDescending(z => (decimal)z["qty"]);
 
                         foreach (var item in frow)
