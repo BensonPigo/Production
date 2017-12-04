@@ -490,12 +490,18 @@ drop table #tmp");
                     );
 
             dataSet.Relations.Add(relation);
-
-            //detail.Columns.Add("selectedQty", typeof(decimal), "iif(selected='true',qty,0)");
-            //master.Columns.Add("total_qty", typeof(decimal), "sum(child.selectedQty)");
+            
             master.Columns.Add("total_qty", typeof(decimal));
             master.Columns.Add("requestqty", typeof(decimal), "InputQty - accu_qty - sum(child.qty)");
 
+            if (listControlBindingSource1.DataSource != null)
+            {
+                listControlBindingSource1.DataSource = null;
+            }
+            if (listControlBindingSource2.DataSource != null)
+            {
+                listControlBindingSource2.DataSource = null;
+            }
             listControlBindingSource1.DataSource = dataSet;
             listControlBindingSource1.DataMember = "Master";
             listControlBindingSource2.DataSource = listControlBindingSource1;
