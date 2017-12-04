@@ -184,7 +184,8 @@ namespace Sci.Production.Subcon
                     double i = double.Parse(numL.Text.ToString()) *
                         double.Parse(numW.Text.ToString()) *
                         double.Parse(numH.Text.ToString()) * 0.00001639;
-                    numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                   // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                   CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
                     //this.numericBox3.Text = Math.Round(i, 4).ToString();
                 }
                 else
@@ -192,7 +193,9 @@ namespace Sci.Production.Subcon
                     double i = double.Parse(numL.Text.ToString()) *
                         double.Parse(numW.Text.ToString()) *
                         double.Parse(numH.Text.ToString()) / 1000000000;
-                    numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+                    CurrentMaintain["CBM"] = MyUtility.Math.Round(i, 4).ToString();
+                   // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
+
                 }
             }
         }
@@ -203,17 +206,7 @@ namespace Sci.Production.Subcon
             
         }
 
-        //計算cbm相關欄位的valid事件
-        private void comboCartonDimension_Validated(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(this.numL.Text)
-               || string.IsNullOrWhiteSpace(numW.Text)
-               || string.IsNullOrWhiteSpace(numH.Text))
-            {
-                return;
-            }
-            getCBM();
-        }
+        
 
         private void W_H_L_Validated(object sender, EventArgs e)
         {
@@ -348,8 +341,21 @@ namespace Sci.Production.Subcon
             }
         }
 
-   
-
+        // 計算cbm相關欄位的valid事件
         
+        private void comboCartonDimension_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            if (CurrentMaintain != null && comboCartonDimension.SelectedValue != null) {
+                CurrentMaintain["CtnUnit"] = comboCartonDimension.SelectedValue.ToString();
+            }
+            if (string.IsNullOrWhiteSpace(this.numL.Text)
+           || string.IsNullOrWhiteSpace(numW.Text)
+           || string.IsNullOrWhiteSpace(numH.Text))
+            {
+                return;
+            }
+            getCBM();
+        }
     }
 }
