@@ -246,7 +246,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             // Start Ctn#
             string sqlCmd;
             DataRow orderData;
-            sqlCmd = string.Format("select isnull(min(CTNStartNo),0) as CTNStartNo  from PackingList_Detail WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("select top 1 CTNStartNo  from PackingList_Detail WITH (NOLOCK) where ID = '{0}' order by seq  ", this.CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 this.displayStartCtn.Value = orderData["CTNStartNo"].ToString();
@@ -412,6 +412,16 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'",
                     // 檢查OrderID+Seq不可以重複建立
                     if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString()))
                     {
+                        dr["OrderID"] = string.Empty;
+                        dr["OrderShipmodeSeq"] = string.Empty;
+                        dr["Article"] = string.Empty;
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
+                        dr["StyleID"] = string.Empty;
+                        dr["CustPONo"] = string.Empty;
+                        dr["SeasonID"] = string.Empty;
+                        dr["Factory"] = string.Empty;
+                        dr.EndEdit();
                         e.Cancel = true;
                         return;
                     }
@@ -504,6 +514,16 @@ where   oq.ID = '{0}'
                     // 檢查OrderID+Seq不可以重複建立
                     if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), ((object)e.FormattedValue).ToString()))
                     {
+                        dr["OrderID"] = string.Empty;
+                        dr["OrderShipmodeSeq"] = string.Empty;
+                        dr["Article"] = string.Empty;
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
+                        dr["StyleID"] = string.Empty;
+                        dr["CustPONo"] = string.Empty;
+                        dr["SeasonID"] = string.Empty;
+                        dr["Factory"] = string.Empty;
+                        dr.EndEdit();
                         e.Cancel = true;
                         return;
                     }
