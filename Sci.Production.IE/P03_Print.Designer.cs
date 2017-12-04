@@ -36,8 +36,6 @@
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioAnnotation = new Sci.Win.UI.RadioButton();
             this.radioDescription = new Sci.Win.UI.RadioButton();
-            this.labelLanguage = new Sci.Win.UI.Label();
-            this.comboLanguage = new Sci.Win.UI.ComboBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -59,7 +57,6 @@
             // 
             // labelLineMappingDisplay
             // 
-            this.labelLineMappingDisplay.Lines = 0;
             this.labelLineMappingDisplay.Location = new System.Drawing.Point(13, 12);
             this.labelLineMappingDisplay.Name = "labelLineMappingDisplay";
             this.labelLineMappingDisplay.Size = new System.Drawing.Size(137, 23);
@@ -101,7 +98,6 @@
             // 
             // labelOperationContentType
             // 
-            this.labelOperationContentType.Lines = 0;
             this.labelOperationContentType.Location = new System.Drawing.Point(13, 75);
             this.labelOperationContentType.Name = "labelOperationContentType";
             this.labelOperationContentType.Size = new System.Drawing.Size(147, 23);
@@ -141,31 +137,9 @@
             this.radioDescription.Text = "Description";
             this.radioDescription.UseVisualStyleBackColor = true;
             // 
-            // labelLanguage
-            // 
-            this.labelLanguage.Lines = 0;
-            this.labelLanguage.Location = new System.Drawing.Point(13, 148);
-            this.labelLanguage.Name = "labelLanguage";
-            this.labelLanguage.Size = new System.Drawing.Size(73, 23);
-            this.labelLanguage.TabIndex = 98;
-            this.labelLanguage.Text = "Language:";
-            // 
-            // comboLanguage
-            // 
-            this.comboLanguage.BackColor = System.Drawing.Color.White;
-            this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLanguage.FormattingEnabled = true;
-            this.comboLanguage.IsSupportUnselect = true;
-            this.comboLanguage.Location = new System.Drawing.Point(90, 148);
-            this.comboLanguage.Name = "comboLanguage";
-            this.comboLanguage.Size = new System.Drawing.Size(121, 24);
-            this.comboLanguage.TabIndex = 0;
-            // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(428, 227);
-            this.Controls.Add(this.comboLanguage);
-            this.Controls.Add(this.labelLanguage);
+            this.ClientSize = new System.Drawing.Size(428, 166);
             this.Controls.Add(this.radioPanel2);
             this.Controls.Add(this.labelOperationContentType);
             this.Controls.Add(this.radioPanel1);
@@ -180,8 +154,6 @@
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.labelOperationContentType, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
-            this.Controls.SetChildIndex(this.labelLanguage, 0);
-            this.Controls.SetChildIndex(this.comboLanguage, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -201,7 +173,5 @@
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioAnnotation;
         private Win.UI.RadioButton radioDescription;
-        private Win.UI.Label labelLanguage;
-        private Win.UI.ComboBox comboLanguage;
     }
 }

@@ -34,6 +34,7 @@
     [EditName]                VARCHAR (10)   CONSTRAINT [DF_Operation_EditName] DEFAULT ('') NULL,
     [EditDate]                DATETIME       NULL,
     [Ukey]                    BIGINT          NOT NULL IDENTITY,
+    [Annotation] NVARCHAR(200) NULL, 
     CONSTRAINT [PK_Operation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

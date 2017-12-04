@@ -94,6 +94,8 @@
             this.numCoverLength = new Sci.Win.UI.NumericBox();
             this.label28 = new Sci.Win.UI.Label();
             this.label29 = new Sci.Win.UI.Label();
+            this.editAnnotation = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -107,10 +109,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(900, 486);
+            this.detail.Size = new System.Drawing.Size(900, 525);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editAnnotation);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label29);
             this.detailcont.Controls.Add(this.label28);
             this.detailcont.Controls.Add(this.numCoverLength);
@@ -168,21 +172,21 @@
             this.detailcont.Controls.Add(this.labelOperationDescription);
             this.detailcont.Controls.Add(this.labelOperationTitle);
             this.detailcont.Controls.Add(this.labelOperationCode);
-            this.detailcont.Size = new System.Drawing.Size(900, 448);
+            this.detailcont.Size = new System.Drawing.Size(900, 487);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 448);
+            this.detailbtm.Location = new System.Drawing.Point(0, 487);
             this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 486);
+            this.browse.Size = new System.Drawing.Size(900, 525);
             // 
             // tabs
             // 
             this.tabs.Controls.Add(this.tabPage1);
-            this.tabs.Size = new System.Drawing.Size(908, 515);
+            this.tabs.Size = new System.Drawing.Size(908, 554);
             this.tabs.Controls.SetChildIndex(this.tabPage1, 0);
             this.tabs.Controls.SetChildIndex(this.detail, 0);
             this.tabs.Controls.SetChildIndex(this.browse, 0);
@@ -213,7 +217,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(900, 486);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Picture";
             // 
@@ -241,12 +245,14 @@
             // 
             // picture2
             // 
+            this.picture2.Image = null;
             this.picture2.Location = new System.Drawing.Point(458, 44);
             this.picture2.Name = "picture2";
             this.picture2.Size = new System.Drawing.Size(430, 434);
             this.picture2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture2.TabIndex = 5;
             this.picture2.TabStop = false;
+            this.picture2.WaitOnLoad = true;
             // 
             // btnPicture1Delete
             // 
@@ -272,16 +278,17 @@
             // 
             // picture1
             // 
+            this.picture1.Image = null;
             this.picture1.Location = new System.Drawing.Point(9, 44);
             this.picture1.Name = "picture1";
             this.picture1.Size = new System.Drawing.Size(430, 434);
             this.picture1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture1.TabIndex = 2;
             this.picture1.TabStop = false;
+            this.picture1.WaitOnLoad = true;
             // 
             // labelPicture2
             // 
-            this.labelPicture2.Lines = 0;
             this.labelPicture2.Location = new System.Drawing.Point(458, 10);
             this.labelPicture2.Name = "labelPicture2";
             this.labelPicture2.Size = new System.Drawing.Size(61, 23);
@@ -290,7 +297,6 @@
             // 
             // labelPicture1
             // 
-            this.labelPicture1.Lines = 0;
             this.labelPicture1.Location = new System.Drawing.Point(9, 10);
             this.labelPicture1.Name = "labelPicture1";
             this.labelPicture1.Size = new System.Drawing.Size(61, 23);
@@ -299,7 +305,6 @@
             // 
             // labelOperationCode
             // 
-            this.labelOperationCode.Lines = 0;
             this.labelOperationCode.Location = new System.Drawing.Point(14, 14);
             this.labelOperationCode.Name = "labelOperationCode";
             this.labelOperationCode.Size = new System.Drawing.Size(136, 23);
@@ -308,7 +313,6 @@
             // 
             // labelOperationTitle
             // 
-            this.labelOperationTitle.Lines = 0;
             this.labelOperationTitle.Location = new System.Drawing.Point(14, 43);
             this.labelOperationTitle.Name = "labelOperationTitle";
             this.labelOperationTitle.Size = new System.Drawing.Size(136, 23);
@@ -317,7 +321,6 @@
             // 
             // labelOperationDescription
             // 
-            this.labelOperationDescription.Lines = 0;
             this.labelOperationDescription.Location = new System.Drawing.Point(14, 101);
             this.labelOperationDescription.Name = "labelOperationDescription";
             this.labelOperationDescription.Size = new System.Drawing.Size(136, 23);
@@ -326,8 +329,7 @@
             // 
             // labelMachine
             // 
-            this.labelMachine.Lines = 0;
-            this.labelMachine.Location = new System.Drawing.Point(14, 159);
+            this.labelMachine.Location = new System.Drawing.Point(14, 219);
             this.labelMachine.Name = "labelMachine";
             this.labelMachine.Size = new System.Drawing.Size(136, 23);
             this.labelMachine.TabIndex = 3;
@@ -335,8 +337,7 @@
             // 
             // labelMaterialFactor
             // 
-            this.labelMaterialFactor.Lines = 0;
-            this.labelMaterialFactor.Location = new System.Drawing.Point(14, 188);
+            this.labelMaterialFactor.Location = new System.Drawing.Point(14, 248);
             this.labelMaterialFactor.Name = "labelMaterialFactor";
             this.labelMaterialFactor.Size = new System.Drawing.Size(136, 23);
             this.labelMaterialFactor.TabIndex = 4;
@@ -344,8 +345,7 @@
             // 
             // labelAttachment
             // 
-            this.labelAttachment.Lines = 0;
-            this.labelAttachment.Location = new System.Drawing.Point(14, 217);
+            this.labelAttachment.Location = new System.Drawing.Point(14, 277);
             this.labelAttachment.Name = "labelAttachment";
             this.labelAttachment.Size = new System.Drawing.Size(136, 23);
             this.labelAttachment.TabIndex = 5;
@@ -353,8 +353,7 @@
             // 
             // labelOperationType
             // 
-            this.labelOperationType.Lines = 0;
-            this.labelOperationType.Location = new System.Drawing.Point(14, 246);
+            this.labelOperationType.Location = new System.Drawing.Point(14, 306);
             this.labelOperationType.Name = "labelOperationType";
             this.labelOperationType.Size = new System.Drawing.Size(136, 23);
             this.labelOperationType.TabIndex = 6;
@@ -362,8 +361,7 @@
             // 
             // labelCostCenter
             // 
-            this.labelCostCenter.Lines = 0;
-            this.labelCostCenter.Location = new System.Drawing.Point(14, 275);
+            this.labelCostCenter.Location = new System.Drawing.Point(14, 335);
             this.labelCostCenter.Name = "labelCostCenter";
             this.labelCostCenter.Size = new System.Drawing.Size(136, 23);
             this.labelCostCenter.TabIndex = 7;
@@ -371,8 +369,7 @@
             // 
             // labelSection
             // 
-            this.labelSection.Lines = 0;
-            this.labelSection.Location = new System.Drawing.Point(14, 304);
+            this.labelSection.Location = new System.Drawing.Point(14, 364);
             this.labelSection.Name = "labelSection";
             this.labelSection.Size = new System.Drawing.Size(136, 23);
             this.labelSection.TabIndex = 8;
@@ -380,8 +377,7 @@
             // 
             // labelNeedleThread
             // 
-            this.labelNeedleThread.Lines = 0;
-            this.labelNeedleThread.Location = new System.Drawing.Point(14, 333);
+            this.labelNeedleThread.Location = new System.Drawing.Point(14, 393);
             this.labelNeedleThread.Name = "labelNeedleThread";
             this.labelNeedleThread.Size = new System.Drawing.Size(136, 23);
             this.labelNeedleThread.TabIndex = 9;
@@ -389,8 +385,7 @@
             // 
             // labelBottomThread
             // 
-            this.labelBottomThread.Lines = 0;
-            this.labelBottomThread.Location = new System.Drawing.Point(14, 362);
+            this.labelBottomThread.Location = new System.Drawing.Point(14, 422);
             this.labelBottomThread.Name = "labelBottomThread";
             this.labelBottomThread.Size = new System.Drawing.Size(136, 23);
             this.labelBottomThread.TabIndex = 10;
@@ -398,8 +393,7 @@
             // 
             // labelCoverThread
             // 
-            this.labelCoverThread.Lines = 0;
-            this.labelCoverThread.Location = new System.Drawing.Point(14, 391);
+            this.labelCoverThread.Location = new System.Drawing.Point(14, 451);
             this.labelCoverThread.Name = "labelCoverThread";
             this.labelCoverThread.Size = new System.Drawing.Size(136, 23);
             this.labelCoverThread.TabIndex = 11;
@@ -419,9 +413,11 @@
             // 
             this.checkImportFromGSD.AutoSize = true;
             this.checkImportFromGSD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FromGSD", true));
-            this.checkImportFromGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkImportFromGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkImportFromGSD.IsSupportEditMode = false;
             this.checkImportFromGSD.Location = new System.Drawing.Point(313, 14);
             this.checkImportFromGSD.Name = "checkImportFromGSD";
+            this.checkImportFromGSD.ReadOnly = true;
             this.checkImportFromGSD.Size = new System.Drawing.Size(132, 21);
             this.checkImportFromGSD.TabIndex = 13;
             this.checkImportFromGSD.Text = "Import from GSD";
@@ -429,23 +425,27 @@
             // 
             // editOperationTitle
             // 
-            this.editOperationTitle.BackColor = System.Drawing.Color.White;
+            this.editOperationTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editOperationTitle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
-            this.editOperationTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editOperationTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editOperationTitle.IsSupportEditMode = false;
             this.editOperationTitle.Location = new System.Drawing.Point(154, 43);
             this.editOperationTitle.Multiline = true;
             this.editOperationTitle.Name = "editOperationTitle";
+            this.editOperationTitle.ReadOnly = true;
             this.editOperationTitle.Size = new System.Drawing.Size(432, 53);
             this.editOperationTitle.TabIndex = 14;
             // 
             // editOperationDescription
             // 
-            this.editOperationDescription.BackColor = System.Drawing.Color.White;
+            this.editOperationDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editOperationDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescCH", true));
-            this.editOperationDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editOperationDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editOperationDescription.IsSupportEditMode = false;
             this.editOperationDescription.Location = new System.Drawing.Point(154, 101);
             this.editOperationDescription.Multiline = true;
             this.editOperationDescription.Name = "editOperationDescription";
+            this.editOperationDescription.ReadOnly = true;
             this.editOperationDescription.Size = new System.Drawing.Size(432, 53);
             this.editOperationDescription.TabIndex = 15;
             // 
@@ -454,7 +454,7 @@
             this.displayMachineTypeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMachineTypeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineTypeID", true));
             this.displayMachineTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMachineTypeID.Location = new System.Drawing.Point(154, 159);
+            this.displayMachineTypeID.Location = new System.Drawing.Point(154, 219);
             this.displayMachineTypeID.Name = "displayMachineTypeID";
             this.displayMachineTypeID.Size = new System.Drawing.Size(80, 23);
             this.displayMachineTypeID.TabIndex = 16;
@@ -463,7 +463,7 @@
             // 
             this.displayMachine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMachine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMachine.Location = new System.Drawing.Point(234, 159);
+            this.displayMachine.Location = new System.Drawing.Point(234, 219);
             this.displayMachine.Name = "displayMachine";
             this.displayMachine.Size = new System.Drawing.Size(352, 23);
             this.displayMachine.TabIndex = 17;
@@ -473,15 +473,14 @@
             this.displayMaterialFactor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMaterialFactor.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlFactorID", true));
             this.displayMaterialFactor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMaterialFactor.Location = new System.Drawing.Point(154, 188);
+            this.displayMaterialFactor.Location = new System.Drawing.Point(154, 248);
             this.displayMaterialFactor.Name = "displayMaterialFactor";
             this.displayMaterialFactor.Size = new System.Drawing.Size(40, 23);
             this.displayMaterialFactor.TabIndex = 18;
             // 
             // labelISO
             // 
-            this.labelISO.Lines = 0;
-            this.labelISO.Location = new System.Drawing.Point(234, 188);
+            this.labelISO.Location = new System.Drawing.Point(234, 248);
             this.labelISO.Name = "labelISO";
             this.labelISO.Size = new System.Drawing.Size(29, 23);
             this.labelISO.TabIndex = 19;
@@ -492,15 +491,14 @@
             this.displayISO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayISO.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ISO", true));
             this.displayISO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayISO.Location = new System.Drawing.Point(267, 188);
+            this.displayISO.Location = new System.Drawing.Point(267, 248);
             this.displayISO.Name = "displayISO";
             this.displayISO.Size = new System.Drawing.Size(80, 23);
             this.displayISO.TabIndex = 20;
             // 
             // labelRPM
             // 
-            this.labelRPM.Lines = 0;
-            this.labelRPM.Location = new System.Drawing.Point(381, 187);
+            this.labelRPM.Location = new System.Drawing.Point(381, 247);
             this.labelRPM.Name = "labelRPM";
             this.labelRPM.Size = new System.Drawing.Size(47, 23);
             this.labelRPM.TabIndex = 21;
@@ -508,16 +506,18 @@
             // 
             // numRPM
             // 
-            this.numRPM.BackColor = System.Drawing.Color.White;
+            this.numRPM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numRPM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RPM", true));
-            this.numRPM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numRPM.Location = new System.Drawing.Point(432, 187);
+            this.numRPM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRPM.IsSupportEditMode = false;
+            this.numRPM.Location = new System.Drawing.Point(432, 247);
             this.numRPM.Name = "numRPM";
             this.numRPM.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numRPM.ReadOnly = true;
             this.numRPM.Size = new System.Drawing.Size(70, 23);
             this.numRPM.TabIndex = 22;
             this.numRPM.Value = new decimal(new int[] {
@@ -531,7 +531,7 @@
             this.displayAttachment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayAttachment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MoldID", true));
             this.displayAttachment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayAttachment.Location = new System.Drawing.Point(154, 217);
+            this.displayAttachment.Location = new System.Drawing.Point(154, 277);
             this.displayAttachment.Name = "displayAttachment";
             this.displayAttachment.Size = new System.Drawing.Size(372, 23);
             this.displayAttachment.TabIndex = 23;
@@ -541,7 +541,7 @@
             this.displayOperationType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayOperationType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OperationType", true));
             this.displayOperationType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayOperationType.Location = new System.Drawing.Point(154, 246);
+            this.displayOperationType.Location = new System.Drawing.Point(154, 306);
             this.displayOperationType.Name = "displayOperationType";
             this.displayOperationType.Size = new System.Drawing.Size(80, 23);
             this.displayOperationType.TabIndex = 24;
@@ -550,7 +550,7 @@
             // 
             this.displayOperationType1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayOperationType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayOperationType1.Location = new System.Drawing.Point(234, 246);
+            this.displayOperationType1.Location = new System.Drawing.Point(234, 306);
             this.displayOperationType1.Name = "displayOperationType1";
             this.displayOperationType1.Size = new System.Drawing.Size(352, 23);
             this.displayOperationType1.TabIndex = 25;
@@ -559,7 +559,7 @@
             // 
             this.displayCostCenter1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCostCenter1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCostCenter1.Location = new System.Drawing.Point(234, 275);
+            this.displayCostCenter1.Location = new System.Drawing.Point(234, 335);
             this.displayCostCenter1.Name = "displayCostCenter1";
             this.displayCostCenter1.Size = new System.Drawing.Size(352, 23);
             this.displayCostCenter1.TabIndex = 27;
@@ -569,7 +569,7 @@
             this.displayCostCenter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCostCenter.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CostCenter", true));
             this.displayCostCenter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCostCenter.Location = new System.Drawing.Point(154, 275);
+            this.displayCostCenter.Location = new System.Drawing.Point(154, 335);
             this.displayCostCenter.Name = "displayCostCenter";
             this.displayCostCenter.Size = new System.Drawing.Size(80, 23);
             this.displayCostCenter.TabIndex = 26;
@@ -578,7 +578,7 @@
             // 
             this.displaySection1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySection1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySection1.Location = new System.Drawing.Point(234, 304);
+            this.displaySection1.Location = new System.Drawing.Point(234, 364);
             this.displaySection1.Name = "displaySection1";
             this.displaySection1.Size = new System.Drawing.Size(352, 23);
             this.displaySection1.TabIndex = 29;
@@ -588,7 +588,7 @@
             this.displaySection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Section", true));
             this.displaySection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySection.Location = new System.Drawing.Point(154, 304);
+            this.displaySection.Location = new System.Drawing.Point(154, 364);
             this.displaySection.Name = "displaySection";
             this.displaySection.Size = new System.Drawing.Size(80, 23);
             this.displaySection.TabIndex = 28;
@@ -598,7 +598,7 @@
             this.displayNeedleThread.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayNeedleThread.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedleThread", true));
             this.displayNeedleThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayNeedleThread.Location = new System.Drawing.Point(154, 333);
+            this.displayNeedleThread.Location = new System.Drawing.Point(154, 393);
             this.displayNeedleThread.Name = "displayNeedleThread";
             this.displayNeedleThread.Size = new System.Drawing.Size(260, 23);
             this.displayNeedleThread.TabIndex = 30;
@@ -608,7 +608,7 @@
             this.displayBottomThread.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBottomThread.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BottomThread", true));
             this.displayBottomThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBottomThread.Location = new System.Drawing.Point(154, 362);
+            this.displayBottomThread.Location = new System.Drawing.Point(154, 422);
             this.displayBottomThread.Name = "displayBottomThread";
             this.displayBottomThread.Size = new System.Drawing.Size(260, 23);
             this.displayBottomThread.TabIndex = 0;
@@ -618,14 +618,13 @@
             this.displayCoverThread.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCoverThread.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CoverThread", true));
             this.displayCoverThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCoverThread.Location = new System.Drawing.Point(154, 391);
+            this.displayCoverThread.Location = new System.Drawing.Point(154, 451);
             this.displayCoverThread.Name = "displayCoverThread";
             this.displayCoverThread.Size = new System.Drawing.Size(260, 23);
             this.displayCoverThread.TabIndex = 0;
             // 
             // labelMachineTMU
             // 
-            this.labelMachineTMU.Lines = 0;
             this.labelMachineTMU.Location = new System.Drawing.Point(640, 14);
             this.labelMachineTMU.Name = "labelMachineTMU";
             this.labelMachineTMU.Size = new System.Drawing.Size(121, 23);
@@ -634,7 +633,6 @@
             // 
             // labelManualTMU
             // 
-            this.labelManualTMU.Lines = 0;
             this.labelManualTMU.Location = new System.Drawing.Point(640, 43);
             this.labelManualTMU.Name = "labelManualTMU";
             this.labelManualTMU.Size = new System.Drawing.Size(121, 23);
@@ -643,7 +641,6 @@
             // 
             // labelTotalTMU
             // 
-            this.labelTotalTMU.Lines = 0;
             this.labelTotalTMU.Location = new System.Drawing.Point(640, 72);
             this.labelTotalTMU.Name = "labelTotalTMU";
             this.labelTotalTMU.Size = new System.Drawing.Size(121, 23);
@@ -652,7 +649,6 @@
             // 
             // labelSMV
             // 
-            this.labelSMV.Lines = 0;
             this.labelSMV.Location = new System.Drawing.Point(640, 101);
             this.labelSMV.Name = "labelSMV";
             this.labelSMV.Size = new System.Drawing.Size(121, 23);
@@ -661,7 +657,6 @@
             // 
             // labelStchCM
             // 
-            this.labelStchCM.Lines = 0;
             this.labelStchCM.Location = new System.Drawing.Point(640, 130);
             this.labelStchCM.Name = "labelStchCM";
             this.labelStchCM.Size = new System.Drawing.Size(121, 23);
@@ -670,7 +665,6 @@
             // 
             // labelTotalSeamLength
             // 
-            this.labelTotalSeamLength.Lines = 0;
             this.labelTotalSeamLength.Location = new System.Drawing.Point(640, 159);
             this.labelTotalSeamLength.Name = "labelTotalSeamLength";
             this.labelTotalSeamLength.Size = new System.Drawing.Size(121, 23);
@@ -679,7 +673,6 @@
             // 
             // labelMachineAllowance
             // 
-            this.labelMachineAllowance.Lines = 0;
             this.labelMachineAllowance.Location = new System.Drawing.Point(640, 188);
             this.labelMachineAllowance.Name = "labelMachineAllowance";
             this.labelMachineAllowance.Size = new System.Drawing.Size(121, 23);
@@ -688,7 +681,6 @@
             // 
             // labelManualAllowance
             // 
-            this.labelManualAllowance.Lines = 0;
             this.labelManualAllowance.Location = new System.Drawing.Point(640, 217);
             this.labelManualAllowance.Name = "labelManualAllowance";
             this.labelManualAllowance.Size = new System.Drawing.Size(121, 23);
@@ -697,7 +689,6 @@
             // 
             // labelNeedleLength
             // 
-            this.labelNeedleLength.Lines = 0;
             this.labelNeedleLength.Location = new System.Drawing.Point(640, 333);
             this.labelNeedleLength.Name = "labelNeedleLength";
             this.labelNeedleLength.Size = new System.Drawing.Size(121, 23);
@@ -706,7 +697,6 @@
             // 
             // labelBottomLength
             // 
-            this.labelBottomLength.Lines = 0;
             this.labelBottomLength.Location = new System.Drawing.Point(640, 360);
             this.labelBottomLength.Name = "labelBottomLength";
             this.labelBottomLength.Size = new System.Drawing.Size(121, 23);
@@ -715,7 +705,6 @@
             // 
             // labelCoverLength
             // 
-            this.labelCoverLength.Lines = 0;
             this.labelCoverLength.Location = new System.Drawing.Point(640, 387);
             this.labelCoverLength.Name = "labelCoverLength";
             this.labelCoverLength.Size = new System.Drawing.Size(121, 23);
@@ -724,10 +713,11 @@
             // 
             // numMachineTMU
             // 
-            this.numMachineTMU.BackColor = System.Drawing.Color.White;
+            this.numMachineTMU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numMachineTMU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineTMU", true));
             this.numMachineTMU.DecimalPlaces = 2;
-            this.numMachineTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numMachineTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numMachineTMU.IsSupportEditMode = false;
             this.numMachineTMU.Location = new System.Drawing.Point(765, 14);
             this.numMachineTMU.Name = "numMachineTMU";
             this.numMachineTMU.NullValue = new decimal(new int[] {
@@ -735,6 +725,7 @@
             0,
             0,
             0});
+            this.numMachineTMU.ReadOnly = true;
             this.numMachineTMU.Size = new System.Drawing.Size(75, 23);
             this.numMachineTMU.TabIndex = 42;
             this.numMachineTMU.Value = new decimal(new int[] {
@@ -745,10 +736,11 @@
             // 
             // numManualTMU
             // 
-            this.numManualTMU.BackColor = System.Drawing.Color.White;
+            this.numManualTMU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numManualTMU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManualTMU", true));
             this.numManualTMU.DecimalPlaces = 2;
-            this.numManualTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numManualTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numManualTMU.IsSupportEditMode = false;
             this.numManualTMU.Location = new System.Drawing.Point(765, 43);
             this.numManualTMU.Name = "numManualTMU";
             this.numManualTMU.NullValue = new decimal(new int[] {
@@ -756,6 +748,7 @@
             0,
             0,
             0});
+            this.numManualTMU.ReadOnly = true;
             this.numManualTMU.Size = new System.Drawing.Size(75, 23);
             this.numManualTMU.TabIndex = 43;
             this.numManualTMU.Value = new decimal(new int[] {
@@ -766,10 +759,11 @@
             // 
             // numTotalTMU
             // 
-            this.numTotalTMU.BackColor = System.Drawing.Color.White;
+            this.numTotalTMU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalTMU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalTMU", true));
             this.numTotalTMU.DecimalPlaces = 2;
-            this.numTotalTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTotalTMU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalTMU.IsSupportEditMode = false;
             this.numTotalTMU.Location = new System.Drawing.Point(765, 72);
             this.numTotalTMU.Name = "numTotalTMU";
             this.numTotalTMU.NullValue = new decimal(new int[] {
@@ -777,6 +771,7 @@
             0,
             0,
             0});
+            this.numTotalTMU.ReadOnly = true;
             this.numTotalTMU.Size = new System.Drawing.Size(75, 23);
             this.numTotalTMU.TabIndex = 44;
             this.numTotalTMU.Value = new decimal(new int[] {
@@ -787,10 +782,11 @@
             // 
             // numSMV
             // 
-            this.numSMV.BackColor = System.Drawing.Color.White;
+            this.numSMV.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numSMV.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMV", true));
             this.numSMV.DecimalPlaces = 4;
-            this.numSMV.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSMV.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSMV.IsSupportEditMode = false;
             this.numSMV.Location = new System.Drawing.Point(765, 101);
             this.numSMV.Name = "numSMV";
             this.numSMV.NullValue = new decimal(new int[] {
@@ -798,6 +794,7 @@
             0,
             0,
             0});
+            this.numSMV.ReadOnly = true;
             this.numSMV.Size = new System.Drawing.Size(75, 23);
             this.numSMV.TabIndex = 45;
             this.numSMV.Value = new decimal(new int[] {
@@ -808,10 +805,11 @@
             // 
             // numStchCM
             // 
-            this.numStchCM.BackColor = System.Drawing.Color.White;
+            this.numStchCM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numStchCM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StitchCM", true));
             this.numStchCM.DecimalPlaces = 2;
-            this.numStchCM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numStchCM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numStchCM.IsSupportEditMode = false;
             this.numStchCM.Location = new System.Drawing.Point(765, 130);
             this.numStchCM.Name = "numStchCM";
             this.numStchCM.NullValue = new decimal(new int[] {
@@ -819,6 +817,7 @@
             0,
             0,
             0});
+            this.numStchCM.ReadOnly = true;
             this.numStchCM.Size = new System.Drawing.Size(75, 23);
             this.numStchCM.TabIndex = 46;
             this.numStchCM.Value = new decimal(new int[] {
@@ -829,10 +828,11 @@
             // 
             // numTotalSeamLength
             // 
-            this.numTotalSeamLength.BackColor = System.Drawing.Color.White;
+            this.numTotalSeamLength.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalSeamLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeamLength", true));
             this.numTotalSeamLength.DecimalPlaces = 2;
-            this.numTotalSeamLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTotalSeamLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalSeamLength.IsSupportEditMode = false;
             this.numTotalSeamLength.Location = new System.Drawing.Point(765, 159);
             this.numTotalSeamLength.Name = "numTotalSeamLength";
             this.numTotalSeamLength.NullValue = new decimal(new int[] {
@@ -840,6 +840,7 @@
             0,
             0,
             0});
+            this.numTotalSeamLength.ReadOnly = true;
             this.numTotalSeamLength.Size = new System.Drawing.Size(75, 23);
             this.numTotalSeamLength.TabIndex = 47;
             this.numTotalSeamLength.Value = new decimal(new int[] {
@@ -850,9 +851,10 @@
             // 
             // numMachineAllowance
             // 
-            this.numMachineAllowance.BackColor = System.Drawing.Color.White;
+            this.numMachineAllowance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numMachineAllowance.DecimalPlaces = 2;
-            this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numMachineAllowance.IsSupportEditMode = false;
             this.numMachineAllowance.Location = new System.Drawing.Point(765, 187);
             this.numMachineAllowance.Name = "numMachineAllowance";
             this.numMachineAllowance.NullValue = new decimal(new int[] {
@@ -860,6 +862,7 @@
             0,
             0,
             0});
+            this.numMachineAllowance.ReadOnly = true;
             this.numMachineAllowance.Size = new System.Drawing.Size(50, 23);
             this.numMachineAllowance.TabIndex = 48;
             this.numMachineAllowance.Value = new decimal(new int[] {
@@ -870,9 +873,10 @@
             // 
             // numManualAllowance
             // 
-            this.numManualAllowance.BackColor = System.Drawing.Color.White;
+            this.numManualAllowance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numManualAllowance.DecimalPlaces = 2;
-            this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numManualAllowance.IsSupportEditMode = false;
             this.numManualAllowance.Location = new System.Drawing.Point(765, 217);
             this.numManualAllowance.Name = "numManualAllowance";
             this.numManualAllowance.NullValue = new decimal(new int[] {
@@ -880,6 +884,7 @@
             0,
             0,
             0});
+            this.numManualAllowance.ReadOnly = true;
             this.numManualAllowance.Size = new System.Drawing.Size(50, 23);
             this.numManualAllowance.TabIndex = 49;
             this.numManualAllowance.Value = new decimal(new int[] {
@@ -890,10 +895,11 @@
             // 
             // numNeedleLength
             // 
-            this.numNeedleLength.BackColor = System.Drawing.Color.White;
+            this.numNeedleLength.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numNeedleLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NeedleLength", true));
             this.numNeedleLength.DecimalPlaces = 2;
-            this.numNeedleLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numNeedleLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNeedleLength.IsSupportEditMode = false;
             this.numNeedleLength.Location = new System.Drawing.Point(765, 333);
             this.numNeedleLength.Name = "numNeedleLength";
             this.numNeedleLength.NullValue = new decimal(new int[] {
@@ -901,6 +907,7 @@
             0,
             0,
             0});
+            this.numNeedleLength.ReadOnly = true;
             this.numNeedleLength.Size = new System.Drawing.Size(60, 23);
             this.numNeedleLength.TabIndex = 50;
             this.numNeedleLength.Value = new decimal(new int[] {
@@ -911,10 +918,11 @@
             // 
             // numBottomLength
             // 
-            this.numBottomLength.BackColor = System.Drawing.Color.White;
+            this.numBottomLength.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBottomLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BottomLength", true));
             this.numBottomLength.DecimalPlaces = 2;
-            this.numBottomLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBottomLength.IsSupportEditMode = false;
             this.numBottomLength.Location = new System.Drawing.Point(765, 360);
             this.numBottomLength.Name = "numBottomLength";
             this.numBottomLength.NullValue = new decimal(new int[] {
@@ -922,6 +930,7 @@
             0,
             0,
             0});
+            this.numBottomLength.ReadOnly = true;
             this.numBottomLength.Size = new System.Drawing.Size(60, 23);
             this.numBottomLength.TabIndex = 51;
             this.numBottomLength.Value = new decimal(new int[] {
@@ -932,10 +941,11 @@
             // 
             // numCoverLength
             // 
-            this.numCoverLength.BackColor = System.Drawing.Color.White;
+            this.numCoverLength.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCoverLength.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CoverLength", true));
             this.numCoverLength.DecimalPlaces = 2;
-            this.numCoverLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCoverLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCoverLength.IsSupportEditMode = false;
             this.numCoverLength.Location = new System.Drawing.Point(765, 387);
             this.numCoverLength.Name = "numCoverLength";
             this.numCoverLength.NullValue = new decimal(new int[] {
@@ -943,6 +953,7 @@
             0,
             0,
             0});
+            this.numCoverLength.ReadOnly = true;
             this.numCoverLength.Size = new System.Drawing.Size(60, 23);
             this.numCoverLength.TabIndex = 52;
             this.numCoverLength.Value = new decimal(new int[] {
@@ -953,7 +964,6 @@
             // 
             // label28
             // 
-            this.label28.Lines = 0;
             this.label28.Location = new System.Drawing.Point(818, 187);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(18, 23);
@@ -962,20 +972,37 @@
             // 
             // label29
             // 
-            this.label29.Lines = 0;
             this.label29.Location = new System.Drawing.Point(818, 217);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(18, 23);
             this.label29.TabIndex = 54;
             this.label29.Text = "%";
             // 
+            // editAnnotation
+            // 
+            this.editAnnotation.BackColor = System.Drawing.Color.White;
+            this.editAnnotation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Annotation", true));
+            this.editAnnotation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editAnnotation.Location = new System.Drawing.Point(154, 160);
+            this.editAnnotation.Multiline = true;
+            this.editAnnotation.Name = "editAnnotation";
+            this.editAnnotation.Size = new System.Drawing.Size(432, 53);
+            this.editAnnotation.TabIndex = 56;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(14, 160);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(136, 23);
+            this.label1.TabIndex = 55;
+            this.label1.Text = "Operation Annotation";
+            // 
             // B09
             // 
-            this.ClientSize = new System.Drawing.Size(908, 548);
+            this.ClientSize = new System.Drawing.Size(908, 587);
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B09";
@@ -1066,5 +1093,7 @@
         private Win.UI.Button btnPicture2Delete;
         private Win.UI.Button btnPicture2Attach;
         private Win.UI.PictureBox picture2;
+        private Win.UI.EditBox editAnnotation;
+        private Win.UI.Label label1;
     }
 }
