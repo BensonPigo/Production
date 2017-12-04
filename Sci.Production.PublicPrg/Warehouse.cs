@@ -805,11 +805,11 @@ where   poid = '{1}'
                         #region 未分配且, 任何一Dyelot總和=剩餘blance
                         if (dt.AsEnumerable().Any(n => ((decimal)n["groupqty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])))
                         {
-                            var dyelotS = dt.AsEnumerable().Where(n => ((decimal)n["groupqty"]).EqualDecimal(blance) && !num.Contains((long)n["num"]));
+                            var dyelotS = dt.AsEnumerable().Where(n => ((decimal)n["groupqty"]).EqualDecimal(blance) && !num.Contains((long)n["num"])).CopyToDataTable();
                             // 找出符合的dyelot資料, 筆數最小,若筆數一樣要qty的標準差最小 ,直接order by第一筆即是結果
                             string s = "select  top 1 dyelot,c=count(1),std = stdev(qty) from #tmp group by dyelot order by c ,std";
                             DataTable ct_std;
-                            DualResult Result = MyUtility.Tool.ProcessWithObject(dyelotS, "", s, out ct_std);
+                            DualResult Result = MyUtility.Tool.ProcessWithDatatable(dyelotS, "dyelot,qty", s, out ct_std);
                             if (!Result)
                             {
                                 MyUtility.Msg.ErrorBox(Result.ToString());
