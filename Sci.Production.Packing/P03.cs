@@ -266,6 +266,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
         }
 
+        // 檢查OrderID+Seq不可以重複建立
+        private bool CheckDouble_SpSeq(string orderid, string seq)
+        {
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", orderid, seq, this.CurrentMaintain["ID"].ToString())))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + orderid + ", Seq:" + seq + " already exist in packing list, can't be create again!");
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// OnDetailGridSetup
         /// </summary>
@@ -391,9 +403,17 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'",
                                     }
                                 }
                             }
+
                             #endregion
                             dr.EndEdit();
                         }
+                    }
+
+                    // 檢查OrderID+Seq不可以重複建立
+                    if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString()))
+                    {
+                        e.Cancel = true;
+                        return;
                     }
                 }
             };
@@ -478,6 +498,13 @@ where   oq.ID = '{0}'
                         dr["Seq"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("< Seq:" + e.FormattedValue + " > not found!!!");
+                        return;
+                    }
+
+                    // 檢查OrderID+Seq不可以重複建立
+                    if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), ((object)e.FormattedValue).ToString()))
+                    {
+                        e.Cancel = true;
                         return;
                     }
                 }
