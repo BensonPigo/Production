@@ -77,7 +77,6 @@
             // label5
             // 
             this.label5.BackColor = System.Drawing.SystemColors.Control;
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(7, 79);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(104, 23);
@@ -102,7 +101,7 @@
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
             this.btnToExcel.TabIndex = 0;
-            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.Text = "Print";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
