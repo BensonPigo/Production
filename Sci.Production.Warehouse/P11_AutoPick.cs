@@ -254,6 +254,10 @@ select	distinct p.id as [poid]
         , ColorMultipleID = isnull(dbo.GetColorMultipleID(p.BrandId, p.ColorID), '')
         , f.MTLTYPEID
         , ob.BomTypeColor
+        , CompareBoAExpandSeq1 = case 
+                                    when p.Seq1 like '7_' then p.OutputSeq1
+                                    else p.Seq1
+                                 end
 into #tmpPO_supp_detail
 from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
@@ -313,16 +317,20 @@ from (
             , Orderlist_chk = psdo.Orderid
     from #tmpPO_supp_detail b
     left join (
-         select --tmpB.*
-        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty ,tmpB.ColorID
-               , ob.Seq1
+         select distinct tmpB.id
+                , tmpB.SCIRefNo
+                , tmpB.SizeCode
+                , tmpB.SizeSpec
+                , tmpB.orderqty
+                , tmpB.ColorID
+                , ob.Seq1
         from #Tmp_BoaExpend tmpB
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey
     ) tb on b.SCIRefno = tb.SciRefno 
             and b.poid = tb.ID 
             and (b.SizeSpec = isnull(tb.SizeSpec, '')) 
             and (b.ColorID = tb.ColorID)
-            and b.Seq1 = tb.Seq1
+            and b.CompareBoAExpandSeq1 = tb.Seq1
     outer apply (
         select value = case count (1)
                             when 0 then 'Y'
@@ -368,21 +376,24 @@ with cte as(
         from #Tmp_BoaExpend tmpB
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
 		where b.SCIRefno = tmpB.SciRefno 
-			and b.poid = tmpB.ID 
-            and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))     
-			and b.ColorID = tmpB.ColorID       
-            and b.Seq1 = ob.Seq1
+			  and b.poid = tmpB.ID 
+              and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))     
+			  and b.ColorID = tmpB.ColorID       
+              and b.CompareBoAExpandSeq1 = ob.Seq1
 	) tbColor
 	outer apply(
-		 select --tmpB.*
-        distinct tmpB.id,tmpB.SCIRefNo,tmpB.SizeCode,tmpB.SizeSpec,tmpB.orderqty
+		select distinct tmpB.id
+               , tmpB.SCIRefNo
+               , tmpB.SizeCode
+               , tmpB.SizeSpec
+               , tmpB.orderqty
                , ob.Seq1
         from #Tmp_BoaExpend tmpB
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
 		where b.SCIRefno = tmpB.SciRefno 
-			and b.poid = tmpB.ID 
-            and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))            
-            and b.Seq1 = ob.Seq1
+			  and b.poid = tmpB.ID 
+              and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))            
+              and b.CompareBoAExpandSeq1 = ob.Seq1
 	) tbNonColor    
     outer apply (
         select value = case
