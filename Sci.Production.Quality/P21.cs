@@ -377,7 +377,7 @@ where a.ID='{0}'",
 
                 if (dResult = DBProxy.Current.Execute(null, updCmd, spamEncode))
                 {
-                    string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid and status='Confirmed' and Stage='F' order by cDate DESC";
+                    string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid and status='Confirmed' and Stage='F' order by cDate DESC,AddDate DESC";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
                     DBProxy.Current.Select(null, cmd, spam, out dt);
@@ -418,7 +418,7 @@ where a.ID='{0}'",
 
             if (dResult = DBProxy.Current.Execute(null, updCmd, spamAmend))
             {
-                string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid  and status='Confirmed' and Stage='F'  order by cDate DESC";
+                string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid  and status='Confirmed' and Stage='F'  order by cDate DESC,AddDate DESC";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
                 DBProxy.Current.Select(null, cmd, spam, out dt);
