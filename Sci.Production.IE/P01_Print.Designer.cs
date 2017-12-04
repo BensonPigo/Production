@@ -30,10 +30,8 @@
         {
             this.labelEfficiencySetting = new Sci.Win.UI.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
-            this.labelLanguage = new Sci.Win.UI.Label();
             this.numEfficiencySetting = new Sci.Win.UI.NumericBox();
             this.comboArtworkType = new Sci.Win.UI.ComboBox();
-            this.comboLanguage = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -53,7 +51,6 @@
             // 
             // labelEfficiencySetting
             // 
-            this.labelEfficiencySetting.Lines = 0;
             this.labelEfficiencySetting.Location = new System.Drawing.Point(13, 13);
             this.labelEfficiencySetting.Name = "labelEfficiencySetting";
             this.labelEfficiencySetting.Size = new System.Drawing.Size(107, 23);
@@ -62,21 +59,11 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(13, 48);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(107, 23);
             this.labelArtworkType.TabIndex = 95;
             this.labelArtworkType.Text = "Artwork type";
-            // 
-            // labelLanguage
-            // 
-            this.labelLanguage.Lines = 0;
-            this.labelLanguage.Location = new System.Drawing.Point(13, 83);
-            this.labelLanguage.Name = "labelLanguage";
-            this.labelLanguage.Size = new System.Drawing.Size(107, 42);
-            this.labelLanguage.TabIndex = 97;
-            this.labelLanguage.Text = "Language";
             // 
             // numEfficiencySetting
             // 
@@ -119,24 +106,11 @@
             this.comboArtworkType.Size = new System.Drawing.Size(121, 24);
             this.comboArtworkType.TabIndex = 1;
             // 
-            // comboLanguage
-            // 
-            this.comboLanguage.BackColor = System.Drawing.Color.White;
-            this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLanguage.FormattingEnabled = true;
-            this.comboLanguage.IsSupportUnselect = true;
-            this.comboLanguage.Location = new System.Drawing.Point(124, 83);
-            this.comboLanguage.Name = "comboLanguage";
-            this.comboLanguage.Size = new System.Drawing.Size(121, 24);
-            this.comboLanguage.TabIndex = 2;
-            // 
             // P01_Print
             // 
-            this.ClientSize = new System.Drawing.Size(447, 171);
-            this.Controls.Add(this.comboLanguage);
+            this.ClientSize = new System.Drawing.Size(447, 145);
             this.Controls.Add(this.comboArtworkType);
             this.Controls.Add(this.numEfficiencySetting);
-            this.Controls.Add(this.labelLanguage);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelEfficiencySetting);
             this.DefaultControl = "numEfficiencySetting";
@@ -149,10 +123,8 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelEfficiencySetting, 0);
             this.Controls.SetChildIndex(this.labelArtworkType, 0);
-            this.Controls.SetChildIndex(this.labelLanguage, 0);
             this.Controls.SetChildIndex(this.numEfficiencySetting, 0);
             this.Controls.SetChildIndex(this.comboArtworkType, 0);
-            this.Controls.SetChildIndex(this.comboLanguage, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,9 +134,7 @@
 
         private Win.UI.Label labelEfficiencySetting;
         private Win.UI.Label labelArtworkType;
-        private Win.UI.Label labelLanguage;
         private Win.UI.NumericBox numEfficiencySetting;
         private Win.UI.ComboBox comboArtworkType;
-        private Win.UI.ComboBox comboLanguage;
     }
 }

@@ -211,6 +211,7 @@ order by td.Seq", masterID);
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
                                     dr["Frequency"] = 1;
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
+                                    dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                     dr.EndEdit();
                                 }
                             }
@@ -228,6 +229,7 @@ order by td.Seq", masterID);
                                 dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.P01SelectOperationCode["SMV"]);
                                 dr["Frequency"] = 1;
                                 dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
+                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                 dr.EndEdit();
                             }
                             else
@@ -259,6 +261,7 @@ order by td.Seq", masterID);
                             dr["SeamLength"] = 0;
                             dr["SMV"] = 0;
                             dr["IETMSSMV"] = 0;
+                            dr["Annotation"] = string.Empty;
                         }
                         else
                         {
@@ -270,7 +273,7 @@ order by td.Seq", masterID);
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
-                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
+                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID,Annotation from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
                             DataTable opData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
@@ -294,6 +297,7 @@ order by td.Seq", masterID);
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]) * 60;
                                     dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SMV"]);
                                     dr["ttlSeamLength"] = MyUtility.Convert.GetDecimal(dr["Frequency"]) * MyUtility.Convert.GetDecimal(dr["SeamLength"]);
+                                    dr["Annotation"] = opData.Rows[0]["Annotation"].ToString();
                                 }
                             }
                             else
@@ -993,7 +997,7 @@ where ID = {0}",
             #endregion
 
             DataTable ietmsData;
-            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
+            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,o.Annotation,
                             iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
                             id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,

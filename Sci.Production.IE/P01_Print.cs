@@ -19,7 +19,6 @@ namespace Sci.Production.IE
     {
         private DataRow masterData;
         private string artworktype;
-        private string language;
         private string custcdID;
         private string machineID;
         private decimal efficiency;
@@ -34,7 +33,6 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.masterData = masterData;
-            this.labelLanguage.Text = "Language\r\n(For description)";
             DataTable artworkType;
             string sqlCmd = string.Format(
                 @"
@@ -46,9 +44,7 @@ and TimeStudy_Detail.ID = {0}",
                 MyUtility.Convert.GetString(this.masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, artworkType);
-            MyUtility.Tool.SetupCombox(this.comboLanguage, 1, 1, "English,Chinese,Cambodia,Vietnam");
             this.comboArtworkType.SelectedIndex = -1;
-            this.comboLanguage.Text = "English";
         }
 
         /// <summary>
@@ -65,7 +61,6 @@ and TimeStudy_Detail.ID = {0}",
 
             this.efficiency = MyUtility.Convert.GetInt(this.numEfficiencySetting.Value);
             this.artworktype = this.comboArtworkType.Text;
-            this.language = this.comboLanguage.Text;
 
             return base.ValidateInput();
         }
@@ -86,10 +81,9 @@ FOR XML PATH('')", MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Check.Empty(this.artworktype) ? string.Empty : " and m.ArtworkTypeID = '" + this.artworktype + "'"));
             string sqlCmd = string.Format(
                 @"select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
-td.Annotation,o.DescEN,od.DescCHS,od.DescKH,od.DescVI 
+td.Annotation,o.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join OperationDesc od WITH (NOLOCK) on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}{1}
@@ -161,7 +155,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 objArray[0, 2] = dr["OperationID"];
                 objArray[0, 3] = dr["MachineTypeID"];
                 objArray[0, 4] = dr["Mold"];
-                objArray[0, 5] = this.language == "English" ? dr["DescEN"] : this.language == "Chinese" ? dr["DescCHS"] : this.language == "Cambodia" ? dr["DescKH"] : this.language == "Vietnam" ? dr["DescVI"] : string.Empty;
+                objArray[0, 5] = dr["DescEN"];
                 objArray[0, 6] = dr["Annotation"];
                 objArray[0, 7] = dr["Frequency"];
                 objArray[0, 8] = dr["SMV"];
