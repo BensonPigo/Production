@@ -1126,7 +1126,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>2in</Height>
+    <Height>0.53125in</Height>
     <Style />
   </Body>
   <Width>11.15963in</Width>
@@ -1333,16 +1333,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Prepared by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>0.48288cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.14941cm</Width>
+          <Width>2.54628cm</Width>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1361,16 +1364,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Noted by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>4.74724cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.73743cm</Width>
+          <Width>1.9491cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
@@ -1390,16 +1396,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Approved by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>8.59963cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.18769cm</Width>
+          <Width>2.47873cm</Width>
           <ZIndex>2</ZIndex>
           <Style>
             <Border>
@@ -1419,16 +1428,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Time of transfer/checked by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>12.90227cm</Left>
           <Height>0.6cm</Height>
-          <Width>4.80467cm</Width>
+          <Width>5.0428cm</Width>
           <ZIndex>3</ZIndex>
           <Style>
             <Border>
@@ -1448,16 +1460,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Time of Arrival /checked by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>19.51483cm</Left>
           <Height>0.6cm</Height>
-          <Width>4.66076cm</Width>
+          <Width>4.9518cm</Width>
           <ZIndex>4</ZIndex>
           <Style>
             <Border>
@@ -1477,16 +1492,19 @@
               <TextRuns>
                 <TextRun>
                   <Value>Received by</Value>
-                  <Style />
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
-          <Left>26.05242cm</Left>
+          <Top>0cm</Top>
+          <Left>25.86721cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.29305cm</Width>
+          <Width>2.47826cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
