@@ -53,55 +53,7 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable gridData;
-            string sqlCmd = string.Format(
-                @"
-with wantToClose
-as
-(
-select distinct POID
-from Orders o WITH (NOLOCK) 
-where o.Finished = 0 
-and o.MDivisionID = '{0}'
-and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S')
-union all
-select distinct A.ID
-	from PO_Supp_Detail A WITH (NOLOCK) 
-	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
-	inner join po p on a.id=p.ID 
-	inner join orders o on o.POID=p.ID
-	where A.ID = o.POID and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty) )
-	and p.Complete=0
-    and o.Finished = 0 
-	and o.Category='M'
-),
-canNotClose
-as
-(
-select distinct POID
-from Orders o WITH (NOLOCK) 
-where o.Finished = 0 
-and o.MDivisionID = '{0}'
-and o.PulloutComplete = 0
-and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S')
-)
-select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle,o.Category
-from (select * from wantToClose
-	  except
-	  select * from canNotClose) a
-left join Orders o WITH (NOLOCK) on a.POID = o.ID
-left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
-left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
-            }
-
-            this.listControlBindingSource1.DataSource = gridData;
+            this.ReLoadDatas();
 
             // 設定Grid1的顯示欄位
             this.gridBatchShipmentFinished.IsEditingReadOnly = false;
@@ -113,33 +65,6 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("POCombo", header: "PO Combo", width: Widths.AnsiChars(50), iseditingreadonly: true);
-        }
-
-        private void SetFilter()
-        {
-            StringBuilder stringFilter = new StringBuilder();
-            stringFilter.Append("1=1");
-            if (!MyUtility.Check.Empty(this.txtStyle.Text))
-            {
-                stringFilter.Append(string.Format(" and StyleID = '{0}'", this.txtStyle.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtBuyer.Text))
-            {
-                stringFilter.Append(string.Format(" and BuyerID = '{0}'", this.txtBuyer.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
-            {
-                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", this.dateBuyerDelivery.Value1));
-            }
-
-            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
-            {
-                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", this.dateBuyerDelivery.Value2));
-            }
-
-            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
         }
 
         // Style#
@@ -259,14 +184,19 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             {
                 if (MyUtility.Convert.GetString(item["Category"]) == "M")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(item["POID"]))))
+                    if (MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(item["POID"]))) == false)
                     {
                         sqlCmds = string.Format(
-                            @"select A.ID
-                        from PO_Supp_Detail A WITH (NOLOCK) 
-                        left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-                        inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
-                        where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)",
+                            @"
+select A.ID
+from PO_Supp_Detail A WITH (NOLOCK) 
+left join MDivisionPoDetail B WITH (NOLOCK) on B.POID = A.ID 
+											   and B.Seq1 = A.SEQ1 
+											   and B.Seq2 = A.SEQ2
+inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid 
+										  and F.MDivisionID = '{0}'
+where A.ID = '{1}' 
+	  and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)",
                             Sci.Env.User.Keyword,
                             item["POID"]);
 
@@ -279,7 +209,16 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 }
                 else
                 {
-                    sqlCmds = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(item["POID"]));
+                    sqlCmds = string.Format(
+                        @"
+select SP = (select ID + ',' 
+			 from Orders WITH (NOLOCK) 
+			 where POID = '{0}' 
+			 	   and Qty > 0 
+			 	   and PulloutComplete = 0 
+	 	     for xml path(''))",
+                        MyUtility.Convert.GetString(item["POID"]));
+
                     string spList = MyUtility.GetValue.Lookup(sqlCmds);
                     if (!MyUtility.Check.Empty(spList))
                     {
@@ -330,55 +269,8 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 }
             }
             #endregion
-            DataTable gridData;
-            string sqlCmd = string.Format(
-                @"
-with wantToClose
-as
-(
-select distinct POID
-from Orders o WITH (NOLOCK) 
-where o.Finished = 0 
-and o.MDivisionID = '{0}'
-and (o.Junk = 1 or o.PulloutComplete = 1)
-and (o.Category = 'B' or o.Category = 'S')
-union all
-select distinct A.ID
-	from PO_Supp_Detail A WITH (NOLOCK) 
-	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-	inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
-	inner join po p on a.id=p.ID 
-	inner join orders o on o.POID=p.ID
-	where A.ID = o.POID and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty) )
-	and p.Complete=0
-    and o.Finished = 0 
-	and o.Category='M'
-),
-canNotClose
-as
-(
-select distinct POID
-from Orders o WITH (NOLOCK) 
-where o.Finished = 0 
-and o.MDivisionID = '{0}'
-and o.PulloutComplete = 0
-and o.Junk = 0
-and (o.Category = 'B' or o.Category = 'S')
-)
-select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle,o.Category
-from (select * from wantToClose
-	  except
-	  select * from canNotClose) a
-left join Orders o WITH (NOLOCK) on a.POID = o.ID
-left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
-left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
-            DualResult renewresult = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            if (!renewresult)
-            {
-                MyUtility.Msg.ErrorBox("Query data fail!!" + renewresult.ToString());
-            }
 
-            this.listControlBindingSource1.DataSource = gridData;
+            this.ReLoadDatas();
             this.SetFilter();
         }
 
@@ -430,5 +322,134 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             strExcelName.OpenFile();
             #endregion
         }
+
+        private void ReLoadDatas()
+        {
+            DataTable gridData;
+            string sqlCmd = string.Format(
+                @"
+select *
+into #wantToClose
+from (
+	select distinct POID
+	from Orders o WITH (NOLOCK) 
+	where o.Finished = 0 
+		  and o.MDivisionID = '{0}'
+		  and (o.Junk = 1 or o.PulloutComplete = 1)
+		  and (o.Category = 'B' or o.Category = 'S')
+
+	union all
+	select distinct A.ID
+	from PO_Supp_Detail A WITH (NOLOCK) 
+	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID = A.ID 
+												   and B.Seq1 = A.SEQ1 
+												   and B.Seq2 = A.SEQ2
+	inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid 
+											  and F.MDivisionID='{0}'
+	inner join po p on a.id = p.ID 
+	inner join orders o on o.POID = p.ID
+	where A.ID = o.POID 
+		  and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty))
+		  and p.Complete = 0
+	      and o.Finished = 0 
+		  and o.Category = 'M'
+) wantToClose
+
+select *
+into #canNotClose
+from (
+	-- Orders
+	select distinct POID
+	from Orders o WITH (NOLOCK) 
+	where o.Finished = 0 
+		  and o.MDivisionID = '{0}'
+		  and o.PulloutComplete = 0
+		  and o.Junk = 0
+		  and (o.Category = 'B' or o.Category = 'S')
+
+	-- Warehouse still have material
+	union
+	select distinct WTC.POID
+	from PO_Supp_Detail A WITH (NOLOCK)
+	inner join Orders o WITH (NOLOCK) on a.ID = o.ID	
+	inner join #wantToClose WTC on A.ID = WTC.POID
+	left join PO With (NOLOCK) on a.ID = PO.ID
+								  and PO.Complete = 1
+	left join MDivisionPoDetail B WITH (NOLOCK) on B.POID = A.ID 
+												   and B.Seq1 = A.SEQ1 
+												   and B.Seq2 = A.SEQ2
+	inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid 
+											  and F.MDivisionID = '{0}'
+	where (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)
+		  and o.Category = 'M'
+		  and PO.ID is null
+
+	-- Below combined SP# not yet ship
+	union
+	select distinct WTC.POID
+	from Orders WITH (NOLOCK) 	
+	inner join #wantToClose WTC on Orders.POID = WTC.POID
+	where Orders.Qty > 0 
+		  and Orders.PulloutComplete = 0 
+		  and Orders.Category != 'M'
+) #canNotClose
+
+select Selected = 1
+	   , a.POID
+	   , StyleID = isnull(o.StyleID, '')
+	   , BuyerID = isnull(b.BuyerID, '')
+	   , o.BuyerDelivery
+	   , POCombo = [dbo].getPOComboList(a.POID, a.POID)
+	   , MCHandle = (o.MCHandle + ' - ' + isnull(p.Name, ''))
+	   , o.Category
+from (
+	select * 
+	from #wantToClose
+	
+	except
+	select * 
+	from #canNotClose
+) a
+left join Orders o WITH (NOLOCK) on a.POID = o.ID
+left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
+left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle",
+                Sci.Env.User.Keyword);
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
+            }
+
+            this.listControlBindingSource1.DataSource = gridData;
+        }
+
+        private void SetFilter()
+        {
+            StringBuilder stringFilter = new StringBuilder();
+            stringFilter.Append("1=1");
+            if (!MyUtility.Check.Empty(this.txtStyle.Text))
+            {
+                stringFilter.Append(string.Format(" and StyleID = '{0}'", this.txtStyle.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtBuyer.Text))
+            {
+                stringFilter.Append(string.Format(" and BuyerID = '{0}'", this.txtBuyer.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            {
+                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", this.dateBuyerDelivery.Value1));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            {
+                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", this.dateBuyerDelivery.Value2));
+            }
+
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
+        }
+
     }
 }
