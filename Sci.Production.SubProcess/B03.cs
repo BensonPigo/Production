@@ -1,18 +1,18 @@
-﻿using System.Windows.Forms;
-using Ict;
+﻿using Ict;
+using System.Windows.Forms;
 
 namespace Sci.Production.SubProcess
 {
     /// <summary>
-    /// SubProcess_B01
+    /// SubProcess_B03
     /// </summary>
-    public partial class B01 : Sci.Win.Tems.Input1
+    public partial class B03 : Sci.Win.Tems.Input1
     {
         /// <summary>
-        /// B01
+        /// B03
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public B01(ToolStripMenuItem menuitem)
+        public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -24,7 +24,8 @@ namespace Sci.Production.SubProcess
         protected override void ClickNewAfter()
         {
             this.txtType.ReadOnly = false;
-            this.txtFeature.ReadOnly = false;
+            this.txtFactory.ReadOnly = false;
+            this.txtID.ReadOnly = false;
             base.ClickNewAfter();
         }
 
@@ -35,7 +36,8 @@ namespace Sci.Production.SubProcess
         protected override bool ClickEditBefore()
         {
             this.txtType.ReadOnly = true;
-            this.txtFeature.ReadOnly = true;
+            this.txtFactory.ReadOnly = true;
+            this.txtID.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
@@ -52,10 +54,17 @@ namespace Sci.Production.SubProcess
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtFeature.Text))
+            if (MyUtility.Check.Empty(this.txtFactory.Text))
             {
-                this.txtFeature.Focus();
-                MyUtility.Msg.WarningBox("Feature cannot be empty!");
+                this.txtFactory.Focus();
+                MyUtility.Msg.WarningBox("Factory cannot be empty!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtID.Text))
+            {
+                this.txtID.Focus();
+                MyUtility.Msg.WarningBox("ID cannot be empty!");
                 return false;
             }
 
@@ -68,7 +77,8 @@ namespace Sci.Production.SubProcess
         protected override void ClickUndo()
         {
             this.txtType.ReadOnly = true;
-            this.txtFeature.ReadOnly = true;
+            this.txtFactory.ReadOnly = true;
+            this.txtID.ReadOnly = true;
             base.ClickUndo();
         }
 
@@ -78,8 +88,9 @@ namespace Sci.Production.SubProcess
         /// <returns>DualResult</returns>
         protected override DualResult ClickSave()
         {
-            this.txtFeature.ReadOnly = true;
             this.txtType.ReadOnly = true;
+            this.txtFactory.ReadOnly = true;
+            this.txtID.ReadOnly = true;
             return base.ClickSave();
         }
 

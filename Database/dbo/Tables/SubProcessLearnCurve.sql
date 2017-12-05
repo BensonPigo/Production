@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SubProcessLearnCurve]
 (
-	[ukey] BIGINT NOT NULL , 
+	[ukey] BIGINT NOT NULL IDENTITY , 
     [Type] VARCHAR(10) NOT NULL DEFAULT (''), 
     [ID] VARCHAR(10) NOT NULL DEFAULT (''), 
     [Description] NVARCHAR(100) NULL DEFAULT (''), 

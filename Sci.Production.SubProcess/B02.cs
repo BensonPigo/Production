@@ -16,7 +16,8 @@ namespace Sci.Production.SubProcess
     /// </summary>
     public partial class B02 : Sci.Win.Tems.Input6
     {
-        public string user = Sci.Env.User.UserID;
+        private string user = Sci.Env.User.UserID;
+
         /// <summary>
         /// B02
         /// </summary>
@@ -24,7 +25,7 @@ namespace Sci.Production.SubProcess
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -142,8 +143,8 @@ namespace Sci.Production.SubProcess
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Type", header: "Type", width: Widths.AnsiChars(10),  settings: gridType)
             .Text("Feature", header: "Feature", width: Widths.AnsiChars(30),  settings: gridFeature)
-            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4, settings: gridSMV)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20),settings: gridRemark)
+            .Numeric("SMV", header: "SMV", width: Widths.AnsiChars(8), integer_places: 7,  decimal_places: 4,maximum: 999, settings: gridSMV)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), settings: gridRemark)
             .Text("AddName", header: "AddName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .DateTime("AddDate", header: "AddDate", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("EditName", header: "EditName", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -155,7 +156,7 @@ namespace Sci.Production.SubProcess
         /// <summary>
         /// OnDetailGridInsert 新增表身時,設定預設值
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">index</param>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
@@ -175,7 +176,6 @@ namespace Sci.Production.SubProcess
                 return false;
             }
 
-            StringBuilder warningmsg = new StringBuilder();
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["Type"]) || MyUtility.Check.Empty(row["Feature"]) || MyUtility.Check.Empty(row["SMV"]))
@@ -188,77 +188,27 @@ namespace Sci.Production.SubProcess
             return base.ClickSaveBefore();
         }
 
+        /// <summary>
+        /// ClickSave
+        /// </summary>
+        /// <returns>DualResult</returns>
         protected override DualResult ClickSave()
         {
-            // 因為表頭Style不能存檔修改EditName,EditDate,所以必須自行寫存檔
-            string sqlupdate = string.Empty;
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    sqlupdate = sqlupdate + string.Format(
-                        @"update Style_Feature set type='{1}',Feature='{2}',SMV='{3}',Remark='{4}',EditName='{5}',EditDate='{6}' where ukey={0}",
-                        dr["ukey"],
-                        dr["Type"],
-                        dr["Feature"],
-                        dr["SMV"],
-                        dr["Remark"],
-                        this.user,
-                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
-                }
+            // 修改表身資料,不寫入表頭EditName and EditDate
+            ITableSchema pass1Schema;
+            var ok = DBProxy.Current.GetTableSchema(null, "Style", out pass1Schema);
+            pass1Schema.IsSupportEditDate = false;
+            pass1Schema.IsSupportEditName = false;
 
-                if (dr.RowState == DataRowState.Added)
-                {
-                    sqlupdate = sqlupdate + string.Format(
-                        @"
-insert into Style_Feature(styleUkey,Type,Feature,SMV,Remark,AddName,AddDate)
-values({0},'{1}','{2}','{3}','{4}','{5}','{6}'); ",
-                        this.CurrentMaintain["Ukey"],
-                        dr["Type"],
-                        dr["Feature"],
-                        dr["SMV"],
-                        dr["Remark"],
-                        this.user,
-                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
-                }
-            }
-
-            DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
-            {
-                try
-                {
-
-                    if (!(upResult = DBProxy.Current.Execute(null, sqlupdate)))
-                    {
-                        transactionscope.Dispose();
-                        return upResult;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return Result.True;
-                }
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
             return Result.True;
-        }       
+        }
 
         /// <summary>
         /// 表身資料修改,填入EditName,EditDate
         /// </summary>
         /// <param name="dr">currentDetailData</param>
         /// <param name="key">判斷是修改哪個欄位</param>
-        private void Edited(DataRow dr,string key)
+        private void Edited(DataRow dr, string key)
         {
             switch (key)
             {
@@ -305,10 +255,7 @@ values({0},'{1}','{2}','{3}','{4}','{5}','{6}'); ",
                     }
 
                     break;
-
             }
-
         }
-
     }
 }

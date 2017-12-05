@@ -66,7 +66,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(726, 362);
+            this.browse.Size = new System.Drawing.Size(627, 299);
             // 
             // tabs
             // 
@@ -156,7 +156,7 @@
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. SubProcess Feature";
-            this.UniqueExpress = "Type, Feature";
+            this.UniqueExpress = "Type,Feature";
             this.WorkAlias = "SubProcessFeature";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
