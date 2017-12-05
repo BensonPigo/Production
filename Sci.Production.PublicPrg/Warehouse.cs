@@ -714,7 +714,8 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID
                                                   and p.seq1 = a.Seq1 
                                                   and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot = a.Dyelot
-where   poid = '{1}' 
+where   a.lock = 0
+        and poid = '{1}' 
         and Stocktype = '{4}' 
         and inqty-OutQty+AdjustQty > 0
         and p.seq1 = '{2}' 
