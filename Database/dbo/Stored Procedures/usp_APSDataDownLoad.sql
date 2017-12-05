@@ -37,6 +37,7 @@ BEGIN
 		declare @tmpcell varchar(2),
 				@tmpdesc nvarchar(500),
 				@tmpsewer int
+		set @tmpcell = null
 		select @tmpcell = SewingCell,@tmpdesc = Description, @tmpsewer = Sewer from SewingLine where ID = @sewinglineid and FactoryID = @factoryid
 		IF @tmpcell is not null
 			BEGIN
