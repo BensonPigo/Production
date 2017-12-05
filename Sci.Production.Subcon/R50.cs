@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.Data.SqlClient;
-
+using Excel = Microsoft.Office.Interop.Excel;
 namespace Sci.Production.Subcon
 {
     public partial class R50 : Sci.Win.Tems.PrintForm
@@ -143,8 +143,14 @@ Where sub.sub like '%PRT%'
 
                         //do some jobs                       
                         Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[c];
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R50.xltx", 1, false, null, objApp, wSheet: objSheets);                        
-                        c++;
+                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R50.xltx", 2, false, null, objApp, wSheet: objSheets);
+                       Excel.Worksheet worksheet = objApp.Sheets[c];
+                        if (!MyUtility.Check.Empty(Date1))worksheet.Cells[1, 2] = Date1.Value.ToShortDateString();
+                        if (!MyUtility.Check.Empty(Date2))worksheet.Cells[1, 4] = Date2.Value.ToShortDateString();
+                       worksheet.Cells[1, 6] = MyUtility.GetValue.Lookup(@"SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
+                       worksheet.Cells[1, 8] = Sci.Env.User.Factory;
+                       worksheet.Columns.AutoFit();
+                       c++;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                         ds.Tables[0].Dispose();
