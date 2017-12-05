@@ -1090,7 +1090,7 @@ outer apply(
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
             sqlCmd.Append(@" 
-DROP TABLE #cte2, #cteㄝ, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
+DROP TABLE #cte2, #cte, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
            , #AccuInComeData, #TablePatternUkey, #TablePatternCode;
 ");
             if (this.isArtwork)
