@@ -128,83 +128,26 @@ namespace Sci.Production.Planning
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             StringBuilder sqlCmd = new StringBuilder();
 
+            #region select orders 需要欄位
             sqlCmd.Append(string.Format(@"
-select o.MDivisionID
-       , o.FactoryID
-       , o.SciDelivery
-       , O.CRDDate
-       , O.CFMDate
-       , OrderID = O.ID 
-       , O.Dest
-       , O.StyleID
-       , O.SeasonID
-       , O.ProjectID
-       , O.Customize1
-       , O.BuyMonth
-       , O.CustPONo
-       , O.BrandID
-       , O.CustCDID
-       , O.ProgramID
-       , O.CdCodeID
-       , O.CPU
-       , O.Qty
-       , O.FOCQty
-       , O.PoPrice
-       , O.CMPPrice
-       , O.KPILETA
-       , O.LETA
-       , O.MTLETA
-       , O.SewETA
-       , O.PackETA
-       , O.MTLComplete
-       , O.SewInLine
-       , O.SewOffLine
-       , O.CutInLine
-       , O.CutOffLine
-       , O.Category
-       , O.IsForecast
-       , O.PulloutDate
-       , O.ActPulloutDate
-       , O.SMR
-       , O.MRHandle
-       , O.MCHandle
-       , O.OrigBuyerDelivery
-       , O.DoxType
-       , O.TotalCTN
-       , O.FtyCTN
-       , O.ClogCTN
-       , O.VasShas
-       , O.TissuePaper
-       , O.MTLExport
-       , O.SewLine
-       , O.ShipModeList
-       , O.PlanDate
-       , O.FirstProduction
-       , O.Finished
-       , O.FtyGroup
-       , O.OrderTypeID
-       , O.SpecialMark
-       , O.GFR
-       , O.SampleReason
-       , O.InspDate
-       , O.MnorderApv
-       , O.FtyKPI
-       , O.KPIChangeReason
-       , O.StyleUkey
-       , O.POID
-       , InspResult = IIF(o.InspResult='P', 'Pass'
-                                          , IIF(o.InspResult = 'F', 'Fail'
-                                                                  , ''))
-       , InspHandle = (o.InspHandle +'-'+ I.Name)
-       , OrdersBuyerDelivery = o.BuyerDelivery
+select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
+	   , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
+	   , O.CustPONo        , O.BrandID    , O.CustCDID        , O.ProgramID         , O.CdCodeID      , O.CPU
+	   , O.Qty             , O.FOCQty     , O.PoPrice         , O.CMPPrice          , O.KPILETA       , O.LETA
+	   , O.MTLETA          , O.SewETA     , O.PackETA         , O.MTLComplete       , O.SewInLine     , O.SewOffLine
+       , O.CutInLine       , O.CutOffLine , O.Category        , O.IsForecast        , O.PulloutDate   , O.ActPulloutDate
+	   , O.SMR             , O.MRHandle   , O.MCHandle        , O.OrigBuyerDelivery , O.DoxType       , O.TotalCTN
+	   , O.FtyCTN          , O.ClogCTN    , O.VasShas         , O.TissuePaper       , O.MTLExport     , O.SewLine
+	   , O.ShipModeList    , O.PlanDate   , O.FirstProduction , O.Finished          , O.FtyGroup      , O.OrderTypeID
+	   , O.SpecialMark     , O.GFR        , O.SampleReason    , O.InspDate          , O.MnorderApv    , O.FtyKPI
+       , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
+       , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
+       , InspHandle = o.InspHandle +'-'+ Pass1.Name      
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
-OUTER APPLY(
-      SELECT  Name 
-      FROM Pass1 WITH (NOLOCK) 
-      WHERE Pass1.ID = O.InspHandle
-)I
+left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
 WHERE 1=1"));
+            #endregion
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(this.sciDelivery1))
@@ -217,7 +160,7 @@ WHERE 1=1"));
                 sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
             }
 
-            if (MyUtility.Check.Empty(this.BuyerDelivery1) == false && MyUtility.Check.Empty(this.BuyerDelivery2) == false)
+            if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
@@ -225,7 +168,7 @@ WHERE 1=1"));
             select 1 
             from Order_QtyShip s WITH (NOLOCK) 
             where s.id = o.ID
-                  and s.BuyerDelivery between '{0}' and '{1}'
+            and s.BuyerDelivery between '{0}' and '{1}'
       )",
                     Convert.ToDateTime(this.BuyerDelivery1).ToString("d"),
                     Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
@@ -367,9 +310,6 @@ pivot
 
             #region -- 產生所有 SubProcessID Qty --
             sqlCmd.Append(@"/*Cur_bdltrack2*/
-
-declare @EndDate date = CONVERT(date, GETDATE());
-
 /*
 Step1
 取得基礎訂單
@@ -386,25 +326,21 @@ select masterID = o.POID
 into  #tsp
 from #cte o
 inner join Factory f on o.FactoryID = f.ID
-where	1=1--o.Junk != 1
-and (o.SewInLine is not null or o.SewInLine != '')
-		and (o.SewOffLine is not null or o.SewOffLine != '')	
-
+where o.SewInLine is not null and o.SewInLine != '' and o.SewOffLine is not null and o.SewOffLine != '' --o.Junk != 1
 ----------------------------------------------------------------------------------------------------------
 /*
 	依照 Poid，取得製作一件衣服所有需要的 【FabricCode & PatternCode】
 */
-select	Poid = o.POID
-		, pt.UKey
+select	Poid = o.POID, pt.UKey
 into #TablePatternUkey
 from #tsp p
 inner join Orders o on p.orderID = o.ID
-inner join Pattern pt on	pt.StyleUkey = o.StyleUkey
-							and pt.Status = 'Completed' 
-							and pt.EDITdATE = (	SELECT MAX(EditDate) 
-												from pattern WITH (NOLOCK) 
-												where styleukey = o.StyleUkey
-														and Status = 'Completed') 
+inner join Pattern pt on pt.StyleUkey = o.StyleUkey
+						 and pt.Status = 'Completed' 
+						 and pt.EDITdATE = (SELECT MAX(EditDate) 
+											from pattern WITH (NOLOCK) 
+											where styleukey = o.StyleUkey
+											and Status = 'Completed') 
 ------------------------------------------------------------------------------------------------------------------
 /*														
 *	取得所有 PatternPanel
@@ -807,6 +743,70 @@ outer apply (
     ) X
 ) SEWOUTPUT
 
+----------↓計算累計成衣件數
+---準備兩個累積
+Select DISTINCT
+    [Bundleno] = bd.BundleNo,
+    [Cut Ref#] = b.CutRef,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [SP] = b.Orderid,
+    SubProcessId = s.Id,
+	b.article,
+    [Size] = bd.SizeCode,
+    [Comb] = b.PatternPanel,
+	b.FabricPanelCode,
+    bd.PatternCode,
+    bd.Qty,
+    bio.InComing,
+    bio.OutGoing
+into #tmp
+from Bundle b WITH (NOLOCK) 
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
+left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
+inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
+where 1=1
+------and b.Orderid = '17110078PP005'
+and bof.kind != 0
+and bio.InComing is not null
+order by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
+------
+select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
+into #tmpin2
+from #tmp
+group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
+
+select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
+into #tmpin3
+from #tmpin2
+group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode
+
+select [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode,accuQty = sum(accuQty)
+into #tmpin
+from #tmpin3
+group by [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode
+------
+select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
+into #tmpout2
+from #tmp
+where OutGoing is not null
+group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
+
+select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
+into #tmpout3
+from #tmpout2
+group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode
+
+select [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode,accuQty = sum(accuQty)
+into #tmpout
+from #tmpout3
+group by [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode
+------
+----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
        , t.SewLine
@@ -917,7 +917,7 @@ left join Country with (Nolock) on Country.id= t.Dest"));
             }
 
             // KPIChangeReason
-            sqlCmd.Append(@"  
+            sqlCmd.Append(@"
 outer apply ( 
     select KPIChangeReason = ID + '-' + Name   
     from Reason 
@@ -927,171 +927,123 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
-    from #AccuInComeData 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'SORTING'
-          and isInComing = 'T'
 ) CutQty
 outer apply (
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'loading'
-          and isInComing = 'T'
 ) loading
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'Emb'
-          and isInComing = 'T'
 ) Embin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'Emb'
-          and isInComing = 'F'
 ) Embout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'BO'
-          and isInComing = 'T'
 ) Bondin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'BO'
-          and isInComing = 'F'
 ) Bondout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'PRT'
-          and isInComing = 'T'
 ) Printin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'PRT'
-          and isInComing = 'F'
 ) Printout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'AT'
-          and isInComing = 'T'
 ) ATin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'AT'
-          and isInComing = 'F'
 ) ATout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'PAD-PRT'
-          and isInComing = 'T'
 ) PadPrintin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'PAD-PRT'
-          and isInComing = 'F'
 ) PadPrintout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'SUBCONEMB'
-          and isInComing = 'T'
 ) Embossin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'SUBCONEMB'
-          and isInComing = 'F'
 ) Embossout
 outer apply(
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpin 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'HT'
-          and isInComing = 'T'
 ) htin
 outer apply(
 	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #AccuInComeData 
+    from #tmpout 
 	where SP = t.OrderID 
-          and StyleID = t.StyleID
 	      and FactoryID = t.FactoryID
-	      and line = t.SewLine
           and SubProcessId = 'HT'
-          and isInComing = 'F'
 ) htout
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
             sqlCmd.Append(@" 
 DROP TABLE #cte2, #cte, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
-           , #AccuInComeData, #TablePatternUkey, #TablePatternCode;
+           , #AccuInComeData, #TablePatternUkey, #TablePatternCode,#tmp,#tmpin2,#tmpin3,#tmpout2,#tmpout3,#tmpin,#tmpout
 ");
             if (this.isArtwork)
             {
