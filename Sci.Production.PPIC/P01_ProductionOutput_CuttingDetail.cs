@@ -62,13 +62,11 @@ namespace Sci.Production.PPIC
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
                  .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
-                 .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
-                 .Text("Status", header: "Status", width: Widths.AnsiChars(8));
+                 .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6));
             this.gridCuttingDailyOutput.Columns[1].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[2].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[3].Visible = this.type != "A";
             this.gridCuttingDailyOutput.Columns[4].Visible = this.type != "A";
-            this.gridCuttingDailyOutput.Columns[6].Visible = this.type != "A";
 
             string sqlCmd;
             if (this.type == "A")
@@ -118,7 +116,6 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
                 sqlCmd = string.Format(
 @"select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno
         , CASE WHEN Status is null THEN 0 ELSE sum(wd.Qty) END AS CutQty
-        , Status
  from Orders o WITH (NOLOCK) 
  left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
  left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey

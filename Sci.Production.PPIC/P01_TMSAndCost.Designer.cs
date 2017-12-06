@@ -87,7 +87,7 @@
             // 
             // P01_TMSAndCost
             // 
-            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.ClientSize = new System.Drawing.Size(700, 497);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.GridPopUp = false;
             this.KeyField1 = "ID";

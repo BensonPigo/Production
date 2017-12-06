@@ -1490,39 +1490,34 @@ drop table #Child, #updateChild";
                     }
                     else
                     {
-                        if (dr.RowState == DataRowState.Added && MyUtility.Convert.GetInt(dr["QAQty"]) > 0)
+                        if (dr.RowState == DataRowState.Modified && MyUtility.Convert.GetInt(dr["QAQty"]) > 0 && MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]) == 0)
                         {
+                            dr.AcceptChanges();
+                            dr.SetAdded();
                             inserted.Add(dr);
-                        }
-                        else if (MyUtility.Convert.GetInt(dr["QAQty"]) != MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]))
-                        {
-                            updated.Add(dr);
                         }
                     }
                 }
             }
 
-            List<DataRow> newUpdated = new List<DataRow>();
-            if (updated.Count > 0 && false)
-            {
-                var newT = updated[0].Table.Clone();
-                for (int i = 0; i < updated.Count; i++)
-                {
-                    var newOne = newT.NewRow();
-                    newOne.ItemArray = updated[i].ItemArray;
-                    newUpdated.Add(newOne);
-                    newT.Rows.Add(newOne);
+            // List<DataRow> newUpdate.d = new List<DataRow>();
+            // if (updated.Count > 0 && false)
+            // {
+            //    var newT = updated[0].Table.Clone();
+            //    for (int i = 0; i < updated.Count; i++)
+            //    {
+            //        var newOne = newT.NewRow();
+            //        newOne.ItemArray = updated[i].ItemArray;
+            //        newUpdated.Add(newOne);
+            //        newT.Rows.Add(newOne);
+            //    }
 
-                    // newOne["QaQty"] = Updated[i]["qaqty"];
-                }
-
-                newT.AcceptChanges();
-                for (int i = 0; i < updated.Count; i++)
-                {
-                    newUpdated[i]["QaQty"] = updated[i]["qaqty"];
-                }
-            }
-
+            // newT.AcceptChanges();
+            //    for (int i = 0; i < updated.Count; i++)
+            //    {
+            //        newUpdated[i]["QaQty"] = updated[i]["qaqty"];
+            //    }
+            // }
             List<DataRow> newDelete = new List<DataRow>();
             if (deleteList.Count > 0)
             {
@@ -1560,26 +1555,27 @@ drop table #Child, #updateChild";
                 }
             }
 
-            foreach (DataRow dr in inserted)
-            {
-                string x = dr.RowState.ToString();
-            }
-
+            // foreach (DataRow dr in inserted)
+            // {
+            //    string x = dr.RowState.ToString();
+            // }
             ok = DBProxy.Current.Deletes(null, this.sub_Schema, newDelete);
             if (!ok)
             {
                 return ok;
             }
 
-             // ok = DBProxy.Current.Batch(null, sub_Schema, Updated);
-            ok = DBProxy.Current.Batch(null, this.sub_Schema, newUpdated);
+            // ok = DBProxy.Current.Batch(null, sub_Schema, Updated);
+            // ok = DBProxy.Current.Batch(null, this.sub_Schema, newUpdated);
+            // if (!ok)
+            // {
+            //    return ok;
+            // }
+            ok = DBProxy.Current.Inserts(null, this.sub_Schema, inserted);
             if (!ok)
             {
                 return ok;
             }
-
-           // ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
-           // if(!ok) { return ok; };
             #endregion
             return ok;
         }

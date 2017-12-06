@@ -47,7 +47,7 @@ namespace Sci.Production.Subcon
             StringBuilder sql2 = new StringBuilder();
             sql.Append(@"
 Select 
-	o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,sub.sub,bd.SizeCode,bd.Qty,
+	o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid,bd.Patterncode,bd.PatternDesc,sub.sub,bd.SizeCode,bd.Qty,
 	b.poid,b.Colorid,b.Article,b.Cdate,b.Orderid,b.Item  ,b.AddDate,B.AddName,B.EditDate,b.EditName
 From Bundle_Detail BD 
 Left join bundle b on (bd.Id = b.ID)
@@ -102,7 +102,7 @@ Where sub.sub like '%PRT%'
             //    sql.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
             //    sql2.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
             //}
-            sql.Append(" order by o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
+            sql.Append(" order by o.FtyGroup,o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             //預先開啟excel app
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
@@ -148,7 +148,6 @@ Where sub.sub like '%PRT%'
                         if (!MyUtility.Check.Empty(Date1))worksheet.Cells[1, 2] = Date1.Value.ToShortDateString();
                         if (!MyUtility.Check.Empty(Date2))worksheet.Cells[1, 4] = Date2.Value.ToShortDateString();
                        worksheet.Cells[1, 6] = MyUtility.GetValue.Lookup(@"SELECT TOP 1 PrintingSuppID FROM [Production].[dbo].SYSTEM");
-                       worksheet.Cells[1, 8] = Sci.Env.User.Factory;
                        worksheet.Columns.AutoFit();
                        c++;
 

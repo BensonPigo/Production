@@ -94,6 +94,7 @@ and ot.ID = '{0}'", this.KeyValue1);
             this.numTTLTMS.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
             #endregion
 
+            /*
             #region 撈新增的ArtworkType
             sqlCmd = string.Format(
                 @"select a.* from (
@@ -131,6 +132,7 @@ where a.OrderID = ''", this.KeyValue1);
                 datas.Rows.Add(newdr);
             }
             #endregion
+            */        
 
             datas.DefaultView.Sort = "Seq";
         }
