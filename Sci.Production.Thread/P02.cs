@@ -1266,7 +1266,7 @@ and {0} <= tas.UpperBound",
             {
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 string factoryname = string.Format(@"select  f.NameEN from Factory f where f.id = '{0}'", this.CurrentMaintain["FactoryID"]);
-                string fN = MyUtility.GetValue.Lookup(factoryname);
+                string fN = this.CurrentMaintain["FactoryID"].ToString()+"-"+MyUtility.GetValue.Lookup(factoryname);
                 objSheets.Cells[1, 1] = fN;
 
                 objSheets.Cells[3, 2] = this.txtSP.Text.ToString();
