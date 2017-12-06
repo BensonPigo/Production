@@ -125,9 +125,10 @@ Where sub.sub like '%PRT%'
                 Marshal.ReleaseComObject(worksheet1);
                 Marshal.ReleaseComObject(worksheetn);
             }
-            
-            int c = 1;
-            using (var cn = new SqlConnection(Env.Cfg.GetConnection("").ConnectionString))
+            SqlConnection sqlConnection = null;
+            DBProxy.Current.OpenConnection(null, out sqlConnection);
+            int c = 1;                       
+            using (var cn = new SqlConnection(sqlConnection.ConnectionString))
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = sql.ToString();
