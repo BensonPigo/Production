@@ -18,7 +18,15 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class R20 : Sci.Win.Tems.PrintForm
     {
-        private string sp1; private string sp2; private DateTime? EstBook1; private DateTime? EstBook2; private DateTime? EstArr1; private DateTime? EstArr2; private string fac; private string M;
+        private string sp1;
+        private string sp2;
+        private string EstBook1;
+        private string EstBook2;
+        private string EstArr1;
+        private string EstArr2;
+        private string fac;
+        private string M;
+        private string tableThreadRequisitionStatus;
         private List<SqlParameter> lis;
         private DataTable dt; private string cmd;
 
@@ -40,6 +48,7 @@ namespace Sci.Production.Thread
             this.comboFactory.DisplayMember = "FTYGroup";
             this.comboFactory.SelectedIndex = 0;
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboBoxStatus.SelectedIndex = 0;
 
             this.comboMDivision.setDefalutIndex(true);
             this.print.Enabled = false;
@@ -60,12 +69,13 @@ namespace Sci.Production.Thread
 
             this.sp1 = this.txtSPNoStart.Text.ToString();
             this.sp2 = this.txtSPNoEnd.Text.ToString();
-            this.EstBook1 = this.dateEstBooking.Value1;
-            this.EstBook2 = this.dateEstBooking.Value2;
-            this.EstArr1 = this.dateEstArrived.Value1;
-            this.EstArr2 = this.dateEstArrived.Value2;
+            this.EstBook1 = this.dateEstBooking.Value1.Empty() ? string.Empty : ((DateTime)this.dateEstBooking.Value1).ToString("yyyy/MM/dd");
+            this.EstBook2 = this.dateEstBooking.Value2.Empty() ? string.Empty : ((DateTime)this.dateEstBooking.Value2).ToString("yyyy/MM/dd");
+            this.EstArr1 = this.dateEstArrived.Value1.Empty() ? string.Empty : ((DateTime)this.dateEstArrived.Value1).ToString("yyyy/MM/dd");
+            this.EstArr2 = this.dateEstArrived.Value2.Empty() ? string.Empty : ((DateTime)this.dateEstArrived.Value2).ToString("yyyy/MM/dd");
             this.fac = this.comboFactory.SelectedValue.ToString();
             this.M = this.comboMDivision.Text.ToString();
+            this.tableThreadRequisitionStatus = this.comboBoxStatus.Text;
             this.lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;
             string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
@@ -128,23 +138,49 @@ namespace Sci.Production.Thread
                 this.lis.Add(new SqlParameter("@M", this.M));
             }
 
+            if (this.tableThreadRequisitionStatus.EqualString("All") == false)
+            {
+                sqlWheres.Add("t.Status = @Status");
+                this.lis.Add(new SqlParameter("@Status", this.tableThreadRequisitionStatus));
+            }
+
             if (sqlWheres.Count > 0)
             {
-                sqlWhere = " where t.Status = 'Approved' and " + sqlWheres.JoinToString(" and ");
+                sqlWhere = "where " + sqlWheres.JoinToString($"{Environment.NewLine}and ");
             }
             #endregion
 
-            this.cmd = string.Format(@"
-             select distinct
-               t.FactoryID,t.BrandID,t.StyleID,t.SeasonID,t.EstBookDate,t.EstArriveDate,t.OrderID,o.SciDelivery,o.SewInLine
-               ,(select li.ThreadTypeID from dbo.LocalItem li WITH (NOLOCK) where li.RefNo = td.Refno) [ThreadTypeID]
-               ,ROUND(td.ConsumptionQty/tdc.OrderQty,3),td.Refno,td.ThreadColorID
-               ,(select c.Description from dbo.ThreadColor c WITH (NOLOCK) where c.id = td.ThreadColorID) [color_desc]
-               ,tdc.OrderQty,td.TotalQty,td.AllowanceQty,td.UseStockQty,td.PurchaseQty
-             from dbo.ThreadRequisition t WITH (NOLOCK) 
-             inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
-             left join dbo.ThreadRequisition_Detail_Cons tdc WITH (NOLOCK) on td.Ukey=tdc.ThreadRequisition_DetailUkey
-             left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID" + sqlWhere + ' ' + order);
+            this.cmd = $@"
+select distinct t.FactoryID
+	   , t.BrandID
+	   , t.StyleID
+	   , t.SeasonID
+	   , t.EstBookDate
+	   , t.EstArriveDate
+	   , t.OrderID
+       , t.Status
+	   , o.SciDelivery
+	   , o.SewInLine
+       , [ThreadTypeID] = (select li.ThreadTypeID 
+       					   from dbo.LocalItem li WITH (NOLOCK) 
+       					   where li.RefNo = td.Refno) 
+       , ROUND(td.ConsumptionQty / tdc.OrderQty, 3)
+       , td.Refno
+       , td.ThreadColorID
+       , [color_desc] = (select c.Description 
+       					 from dbo.ThreadColor c WITH (NOLOCK) 
+       					 where c.id = td.ThreadColorID) 
+       , tdc.OrderQty
+       , td.TotalQty
+       , td.AllowanceQty
+       , td.UseStockQty
+       , td.PurchaseQty
+from dbo.ThreadRequisition t WITH (NOLOCK) 
+inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
+left join dbo.ThreadRequisition_Detail_Cons tdc WITH (NOLOCK) on td.Ukey = tdc.ThreadRequisition_DetailUkey
+left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID
+{sqlWhere}
+{order}";
 
             return base.ValidateInput();
         }
