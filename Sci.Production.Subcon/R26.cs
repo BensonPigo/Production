@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 //using Ict.Win.Tools;
 
 namespace Sci.Production.Subcon
@@ -201,6 +202,7 @@ select DISTINCT c.FactoryID
 	        ,a.FactoryId
 	        ,b.OrderId
 	        ,c.StyleID
+            ,c.brandid
 	        ,c.SeasonID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
@@ -423,8 +425,26 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #region PO List
             if ("PO List".EqualString(this.comboReportType.Text))
             {
-               MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, true, null, null);      // 將datatable copy to excel
-               return true;
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);      // 將datatable copy to excel
+
+                objSheets.get_Range("B2").ColumnWidth = 9.63;
+                objSheets.get_Range("A2").RowHeight = 31.5;
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R26_Local_PO_List");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objSheets);    //釋放sheet
+                Marshal.ReleaseComObject(objApp);          //釋放objApp
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
+                return true;
             }
             #endregion
                 
