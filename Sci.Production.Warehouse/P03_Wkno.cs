@@ -27,13 +27,23 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@"Select a.id, a.ETA, a.WhseArrival, b.qty, b.foc, a.vessel, a.ShipModeID
-                                                                                From export a WITH (NOLOCK) , export_detail b WITH (NOLOCK) 
-                                                                                Where a.id = b.id
-                                                                                And b.poid = '{0}'
-                                                                                And b.seq1 = '{1}'
-                                                                                And b.seq2 = '{2}'"
-                                                                            , dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+            string selectCommand1 = string.Format(
+                @"
+Select a.id
+	   , a.ETA
+	   , a.WhseArrival
+	   , b.qty
+	   , b.foc
+	   , a.vessel
+	   , a.ShipModeID
+       , a.Blno
+From export a WITH (NOLOCK) 
+	 , export_detail b WITH (NOLOCK) 
+Where a.id = b.id
+And b.poid = '{0}'
+And b.seq1 = '{1}'
+And b.seq2 = '{2}'", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
@@ -50,7 +60,8 @@ namespace Sci.Production.Warehouse
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(20))
-                 .Text("Shipmodeid", header: "Ship Mode", width: Widths.AnsiChars(6));
+                 .Text("Shipmodeid", header: "Ship Mode", width: Widths.AnsiChars(6))
+                 .Text("Blno", header: "B/L No.", width: Widths.AnsiChars(20));
         }
 
         private void btnClose_Click(object sender, EventArgs e)
