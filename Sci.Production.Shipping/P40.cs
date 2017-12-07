@@ -1100,9 +1100,7 @@ group by NLCode, HSCode, CustomsUnit");
             DataTable groupNoInPOData;
 
             // 將資料做排序
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(
+            result = MyUtility.Tool.ProcessWithDatatable(
                     selectedData,
                     @"NLCode,HSCode,CustomsUnit,NewQty,Price",
                     string.Format(@"
@@ -1110,14 +1108,13 @@ select NLCode
 	   , HSCode
 	   , CustomsUnit
 	   , NewQty
-	   , Price = Price / NewQty
+	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
 order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
                     out groupNoInPOData);
-            }
-            catch (Exception ex)
+            if (!result)
             {
-                MyUtility.Msg.ErrorBox("Calculate Not in PO Data fail!!\r\n" + ex.ToString());
+                MyUtility.Msg.WarningBox("Calculate Not in PO Data fail!!\r\n" + result.ToString());
                 return;
             }
 
