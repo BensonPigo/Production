@@ -191,7 +191,7 @@ isnull((select SUM(c.Qty)
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     DataRow dr = this.gridCutting.GetDataRow<DataRow>(e.RowIndex);
-                    Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(this.cuttingWorkType, this.cuttingWorkType == "1" ? MyUtility.Convert.GetString(this.masterData["CuttingSP"]) : MyUtility.Convert.GetString(this.masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
+                    Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(this.cuttingWorkType, MyUtility.Convert.GetString(this.masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
