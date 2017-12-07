@@ -792,7 +792,6 @@ where s.Type = 'EXPORT'");
             }
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            excel.Visible = true;
             if (this.reportContent == 2)
             {
                 worksheet.Cells[1, 2] = "FTY WK#";
