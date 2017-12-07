@@ -14,7 +14,6 @@ namespace Sci.Production.Warehouse
 {
     public partial class R15 : Sci.Win.Tems.PrintForm
     {
-        //string reason, mdivision, factory, stocktype, spno1, spno2;
         string reason, mdivision, factory, stocktype="", spno1, spno2;
         DateTime? issueDate1, issueDate2;
         DataTable printData;
@@ -169,21 +168,7 @@ where a.type = 'D' AND a.Status = 'Confirmed'
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R15.xltx"); //預先開啟excel app           
-            bool s = MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R15.xltx", 2, false, null, objApp); Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.ActiveSheet;
-
-            objApp.Columns.ColumnWidth = 20;
-            worksheet.Columns.AutoFit();
-
-            #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R15");
-            objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(worksheet);
-
-            strExcelName.OpenFile();
-            #endregion
+            bool s = MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R15.xltx", 2, true, null, null);
             return true;
         }
     }
