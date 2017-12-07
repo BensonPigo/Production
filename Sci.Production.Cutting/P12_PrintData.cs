@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
         public string Season { get; set; }
         public string brand { get; set; }
         public string item { get; set; }
-        public int CutRef { get; set; }
+        public string CutRef { get; set; }
 
         public string Group_right2 { get; set; }
         public string Group_left2 { get; set; }
@@ -52,7 +52,7 @@ namespace Sci.Production.Cutting
         public string Season2 { get; set; }
         public string brand2 { get; set; }
         public string item2 { get; set; }
-        public int CutRef2 { get; set; }
+        public string CutRef2 { get; set; }
 
         public string Group_right3 { get; set; }
         public string Group_left3 { get; set; }
@@ -75,7 +75,7 @@ namespace Sci.Production.Cutting
         public string Season3 { get; set; }
         public string brand3 { get; set; }
         public string item3 { get; set; }
-        public int CutRef3 { get; set; }
+        public string CutRef3 { get; set; }
     }
 }
 

@@ -70,9 +70,9 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -464,6 +464,16 @@
             this.panel3.Size = new System.Drawing.Size(1008, 52);
             this.panel3.TabIndex = 1;
             // 
+            // checkChangepagebyCut
+            // 
+            this.checkChangepagebyCut.AutoSize = true;
+            this.checkChangepagebyCut.Location = new System.Drawing.Point(354, 14);
+            this.checkChangepagebyCut.Name = "checkChangepagebyCut";
+            this.checkChangepagebyCut.Size = new System.Drawing.Size(216, 21);
+            this.checkChangepagebyCut.TabIndex = 4;
+            this.checkChangepagebyCut.Text = "Change page by Cut# + Comb";
+            this.checkChangepagebyCut.UseVisualStyleBackColor = true;
+            // 
             // panel5
             // 
             this.panel5.Controls.Add(this.grid1);
@@ -501,19 +511,10 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(1008, 402);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // checkChangepagebyCut
-            // 
-            this.checkChangepagebyCut.AutoSize = true;
-            this.checkChangepagebyCut.Location = new System.Drawing.Point(406, 14);
-            this.checkChangepagebyCut.Name = "checkChangepagebyCut";
-            this.checkChangepagebyCut.Size = new System.Drawing.Size(164, 21);
-            this.checkChangepagebyCut.TabIndex = 4;
-            this.checkChangepagebyCut.Text = "Change page by Cut#";
-            this.checkChangepagebyCut.UseVisualStyleBackColor = true;
             // 
             // P12
             // 
