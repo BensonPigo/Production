@@ -583,19 +583,31 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Roll
-,a.Dyelot
-,p1.stockunit
-,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-,a.Qty
-,a.StockType
-,dbo.Getlocation(f.Ukey)  as location
-,a.ukey
-,a.FtyInventoryUkey
+            this.DetailSelectCommand = string.Format(@"
+select a.id
+	   , a.PoId
+	   , a.Seq1
+	   , a.Seq2
+	   , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+	   , a.Roll
+	   , a.Dyelot
+	   , p1.stockunit
+	   , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) 
+	   , a.Qty
+	   , a.StockType
+	   , location = dbo.Getlocation(f.Ukey) 
+	   , a.ukey
+	   , a.FtyInventoryUkey
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join FtyInventory f WITH (NOLOCK) on a.POID=f.POID and a.Seq1=f.Seq1 and a.Seq2=f.Seq2 and a.Roll=f.Roll and a.Dyelot=f.Dyelot and a.StockType=f.StockType
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId 
+											 and p1.seq1 = a.SEQ1 
+											 and p1.SEQ2 = a.seq2
+left join FtyInventory f WITH (NOLOCK) on a.POID = f.POID 
+										  and a.Seq1 = f.Seq1 
+										  and a.Seq2 = f.Seq2 
+										  and a.Roll = f.Roll 
+										  and a.Dyelot = f.Dyelot 
+										  and a.StockType = f.StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -51,28 +51,47 @@ namespace Sci.Production.Warehouse
 
             #region -- 抓lack的資料 --
             //grid1
-            strSQLCmd.Append(string.Format(@"select rtrim(a.POID) poid,b.seq1,b.seq2,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
-,dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0) as [description]
-,b.RequestQty
-from dbo.lack a WITH (NOLOCK) inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+            strSQLCmd.Append(string.Format(@"
+select poid = rtrim(a.POID) 
+	   , b.seq1
+	   , b.seq2
+	   , seq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2)
+	   , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
+	   , b.RequestQty
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 where a.id = '{0}';", dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
+
             //grid2
-            strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
-,rtrim(c.PoId) poid,c.Seq1,c.Seq2,concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
-,c.Roll
-,c.Dyelot
-,0.00 as Qty
-,'B' StockType
-,c.ukey as ftyinventoryukey
-,dbo.Getlocation(c.ukey) as location
-,c.inqty-c.outqty + c.adjustqty as balance
-,(select stockunit from po_supp_detail WITH (NOLOCK) where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
-,dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) as [description]
+            strSQLCmd.Append(string.Format(@"
+select selected = 0
+	   , id = '' 
+	   , poid = rtrim(c.PoId) 
+	   , c.Seq1
+	   , c.Seq2
+	   , seq = concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2)
+	   , Roll = Rtrim(Ltrim(c.Roll))
+	   , c.Dyelot
+	   , Qty = 0.00
+	   , StockType = 'B' 
+	   , ftyinventoryukey = c.ukey
+	   , location = dbo.Getlocation(c.ukey)
+	   , balance = c.inqty - c.outqty + c.adjustqty
+	   , stockunit = (select stockunit 
+	   				  from po_supp_detail WITH (NOLOCK) 
+	   				  where id = c.poid 
+	   				  		and seq1 = c.seq1 
+	   				  		and seq2 = c.seq2)
+	   , [description] = dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) 
 from dbo.Lack_Detail a WITH (NOLOCK) 
-inner join dbo.Lack b WITH (NOLOCK) on b.ID= a.ID
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); // 
+inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
+											   and c.seq1 = a.seq1 
+											   and c.seq2  = a.seq2 
+											   and c.stocktype = 'B'
+Where a.id = '{0}' 
+	  and c.lock = 0 ", dr_master["requestid"])); // 
            //判斷LACKING
             //
             if (Type != "Lacking")
