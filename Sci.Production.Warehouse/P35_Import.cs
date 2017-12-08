@@ -66,7 +66,7 @@ select  0 as selected
         , a.stockunit
         , c.stockType
         , c.ukey as ftyinventoryukey
-        , a.colorid
+        , ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Factory f WITH (NOLOCK) on a.FactoryID=f.id

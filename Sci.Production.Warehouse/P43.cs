@@ -172,7 +172,7 @@ Po3.StockUnit,
 AD2.ReasonId,
 [reason_nm]=Reason.Name,
 AD2.Ukey,
-PO3.colorid
+ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
 from Adjust_Detail AD2
 inner join PO_Supp_Detail PO3 on PO3.ID=AD2.POID 
 inner join FtyInventory FTI on FTI.POID=AD2.POID and FTI.Seq1=AD2.Seq1

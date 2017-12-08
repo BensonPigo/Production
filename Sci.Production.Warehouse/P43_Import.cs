@@ -61,7 +61,7 @@ select distinct 0 as selected
         ,[location]= dbo.Getlocation(FTI.Ukey)
         , '' reasonid
         , '' reason_nm
-        ,PO3.colorid
+        ,ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
 from FtyInventory FTI WITH (NOLOCK) 
 left join PO_Supp_Detail PO3 on PO3.ID=FTI.POID 
 and PO3.SEQ1=FTI.Seq1 and PO3.SEQ2=FTI.Seq2 
