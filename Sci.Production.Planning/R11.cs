@@ -219,7 +219,7 @@ select
 	o.StyleID
 	,qty = sod.QAQty
 	,MH = so.manpower * sod.WorkHour
-	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(sl.Rate/100))
+	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(ol.rate/100))
 	,S = sum(iif(o.Category = 'S',1,0)) over(partition by o.StyleID)
 	,B = sum(iif(o.Category = 'B',1,0)) over(partition by o.StyleID)
 	,OutputDate
@@ -229,7 +229,8 @@ from System s,#tmpo o2
 inner join Orders o on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
 inner join SewingOutput_Detail sod on sod.OrderId = o.ID
 inner join SewingOutput so on sod.id = so.id
-inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)	
+--inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)
+inner join order_location ol on ol.orderid = o.id and ol.location = sod.combotype	
 where 1=1"));
             if (!MyUtility.Check.Empty(this.mdivision))
             {

@@ -116,6 +116,21 @@ namespace Sci.Production.Sewing
 
             #region Sewing P03 拆單
             strSqlCmd.Append(@"
+--檢查OrderId在Order_Location是否有資料，沒資料就補
+DECLARE CUR_SewingOutput_Detail CURSOR FOR 
+     Select distinct id from #tmp 
+
+declare @orderid1 varchar(13) 
+OPEN CUR_SewingOutput_Detail   
+FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid1 
+WHILE @@FETCH_STATUS = 0 
+BEGIN
+  exec dbo.Ins_OrderLocation @orderid1
+FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid1
+END
+CLOSE CUR_SewingOutput_Detail
+DEALLOCATE CUR_SewingOutput_Detail
+
 ---- 需求 ---------------------------------------------------------------------------------------
 select	ID = OQG.ID
 		, StyleLocation = SL.Location
@@ -345,7 +360,7 @@ using (
 			, takeQty = sum(takeQty)
             , TMS = TMS.value
 	from #OrdersReceiveTmp tmp
-    outer apply (
+    /*outer apply (
 	    select top 1 value = StdTMS
 	    from System WITH (NOLOCK)
     ) StdTms
@@ -359,6 +374,13 @@ using (
 	    inner join Style_Location SL on o.StyleUkey = SL.StyleUkey
 	    where   o.ID = tmp.POID
 			    and SL.Location = tmp.ComboType
+    ) TMS*/
+    --TMS改取母單
+    outer apply (
+	    select top 1 value = sod.TMS
+	    from Order_Qty_Garment oqg WITH (NOLOCK) 
+	    inner join SewingOutput_Detail sod on sod.orderid = oqg.OrderidFrom
+	    where   oqg.ID = tmp.ID
     ) TMS
 	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color, TMS.value 
 ) as s on t.ID = s.SewingOutputID
@@ -615,6 +637,7 @@ select OrderID = ID
 	   , CanReceiveQty
 from #OrdersAccuNeedQty
 where AccuNeedStatus in ('O', 'S')
+
 
 drop table #tmp, #PoidAvailableReserveQty, #OrdersAccuNeedQty, #OrdersReceiveTmp, #SelectData;");
             #endregion

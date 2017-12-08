@@ -443,11 +443,12 @@ left join (
 			,vd.HSCode
 			,vd.NLCode
 			,vd.UnitID
-			,(sl.Rate/100*sdd.QAQty)*vd.Qty as Qty
+			,(ol.rate/100*sdd.QAQty)*vd.Qty as Qty
 			,tc.CustomSP
 	from #tmpWHNotClose t
 	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID
-	inner join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = t.StyleUKey and sl.Location = sdd.ComboType
+	--inner join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = t.StyleUKey and sl.Location = sdd.ComboType
+    inner join order_location ol WITH (NOLOCK) on ol.orderid = t.id and ol.location = sdd.combotype
 	inner join #tmpCustomSP tc on tc.StyleID = t.StyleID and tc.BrandID = t.BrandID and tc.Category = t.Category
 	inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = tc.ID and va.Article = sdd.Article
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = sdd.SizeCode
