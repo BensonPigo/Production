@@ -500,16 +500,16 @@ outer apply
             bool changeGroup = true;
             for (int i = 0; i< dtSelect.Rows.Count;)
             {
-                int thisGroupCut;
+                string thisGroupCut;
                 if (checkChangepagebyCut.Checked)
                 {
-                    thisGroupCut = MyUtility.Convert.GetInt(dtSelect.Rows[i]["Cut"]);
+                    thisGroupCut = MyUtility.Convert.GetString(dtSelect.Rows[i]["Comb"]) + MyUtility.Convert.GetString(dtSelect.Rows[i]["Cut"]);
                 }
                 else
                 {
-                    thisGroupCut = 1;
+                    thisGroupCut = "1";
                 }
-                int tmpCut = -1;
+                string tmpCut = "-1";
                 var pdata = new P12_PrintData();
                 data.Add(pdata);
                 int j = 0;
@@ -518,11 +518,11 @@ outer apply
                     DataRow dr = dtSelect.Rows[i + j];
                     if (checkChangepagebyCut.Checked)
                     {
-                        tmpCut = MyUtility.Convert.GetInt(dr["cut"]);
+                        tmpCut = MyUtility.Convert.GetString(dr["Comb"]) + MyUtility.Convert.GetString(dr["cut"]);
                     }
                     else
                     {
-                        tmpCut = 1;
+                        tmpCut = "1";
                     }
                     
                     if (changeGroup && tmpCut != thisGroupCut)
