@@ -195,6 +195,7 @@
             this.KeyField2 = "StyleUkey";
             this.Name = "B02";
             this.Text = "B02.Style Feature Data";
+            this.UniqueExpress = "ID,BrandID,SeasonID";
             this.WorkAlias = "Style";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

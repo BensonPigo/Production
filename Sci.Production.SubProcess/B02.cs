@@ -183,6 +183,12 @@ namespace Sci.Production.SubProcess
                     MyUtility.Msg.WarningBox("Type,Feature,SMV cannot be empty!");
                     return false;
                 }
+
+                if (MyUtility.Convert.GetDecimal(row["SMV"]) >= 1000)
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"<SMV: {0}> cannot more than 999.9999!", row["SMV"]));
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();

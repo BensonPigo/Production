@@ -11,8 +11,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.SubProcess
 {
+    /// <summary>
+    /// SubProcess_B04
+    /// </summary>
     public partial class B04 : Sci.Win.Tems.Input6
     {
+        /// <summary>
+        /// B04
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -85,14 +92,23 @@ where isselection=1 and Junk=0 and id='{0}'", txtValue)))
         }
 
         /// <summary>
-        /// ClickSave
+        /// ClickCopyAfter
         /// </summary>
-        /// <returns>DualResult</returns>
-        protected override DualResult ClickSave()
+        protected override void ClickCopyAfter()
+        {
+            this.txtType.ReadOnly = false;
+            this.txtID.ReadOnly = false;
+            base.ClickCopyAfter();
+        }
+
+        /// <summary>
+        /// ClickSaveAfter
+        /// </summary>
+        protected override void ClickSaveAfter()
         {
             this.txtType.ReadOnly = true;
             this.txtID.ReadOnly = true;
-            return base.ClickSave();
+            base.ClickSaveAfter();
         }
 
         /// <summary>
@@ -128,6 +144,12 @@ where isselection=1 and Junk=0 and id='{0}'", txtValue)))
                     MyUtility.Msg.WarningBox("Day,Efficiency cannot be empty!");
                     return false;
                 }
+
+                if (MyUtility.Convert.GetDecimal(row["Efficiency"]) > 100)
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"<Efficiency% : {0}> cannot more than 100!", row["Efficiency"]));
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
@@ -146,6 +168,26 @@ where isselection=1 and Junk=0 and id='{0}'", txtValue)))
         }
 
         /// <summary>
+        /// OnDetailGridDelete
+        /// </summary>
+        protected override void OnDetailGridDelete()
+        {
+            base.OnDetailGridDelete();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            int day = 1;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
+                dr["day"] = day;
+                day++;
+            }
+        }
+
+        /// <summary>
         /// OnDetailGridInsert
         /// </summary>
         /// <param name="index">index</param>
@@ -154,7 +196,6 @@ where isselection=1 and Junk=0 and id='{0}'", txtValue)))
             base.OnDetailGridInsert(index);
             int maxNo;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-
             if (dt.Rows.Count < 1)
             {
                 maxNo = 0;
@@ -163,21 +204,18 @@ where isselection=1 and Junk=0 and id='{0}'", txtValue)))
             }
             else
             {
-                if (MyUtility.Check.Empty(dt.Rows[0]["Day"]))
+                int day = 1;
+                foreach (DataRow dr in dt.Rows)
                 {
-                    this.CurrentDetailData["Day"] = 1;
-                    return;
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    dr["day"] = day;
+                    day++;
                 }
-
-                int maxNo1 = dt.AsEnumerable().Select(numb => numb.Field<int>("Day")).Max();
-                //List<int> Day = dt.AsEnumerable().Select(r => r.Field<int>("Day")).Distinct().ToList();
-                //int maxNo2 = Day.Max();
-                maxNo = MyUtility.Convert.GetInt(dt.Compute("Max(Day)", string.Empty));
-
-                this.CurrentDetailData["Day"] = maxNo + 1;
             }
         }
-
     }
 }
-

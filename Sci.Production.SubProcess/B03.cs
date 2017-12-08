@@ -24,7 +24,6 @@ namespace Sci.Production.SubProcess
         protected override void ClickNewAfter()
         {
             this.txtType.ReadOnly = false;
-            this.txtFactory.ReadOnly = false;
             this.txtID.ReadOnly = false;
             base.ClickNewAfter();
         }
@@ -36,7 +35,6 @@ namespace Sci.Production.SubProcess
         protected override bool ClickEditBefore()
         {
             this.txtType.ReadOnly = true;
-            this.txtFactory.ReadOnly = true;
             this.txtID.ReadOnly = true;
             return base.ClickEditBefore();
         }
@@ -54,17 +52,17 @@ namespace Sci.Production.SubProcess
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtFactory.Text))
-            {
-                this.txtFactory.Focus();
-                MyUtility.Msg.WarningBox("Factory cannot be empty!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.txtID.Text))
             {
                 this.txtID.Focus();
                 MyUtility.Msg.WarningBox("ID cannot be empty!");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetDecimal(this.CurrentMaintain["Manpower"]) >= 1000)
+            {
+                this.numManPower.Focus();
+                MyUtility.Msg.WarningBox("ManPower cannot more than 999.99");
                 return false;
             }
 
@@ -77,7 +75,6 @@ namespace Sci.Production.SubProcess
         protected override void ClickUndo()
         {
             this.txtType.ReadOnly = true;
-            this.txtFactory.ReadOnly = true;
             this.txtID.ReadOnly = true;
             base.ClickUndo();
         }
@@ -89,7 +86,6 @@ namespace Sci.Production.SubProcess
         protected override DualResult ClickSave()
         {
             this.txtType.ReadOnly = true;
-            this.txtFactory.ReadOnly = true;
             this.txtID.ReadOnly = true;
             return base.ClickSave();
         }
