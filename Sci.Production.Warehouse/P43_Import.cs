@@ -60,7 +60,8 @@ select distinct 0 as selected
         ,[StockUnit] = PO3.StockUnit      
         ,[location]= dbo.Getlocation(FTI.Ukey)
         , '' reasonid
-        , '' reason_nm        
+        , '' reason_nm
+        ,PO3.colorid
 from FtyInventory FTI WITH (NOLOCK) 
 left join PO_Supp_Detail PO3 on PO3.ID=FTI.POID 
 and PO3.SEQ1=FTI.Seq1 and PO3.SEQ2=FTI.Seq2 
@@ -231,19 +232,20 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   
-                .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))     
-                .Text("Seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(14))   
-                .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(14))               
-                .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(15)) 
-                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) 
-                .Numeric("QtyBefore", header: "Original Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) 
-                .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  
-                .Numeric("AdjustQty", header: "Adjust Qty",iseditingreadonly:true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))  
-                .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6))      
-                .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6))   
-                .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))    
-               ;
+            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   
+            .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))     
+            .Text("Seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(14))   
+            .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(14))               
+            .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(15))
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) 
+            .Numeric("QtyBefore", header: "Original Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) 
+            .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  
+            .Numeric("AdjustQty", header: "Adjust Qty",iseditingreadonly:true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6))  
+            .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6))      
+            .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6))   
+            .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))    
+            ;
 
             this.gridImport.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;

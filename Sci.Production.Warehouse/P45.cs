@@ -310,6 +310,7 @@ select
 	,Location = dbo.Getlocation(fi.ukey)
 	,ad.ReasonId
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
+    ,psd.colorid
 from Adjust_detail ad WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
@@ -418,6 +419,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             .Text("seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)  //1
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)  //2
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //3     
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(8), iseditingreadonly: true)  //4
             .Numeric("QtyBefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //4
             .Numeric("QtyAfter", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum:0,settings: ns)    //5

@@ -171,7 +171,8 @@ Po3.StockUnit,
 [location]= dbo.Getlocation(FTI.Ukey),
 AD2.ReasonId,
 [reason_nm]=Reason.Name,
-AD2.Ukey
+AD2.Ukey,
+PO3.colorid
 from Adjust_Detail AD2
 inner join PO_Supp_Detail PO3 on PO3.ID=AD2.POID 
 inner join FtyInventory FTI on FTI.POID=AD2.POID and FTI.Seq1=AD2.Seq1
@@ -276,7 +277,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)  
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(15), iseditingreadonly: true)  
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: true) 
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)     
             .Numeric("QtyBefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    
             .Numeric("QtyAfter", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: ns)    
