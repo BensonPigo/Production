@@ -46,7 +46,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(824, 444);
+            this.panel1.Size = new System.Drawing.Size(1110, 455);
             this.panel1.TabIndex = 0;
             // 
             // gridWkno
@@ -68,7 +68,8 @@
             this.gridWkno.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridWkno.RowTemplate.Height = 24;
             this.gridWkno.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridWkno.Size = new System.Drawing.Size(824, 444);
+            this.gridWkno.ShowCellToolTips = false;
+            this.gridWkno.Size = new System.Drawing.Size(1110, 455);
             this.gridWkno.TabIndex = 0;
             this.gridWkno.TabStop = false;
             // 
@@ -76,16 +77,16 @@
             // 
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 444);
+            this.panel2.Location = new System.Drawing.Point(0, 455);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(824, 48);
+            this.panel2.Size = new System.Drawing.Size(1110, 48);
             this.panel2.TabIndex = 0;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(732, 11);
+            this.btnClose.Location = new System.Drawing.Point(1018, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -95,7 +96,7 @@
             // 
             // P03_Wkno
             // 
-            this.ClientSize = new System.Drawing.Size(824, 492);
+            this.ClientSize = new System.Drawing.Size(1110, 503);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Name = "P03_Wkno";
