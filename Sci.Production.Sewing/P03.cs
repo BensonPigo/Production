@@ -249,6 +249,7 @@ select OrdersAccuNeedQty.ID
 	   , OrdersAccuNeedQty.SizeCode
 	   , OrdersAccuNeedQty.NeedQty
 	   , OrdersAccuNeedQty.NeedQtyRunningTotal
+       , OrdersAccuNeedQty.OrderIDFrom
 	   , FrontNeedQtyRunningTotal = NeedQtyRunningTotal - NeedQty
 	   , AccuNeedStatus = AccuNeedStatus.value
 	   , CanReceiveQty = case AccuNeedStatus.value
@@ -266,7 +267,8 @@ from (
 		   , NeedQty = #SelectData.ToSPBalance
 		   , NeedQtyRunningTotal = sum (#SelectData.ToSPBalance) over (partition by #SelectData.OrderIDFrom, #SelectData.StyleLocation, #SelectData.Article, #SelectData.SizeCode
 																       order by #SelectData.OrderIDFrom, #SelectData.ToSPBuyerDeliver, #SelectData.ID)
-		   , PoidQty = PoidQty.value	
+		   , PoidQty = PoidQty.value
+           , #SelectData.OrderIDFrom	
 	from #SelectData
 	outer apply (
 		select value = sum (isnull (PoidAvailable.AvailableQty, 0))
@@ -304,6 +306,7 @@ select TakeQty.SewingOutputID
 	   , TakeQty.Color
 	   , AccuNeed.SizeCode
 	   , TakeQty = TakeQty.value
+       ,AccuNeed.OrderIDFrom
 into #OrdersReceiveTmp
 from #OrdersAccuNeedQty AccuNeed
 -- TakeQty --
@@ -377,10 +380,13 @@ using (
     ) TMS*/
     --TMS改取母單
     outer apply (
-	    select top 1 value = sod.TMS
-	    from Order_Qty_Garment oqg WITH (NOLOCK) 
-	    inner join SewingOutput_Detail sod on sod.orderid = oqg.OrderidFrom
-	    where   oqg.ID = tmp.ID
+	    select  value = sod.TMS
+	    from SewingOutput_Detail sod WITH (NOLOCK) 
+	    where   sod.ID = tmp.SewingOutputID 
+            and sod.OrderId = tmp.OrderIDFrom 
+            and sod.ComboType = tmp.ComboType
+		    and sod.Article = tmp.Article
+		    and sod.Color = tmp.Color
     ) TMS
 	group by tmp.SewingOutputID, tmp.ID, tmp.ComboType, tmp.Article, tmp.Color, TMS.value 
 ) as s on t.ID = s.SewingOutputID

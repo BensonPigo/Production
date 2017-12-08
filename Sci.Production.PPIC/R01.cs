@@ -235,7 +235,7 @@ from (
             , s.Offline
             , o.SciDelivery
             , o.BuyerDelivery
-            , o.CPU * o.CPUFactor * ( isnull(isnull(loc_rate.value,sl.Rate), 100) / 100) as CPU
+            , o.CPU * o.CPUFactor * ( isnull(isnull(ol_rate.value,sl_rate.value), 100) / 100) as CPU
             , IIF(o.VasShas=1, 'Y', '') as VasShas
             , o.ShipModeList,isnull(c.Alias, '') as Alias
             , isnull(SUBSTRING(ta.Artwork, 1, LEN(ta.Artwork) - 1), '') as ArtWork
@@ -248,11 +248,12 @@ from (
                     ), '') as Remark
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
-    left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
-												 and s.ComboType = sl.Location
+   -- left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
+	--											 and s.ComboType = sl.Location
     left join tmpOrderArtwork ta on ta.ID = s.OrderID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) loc_rate
+    outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
+    outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
     where 1 = 1 
 ");
             if (!MyUtility.Check.Empty(this.mDivision))
