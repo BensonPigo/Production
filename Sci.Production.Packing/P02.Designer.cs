@@ -59,6 +59,7 @@
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
             this.labelFactory = new Sci.Win.UI.Label();
             this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.btnSwitchToPLByArticle = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnSwitchToPLByArticle);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.txtshipmode);
@@ -139,6 +141,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtshipmode, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSwitchToPLByArticle, 0);
             // 
             // detailpanel
             // 
@@ -205,7 +208,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(5, 12);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -214,7 +216,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(5, 39);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -223,7 +224,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 66);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -232,7 +232,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(5, 93);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -241,7 +240,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(5, 120);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(75, 23);
@@ -250,7 +248,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(5, 147);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -331,7 +328,6 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Lines = 0;
             this.labelSeq.Location = new System.Drawing.Point(221, 38);
             this.labelSeq.Name = "labelSeq";
             this.labelSeq.Size = new System.Drawing.Size(33, 24);
@@ -354,7 +350,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(372, 11);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(107, 23);
@@ -363,7 +358,6 @@
             // 
             // labelShippingMode
             // 
-            this.labelShippingMode.Lines = 0;
             this.labelShippingMode.Location = new System.Drawing.Point(372, 38);
             this.labelShippingMode.Name = "labelShippingMode";
             this.labelShippingMode.Size = new System.Drawing.Size(107, 23);
@@ -372,7 +366,6 @@
             // 
             // labelPackingMethod
             // 
-            this.labelPackingMethod.Lines = 0;
             this.labelPackingMethod.Location = new System.Drawing.Point(372, 65);
             this.labelPackingMethod.Name = "labelPackingMethod";
             this.labelPackingMethod.Size = new System.Drawing.Size(107, 23);
@@ -381,7 +374,6 @@
             // 
             // labelStartCtn
             // 
-            this.labelStartCtn.Lines = 0;
             this.labelStartCtn.Location = new System.Drawing.Point(372, 92);
             this.labelStartCtn.Name = "labelStartCtn";
             this.labelStartCtn.Size = new System.Drawing.Size(107, 23);
@@ -390,7 +382,6 @@
             // 
             // labelTotalCartons
             // 
-            this.labelTotalCartons.Lines = 0;
             this.labelTotalCartons.Location = new System.Drawing.Point(372, 119);
             this.labelTotalCartons.Name = "labelTotalCartons";
             this.labelTotalCartons.Size = new System.Drawing.Size(107, 23);
@@ -464,7 +455,6 @@
             // 
             // labelTotalShipQty
             // 
-            this.labelTotalShipQty.Lines = 0;
             this.labelTotalShipQty.Location = new System.Drawing.Point(561, 93);
             this.labelTotalShipQty.Name = "labelTotalShipQty";
             this.labelTotalShipQty.Size = new System.Drawing.Size(96, 23);
@@ -517,7 +507,7 @@
             // btnSwitchToPackingList
             // 
             this.btnSwitchToPackingList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnSwitchToPackingList.Location = new System.Drawing.Point(726, 171);
+            this.btnSwitchToPackingList.Location = new System.Drawing.Point(726, 141);
             this.btnSwitchToPackingList.Name = "btnSwitchToPackingList";
             this.btnSwitchToPackingList.Size = new System.Drawing.Size(160, 30);
             this.btnSwitchToPackingList.TabIndex = 7;
@@ -541,7 +531,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(221, 11);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(51, 23);
@@ -557,6 +546,17 @@
             this.displayFactory.Name = "displayFactory";
             this.displayFactory.Size = new System.Drawing.Size(63, 23);
             this.displayFactory.TabIndex = 28;
+            // 
+            // btnSwitchToPLByArticle
+            // 
+            this.btnSwitchToPLByArticle.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnSwitchToPLByArticle.Location = new System.Drawing.Point(726, 174);
+            this.btnSwitchToPLByArticle.Name = "btnSwitchToPLByArticle";
+            this.btnSwitchToPLByArticle.Size = new System.Drawing.Size(160, 30);
+            this.btnSwitchToPLByArticle.TabIndex = 29;
+            this.btnSwitchToPLByArticle.Text = "Switch to PL by Article";
+            this.btnSwitchToPLByArticle.UseVisualStyleBackColor = true;
+            this.btnSwitchToPLByArticle.Click += new System.EventHandler(this.BtnSwitchToPackingList_Click);
             // 
             // P02
             // 
@@ -627,5 +627,6 @@
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayFactory;
         private Win.UI.Label labelFactory;
+        private Win.UI.Button btnSwitchToPLByArticle;
     }
 }

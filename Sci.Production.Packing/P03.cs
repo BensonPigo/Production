@@ -246,7 +246,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             // Start Ctn#
             string sqlCmd;
             DataRow orderData;
-            sqlCmd = string.Format("select isnull(min(CTNStartNo),0) as CTNStartNo  from PackingList_Detail WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("select top 1 CTNStartNo  from PackingList_Detail WITH (NOLOCK) where ID = '{0}' order by seq  ", this.CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 this.displayStartCtn.Value = orderData["CTNStartNo"].ToString();
@@ -264,6 +264,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
+        }
+
+        // 檢查OrderID+Seq不可以重複建立
+        private bool CheckDouble_SpSeq(string orderid, string seq)
+        {
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", orderid, seq, this.CurrentMaintain["ID"].ToString())))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + orderid + ", Seq:" + seq + " already exist in packing list, can't be create again!");
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -391,9 +403,27 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'",
                                     }
                                 }
                             }
+
                             #endregion
                             dr.EndEdit();
                         }
+                    }
+
+                    // 檢查OrderID+Seq不可以重複建立
+                    if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString()))
+                    {
+                        dr["OrderID"] = string.Empty;
+                        dr["OrderShipmodeSeq"] = string.Empty;
+                        dr["Article"] = string.Empty;
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
+                        dr["StyleID"] = string.Empty;
+                        dr["CustPONo"] = string.Empty;
+                        dr["SeasonID"] = string.Empty;
+                        dr["Factory"] = string.Empty;
+                        dr.EndEdit();
+                        e.Cancel = true;
+                        return;
                     }
                 }
             };
@@ -478,6 +508,23 @@ where   oq.ID = '{0}'
                         dr["Seq"] = string.Empty;
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("< Seq:" + e.FormattedValue + " > not found!!!");
+                        return;
+                    }
+
+                    // 檢查OrderID+Seq不可以重複建立
+                    if (!this.CheckDouble_SpSeq(dr["OrderID"].ToString(), ((object)e.FormattedValue).ToString()))
+                    {
+                        dr["OrderID"] = string.Empty;
+                        dr["OrderShipmodeSeq"] = string.Empty;
+                        dr["Article"] = string.Empty;
+                        dr["Color"] = string.Empty;
+                        dr["SizeCode"] = string.Empty;
+                        dr["StyleID"] = string.Empty;
+                        dr["CustPONo"] = string.Empty;
+                        dr["SeasonID"] = string.Empty;
+                        dr["Factory"] = string.Empty;
+                        dr.EndEdit();
+                        e.Cancel = true;
                         return;
                     }
                 }

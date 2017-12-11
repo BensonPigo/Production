@@ -328,6 +328,13 @@ where o.ID = @orderid";
                 return false;
             }
 
+            // 檢查OrderID+Seq不可以重複建立
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString())))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + this.CurrentMaintain["OrderID"].ToString() + ", Seq:" + this.CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
+                return false;
+            }
+
             // 檢查表身不可以沒有資料
             DataRow[] detailData = ((DataTable)this.detailgridbs.DataSource).Select();
             if (detailData.Length == 0)
@@ -1123,57 +1130,17 @@ order by oa.Seq,os.Seq",
             callNextForm.ShowDialog(this);
         }
 
-        // Switch to Packing list
-        private void BtnSwitchToPackingList_Click(object sender, EventArgs e)
+        private string GetSwitchToPackingListSQL(string fromBtn)
         {
-            // 檢查OrderID+Seq不可以重複建立
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.CurrentMaintain["ID"].ToString())))
+            string insertCmd = string.Empty;
+            if (fromBtn.Equals("btnSwitchToPackingList"))
             {
-                MyUtility.Msg.WarningBox("SP No:" + this.CurrentMaintain["OrderID"].ToString() + ", Seq:" + this.CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
-                return;
-            }
-
-            // 檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
-            string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders WITH (NOLOCK) where ID = '" + this.CurrentMaintain["OrderID"].ToString() + "'");
-            if (lookupReturn == "True")
-            {
-                MyUtility.Msg.WarningBox("SP# was ship complete!! You can't switch to packing list.");
-                return;
-            }
-
-            // 檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
-            DataRow seekData;
-            string seekCmd = "select Status, InvNo from PackingList WITH (NOLOCK) where ID = '" + this.CurrentMaintain["ID"].ToString().Trim() + "'";
-            if (MyUtility.Check.Seek(seekCmd, out seekData))
-            {
-                if (seekData["Status"].ToString() == "Confirmed")
+                #region 組SwitchToPackingList Insert SQL
+                if (this.comboPackingMethod.SelectedIndex != -1 && this.comboPackingMethod.SelectedValue.ToString() == "2")
                 {
-                    MyUtility.Msg.WarningBox("SP# has been confirmed!! You can't switch to packing list.");
-                    return;
-                }
-
-                if (seekData["InvNo"].ToString() == "Y")
-                {
-                    MyUtility.Msg.WarningBox("SP# was booking!! You can't switch to packing list.");
-                    return;
-                }
-            }
-
-            // 檢查PackingList是否已經有箱子送到Clog，若有，就出訊息告知使用者且不做任事
-            seekCmd = "select ID from PackingList_Detail WITH (NOLOCK) where ID = '" + this.CurrentMaintain["ID"].ToString() + "' and TransferDate is not null";
-            if (MyUtility.Check.Seek(seekCmd))
-            {
-                MyUtility.Msg.WarningBox("SP# has been transfer!! You can't switch to packing list.");
-                return;
-            }
-
-            #region 組Insert SQL
-            string insertCmd;
-            if (this.comboPackingMethod.SelectedIndex != -1 && this.comboPackingMethod.SelectedValue.ToString() == "2")
-            {
-                #region 單色混碼
-                insertCmd = string.Format(
-                    @"--宣告變數: PackingGuide帶入的參數
+                    #region 單色混碼
+                    insertCmd = string.Format(
+                        @"--宣告變數: PackingGuide帶入的參數
 DECLARE @id VARCHAR(13),
 		@mdivisionid VARCHAR(8),
 		@factoryid VARCHAR(8),
@@ -1482,15 +1449,15 @@ IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
 	COMMIT TRANSACTION",
-    this.CurrentMaintain["ID"].ToString(),
-    Sci.Env.User.UserID);
-                #endregion
-            }
-            else
-            {
-                #region 單色單碼
-                insertCmd = string.Format(
-                    @"--宣告變數: PackingGuide帶入的參數
+        this.CurrentMaintain["ID"].ToString(),
+        Sci.Env.User.UserID);
+                    #endregion
+                }
+                else
+                {
+                    #region 單色單碼
+                    insertCmd = string.Format(
+                        @"--宣告變數: PackingGuide帶入的參數
 DECLARE @id VARCHAR(13),
 		@mdivisionid VARCHAR(8),
 		@factoryid VARCHAR(8),
@@ -1722,11 +1689,633 @@ IF @@ERROR <> 0
 	ROLLBACK TRANSACTION
 ELSE
 	COMMIT TRANSACTION",
-                    this.CurrentMaintain["ID"].ToString(),
-                    Env.User.UserID);
+                        this.CurrentMaintain["ID"].ToString(),
+                        Env.User.UserID);
+                    #endregion
+                }
+                #endregion
+
+            }
+            else
+            {
+                #region 組SwitchToPackingList by Article Insert SQL
+                if (this.comboPackingMethod.SelectedIndex != -1 && this.comboPackingMethod.SelectedValue.ToString() == "2")
+                {
+                    #region 單色混碼
+                    insertCmd = string.Format(
+                        @"--宣告變數: PackingGuide帶入的參數
+DECLARE @id VARCHAR(13),
+		@mdivisionid VARCHAR(8),
+		@factoryid VARCHAR(8),
+		@orderid VARCHAR(13),
+		@ordershipmodeseq VARCHAR(2),
+		@shipmodeid VARCHAR(10),
+		@ctnstartno INT,
+		@cbm NUMERIC(8,3),
+		@remark NVARCHAR(125)
+--設定變數值
+SET @id = '{0}'
+SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
+
+--宣告變數: Orders相關的參數
+DECLARE @brandid VARCHAR(8),
+		@dest VARCHAR(2),
+		@custcdid VARCHAR(16)
+--設定變數值
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+
+--建立tmpe table存放展開後結果
+DECLARE @tempPackingList TABLE (
+   RefNo VARCHAR(21),
+   CTNStartNo VARCHAR(6),
+   CTNQty INT,
+   Seq VARCHAR(6),
+   Article VARCHAR(8),
+   Color VARCHAR(6),
+   SizeCode VARCHAR(8),
+   QtyPerCTN SMALLINT,
+   ShipQty INT,
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
+   NWPerPcs NUMERIC(5,3),
+   CtnNo INT,
+   SizeSeq INT,
+   LastCntNo VARCHAR(2),
+   ArticleSeq INT
+)
+
+--建立tmpe table存放餘箱資料
+DECLARE @tempRemainder TABLE (
+   RefNo VARCHAR(21),
+   CTNQty INT,
+   Seq INT,
+   Article VARCHAR(8),
+   Color VARCHAR(6),
+   SizeCode VARCHAR(8),
+   QtyPerCTN SMALLINT,
+   ShipQty INT,
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
+   NWPerPcs NUMERIC(5,3),
+   SizeSeq INT
+)
+
+--將PackingGuide_Detail中的Article撈出來
+DECLARE cursor_groupbyarticle CURSOR FOR
+	SELECT Distinct a.Article, b.Seq FROM PackingGuide_Detail a WITH (NOLOCK) , Order_Article b WITH (NOLOCK) WHERE a.Id = @id AND b.id = @orderid AND a.Article = b.Article ORDER BY b.Seq
+
+--宣告變數: PackingGuide_Detail相關的參數
+DECLARE @refno VARCHAR(21),
+		@article VARCHAR(8),
+		@color VARCHAR(6),
+		@sizecode VARCHAR(8),
+		@qtyperctn SMALLINT,
+		@shipqty INT,
+		@nw NUMERIC(7,3),
+		@gw NUMERIC(7,3),
+		@nnw NUMERIC(5,3)
+
+--宣告變數: 記錄程式中的資料
+DECLARE @currentqty INT, --目前數量
+		@ctnno INT, --箱號
+        @recordctnno INT, --紀錄起始箱號
+		@seqcount INT, --排序用編號
+		@seq VARCHAR(6), --排序用編號
+		@articleSeq VARCHAR(6), --排序用編號
+		@remaindercount INT, --餘箱資料個數
+		@ttlshipqty INT, --總件數，寫入PackingList時使用
+		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(7,3), --總淨淨重，寫入PackingList時使用
+		@firstsize VARCHAR(8), --第一筆的SizeCode
+		@minctn INT, --最少箱數
+		@_i INT --計算迴圈用
+DECLARE @articlecnt INT
+DECLARE @lastctn varchar(2)
+SET @recordctnno = @ctnstartno
+SET @remaindercount = 0
+SET @minctn = 0
+SET @articlecnt = 0
+
+--開始run cursor
+OPEN cursor_groupbyarticle
+--將第一筆資料填入變數
+FETCH NEXT FROM cursor_groupbyarticle INTO @article, @articleSeq
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SET @firstsize = ''
+	SET @articlecnt = @articlecnt + 1
+	SET @lastctn = CHAR(@articlecnt + 64) --ASCII 65開始是A
+    --SET @recordctnno = @recordctnno + @minctn
+	--先算出最少箱數
+	SELECT @minctn = MIN(ShipQty/QtyPerCTN) FROM PackingGuide_Detail WITH (NOLOCK) WHERE ID = @id AND Article = @article
+
+	--撈出PackingGuide_Detail資料
+	DECLARE cursor_packingguide CURSOR FOR
+		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq
+		FROM PackingGuide_Detail a WITH (NOLOCK) 
+		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
+		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
+		WHERE a.Id = @id AND a.Article = @article
+		ORDER BY c.Seq
+
+	OPEN cursor_packingguide
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq
+	SET @firstsize = @sizecode
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF @firstsize = @sizecode
+			BEGIN
+				SET @ctnno = @recordctnno
+				SET @_i = 0
+				WHILE (@_i < @minctn)
+				BEGIN
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq)
+						VALUES (@refno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw-@nw, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq)
+					SET @_i = @_i + 1
+					SET @ctnno = @ctnno + 1
+				END
+			END
+		ELSE
+			BEGIN
+				SET @ctnno = @recordctnno
+				SET @_i = 0
+				WHILE (@_i < @minctn)
+				BEGIN
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq)
+						VALUES (@refno, 0, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, 0, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq)
+					SET @_i = @_i + 1
+					SET @ctnno = @ctnno + 1
+				END
+			END
+
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq
+	END
+	CLOSE cursor_packingguide
+	
+	--整理餘箱資料
+	SELECT @ctnno = MAX(CtnNo) FROM @tempPackingList where Article = @article
+	SET @firstsize = ''
+	OPEN cursor_packingguide
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
+		IF @currentqty > 0
+			BEGIN
+				SET @remaindercount = @remaindercount + 1
+
+				IF @firstsize = ''
+					BEGIN
+						SET @firstsize = @sizecode
+					END
+
+				IF @firstsize = @sizecode
+					BEGIN
+						SET @ctnno = @ctnno + 1
+						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq)
+							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, @gw-@nw, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @ctnno,@lastctn,@articleSeq)
+					END
+				ELSE
+					BEGIN
+						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq)
+							VALUES (@refno, 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @ctnno,@lastctn,@articleSeq)
+					END
+			END
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq
+	END
+	CLOSE cursor_packingguide
+	DEALLOCATE cursor_packingguide
+
+	FETCH NEXT FROM cursor_groupbyarticle INTO @article,  @articleSeq
+END
+--關閉cursor與參數的關聯
+CLOSE cursor_groupbyarticle
+--將cursor物件從記憶體移除
+DEALLOCATE cursor_groupbyarticle
+
+--宣告變數
+DECLARE @ctnqty INT, --Carton數
+		@nwperpcs NUMERIC(5,3) --每件淨重
+
+--更新箱號
+UPDATE @tempPackingList SET CTNStartNo = CONVERT(VARCHAR,CtnNo) + LastCntNo
+
+--更新重量
+DECLARE cursor_@temppacklistgroup CURSOR FOR
+	SELECT DISTINCT Article,CtnNo FROM @tempPackingList
+OPEN cursor_@temppacklistgroup
+FETCH NEXT FROM cursor_@temppacklistgroup INTO @article, @ctnno
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SELECT @nw = SUM(NW), @gw = SUM(GW), @nnw = SUM(NNW), @seqcount = MAX(CtnNo) FROM @tempPackingList WHERE Article = @article and CtnNo = @ctnno
+	UPDATE @tempPackingList 
+	SET NW = @nw,
+		GW = @nw+@gw,
+		NNW = @nnw
+	WHERE Article = @article and CtnNo = @ctnno AND CTNQty = 1
+
+	UPDATE @tempPackingList 
+	SET NW = 0, GW = 0, NNW = 0 WHERE Article = @article and CtnNo = @ctnno AND CTNQty = 0
+
+	FETCH NEXT FROM cursor_@temppacklistgroup INTO @article, @ctnno
+END
+CLOSE cursor_@temppacklistgroup
+DEALLOCATE cursor_@temppacklistgroup
+
+--全部總重量
+SELECT @ttlnw = SUM(NW), @ttlgw = SUM(GW), @ttlnnw = SUM(NNW), @ttlshipqty = SUM(ShipQty), @seqcount = SUM(CtnQty) FROM @tempPackingList
+
+--刪除PackingList_Detail資料
+DELETE PackingList_Detail WHERE ID = @id
+
+--資料存入PackingList & PackingList_Detail
+--宣告變數
+DECLARE @havepl INT, --檢查PackingList是否存在
+		@addname VARCHAR(10), --系統登入人員
+		@adddate DATETIME --新增時間
+SET @addname = '{1}'
+SET @adddate = GETDATE()
+
+SET XACT_ABORT ON;
+BEGIN TRANSACTION
+--PackingList
+SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
+IF @havepl = 0
+	BEGIN --新增PackingList
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+	END
+ELSE
+	BEGIN --更新PackingList
+		UPDATE PackingList 
+		SET MDivisionID = @mdivisionid,
+			FactoryID = @factoryid,
+			ShipModeID = @shipmodeid,
+			BrandID = @brandid,
+			Dest = @dest,
+			CustCDID = @custcdid,
+			CTNQty = @seqcount,
+			ShipQty = @ttlshipqty,
+			NW = @ttlnw,
+			GW = @ttlgw,
+			NNW = @ttlnnw,
+			CBM = @cbm,
+			Remark = @remark,
+			Status = 'New',
+			AddName = @addname,
+			AddDate = @adddate,
+			EditName = '',
+			EditDate = null
+		WHERE ID = @id
+	END
+
+--PackingList_Detail
+DECLARE @cartonsatrtno VARCHAR(6)
+
+SET @seqcount = 0
+
+DECLARE cursor_temppackinglist CURSOR FOR
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs FROM @tempPackingList ORDER BY ArticleSeq,CtnNo,SizeSeq
+
+OPEN cursor_temppackinglist
+FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SET @seqcount = @seqcount + 1
+	SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq)
+	--將下一筆資料填入變數
+	FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs
+END
+CLOSE cursor_temppackinglist
+DEALLOCATE cursor_temppackinglist
+
+IF @@ERROR <> 0
+	ROLLBACK TRANSACTION
+ELSE
+	COMMIT TRANSACTION",
+        this.CurrentMaintain["ID"].ToString(),
+        Sci.Env.User.UserID);
+                    #endregion
+                }
+                else
+                {
+                    #region 單色單碼
+                    insertCmd = string.Format(
+                        @"--宣告變數: PackingGuide帶入的參數
+DECLARE @id VARCHAR(13),
+		@mdivisionid VARCHAR(8),
+		@factoryid VARCHAR(8),
+		@orderid VARCHAR(13),
+		@ordershipmodeseq VARCHAR(2),
+		@shipmodeid VARCHAR(10),
+		@ctnstartno INT,
+		@cbm NUMERIC(8,3),
+		@remark NVARCHAR(125),
+		@article VARCHAR(8)
+
+--設定變數值
+SET @id = '{0}'
+SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WITH (NOLOCK) WHERE Id = @id
+
+--宣告變數: Orders相關的參數
+DECLARE @brandid VARCHAR(8),
+		@dest VARCHAR(2),
+		@custcdid VARCHAR(16)
+--設定變數值
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+
+--建立tmpe table存放展開後結果
+DECLARE @tempPackingList TABLE (
+   RefNo VARCHAR(21),
+   CTNStartNo VARCHAR(6),
+   CTNQty INT,
+   Seq VARCHAR(6),
+   Article VARCHAR(8),
+   Color VARCHAR(6),
+   SizeCode VARCHAR(8),
+   QtyPerCTN SMALLINT,
+   ShipQty INT,
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
+   NWPerPcs NUMERIC(5,3)
+)
+
+--建立tmpe table存放餘箱資料
+DECLARE @tempRemainder TABLE (
+   RefNo VARCHAR(21),
+   CTNQty INT,
+   Seq INT,
+   Article VARCHAR(8),
+   Color VARCHAR(6),
+   SizeCode VARCHAR(8),
+   QtyPerCTN SMALLINT,
+   ShipQty INT,
+   NW NUMERIC(7,3),
+   GW NUMERIC(7,3),
+   NNW NUMERIC(7,3),
+   NWPerPcs NUMERIC(5,3)
+)
+
+--先開article的cursor
+DECLARE cursor_packing_article CURSOR FOR
+	select a.Article
+		FROM PackingGuide_Detail a WITH (NOLOCK)
+		LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
+		WHERE a.ID = @id group by a.Article ORDER BY max(c.Seq)
+
+
+
+--宣告變數: PackingGuide_Detail相關的參數
+DECLARE @refno VARCHAR(21),
+		@color VARCHAR(6),
+		@sizecode VARCHAR(8),
+		@qtyperctn SMALLINT,
+		@shipqty INT,
+		@nw NUMERIC(7,3),
+		@gw NUMERIC(7,3),
+		@nnw NUMERIC(5,3)
+
+--宣告變數: 記錄程式中的資料
+DECLARE @currentqty INT, --目前數量
+		@ctnno INT, --箱號
+		@realctnno VARCHAR(6), --寫入Table中的箱號
+		@seqcount INT, --排序用編號
+		@seq VARCHAR(6), --排序用編號
+		@remaindercount INT, --餘箱資料個數
+		@ttlshipqty INT, --總件數，寫入PackingList時使用
+		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(7,3) --總淨淨重，寫入PackingList時使用
+
+DECLARE @lastctn varchar(2)
+DECLARE @articlecnt INT
+SET @seqcount = 0
+SET @remaindercount = 0
+SET @ttlshipqty = 0
+SET @ttlnw = 0
+SET @ttlgw = 0
+SET @ttlnnw = 0
+SET @articlecnt = 0
+OPEN cursor_packing_article
+FETCH NEXT FROM cursor_packing_article INTO @article
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SET @articlecnt = @articlecnt + 1
+	SET @ctnno = @ctnstartno
+	SET @lastctn = CHAR(@articlecnt + 64) --ASCII 65開始是A
+	--開始run cursor
+	--將PackingGuide_Detail資料存放至Cursor
+	DECLARE cursor_packguide CURSOR FOR
+	SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW 
+	FROM PackingGuide_Detail a WITH (NOLOCK) 
+	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
+	LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
+	WHERE a.ID = @id and a.Article = @article ORDER BY d.Seq
+	OPEN cursor_packguide
+	--將第一筆資料填入變數
+	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF @qtyperctn > 0
+		BEGIN
+			SET @currentqty = @shipqty
+			WHILE @currentqty > 0
+			BEGIN
+				IF @currentqty >= @qtyperctn
+					BEGIN
+						SET @seqcount = @seqcount + 1
+						SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
+						SELECT @realctnno = CONVERT(VARCHAR,@ctnno) + @lastctn
+						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq)
+							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nw/@qtyperctn, @seq)
+						SET @ctnno = @ctnno + 1
+						SET @ttlnw = @ttlnw + @nw
+						SET @ttlgw = @ttlgw + @gw
+						SET @ttlnnw = @ttlnnw + @nnw
+						SET @ttlshipqty = @ttlshipqty + @qtyperctn
+					END
+				ELSE
+					BEGIN
+						SET @remaindercount = @remaindercount + 1
+						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq)
+							VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount)
+					END
+	
+				SET @currentqty = @currentqty - @qtyperctn
+			END
+		END
+		--將下一筆資料填入變數
+		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw
+	END
+	--關閉cursor與參數的關聯
+	CLOSE cursor_packguide
+	--將cursor物件從記憶體移除
+	DEALLOCATE cursor_packguide
+
+	--將餘箱資料寫入@tempPackingList
+	--將@tempRemainder資料存放至Cursor
+	DECLARE cursor_temRemainder CURSOR FOR
+		SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs FROM @tempRemainder ORDER BY Seq
+	--宣告變數: 記錄程式中的資料
+	DECLARE @ctnqty INT, --Carton數
+			@nwperpcs NUMERIC(5,3) --每件淨重
+	
+	OPEN cursor_temRemainder
+	FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @seqcount = @seqcount + 1
+		SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
+		SELECT @realctnno = CONVERT(VARCHAR,@ctnno) + @lastctn
+		INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq)
+			VALUES (@refno, @realctnno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nwperpcs, @seq)
+		SET @ctnno = @ctnno + 1
+		SET @ttlnw = @ttlnw + @nw
+		SET @ttlgw = @ttlgw + @gw
+		SET @ttlnnw = @ttlnnw + @nnw
+		SET @ttlshipqty = @ttlshipqty + @qtyperctn
+	
+		--將下一筆資料填入變數
+		FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs
+	END
+	CLOSE cursor_temRemainder
+	DEALLOCATE cursor_temRemainder
+	DELETE @tempRemainder
+
+
+FETCH NEXT FROM cursor_packing_article INTO @article
+END
+CLOSE cursor_packing_article
+DEALLOCATE cursor_packing_article
+
+
+--刪除PackingList_Detail資料
+DELETE PackingList_Detail WHERE ID = @id
+
+--資料存入PackingList & PackingList_Detail
+--宣告變數
+DECLARE @havepl INT, --檢查PackingList是否存在
+		@addname VARCHAR(10), --系統登入人員
+		@adddate DATETIME --新增時間
+SET @addname = '{1}'
+SET @adddate = GETDATE()
+
+SET XACT_ABORT ON;
+BEGIN TRANSACTION
+--PackingList
+SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
+IF @havepl = 0
+	BEGIN --新增PackingList
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+	END
+ELSE
+	BEGIN --更新PackingList
+		UPDATE PackingList 
+		SET MDivisionID = @mdivisionid,
+			FactoryID = @factoryid,
+			ShipModeID = @shipmodeid,
+			BrandID = @brandid,
+			Dest = @dest,
+			CustCDID = @custcdid,
+			CTNQty = @seqcount,
+			ShipQty = @ttlshipqty,
+			NW = @ttlnw,
+			GW = @ttlgw,
+			NNW = @ttlnnw,
+			CBM = @cbm,
+			Remark = @remark,
+			Status = 'New',
+			AddName = @addname,
+			AddDate = @adddate,
+			EditName = '',
+			EditDate = null
+		WHERE ID = @id
+	END
+
+--PackingList_Detail
+DECLARE @cartonsatrtno VARCHAR(6)
+
+DECLARE cursor_temPackingList CURSOR FOR
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq FROM @tempPackingList ORDER BY Seq
+OPEN cursor_temPackingList
+FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq)
+	--將下一筆資料填入變數
+	FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq
+END
+CLOSE cursor_temPackingList
+DEALLOCATE cursor_temPackingList
+
+IF @@ERROR <> 0
+	ROLLBACK TRANSACTION
+ELSE
+	COMMIT TRANSACTION
+",
+                        this.CurrentMaintain["ID"].ToString(),
+                        Env.User.UserID);
+                    #endregion
+                }
                 #endregion
             }
-            #endregion
+
+            return insertCmd;
+        }
+
+        // Switch to Packing list
+        private void BtnSwitchToPackingList_Click(object sender, EventArgs e)
+        {
+            // 檢查OrderID+Seq不可以重複建立
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.CurrentMaintain["ID"].ToString())))
+            {
+                MyUtility.Msg.WarningBox("SP No:" + this.CurrentMaintain["OrderID"].ToString() + ", Seq:" + this.CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
+                return;
+            }
+
+            // 檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
+            string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders WITH (NOLOCK) where ID = '" + this.CurrentMaintain["OrderID"].ToString() + "'");
+            if (lookupReturn == "True")
+            {
+                MyUtility.Msg.WarningBox("SP# was ship complete!! You can't switch to packing list.");
+                return;
+            }
+
+            // 檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
+            DataRow seekData;
+            string seekCmd = "select Status, InvNo from PackingList WITH (NOLOCK) where ID = '" + this.CurrentMaintain["ID"].ToString().Trim() + "'";
+            if (MyUtility.Check.Seek(seekCmd, out seekData))
+            {
+                if (seekData["Status"].ToString() == "Confirmed")
+                {
+                    MyUtility.Msg.WarningBox("SP# has been confirmed!! You can't switch to packing list.");
+                    return;
+                }
+
+                if (seekData["InvNo"].ToString() == "Y")
+                {
+                    MyUtility.Msg.WarningBox("SP# was booking!! You can't switch to packing list.");
+                    return;
+                }
+            }
+
+            // 檢查PackingList是否已經有箱子送到Clog，若有，就出訊息告知使用者且不做任事
+            seekCmd = "select ID from PackingList_Detail WITH (NOLOCK) where ID = '" + this.CurrentMaintain["ID"].ToString() + "' and TransferDate is not null";
+            if (MyUtility.Check.Seek(seekCmd))
+            {
+                MyUtility.Msg.WarningBox("SP# has been transfer!! You can't switch to packing list.");
+                return;
+            }
+
+            string insertCmd = this.GetSwitchToPackingListSQL(((Button)sender).Name);
 
             DualResult result = DBProxy.Current.Execute(null, insertCmd);
             if (result)
