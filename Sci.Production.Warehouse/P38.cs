@@ -345,6 +345,7 @@ txtReceivingid.Text));
             }
 
             DataTable dt = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
 
             if (this.SaveExcel(dt, strExcelName))
@@ -375,7 +376,7 @@ txtReceivingid.Text));
         {
             string sql = @"
 select t.POID
-	   , t.Seq1+' '+Seq2
+	   , t.Seq1+' '+t.Seq2
 	   , t.Roll
 	   , t.Dyelot
 	   , t.stocktype
@@ -391,14 +392,20 @@ select t.POID
 	   , t.earliest_SciDelivery
 	   , t.BrandID
 	   , t.FactoryID
-	   , t.LockDate
-	   , t.LockName
-from #Tmp t";
+	   , LockDate = f.LockDate
+	   , LockName = f.LockName
+from #tmp t
+inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
             DataTable k;
-            MyUtility.Tool.ProcessWithDatatable(printData, string.Empty, sql, out k, "#Tmp");
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(printData, string.Empty, sql, out k, "#Tmp");
 
-            if (k.Rows.Count == 0)
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+            else if (k.Rows.Count == 0)
             {
                 return false;
             }
