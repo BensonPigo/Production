@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.IE
 {
@@ -99,6 +100,9 @@ order by ld.No, ld.GroupKey", masterID);
             Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings operatorid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_No;
+            Ict.Win.DataGridViewGeneratorTextColumnSettings Attachment = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings Template = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ThreadColor = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -279,23 +283,135 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
+            #region Attachment
+            Attachment.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = "select ID,Description from SewingMachineAttachement WITH (NOLOCK) where Junk = 0";
+
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null);
+                    item.Width = 666;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["Attachment"] = item.GetSelectedString();
+                }
+            };
+
+            Attachment.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    this.CurrentDetailData["Attachment"] = e.FormattedValue;
+                    string sqlcmd = "select ID,Description from SewingMachineAttachement WITH (NOLOCK) where Junk = 0";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = this.CurrentDetailData["Attachment"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errAttachment = new List<string>();
+                    List<string> trueAttachment = new List<string>();
+                    foreach (string item in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        {
+                            selectId &= false;
+                            errAttachment.Add(item);
+                        }
+                        else if (!item.EqualString(string.Empty))
+                        {
+                            trueAttachment.Add(item);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errAttachment.ToArray()) + "  Data not found !!", "Data not found");
+                    }
+
+                    trueAttachment.Sort();
+                    this.CurrentDetailData["Attachment"] = string.Join(",", trueAttachment.ToArray());
+                }
+            };
+            #endregion
+            #region Template
+            Template.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null);
+                    item.Width = 666;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["Template"] = item.GetSelectedString();
+                }
+            };
+
+            Template.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    this.CurrentDetailData["Template"] = e.FormattedValue;
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errTemplate = new List<string>();
+                    List<string> trueTemplate = new List<string>();
+                    foreach (string item in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        {
+                            selectId &= false;
+                            errTemplate.Add(item);
+                        }
+                        else if (!item.EqualString(string.Empty))
+                        {
+                            trueTemplate.Add(item);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
+                    }
+
+                    trueTemplate.Sort();
+                    this.CurrentDetailData["Template"] = string.Join(",", trueTemplate.ToArray());
+                }
+            };
+            #endregion
+            ThreadColor.MaxLength = 1;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
-                .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
-                .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-                .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-                .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                .CheckBox("Attachment", header: "Attachment", trueValue: 1, falseValue: 0)
-                .CheckBox("Template", header: "Template", trueValue: 1, falseValue: 0)
-                .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
-                .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
+            .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
+            .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
+            .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
+            .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: Attachment)
+            .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: Template)
+            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: ThreadColor);
 
             // 因為資料顯示已有排序，所以按Grid Header不可以做排序
             // mantis8880排序功能開啟
