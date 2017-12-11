@@ -16,7 +16,7 @@
     [Template]      VARCHAR (100)  NULL,
     [OriNO]         VARCHAR (4)    NULL,
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
-    [ThreadColor]   VARCHAR (1)    NULL,
+    [ThreadColor]   NVARCHAR    NULL,
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
