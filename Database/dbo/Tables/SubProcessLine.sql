@@ -11,5 +11,5 @@
     [AddDate] DATETIME NULL, 
     [EditName] VARCHAR(10) NULL DEFAULT (''), 
     [EditDate] DATETIME NULL, 
-    PRIMARY KEY ([Type], [ID], [Factory])
+    PRIMARY KEY ([Type], [ID])
 )

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SubProcessLearnCurve_Detail]
 (
-	[ukey] BIGINT NOT NULL IDENTITY , 
+	[ukey] BIGINT NOT NULL , 
     [Day] INT NOT NULL, 
     [Efficiency] INT NULL, 
     PRIMARY KEY ([ukey], [Day])
