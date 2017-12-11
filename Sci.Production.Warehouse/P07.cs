@@ -1232,12 +1232,17 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             #endregion
 
             sqlcmd4 = string.Format(@"
+declare @whseArrival date
+select top 1 @whseArrival = WhseArrival from dbo.Receiving WITH (NOLOCK) where ExportId = '{1}' and ID <> '{2}' and Status = 'Confirmed'
+IF @whseArrival is null
+BEGIN
 update dbo.export 
 set whsearrival = null
     , packingarrival = null
     , editname = '{0}' 
     , editdate = GETDATE()
-where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
+where id = '{1}'
+END", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain["id"]);
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
