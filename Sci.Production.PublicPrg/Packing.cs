@@ -1694,7 +1694,32 @@ select  pd.ID
                     from PackingList WITH (NOLOCK) 
                     where ID = pd.ID)
         , PONo = isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'')
+		, SizeCode = case 
+						when checkMixSize.value > 1 then 'Mix'
+						else pd.SizeCode
+					 end
+		, ShipQty = case 
+						when checkMixSize.value > 1 then TTLShipQty.value
+						else pd.ShipQty
+					 end
+		, checkMixSize.value
 from PackingList_Detail pd WITH (NOLOCK) 
+outer apply (
+	select value = count (1)
+	from (
+		select distinct checkPD.sizecode
+		from PackingList_Detail checkPD With (NoLock)
+		where pd.ID = checkPD.ID
+			  and pd.CTNStartNo = checkPD.CTNStartNo
+	) distinctSize
+) checkMixSize
+outer apply (
+    select value = sum (ShipQty)
+    from PackingList_Detail checkPD With (NoLock)
+	where checkMixSize.value > 1
+          and pd.ID = checkPD.ID
+		  and pd.CTNStartNo = checkPD.CTNStartNo
+) TTLShipQty
 where pd.CTNQty > 0");
             if (!MyUtility.Check.Empty(packingListID))
             {
