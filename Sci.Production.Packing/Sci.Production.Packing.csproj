@@ -108,8 +108,9 @@
     <Reference Include="Office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="OnBarcode.Barcode.WinForms">
-      <HintPath>C:\Users\jimmy.liao\Downloads\OnBarcode.Barcode.WinForms.dll</HintPath>
+    <Reference Include="OnBarcode.Barcode.WinForms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=4da8d7f865f70e30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Sci.Production\OnBarcode.Barcode.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
