@@ -154,4 +154,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3baa97e8-45e9-42fe-9a6c-39eb15601902" ChangeDateTime="12/07/2017 04:22:53">
+    <Property Name="ElementName" Value="[dbo].[Style_Location].[StyleUkey]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Style_Location]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="OrderId" />
+  </Operation>
 </Operations>

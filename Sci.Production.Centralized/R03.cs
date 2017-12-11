@@ -169,12 +169,12 @@ Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.Bran
 	CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
 	Orders.BuyerDelivery, Orders.SCIDelivery, 
 	SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
-    QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetStyleLocation_Rate](Style.Ukey ,SewingOutput_Detail.ComboType)/100,1)
+    QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetOrderLocation_Rate](Orders.id ,SewingOutput_Detail.ComboType)/100,1)
 	, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
 	, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
 	, STYLE.ModularParent, STYLE.CPUAdjusted
 	,OutputDate,Shift, Team,SCategory = SewingOutput.Category, CPUFactor, Orders.MDivisionID,orderid
-	 , Rate = isnull([dbo].[GetStyleLocation_Rate]( Style.Ukey ,SewingOutput_Detail.ComboType)/100,1) 
+	 , Rate = isnull([dbo].[GetOrderLocation_Rate]( Orders.id ,SewingOutput_Detail.ComboType)/100,1) 
 into #stmp
 FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
 Where SewingOutput_Detail.OrderID = Orders.ID 

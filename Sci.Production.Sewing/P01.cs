@@ -320,7 +320,7 @@ where   o.FtyGroup = @factoryid
                             this.GetRFT(dr);
 
                             #region 若此SP是套裝的話，就跳出視窗讓使用者選擇部位
-                            sqlCmd = string.Format("select Location,Rate = [dbo].[GetStyleLocation_Rate]('{0}',Location) from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(ordersData.Rows[0]["StyleUkey"]));
+                            sqlCmd = string.Format("select Location,Rate = isnull([dbo].[GetOrderLocation_Rate]('{1}',Location),[dbo].[GetStyleLocation_Rate]('{0}',Location)) from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(ordersData.Rows[0]["StyleUkey"]), MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable styleLocation;
                             result = DBProxy.Current.Select(null, sqlCmd, out styleLocation);
                             if (!result || styleLocation.Rows.Count < 0)
@@ -376,7 +376,7 @@ where   o.FtyGroup = @factoryid
                             }
 
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select sl.Location,Rate = [dbo].[GetStyleLocation_Rate](o.StyleUkey ,sl.Location),o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
+                            string sqlCmd = string.Format("select sl.Location,Rate = isnull([dbo].[GetOrderLocation_Rate]('{0}' ,sl.Location),[dbo].[GetStyleLocation_Rate](o.StyleUkey ,sl.Location)),o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable locationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out locationData);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(locationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
@@ -1296,6 +1296,31 @@ where not exists (select 1
             {
                 MyUtility.Msg.WarningBox(result.Description);
             }
+
+            #region 檢查OrderId在Order_Location是否有資料，沒資料就補
+            string chk_sql = string.Format(
+                @"DECLARE CUR_SewingOutput_Detail CURSOR FOR 
+                      Select distinct orderid from SewingOutput_Detail where id =  '{0}' 
+
+                 declare @orderid varchar(13) 
+                 OPEN CUR_SewingOutput_Detail   
+                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid 
+                 WHILE @@FETCH_STATUS = 0 
+                 BEGIN
+                   exec dbo.Ins_OrderLocation @orderid
+                 FETCH NEXT FROM CUR_SewingOutput_Detail INTO @orderid
+                 END
+                 CLOSE CUR_SewingOutput_Detail
+                 DEALLOCATE CUR_SewingOutput_Detail", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+            DualResult chkResult = DBProxy.Current.Execute(null, chk_sql);
+
+            if (chkResult == false)
+            {
+                MyUtility.Msg.WarningBox(chkResult.ToString());
+                return;
+            }
+            #endregion
 
             #region 更新 SewingOutputID 子單 WorkHour
             List<SqlParameter> listSqlParmeter = new List<SqlParameter>();

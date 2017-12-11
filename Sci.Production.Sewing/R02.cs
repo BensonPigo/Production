@@ -209,7 +209,7 @@ select  s.OutputDate
 		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
 		, [OrderStyle] = isnull(o.StyleID,'')
 		, [MockupStyle] = isnull(mo.StyleID,'')
-        , [Rate] = isnull([dbo].[GetStyleLocation_Rate](o.StyleUkey ,sd.ComboType),100)/100
+        , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
 		, System.StdTMS
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
@@ -675,7 +675,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetStyleLocation_Rate](o.StyleUkey ,a.ComboType), 100) / 100), 2) 
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
@@ -683,7 +683,7 @@ tmpAllSubprocess as(
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
 			and ot.Price > 0 		    
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetStyleLocation_Rate](o.StyleUkey ,a.ComboType)
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
 )
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Price), 0)

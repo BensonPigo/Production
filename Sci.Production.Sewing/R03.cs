@@ -110,7 +110,7 @@ with tmp1stData as (
             , sod.WorkHour
             , sod.QAQty
             , o.CPUFactor
-            , Rate = isnull([dbo].[GetStyleLocation_Rate]( s.Ukey ,sod.ComboType)/100,1) 
+            , Rate = isnull([dbo].[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1) 
             , StyleDesc = s.Description
             , CDDesc = c.Description
             , s.ModularParent
