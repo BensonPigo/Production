@@ -66,7 +66,7 @@ namespace Sci.Production.Packing
             this.reportType = this.radioPackingGuideReport.Checked ? "1" : "2";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
-            this.ReportResourceName = "BarcodePrint.rdlc";
+            this.ReportResourceName = "P04_BarcodePrint.rdlc";
 
             return base.ValidateInput();
         }
@@ -169,16 +169,6 @@ left join LocalItem l on l.RefNo = t.RefNo
 order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.ctnDim);
                 return result;
-            }
-            else
-            {
-                DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(this.masterData["ID"]), this.ctn1, this.ctn2, out this.printData);
-                if (!result)
-                {
-                    return result;
-                }
-
-                e.Report.ReportDataSource = this.printData;
             }
 
             return Result.True;
@@ -298,6 +288,23 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
                 this.HideWaitMessage();
             }
 
+            return true;
+        }
+
+        protected override bool ToPrint()
+        {
+            this.ValidateInput();
+
+            this.ShowWaitMessage("Data Loading ...");
+            DualResult result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            this.HideWaitMessage();
             return true;
         }
     }

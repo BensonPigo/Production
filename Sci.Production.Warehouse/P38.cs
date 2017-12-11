@@ -11,6 +11,7 @@ using Sci;
 using Sci.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
@@ -247,7 +248,6 @@ txtReceivingid.Text));
 
         private bool checkStatus(Byte flag)
         {
-
             bool check = true;
             string strCheckStatus = "";
             #region 確認 Lock Or UnLock
@@ -268,7 +268,6 @@ txtReceivingid.Text));
 
         private void LockUnlock(Byte flag)
         {
-
             bool x;
             if (!(x = gridMaterialLock.ValidateControl())) MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
             gridMaterialLock.EndEdit();
@@ -307,66 +306,125 @@ txtReceivingid.Text));
             {
                 sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE() where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID));
             }
+
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd.ToString())))
             {
                 MyUtility.Msg.WarningBox(string.Format("{0} failed, Pleaes re-try", keyword));
                 return;
             }
-            else { MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword)); }
+            else
+            {
+                this.SendExcel();
+                MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword));
+            }
 
             btnQuery_Click(null,null);
         }
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            if (listControlBindingSource1.DataSource == null) return;
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            //MyUtility.Excel.CopyToXls(dt, "");
-            string sql = @"
+            if (listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
 
-                select  
-t.selected,
-t.POID,
-t.Seq1+' '+Seq2,
-t.Roll,
-t.Dyelot,
-t.stocktype,
-t.status,
-t.InQty,
-t.OutQty,
-t.balanceqty,
-t.location,
-t.Description,
-t.StyleID,
-t.ColorID,
-t.earliest_BuyerDelivery,
-t.earliest_SciDelivery,
-t.BrandID,
-t.FactoryID,
-t.LockDate,
-t.LockName
-                from  #Tmp t
-            ";
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");            
+
+            if (this.SaveExcel(dt, strExcelName))
+            {
+                strExcelName.OpenFile();
+            }
+        }        
+
+        private void SendExcel()
+        {
+            if (listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
+            DataTable dt = ((DataTable)listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+
+            if (this.SaveExcel(dt, strExcelName))
+            {
+                DataTable dtSendAccount;
+                string strSendAccount = "select * from MailTo where Description='Material locked/Unlocked'";
+
+                DualResult result = DBProxy.Current.Select(string.Empty, strSendAccount, out dtSendAccount);
+                if (result)
+                {
+                    if (dtSendAccount != null && dtSendAccount.Rows.Count > 0)
+                    {
+                        string mailto = dtSendAccount.Rows[0]["ToAddress"].ToString();
+                        string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
+                        string subject = dtSendAccount.Rows[0]["Subject"].ToString();
+                        string content = dtSendAccount.Rows[0]["Content"].ToString();
+                        var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, strExcelName, content, false, true);
+                        email.ShowDialog(this);
+                    }
+                }else
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                }
+            }
+        }
+
+        private bool SaveExcel(DataTable printData, string strExcelName)
+        {
+            string sql = @"
+select t.POID
+	   , t.Seq1+' '+t.Seq2
+	   , t.Roll
+	   , t.Dyelot
+	   , t.stocktype
+	   , t.status
+	   , t.InQty
+	   , t.OutQty
+	   , t.balanceqty
+	   , t.location
+	   , t.Description
+	   , t.StyleID
+	   , t.ColorID
+	   , t.earliest_BuyerDelivery
+	   , t.earliest_SciDelivery
+	   , t.BrandID
+	   , t.FactoryID
+	   , LockDate = f.LockDate
+	   , LockName = f.LockName
+from #tmp t
+inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
             DataTable k;
-            MyUtility.Tool.ProcessWithDatatable(dt, "", sql, out k, "#Tmp");
-            if (k.Rows.Count == 0) return;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(printData, string.Empty, sql, out k, "#Tmp");
+
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+            else if (k.Rows.Count == 0)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 1, false, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 2, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
-            #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_P38");
+            #region Save Excel            
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
             Marshal.ReleaseComObject(objSheets);
-
-            strExcelName.OpenFile();
             #endregion
+
+            return true;
         }
     }
 }

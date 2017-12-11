@@ -1244,6 +1244,10 @@
       <Project>{00dd7dbc-5ff6-4b6b-b820-7b2b5edf3116}</Project>
       <Name>Sci.Production.Subcon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.SubProcess\Sci.Production.SubProcess.csproj">
+      <Project>{4cb3bf8f-1c15-4d8c-95c1-6c9f0a5383b0}</Project>
+      <Name>Sci.Production.SubProcess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Thread\Sci.Production.Thread.csproj">
       <Project>{8bd67b5f-49dc-47c7-9330-43af1b161b1b}</Project>
       <Name>Sci.Production.Thread</Name>
@@ -1271,6 +1275,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="KEYREG.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OnBarcode.Barcode.WinForms.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Ymodem_pd.dll">

@@ -1662,6 +1662,26 @@
             <param name="datas">lists of DataRow which will be processed.</param>
             <returns>result of the SQL command is executed.</returns>
         </member>
+        <member name="P:Sci.Data.ITableSchema.IsSupportEditName">
+            <summary>
+            存檔時, 是否要自動變更 EditName
+            </summary>
+        </member>
+        <member name="P:Sci.Data.ITableSchema.IsSupportEditDate">
+            <summary>
+            存檔時, 是否要自動變更 EditDate
+            </summary>
+        </member>
+        <member name="P:Sci.Data.ITableSchema.IsSupportAddName">
+            <summary>
+            存檔時, 是否要自動變更 AddName
+            </summary>
+        </member>
+        <member name="P:Sci.Data.ITableSchema.IsSupportAddDate">
+            <summary>
+            存檔時, 是否要自動變更 AddDate
+            </summary>
+        </member>
         <member name="T:Sci.Data.SYS">
              <summary>
             Represents a strongly typed in-memory cache of data.
@@ -3832,6 +3852,33 @@
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
+        </member>
+        <member name="M:Sci.Win.Forms.Base.ShowLoadingText(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Sci.Win.Forms.Base.InitLoadingLabel">
+            <summary>
+            判斷要不要擺 label上去
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Forms.Base.OnResize(System.EventArgs)">
+            <summary>
+            Input form size 變換時特殊控制
+            </summary>
+            <param name="e">event args</param>
+        </member>
+        <member name="M:Sci.Win.Forms.Base.WindowStateChange_AfterResize">
+            <summary>
+            form 最小化時, grid的scrollbar 位置會跑掉, 所以要特別把它先記錄起來... 等畫面不是最小化時, 再定位回去
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Forms.Base.WindowStateChange_beforeResize">
+            <summary>
+            form 最小化時, grid的scrollbar 位置會跑掉, 所以要特別把它先記錄起來... 等畫面不是最小化時, 再定位回去
+            </summary>
         </member>
         <member name="F:Sci.Win.MatrixHelper.Mixer.UniqueKeyHelper.axis">
             <summary>
@@ -8292,6 +8339,11 @@
             單筆瀏覽明細維護頁面.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tems.Input1.EnableQueryBuild_b4_Reload">
+            <summary>
+            設定在Reload前, 是否要讓QueryBuild先顯示
+            </summary>
+        </member>
         <member name="F:Sci.Win.Tems.Input1.ROW_General">
             <summary>
             BackColor of grid row when in general mode.
@@ -8980,6 +9032,12 @@
             <summary>
             On Delete Rollback method.
             </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.OpenQueryBuild">
+            <summary>
+            開啟QueryBuild畫面 (不包含Reload data
+            </summary>
+            <returns>true : user click ok ; false : user click cancel</returns>
         </member>
         <member name="M:Sci.Win.Tems.Input1.ClickLocate">
             <summary>
