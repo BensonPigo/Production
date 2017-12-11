@@ -335,13 +335,7 @@ namespace Production.Daily
             #region 先把Trade_To_Pms的DB drop掉
             transferPMS.DeleteDatabase(importRegion);
             #endregion
-
-            //#region 解壓縮檔案到資料夾裡
-            //if (!transferPMS.UnRAR_To_ImportDir(importRegion))
-            //{
-            //    return new DualResult(false, "FTP Download failed!");
-            //};
-         
+                     
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
             if (!File.Exists(rarFile))
             {
@@ -358,7 +352,7 @@ namespace Production.Daily
 
             if (!result)
             {
-                ErrMail("Export", transferPMS.Regions_All); //exportRegion);
+                ErrMail("Export", transferPMS.Regions_All);
                 return result;
             }
             #endregion
@@ -533,15 +527,18 @@ Region      Succeeded       Message
                 transferPMS.SetupData(transExport);
             }
             #endregion
+
             #region 檢查FTP檔案的日期是否正確
+            bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
                 if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, false))
                 {
+                    fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
                     String desc = "Wrong the downloaded file date, FileName:(" + importRegion.RarName + ")!!,Pls contact with Taipei.";
                     SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date, FileName(" + importRegion.RarName + ")!!,Pls contact with Taipei.");
+                    //return Ict.Result.F("Wrong the downloaded file date, FileName(" + importRegion.RarName + ")!!,Pls contact with Taipei.");
                 }
             }
             else
@@ -552,52 +549,60 @@ Region      Succeeded       Message
                 string Today = DateTime.Now.ToString("yyyyMMdd");
                 if (!File.Exists(sourceFile))
                 {
-                    return new DualResult(false, importRegion.RarName+" Document is not found!!");
+                    fileExists = false;
+                    //return new DualResult(false, importRegion.RarName+" Document is not found!!");
                 }
-                if (RaRLastEditDate != Today)                
+                else
                 {
-                    String subject = "PMS transfer data (New) ERROR";
-                    String desc = "Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New";
-                    SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New");
-
+                    if (RaRLastEditDate != Today)
+                    {
+                        fileExists = false;
+                        //String subject = "PMS transfer data (New) ERROR";
+                        //String desc = "Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New";
+                        //SendMail(subject, desc);
+                        //return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New");
+                    }
                 }
             }
 
             #endregion
             #region 解壓縮檔案到資料夾裡
-            if (isAuto)
+            if (fileExists) // 檔案存在才做解壓縮
             {
-                string UnRARpath = Path.Combine(importRegion.DirName);
-                string targetRar = Path.Combine(UnRARpath, importRegion.RarName);
-                //自動的話, 去FTP下載
-                #region 1. 清空已存在的 targetDir 下的檔案
-                var cleanFiles = Directory.GetFiles(UnRARpath);
-                cleanFiles.Select(fileName => transferPMS.Try_DeleteFile(fileName, importRegion)).ToList().All(deleted => deleted);
-                #endregion
-                #region 2. 從FTP下載檔案
-                for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
+                if (isAuto)
                 {
-                    if (this.autoDownloadFtpFile(string.Format("ftp://{0}/{1}", Sci.Env.Cfg.FtpServerIP, importRegion.RarName), targetRar))
+                    string UnRARpath = Path.Combine(importRegion.DirName);
+                    string targetRar = Path.Combine(UnRARpath, importRegion.RarName);
+                    //自動的話, 去FTP下載
+                    #region 1. 清空已存在的 targetDir 下的檔案
+                    var cleanFiles = Directory.GetFiles(UnRARpath);
+                    cleanFiles.Select(fileName => transferPMS.Try_DeleteFile(fileName, importRegion)).ToList().All(deleted => deleted);
+                    #endregion
+                    #region 2. 從FTP下載檔案
+                    for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
                     {
-                        break;
+                        if (this.autoDownloadFtpFile(string.Format("ftp://{0}/{1}", Sci.Env.Cfg.FtpServerIP, importRegion.RarName), targetRar))
+                        {
+                            break;
+                        }
+                    }
+                    #endregion
+                    #region 3. 解壓縮
+                    DualResult unRARResult = MyUtility.File.UnRARFile(targetRar, true, UnRARpath);//waitRarFinished: true);
+                    if (unRARResult)
+                    {
+                        importRegion.Logs.Add(new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result));
+                    }
+                    #endregion
+                }
+                else
+                {
+                    if (!UnRaR(importRegion))
+                    {
+                        return new DualResult(false, "rar file Download failed!");
                     }
                 }
-                #endregion
-                #region 3. 解壓縮
-                DualResult unRARResult = MyUtility.File.UnRARFile(targetRar, true, UnRARpath);//waitRarFinished: true);
-                if (unRARResult) { 
-                    importRegion.Logs.Add(new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result)); 
-                }
-                #endregion
             }
-            else
-            {
-                if (!UnRaR(importRegion))
-                {
-                    return new DualResult(false, "rar file Download failed!");
-                };
-            }         
            
             #endregion
 
@@ -607,19 +612,7 @@ Region      Succeeded       Message
                 File.Delete(exportRegion.DirName + exportRegion.RarName);
             }
             #endregion
-
-            #region 刪除FTP的檔案
-
-            //if (IsFtpFileExist(exportRegion.RarName))
-            //{
-            //    if (!transferPMS.Delete_Rar_On_Ftp(exportRegion))
-            //    {
-            //        return new DualResult(false, "Delete FTP File failed!");
-            //    }
-            //}
-
-            #endregion
-
+            
             #region 判斷若DB不存在，就掛載
             DataTable isDbExist;
             sqlCmd = "Select Name From master.dbo.sysdatabases Where ('[' + name + ']' = @DbName OR name = @DbName)";
