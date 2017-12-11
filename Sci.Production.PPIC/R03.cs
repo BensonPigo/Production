@@ -174,6 +174,7 @@ with tmpOrders as (
             , o.CFMDate
             , o.Dest
             , o.StyleID
+            , s.StyleName
             , o.SeasonID
             , o.BrandID
             , o.ProjectID
@@ -240,6 +241,7 @@ with tmpOrders as (
             , o.GFR "
             + seperCmd +
     @" from Orders o WITH (NOLOCK) 
+   left join style s WITH (NOLOCK) on o.styleukey = s.ukey
    " + seperCmdkpi2 + @"
     OUTER APPLY(
         SELECT  Name 
@@ -441,6 +443,7 @@ tmpFilterZone as (
             , o.CFMDate
             , o.Dest
             , o.StyleID
+            , s.StyleName
             , o.SeasonID
             , o.BrandID
             , o.ProjectID
@@ -507,6 +510,7 @@ tmpFilterZone as (
             , o.GFR "
             + seperCmd +
     @"from Orders o  WITH (NOLOCK) 
+    left join style s WITH (NOLOCK) on o.styleukey = s.ukey
    " + seperCmdkpi2 + @"
     OUTER APPLY (
         SELECT Name 
@@ -542,6 +546,7 @@ tmpFilterZone as (
             , t.CFMDate
             , t.Dest
             , t.StyleID
+            , t.StyleName
             , t.SeasonID
             , t.BrandID
             , t.ProjectID
@@ -1279,7 +1284,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             worksheet.Name = "PPIC_Master_List";
 
             // 填Subprocess欄位名稱
-            int lastCol = 116;
+            int lastCol = 117;
             int subConCol = 9999, ttlTMS = 116; // 紀錄SubCon與TTL_TMS的欄位
             if (this.artwork || this.pap)
             {
@@ -1357,107 +1362,108 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 objArray[intRowsStart, 13] = MyUtility.Convert.GetString(dr["Junk"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
                 objArray[intRowsStart, 14] = dr["DestAlias"];
                 objArray[intRowsStart, 15] = dr["StyleID"];
-                objArray[intRowsStart, 16] = dr["ModularParent"];
-                objArray[intRowsStart, 17] = dr["CPUAdjusted"];
-                objArray[intRowsStart, 18] = dr["SimilarStyle"];
-                objArray[intRowsStart, 19] = dr["SeasonID"];
-                objArray[intRowsStart, 20] = dr["GMTLT"];
-                objArray[intRowsStart, 21] = dr["OrderTypeID"];
-                objArray[intRowsStart, 22] = dr["ProjectID"];
-                objArray[intRowsStart, 23] = dr["Customize1"];
-                objArray[intRowsStart, 24] = dr["BuyMonth"];
-                objArray[intRowsStart, 25] = dr["CustPONo"];
-                objArray[intRowsStart, 26] = MyUtility.Convert.GetString(dr["VasShas"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 27] = dr["MnorderApv2"];
-                objArray[intRowsStart, 28] = dr["MnorderApv"];
-                objArray[intRowsStart, 29] = MyUtility.Convert.GetString(dr["TissuePaper"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 30] = dr["ExpectionForm"];
-                objArray[intRowsStart, 31] = dr["ExpectionFormRemark"];
-                objArray[intRowsStart, 32] = MyUtility.Convert.GetString(dr["GFR"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 33] = dr["BrandID"];
-                objArray[intRowsStart, 34] = dr["CustCDID"];
-                objArray[intRowsStart, 35] = dr["BrandFTYCode"];
-                objArray[intRowsStart, 36] = dr["ProgramID"];
-                objArray[intRowsStart, 37] = dr["CdCodeID"];
-                objArray[intRowsStart, 38] = dr["CPU"];
-                objArray[intRowsStart, 39] = dr["Qty"];
-                objArray[intRowsStart, 40] = dr["FOCQty"];
-                objArray[intRowsStart, 41] = MyUtility.Convert.GetDecimal(dr["CPU"]) * MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPUFactor"]);
-                objArray[intRowsStart, 42] = dr["SewQtyTop"];
-                objArray[intRowsStart, 43] = dr["SewQtyBottom"];
-                objArray[intRowsStart, 44] = dr["SewQtyInner"];
-                objArray[intRowsStart, 45] = dr["SewQtyOuter"];
-                objArray[intRowsStart, 46] = dr["TtlSewQty"];
-                objArray[intRowsStart, 47] = dr["CutQty"];
-                objArray[intRowsStart, 48] = MyUtility.Convert.GetString(dr["WorkType"]) == "1" ? "Y" : string.Empty;
-                objArray[intRowsStart, 49] = MyUtility.Convert.GetDecimal(dr["CutQty"]) >= MyUtility.Convert.GetDecimal(dr["Qty"]) ? "Y" : string.Empty;
-                objArray[intRowsStart, 50] = dr["PackingQty"];
-                objArray[intRowsStart, 51] = dr["PackingFOCQty"];
-                objArray[intRowsStart, 52] = dr["BookingQty"];
-                objArray[intRowsStart, 53] = dr["InvoiceAdjQty"];
-                objArray[intRowsStart, 54] = dr["PoPrice"];
-                objArray[intRowsStart, 55] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["PoPrice"]);
-                objArray[intRowsStart, 56] = MyUtility.Convert.GetString(dr["LocalOrder"]).ToUpper() == "TRUE" ? dr["PoPrice"] : dr["CMPPrice"];
-                objArray[intRowsStart, 57] = dr["KPILETA"];  // BE
-                objArray[intRowsStart, 58] = dr["PFRemark"]; // BF
-                objArray[intRowsStart, 59] = dr["LETA"];  // BG
-                objArray[intRowsStart, 60] = dr["MTLETA"];  // BH
-                objArray[intRowsStart, 61] = dr["Fab_ETA"];  // BI
-                objArray[intRowsStart, 62] = dr["Acc_ETA"];  // BJ
-                objArray[intRowsStart, 63] = dr["SewETA"];  // BK
-                objArray[intRowsStart, 64] = dr["PackETA"];  // BL
-                objArray[intRowsStart, 65] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : string.Empty; // BM
-                objArray[intRowsStart, 66] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
-                objArray[intRowsStart, 67] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();   // MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
-                objArray[intRowsStart, 68] = dr["ArriveWHDate"];
-                objArray[intRowsStart, 69] = dr["SewInLine"];
-                objArray[intRowsStart, 70] = dr["SewOffLine"];
-                objArray[intRowsStart, 71] = dr["FirstOutDate"];
-                objArray[intRowsStart, 72] = dr["LastOutDate"];
-                objArray[intRowsStart, 73] = dr["EachConsApv"];
-                objArray[intRowsStart, 74] = dr["CutInLine"];
-                objArray[intRowsStart, 75] = dr["CutOffLine"];
-                objArray[intRowsStart, 76] = dr["FirstCutDate"];
-                objArray[intRowsStart, 77] = dr["LastCutDate"];
-                objArray[intRowsStart, 78] = dr["PulloutDate"];
-                objArray[intRowsStart, 79] = dr["ActPulloutDate"];
-                objArray[intRowsStart, 80] = dr["PulloutQty"];
-                objArray[intRowsStart, 81] = dr["ActPulloutTime"];
-                objArray[intRowsStart, 82] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : string.Empty;
-                objArray[intRowsStart, 83] = dr["FtyKPI"];
+                objArray[intRowsStart, 16] = dr["StyleName"];
+                objArray[intRowsStart, 17] = dr["ModularParent"];
+                objArray[intRowsStart, 18] = dr["CPUAdjusted"];
+                objArray[intRowsStart, 19] = dr["SimilarStyle"];
+                objArray[intRowsStart, 20] = dr["SeasonID"];
+                objArray[intRowsStart, 21] = dr["GMTLT"];
+                objArray[intRowsStart, 22] = dr["OrderTypeID"];
+                objArray[intRowsStart, 23] = dr["ProjectID"];
+                objArray[intRowsStart, 24] = dr["Customize1"];
+                objArray[intRowsStart, 25] = dr["BuyMonth"];
+                objArray[intRowsStart, 26] = dr["CustPONo"];
+                objArray[intRowsStart, 27] = MyUtility.Convert.GetString(dr["VasShas"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 28] = dr["MnorderApv2"];
+                objArray[intRowsStart, 29] = dr["MnorderApv"];
+                objArray[intRowsStart, 30] = MyUtility.Convert.GetString(dr["TissuePaper"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 31] = dr["ExpectionForm"];
+                objArray[intRowsStart, 32] = dr["ExpectionFormRemark"];
+                objArray[intRowsStart, 33] = MyUtility.Convert.GetString(dr["GFR"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 34] = dr["BrandID"];
+                objArray[intRowsStart, 35] = dr["CustCDID"];
+                objArray[intRowsStart, 36] = dr["BrandFTYCode"];
+                objArray[intRowsStart, 37] = dr["ProgramID"];
+                objArray[intRowsStart, 38] = dr["CdCodeID"];
+                objArray[intRowsStart, 39] = dr["CPU"];
+                objArray[intRowsStart, 40] = dr["Qty"];
+                objArray[intRowsStart, 41] = dr["FOCQty"];
+                objArray[intRowsStart, 42] = MyUtility.Convert.GetDecimal(dr["CPU"]) * MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPUFactor"]);
+                objArray[intRowsStart, 43] = dr["SewQtyTop"];
+                objArray[intRowsStart, 44] = dr["SewQtyBottom"];
+                objArray[intRowsStart, 45] = dr["SewQtyInner"];
+                objArray[intRowsStart, 46] = dr["SewQtyOuter"];
+                objArray[intRowsStart, 47] = dr["TtlSewQty"];
+                objArray[intRowsStart, 48] = dr["CutQty"];
+                objArray[intRowsStart, 49] = MyUtility.Convert.GetString(dr["WorkType"]) == "1" ? "Y" : string.Empty;
+                objArray[intRowsStart, 50] = MyUtility.Convert.GetDecimal(dr["CutQty"]) >= MyUtility.Convert.GetDecimal(dr["Qty"]) ? "Y" : string.Empty;
+                objArray[intRowsStart, 51] = dr["PackingQty"];
+                objArray[intRowsStart, 52] = dr["PackingFOCQty"];
+                objArray[intRowsStart, 53] = dr["BookingQty"];
+                objArray[intRowsStart, 54] = dr["InvoiceAdjQty"];
+                objArray[intRowsStart, 55] = dr["PoPrice"];
+                objArray[intRowsStart, 56] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["PoPrice"]);
+                objArray[intRowsStart, 57] = MyUtility.Convert.GetString(dr["LocalOrder"]).ToUpper() == "TRUE" ? dr["PoPrice"] : dr["CMPPrice"];
+                objArray[intRowsStart, 58] = dr["KPILETA"];  // BE
+                objArray[intRowsStart, 59] = dr["PFRemark"]; // BF
+                objArray[intRowsStart, 60] = dr["LETA"];  // BG
+                objArray[intRowsStart, 61] = dr["MTLETA"];  // BH
+                objArray[intRowsStart, 62] = dr["Fab_ETA"];  // BI
+                objArray[intRowsStart, 63] = dr["Acc_ETA"];  // BJ
+                objArray[intRowsStart, 64] = dr["SewETA"];  // BK
+                objArray[intRowsStart, 65] = dr["PackETA"];  // BL
+                objArray[intRowsStart, 66] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : string.Empty; // BM
+                objArray[intRowsStart, 67] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
+                objArray[intRowsStart, 68] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();   // MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
+                objArray[intRowsStart, 69] = dr["ArriveWHDate"];
+                objArray[intRowsStart, 70] = dr["SewInLine"];
+                objArray[intRowsStart, 71] = dr["SewOffLine"];
+                objArray[intRowsStart, 72] = dr["FirstOutDate"];
+                objArray[intRowsStart, 73] = dr["LastOutDate"];
+                objArray[intRowsStart, 74] = dr["EachConsApv"];
+                objArray[intRowsStart, 75] = dr["CutInLine"];
+                objArray[intRowsStart, 76] = dr["CutOffLine"];
+                objArray[intRowsStart, 77] = dr["FirstCutDate"];
+                objArray[intRowsStart, 78] = dr["LastCutDate"];
+                objArray[intRowsStart, 79] = dr["PulloutDate"];
+                objArray[intRowsStart, 80] = dr["ActPulloutDate"];
+                objArray[intRowsStart, 81] = dr["PulloutQty"];
+                objArray[intRowsStart, 82] = dr["ActPulloutTime"];
+                objArray[intRowsStart, 83] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : string.Empty;
+                objArray[intRowsStart, 84] = dr["FtyKPI"];
                 kPIChangeReasonName = dr["KPIChangeReason"].ToString().Trim() + "-" + dr["KPIChangeReasonName"].ToString().Trim();
-                objArray[intRowsStart, 84] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? kPIChangeReasonName : string.Empty; // cc
-                objArray[intRowsStart, 85] = dr["PlanDate"];
-                objArray[intRowsStart, 86] = dr["OrigBuyerDelivery"];
-                objArray[intRowsStart, 87] = dr["SMR"];
-                objArray[intRowsStart, 88] = dr["SMRName"];
-                objArray[intRowsStart, 89] = dr["MRHandle"];
-                objArray[intRowsStart, 90] = dr["MRHandleName"];
-                objArray[intRowsStart, 91] = dr["POSMR"];
-                objArray[intRowsStart, 92] = dr["POSMRName"];
-                objArray[intRowsStart, 93] = dr["POHandle"];
-                objArray[intRowsStart, 94] = dr["POHandleName"];
-                objArray[intRowsStart, 95] = dr["MCHandle"];
-                objArray[intRowsStart, 96] = dr["MCHandleName"];
-                objArray[intRowsStart, 97] = dr["DoxType"];
-                objArray[intRowsStart, 98] = dr["PackingCTN"];
-                objArray[intRowsStart, 99] = dr["TotalCTN1"];
-                objArray[intRowsStart, 100] = dr["FtyCtn1"];
-                objArray[intRowsStart, 101] = dr["ClogCTN1"];
-                objArray[intRowsStart, 102] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 103] = dr["InspDate"];
-                objArray[intRowsStart, 104] = dr["InspResult"];
-                objArray[intRowsStart, 105] = dr["InspHandle"];
-                objArray[intRowsStart, 106] = dr["SewLine"];
-                objArray[intRowsStart, 107] = dr["ShipModeList"];
-                objArray[intRowsStart, 108] = dr["Article"];
-                objArray[intRowsStart, 109] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 110] = dr["FTYRemark"];
-                objArray[intRowsStart, 111] = dr["SampleReasonName"];
-                objArray[intRowsStart, 112] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 113] = dr["CuttingSP"];
-                objArray[intRowsStart, 114] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 115] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 85] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? kPIChangeReasonName : string.Empty; // cc
+                objArray[intRowsStart, 86] = dr["PlanDate"];
+                objArray[intRowsStart, 87] = dr["OrigBuyerDelivery"];
+                objArray[intRowsStart, 88] = dr["SMR"];
+                objArray[intRowsStart, 89] = dr["SMRName"];
+                objArray[intRowsStart, 90] = dr["MRHandle"];
+                objArray[intRowsStart, 91] = dr["MRHandleName"];
+                objArray[intRowsStart, 92] = dr["POSMR"];
+                objArray[intRowsStart, 93] = dr["POSMRName"];
+                objArray[intRowsStart, 94] = dr["POHandle"];
+                objArray[intRowsStart, 95] = dr["POHandleName"];
+                objArray[intRowsStart, 96] = dr["MCHandle"];
+                objArray[intRowsStart, 97] = dr["MCHandleName"];
+                objArray[intRowsStart, 98] = dr["DoxType"];
+                objArray[intRowsStart, 99] = dr["PackingCTN"];
+                objArray[intRowsStart, 100] = dr["TotalCTN1"];
+                objArray[intRowsStart, 101] = dr["FtyCtn1"];
+                objArray[intRowsStart, 102] = dr["ClogCTN1"];
+                objArray[intRowsStart, 103] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 104] = dr["InspDate"];
+                objArray[intRowsStart, 105] = dr["InspResult"];
+                objArray[intRowsStart, 106] = dr["InspHandle"];
+                objArray[intRowsStart, 107] = dr["SewLine"];
+                objArray[intRowsStart, 108] = dr["ShipModeList"];
+                objArray[intRowsStart, 109] = dr["Article"];
+                objArray[intRowsStart, 110] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 111] = dr["FTYRemark"];
+                objArray[intRowsStart, 112] = dr["SampleReasonName"];
+                objArray[intRowsStart, 113] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 114] = dr["CuttingSP"];
+                objArray[intRowsStart, 115] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 116] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
                 // 先清空Subprocess值
