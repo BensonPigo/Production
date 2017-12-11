@@ -254,19 +254,20 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             #endregion Seq 右鍵開窗
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .Numeric("qtybefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
-            .Numeric("qtyafter", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns)    //6
-            .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))    //8
-            .Text("Location", header: "Location", iseditingreadonly: true)    //9
-            .Text("reasonid", header: "Reason ID", settings: ts)    //10
-            .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))    //11
-            ;     //
+            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Numeric("qtybefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("qtyafter", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns)
+            .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))
+            .Text("Location", header: "Location", iseditingreadonly: true)
+            .Text("reasonid", header: "Reason ID", settings: ts)
+            .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
+            ;
             #endregion 欄位設定
 
             detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
@@ -618,6 +619,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 ,dbo.Getlocation(fi.ukey) location
 ,a.ukey
 ,a.ftyinventoryukey
+,ColorID =dbo.GetColorMultipleID(p1.BrandId, p1.ColorID)
 from dbo.Adjust_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
