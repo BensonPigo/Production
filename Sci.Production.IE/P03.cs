@@ -95,33 +95,56 @@ order by ld.No, ld.GroupKey", masterID);
         {
             base.OnDetailGridSetup();
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
-            Ict.Win.DataGridViewGeneratorTextColumnSettings no = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings operatorid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings no = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_No;
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Attachment = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Template = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ThreadColor = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
                 {
-                    if (this.EditMode)
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["No"].ToString()))
                     {
-                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["No"].ToString()))
-                        {
-                            string oldValue = MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString();
-                            dr["No"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
-                            dr.EndEdit();
+                        string oldValue = MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString();
+                        dr["No"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
+                        dr.EndEdit();
 
-                            this.ReclculateGridGSDCycleTime(oldValue);
-                            this.ReclculateGridGSDCycleTime(dr["No"].ToString());
-                            this.ComputeTaktTime();
-                        }
+                        this.ReclculateGridGSDCycleTime(oldValue);
+                        this.ReclculateGridGSDCycleTime(dr["No"].ToString());
+                        this.ComputeTaktTime();
                     }
-                };
+                }
+            };
+
+            no.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (MyUtility.Convert.GetBool(dr["IsPPA"]))
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+            };
             #endregion
             #region Cycle的Valid
             cycle.CellValidating += (s, e) =>
@@ -284,7 +307,7 @@ order by ld.No, ld.GroupKey", masterID);
             };
             #endregion
             #region Attachment
-            Attachment.EditingMouseDown += (s, e) =>
+            attachment.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
@@ -302,7 +325,7 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
 
-            Attachment.CellValidating += (s, e) =>
+            attachment.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
@@ -339,7 +362,7 @@ order by ld.No, ld.GroupKey", masterID);
             };
             #endregion
             #region Template
-            Template.EditingMouseDown += (s, e) =>
+            template.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
@@ -357,7 +380,7 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
 
-            Template.CellValidating += (s, e) =>
+            template.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
@@ -393,11 +416,13 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
-            ThreadColor.MaxLength = 1;
+            threadColor.MaxLength = 1;
+            no.MaxLength = 4;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
+            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: false, trueValue: true, falseValue: false)
             .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -405,22 +430,13 @@ order by ld.No, ld.GroupKey", masterID);
             .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
             .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: Attachment)
-            .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: Template)
+            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
+            .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: ThreadColor);
-
-            // 因為資料顯示已有排序，所以按Grid Header不可以做排序
-            // mantis8880排序功能開啟
-            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            //{
-            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
-
-            cbb_No.MaxLength = 4;
+            .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor);
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -656,7 +672,11 @@ order by ld.No, ld.GroupKey", masterID);
                 this.SumNoGSDCycleTime(groupkey);
                 base.OnDetailGridDelete();
                 this.AssignNoGSDCycleTime(groupkey);
-                this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                if (no != string.Empty)
+                {
+                    this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                }
+
                 this.ComputeTaktTime();
             }
         }
@@ -684,17 +704,17 @@ order by ld.No, ld.GroupKey", masterID);
         // 加總傳入的GroupKey的GSD & Cycle Time
         private void SumNoGSDCycleTime(string groupKey)
         {
-            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("GroupKey = {0}", groupKey));
-            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("GroupKey = {0}", groupKey));
+            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
+            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
         }
 
         // 填輸入的GroupKey的GSD & Cycle Time
         private void AssignNoGSDCycleTime(string groupKey)
         {
-            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("GroupKey = {0}", groupKey));
+            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
             decimal avgGSD = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalGSD) : Math.Round(MyUtility.Convert.GetDecimal(this.totalGSD) / MyUtility.Convert.GetDecimal(countRec), 2);
             decimal avgCycleTime = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalCycleTime) : Math.Round(MyUtility.Convert.GetDecimal(this.totalCycleTime) / MyUtility.Convert.GetDecimal(countRec), 2);
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("GroupKey = {0}", groupKey));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
             int i = 0;
             decimal sumGSD = 0, sumCycleTime = 0;
 
@@ -741,17 +761,17 @@ order by ld.No, ld.GroupKey", masterID);
         // Compute Takt Time
         private void ComputeTaktTime()
         {
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Empty);
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Empty);
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", string.Empty);
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", string.Empty);
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "IsPPA = 0");
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "IsPPA = 0");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "IsPPA = 0");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "IsPPA = 0");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
-            foreach (DataRow dr in temptable.DefaultView.ToTable().Rows)
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("IsPPA = 0"))
             {
                 if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
                 {
@@ -784,10 +804,10 @@ order by ld.No, ld.GroupKey", masterID);
         // 重新計算Grid的Cycle Time
         private void ReclculateGridGSDCycleTime(string no)
         {
-            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("No = '{0}'", no));
-            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("No = '{0}'", no));
+            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("IsPPA = 0 and No = '{0}'", no));
+            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("IsPPA = 0 and No = '{0}'", no));
 
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", no));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("IsPPA = 0 and No = '{0}'", no));
             if (findRow.Length > 0)
             {
                 foreach (DataRow dr in findRow)
@@ -911,7 +931,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("No = '' or No is null");
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("IsPPA = 0 and (No = '' or No is null)");
             if (findrow.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< No. > can't empty!!");
@@ -1118,10 +1138,11 @@ select ID = null
 	   , EmployeeName = ''
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
+       , IsPPA  = iif(td.SMV > 0,0,1)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = {0} 
-	  and td.SMV > 0 
+	  --and td.SMV > 0
 order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)

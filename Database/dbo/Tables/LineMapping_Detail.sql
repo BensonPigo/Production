@@ -17,6 +17,7 @@
     [OriNO]         VARCHAR (4)    NULL,
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     [ThreadColor]   NVARCHAR    NULL,
+    [IsPPA ] BIT NULL, 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
