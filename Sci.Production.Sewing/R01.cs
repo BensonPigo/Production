@@ -212,7 +212,7 @@ select cumulate = IIF(Count(1)=0, 1, Count(1))
 	   , s.ComboType
 into #cl
 from #stmp s
-where s.scOutputDate > (select date = max(Date)
+where s.scOutputDate > isnull((select date = max(Date)
 						from #wtmp w 
 						left join #stmp s2 on s2.scOutputDate = w.Date 
 											  and w.style = s2.style 
@@ -229,7 +229,7 @@ where s.scOutputDate > (select date = max(Date)
 							  and w.Shift = s.Shift 
 							  and w.Team = s.Team 
 							  and w.OrderId = s.OrderId 
-							  and w.ComboType = s.ComboType)
+							  and w.ComboType = s.ComboType),'1900/01/01')
 group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
 		 , s.OrderId, s.ComboType
 -----↑計算累計天數
