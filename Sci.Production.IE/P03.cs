@@ -19,7 +19,7 @@ namespace Sci.Production.IE
         private object totalGSD;
         private object totalCycleTime;
         private DataTable EmployeeData;
-
+        private DataTable distdt;
         /// <summary>
         /// P03
         /// </summary>
@@ -86,6 +86,7 @@ order by ld.No, ld.GroupKey", masterID);
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
+            this.Distable();
         }
 
         /// <summary>
@@ -103,6 +104,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.UI.DataGridViewNumericBoxColumn act;
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -120,6 +122,8 @@ order by ld.No, ld.GroupKey", masterID);
                         this.ReclculateGridGSDCycleTime(dr["No"].ToString());
                         this.ComputeTaktTime();
                     }
+
+                    this.Distable();
                 }
             };
 
@@ -178,6 +182,8 @@ order by ld.No, ld.GroupKey", masterID);
                     dr.EndEdit();
                     this.ReclculateGridGSDCycleTime(MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString());
                     this.ComputeTaktTime();
+
+                    this.Distable();
                 }
             };
             #endregion
@@ -427,9 +433,12 @@ order by ld.No, ld.GroupKey", masterID);
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-            .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+
+            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2).Get(out act)
+            .Numeric("TotalGSD", header: "Ttl\r\nGSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("TotalCycle", header: "Ttl\r\nCycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
@@ -441,9 +450,7 @@ order by ld.No, ld.GroupKey", masterID);
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["TotalGSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["TotalCycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -457,7 +464,6 @@ order by ld.No, ld.GroupKey", masterID);
                 }
 
                 DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-
                 #region 變色規則，若該 Row 已經變色則跳過
                 if (dr["New"].ToString().ToUpper() == "TRUE")
                 {
@@ -474,6 +480,31 @@ order by ld.No, ld.GroupKey", masterID);
                     }
                 }
                 #endregion
+            };
+
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2).Get(out act)
+            .Numeric("TotalGSD", header: "Ttl\r\nGSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("TotalCycle", header: "Ttl\r\nCycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
+
+            act.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (!this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
             };
         }
 
@@ -704,17 +735,17 @@ order by ld.No, ld.GroupKey", masterID);
         // 加總傳入的GroupKey的GSD & Cycle Time
         private void SumNoGSDCycleTime(string groupKey)
         {
-            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
-            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
+            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
+            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
         }
 
         // 填輸入的GroupKey的GSD & Cycle Time
         private void AssignNoGSDCycleTime(string groupKey)
         {
-            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
+            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
             decimal avgGSD = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalGSD) : Math.Round(MyUtility.Convert.GetDecimal(this.totalGSD) / MyUtility.Convert.GetDecimal(countRec), 2);
             decimal avgCycleTime = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalCycleTime) : Math.Round(MyUtility.Convert.GetDecimal(this.totalCycleTime) / MyUtility.Convert.GetDecimal(countRec), 2);
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("IsPPA = 0 and GroupKey = {0}", groupKey));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
             int i = 0;
             decimal sumGSD = 0, sumCycleTime = 0;
 
@@ -761,17 +792,17 @@ order by ld.No, ld.GroupKey", masterID);
         // Compute Takt Time
         private void ComputeTaktTime()
         {
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "IsPPA = 0");
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "IsPPA = 0");
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "IsPPA = 0");
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "IsPPA = 0");
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsPPA = 0 or  IsPPA is null)");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
-            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("IsPPA = 0"))
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("(IsPPA = 0 or  IsPPA is null)"))
             {
                 if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
                 {
@@ -804,10 +835,10 @@ order by ld.No, ld.GroupKey", masterID);
         // 重新計算Grid的Cycle Time
         private void ReclculateGridGSDCycleTime(string no)
         {
-            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("IsPPA = 0 and No = '{0}'", no));
-            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("IsPPA = 0 and No = '{0}'", no));
+            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("(IsPPA = 0 or  IsPPA is null)  and No = '{0}'", no));
+            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
 
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("IsPPA = 0 and No = '{0}'", no));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
             if (findRow.Length > 0)
             {
                 foreach (DataRow dr in findRow)
@@ -931,7 +962,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("IsPPA = 0 and (No = '' or No is null)");
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsPPA = 0 or  IsPPA is null) and (No = '' or No is null)");
             if (findrow.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< No. > can't empty!!");
@@ -1176,6 +1207,25 @@ order by td.Seq", timeStudy["ID"].ToString());
             this.CurrentMaintain["HighestCycle"] = maxSMV;
             this.CalculateValue(0);
             this.ComputeTaktTime();
+        }
+
+        private void Distable()
+        {
+            DataTable copydt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            this.distdt = copydt.DefaultView.ToTable(true, new string[] { "No", "ActCycle", "TotalGSD", "TotalCycle", });
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.listControlBindingSource1.DataSource = null;
+            }
+
+            if (this.grid1.DataSource != null)
+            {
+                this.grid1.DataSource = null;
+            }
+
+            this.distdt.DefaultView.Sort = "No";
+            this.listControlBindingSource1.DataSource = this.distdt;
+            this.grid1.DataSource = this.listControlBindingSource1;
         }
     }
 }
