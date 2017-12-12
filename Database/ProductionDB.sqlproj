@@ -2249,6 +2249,9 @@
     <Build Include="dbo\Tables\SubProcessOutput_Detail.sql" />
     <Build Include="dbo\Stored Procedures\usp_GetErrorString.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_P01_QtyBreakdown_PoCombbySPList_TableOfGoods.sql" />
+    <Build Include="dbo\Tables\PPASchedule_Detail.sql" />
+    <Build Include="dbo\Tables\PPASchedule.sql" />
+    <Build Include="dbo\Functions\CalculateWorkDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

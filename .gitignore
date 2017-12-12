@@ -54,6 +54,8 @@ Database/bin/Debug/
 Database/obj/Debug/
 Production.Daily/bin/
 Production.Daily/obj/
+Sci.Production.SubProcess/bin/
+Sci.Production.SubProcess/obj/
 *.user
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csprojResolveAssemblyReference.cache
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csproj.GenerateResource.Cache

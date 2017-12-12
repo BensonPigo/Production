@@ -58,10 +58,19 @@
     <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.Office.Tools, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
@@ -119,6 +128,18 @@
     <Compile Include="P01_QAOutput.Designer.cs">
       <DependentUpon>P01_QAOutput.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10.Designer.cs">
+      <DependentUpon>P10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_ToExcel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_ToExcel.Designer.cs">
+      <DependentUpon>P10_ToExcel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
@@ -137,6 +158,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_QAOutput.resx">
       <DependentUpon>P01_QAOutput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10.resx">
+      <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_ToExcel.resx">
+      <DependentUpon>P10_ToExcel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -180,6 +207,9 @@
       <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
       <Name>Sci.Production.Tools</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
