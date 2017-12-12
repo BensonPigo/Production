@@ -201,6 +201,13 @@ From
                     }
                     update = update + string.Format("Update Workorder Set estcutdate ='{0}' where Ukey = {1}; ", dr["newestcutdate"],dr["Ukey"]);
                     update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
+
+                    // Mantis_9252 連帶更新Cutting資料表的CutInLine及CutOffLine,CutInLine-->MIN(Workorder.estcutdate),CutOffLine-->MAX(Workorder.estcutdate)
+                    update = update + string.Format(@"update cutting set CutInLine =  wk.Min_Wk_estcutdate,CutOffLine = wk.Max_Wk_estcutdate
+from dbo.cutting WITH (NOLOCK)
+left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
+			from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = cutting.ID
+where cutting.ID = '{0}';", dr["ID"]);
                 }
             }
             if (update == "") return;
