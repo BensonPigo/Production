@@ -1034,12 +1034,6 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                 return;
             }
             #endregion
-
-            if (!this.Checkqty())
-            {
-                return;
-            }
-
             string insertCmd = string.Format(
                 @"insert into AirPP_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','Status','New','Checked','{1}',GetDate())",
@@ -1135,11 +1129,6 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())",
                 return;
             }
 
-            if (!this.Checkqty())
-            {
-                return;
-            }
-
             // Air Qty要等於Order Qty
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]) > MyUtility.Convert.GetInt(this.numOrderQty.Value))
             {
@@ -1182,21 +1171,6 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
             }
 
             this.SendMail(false);
-        }
-
-        private bool Checkqty()
-        {
-            string sp = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
-            string seq = MyUtility.Convert.GetString(this.CurrentMaintain["OrderShipmodeSeq"]);
-            string shipQty = MyUtility.Convert.GetString(this.CurrentMaintain["ShipQty"]);
-            string qty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip where id = '{0}' and Seq = '{1}'", sp, seq));
-            if (shipQty != qty)
-            {
-                MyUtility.Msg.WarningBox(string.Format("<SP> {0} <Seq> {1} <Air Qty> {2} is not correct, please check again!", sp, seq, shipQty));
-                return false;
-            }
-
-            return true;
         }
 
         // Status update history
