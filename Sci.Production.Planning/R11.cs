@@ -120,10 +120,10 @@ SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.Style
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
     ,oa.Article,o.brandid
 into #tmpo
-FROM Orders o
+FROM Orders o WITH (NOLOCK)
 outer apply(
 	select Article= STUFF((select distinct CONCAT(',',Article) 
-					from Order_Article oa
+					from Order_Article oa WITH (NOLOCK)
 					where oa.id=o.ID
 					for xml path('')),1,1,'')
 ) oa
@@ -219,18 +219,20 @@ select
 	o.StyleID
 	,qty = sod.QAQty
 	,MH = so.manpower * sod.WorkHour
-	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(ol_rate.value/100))
+	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(dbo.GetOrderLocation_Rate(o.id,sod.ComboType)/100))
+    --,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(ol.rate/100))
 	,S = sum(iif(o.Category = 'S',1,0)) over(partition by o.StyleID)
 	,B = sum(iif(o.Category = 'B',1,0)) over(partition by o.StyleID)
 	,OutputDate
 	,SewingLineID
 into #tmp_AR_Basic
 from System s,#tmpo o2
-inner join Orders o on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
-inner join SewingOutput_Detail sod on sod.OrderId = o.ID
-inner join SewingOutput so on sod.id = so.id
---inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)
-outer apply (select value = dbo.GetOrderLocation_Rate(o.id,sod.ComboType)) ol_rate
+inner join Orders o WITH (NOLOCK) on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
+inner join SewingOutput_Detail sod  WITH (NOLOCK) on sod.OrderId = o.ID
+inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
+--inner join Style_Location sl  WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)
+--inner join Order_Location ol  WITH (NOLOCK) on ol.OrderId = o.ID AND ol.Location = sod.ComboType
+--outer apply (select value = dbo.GetOrderLocation_Rate(o.id,sod.ComboType)) ol_rate
 where 1=1"));
             if (!MyUtility.Check.Empty(this.mdivision))
             {
@@ -295,8 +297,8 @@ group by a.StyleID,b.max_OutputDate,S,B
 select o.StyleID,P = sum(st.Price)
 into #tmp_P
 from #tmpo o2 
-inner join orders o on o.StyleID = o2.StyleID and o.SeasonID = o2.SeasonID
-inner join style_tmscost st on st.StyleUkey = o.StyleUkey
+inner join orders o  WITH (NOLOCK) on o.StyleID = o2.StyleID and o.SeasonID = o2.SeasonID
+inner join style_tmscost st  WITH (NOLOCK) on st.StyleUkey = o.StyleUkey
 where ArtworkTypeID ='GMT WASH'
 group by o.StyleID,st.ArtworkTypeID
 --
@@ -306,8 +308,8 @@ from
 (
 	select o.StyleID,otc.ArtworkTypeID,max(iif(at.IsTMS=1,otc.tms,otc.price)) price_tms 
 	from #tmpo o
-	inner join dbo.Order_TmsCost otc on otc.id = o.id
-	inner join dbo.ArtworkType at on at.id = otc.ArtworkTypeID
+	inner join dbo.Order_TmsCost otc  WITH (NOLOCK) on otc.id = o.id
+	inner join dbo.ArtworkType at  WITH (NOLOCK)  on at.id = otc.ArtworkTypeID
 	where at.IsTMS =1 or at.IsPrice = 1
 	group by o.StyleID,otc.ArtworkTypeID
 )a

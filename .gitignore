@@ -47,6 +47,8 @@ Sci.Production.Warehouse/bin
 Sci.Production.Warehouse/obj
 Sci.Production.Centralized/bin
 Sci.Production.Centralized/obj
+Sci.Production.SubProcess/bin
+Sci.Production.SubProcess/obj
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
 Database/obj/Debug/
