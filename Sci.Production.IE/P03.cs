@@ -86,6 +86,8 @@ order by ld.No, ld.GroupKey", masterID);
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
+            this.listControlBindingSource1.DataSource = this.distdt;
+
             this.Distable();
         }
 
@@ -100,18 +102,26 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_No;
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.UI.DataGridViewNumericBoxColumn act;
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
+                    DataRow[] selectrow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", e.FormattedValue.ToString().Trim().PadLeft(4, '0')));
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (selectrow.Length == 0)
+                    {
+                        dr["ActCycle"] = DBNull.Value;
+                    }
+                    else
+                    {
+                        dr["ActCycle"] = selectrow[0]["ActCycle"];
+                    }
+
                     if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["No"].ToString()))
                     {
                         string oldValue = MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString();
@@ -427,18 +437,13 @@ order by ld.No, ld.GroupKey", masterID);
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
+            .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: false, trueValue: true, falseValue: false)
             .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-
-            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2).Get(out act)
-            .Numeric("TotalGSD", header: "Ttl\r\nGSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("TotalCycle", header: "Ttl\r\nCycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
             .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
@@ -482,9 +487,39 @@ order by ld.No, ld.GroupKey", masterID);
                 #endregion
             };
 
+            DataGridViewGeneratorNumericColumnSettings ac = new DataGridViewGeneratorNumericColumnSettings();
+            ac.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(dr["ActCycle"]) == MyUtility.Convert.GetDecimal(e.FormattedValue))
+                {
+                    return;
+                }
+
+                dr["ActCycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue) == 0 ? DBNull.Value : e.FormattedValue;
+                string tmpno = MyUtility.Convert.GetString(dr["No"]);
+
+                DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", tmpno));
+                foreach (DataRow item in drs)
+                {
+                    item["ActCycle"] = dr["ActCycle"];
+                }
+            };
+
+            Ict.Win.UI.DataGridViewNumericBoxColumn act;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2).Get(out act)
+            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2, iseditingreadonly: false, settings: ac).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("TotalCycle", header: "Ttl\r\nCycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
 
@@ -575,6 +610,18 @@ order by ld.No, ld.GroupKey", masterID);
             this.CurrentMaintain["IEReasonID"] = string.Empty;
             this.CurrentMaintain["Status"] = "New";
             this.txtStyleComboType.BackColor = Color.White;
+        }
+
+        /// <summary>
+        /// OnEditModeChanged
+        /// </summary>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (this.grid1 != null)
+            {
+                this.grid1.IsEditingReadOnly = !this.EditMode;
+            }
         }
 
         /// <summary>
@@ -1116,6 +1163,8 @@ order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
                 this.CalculateValue(0);
                 this.ComputeTaktTime();
             }
+
+            this.Distable();
         }
 
         // Copy from GSD
@@ -1192,8 +1241,8 @@ order by td.Seq", timeStudy["ID"].ToString());
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
 
-            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", string.Empty);
-            object maxSMV = timeStudy_Detail.Compute("max(GSD)", string.Empty);
+            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsPPA = 0 or  IsPPA is null)");
 
             // 填入表頭資料
             this.CurrentMaintain["IdealOperators"] = timeStudy["NumberSewer"].ToString();
@@ -1207,12 +1256,11 @@ order by td.Seq", timeStudy["ID"].ToString());
             this.CurrentMaintain["HighestCycle"] = maxSMV;
             this.CalculateValue(0);
             this.ComputeTaktTime();
+            this.Distable();
         }
 
         private void Distable()
         {
-            DataTable copydt = ((DataTable)this.detailgridbs.DataSource).Copy();
-            this.distdt = copydt.DefaultView.ToTable(true, new string[] { "No", "ActCycle", "TotalGSD", "TotalCycle", });
             if (this.listControlBindingSource1.DataSource != null)
             {
                 this.listControlBindingSource1.DataSource = null;
@@ -1222,6 +1270,15 @@ order by td.Seq", timeStudy["ID"].ToString());
             {
                 this.grid1.DataSource = null;
             }
+
+            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> ''");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            DataTable copydt = drs.CopyToDataTable();
+            this.distdt = copydt.DefaultView.ToTable(true, new string[] { "No", "ActCycle", "TotalGSD", "TotalCycle", });
 
             this.distdt.DefaultView.Sort = "No";
             this.listControlBindingSource1.DataSource = this.distdt;
