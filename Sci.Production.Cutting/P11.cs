@@ -505,18 +505,18 @@ Select  distinct 0 as sel
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
-outer apply (
-	select  a.ArticleGroup
-	from pattern p WITH (NOLOCK)
-	inner join Pattern_GL_Article a WITH (NOLOCK) on  a.PatternUkey = p.ukey
-	where   p.STYLEUKEY = ord.Styleukey
-	        and a.article = b.article
-	        and Status = 'Completed' 
-	        AND p.EDITdATE = (  SELECT MAX(EditDate) 
-                                from pattern WITH (NOLOCK)
-                                where   styleukey = ord.Styleukey 
-                                        and Status = 'Completed')	
-)ag
+--outer apply (
+--	select  a.ArticleGroup
+--	from pattern p WITH (NOLOCK)
+--	inner join Pattern_GL_Article a WITH (NOLOCK) on  a.PatternUkey = p.ukey
+--	where   p.STYLEUKEY = ord.Styleukey
+--	        and a.article = b.article
+--	        and Status = 'Completed' 
+--	        AND p.EDITdATE = (  SELECT MAX(EditDate) 
+--                                from pattern WITH (NOLOCK)
+--                                where   styleukey = ord.Styleukey 
+--                                        and Status = 'Completed')	
+--)ag
 Where   a.CutRef is not null  
         and ord.mDivisionid = '{0}'", keyWord);
 
