@@ -163,13 +163,13 @@ namespace Sci.Production.Quality
         /// 刪除第三層資料
         /// By Ukey
         /// </summary>
-        /// <param name="strDetailUkey">需要刪除第三層所對應的 Ukey</param>
-        private void cleanDefect(string strDetailUkey)
+        /// <param name="strNewKey">需要刪除第三層所對應的 NewUkey</param>
+        private void cleanDefect(string strNewKey)
         {
             for (int i = Fir_physical_Defect.Rows.Count - 1; i >= 0; i--)
             {
                 if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted 
-                    && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUKey"].EqualString(strDetailUkey))
+                    && Fir_physical_Defect.Rows[i]["NewKey"].EqualString(strNewKey))
                 {
                     Fir_physical_Defect.Rows[i].Delete();
                 }
@@ -190,13 +190,13 @@ namespace Sci.Production.Quality
             for (int i = 0; i <= Fir_physical_Defect.Rows.Count - 1; i++)
             {
                 if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted
-                    && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUKey"].EqualString(CurrentData["DetailUKey"]))
+                    && Fir_physical_Defect.Rows[i]["NewKey"].EqualString(CurrentData["NewKey"]))
                 {
                     // if (dr.RowState != DataRowState.Deleted)
                     //{
                     def_locF = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                     def_locT = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_locF >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
+                    if (def_locF >= double_ActualYds && Fir_physical_Defect.Rows[i]["NewKey"].ToString() == CurrentData["NewKey"].ToString())
                     {
                         Fir_physical_Defect.Rows[i].Delete();
                     }
@@ -288,7 +288,7 @@ where	WEAVETYPEID = '{0}'
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string originRoll = dr["Roll"].ToString();
-                    string strDetailUkey = dr["DetailUkey"].ToString();
+                    string strNewKey = dr["NewKey"].ToString();
 
                     SelectItem sele;
                     string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' order by dyelot", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
@@ -322,7 +322,7 @@ where	WEAVETYPEID = '{0}'
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
                         dr["totalpoint"] = 0.00;
-                        cleanDefect(strDetailUkey);
+                        cleanDefect(strNewKey);
                         dr.EndEdit();
                     }
                     else
@@ -340,7 +340,7 @@ where	WEAVETYPEID = '{0}'
                         dr["Grade"] = "";
                         dr["moisture"] = 0;
                         dr["Remark"] = "";
-                        cleanDefect(strDetailUkey);
+                        cleanDefect(strNewKey);
                         dr.EndEdit();
                         return;
                     }  
@@ -349,7 +349,7 @@ where	WEAVETYPEID = '{0}'
             Rollcell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string strDetailUkey = dr["DetailUkey"].ToString();
+                string strNewKey = dr["NewKey"].ToString();
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -370,7 +370,7 @@ where	WEAVETYPEID = '{0}'
                     dr["Grade"] = "";
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
-                    cleanDefect(strDetailUkey);
+                    cleanDefect(strNewKey);
                     dr.EndEdit();
                     return;
                 }
@@ -390,7 +390,7 @@ where	WEAVETYPEID = '{0}'
                     dr["Result"] = "Pass";
                     dr["Grade"] = "A";
                     dr["totalpoint"] = 0.00;
-                    cleanDefect(strDetailUkey);
+                    cleanDefect(strNewKey);
                     dr.EndEdit();
                 }
                 else
@@ -409,7 +409,7 @@ where	WEAVETYPEID = '{0}'
                     dr["moisture"] = 0;
                     dr["Remark"] = "";
                     dr.EndEdit();
-                    cleanDefect(strDetailUkey);
+                    cleanDefect(strNewKey);
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
@@ -436,7 +436,7 @@ where	WEAVETYPEID = '{0}'
                     if (Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
                     {
                         def_loc = MyUtility.Convert.GetDouble(Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
-                        if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["FIR_PhysicalDetailUkey"].ToString() == CurrentData["DetailUkey"].ToString())
+                        if (def_loc >= double_ActualYds && Fir_physical_Defect.Rows[i]["NewKey"].ToString() == CurrentData["NewKey"].ToString())
                         {
                             hintmsg.Append("Yds : " + Fir_physical_Defect.Rows[i]["DefectLocation"].ToString() + " , Defects : " + Fir_physical_Defect.Rows[i]["DefectRecord"].ToString() +
                                                 " , Point : " + Fir_physical_Defect.Rows[i]["Point"].ToString() + "\n");
@@ -459,7 +459,7 @@ where	WEAVETYPEID = '{0}'
                 // 若新的 Act.Yds\nInspected = 0，則第三層必須清空
                 if (newvalue.EqualDecimal(0))
                 {
-                    cleanDefect(dr["DetailUkey"].ToString());
+                    cleanDefect(dr["NewKey"].ToString());
                 }
 
                 dr["Actualyds"] = e.FormattedValue;
