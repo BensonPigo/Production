@@ -173,6 +173,12 @@ CREATE NONCLUSTERED INDEX [Index_POID]
     INCLUDE([ID]);
 GO
 
+CREATE NONCLUSTERED INDEX [Index_Orders_StyleID] ON [dbo].[Orders]
+(
+	[StyleID] ASC
+)
+GO
+
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders';
 
 
