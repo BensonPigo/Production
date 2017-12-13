@@ -285,7 +285,7 @@ where o.Id = '{0}'",
             // Air Qty要等於Order Qty
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]) > MyUtility.Convert.GetInt(this.numOrderQty.Value))
             {
-                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty Order Q'ty<" + this.numOrderQty.Value + ">!!");
+                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty<" + this.numOrderQty.Value + ">!!");
                 return false;
             }
             #endregion
@@ -1030,7 +1030,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
             // Air Qty要等於Order Qty
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]) > MyUtility.Convert.GetInt(this.numOrderQty.Value))
             {
-                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty Order Q'ty<" + this.numOrderQty.Value + ">!!");
+                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty<" + this.numOrderQty.Value + ">!!");
                 return;
             }
             #endregion
@@ -1132,7 +1132,7 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())",
             // Air Qty要等於Order Qty
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["ShipQty"]) > MyUtility.Convert.GetInt(this.numOrderQty.Value))
             {
-                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty Order Q'ty<" + this.numOrderQty.Value + ">!!");
+                MyUtility.Msg.WarningBox("Air Q'ty<" + this.CurrentMaintain["ShipQty"] + "> cannot greater than Order Q'ty<" + this.numOrderQty.Value + ">!!");
                 return;
             }
 
