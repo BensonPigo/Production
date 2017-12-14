@@ -434,7 +434,7 @@ where sd.ID = '{0}'", masterID);
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp WITH (NOLOCK) where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["Handle"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp WITH (NOLOCK) where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", MyUtility.Convert.GetString(this.CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])), out dr))
                 {
                     MyUtility.Msg.WarningBox("< Invoice# > and < B/L No. > duplicate with No." + MyUtility.Convert.GetString(dr["ID"]));
                     return false;
