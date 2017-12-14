@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -209,8 +210,11 @@ namespace Sci.Production.Warehouse
 
                         if (intColumnsCount >= 30)
                         {
-                            excel.Workbooks.Close();
+                            Marshal.ReleaseComObject(worksheet);
+                            excel.ActiveWorkbook.Close(false, Type.Missing, Type.Missing);
+                            //excel.Workbooks.Close();
                             excel.Quit();
+                            Marshal.ReleaseComObject(excel);
                             excel = null;
                             MyUtility.Msg.WarningBox("Column count can not more than 30!!");
                             return;
@@ -426,9 +430,12 @@ where   stocktype='{0}'
                             dr["Status"] = (intRowsCount - 1 == count) ? "Check & Import Completed." : "Some Data Faild. Please check Error Message.";
                             dr["Count"] = count;
                         }
-
-                        excel.Workbooks.Close();
+                        
+                        Marshal.ReleaseComObject(worksheet);
+                        excel.ActiveWorkbook.Close(false, Type.Missing, Type.Missing);
+                        //excel.Workbooks.Close();
                         excel.Quit();
+                        Marshal.ReleaseComObject(excel);
                         excel = null;
                     }
                 }
