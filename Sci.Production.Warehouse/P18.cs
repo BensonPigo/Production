@@ -365,6 +365,8 @@ where a.id = @ID", pars, out dtDetail);
             CurrentDetailData["Stocktype"] = 'B';
         }
 
+        
+
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -378,7 +380,10 @@ where a.id = @ID", pars, out dtDetail);
                     IList<DataRow> x;
 
                     DataTable dt;
-                    string sqlcmd = string.Format(@"
+                    string sqlcmd;
+                    if (CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
+                    {
+                        sqlcmd = string.Format(@"
 select  poid = p.ID 
         , seq = concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2)
         , p.seq1
@@ -390,6 +395,22 @@ select  poid = p.ID
         , stockunit = dbo.GetStockUnitBySPSeq (p.ID, p.seq1, p.seq2)
 from dbo.Po_Supp_Detail p WITH (NOLOCK) 
 where p.ID ='{0}'", CurrentDetailData["poid"].ToString());
+                    }
+                    else
+                    {
+                        sqlcmd = string.Format(@"
+select  poid = I.InventoryPOID 
+        , seq = concat(Ltrim(Rtrim(I.InventorySeq1)), ' ', I.InventorySeq2)
+        , seq1 = I.InventorySeq1
+        , seq2 = I.InventorySeq2
+        , I.Refno
+        , Description = ''
+        , I.FabricType
+        , stockunit = dbo.GetStockUnitBySPSeq (I.InventoryPOID, I.InventorySeq1, I.InventorySeq2)
+from dbo.Invtrans I WITH (NOLOCK) 
+where I.InventoryPOID ='{0}' and I.type = 3 and FactoryID = '{1}'", CurrentDetailData["poid"].ToString(), this.CurrentMaintain["FromFtyID"]);
+                    }
+                    
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
@@ -401,13 +422,13 @@ where p.ID ='{0}'", CurrentDetailData["poid"].ToString());
                     if (result == DialogResult.Cancel) { return; }
                     x = selepoitem.GetSelecteds();
 
-                    CurrentDetailData["seq"] = x[0]["seq"];
-                    CurrentDetailData["seq1"] = x[0]["seq1"];
-                    CurrentDetailData["seq2"] = x[0]["seq2"];
-                    CurrentDetailData["stockunit"] = x[0]["stockunit"];
-                    CurrentDetailData["Description"] = x[0]["Description"];
-                    CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
-
+                    this.CurrentDetailData["seq"] = x[0]["seq"];
+                    this.CurrentDetailData["seq1"] = x[0]["seq1"];
+                    this.CurrentDetailData["seq2"] = x[0]["seq2"];
+                    this.CurrentDetailData["stockunit"] = x[0]["stockunit"];
+                    this.CurrentDetailData["Description"] = x[0]["Description"];
+                    this.CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    CurrentDetailData.EndEdit();
                 }
             };
 
@@ -438,8 +459,10 @@ where p.ID ='{0}'", CurrentDetailData["poid"].ToString());
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             return;
                         }
-
-                        if (!MyUtility.Check.Seek(string.Format(@"
+                        if (CurrentDetailData["DataFrom"].Equals("Po_Supp_Detail"))
+                        {
+                            #region check Po_Supp_Detail seq 1 2
+                            if (!MyUtility.Check.Seek(string.Format(@"
 select  pounit
         , stockunit = dbo.GetStockUnitBySPSeq (id, seq1, seq2)
         , fabrictype
@@ -450,8 +473,8 @@ from po_supp_detail WITH (NOLOCK)
 where   id = '{0}' 
         and seq1 ='{1}'
         and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
-                        {
-                            if (!MyUtility.Check.Seek(string.Format(@"
+                            {
+                                if (!MyUtility.Check.Seek(string.Format(@"
 select  poid = p.POID 
         , seq = left (p.seq1 + ' ', 3) + p.seq2
         , p.seq1
@@ -464,9 +487,48 @@ where   poid = '{0}'
         and seq1 = '{1}'
         and seq2 = '{2}' 
         and factoryid = '{3}'", CurrentDetailData["poid"]
-                              , e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                              , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)
-                              , CurrentMaintain["fromftyid"]), out dr, null))
+                                  , e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
+                                  , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)
+                                  , CurrentMaintain["fromftyid"]), out dr, null))
+                                {
+                                    e.Cancel = true;
+                                    MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                    return;
+                                }
+                                else
+                                {
+                                    CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                    CurrentDetailData["seq1"] = seq[0];
+                                    CurrentDetailData["seq2"] = seq[1];
+                                    CurrentDetailData["Roll"] = "";
+                                    CurrentDetailData["Dyelot"] = "";
+                                    //CurrentDetailData["stockunit"] = dr["stockunit"];
+                                    CurrentDetailData["Description"] = dr["description"];
+                                    CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                                }
+                            }
+                            else
+                            {
+                                CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                CurrentDetailData["seq1"] = seq[0];
+                                CurrentDetailData["seq2"] = seq[1];
+                                CurrentDetailData["Roll"] = "";
+                                CurrentDetailData["Dyelot"] = "";
+                                CurrentDetailData["stockunit"] = dr["stockunit"];
+                                CurrentDetailData["Description"] = dr["description"];
+                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region check Invtrans seq 1 2
+                            if (!MyUtility.Check.Seek(string.Format(@"
+select    fabrictype
+from Invtrans WITH (NOLOCK) 
+where   InventoryPOID = '{0}' 
+        and InventorySeq1 ='{1}'
+        and InventorySeq2 = '{2}' and type = 3 and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1],CurrentMaintain["FromFtyID"]), out dr, null))
                             {
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -479,22 +541,14 @@ where   poid = '{0}'
                                 CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["Roll"] = "";
                                 CurrentDetailData["Dyelot"] = "";
-                                //CurrentDetailData["stockunit"] = dr["stockunit"];
-                                CurrentDetailData["Description"] = dr["description"];
+                                CurrentDetailData["stockunit"] = "";
+                                CurrentDetailData["Description"] = "";
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
                             }
+
+                            #endregion
                         }
-                        else
-                        {
-                            CurrentDetailData["seq"] = seq[0] + " " + seq[1];
-                            CurrentDetailData["seq1"] = seq[0];
-                            CurrentDetailData["seq2"] = seq[1];
-                            CurrentDetailData["Roll"] = "";
-                            CurrentDetailData["Dyelot"] = "";
-                            CurrentDetailData["stockunit"] = dr["stockunit"];
-                            CurrentDetailData["Description"] = dr["description"];
-                            CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                        }
+
                     }
                 }
             };
@@ -607,8 +661,22 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
+                if (this.EditMode == true && string.IsNullOrEmpty(e.FormattedValue.ToString()))
+                {
+                    this.CurrentDetailData["seq"] = "";
+                    this.CurrentDetailData["seq1"] = "";
+                    this.CurrentDetailData["seq2"] = "";
+                    this.CurrentDetailData["roll"] = "";
+                    this.CurrentDetailData["dyelot"] = "";
+                    this.CurrentDetailData["poid"] = "";
+                    this.CurrentDetailData["DataFrom"] = "";
+                    this.CurrentDetailData["qty"] = 0;
+                    return;
+                }
+
                 if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
+                    string dataFrom = "Po_Supp_Detail";
                     string strCheckOrders = string.Format(@"
 select  o.id
 from Orders o
@@ -626,11 +694,23 @@ where   c.POID = '{0}'
         and f.MDivisionID = '{1}' 
 ", e.FormattedValue, Sci.Env.User.Keyword);
 
+                    string strCheckInvtrans = string.Format(@"
+select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID = '{1}'
+", e.FormattedValue, this.CurrentMaintain["FromFtyID"]);
+
                     if (!MyUtility.Check.Seek(strCheckOrders) && !MyUtility.Check.Seek(strCheckInventory))
                     {
-                        this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
-                        MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
-                        return;
+                        if (!MyUtility.Check.Seek(strCheckInvtrans))
+                        {
+                            this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
+                            MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
+                            return;
+                        }
+                        else
+                        {
+                            dataFrom = "Invtrans";
+                        }
+                       
                     }
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
@@ -638,6 +718,7 @@ where   c.POID = '{0}'
                     this.CurrentDetailData["roll"] = "";
                     this.CurrentDetailData["dyelot"] = "";
                     this.CurrentDetailData["poid"] = e.FormattedValue;
+                    this.CurrentDetailData["DataFrom"] = dataFrom;
                 }
             };
 
@@ -1200,6 +1281,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string fromFty = (e.Master == null) ? "" : e.Master["FromFtyID"].ToString();
             this.DetailSelectCommand = string.Format(@"
 select  a.id
         , a.PoId
@@ -1214,12 +1296,16 @@ select  a.id
         , a.StockType
         , a.location
         , a.ukey
-        , FabricType = p.FabricType
+        , FabricType = isnull(p.FabricType,I.FabricType)
+        , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
-left join Po_Supp_Detail p on a.poid = p.id
+left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
                               and a.seq2 = p.seq2
-Where a.id = '{0}'", masterID);
+left join Invtrans I WITH (NOLOCK)  on a.poid = I.InventoryPOID
+                              and a.seq1 = I.InventorySeq1
+                              and a.seq2 = I.InventorySeq2 and I.FactoryID = '{1}' and I.type = 3
+Where a.id = '{0}'", masterID, fromFty);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
