@@ -422,13 +422,13 @@ where I.InventoryPOID ='{0}' and I.type = 3 and FactoryID = '{1}'", CurrentDetai
                     if (result == DialogResult.Cancel) { return; }
                     x = selepoitem.GetSelecteds();
 
-                    CurrentDetailData["seq"] = x[0]["seq"];
-                    CurrentDetailData["seq1"] = x[0]["seq1"];
-                    CurrentDetailData["seq2"] = x[0]["seq2"];
-                    CurrentDetailData["stockunit"] = x[0]["stockunit"];
-                    CurrentDetailData["Description"] = x[0]["Description"];
-                    CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
-
+                    this.CurrentDetailData["seq"] = x[0]["seq"];
+                    this.CurrentDetailData["seq1"] = x[0]["seq1"];
+                    this.CurrentDetailData["seq2"] = x[0]["seq2"];
+                    this.CurrentDetailData["stockunit"] = x[0]["stockunit"];
+                    this.CurrentDetailData["Description"] = x[0]["Description"];
+                    this.CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    CurrentDetailData.EndEdit();
                 }
             };
 
@@ -661,6 +661,19 @@ WHERE   StockType='{0}'
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts3 = new DataGridViewGeneratorTextColumnSettings();
             ts3.CellValidating += (s, e) =>
             {
+                if (this.EditMode == true && string.IsNullOrEmpty(e.FormattedValue.ToString()))
+                {
+                    this.CurrentDetailData["seq"] = "";
+                    this.CurrentDetailData["seq1"] = "";
+                    this.CurrentDetailData["seq2"] = "";
+                    this.CurrentDetailData["roll"] = "";
+                    this.CurrentDetailData["dyelot"] = "";
+                    this.CurrentDetailData["poid"] = "";
+                    this.CurrentDetailData["DataFrom"] = "";
+                    this.CurrentDetailData["qty"] = 0;
+                    return;
+                }
+
                 if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
                     string dataFrom = "Po_Supp_Detail";
