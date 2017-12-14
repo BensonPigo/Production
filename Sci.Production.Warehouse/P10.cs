@@ -1098,7 +1098,7 @@ where t.id= @ID";
                     Dyelot = row1["Dyelot"].ToString().Trim(),
                     Qty = row1["Qty"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim()
-                }).ToList();
+                }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
 
             report.ReportDataSource = data;
             #endregion
