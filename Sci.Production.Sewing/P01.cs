@@ -294,8 +294,21 @@ where   o.FtyGroup = @factoryid
                                 return;
                             }
 
-                            // 當該SP#+Line不屬於排程時，跳出確認訊息
-                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule WITH (NOLOCK) where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]))))
+                        // 當該SP#已被Junk時，跳出確認訊息
+                        if (MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where ID = '{0}' and junk=1", MyUtility.Convert.GetString(e.FormattedValue))))
+                        {
+                           // 問是否要繼續，確定才繼續往下做
+                           DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# has been canceled already,\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
+                           if (buttonResult == System.Windows.Forms.DialogResult.No)
+                           {
+                              dr["OrderID"] = string.Empty;
+                              e.Cancel = true;
+                              return;
+                           }
+                        }
+
+                        // 當該SP#+Line不屬於排程時，跳出確認訊息
+                        if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule WITH (NOLOCK) where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]))))
                             {
                                 // 問是否要繼續，確定才繼續往下做
                                 DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# dosen't belong to this line, please inform scheduler.\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
