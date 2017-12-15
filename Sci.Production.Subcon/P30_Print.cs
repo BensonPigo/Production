@@ -120,16 +120,15 @@ a.OrderId
 ,a.Refno
 ,c.ArtTkt
 ,a.ThreadColorID
-,b.BrandID
+,c.Description
 ,a.Qty
 ,a.Delivery
 ,a.ID
-,d.BuyerID
+,b.BrandID
 ,b.FactoryID
 from localpo_detail a WITH (NOLOCK) 
 left join orders b WITH (NOLOCK)  on a.orderid = b.id
 left join localitem c WITH  (NOLOCK) on c.refno = a.refno 
-left join Brand d WITH  (NOLOCK) on d.ID=b.BrandID
 Where a.id = '{0}' 
 order by orderid,a.refno,threadcolorid", currentID);
 
