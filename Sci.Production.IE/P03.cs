@@ -105,6 +105,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
@@ -432,13 +433,25 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
+            ppa.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    if ((bool)((Ict.Win.UI.DataGridViewCellValidatingEventArgs)e).FormattedValue)
+                    {
+                        DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                        dr["No"] = string.Empty;
+                        dr["isppa"] = 1;
+                    }
+                }
+            };
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
-            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: false, trueValue: true, falseValue: false)
+            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
             .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -705,6 +718,7 @@ order by ld.No, ld.GroupKey", masterID);
             }
 
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
+
             return true;
         }
 
