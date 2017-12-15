@@ -101,7 +101,7 @@ BEGIN
 		(
 			select distinct om.ActCuttingPerimeter
 			from WorkOrder w3
-			left join Order_MarkerList om on w3.id = om.id and w3.Markername = om.MarkerName and w3.MarkerNo = om.MarkerNo
+			left join Order_EachCons om on w3.id = om.id and w3.Markername = om.MarkerName and w3.MarkerNo = om.MarkerNo
 			where w3.ukey = w.ukey
 		)
 	)C
