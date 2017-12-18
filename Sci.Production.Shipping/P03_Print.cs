@@ -150,7 +150,7 @@ order by e.ID",
                 worksheet.Cells[9, 8] = this.email;
 
                 int rownum = 11;
-                object[,] objArray = new object[1, 17];
+                object[,] objArray = new object[1, 18];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
                     objArray[0, 0] = dr["FactoryID"];
@@ -160,17 +160,18 @@ order by e.ID",
                     objArray[0, 4] = dr["Category"];
                     objArray[0, 5] = dr["InspDate"];
                     objArray[0, 6] = dr["Seq"];
-                    objArray[0, 7] = dr["Supp"];
-                    objArray[0, 8] = dr["Description"];
-                    objArray[0, 9] = dr["UnitId"];
-                    objArray[0, 10] = dr["ColorID"];
-                    objArray[0, 11] = dr["SizeSpec"];
-                    objArray[0, 12] = dr["Qty"];
-                    objArray[0, 13] = dr["Foc"];
-                    objArray[0, 14] = dr["BalanceQty"];
-                    objArray[0, 15] = dr["NetKg"];
-                    objArray[0, 16] = dr["WeightKg"];
-                    worksheet.Range[string.Format("A{0}:Q{0}", rownum)].Value2 = objArray;
+                    objArray[0, 7] = dr["Preshrink"];
+                    objArray[0, 8] = dr["Supp"];
+                    objArray[0, 9] = dr["Description"];
+                    objArray[0, 10] = dr["UnitId"];
+                    objArray[0, 11] = dr["ColorID"];
+                    objArray[0, 12] = dr["SizeSpec"];
+                    objArray[0, 13] = dr["Qty"];
+                    objArray[0, 14] = dr["Foc"];
+                    objArray[0, 15] = dr["BalanceQty"];
+                    objArray[0, 16] = dr["NetKg"];
+                    objArray[0, 17] = dr["WeightKg"];
+                    worksheet.Range[string.Format("A{0}:R{0}", rownum)].Value2 = objArray;
 
                     rownum++;
                 }
