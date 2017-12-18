@@ -21,7 +21,6 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string display;
         private string contentType;
-        private DataTable machineInv;
         private DataTable actCycleTime;
         private DataTable operationCode;
         private DataTable noda;
@@ -65,29 +64,7 @@ namespace Sci.Production.IE
         /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string sqlCmd = string.Format(
-                @"with Attachment
-as
-(
- select distinct MachineTypeID,(select CONCAT(MoldID,',') from LineMapping_Detail WITH (NOLOCK) where ID = 8257 and MoldID <> '' and MachineTypeID = ld.MachineTypeID for xml path('')) as Attach
- from LineMapping_Detail ld WITH (NOLOCK) 
- where ID = {0} and MoldID <> ''
-)
-select b.MachineTypeID,b.ctn,iif(a.Attach is null,'',SUBSTRING(a.Attach,1,len(a.Attach)-1)) as Attach 
-from (select a.MachineTypeID, count(a.MachineTypeID) as ctn 
-	  from
-	  (select distinct no,MachineTypeID 
-	   from LineMapping_Detail WITH (NOLOCK) 
-	   where ID = {0}) a
-	  group by a.MachineTypeID) b
-left join Attachment a on b.MachineTypeID = a.MachineTypeID", MyUtility.Convert.GetString(this.masterData["ID"]));
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineInv);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query machine data fail\r\n" + result.ToString());
-                return failResult;
-            }
-
+            string sqlCmd;
 
             #region 第一頁
             sqlCmd = string.Format(
@@ -104,7 +81,7 @@ from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID
 	  group by GroupKey,OperationID,Annotation,MachineTypeID,Attachment,Template) a
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
-            result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query operation code data fail\r\n" + result.ToString());
@@ -256,7 +233,8 @@ order by No",
                 return false;
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
+            // string strXltName = Sci.Env.Cfg.XltPathDir + (this.display == "U" ? "\\IE_P03_Print_U.xltx" : "\\IE_P03_Print_Z.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -339,6 +317,8 @@ order by No",
 
             excel.Visible = true;
 
+            #region 長條圖資料
+
             // 填act Cycle Time
             worksheet = excel.ActiveWorkbook.Worksheets[3];
             intRowsStart = 2;
@@ -364,6 +344,8 @@ order by No",
                 worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
+            #endregion
+
             #region 第二頁
 
             #region 固定資料
@@ -400,7 +382,6 @@ order by No",
             }
             #endregion
 
-
             #region 新增長條圖 2
 
             // 新增長條圖
@@ -422,12 +403,6 @@ order by No",
             series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
             series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
             series2.Name = "CT time";
-
-            // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
-            //chartPage2.ApplyLayout(9);
-            //chartPage2.ChartTitle.Select();
-            //Microsoft.Office.Interop.Excel.Axis z2 = (Microsoft.Office.Interop.Excel.Axis)chartPage2.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlValue, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
-            //z2 = (Microsoft.Office.Interop.Excel.Axis)chartPage2.Axes(Microsoft.Office.Interop.Excel.XlAxisType.xlCategory, Microsoft.Office.Interop.Excel.XlAxisGroup.xlPrimary);
 
             // 折線圖的資料標籤不顯示
             series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
@@ -545,6 +520,122 @@ order by No",
             #region U字型列印
             if (this.display == "U")
             {
+                int maxct = 3;
+                int di = this.nodist.Rows.Count;
+                int addct = 0;
+                bool flag = true;
+                decimal dd = Math.Ceiling((decimal)di / 2);
+                List<int> max_ct = new List<int>();
+                for (int i = 0; i < dd; i++)
+                {
+                    int a = MyUtility.Convert.GetInt(this.nodist.Rows[i]["ct"]);
+                    int d = 0;
+                    if (di % 2 == 1 && flag)
+                    {
+                        flag = false;
+                    }
+                    else
+                    {
+                        if (di % 2 == 1)
+                        {
+                            d = MyUtility.Convert.GetInt(this.nodist.Rows[di - i]["ct"]);
+                        }
+                        else
+                        {
+                            d = MyUtility.Convert.GetInt(this.nodist.Rows[di - 1 - i]["ct"]);
+                        }
+                    }
+
+                    maxct = a > d ? a : d;
+                    maxct = maxct > 3 ? maxct : 3;
+                    max_ct.Add(maxct);
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(norow + 3)), Type.Missing).EntireRow;
+                    for (int k = 3; k < maxct; k++)
+                    {
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        worksheet.get_Range(string.Format("D{0}:H{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        worksheet.get_Range(string.Format("I{0}:J{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        worksheet.get_Range(string.Format("L{0}:M{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        worksheet.get_Range(string.Format("N{0}:P{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        if (i > 0)
+                        {
+                            addct++;
+                        }
+                    }
+
+                    norow = norow - 5;
+                    maxct = 3;
+                }
+
+                bool leftDirection = true;
+                norow = 17 + ((j - 2) * 5) + addct;
+                int m = 0;
+                foreach (DataRow nodr in this.nodist.Rows)
+                {
+                    if (leftDirection)
+                    {
+                        nocolumn = 9;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+
+                        DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        int ridx = 2;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
+                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
+                            worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
+                            worksheet.Cells[norow, nocolumn - 4] = item["name"];
+
+                            ridx++;
+                        }
+
+                        DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        ridx = 2;
+                        foreach (DataRow item in mdrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
+                            ridx++;
+                        }
+
+                        m++;
+                        if (m == dd)
+                        {
+                            leftDirection = false;
+                            m--;
+                            continue;
+                        }
+
+                        norow = norow - 5 - (max_ct[m] - 3);
+                    }
+                    else
+                    {
+                        nocolumn = 12;
+                        worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+
+                        DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        int ridx = 2;
+                        foreach (DataRow item in nodrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
+                            worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
+                            worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
+                            worksheet.Cells[norow, nocolumn + 3] = item["name"];
+
+                            ridx++;
+                        }
+
+                        DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        ridx = 2;
+                        foreach (DataRow item in mdrs)
+                        {
+                            worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
+                            ridx++;
+                        }
+
+                        norow = norow + 5 + (max_ct[m] - 3);
+                        m--;
+                    }
+                }
             }
             #endregion
             #region Z字型列印

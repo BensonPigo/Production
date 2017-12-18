@@ -407,10 +407,7 @@
     <None Include="XLT\IE_P02_ChkListRepeat.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\IE_P03_Print_U.xltx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="XLT\IE_P03_Print_Z.xltx">
+    <None Include="XLT\IE_P03_Print.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\IE_P08.xltx">
