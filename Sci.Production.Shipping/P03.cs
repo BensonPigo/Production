@@ -43,7 +43,8 @@ iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Fact
 iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
 (case when ed.PoType = 'M' and ed.FabricType = 'M' then 'Machine' when ed.PoType = 'M' and ed.FabricType = 'P' then 'Part' when ed.PoType = 'M' and ed.FabricType = 'O' then 'Miscellaneous' else '' end) as FabricType,
 ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
-ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn
+ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn,
+Preshrink = iif(f.Preshrink = 1, 'V' ,'')
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
