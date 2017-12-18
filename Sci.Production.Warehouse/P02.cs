@@ -44,6 +44,7 @@ where exists(
 
             return base.ClickEditBefore();
         }
+
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
@@ -123,6 +124,7 @@ select  FactoryID = iif(ed.potype='M'
         , ed.Ukey
         , PoidSeq1 = rtrim(ed.Poid) + Ltrim(Rtrim(ed.Seq1))
         , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
+        , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -166,6 +168,7 @@ where ed.ID = '{0}'", masterID);
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3))
+                .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(13))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(6))
                 .Text("FabricType", header: "MMS Type", width: Widths.AnsiChars(3))
