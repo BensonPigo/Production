@@ -315,7 +315,7 @@ order by No",
             }
             #endregion
 
-            excel.Visible = true;
+            // excel.Visible = true;
 
             #region 長條圖資料
 
