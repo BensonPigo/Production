@@ -292,7 +292,7 @@ and lpd.inqty + t.qty > lpd.qty
             StringBuilder chk = new StringBuilder();
             foreach (DataRow item in dtt.Rows)
             {
-                chk.Append(string.Format("Msg:{0}#+'-'+{1} already received {2} can not exceed PO Qty {3}!! \r\n", item["orderid"], item["refno"], item["inqty"], item["qty"]));
+                chk.Append(string.Format("{0}# - {1} already received {2} can not exceed PO Qty {3}!! \r\n", item["orderid"], item["refno"], item["inqty"], item["qty"]));
             }
             if (chk.Length>0)
             {
