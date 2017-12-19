@@ -23,12 +23,13 @@ namespace Sci.Production.Sewing
 
         private DateTime systemLockDate;
         private decimal systemTMS = 0;
+        private decimal? oldttlqaqty;
 
-        /// <summary>
-        /// P02
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
-        public P02(ToolStripMenuItem menuitem)
+      /// <summary>
+      /// P02
+      /// </summary>
+      /// <param name="menuitem">menuitem</param>
+      public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -320,9 +321,9 @@ where   mo.Junk = 0
 
             this.CurrentMaintain["TMS"] = tms.Rows[0]["TtlTMS"];
         }
-
-        /// <inheritdoc/>
-        protected override void ClickNewAfter()
+      
+      /// <inheritdoc/>
+      protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
@@ -449,8 +450,32 @@ where   mo.Junk = 0
                 return false;
             }
 
-            // GetID
-            if (this.IsDetailInserting)
+         #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty
+         DataTable sys;
+         DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
+         DateTime? sod = MyUtility.Convert.GetDate(this.CurrentMaintain["outputDate"]);
+         DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
+         if (sod <= sl)
+         {
+            decimal nQ = 0;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+               if (!MyUtility.Check.Empty(dr["QAQty"]))
+               {
+                  nQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
+               }
+            }
+
+            if (nQ != this.oldttlqaqty)
+            {
+               MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
+               return false;
+            }
+         }
+         #endregion
+
+         // GetID
+         if (this.IsDetailInserting)
             {
                 string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "MM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
@@ -508,7 +533,7 @@ where   mo.Junk = 0
                     return;
                 }
 
-                if (this.dateDate.Value < this.systemLockDate)
+                if (this.dateDate.Value <= this.systemLockDate)
                 {
                     this.dateDate.Value = null;
                     e.Cancel = true;
@@ -518,7 +543,13 @@ where   mo.Junk = 0
             }
         }
 
-        private void CalculateManHour()
+      protected override void OnDetailEntered()
+      {
+         base.OnDetailEntered();
+         this.oldttlqaqty = this.numQAOutput.Value;
+      }
+
+      private void CalculateManHour()
         {
             decimal manpower = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Manpower"]);
             decimal workHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
