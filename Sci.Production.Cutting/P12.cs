@@ -480,10 +480,11 @@ outer apply
 
             DataTable dtSelect;
 
-            dtSelect = dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"])
+            dtSelect = dtt.DefaultView.ToTable()
+                .AsEnumerable()
+                .Where(row=> (bool)row["selected"])
                 .CopyToDataTable();
-
+            
             List<P12_PrintData> data = new List<P12_PrintData>();
             bool changeGroup = true;
             for (int i = 0; i< dtSelect.Rows.Count;)
