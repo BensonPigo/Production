@@ -164,17 +164,26 @@ namespace Sci.Production.Centralized
             try
             {
                 string strSQL = @"
-Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.BrandID , Orders.FactoryID, 
-	Orders.POID , Orders.Category, Orders.CdCodeID , Orders.CPU, 
-	CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  , 
-	Orders.BuyerDelivery, Orders.SCIDelivery, 
-	SewingOutput.SewingLineID , SewingOutput.ManPower, SewingOutput_Detail.ComboType, SewingOutput_Detail.WorkHour, SewingOutput_Detail.QAQty , 
-    QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetOrderLocation_Rate](Orders.id ,SewingOutput_Detail.ComboType)/100,1)
-	, SewingOutput_Detail.WorkHour * SewingOutput.ManPower as TotalManHour 
-	, CDCode.Description AS CDDesc, Style.Description AS StyleDesc
-	, STYLE.ModularParent, STYLE.CPUAdjusted
-	,OutputDate,Shift, Team,SCategory = SewingOutput.Category, CPUFactor, Orders.MDivisionID,orderid
-	 , Rate = isnull([dbo].[GetOrderLocation_Rate]( Orders.id ,SewingOutput_Detail.ComboType)/100,1) 
+
+Select Orders.ID, Orders.ProgramID, Orders.StyleID, Orders.SeasonID, Orders.BrandID , Orders.FactoryID
+,Orders.POID , Orders.Category, Orders.CdCodeID 
+,Orders.CPU
+,CPURate = (SELECT * FROM GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'Order')) * Orders.CPU  
+,Orders.BuyerDelivery, Orders.SCIDelivery
+,SewingOutput.SewingLineID 
+,SewingOutput.ManPower
+,SewingOutput_Detail.ComboType
+,SewingOutput_Detail.WorkHour
+,SewingOutput_Detail.QAQty 
+,QARate = SewingOutput_Detail.QAQty * isnull([dbo].[GetOrderLocation_Rate](Orders.id ,SewingOutput_Detail.ComboType)/100,1)
+,Round(SewingOutput_Detail.WorkHour * SewingOutput.ManPower,2) as TotalManHour 
+,CDDesc = CDCode.Description 
+,StyleDesc = Style.Description
+,STYLE.ModularParent, STYLE.CPUAdjusted
+,OutputDate,Shift, Team
+,SCategory = SewingOutput.Category, CPUFactor, Orders.MDivisionID,orderid
+,Rate = isnull([dbo].[GetOrderLocation_Rate]( Orders.id ,SewingOutput_Detail.ComboType)/100,1) 
+,ActManPower= IIF(SewingOutput_Detail.QAQty = 0, SewingOutput.Manpower, SewingOutput.Manpower * SewingOutput_Detail.QAQty)
 into #stmp
 FROM Orders WITH (NOLOCK), SewingOutput WITH (NOLOCK), SewingOutput_Detail WITH (NOLOCK) , Brand WITH (NOLOCK) , Factory WITH (NOLOCK), CDCode WITH (NOLOCK) , Style WITH (NOLOCK)
 Where SewingOutput_Detail.OrderID = Orders.ID 
@@ -253,18 +262,49 @@ and Factory.IsProduceFty = '1'
                 }
 
                 strSQL += @"
-select OutputDate,Category, Shift, SewingLineID, Team, OrderId , ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate, MDivisionID, QAQty = sum(QAQty)
-into #stmp2		from #stmp
-group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
+select OutputDate
+,Category
+, Shift
+, SewingLineID
+, Team
+, OrderId 
+, ComboType
+, SCategory
+, FactoryID
+, ProgramID
+, CPU
+, CPUFactor
+, StyleID
+, Rate
+, MDivisionID
+, QAQty = sum(QAQty)
+, ActManPower= Sum(Round(ActManPower,2))
+, WorkHour = sum(Round(WorkHour,2))
+into #stmp2		
+from #stmp
+group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
+, ProgramID, CPU, CPUFactor, StyleID, Rate,MDivisionID
 
 select 
 a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID 
-, CPU = sum(a.CPU), CPURate = sum(a.CPURate)
-,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
-, ManPower = sum(a.ManPower), WorkHour = sum(a.WorkHour) , QARate = convert(numeric(12,2),sum(a.QARate))
-, TotalManHour = sum(a.TotalManHour )
-, a.CDDesc, a.StyleDesc
-, a.ModularParent, CPUAdjusted = sum(a.CPUAdjusted)
+, CPU = sum(a.CPU)
+, CPURate = sum(a.CPURate)
+, a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
+, ManPower = sum(a.ManPower)
+, WorkHour = sum(Round(a.WorkHour,2)) 
+, QARate = convert(numeric(12,2)
+, sum(a.QARate))
+, TotalManHour =
+	(select sum(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2))
+	from #stmp2 f 
+	where f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	and f.orderid = a.orderid
+	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
+	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+, a.CDDesc
+, a.StyleDesc
+, a.ModularParent
+, CPUAdjusted = sum(a.CPUAdjusted)
 ,QAQty = sum(a.QAQty) 
 ,TotalCPUOut =
 	(select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
