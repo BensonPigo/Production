@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(829, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtID);
@@ -48,6 +52,11 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Size = new System.Drawing.Size(829, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -120,6 +129,7 @@
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(166, 23);
             this.txtID.TabIndex = 0;
+            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtID_Validating);
             // 
             // B11
             // 

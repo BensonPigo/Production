@@ -31,5 +31,20 @@ namespace Sci.Production.IE
             base.ClickEditAfter();
             this.txtID.ReadOnly = true;
         }
+
+        /// <summary>
+        /// txtID_Validating
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void TxtID_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtID.Text.Contains(","))
+            {
+                MyUtility.Msg.WarningBox("<ID> can not have ',' !");
+
+                this.txtID.Text = string.Empty;
+            }
+        }
     }
 }

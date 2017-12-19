@@ -129,6 +129,7 @@
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(166, 23);
             this.txtID.TabIndex = 0;
+            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtID_Validating);
             // 
             // B10
             // 
