@@ -105,6 +105,7 @@
             this.txtsewingline = new Sci.Production.Class.txtsewingline();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -119,6 +120,9 @@
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -260,8 +264,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
-            this.detailpanel.Location = new System.Drawing.Point(0, 206);
-            this.detailpanel.Size = new System.Drawing.Size(739, 417);
+            this.detailpanel.Location = new System.Drawing.Point(225, 247);
+            this.detailpanel.Size = new System.Drawing.Size(316, 274);
             // 
             // gridicon
             // 
@@ -273,7 +277,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(739, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(316, 274);
             // 
             // detail2
             // 
@@ -294,11 +298,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.grid1);
+            this.detailcont.Controls.Add(this.splitContainer1);
             this.detailcont.Size = new System.Drawing.Size(996, 623);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
+            this.detailcont.Controls.SetChildIndex(this.splitContainer1, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
-            this.detailcont.Controls.SetChildIndex(this.grid1, 0);
             // 
             // detailbtm
             // 
@@ -1344,20 +1348,33 @@
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(743, 206);
+            this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(253, 417);
+            this.grid1.Size = new System.Drawing.Size(241, 417);
             this.grid1.TabIndex = 2;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 206);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.grid1);
+            this.splitContainer1.Size = new System.Drawing.Size(996, 417);
+            this.splitContainer1.SplitterDistance = 751;
+            this.splitContainer1.TabIndex = 3;
             // 
             // P03
             // 
@@ -1396,6 +1413,9 @@
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1479,5 +1499,6 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape10;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

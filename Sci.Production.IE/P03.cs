@@ -32,6 +32,9 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.gridicon.Append.Visible = false;
+
+            this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
+            this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
         }
 
         /// <inheritdoc/>
@@ -437,12 +440,27 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode)
                 {
-                    if ((bool)((Ict.Win.UI.DataGridViewCellValidatingEventArgs)e).FormattedValue)
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if ((bool)e.FormattedValue)
                     {
-                        DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                        string noo = dr["No"].ToString(); // 紀錄要被刪除的No
                         dr["No"] = string.Empty;
                         dr["isppa"] = 1;
+                        this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
+                        this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
+                        if (noo != string.Empty)
+                        {
+                            this.ReclculateGridGSDCycleTime(noo); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                        }
                     }
+                    else
+                    {
+                        this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
+                        this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
+                    }
+
+                    this.ComputeTaktTime();
+                    this.Distable();
                 }
             };
             threadColor.MaxLength = 1;
@@ -755,8 +773,11 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
                 {
-                    MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
-                    return;
+                    if (MyUtility.Convert.GetDecimal(this.CurrentDetailData["GSD"]) != 0)
+                    {
+                        MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
+                        return;
+                    }
                 }
 
                 string no = this.CurrentDetailData["No"].ToString(); // 紀錄要被刪除的No
