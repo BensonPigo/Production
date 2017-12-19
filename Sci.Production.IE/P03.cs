@@ -532,9 +532,9 @@ order by ld.No, ld.GroupKey", masterID);
             Ict.Win.UI.DataGridViewNumericBoxColumn act;
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Numeric("ActCycle", header: "Act.\r\nCycle Time", width: Widths.AnsiChars(6), integer_places: 5, decimal_places: 2, iseditingreadonly: false, settings: ac).Get(out act)
-            .Numeric("TotalGSD", header: "Ttl\r\nGSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("TotalCycle", header: "Ttl\r\nCycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
+            .Numeric("ActCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: false, settings: ac).Get(out act)
+            .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("TotalCycle", header: "Ttl\r\nCycle\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true);
 
             act.CellFormatting += (s, e) =>
             {

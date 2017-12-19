@@ -127,7 +127,7 @@ order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
 
             #region Machine Type IsPPa
             sqlCmd = string.Format(
-                @"select ld.OperationID,ld.MachineTypeID,Annotation,DescEN=isnull(o.DescEN,Annotation)
+                @"select ld.OperationID,ld.MachineTypeID,ld.Annotation,DescEN=isnull(o.DescEN,ld.Annotation)
 from LineMapping_Detail ld WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 where ld.ID = {0} and IsPPa = 1
@@ -157,7 +157,7 @@ order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 }
 
                 sqlCmd = string.Format(
-                    @"select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,Annotation,o.DescEN
+                    @"select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(
@@ -547,7 +547,7 @@ from(
 )x
 group by ID
 
-select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,Annotation,o.DescEN
+select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(
@@ -584,7 +584,7 @@ from(
 )x
 group by ID
 
-select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,Annotation,o.DescEN
+select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(

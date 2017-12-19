@@ -261,7 +261,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
             this.detailpanel.Location = new System.Drawing.Point(0, 206);
-            this.detailpanel.Size = new System.Drawing.Size(636, 417);
+            this.detailpanel.Size = new System.Drawing.Size(739, 417);
             // 
             // gridicon
             // 
@@ -273,7 +273,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(636, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(739, 417);
             // 
             // detail2
             // 
@@ -1349,14 +1349,14 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(639, 206);
+            this.grid1.Location = new System.Drawing.Point(743, 206);
             this.grid1.Name = "grid1";
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(357, 417);
+            this.grid1.Size = new System.Drawing.Size(253, 417);
             this.grid1.TabIndex = 2;
             // 
             // P03
