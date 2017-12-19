@@ -274,6 +274,32 @@ where	Junk != 1
             DualResult result, result2;
             DataTable datacheck;
 
+            DataTable dtt;
+            string chklocalqty =
+                @"
+select t.orderid,t.refno,lpd.inqty,lpd.qty
+from LocalPO_Detail lpd with(nolock),#tmp t
+where t.LocalPo_detailukey = lpd .ukey
+and lpd.inqty + t.qty > lpd.qty
+";
+            result = MyUtility.Tool.ProcessWithDatatable(DetailDatas.CopyToDataTable(), string.Empty, chklocalqty, out dtt);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
+            StringBuilder chk = new StringBuilder();
+            foreach (DataRow item in dtt.Rows)
+            {
+                chk.Append(string.Format("Msg:{0}#+'-'+{1} already received {2} can not exceed PO Qty {3}!! \r\n", item["orderid"], item["refno"], item["inqty"], item["qty"]));
+            }
+            if (chk.Length>0)
+            {
+                MyUtility.Msg.WarningBox(chk.ToString());
+                return;
+            }
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(@"
