@@ -470,11 +470,6 @@ outer apply
                 {
                     checkone = true;
                 }
-
-                if (false && true)
-                {
-                    //execute aaa
-                }
             }
             if (!checkone)
             {
@@ -483,19 +478,13 @@ outer apply
                 return;
             }
 
-            DataTable dt1, dt2, dt3,dtSelect;
-            dt1 = dtt.Clone();
-            dt2 = dtt.Clone();
-            dt3 = dtt.Clone();
-            dtSelect = dtt.AsEnumerable()
-                .Where(row => (bool)row["selected"])
-                .OrderBy(row=>row["Cut"])
+            DataTable dtSelect;
+
+            dtSelect = dtt.DefaultView.ToTable()
+                .AsEnumerable()
+                .Where(row=> (bool)row["selected"])
                 .CopyToDataTable();
-
-            //var names = new string[]{
-            //    "Group_right","Group_left","Line","Cell","SP","Style","Item","Body_Cut","Parts","Color",
-            //    "Size","SizeSpec","Desc","SubProcess","Qty","Barcode","Patterncode","MarkerNo","Season","brand","item","CutRef "};
-
+            
             List<P12_PrintData> data = new List<P12_PrintData>();
             bool changeGroup = true;
             for (int i = 0; i< dtSelect.Rows.Count;)
