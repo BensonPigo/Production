@@ -256,7 +256,7 @@ select OutputDate,Category
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(WorkHour)
+	   , WorkHour = sum(Round(WorkHour,2))
 	   , QAQty = sum(QAQty)
 	   , InlineQty = sum(InlineQty)
 	   , OrderCategory
