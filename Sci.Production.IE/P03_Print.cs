@@ -144,10 +144,10 @@ select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.Machine
 ,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by a.GroupKey)
 from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID 
 		,AT = case 
-		  when Attachment is not null and Template is not null then Attachment+','+Template
-		  when Attachment is not null and Template is null then Attachment
-		  when Attachment is null and Template is not null then Template 
-		  else ''end
+	        when isnull(Attachment,'') != '' and isnull(Template,'') != '' then Attachment+','+Template
+	        when isnull(Attachment,'') != '' and isnull(Template,'') = '' then Attachment
+	        when isnull(Attachment,'') = '' and isnull(Template,'') != '' then Template 
+	        else ''end
 	  from LineMapping_Detail ld WITH (NOLOCK) 
 	  where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	  group by GroupKey,OperationID,Annotation,MachineTypeID,Attachment,Template
