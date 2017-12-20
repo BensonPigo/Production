@@ -33,6 +33,7 @@ namespace Sci.Production.IE
         private decimal styleCPU;
         private decimal takt1;
         private decimal takt2;
+        private decimal changp;
         private decimal count1;
         private decimal count2;
         private bool change = false;
@@ -66,30 +67,7 @@ namespace Sci.Production.IE
         {
             this.display = this.radioU.Checked ? "U" : "Z";
             this.contentType = this.radioDescription.Checked ? "D" : "A";
-
-            decimal changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
-            decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);
-
-            if (this.chkpage.Checked && ttlnocount > changp)
-            {
-                this.count1 = changp;
-                this.count2 = ttlnocount - changp;
-                decimal ttlcycle = MyUtility.Convert.GetDecimal(this.masterData["TotalCycle"]);
-                decimal standardOutput1 = ttlcycle == 0 ? 0 : MyUtility.Math.Round(3600 * this.count1 / ttlcycle, 0);
-                decimal standardOutput2 = ttlcycle == 0 ? 0 : MyUtility.Math.Round(3600 * this.count2 / ttlcycle, 0);
-
-                decimal dailyDemand1 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput1, 0);
-                decimal dailyDemand2 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput2, 0);
-
-                this.takt1 = dailyDemand1 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand1, 0);
-                this.takt2 = dailyDemand2 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand2, 0);
-                this.change = true;
-            }
-            else
-            {
-                this.change = false;
-            }
-
+            this.changp = MyUtility.Convert.GetDecimal(this.numpage.Value);
             return base.ValidateInput();
         }
 
@@ -100,22 +78,82 @@ namespace Sci.Production.IE
         /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            #region 切分頁計算 takt
+            decimal ttlnocount = MyUtility.Convert.GetInt(this.masterData["CurrentOperators"]);
+            if (this.chkpage.Checked && ttlnocount > this.changp)
+            {
+                string sqlp1 = string.Format(
+                    @"
+select no = count(distinct no)
+from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no<={1}
+",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                string sqlp2 = string.Format(
+                    @"
+select no = count(distinct no)
+from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
+",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                this.count1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
+                this.count2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
+                sqlp1 = string.Format(
+                    @"
+select sumCycle = sum(Cycle)
+from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)  and no<={1}
+",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                sqlp2 = string.Format(
+                    @"
+select sumCycle = sum(Cycle)
+from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
+",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+
+                decimal totalCycle1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
+                decimal totalCycle2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
+                decimal currentOperators1 = this.count1;
+                decimal currentOperators2 = this.count2;
+                decimal standardOutput1 = totalCycle1 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators1 / totalCycle1, 0);
+                decimal standardOutput2 = totalCycle2 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators2 / totalCycle2, 0);
+                decimal dailyDemand1 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput1, 0);
+                decimal dailyDemand2 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput2, 0);
+                this.takt1 = dailyDemand1 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand1, 0);
+                this.takt2 = dailyDemand2 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand2, 0);
+                this.change = true;
+            }
+            else
+            {
+                this.change = false;
+            }
+            #endregion
+
             string sqlCmd;
 
             #region 第一頁
             sqlCmd = string.Format(
                 @"
-select a.*,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by a.GroupKey)
-from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID
+select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID),a.at
+,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by a.GroupKey)
+from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID 
 		,AT = case 
 		  when Attachment is not null and Template is not null then Attachment+','+Template
 		  when Attachment is not null and Template is null then Attachment
 		  when Attachment is null and Template is not null then Template 
 		  else ''end
-	  from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	  where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	  group by GroupKey,OperationID,Annotation,MachineTypeID,Attachment,Template) a
+	  from LineMapping_Detail ld WITH (NOLOCK) 
+	  where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
+	  group by GroupKey,OperationID,Annotation,MachineTypeID,Attachment,Template
+) a
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
+left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
@@ -124,14 +162,14 @@ order by a.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
                 return failResult;
             }
             #endregion
-
             #region Machine Type IsPPa
             sqlCmd = string.Format(
-                @"select ld.OperationID,ld.MachineTypeID,ld.Annotation,DescEN=isnull(o.DescEN,ld.Annotation)
+                @"
+select ld.OperationID,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),ld.Annotation,DescEN=isnull(o.DescEN,ld.Annotation)
 from LineMapping_Detail ld WITH (NOLOCK)
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
-where ld.ID = {0} and IsPPa = 1 and m.MachineGroupID != ''
+where ld.ID = {0} and IsPPa = 1 
 order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.noppa);
             if (!result)
@@ -147,8 +185,7 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]))
                 sqlCmd = string.Format(
                     @"select No,CT = COUNT(1)
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 GROUP BY NO
 order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
@@ -159,9 +196,10 @@ order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 }
 
                 sqlCmd = string.Format(
-                    @"select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
+                    @"
+select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(
     select Name = stuff((
@@ -175,7 +213,7 @@ outer apply(
         for xml path('')
     ),1,1,'')
 )e2
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 order by ld.No,ld.MachineTypeID,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
@@ -186,11 +224,19 @@ order by ld.No,ld.MachineTypeID,ld.GroupKey", MyUtility.Convert.GetString(this.m
 
                 sqlCmd = string.Format(
                     @"
-select ld.No,MachineTypeID = rtrim(MachineTypeID+' '+isnull(Attachment,'')+' '+isnull(Template,'')+' '+isnull(ThreadColor,''))
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')", MyUtility.Convert.GetString(this.masterData["ID"]));
+select * from
+(
+	select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+	from(
+		select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+		from LineMapping_Detail ld WITH (NOLOCK) 
+		where ld.ID = {0} and  (IsPPa = 0 or IsPPa is null)
+		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+	)a
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
+order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt);
                 if (!result)
                 {
@@ -222,16 +268,26 @@ group by MachineTypeID", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 sqlCmd = string.Format(
                     @"
-select a_ct = count(a.no),t_ct = count(t.no)
+select * from(
+select a_ct = count(a.no)
 from(
-	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
+	select Attachment=isnull(Attachment,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
 	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='') and m.MachineGroupID != ''
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
 outer apply(select * from SplitString(Attachment,','))a
-outer apply(select * from SplitString(Template,','))t", MyUtility.Convert.GetString(this.masterData["ID"]));
+)z,(
+select t_ct = count(t.no)
+from(
+	select Template=isnull(Template,'')
+	from LineMapping_Detail ld WITH (NOLOCK) 
+	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='') and m.MachineGroupID != ''
+	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+)x
+outer apply(select * from SplitString(Template,','))t)z2", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct);
                 if (!result)
                 {
@@ -242,10 +298,9 @@ outer apply(select * from SplitString(Template,','))t", MyUtility.Convert.GetStr
                 // 圖1用
                 sqlCmd = string.Format(
                     @"
-select distinct No,ActCycle,1 as TaktTime
+select distinct No,ActCycle,{1} as TaktTime
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     MyUtility.Convert.GetString(this.masterData["TaktTime"]));
@@ -261,8 +316,7 @@ order by No",
                     @"
 select distinct No,TotalGSD,TotalCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime);
@@ -273,7 +327,6 @@ order by No",
                 }
             }
             #endregion
-
             #region 第二頁 有分頁
             else
             {
@@ -327,7 +380,7 @@ from(
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
@@ -346,8 +399,7 @@ from(
 )x
 group by MachineTypeID",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.summt2);
                 if (!result)
                 {
@@ -366,8 +418,7 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET 0 ROWS 
 	FETCH NEXT {1} ROWS ONLY
@@ -376,9 +427,8 @@ group by ID
 
 select distinct No,ActCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.count1);
@@ -396,23 +446,20 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
 select distinct No,ActCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime2);
                 if (!result)
                 {
@@ -428,8 +475,7 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET 0 ROWS 
 	FETCH NEXT {1} ROWS ONLY
@@ -438,9 +484,8 @@ group by ID
 
 select No,TotalGSD,TotalCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.count1);
@@ -458,23 +503,20 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
 select No,TotalGSD,TotalCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime2);
                 if (!result)
                 {
@@ -499,7 +541,8 @@ from(
 )x
 group by ID
 
-select a_ct = count(a.no),t_ct = count(t.no)
+select*from(
+select a_ct = count(a.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
@@ -510,7 +553,18 @@ from(
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
 outer apply(select * from SplitString(Attachment,','))a
-outer apply(select * from SplitString(Template,','))t
+)z,(
+select t_ct = count(t.no)
+from(
+	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
+	from LineMapping_Detail ld WITH (NOLOCK) 
+	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	inner join #tmp t on ld.ID = t.ID
+	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
+	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+)x
+outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.count1);
@@ -532,11 +586,12 @@ from(
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
-select a_ct = count(a.no),t_ct = count(t.no)
+select*from(
+select a_ct = count(a.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
@@ -547,11 +602,21 @@ from(
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
 outer apply(select * from SplitString(Attachment,','))a
-outer apply(select * from SplitString(Template,','))t
+)z,(
+select t_ct = count(t.no)
+from(
+	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
+	from LineMapping_Detail ld WITH (NOLOCK) 
+	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	inner join #tmp t on ld.ID = t.ID
+	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
+	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+)x
+outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct2);
                 if (!result)
                 {
@@ -568,8 +633,7 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET 0 ROWS 
 	FETCH NEXT {1} ROWS ONLY
@@ -578,9 +642,8 @@ group by ID
 
 select No,CT = COUNT(1)
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
 GROUP BY NO
 order by no
 
@@ -601,26 +664,23 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
 select No,CT = COUNT(1)
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 GROUP BY NO
 order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {
@@ -637,17 +697,16 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET 0 ROWS 
 	FETCH NEXT {1} ROWS ONLY
 )x
 group by ID
 
-select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
+select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(
@@ -662,7 +721,7 @@ outer apply(
         for xml path('')
     ),1,1,'')
 )e2
-where (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.count1);
@@ -680,17 +739,16 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
-select ld.No,ld.Cycle,ld.GSD,ld.MachineTypeID,e2.Name,ld.Annotation,o.DescEN
+select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
 from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 outer apply(
@@ -705,11 +763,10 @@ outer apply(
         for xml path('')
     ),1,1,'')
 )e2
-where (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda2);
                 if (!result)
                 {
@@ -726,20 +783,26 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 	order by no
 	OFFSET 0 ROWS 
 	FETCH NEXT {1} ROWS ONLY
 )x
 group by ID
 
-select ld.No,MachineTypeID = rtrim(MachineTypeID+' '+isnull(Attachment,'')+' '+isnull(Template,'')+' '+isnull(ThreadColor,''))
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
-GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+select * from
+(
+    select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+    from(
+	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+	    from LineMapping_Detail ld WITH (NOLOCK) 
+	    inner join #tmp t on ld.ID = t.ID
+	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
+	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+    )a
+    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.count1);
@@ -761,20 +824,26 @@ from(
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
 	order by no
 	OFFSET {1} ROWS 
-	FETCH NEXT {2} ROWS ONLY
+	FETCH NEXT 255 ROWS ONLY
 )x
 group by ID
 
-select ld.No,MachineTypeID = rtrim(MachineTypeID+' '+isnull(Attachment,'')+' '+isnull(Template,'')+' '+isnull(ThreadColor,''))
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
-GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+select * from
+(
+    select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+    from(
+	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+	    from LineMapping_Detail ld WITH (NOLOCK) 
+	    inner join #tmp t on ld.ID = t.ID
+	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
+	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+    )a
+    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1,
-                    this.count2);
+                    this.count1);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt2);
                 if (!result)
                 {
