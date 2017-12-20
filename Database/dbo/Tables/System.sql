@@ -37,7 +37,8 @@
     [APSLoginId] VARCHAR(15) NULL DEFAULT (''), 
     [APSLoginPwd] VARCHAR(15) NULL DEFAULT (''), 
     [SQLServerName] VARCHAR(130) NULL DEFAULT (''), 
-    [APSDatabaseName] VARCHAR(15) NULL DEFAULT ('')
+    [APSDatabaseName] VARCHAR(15) NULL DEFAULT (''), 
+    [RFIDMiddlewareInRFIDServer] BIT NOT NULL DEFAULT ((0))
 );
 
 

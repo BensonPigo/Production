@@ -115,8 +115,9 @@ with tmp1stData as (
             , CDDesc = c.Description
             , s.ModularParent
             , s.CPUAdjusted
-            ,o.Category,OutputDate,Shift,Team,OrderId,sod.ComboType,LocalOrder
-			,ManPower1= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
+            , o.Category,OutputDate,Shift,Team,OrderId,sod.ComboType,LocalOrder
+			--,ManPower1= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
+            , ActManPower= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
 		, SCategory = so.Category
     from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
@@ -198,7 +199,8 @@ with tmp1stData as (
 		   , Team
 		   , OrderId
 		   , ComboType
-		   , WorkHour = sum(WorkHour)
+           , ActManPower= Sum(Round(ActManPower,2))
+		   , WorkHour = sum(Round(WorkHour,2))
 		   , QAQty = sum(QAQty)
 		   , SCategory
 		   , LocalOrder
@@ -225,7 +227,7 @@ with tmp1stData as (
             , POID
             , CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,2)
             , SewingLineID
-            , ManHour = Manpower * WorkHour 
+            , ManHour = Round(Manpower * WorkHour ,2)
             , RateOutput = QAQty  * Rate
             , ModularParent,CPUAdjusted 
     from tmp1stData
@@ -245,7 +247,9 @@ with tmp1stData as (
             , CPUAdjusted
             , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  from forttlcpu f 
 			where  f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
-            , TtlManhour = Sum(ManHour)
+            --, TtlManhour = Sum(ManHour)
+            , TtlManhour = (select sum(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2))  from forttlcpu f 
+			where  f.MDivisionID = a.MDivisionID and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
             , Output = Sum(RateOutput)  
     from tmp2ndData a
     group by ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID

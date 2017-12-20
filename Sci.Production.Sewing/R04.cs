@@ -114,7 +114,7 @@ where 1=1 "));
 
             sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
 select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
-	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(WorkHour)over(partition by id,OrderId,ComboType)
+	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(Round(WorkHour,2))over(partition by id,OrderId,ComboType)
 	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
 	,LocalOrder,CustPONo,OrderCategory,OrderType
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason

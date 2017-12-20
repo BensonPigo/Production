@@ -50,23 +50,43 @@ BEGIN
 			left join RFIDReader RR on RB.readerid=RR.Id
 						
 			--add update BundleInOut			
+			-- RFIDReader.Type=1
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate
+			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
 			group by a.EpcId,b.processId) as s
-			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId 
-			when matched then
+			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=1
+			when matched then 
 				update set
-				t.OutGoing = s.TransDate,
-				t.EditDate = s.AddDate
-			when not matched by target then
+				t.incoming = s.TransDate,	t.EditDate = s.AddDate
+			when not matched by target and s.type=1 then
 				insert(BundleNo, SubProcessId, InComing, AddDate)
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate);
+
+			-- RFIDReader.Type=2
+			Merge Production.dbo.BundleInOut as t
+			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
+			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
+			group by a.EpcId,b.processId) as s
+			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=2 
+			when matched then 
+				update set
+				t.OutGoing = s.TransDate,	t.EditDate = s.AddDat
+			when not matched by target and s.type=2 then
+				insert(BundleNo, SubProcessId, OutGoing, AddDate)
 				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate);
 
 			Commit tran
 
-			DELETE ['+@RFIDServerName+'].'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'
-			where sid<=@MaxSid
+			IF exists(select 1 from System where RFIDMiddlewareInRFIDServer=0)
+				Begin
+					DELETE '+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'					
+				End
+			Else
+				Begin	
+					DELETE ['+@RFIDServerName+'].'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'	
+					where sid<=@MaxSid
+				End
 
 	End Try
 	Begin Catch

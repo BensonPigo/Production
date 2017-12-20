@@ -135,11 +135,11 @@ select OutputDate
 	   , Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower = Sum(ActManPower)
+	   , ActManPower = Sum(Round(ActManPower,2))
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(WorkHour)
+	   , WorkHour = sum(Round(WorkHour,2))
 	   , QAQty = sum(QAQty) 
 	   , InlineQty = sum(InlineQty) 
 	   , OrderCategory
@@ -340,7 +340,7 @@ SubTotal as (
 						else (s.TMS/s.QAQty)
 				   end
 		   , s.RFT
-		   , ActManPower = sum(m.ActManPower)
+		   , ActManPower = sum(Round(m.ActManPower,2))
 	from SubSummaryData s 
 	left join SubMaxActManpower m on s.Shift = m.Shift 
 									 and s.Team = m.Team
