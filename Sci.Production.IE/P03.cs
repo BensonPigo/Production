@@ -1149,6 +1149,9 @@ select ID = null
 	   , EmployeeName = e.Name
 	   , EmployeeSkill = e.Skill
 	   , Efficiency = iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100)
+       , ld.isppa
+       , ld.Threadcolor
+       , ld.ActCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID

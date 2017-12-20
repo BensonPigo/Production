@@ -273,8 +273,7 @@ select a_ct = count(a.no)
 from(
 	select Attachment=isnull(Attachment,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='') and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='')
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
 outer apply(select * from SplitString(Attachment,','))a
@@ -283,8 +282,7 @@ select t_ct = count(t.no)
 from(
 	select Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='') and m.MachineGroupID != ''
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='')
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
 outer apply(select * from SplitString(Template,','))t)z2", MyUtility.Convert.GetString(this.masterData["ID"]));
@@ -482,7 +480,7 @@ from(
 )x
 group by ID
 
-select No,TotalGSD,TotalCycle
+select distinct No,TotalGSD,TotalCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
@@ -510,7 +508,7 @@ from(
 )x
 group by ID
 
-select No,TotalGSD,TotalCycle
+select distinct No,TotalGSD,TotalCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
@@ -546,9 +544,8 @@ select a_ct = count(a.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
@@ -558,9 +555,8 @@ select t_ct = count(t.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
@@ -595,9 +591,8 @@ select a_ct = count(a.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
@@ -607,9 +602,8 @@ select t_ct = count(t.no)
 from(
 	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
 	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 )x
@@ -971,15 +965,15 @@ order by no",
 
                 // 填act Cycle Time 2
                 worksheet = excel.ActiveWorkbook.Worksheets[6];
-                intRowsStart = 2;
+                int intRowsStart2 = 2;
                 objArray = new object[1, 3];
                 foreach (DataRow dr in this.actCycleTime2.Rows)
                 {
                     objArray[0, 0] = dr["No"];
                     objArray[0, 1] = dr["ActCycle"];
                     objArray[0, 2] = this.takt2;
-                    worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Value2 = objArray;
-                    intRowsStart++;
+                    worksheet.Range[string.Format("A{0}:C{0}", intRowsStart2)].Value2 = objArray;
+                    intRowsStart2++;
                 }
 
                 // 填 TotalGSD 1
@@ -997,15 +991,15 @@ order by no",
 
                 // 填 TotalGSD 2
                 worksheet = excel.ActiveWorkbook.Worksheets[7];
-                intRowsStart = 2;
+                intRowsStart2 = 2;
                 objArray = new object[1, 3];
                 foreach (DataRow dr in this.GCTime2.Rows)
                 {
                     objArray[0, 0] = dr["No"];
                     objArray[0, 1] = dr["TotalGSD"];
                     objArray[0, 2] = dr["TotalCycle"];
-                    worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Value2 = objArray;
-                    intRowsStart++;
+                    worksheet.Range[string.Format("A{0}:C{0}", intRowsStart2)].Value2 = objArray;
+                    intRowsStart2++;
                 }
                 #endregion
 
@@ -1082,7 +1076,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Range chartRange2;
                 object misValue2 = System.Reflection.Missing.Value;
                 Microsoft.Office.Interop.Excel.ChartObjects xlsCharts2 = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                Microsoft.Office.Interop.Excel.ChartObject myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 700, 350);
+                Microsoft.Office.Interop.Excel.ChartObject myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 1000, 350);
                 Microsoft.Office.Interop.Excel.Chart chartPage2 = myChart2.Chart;
                 chartRange2 = chartData2.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 chartPage2.SetSourceData(chartRange2, misValue2);
@@ -1094,7 +1088,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Series series2 = seriesCollection2.NewSeries();
                 series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
-                series2.Name = "CT time";
+                series2.Name = "TotalCycle Time";
 
                 // 折線圖的資料標籤不顯示
                 series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
@@ -1107,9 +1101,9 @@ order by no",
                 worksheet = excel.ActiveWorkbook.Worksheets[5];
                 misValue2 = System.Reflection.Missing.Value;
                 xlsCharts2 = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 700, 350);
+                myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 1000, 350);
                 chartPage2 = myChart2.Chart;
-                chartRange2 = chartData2.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
+                chartRange2 = chartData2.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
                 chartPage2.SetSourceData(chartRange2, misValue2);
 
                 chartPage2.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlColumnClustered;
@@ -1117,9 +1111,9 @@ order by no",
                 // 新增折線圖
                 seriesCollection2 = chartPage2.SeriesCollection();
                 series2 = seriesCollection2.NewSeries();
-                series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
-                series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
-                series2.Name = "CT time";
+                series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
+                series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
+                series2.Name = "TotalCycle Time";
 
                 // 折線圖的資料標籤不顯示
                 series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
@@ -1136,7 +1130,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Range chartRange;
                 object misValue = System.Reflection.Missing.Value;
                 Microsoft.Office.Interop.Excel.ChartObjects xlsCharts = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                Microsoft.Office.Interop.Excel.ChartObject myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 700, 350);
+                Microsoft.Office.Interop.Excel.ChartObject myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 1000, 350);
                 Microsoft.Office.Interop.Excel.Chart chartPage = myChart.Chart;
                 chartRange = chartData.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 chartPage.SetSourceData(chartRange, misValue);
@@ -1174,9 +1168,9 @@ order by no",
                 worksheet = excel.ActiveWorkbook.Worksheets[5];
                 misValue = System.Reflection.Missing.Value;
                 xlsCharts = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 700, 350);
+                myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 1000, 350);
                 chartPage = myChart.Chart;
-                chartRange = chartData.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
+                chartRange = chartData.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
                 chartPage.SetSourceData(chartRange, misValue);
 
                 chartPage.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlColumnClustered;
@@ -1184,8 +1178,8 @@ order by no",
                 // 新增折線圖
                 seriesCollection = chartPage.SeriesCollection();
                 series1 = seriesCollection.NewSeries();
-                series1.Values = chartData.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
-                series1.XValues = chartData.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
+                series1.Values = chartData.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
+                series1.XValues = chartData.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart2 - 1)));
                 series1.Name = "Takt time";
                 series1.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
 
@@ -1910,7 +1904,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Range chartRange2;
                 object misValue2 = System.Reflection.Missing.Value;
                 Microsoft.Office.Interop.Excel.ChartObjects xlsCharts2 = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                Microsoft.Office.Interop.Excel.ChartObject myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 700, 350);
+                Microsoft.Office.Interop.Excel.ChartObject myChart2 = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts2.Add(378, 1082, 1000, 350);
                 Microsoft.Office.Interop.Excel.Chart chartPage2 = myChart2.Chart;
                 chartRange2 = chartData2.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 chartPage2.SetSourceData(chartRange2, misValue2);
@@ -1922,7 +1916,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Series series2 = seriesCollection2.NewSeries();
                 series2.Values = chartData2.get_Range("C2", string.Format("C{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 series2.XValues = chartData2.get_Range("A2", string.Format("A{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
-                series2.Name = "CT time";
+                series2.Name = "TotalCycle Time";
 
                 // 折線圖的資料標籤不顯示
                 series2.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowNone, false, false);
@@ -1939,7 +1933,7 @@ order by no",
                 Microsoft.Office.Interop.Excel.Range chartRange;
                 object misValue = System.Reflection.Missing.Value;
                 Microsoft.Office.Interop.Excel.ChartObjects xlsCharts = (Microsoft.Office.Interop.Excel.ChartObjects)worksheet.ChartObjects(Type.Missing);
-                Microsoft.Office.Interop.Excel.ChartObject myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 700, 350);
+                Microsoft.Office.Interop.Excel.ChartObject myChart = (Microsoft.Office.Interop.Excel.ChartObject)xlsCharts.Add(378, 718.5, 1000, 350);
                 Microsoft.Office.Interop.Excel.Chart chartPage = myChart.Chart;
                 chartRange = chartData.get_Range("B1", string.Format("B{0}", MyUtility.Convert.GetString(intRowsStart - 1)));
                 chartPage.SetSourceData(chartRange, misValue);
