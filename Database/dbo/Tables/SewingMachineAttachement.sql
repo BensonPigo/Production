@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[SewingMachineAttachement] (
+﻿CREATE TABLE [dbo].[SewingMachineAttachment] (
     [ID]          VARCHAR (20)   NOT NULL,
     [Description] NVARCHAR (100) NULL,
     [Junk]        BIT            NULL,
@@ -6,6 +6,6 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   NULL,
     [EditDate]    DATETIME       NULL,
-    CONSTRAINT [PK_SewingMachineAttachement] PRIMARY KEY CLUSTERED ([ID] ASC)
+    CONSTRAINT [PK_SewingMachineAttachment] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

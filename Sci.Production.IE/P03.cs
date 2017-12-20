@@ -331,7 +331,7 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "select ID,Description from SewingMachineAttachement WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
 
                     Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null);
                     item.Width = 666;
@@ -350,7 +350,7 @@ order by ld.No, ld.GroupKey", masterID);
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     this.CurrentDetailData["Attachment"] = e.FormattedValue;
-                    string sqlcmd = "select ID,Description from SewingMachineAttachement WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Attachment"].ToString().Split(',').Distinct().ToArray();

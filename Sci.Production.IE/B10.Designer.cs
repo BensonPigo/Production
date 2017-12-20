@@ -140,8 +140,8 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B10";
-            this.Text = "B10. Sewing Machine Attachement";
-            this.WorkAlias = "SewingMachineAttachement";
+            this.Text = "B10. Sewing Machine Attachment";
+            this.WorkAlias = "SewingMachineAttachment";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
