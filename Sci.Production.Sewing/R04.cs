@@ -24,6 +24,7 @@ namespace Sci.Production.Sewing
         private string factory;
         private string brand;
         private string cdcode;
+        private bool show_Accumulate_output;
 
         /// <summary>
         /// R04
@@ -54,7 +55,7 @@ namespace Sci.Production.Sewing
             this.factory = this.comboFactory.Text;
             this.brand = this.txtbrand.Text;
             this.cdcode = this.txtCDCode.Text;
-
+            this.show_Accumulate_output = this.chk_Accumulate_output.Checked;
             return base.ValidateInput();
         }
 
@@ -73,6 +74,8 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 	,MockupProgram= isnull(mo.ProgramID,'') ,MockupCPU= isnull(mo.Cpu,0),MockupCPUFactor= isnull(mo.CPUFactor,0),MockupStyle= isnull(mo.StyleID,''),MockupSeason= isnull(mo.SeasonID,'')	
     ,Rate = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100,System.StdTMS
 	,InspectQty = isnull(r.InspectQty,0),RejectQty = isnull(r.RejectQty,0)
+    ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
+    ,OrderQty = o.Qty
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -120,6 +123,8 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS,InspectQty,RejectQty
+    ,BuyerDelivery
+    ,OrderQty
 into #tmpSewingGroup
 from #tmpSewingDetail
 --↓計算累計天數 function table太慢直接寫在這
@@ -265,9 +270,15 @@ select * from(
 	select distinct
 		 MDivisionID,t.FactoryID
 		,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
-		,FtyCountry,t.OutputDate,t.SewingLineID
+		,FtyCountry
+        ,t.OutputDate
+        ,t.SewingLineID
 		,Shift = IIF(t.LastShift=''D'',''Day'',IIF(t.LastShift=''N'',''Night'',IIF(t.LastShift=''O'',''Subcon-Out'',''Subcon-In'')))
-		,t.Team,t.OrderId,CustPONo
+		,t.Team
+        ,t.OrderId
+        ,CustPONo
+        ,t.BuyerDelivery
+        ,t.OrderQty
 		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
 		,Category = IIF(t.Category=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.Category=''B'',''Bulk'',IIF(t.Category=''S'',''Sample'',''''))))
 		,Program = IIF(t.Category=''M'',MockupProgram,OrderProgram)
@@ -290,12 +301,31 @@ select * from(
 		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,''>=10'',CONVERT(VARCHAR,CumulateDate))
-		,InlineQty
-		,Diff = t.QAQty-InlineQty
+		,InlineQty");
+            if (this.show_Accumulate_output == true)
+            {
+                sqlCmd.Append(@",acc_output.value
+                                ,Balance =  t.OrderQty -  acc_output.value 
+                            ");
+            }
+
+            sqlCmd.Append(@",Diff = t.QAQty-InlineQty
 		,rate
 		'+@TTLZ+N'
-	from #tmp1stFilter t
-	left join #oid_at o on o.orderid = t.OrderId and 
+	from #tmp1stFilter t");
+            if (this.show_Accumulate_output == true)
+            {
+                sqlCmd.Append(@"
+                                    outer  apply(select value = Sum(SD.QAQty)
+                                             from SewingOutput_Detail SD
+                                             inner join SewingOutput S on SD.ID=S.ID
+                                             where SD.ComboType=t.ComboType
+                                               and SD.orderid=t.OrderId
+                                               and S.OutputDate <= t.OutputDate) acc_output");
+            }
+
+            sqlCmd.Append(@" 
+        left join #oid_at o on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID and
                            o.Team       = t.Team and
                            o.OutputDate           = t.OutputDate    and
@@ -317,7 +347,7 @@ EXEC sp_executesql @lastSql
                 return failResult;
             }
 
-         DBProxy.Current.DefaultTimeout = 300;  //timeout時間改回5分鐘
+         DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
          return Result.True;
         }
 
@@ -326,7 +356,7 @@ EXEC sp_executesql @lastSql
         {
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
-
+            int start_column;
             if (this.printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -337,7 +367,17 @@ EXEC sp_executesql @lastSql
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            for (int i = 35; i < this.printData.Columns.Count; i++)
+            if (this.show_Accumulate_output == true)
+            {
+                start_column = 39;
+            }
+            else
+            {
+                start_column = 37;
+                objSheets.get_Range("AJ:AK").EntireColumn.Delete();
+            }
+
+            for (int i = start_column; i < this.printData.Columns.Count; i++)
             {
                 objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName;
             }

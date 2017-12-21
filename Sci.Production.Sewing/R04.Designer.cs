@@ -40,6 +40,7 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtCDCode = new Sci.Production.Class.txtcdcode();
+            this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -107,6 +108,20 @@
             // 
             // dateOoutputDate
             // 
+            // 
+            // 
+            // 
+            this.dateOoutputDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOoutputDate.DateBox1.Name = "";
+            this.dateOoutputDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOoutputDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOoutputDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOoutputDate.DateBox2.Name = "";
+            this.dateOoutputDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOoutputDate.DateBox2.TabIndex = 1;
             this.dateOoutputDate.IsRequired = false;
             this.dateOoutputDate.Location = new System.Drawing.Point(115, 12);
             this.dateOoutputDate.Name = "dateOoutputDate";
@@ -164,9 +179,21 @@
             this.txtCDCode.Size = new System.Drawing.Size(54, 23);
             this.txtCDCode.TabIndex = 5;
             // 
+            // chk_Accumulate_output
+            // 
+            this.chk_Accumulate_output.AutoSize = true;
+            this.chk_Accumulate_output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_Accumulate_output.Location = new System.Drawing.Point(320, 196);
+            this.chk_Accumulate_output.Name = "chk_Accumulate_output";
+            this.chk_Accumulate_output.Size = new System.Drawing.Size(193, 21);
+            this.chk_Accumulate_output.TabIndex = 100;
+            this.chk_Accumulate_output.Text = "Include Accumulate output";
+            this.chk_Accumulate_output.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(525, 255);
+            this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.comboFactory);
@@ -199,6 +226,7 @@
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtCDCode, 0);
+            this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,5 +246,6 @@
         private Win.UI.ComboBox comboFactory;
         private Class.txtbrand txtbrand;
         private Class.txtcdcode txtCDCode;
+        private Win.UI.CheckBox chk_Accumulate_output;
     }
 }
