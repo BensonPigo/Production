@@ -112,7 +112,7 @@ BEGIN
 	Declare @Seq2 varchar(2)
 	Declare @OrderID varchar(13)
 	Declare @Colorid varchar(6)
-	Declare @Markername varchar(5)
+	Declare @Markername varchar(20)
 	Declare @CutCell varchar(2)
 	Declare @MarkerLength  varchar(13)
 	Declare @ConsPC numeric(6,4)
