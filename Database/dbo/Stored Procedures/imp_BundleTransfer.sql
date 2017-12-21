@@ -54,7 +54,7 @@ BEGIN
 			Merge Production.dbo.BundleInOut as t
 			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
-			group by a.EpcId,b.processId) as s
+			group by a.EpcId,b.processId, b.Type) as s
 			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=1
 			when matched then 
 				update set
@@ -67,11 +67,11 @@ BEGIN
 			Merge Production.dbo.BundleInOut as t
 			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
-			group by a.EpcId,b.processId) as s
+			group by a.EpcId,b.processId, b.Type) as s
 			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=2 
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate,	t.EditDate = s.AddDat
+				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate
 			when not matched by target and s.type=2 then
 				insert(BundleNo, SubProcessId, OutGoing, AddDate)
 				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate);
