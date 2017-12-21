@@ -284,7 +284,7 @@ where a.status = 'Approved'
                     { ShowErr(strSQLCmd, result); }
 
                 #region 加工remark欄位
-                string category,Finished, PulloutComplete;
+                string category,Finished;
                 decimal price;
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
@@ -311,9 +311,20 @@ where a.status = 'Approved'
                         dr["remark"] += "  This orders already finished, can not be transfered to local purchase!!";
                         dr["selected"] = 0;
                     }
-
-                    PulloutComplete = MyUtility.GetValue.Lookup(string.Format(@"select PulloutComplete from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
-                    if (PulloutComplete == "True")
+                    if (MyUtility.Check.Seek(String.Format(@"
+SELECT 1
+FROM ORDERS O
+outer apply (
+	select ShipQty= isnull(sum(ShipQty),0)  from Pullout_Detail where OrderID=O.ID
+) pd
+outer apply(
+	select DiffQty= isnull(SUM(isnull(DiffQty ,0)),0) 
+	from InvAdjust I
+	left join InvAdjust_Qty IQ on I.ID=IQ.ID
+	where OrderID=O.ID
+) inv
+WHERE O.ID='{0}' 
+AND (O.Qty-pd.ShipQty-inv.DiffQty = 0)", dr["orderid"])))
                     {
                         dr["remark"] += "  This orders already PulloutComplete, can not be transfered to local purchase!!";
                         dr["selected"] = 0;
