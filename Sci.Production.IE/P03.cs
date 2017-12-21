@@ -347,7 +347,7 @@ order by ld.No, ld.GroupKey", masterID);
 
             attachment.CellValidating += (s, e) =>
             {
-                if (this.EditMode && e.FormattedValue != null)
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     this.CurrentDetailData["Attachment"] = e.FormattedValue;
                     string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
@@ -402,7 +402,7 @@ order by ld.No, ld.GroupKey", masterID);
 
             template.CellValidating += (s, e) =>
             {
-                if (this.EditMode && e.FormattedValue != null)
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     this.CurrentDetailData["Template"] = e.FormattedValue;
                     string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
@@ -455,6 +455,7 @@ order by ld.No, ld.GroupKey", masterID);
                     }
                     else
                     {
+                        dr["isppa"] = 0;
                         this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
                         this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
                     }
@@ -817,17 +818,17 @@ order by ld.No, ld.GroupKey", masterID);
         // 加總傳入的GroupKey的GSD & Cycle Time
         private void SumNoGSDCycleTime(string groupKey)
         {
-            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
-            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
+            this.totalGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Format("GroupKey = {0}", groupKey));
+            this.totalCycleTime = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Format("GroupKey = {0}", groupKey));
         }
 
         // 填輸入的GroupKey的GSD & Cycle Time
         private void AssignNoGSDCycleTime(string groupKey)
         {
-            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
+            object countRec = ((DataTable)this.detailgridbs.DataSource).Compute("count(GroupKey)", string.Format("GroupKey = {0}", groupKey));
             decimal avgGSD = MyUtility.Check.Empty(Convert.ToDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalGSD) : Math.Round(MyUtility.Convert.GetDecimal(this.totalGSD) / MyUtility.Convert.GetDecimal(countRec), 2);
             decimal avgCycleTime = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(countRec)) ? MyUtility.Convert.GetDecimal(this.totalCycleTime) : Math.Round(MyUtility.Convert.GetDecimal(this.totalCycleTime) / MyUtility.Convert.GetDecimal(countRec), 2);
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsPPA = 0 or  IsPPA is null) and GroupKey = {0}", groupKey));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("GroupKey = {0}", groupKey));
             int i = 0;
             decimal sumGSD = 0, sumCycleTime = 0;
 
