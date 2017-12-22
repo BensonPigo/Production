@@ -32,7 +32,7 @@ select ID = ''
 
 union all
 Select ID 
-from Factory
+from Factory WITH (NOLOCK)
 where Junk != 1", out dtFactory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
             comboFactory.Text = Sci.Env.User.Factory;
@@ -68,6 +68,7 @@ where Junk != 1", out dtFactory);
             #endregion
 
             #region SQL cmd
+            DBProxy.Current.DefaultTimeout = 1800;  // timeout時間加長為30分鐘
             string strSQL = string.Format(@"
 declare @StartDate Date = @SewingStart;
 declare @EndDate Date = @SewingEnd;
@@ -91,8 +92,8 @@ select	masterID = o.POID
 		, o.SewInLine
 		, o.SewOffLine
 into #tsp
-from orders o
-inner join Factory f on o.FactoryID = f.ID
+from orders o WITH (NOLOCK)
+inner join Factory f WITH (NOLOCK) on o.FactoryID = f.ID
 where	o.Junk != 1
 		-- {0} 篩選 OrderID
 		{0}
@@ -110,8 +111,8 @@ select	Poid = o.POID
 		, pt.UKey
 into #TablePatternUkey
 from #tsp p
-inner join Orders o on p.orderID = o.ID
-inner join Pattern pt on	pt.StyleUkey = o.StyleUkey
+inner join Orders o WITH (NOLOCK) on p.orderID = o.ID
+inner join Pattern pt WITH (NOLOCK) on	pt.StyleUkey = o.StyleUkey
 							and pt.Status = 'Completed' 
 							and pt.EDITdATE = (	SELECT MAX(EditDate) 
 												from pattern WITH (NOLOCK) 
@@ -170,7 +171,7 @@ inner join (
 			, artwork = isnull (stuff ((select '+' + subprocessid
 										from (
 											select distinct bda.subprocessid
-											from Bundle_Detail_Art bda
+											from Bundle_Detail_Art bda WITH (NOLOCK)
 											where bd.BundleNo = bda.Bundleno
 										) k
 										for xml path('')
@@ -178,15 +179,15 @@ inner join (
 							  , '')
 			, PatternCode = tpc.PatternCode
 	from #TablePatternCode tpc
-	left join Bundle b on b.POID = tpc.Poid
-	left join Bundle_Detail bd on b.id = bd.id
+	left join Bundle b WITH (NOLOCK) on b.POID = tpc.Poid
+	left join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
 								  and tpc.PatternCode = bd.Patterncode
 	left join #tsp on b.Orderid = #tsp.orderID
-	left join WorkOrder wo on b.POID = wo.id
+	left join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
 							   and b.CutRef = wo.CutRef
-	left join Order_BOF ob on ob.Id = wo.Id 
+	left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
 							  and ob.FabricCode = wo.FabricCode
-	left join Order_EachCons oec on oec.ID = ob.ID 
+	left join Order_EachCons oec WITH (NOLOCK) on oec.ID = ob.ID 
 								    and oec.MarkerName = wo.Markername 
 									and oec.FabricCombo = wo.FabricCombo 
 									and oec.FabricPanelCode = wo.FabricPanelCode 
@@ -215,19 +216,19 @@ select	b.orderid
 		, artwork = isnull(ArtWork.value, '')
 		, qty = sum(isnull(bd.qty, 0))
 into #cur_bdltrack2
-from BundleInOut bio
-inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
-inner join Bundle b on b.id = bd.id
-inner join WorkOrder wo on b.POID = wo.id
+from BundleInOut bio WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on bio.BundleNo = bd.BundleNo
+inner join Bundle b WITH (NOLOCK) on b.id = bd.id
+inner join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
 						   and b.CutRef = wo.CutRef
-left join Order_BOF ob on ob.Id = wo.Id 
+left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
 						  and ob.FabricCode = wo.FabricCode
 inner join #tsp on b.Orderid = #tsp.orderID
 outer apply (
 	select value = stuff ((	select '+' + subprocessid
 							from (
 								select distinct bda.subprocessid
-								from Bundle_Detail_Art bda
+								from Bundle_Detail_Art bda WITH (NOLOCK)
 								where bd.BundleNo = bda.Bundleno
 							) k
 							for xml path('')
@@ -521,6 +522,7 @@ drop table #CBDate
             {
                 return result;
             }
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間調回為5分鐘
             return Result.True;
         }
 
