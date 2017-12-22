@@ -151,11 +151,11 @@ where BIO.subprocessid='SORTING'
 
             if (!MyUtility.Check.Empty(rfidDate1))
             {
-                sqlcmd.Append(string.Format(@" and BIO.incoming >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("d")));
+                sqlcmd.Append(string.Format(@" and BIO.AddDate >='{0}' ", Convert.ToDateTime(rfidDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(rfidDate2))
             {
-                sqlcmd.Append(string.Format(@" and BIO.incoming <='{0}'", Convert.ToDateTime(rfidDate2).ToString("d") + " 23:59:59"));
+                sqlcmd.Append(string.Format(@" and BIO.AddDate <='{0}'", Convert.ToDateTime(rfidDate2).ToString("d") + " 23:59:59"));
             }
             if (!MyUtility.Check.Empty(spno))
             {
