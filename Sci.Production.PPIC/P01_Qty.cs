@@ -138,11 +138,10 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode 
-             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty  
+             , oq.SizeCode
+             , oq.Qty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
-      inner join orders o WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '{0}'
 ),
@@ -186,11 +185,10 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
-             , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode 
-             , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
+             , oq.SizeCode
+             , oq.OriQty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
-      inner join orders o WITH (NOLOCK) on o.ID = oq.ID 
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '{0}'
 ),
@@ -623,11 +621,10 @@ SET @sql = N'
 ),
 tmpData as (
       select oq.Article
-             , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
-             , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
+             , oq.SizeCode
+             , oq.Qty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
-      inner join orders o WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
       where oq.ID = '''+@ID+'''
 ),
@@ -894,11 +891,10 @@ SET @sql = N'
 ), 
 tmpData as (
     select oq.Article
-           , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
-           , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
+           , oq.SizeCode
+           , oq.OriQty
            , sb.RowNo
     from Order_Qty oq WITH (NOLOCK) 
-    inner join orders o WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
     where oq.ID = '''+@ID+'''
 
