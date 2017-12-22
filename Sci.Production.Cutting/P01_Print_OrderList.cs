@@ -545,7 +545,7 @@ namespace Sci.Production.Cutting
                     // 組合SewingLine 資料
                     for (int lii = 0; lii < dtline2.Rows.Count; lii++)
                     {
-                        wkcolor.Cells[countLine + li + countTotal + 1, 1] = dtline2.Rows[lii]["colorid"] + "-" + dtline2.Rows[lii]["ColorName"] + "<" + dtline2.Rows[lii]["Article"] + "> " + "SIZE" + dtline2.Rows[lii]["SizeList"] + "(" + dtline2.Rows[lii]["No"] + ")" + "," + "Qty=" + dtline2.Rows[lii]["qty"] + "PCS";
+                        wkcolor.Cells[countLine + li + countTotal + 1, 1] = dtline2.Rows[lii]["colorid"] + "-" + dtline2.Rows[lii]["ColorName"] + "<" + dtline2.Rows[lii]["Article"] + "> " + "SIZE:" + dtline2.Rows[lii]["SizeList"] + "(" + dtline2.Rows[lii]["No"] + ")" + "," + "Qty=" + dtline2.Rows[lii]["qty"] + "PCS";
              
                         // 取得相同Article 紅綠藍顏色
                         int red = (int)dtColor.Select(string.Format("ArticleNo='{0}'", dtline2.Rows[lii]["Article"]))[0]["RedNo"];
