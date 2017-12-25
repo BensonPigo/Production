@@ -172,10 +172,30 @@ BEGIN
 		update dbo.Orders set WhseClose = getdate() where POID = @poid;
 
 		---close 需加上Local物料
-		INSERT INTO SubTransferLocal
-			([ID] ,[MDivisionID],[FactoryID],[IssueDate],[Type],[Status]   ,[Remark],[AddName],[AddDate] )
-		VALUES
-			(@poid,@MDivisionid ,@Factoryid ,GETDATE()  ,'D'   ,'Confrimed','Add by Warehouse Close',@loginid,GETDATE())
+		IF EXISTS(SELECT 1 FROM [dbo].[SubTransferLocal]  WITH (NOLOCK)WHERE ID = @poid AND Status!='Confirmed')
+		BEGIN
+			Delete FROM dbo.SubTransferLocal WHERE ID = @poid  
+			Delete FROM dbo.SubTransferLocal_Detail WHERE ID = @poid  
+		END
+
+		IF EXISTS (SELECT 1 FROM SubTransferLocal WITH (NOLOCK) WHERE ID=@poid AND Status='Confirmed' )
+		BEGIN
+			UPDATE 	SubTransferLocal
+			SET [MDivisionID]=@MDivisionid,
+			[FactoryID]=@Factoryid,
+			[IssueDate]=GETDATE() ,			
+			[Status]='Confirmed',
+			EditName= @loginid,
+			EditDate=GETDATE()
+			WHERE ID=@poid 
+		END
+		ELSE
+		BEGIN
+			INSERT INTO SubTransferLocal
+				([ID] ,[MDivisionID],[FactoryID],[IssueDate],[Type],[Status]   ,[Remark],[AddName],[AddDate] )
+			VALUES
+				(@poid,@MDivisionid ,@Factoryid ,GETDATE()  ,'D'  ,'Confirmed','Add by Warehouse Close',@loginid,GETDATE())
+		END
 
 		INSERT INTO [dbo].[SubTransferLocal_Detail]
            ([ID]

@@ -264,7 +264,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
             this.HideWaitMessage();
 
-            QueryData(false);
+            QueryData(true);
         }
 
         private void btnToEexcel_Click(object sender, EventArgs e)
