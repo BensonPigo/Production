@@ -36,23 +36,25 @@
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioAnnotation = new Sci.Win.UI.RadioButton();
             this.radioDescription = new Sci.Win.UI.RadioButton();
+            this.chkpage = new System.Windows.Forms.CheckBox();
+            this.numpage = new Sci.Win.UI.NumericBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(336, 12);
+            this.print.Location = new System.Drawing.Point(286, 12);
             this.print.TabIndex = 1;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(336, 48);
+            this.toexcel.Location = new System.Drawing.Point(286, 48);
             this.toexcel.TabIndex = 2;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(336, 84);
+            this.close.Location = new System.Drawing.Point(286, 84);
             this.close.TabIndex = 3;
             // 
             // labelLineMappingDisplay
@@ -137,9 +139,45 @@
             this.radioDescription.Text = "Description";
             this.radioDescription.UseVisualStyleBackColor = true;
             // 
+            // chkpage
+            // 
+            this.chkpage.AutoSize = true;
+            this.chkpage.Location = new System.Drawing.Point(13, 146);
+            this.chkpage.Name = "chkpage";
+            this.chkpage.Size = new System.Drawing.Size(162, 21);
+            this.chkpage.TabIndex = 98;
+            this.chkpage.Text = "Change page 2 at No";
+            this.chkpage.UseVisualStyleBackColor = true;
+            // 
+            // numpage
+            // 
+            this.numpage.BackColor = System.Drawing.Color.White;
+            this.numpage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numpage.Location = new System.Drawing.Point(181, 146);
+            this.numpage.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numpage.Name = "numpage";
+            this.numpage.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numpage.Size = new System.Drawing.Size(53, 23);
+            this.numpage.TabIndex = 99;
+            this.numpage.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(428, 166);
+            this.ClientSize = new System.Drawing.Size(378, 206);
+            this.Controls.Add(this.numpage);
+            this.Controls.Add(this.chkpage);
             this.Controls.Add(this.radioPanel2);
             this.Controls.Add(this.labelOperationContentType);
             this.Controls.Add(this.radioPanel1);
@@ -147,13 +185,15 @@
             this.IsSupportToPrint = false;
             this.Name = "P03_Print";
             this.Text = "Print";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelLineMappingDisplay, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.labelOperationContentType, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.chkpage, 0);
+            this.Controls.SetChildIndex(this.numpage, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -173,5 +213,7 @@
         private Win.UI.RadioPanel radioPanel2;
         private Win.UI.RadioButton radioAnnotation;
         private Win.UI.RadioButton radioDescription;
+        private System.Windows.Forms.CheckBox chkpage;
+        private Win.UI.NumericBox numpage;
     }
 }

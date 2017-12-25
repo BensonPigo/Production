@@ -2241,6 +2241,8 @@
     <Build Include="dbo\Tables\Style_Feature.sql" />
     <Build Include="dbo\Tables\SubProcessLine.sql" />
     <Build Include="dbo\Tables\SubProcessLearnCurve.sql" />
+    <Build Include="dbo\Tables\SewingMachineTemplate.sql" />
+    <Build Include="dbo\Tables\SewingMachineAttachement.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

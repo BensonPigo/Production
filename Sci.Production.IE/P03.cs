@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.IE
 {
@@ -18,7 +19,7 @@ namespace Sci.Production.IE
         private object totalGSD;
         private object totalCycleTime;
         private DataTable EmployeeData;
-
+        private DataTable distdt;
         /// <summary>
         /// P03
         /// </summary>
@@ -31,6 +32,9 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.gridicon.Append.Visible = false;
+
+            this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
+            this.detailpanel.Dock = System.Windows.Forms.DockStyle.Fill;
         }
 
         /// <inheritdoc/>
@@ -85,6 +89,9 @@ order by ld.No, ld.GroupKey", masterID);
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
+            this.listControlBindingSource1.DataSource = this.distdt;
+
+            this.Distable();
         }
 
         /// <summary>
@@ -94,30 +101,68 @@ order by ld.No, ld.GroupKey", masterID);
         {
             base.OnDetailGridSetup();
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
-            Ict.Win.DataGridViewGeneratorTextColumnSettings no = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings machine = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.DataGridViewGeneratorTextColumnSettings operatorid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_No;
+            DataGridViewGeneratorTextColumnSettings no = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             #region No.的Valid
             no.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
                 {
-                    if (this.EditMode)
+                    DataRow[] selectrow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", e.FormattedValue.ToString().Trim().PadLeft(4, '0')));
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (selectrow.Length == 0)
                     {
-                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["No"].ToString()))
-                        {
-                            string oldValue = MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString();
-                            dr["No"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
-                            dr.EndEdit();
-
-                            this.ReclculateGridGSDCycleTime(oldValue);
-                            this.ReclculateGridGSDCycleTime(dr["No"].ToString());
-                            this.ComputeTaktTime();
-                        }
+                        dr["ActCycle"] = DBNull.Value;
                     }
-                };
+                    else
+                    {
+                        dr["ActCycle"] = selectrow[0]["ActCycle"];
+                    }
+
+                    if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["No"].ToString()))
+                    {
+                        string oldValue = MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString();
+                        dr["No"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
+                        dr.EndEdit();
+
+                        this.ReclculateGridGSDCycleTime(oldValue);
+                        this.ReclculateGridGSDCycleTime(dr["No"].ToString());
+                        this.ComputeTaktTime();
+                    }
+
+                    this.Distable();
+                }
+            };
+
+            no.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (MyUtility.Convert.GetBool(dr["IsPPA"]))
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+            };
             #endregion
             #region Cycle的Valid
             cycle.CellValidating += (s, e) =>
@@ -151,6 +196,8 @@ order by ld.No, ld.GroupKey", masterID);
                     dr.EndEdit();
                     this.ReclculateGridGSDCycleTime(MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString());
                     this.ComputeTaktTime();
+
+                    this.Distable();
                 }
             };
             #endregion
@@ -279,39 +326,168 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
+            #region Attachment
+            attachment.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
+
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null);
+                    item.Width = 666;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["Attachment"] = item.GetSelectedString();
+                }
+            };
+
+            attachment.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.CurrentDetailData["Attachment"] = e.FormattedValue;
+                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = this.CurrentDetailData["Attachment"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errAttachment = new List<string>();
+                    List<string> trueAttachment = new List<string>();
+                    foreach (string item in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        {
+                            selectId &= false;
+                            errAttachment.Add(item);
+                        }
+                        else if (!item.EqualString(string.Empty))
+                        {
+                            trueAttachment.Add(item);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errAttachment.ToArray()) + "  Data not found !!", "Data not found");
+                    }
+
+                    trueAttachment.Sort();
+                    this.CurrentDetailData["Attachment"] = string.Join(",", trueAttachment.ToArray());
+                }
+            };
+            #endregion
+            #region Template
+            template.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+
+                    Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null);
+                    item.Width = 666;
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["Template"] = item.GetSelectedString();
+                }
+            };
+
+            template.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    this.CurrentDetailData["Template"] = e.FormattedValue;
+                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errTemplate = new List<string>();
+                    List<string> trueTemplate = new List<string>();
+                    foreach (string item in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        {
+                            selectId &= false;
+                            errTemplate.Add(item);
+                        }
+                        else if (!item.EqualString(string.Empty))
+                        {
+                            trueTemplate.Add(item);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
+                    }
+
+                    trueTemplate.Sort();
+                    this.CurrentDetailData["Template"] = string.Join(",", trueTemplate.ToArray());
+                }
+            };
+            #endregion
+            ppa.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if ((bool)e.FormattedValue)
+                    {
+                        string noo = dr["No"].ToString(); // 紀錄要被刪除的No
+                        dr["No"] = string.Empty;
+                        dr["isppa"] = 1;
+                        this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
+                        this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
+                        if (noo != string.Empty)
+                        {
+                            this.ReclculateGridGSDCycleTime(noo); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                        }
+                    }
+                    else
+                    {
+                        dr["isppa"] = 0;
+                        this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
+                        this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
+                    }
+
+                    this.ComputeTaktTime();
+                    this.Distable();
+                }
+            };
+            threadColor.MaxLength = 1;
+            no.MaxLength = 4;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no).Get(out cbb_No)
-                .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
-                .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-                .Numeric("TotalGSD", header: "Ttl GSD Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
-                .Numeric("TotalCycle", header: "Ttl Cycle Time", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-                .CheckBox("Attachment", header: "Attachment", trueValue: 1, falseValue: 0)
-                .CheckBox("Template", header: "Template", trueValue: 1, falseValue: 0)
-                .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
-                .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
-
-            // 因為資料顯示已有排序，所以按Grid Header不可以做排序
-            // mantis8880排序功能開啟
-            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            //{
-            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
-
-            cbb_No.MaxLength = 4;
+            .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
+            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
+            .Text("MachineTypeID", header: "Machine Type", width: Widths.AnsiChars(10), settings: machine)
+            .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
+            .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(10), settings: attachment)
+            .Text("Template", header: "Template", width: Widths.AnsiChars(10), settings: template)
+            .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
+            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["TotalGSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["TotalCycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -325,7 +501,6 @@ order by ld.No, ld.GroupKey", masterID);
                 }
 
                 DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-
                 #region 變色規則，若該 Row 已經變色則跳過
                 if (dr["New"].ToString().ToUpper() == "TRUE")
                 {
@@ -342,6 +517,61 @@ order by ld.No, ld.GroupKey", masterID);
                     }
                 }
                 #endregion
+            };
+
+            DataGridViewGeneratorNumericColumnSettings ac = new DataGridViewGeneratorNumericColumnSettings();
+            ac.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(dr["ActCycle"]) == MyUtility.Convert.GetDecimal(e.FormattedValue))
+                {
+                    return;
+                }
+
+                dr["ActCycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue) == 0 ? DBNull.Value : e.FormattedValue;
+                string tmpno = MyUtility.Convert.GetString(dr["No"]);
+
+                DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", tmpno));
+                foreach (DataRow item in drs)
+                {
+                    item["ActCycle"] = dr["ActCycle"];
+                }
+            };
+
+            Ict.Win.UI.DataGridViewNumericBoxColumn act;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("No", header: "No.", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Numeric("ActCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: false, settings: ac).Get(out act)
+            .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("TotalCycle", header: "Ttl\r\nCycle\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true);
+
+            act.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (!this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
             };
         }
 
@@ -412,6 +642,18 @@ order by ld.No, ld.GroupKey", masterID);
             this.CurrentMaintain["IEReasonID"] = string.Empty;
             this.CurrentMaintain["Status"] = "New";
             this.txtStyleComboType.BackColor = Color.White;
+        }
+
+        /// <summary>
+        /// OnEditModeChanged
+        /// </summary>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (this.grid1 != null)
+            {
+                this.grid1.IsEditingReadOnly = !this.EditMode;
+            }
         }
 
         /// <summary>
@@ -495,6 +737,7 @@ order by ld.No, ld.GroupKey", masterID);
             }
 
             this.txtStyleComboType.BackColor = this.txtStyleID.BackColor;
+
             return true;
         }
 
@@ -531,8 +774,11 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
                 {
-                    MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
-                    return;
+                    if (MyUtility.Convert.GetDecimal(this.CurrentDetailData["GSD"]) != 0)
+                    {
+                        MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
+                        return;
+                    }
                 }
 
                 string no = this.CurrentDetailData["No"].ToString(); // 紀錄要被刪除的No
@@ -540,7 +786,11 @@ order by ld.No, ld.GroupKey", masterID);
                 this.SumNoGSDCycleTime(groupkey);
                 base.OnDetailGridDelete();
                 this.AssignNoGSDCycleTime(groupkey);
-                this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                if (no != string.Empty)
+                {
+                    this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                }
+
                 this.ComputeTaktTime();
             }
         }
@@ -625,17 +875,17 @@ order by ld.No, ld.GroupKey", masterID);
         // Compute Takt Time
         private void ComputeTaktTime()
         {
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", string.Empty);
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", string.Empty);
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", string.Empty);
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", string.Empty);
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsPPA = 0 or  IsPPA is null)");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
-            foreach (DataRow dr in temptable.DefaultView.ToTable().Rows)
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("(IsPPA = 0 or  IsPPA is null)"))
             {
                 if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
                 {
@@ -668,10 +918,10 @@ order by ld.No, ld.GroupKey", masterID);
         // 重新計算Grid的Cycle Time
         private void ReclculateGridGSDCycleTime(string no)
         {
-            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("No = '{0}'", no));
-            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("No = '{0}'", no));
+            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("(IsPPA = 0 or  IsPPA is null)  and No = '{0}'", no));
+            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
 
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("No = '{0}'", no));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
             if (findRow.Length > 0)
             {
                 foreach (DataRow dr in findRow)
@@ -795,7 +1045,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("No = '' or No is null");
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsPPA = 0 or  IsPPA is null) and (No = '' or No is null)");
             if (findrow.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< No. > can't empty!!");
@@ -900,6 +1150,9 @@ select ID = null
 	   , EmployeeName = e.Name
 	   , EmployeeSkill = e.Skill
 	   , Efficiency = iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100)
+       , ld.isppa
+       , ld.Threadcolor
+       , ld.ActCycle
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -949,6 +1202,8 @@ order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
                 this.CalculateValue(0);
                 this.ComputeTaktTime();
             }
+
+            this.Distable();
         }
 
         // Copy from GSD
@@ -1002,10 +1257,11 @@ select ID = null
 	   , EmployeeName = ''
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
+       , IsPPA  = iif(td.SMV > 0,0,1)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = {0} 
-	  and td.SMV > 0 
+	  --and td.SMV > 0
 order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
@@ -1024,8 +1280,8 @@ order by td.Seq", timeStudy["ID"].ToString());
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
 
-            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", string.Empty);
-            object maxSMV = timeStudy_Detail.Compute("max(GSD)", string.Empty);
+            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsPPA = 0 or  IsPPA is null)");
 
             // 填入表頭資料
             this.CurrentMaintain["IdealOperators"] = timeStudy["NumberSewer"].ToString();
@@ -1039,6 +1295,33 @@ order by td.Seq", timeStudy["ID"].ToString());
             this.CurrentMaintain["HighestCycle"] = maxSMV;
             this.CalculateValue(0);
             this.ComputeTaktTime();
+            this.Distable();
+        }
+
+        private void Distable()
+        {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.listControlBindingSource1.DataSource = null;
+            }
+
+            if (this.grid1.DataSource != null)
+            {
+                this.grid1.DataSource = null;
+            }
+
+            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> ''");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            DataTable copydt = drs.CopyToDataTable();
+            this.distdt = copydt.DefaultView.ToTable(true, new string[] { "No", "ActCycle", "TotalGSD", "TotalCycle", });
+
+            this.distdt.DefaultView.Sort = "No";
+            this.listControlBindingSource1.DataSource = this.distdt;
+            this.grid1.DataSource = this.listControlBindingSource1;
         }
     }
 }
