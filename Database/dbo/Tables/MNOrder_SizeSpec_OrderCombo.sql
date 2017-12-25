@@ -10,3 +10,10 @@
 
 
 
+
+GO
+
+
+CREATE NONCLUSTERED INDEX [OrderComboID_SizeItem_SizeCode] 
+ON [dbo].[MNOrder_SizeSpec_OrderCombo] 
+([OrderComboID], [SizeItem], [SizeCode])
