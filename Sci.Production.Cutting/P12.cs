@@ -315,11 +315,11 @@ from(
 outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
-	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
-		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
-		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
-		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
+	from MNOrder m WITH (NOLOCK)
+		inner join Production.dbo.MNOrder_SizeItem msi WITH (NOLOCK) on msi.ID = m.OrderComboID
+		left join Production.dbo.MNOrder_SizeCode msc WITH (NOLOCK) on msi.Id = msc.Id
+		left join Production.dbo.MNOrder_SizeSpec mss WITH (NOLOCK) on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
+		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso WITH (NOLOCK) on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
@@ -432,11 +432,11 @@ from(
 outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
-	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
-		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
-		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
-		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
+	from MNOrder m WITH (NOLOCK)
+		inner join Production.dbo.MNOrder_SizeItem msi WITH (NOLOCK) on msi.ID = m.OrderComboID
+		left join Production.dbo.MNOrder_SizeCode msc WITH (NOLOCK) on msi.Id = msc.Id
+		left join Production.dbo.MNOrder_SizeSpec mss WITH (NOLOCK) on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
+		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso WITH (NOLOCK) on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
@@ -641,15 +641,15 @@ outer apply
                     @"
 update bd
 set bd.PrintDate = GETDATE()
-from Bundle_Detail bd
+from Bundle_Detail bd WITH (NOLOCK)
 where bd.BundleNo = '{0}'",
                     item.Barcode));
 
                 ups.Append(string.Format(@"
                             update b
                             set b.PrintDate = GETDATE()
-                            from Bundle b
-                            inner join Bundle_Detail bd on b.id=bd.ID
+                            from Bundle b WITH (NOLOCK)
+                            inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
                             where bd.BundleNo = '{1}'"
                           , item.SP, item.Barcode));
             }
