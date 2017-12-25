@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelVersion = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -102,6 +103,9 @@
             this.numEffieiency = new Sci.Win.UI.NumericBox();
             this.labelOprts = new Sci.Win.UI.Label();
             this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.grid1 = new Sci.Win.UI.Grid();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -114,6 +118,11 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -251,8 +260,12 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 206);
-            this.detailpanel.Size = new System.Drawing.Size(996, 417);
+            this.detailpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
+            this.detailpanel.Location = new System.Drawing.Point(225, 247);
+            this.detailpanel.Size = new System.Drawing.Size(316, 274);
             // 
             // gridicon
             // 
@@ -264,20 +277,19 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(996, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(316, 274);
             // 
             // detail2
             // 
-            this.detail2.Location = new System.Drawing.Point(4, 24);
-            this.detail2.Size = new System.Drawing.Size(996, 661);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(990, 615);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(990, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -286,7 +298,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.splitContainer1);
             this.detailcont.Size = new System.Drawing.Size(996, 623);
+            this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
+            this.detailcont.Controls.SetChildIndex(this.splitContainer1, 0);
+            this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
             // 
             // detailbtm
             // 
@@ -317,7 +333,6 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Lines = 0;
             this.labelVersion.Location = new System.Drawing.Point(5, 7);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(49, 21);
@@ -326,7 +341,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(5, 35);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(50, 21);
@@ -335,7 +349,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 63);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(50, 21);
@@ -344,7 +357,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(5, 91);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(50, 21);
@@ -353,7 +365,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(5, 119);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(50, 21);
@@ -362,7 +373,6 @@
             // 
             // labelDesc
             // 
-            this.labelDesc.Lines = 0;
             this.labelDesc.Location = new System.Drawing.Point(5, 175);
             this.labelDesc.Name = "labelDesc";
             this.labelDesc.Size = new System.Drawing.Size(50, 21);
@@ -448,7 +458,6 @@
             // labelNoOfOprts
             // 
             this.labelNoOfOprts.BackColor = System.Drawing.Color.Transparent;
-            this.labelNoOfOprts.Lines = 0;
             this.labelNoOfOprts.Location = new System.Drawing.Point(235, 7);
             this.labelNoOfOprts.Name = "labelNoOfOprts";
             this.labelNoOfOprts.Size = new System.Drawing.Size(82, 21);
@@ -462,7 +471,6 @@
             // labelTargetHr
             // 
             this.labelTargetHr.BackColor = System.Drawing.Color.Transparent;
-            this.labelTargetHr.Lines = 0;
             this.labelTargetHr.Location = new System.Drawing.Point(214, 35);
             this.labelTargetHr.Name = "labelTargetHr";
             this.labelTargetHr.Size = new System.Drawing.Size(108, 21);
@@ -476,7 +484,6 @@
             // labelDailydemandshift
             // 
             this.labelDailydemandshift.BackColor = System.Drawing.Color.Transparent;
-            this.labelDailydemandshift.Lines = 0;
             this.labelDailydemandshift.Location = new System.Drawing.Point(214, 63);
             this.labelDailydemandshift.Name = "labelDailydemandshift";
             this.labelDailydemandshift.Size = new System.Drawing.Size(106, 21);
@@ -490,7 +497,6 @@
             // labelTaktTime
             // 
             this.labelTaktTime.BackColor = System.Drawing.Color.Transparent;
-            this.labelTaktTime.Lines = 0;
             this.labelTaktTime.Location = new System.Drawing.Point(214, 91);
             this.labelTaktTime.Name = "labelTaktTime";
             this.labelTaktTime.Size = new System.Drawing.Size(69, 21);
@@ -503,7 +509,6 @@
             // 
             // labelSewingLineTeam
             // 
-            this.labelSewingLineTeam.Lines = 0;
             this.labelSewingLineTeam.Location = new System.Drawing.Point(212, 147);
             this.labelSewingLineTeam.Name = "labelSewingLineTeam";
             this.labelSewingLineTeam.Size = new System.Drawing.Size(108, 21);
@@ -513,7 +518,6 @@
             // labelCurrent
             // 
             this.labelCurrent.BackColor = System.Drawing.Color.Transparent;
-            this.labelCurrent.Lines = 0;
             this.labelCurrent.Location = new System.Drawing.Point(333, 7);
             this.labelCurrent.Name = "labelCurrent";
             this.labelCurrent.Size = new System.Drawing.Size(50, 21);
@@ -527,7 +531,6 @@
             // labelIdeal
             // 
             this.labelIdeal.BackColor = System.Drawing.Color.Transparent;
-            this.labelIdeal.Lines = 0;
             this.labelIdeal.Location = new System.Drawing.Point(404, 7);
             this.labelIdeal.Name = "labelIdeal";
             this.labelIdeal.Size = new System.Drawing.Size(39, 21);
@@ -683,7 +686,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 206);
+            this.shapeContainer1.Size = new System.Drawing.Size(996, 206);
             this.shapeContainer1.TabIndex = 27;
             this.shapeContainer1.TabStop = false;
             // 
@@ -792,7 +795,6 @@
             // label14
             // 
             this.label14.BackColor = System.Drawing.Color.Transparent;
-            this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(385, 147);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(10, 23);
@@ -805,7 +807,6 @@
             // 
             // labelCPUPC
             // 
-            this.labelCPUPC.Lines = 0;
             this.labelCPUPC.Location = new System.Drawing.Point(5, 147);
             this.labelCPUPC.Name = "labelCPUPC";
             this.labelCPUPC.Size = new System.Drawing.Size(50, 21);
@@ -836,7 +837,6 @@
             // 
             // labelTotalGSDTime
             // 
-            this.labelTotalGSDTime.Lines = 0;
             this.labelTotalGSDTime.Location = new System.Drawing.Point(481, 7);
             this.labelTotalGSDTime.Name = "labelTotalGSDTime";
             this.labelTotalGSDTime.Size = new System.Drawing.Size(94, 21);
@@ -845,7 +845,6 @@
             // 
             // labelTotalCycleTime
             // 
-            this.labelTotalCycleTime.Lines = 0;
             this.labelTotalCycleTime.Location = new System.Drawing.Point(481, 35);
             this.labelTotalCycleTime.Name = "labelTotalCycleTime";
             this.labelTotalCycleTime.Size = new System.Drawing.Size(94, 21);
@@ -854,7 +853,6 @@
             // 
             // labelTotalTimeDiff
             // 
-            this.labelTotalTimeDiff.Lines = 0;
             this.labelTotalTimeDiff.Location = new System.Drawing.Point(481, 63);
             this.labelTotalTimeDiff.Name = "labelTotalTimeDiff";
             this.labelTotalTimeDiff.Size = new System.Drawing.Size(94, 21);
@@ -863,7 +861,6 @@
             // 
             // labelNoOfHours
             // 
-            this.labelNoOfHours.Lines = 0;
             this.labelNoOfHours.Location = new System.Drawing.Point(481, 147);
             this.labelNoOfHours.Name = "labelNoOfHours";
             this.labelNoOfHours.Size = new System.Drawing.Size(75, 21);
@@ -1070,7 +1067,6 @@
             // 
             // labelNetAvailableTime
             // 
-            this.labelNetAvailableTime.Lines = 0;
             this.labelNetAvailableTime.Location = new System.Drawing.Point(481, 119);
             this.labelNetAvailableTime.Name = "labelNetAvailableTime";
             this.labelNetAvailableTime.Size = new System.Drawing.Size(107, 21);
@@ -1079,7 +1075,6 @@
             // 
             // labelEOLR
             // 
-            this.labelEOLR.Lines = 0;
             this.labelEOLR.Location = new System.Drawing.Point(481, 91);
             this.labelEOLR.Name = "labelEOLR";
             this.labelEOLR.Size = new System.Drawing.Size(94, 21);
@@ -1088,7 +1083,6 @@
             // 
             // labelHighestTimeDiff
             // 
-            this.labelHighestTimeDiff.Lines = 0;
             this.labelHighestTimeDiff.Location = new System.Drawing.Point(664, 62);
             this.labelHighestTimeDiff.Name = "labelHighestTimeDiff";
             this.labelHighestTimeDiff.Size = new System.Drawing.Size(107, 21);
@@ -1097,7 +1091,6 @@
             // 
             // labelHighestCycleTime
             // 
-            this.labelHighestCycleTime.Lines = 0;
             this.labelHighestCycleTime.Location = new System.Drawing.Point(664, 34);
             this.labelHighestCycleTime.Name = "labelHighestCycleTime";
             this.labelHighestCycleTime.Size = new System.Drawing.Size(107, 21);
@@ -1106,7 +1099,6 @@
             // 
             // labelHighestGSDTime
             // 
-            this.labelHighestGSDTime.Lines = 0;
             this.labelHighestGSDTime.Location = new System.Drawing.Point(664, 6);
             this.labelHighestGSDTime.Name = "labelHighestGSDTime";
             this.labelHighestGSDTime.Size = new System.Drawing.Size(106, 21);
@@ -1115,7 +1107,6 @@
             // 
             // labelEffieiency
             // 
-            this.labelEffieiency.Lines = 0;
             this.labelEffieiency.Location = new System.Drawing.Point(664, 91);
             this.labelEffieiency.Name = "labelEffieiency";
             this.labelEffieiency.Size = new System.Drawing.Size(75, 21);
@@ -1124,7 +1115,6 @@
             // 
             // labelPPH
             // 
-            this.labelPPH.Lines = 0;
             this.labelPPH.Location = new System.Drawing.Point(664, 119);
             this.labelPPH.Name = "labelPPH";
             this.labelPPH.Size = new System.Drawing.Size(75, 21);
@@ -1133,7 +1123,6 @@
             // 
             // labelLBR
             // 
-            this.labelLBR.Lines = 0;
             this.labelLBR.Location = new System.Drawing.Point(664, 147);
             this.labelLBR.Name = "labelLBR";
             this.labelLBR.Size = new System.Drawing.Size(75, 21);
@@ -1142,7 +1131,6 @@
             // 
             // labelLLER
             // 
-            this.labelLLER.Lines = 0;
             this.labelLLER.Location = new System.Drawing.Point(664, 175);
             this.labelLLER.Name = "labelLLER";
             this.labelLLER.Size = new System.Drawing.Size(75, 21);
@@ -1331,7 +1319,6 @@
             // labelOprts
             // 
             this.labelOprts.BackColor = System.Drawing.Color.Transparent;
-            this.labelOprts.Lines = 0;
             this.labelOprts.Location = new System.Drawing.Point(214, 118);
             this.labelOprts.Name = "labelOprts";
             this.labelOprts.Size = new System.Drawing.Size(69, 21);
@@ -1352,6 +1339,42 @@
             this.txtsewingline.Name = "txtsewingline";
             this.txtsewingline.Size = new System.Drawing.Size(60, 21);
             this.txtsewingline.TabIndex = 16;
+            // 
+            // grid1
+            // 
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(0, 0);
+            this.grid1.Name = "grid1";
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
+            this.grid1.Size = new System.Drawing.Size(241, 417);
+            this.grid1.TabIndex = 2;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 206);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.grid1);
+            this.splitContainer1.Size = new System.Drawing.Size(996, 417);
+            this.splitContainer1.SplitterDistance = 751;
+            this.splitContainer1.TabIndex = 3;
             // 
             // P03
             // 
@@ -1388,6 +1411,11 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1469,5 +1497,8 @@
         private Win.UI.NumericBox numTotalTimeDiff;
         private Win.UI.Label labelOprts;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape10;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Grid grid1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

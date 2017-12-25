@@ -95,6 +95,20 @@ namespace Sci.Production.Basic
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]))
+            {
+                MyUtility.Msg.WarningBox("< Currency > can not be empty!");
+                this.txtCurrency.Focus();
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["PayTermID"]))
+            {
+                MyUtility.Msg.WarningBox("< Payment Term > can not be empty!");
+                this.txtpayterm_ftyPaymentTerm.Focus();
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 

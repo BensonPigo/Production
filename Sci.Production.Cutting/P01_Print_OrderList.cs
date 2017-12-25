@@ -435,6 +435,7 @@ namespace Sci.Production.Cutting
                 sxr.DicDatas.Add(sxr.VPrefix + "MCHandle", "MC Handle: " + MyUtility.GetValue.Lookup(string.Format(@"select b.Name+'-'+b.ExtNo from orders a inner join pass1 b on a.mchandle=b.id where a.id='{0}'", _id), null));
                 sxr.DicDatas.Add(sxr.VPrefix + "LocalMR", "Local MR: " + MyUtility.GetValue.Lookup(string.Format(@"select b.Name+'-'+b.ExtNo from orders a inner join pass1 b on a.LocalMR =b.id where a.id='{0}'", _id), null));
                 sxr.DicDatas.Add(sxr.VPrefix + "Date", "Date: " + DateTime.Now.ToString("MM/dd/yyyy"));
+                sxr.DicDatas.Add(sxr.VPrefix + "Planner", "Planner: " + MyUtility.GetValue.Lookup(string.Format(@"select b.ID+'-'+b.ExtNo from cutting a inner join pass1 b on a.EditName =b.id where a.id='{0}'", _id), null));
 
                 // 設定Sheet2 格式
                 Microsoft.Office.Interop.Excel.Worksheet wkcolor = sxr.ExcelApp.Sheets[2];
@@ -544,7 +545,7 @@ namespace Sci.Production.Cutting
                     // 組合SewingLine 資料
                     for (int lii = 0; lii < dtline2.Rows.Count; lii++)
                     {
-                        wkcolor.Cells[countLine + li + countTotal + 1, 1] = dtline2.Rows[lii]["colorid"] + "-" + dtline2.Rows[lii]["ColorName"] + "<" + dtline2.Rows[lii]["Article"] + "> " + "SIZE" + dtline2.Rows[lii]["SizeList"] + "(" + dtline2.Rows[lii]["No"] + ")" + "," + "Qty=" + dtline2.Rows[lii]["qty"] + "PCS";
+                        wkcolor.Cells[countLine + li + countTotal + 1, 1] = dtline2.Rows[lii]["colorid"] + "-" + dtline2.Rows[lii]["ColorName"] + "<" + dtline2.Rows[lii]["Article"] + "> " + "SIZE:" + dtline2.Rows[lii]["SizeList"] + "(" + dtline2.Rows[lii]["No"] + ")" + "," + "Qty=" + dtline2.Rows[lii]["qty"] + "PCS";
              
                         // 取得相同Article 紅綠藍顏色
                         int red = (int)dtColor.Select(string.Format("ArticleNo='{0}'", dtline2.Rows[lii]["Article"]))[0]["RedNo"];
@@ -652,7 +653,7 @@ select distinct sizecode,Seq
                     wkcolor.Cells[8 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 8 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 7));
 
                     // 取得相同的Article 數量
-                    DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and [Sewing Line] <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
+                    DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and SPNO <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
 
                     // 取得報表為Total columns
                     string TotalCol =MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + i, 1]).Text);
@@ -719,10 +720,10 @@ select distinct sizecode,Seq
                     wkcolor.Columns[i].ColumnWidth = 5.5;
                 }
 
-                // 調整欄位 BUYER DLV. (Exclude Sat. & Sun.) 寬度
+                // 調整欄位 EX-FTY Date 寬度
                 wkcolor.Columns[dt2ColsCnt - 1].ColumnWidth = 11;
-                // 縮小字體
-                wkcolor.Cells[7, dt2ColsCnt - 1].Font.Size = 10;
+                // 加入註解                
+                wkcolor.Cells[7, dt2ColsCnt - 1].AddComment("One day in advance and Exclude weekend");
                 // 調整欄位CUST CD 寬度
                 wkcolor.Columns[dt2ColsCnt - 2].ColumnWidth = 13;
                 // 調整欄位 P.O.No 寬度

@@ -3880,6 +3880,13 @@
             form 最小化時, grid的scrollbar 位置會跑掉, 所以要特別把它先記錄起來... 等畫面不是最小化時, 再定位回去
             </summary>
         </member>
+        <member name="M:Sci.Win.Forms.Base.ShowAsModal(System.Windows.Forms.Form)">
+            <summary>
+            讓子form開啟的模式如同showDialog, 不過子form開啟後的位置會附在MDI parent內, 不會有ShowDialog 突出於MDI form之外的問題
+            </summary>
+            <param name="childForm">要被開啟的子form</param>
+            <returns>dialogResult of childForm</returns>
+        </member>
         <member name="F:Sci.Win.MatrixHelper.Mixer.UniqueKeyHelper.axis">
             <summary>
             0:x,1:y
@@ -6359,6 +6366,16 @@
             field of isdeleted .
             </summary>
         </member>
+        <member name="F:Sci.Win.Subs.Input6A._isinsert">
+            <summary>
+            finally, mark status as Inserted.
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Subs.Input6A._forceAsInsert">
+            <summary>
+            original _isinsert is not cover default case of Input6 的操作方式, 所以特別加上此mark強制辨識為Inserted.
+            </summary>
+        </member>
         <member name="F:Sci.Win.Subs.Input6A._text">
             <summary>
             Display Text string of form.
@@ -6414,7 +6431,7 @@
             <param name="data">DataRow object.</param>
             <returns>result of process.</returns>
         </member>
-        <member name="M:Sci.Win.Subs.Input6A.Set(System.Boolean,System.Collections.Generic.IList{System.Data.DataRow},System.Data.DataRow)">
+        <member name="M:Sci.Win.Subs.Input6A.Set(System.Boolean,System.Collections.Generic.IList{System.Data.DataRow},System.Data.DataRow,System.Boolean)">
             <summary>
             Setup DataRows, controls.
             </summary>
