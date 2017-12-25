@@ -80,7 +80,7 @@ BEGIN
 
 			IF exists(select 1 from System where RFIDMiddlewareInRFIDServer=0)
 				Begin
-					DELETE '+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'					
+					DELETE '+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'	where sid<=@MaxSid
 				End
 			Else
 				Begin	
