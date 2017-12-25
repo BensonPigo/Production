@@ -210,6 +210,8 @@ namespace Sci.Production.Cutting
             if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
             {
                 #region SQL
+
+                DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
                 sqlcmd = string.Format(@"
 select distinct *
 from(
@@ -454,7 +456,7 @@ outer apply
             }
             if (dtt.Rows.Count == 0)  MyUtility.Msg.WarningBox("Data not found!!"); 
             listControlBindingSource1.DataSource = dtt;
-            
+            DBProxy.Current.DefaultTimeout = 300;  //恢復時間為5分鐘
             this.HideWaitMessage();
         }
 
