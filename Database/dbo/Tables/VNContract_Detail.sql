@@ -4,12 +4,13 @@
     [NLCode]        VARCHAR (5)     CONSTRAINT [DF_VNContract_Detail_NLCode] DEFAULT ('') NOT NULL,
     [Qty]           NUMERIC (14, 3) CONSTRAINT [DF_VNContract_Detail_Qty] DEFAULT ((0)) NULL,
     [UnitID]        VARCHAR (8)     CONSTRAINT [DF_VNContract_Detail_UnitID] DEFAULT ('') NOT NULL,
-    [Waste]         NUMERIC (8, 6)  CONSTRAINT [DF_VNContract_Detail_Waste] DEFAULT ((0)) NOT NULL,
+    [WasteLower]    NUMERIC (5, 3)  CONSTRAINT [DF_VNContract_Detail_WasteLower] DEFAULT ((0)) NOT NULL,
     [Price]         NUMERIC (6, 3)  CONSTRAINT [DF_VNContract_Detail_Price] DEFAULT ((0)) NOT NULL,
     [LocalPurchase] BIT             CONSTRAINT [DF_VNContract_Detail_LocalPurchase] DEFAULT ((0)) NULL,
     [NecessaryItem] BIT             CONSTRAINT [DF_VNContract_Detail_NecessaryItem] DEFAULT ((0)) NULL,
     [AddName]       VARCHAR (10)    CONSTRAINT [DF_VNContract_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME        NULL,
+    [WasteUpper]	NUMERIC(5, 3)	CONSTRAINT [DF_VNContract_Detail_WasteUpper] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_VNContract_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [NLCode] ASC)
 );
 
@@ -39,7 +40,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單價', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'合約簽訂的損耗率', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract_Detail', @level2type = N'COLUMN', @level2name = N'Waste';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'合約簽訂的損耗率', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract_Detail', @level2type = N'COLUMN', @level2name = 'WasteLower';
 
 
 GO
@@ -65,3 +66,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關簽約紀錄明細', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'VNContract_Detail';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'合約簽訂的損耗率',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'VNContract_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'WasteUpper'

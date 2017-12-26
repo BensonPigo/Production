@@ -72,14 +72,14 @@ namespace Sci.Production.Subcon
             IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(new SqlParameter("@SubProcess", SubProcess));
             cmds.Add(new SqlParameter("@BundleReceive1", Convert.ToDateTime(dateBundleReceive1).ToString("d")));
-            cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d") + " 23:59:59"));
+            cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d")));
             cmds.Add(new SqlParameter("@M", M));
             cmds.Add(new SqlParameter("@Factory", Factory));
 
             Dictionary<string, string> listDicFilte = new Dictionary<string, string>();
             listDicFilte.Add("SubProcess", (!MyUtility.Check.Empty(SubProcess)) ? "and (bio.SubprocessId = @SubProcess or @SubProcess = 'ALL')" : "");
-            listDicFilte.Add("BundleReceive1", (!MyUtility.Check.Empty(dateBundleReceive1)) ? "and bio.InComing >= @BundleReceive1" : "");
-            listDicFilte.Add("BundleReceive2", (!MyUtility.Check.Empty(dateBundleReceive2)) ? "and bio.InComing <= @BundleReceive2 " : "");
+            listDicFilte.Add("BundleReceive1", (!MyUtility.Check.Empty(dateBundleReceive1)) ? "and convert(date, bio.InComing) >= @BundleReceive1" : "");
+            listDicFilte.Add("BundleReceive2", (!MyUtility.Check.Empty(dateBundleReceive2)) ? "and convert(date, bio.InComing) <= @BundleReceive2 " : "");
             listDicFilte.Add("M", (!MyUtility.Check.Empty(M)) ? "and b.MDivisionid = @M" : "");
             listDicFilte.Add("Factory", (!MyUtility.Check.Empty(Factory)) ? "and o.FtyGroup = @Factory" : "");            
             #endregion

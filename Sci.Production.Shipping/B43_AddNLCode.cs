@@ -59,7 +59,8 @@ namespace Sci.Production.Shipping
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7))
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), settings: this.unit)
-                .Numeric("Waste", header: "Waste", decimal_places: 3)
+                .Numeric("WasteLower", header: "Waste Lower", decimal_places: 3)
+                .Numeric("WasteUpper", header: "Waste Upper", decimal_places: 3)
                 .Numeric("Price", header: "Unit Price", decimal_places: 3)
                 .CheckBox("LocalPurchase", header: "Buy in VN", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .CheckBox("NecessaryItem", header: "Cons. Necessary item", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
@@ -124,7 +125,7 @@ namespace Sci.Production.Shipping
             {
                 intRowsRead++;
 
-                range = worksheet.Range[string.Format("A{0}:H{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:I{0}", intRowsRead)];
                 objCellArray = range.Value;
 
                 DataRow newRow = excelDataTable.NewRow();
@@ -132,10 +133,11 @@ namespace Sci.Production.Shipping
                 newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                 newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
                 newRow["UnitID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
-                newRow["Waste"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "N");
-                newRow["Price"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N");
-                newRow["LocalPurchase"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C")) ? 0 : 1;
-                newRow["NecessaryItem"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C")) ? 0 : 1;
+                newRow["WasteLower"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "N");
+                newRow["WasteUpper"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N");
+                newRow["Price"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "N");
+                newRow["LocalPurchase"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C")) ? 0 : 1;
+                newRow["NecessaryItem"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C")) ? 0 : 1;
                 if (MyUtility.Check.Seek(MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C")), "Unit", "ID"))
                 {
                     newRow["WrongUnit"] = 0;
@@ -176,14 +178,15 @@ namespace Sci.Production.Shipping
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into VNContract_Detail (      ID,HSCode,NLCode,Qty,UnitID,Waste,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
-values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}',GETDATE());",
+                    @"insert into VNContract_Detail (      ID,HSCode,NLCode,Qty,UnitID,WasteLower,WasteUpper,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
+values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}',GETDATE());",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     MyUtility.Convert.GetString(dr["HSCode"]),
                     MyUtility.Convert.GetString(dr["NLCode"]),
                     MyUtility.Convert.GetString(dr["Qty"]),
                     MyUtility.Convert.GetString(dr["UnitID"]),
-                    MyUtility.Convert.GetString(dr["Waste"]),
+                    MyUtility.Convert.GetString(dr["WasteLower"]),
+                    MyUtility.Convert.GetString(dr["WasteUpper"]),
                     MyUtility.Convert.GetString(dr["Price"]),
                     MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
                     MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0",
