@@ -94,7 +94,7 @@ order by Abb";
                         DataRow dr = tmpDataTable.NewRow();
                         try
                         {
-                            dr["BundleNo"] = sl[0];
+                            dr["BundleNo"] = sl[0].Trim();
                         }
                         catch (Exception)
                         {
