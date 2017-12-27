@@ -1277,6 +1277,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnBreakDown_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(CurrentMaintain["cutplanID"])&& MyUtility.Check.Empty(CurrentMaintain["OrderId"]))
+            {
+                MyUtility.Msg.WarningBox("Msg:Please key-in Request or Order ID first!!");
+                return;
+            }
+
             var frm = new Sci.Production.Warehouse.P11_IssueBreakDown(CurrentMaintain, dtIssueBreakDown, dtSizeCode);
             frm.ShowDialog(this);
             this.OnDetailEntered();
