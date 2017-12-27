@@ -1279,7 +1279,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cutplanID"])&& MyUtility.Check.Empty(CurrentMaintain["OrderId"]))
             {
-                MyUtility.Msg.WarningBox("Msg:Please key-in Request or Order ID first!!");
+                MyUtility.Msg.WarningBox("Please key-in Request or Order ID first!!");
                 return;
             }
 
