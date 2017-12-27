@@ -757,7 +757,7 @@ Select DISTINCT
     [Comb] = b.PatternPanel,
 	b.FabricPanelCode,
     bd.PatternCode,
-    bd.Qty,
+    Qty = iif(bio.InComing is null ,0,bd.Qty),
     bio.InComing,
     bio.OutGoing
 into #tmp
@@ -770,41 +770,56 @@ left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubP
 inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
 inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
 where 1=1
+and b.Orderid in (select distinct orderid from #cte)
 ------and b.Orderid = '17110078PP005'
 and bof.kind != 0
-and bio.InComing is not null
-order by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
+--order by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
 ------
-select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpin2
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
+into #tmp2
 from #tmp
-group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
+group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
 
-select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-into #tmpin3
-from #tmpin2
-group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
+into #tmp3
+from #tmp2
+group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
 
-select [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode,accuQty = sum(accuQty)
+
+select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
+into #tmp4
+from #tmp3
+group by [M],[Factory],[SP],[Subprocessid],article,[Size]
+
+select [M],[Factory],[SP],[Subprocessid],article,accuQty = sum(accuQty)
 into #tmpin
-from #tmpin3
-group by [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode
+from #tmp4
+group by [M],[Factory],[SP],[Subprocessid],article
 ------
-select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
-into #tmpout2
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
+into #tmpout1
 from #tmp
-where OutGoing is not null
-group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
 
-select [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
+into #tmpout2
+from #tmpout1
+group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
+
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
 into #tmpout3
 from #tmpout2
-group by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode
+group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
 
-select [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode,accuQty = sum(accuQty)
-into #tmpout
+
+select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
+into #tmpout4
 from #tmpout3
-group by [M],[Factory],[SP],SubProcessId,article,[Comb],FabricPanelCode
+group by [M],[Factory],[SP],[Subprocessid],article,[Size]
+
+select [M],[Factory],[SP],[Subprocessid],article,accuQty = sum(accuQty)
+into #tmpout
+from #tmpout4
+group by [M],[Factory],[SP],[Subprocessid],article
 ------
 ----------↑計算累計成衣件數
 select t.MDivisionID
