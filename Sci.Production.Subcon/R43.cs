@@ -108,8 +108,6 @@ from (
                               where (bio.InComing-bio.OutGoing) <= s.BCSDate)
     from Bundle b WITH (NOLOCK) 
     inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-    inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id 
-                                                      and bda.Bundleno = bd.Bundleno
     inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
     left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
     left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
