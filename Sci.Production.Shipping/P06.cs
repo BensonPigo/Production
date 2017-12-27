@@ -392,6 +392,30 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
                 }
             }
 
+
+
+            return base.ClickSave();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            DualResult result;
+            if (this.updatePackinglist.Trim() != string.Empty)
+            {
+                result = DBProxy.Current.Execute(null, this.updatePackinglist);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
+                    return failResult;
+                }
+            }
+
             // 將Pullout箱數回寫回Orders.PulloutCTNQty
             string updateCmd = string.Format(
                 @"update Orders set PulloutCTNQty = (select isnull(sum(pd.CTNQty),0)
@@ -407,22 +431,6 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                 return failResult;
             }
 
-            if (this.updatePackinglist.Trim() != string.Empty)
-            {
-                result = DBProxy.Current.Execute(null, this.updatePackinglist);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Update Packinglist fail!!\r\n" + result.ToString());
-                    return failResult;
-                }
-            }
-
-            return base.ClickSave();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult ClickSavePost()
-        {
             return base.ClickSavePost();
         }
 
