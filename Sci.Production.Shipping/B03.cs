@@ -101,6 +101,13 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]))
+            {
+                this.displayPrice.Focus();
+                MyUtility.Msg.WarningBox("Currency cannot be empty!!");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 

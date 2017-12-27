@@ -428,6 +428,13 @@ where sd.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Handle can't empty!!");
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]))
+            {
+                this.displayCurrency.Focus();
+                MyUtility.Msg.WarningBox("Currency cannot be empty!!");
+                return false;
+            }
             #endregion
 
             // InvNo + B/L No不可以重複建立
@@ -444,12 +451,18 @@ where sd.ID = '{0}'", masterID);
             // 清空表身Grid資料
             int countRec = 0; // 計算表身筆數
             decimal detailAmt = 0.0m; // 表身Amount加總值
+            bool currencyEmpt = false;
             foreach (DataRow dr in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(dr["ShipExpenseID"]))
                 {
                     dr.Delete();
                     continue;
+                }
+
+                if (MyUtility.Check.Empty(dr["CurrencyID"]))
+                {
+                    currencyEmpt = true;
                 }
 
                 detailAmt = detailAmt + MyUtility.Convert.GetDecimal(dr["Amount"]);
@@ -460,6 +473,13 @@ where sd.ID = '{0}'", masterID);
             if (countRec == 0)
             {
                 MyUtility.Msg.WarningBox("< A/P# Detail> can't empty!!");
+                return false;
+            }
+
+            // 表身Curreny為空
+            if (currencyEmpt)
+            {
+                MyUtility.Msg.WarningBox("Currency cannot be empty!!");
                 return false;
             }
 
@@ -733,6 +753,23 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Acct. Approve
         private void BtnAcctApprove_Click(object sender, EventArgs e)
         {
+            #region 表頭及表身Currency不可空白
+            bool currencyEmpty = false;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["CurrencyID"]))
+                {
+                    currencyEmpty = true;
+                }
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CurrencyID"]) || currencyEmpty)
+            {
+                MyUtility.Msg.WarningBox("Currency cannot be empty!!");
+                return;
+            }
+            #endregion
+
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))))
             {
                 // Approve
