@@ -76,7 +76,7 @@
             this.masterpanel.Controls.Add(this.txtTypeID);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.labelType);
-            this.masterpanel.Size = new System.Drawing.Size(793, 124);
+            this.masterpanel.Size = new System.Drawing.Size(976, 124);
             this.masterpanel.Controls.SetChildIndex(this.labelType, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTypeID, 0);
@@ -98,7 +98,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 124);
-            this.detailpanel.Size = new System.Drawing.Size(793, 247);
+            this.detailpanel.Size = new System.Drawing.Size(976, 247);
             // 
             // gridicon
             // 
@@ -106,28 +106,28 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(793, 247);
+            this.detailgridcont.Size = new System.Drawing.Size(976, 247);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(793, 409);
+            this.detail.Size = new System.Drawing.Size(976, 409);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(793, 371);
+            this.detailcont.Size = new System.Drawing.Size(976, 371);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 371);
-            this.detailbtm.Size = new System.Drawing.Size(793, 38);
+            this.detailbtm.Size = new System.Drawing.Size(976, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(793, 409);
+            this.browse.Size = new System.Drawing.Size(976, 409);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(801, 438);
+            this.tabs.Size = new System.Drawing.Size(984, 438);
             // 
             // labelType
             // 
@@ -335,7 +335,7 @@
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(801, 471);
+            this.ClientSize = new System.Drawing.Size(984, 471);
             this.DefaultDetailOrder = "orderid";
             this.DefaultOrder = "OutputDate,Shift,Team";
             this.GridAlias = "SubProcessOutput_Detail";
@@ -349,7 +349,7 @@
             this.SubDetailKeyField2 = "id,SubProcessOutput_DetailUKey";
             this.SubGridAlias = "SubProcessOutput_Detail_Detail";
             this.SubKeyField1 = "ukey";
-            this.Text = "P01. Subprocess Daily Output";
+            this.Text = "P01. PPA Daily Output";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "SubProcessOutput";

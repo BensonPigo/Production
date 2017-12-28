@@ -222,6 +222,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA'",
                 DataRow dr_orderID;
                 if (!MyUtility.Check.Seek(sqlCmd, out dr_orderID))
                 {
+                    MyUtility.Msg.WarningBox(string.Format("{0} data not find. Please check [Style Feature Data] first !!", e.FormattedValue));
                     this.CurrentDetailData["OrderID"] = string.Empty;
                     this.CurrentDetailData["StyleID"] = string.Empty;
                     this.CurrentDetailData["styleukey"] = 0;
@@ -289,7 +290,8 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}'",
 
                     if (item.GetSelecteds().Count > 0)
                     {
-                        if (item.GetSelecteds()[0]["Article"].ToString() != MyUtility.Convert.GetString(this.CurrentDetailData["Article"]))
+                        if (MyUtility.Convert.GetString(item.GetSelecteds()[0]["Article"]) != MyUtility.Convert.GetString(this.CurrentDetailData["Article"])
+                        || MyUtility.Convert.GetString(item.GetSelecteds()[0]["Colorid"]) != MyUtility.Convert.GetString(this.CurrentDetailData["Color"]))
                         {
                             this.CurrentDetailData["Article"] = item.GetSelecteds()[0]["Article"];
                             this.CurrentDetailData["Color"] = item.GetSelecteds()[0]["Colorid"];
@@ -381,20 +383,20 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' a
 
             #region qaoutput
             DataGridViewGeneratorTextColumnSettings qaoutput = new DataGridViewGeneratorTextColumnSettings();
-           qaoutput.CellMouseDoubleClick += (s, e) =>
-            {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                {
-                    this.OpenSubDetailPage();
-                    this.Caculate_DefectQty();
-                    this.Caculate_EFF();
-                    this.Caculate_TotalCPU();
-                    this.Caculate_PPH();
-                    this.CurrentDetailData.EndEdit();
-                    this.SumQty_QA_Prod_Defect();
-                    this.Sum_Workinghours();
-                }
-            };
+            qaoutput.CellMouseDoubleClick += (s, e) =>
+             {
+                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                 {
+                     this.OpenSubDetailPage();
+                     this.Caculate_DefectQty();
+                     this.Caculate_EFF();
+                     this.Caculate_TotalCPU();
+                     this.Caculate_PPH();
+                     this.CurrentDetailData.EndEdit();
+                     this.SumQty_QA_Prod_Defect();
+                     this.Sum_Workinghours();
+                 }
+             };
             #endregion
 
             #region prodQty
@@ -425,13 +427,21 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' a
 
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
+                    if (MyUtility.Check.Empty(this.CurrentDetailData["OrderID"]))
+                    {
+                        MyUtility.Msg.WarningBox("Please enter SP# first");
+                        return;
+                    }
+
                     string sqlCmd = string.Format(
-                    @"Select Feature, remark
-From SubProcessFeature
-Where type='{0}' and junk=0
+                    @"
+Select Feature,smv, remark
+From Style_Feature
+Where type='{0}'  and styleUkey='{1}'
 Order by Feature",
-                    this.CurrentMaintain["TypeID"]);
-                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlCmd, "Feature,Remark", "15,30", MyUtility.Convert.GetString(this.CurrentDetailData["Feature"]), null, null, null);
+                    this.CurrentMaintain["TypeID"],
+                    this.CurrentDetailData["styleukey"]);
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlCmd, "Feature,SMV,Remark", "12,8,20", MyUtility.Convert.GetString(this.CurrentDetailData["Feature"]), "0,4,0");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
                     {
@@ -452,12 +462,24 @@ Order by Feature",
                     return;
                 }
 
+                if (MyUtility.Check.Empty(this.CurrentDetailData["OrderID"]))
+                {
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        MyUtility.Msg.WarningBox("Please enter SP# first");
+                    }
+
+                    return;
+                }
+
                 string sqlCmd = string.Format(
-                @"Select Feature, remark
-From SubProcessFeature
-Where type='{0}' and junk=0
+                    @"
+Select Feature,smv, remark
+From Style_Feature
+Where type='{0}'  and styleUkey='{1}'
 Order by Feature",
-                this.CurrentMaintain["TypeID"]);
+                    this.CurrentMaintain["TypeID"],
+                     this.CurrentDetailData["styleukey"]);
 
                 this.CurrentDetailData["Feature"] = e.FormattedValue;
                 DataTable dt;
@@ -548,26 +570,29 @@ Order by Feature",
 
             #region Grid欄位
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("SubprocessLineID", header: "SubProcess Line", width: Widths.AnsiChars(10), settings: subprocessLineID)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), settings: orderID)
-            .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: article)
+            .Text("SubprocessLineID", header: "SubPro.\r\nLine", width: Widths.AnsiChars(6), settings: subprocessLineID)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(11), settings: orderID)
+            .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.AnsiChars(7), settings: article)
             .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("QAOutput", header: "QA\r\nOutput", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: qaoutput)
-            .Numeric("QAQty", header: "QA Ttl\r\nOutput", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Numeric("ProdQty", header: "Prod.\r\nOutput", width: Widths.AnsiChars(5), settings: prodQty)
-            .Numeric("DefectQty", header: "Defect\r\nQ’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("Feature", header: "SubPro.\r\nFeature", width: Widths.AnsiChars(5), settings: feature)
-            .Numeric("SMV", header: "SMV\r\n(Sec)", width: Widths.AnsiChars(5), settings: sMV)
-            .Numeric("Manpower", header: "Manpower", width: Widths.AnsiChars(5), decimal_places: 2, maximum: 999.99m, settings: manpower)
-            .Numeric("Workinghours", header: "Workinghours", width: Widths.AnsiChars(5), decimal_places: 2, maximum: 999.99m, settings: workinghours)
-            .Numeric("TTLWorkinghours", header: "Total\r\nW’Hour", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("FeatureCPU", header: "Feature\r\n(CPU)", width: Widths.AnsiChars(6), decimal_places: 4, maximum: 99.9999m, iseditingreadonly: true)
-            .Text("EFF_percent", header: "EFF(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Numeric("TotalCPU", header: "Total\r\nCPU", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("PPH", header: "PPH", width: Widths.AnsiChars(6), decimal_places: 3, iseditingreadonly: true)
+            .Text("QAOutput", header: "QA\r\nOutput", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: qaoutput)
+            .Numeric("QAQty", header: "QA Ttl\r\nOutput", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            .Numeric("ProdQty", header: "Prod.\r\nOutput", width: Widths.AnsiChars(3), settings: prodQty)
+            .Numeric("DefectQty", header: "Defect\r\nQ’ty", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            .Text("Feature", header: "SubPro.\r\nFeature", width: Widths.AnsiChars(9), settings: feature)
+            .Numeric("SMV", header: "SMV\r\n(Sec)", width: Widths.AnsiChars(3), settings: sMV)
+            .Numeric("Manpower", header: "Manpower", width: Widths.AnsiChars(3), decimal_places: 2, maximum: 999.99m, settings: manpower)
+            .Numeric("Workinghours", header: "Working\r\nhours", width: Widths.AnsiChars(4), decimal_places: 2, maximum: 999.99m, settings: workinghours)
+            .Numeric("TTLWorkinghours", header: "Total\r\nW’Hour", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("FeatureCPU", header: "Feature\r\n(CPU)", width: Widths.AnsiChars(4), decimal_places: 4, maximum: 99.9999m, iseditingreadonly: true)
+            .Text("EFF_percent", header: "EFF(%)", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Numeric("TotalCPU", header: "Total\r\nCPU", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("PPH", header: "PPH", width: Widths.AnsiChars(4), decimal_places: 3, iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(5))
             ;
+
+            this.detailgrid.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 10);
+            this.detailgrid.DefaultCellStyle.Font = new Font("Tahoma", 10);
             #endregion
 
             #region 顏色設定
@@ -984,8 +1009,13 @@ where s.id = '{0}'
                 return false;
             }
             #endregion
+            if (printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Subprocess_P01.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "Subprocess_P01.xltx");
             Microsoft.Office.Interop.Excel._Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 2] = ftyName;
