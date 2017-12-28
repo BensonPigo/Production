@@ -179,14 +179,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 txtuserSMR.TextBox1.Focus();
                 return false;
             }
-
-            if (MyUtility.Check.Empty(CurrentMaintain["SMR"]))
-            {
-                MyUtility.Msg.WarningBox("< SMR >  can't be empty!", "Warning");
-                txtuserSMR.TextBox1.Focus();
-                return false;
-            }
-
+            
             if (MyUtility.Check.Empty(CurrentMaintain["CURRENCYID"]))
             {
                 MyUtility.Msg.WarningBox("< Currency >  can't be empty!", "Warning");
@@ -194,6 +187,13 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             }
 
             #endregion
+
+            // Currency =USD, Exchange 只能為1
+            if (this.displaycurrencyid.Value.ToString().ToUpper()=="USD" && numExchange.Value != 1)
+            {
+                MyUtility.Msg.WarningBox("If the currency is USD, then exchange must be 1 !!");
+                return false;
+            }
 
             // 刪除 qty,amount,addtion皆為零的資料
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 and amount = 0 and addition = 0"))
@@ -246,13 +246,6 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 MyUtility.Msg.WarningBox("This record is confirmed, can't edit!!");
                 return false;
             }
-
-            //調成跟舊系統一樣，不管誰都可以編輯
-            //if (!PublicPrg.Prgs.GetAuthority(CurrentMaintain["HANDLE"].ToString()))
-            //{
-            //    MyUtility.Msg.WarningBox("You don't have permission to modify!!");
-            //    return false;
-            //}
 
             if (CurrentMaintain["status"].ToString().ToUpper() == "SENT")
             {
