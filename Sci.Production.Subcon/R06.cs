@@ -68,7 +68,7 @@ select  AP.MDivisionID
 	  , APD.PatternCode
       , APD.ukey
 into #tmpAll
-from ArtworkPO AP
+from ArtworkPO AP WITH (NOLOCK)
 left join ArtworkPO_Detail APD WITH (NOLOCK) on APD.ID=AP.ID
 left join orders O WITH (NOLOCK) on APD.OrderID = O.ID
 where 1=1  --從畫面上帶入條件
@@ -184,8 +184,8 @@ select RowID= CONCAT( ArtworkPo_DetailUkey,issuedate,row_number() over(partition
 , issuedate = b.issuedate
 , ArtworkPo_DetailUkey
 into #Targer
-from farmIn_detail a
-inner join farmIn b on a.id=b.id
+from farmIn_detail a WITH (NOLOCK)
+inner join farmIn b WITH (NOLOCK) on a.id=b.id
 where b.Status = 'Confirmed'
 and ArtworkPo_DetailUkey in (select distinct ukey from #tmpAll)
 order by b.issuedate
@@ -196,8 +196,8 @@ select RowID= CONCAT( ArtworkPo_DetailUkey,issuedate,row_number() over(partition
 , issuedate = b.issuedate
 , ArtworkPo_DetailUkey
 into #Source
-from farmOut_detail a
-inner join farmOut b on a.id=b.id
+from farmOut_detail a WITH (NOLOCK)
+inner join farmOut b WITH (NOLOCK) on a.id=b.id
 where b.Status = 'Confirmed'
 and ArtworkPo_DetailUkey in (select distinct ukey from #tmpAll)
 order by b.issuedate
@@ -226,10 +226,8 @@ SELECT  MDivisionID
 	, [Date] = Farm.issuedate
 	, [Farm Out Qty] = Farm.QtyOut
 	, [Farm In Qty] = Farm.QtyIn	
-from #tmpAll
-OUTER APPLY(
-	select * from #Targer where ArtworkPo_DetailUkey=ukey
-) Farm
+from #tmpAll a
+inner join #Targer Farm on a.ukey=Farm.ArtworkPo_DetailUkey
 Order by MDivisionID,id, POID, Orderid,ukey,date
 
 drop table #Targer,#Source,#tmpAll

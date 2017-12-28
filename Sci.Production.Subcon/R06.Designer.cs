@@ -87,7 +87,7 @@
             this.lbFarmOutDate.RectStyle.ExtBorderWidth = 1F;
             this.lbFarmOutDate.Size = new System.Drawing.Size(98, 23);
             this.lbFarmOutDate.TabIndex = 96;
-            this.lbFarmOutDate.Text = "Farm Out Date";
+            this.lbFarmOutDate.Text = "Issue Date";
             this.lbFarmOutDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbFarmOutDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
