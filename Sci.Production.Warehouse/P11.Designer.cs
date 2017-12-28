@@ -461,6 +461,7 @@
             this.gridIssueBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridIssueBreakDown.RowTemplate.Height = 24;
             this.gridIssueBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridIssueBreakDown.ShowCellToolTips = false;
             this.gridIssueBreakDown.Size = new System.Drawing.Size(889, 129);
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
