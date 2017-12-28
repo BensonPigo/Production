@@ -154,8 +154,9 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            // End Date：輸入的日期年份一定要是建檔當天的隔年
-            if (Convert.ToDateTime(this.dateEndDate.Value).Year != DateTime.Today.Year + 1)
+            // End Date：輸入的日期年份一定要是建檔"當年 或 隔年"
+            if (!(Convert.ToDateTime(this.dateEndDate.Value).Year == DateTime.Today.Year ||
+                Convert.ToDateTime(this.dateEndDate.Value).Year == DateTime.Today.Year + 1))
             {
                 this.dateEndDate.Focus();
                 MyUtility.Msg.WarningBox("Pls double check the end date!!");
