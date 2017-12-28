@@ -38,8 +38,6 @@ namespace Sci.Production.Subcon
             }
             farmoutdate1 = dateFarmOutDate.Value1;
             farmoutdate2 = dateFarmOutDate.Value2;
-            bundleno1 = txtBundleNoStart.Text;
-            bundleno2 = txtBundleNoEnd.Text;
             scidelivery1 = dateSCIDelivery.Value1;
             scidelivery2 = dateSCIDelivery.Value2;
 
@@ -57,32 +55,24 @@ namespace Sci.Production.Subcon
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- Sql Command --
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select 
-a.MDivisionID
-,a.id
-,c.POID
-,b.Orderid
-,c.StyleID
-,d.Article
-,a.artworktypeid
-,f.LocalSuppID+'-'+(select abb from LocalSupp WITH (NOLOCK) where id = f.LocalSuppID) supplier
-,a.FactoryId
-,b.ArtworkPoid
-,e.BundleGroup
-,b.BundleNo
-,d.Colorid
-,d.Sizecode
-,b.Qty
-,a.IssueDate farmoutDate
-,(select max(farmin.IssueDate) from FarmIn WITH (NOLOCK) inner join FarmIn_Detail WITH (NOLOCK) on farmin.ID = FarmIn_Detail.ID where farmin.Status = 'Confirmed' and FarmIn_Detail.ArtworkPo_DetailUkey = b.ArtworkPo_DetailUkey) farminDate
-from farmout a WITH (NOLOCK) 
-inner join farmout_detail b WITH (NOLOCK) on a.id = b.id
-inner join orders c WITH (NOLOCK) on b.orderid = c.id
-inner join ArtworkPO f WITH (NOLOCK) on f.ID = b.ArtworkPoid
-left join ( bundle d WITH (NOLOCK) inner join Bundle_Detail e WITH (NOLOCK) on e.id = d.ID) on e.BundleNo = b.BundleNo
-where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(farmoutdate1).ToString("d"), Convert.ToDateTime(farmoutdate2).ToString("d")));
+            StringBuilder sqlCmd = new StringBuilder();  
+            sqlCmd.Append(@"
+select  AP.MDivisionID
+	  , AP.FactoryId
+	  , AP.ID
+	  , localsupp = AP.LocalSuppID+'-'+(select abb from localsupp WITH (NOLOCK) where id = AP.localsuppid)
+	  , AP.ArtworkTypeID
+	  , O.POID 
+	  , APD.OrderID 
+	  , O.StyleID
+	  , APD.PatternCode
+      , APD.ukey
+into #tmpAll
+from ArtworkPO AP
+left join ArtworkPO_Detail APD WITH (NOLOCK) on APD.ID=AP.ID
+left join orders O WITH (NOLOCK) on APD.OrderID = O.ID
+where 1=1  --從畫面上帶入條件
+");
             #endregion
 
             System.Data.SqlClient.SqlParameter sp_farmoutdate1 = new System.Data.SqlClient.SqlParameter();
@@ -109,12 +99,6 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
             System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
             sp_style.ParameterName = "@style";
 
-            System.Data.SqlClient.SqlParameter sp_bundleno1 = new System.Data.SqlClient.SqlParameter();
-            sp_bundleno1.ParameterName = "@bundleno1";
-
-            System.Data.SqlClient.SqlParameter sp_bundleno2 = new System.Data.SqlClient.SqlParameter();
-            sp_bundleno2.ParameterName = "@bundleno2";
-
             System.Data.SqlClient.SqlParameter sp_scidelivery1 = new System.Data.SqlClient.SqlParameter();
             sp_scidelivery1.ParameterName = "@scidelivery1";
 
@@ -125,85 +109,131 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 
             if (!MyUtility.Check.Empty(farmoutdate1))
             {
-                sqlCmd.Append(" and a.issuedate >= @farmoutdate1");
+                sqlCmd.Append(" and AP.issuedate >= @farmoutdate1");
                 sp_farmoutdate1.Value = farmoutdate1;
                 cmds.Add(sp_farmoutdate1);
             }
 
             if (!MyUtility.Check.Empty(farmoutdate2))
             {
-                sqlCmd.Append(" and a.issuedate <= @farmoutdate2");
+                sqlCmd.Append(" and AP.issuedate <= @farmoutdate2");
                 sp_farmoutdate2.Value = farmoutdate2;
                 cmds.Add(sp_farmoutdate2);
-            }
-
-            if (!MyUtility.Check.Empty(bundleno1))
-            {
-                sqlCmd.Append(" and b.bundleno >= @bundleno1");
-                sp_bundleno1.Value = bundleno1;
-                cmds.Add(sp_bundleno1);
-            }
-
-            if (!MyUtility.Check.Empty(bundleno2))
-            {
-                sqlCmd.Append(" and b.bundleno <= @bundleno2");
-                sp_bundleno2.Value = bundleno2;
-                cmds.Add(sp_bundleno2);
-            }
+            }                     
 
             if (!MyUtility.Check.Empty(scidelivery1))
             {
-                sqlCmd.Append(" and c.scidelivery >= @scidelivery1");
+                sqlCmd.Append(" and o.scidelivery >= @scidelivery1");
                 sp_scidelivery1.Value = scidelivery1;
-                cmds.Add(sp_scidelivery1);
-                
+                cmds.Add(sp_scidelivery1);                
             }
+
             if (!MyUtility.Check.Empty(scidelivery2))
             {
-                sqlCmd.Append(" and c.scidelivery <= @scidelivery2");
+                sqlCmd.Append(" and o.scidelivery <= @scidelivery2");
                 sp_scidelivery2.Value = scidelivery2;
                 cmds.Add(sp_scidelivery2);
             }
 
             if (!MyUtility.Check.Empty(artworktype))
             {
-                sqlCmd.Append(" and a.artworktypeid = @artworktype");
+                sqlCmd.Append(" and AP.artworktypeid = @artworktype");
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
+                sqlCmd.Append(" and AP.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
             }
+
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(" and a.factoryid = @factory");
+                sqlCmd.Append(" and AP.factoryid = @factory");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
+
             if (!MyUtility.Check.Empty(subcon))
             {
-                sqlCmd.Append(" and f.localsuppid = @subcon");
+                sqlCmd.Append(" and AP.localsuppid = @subcon");
                 sp_subcon.Value = subcon;
                 cmds.Add(sp_subcon);
             }
+
             if (!MyUtility.Check.Empty(poid))
             {
-                sqlCmd.Append(" and c.poid = @poid ");
+                sqlCmd.Append(" and o.poid = @poid ");
                 sp_poid.Value = poid;
                 cmds.Add(sp_poid);
             }
+
             if (!MyUtility.Check.Empty(style))
             {
                 sqlCmd.Append(" and c.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
+            sqlCmd.Append(@"
 
-            sqlCmd.Append(" Order by a.MDivisionID, a.id, c.POID, b.Orderid, e.BundleGroup, b.BundleNo");
+select RowID= CONCAT( ArtworkPo_DetailUkey,issuedate,row_number() over(partition by ArtworkPo_DetailUkey,issuedate order by ArtworkPo_DetailUkey,issuedate))
+, QtyIn = qty
+, QtyOut = 0
+, issuedate = b.issuedate
+, ArtworkPo_DetailUkey
+into #Targer
+from farmIn_detail a
+inner join farmIn b on a.id=b.id
+where b.Status = 'Confirmed'
+and ArtworkPo_DetailUkey in (select distinct ukey from #tmpAll)
+order by b.issuedate
+
+select RowID= CONCAT( ArtworkPo_DetailUkey,issuedate,row_number() over(partition by ArtworkPo_DetailUkey,issuedate order by ArtworkPo_DetailUkey,issuedate))
+, QtyIn = 0
+, QtyOut = qty
+, issuedate = b.issuedate
+, ArtworkPo_DetailUkey
+into #Source
+from farmOut_detail a
+inner join farmOut b on a.id=b.id
+where b.Status = 'Confirmed'
+and ArtworkPo_DetailUkey in (select distinct ukey from #tmpAll)
+order by b.issuedate
+
+
+merge #Targer as t
+using #Source as s
+	on  t.RowID=s.RowID 	
+when matched then 
+	update set
+	t.QtyOut=s.QtyOut	
+when not matched by target then 
+	insert (  Rowid,  QtyIn,  QtyOut,  issuedate,  ArtworkPo_DetailUkey)
+	values (s.Rowid,s.QtyIn,s.QtyOut,s.issuedate,s.ArtworkPo_DetailUkey);
+
+
+SELECT  MDivisionID
+	, FactoryId
+	, ID
+	, localsupp
+	, ArtworkTypeID
+	, POID 
+	, OrderID 
+	, StyleID
+	, PatternCode
+	, [Date] = Farm.issuedate
+	, [Farm Out Qty] = Farm.QtyOut
+	, [Farm In Qty] = Farm.QtyIn	
+from #tmpAll
+OUTER APPLY(
+	select * from #Targer where ArtworkPo_DetailUkey=ukey
+) Farm
+Order by MDivisionID,id, POID, Orderid,ukey,date
+
+drop table #Targer,#Source,#tmpAll
+ ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
