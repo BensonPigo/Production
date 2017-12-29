@@ -40,10 +40,6 @@
             this.lbM = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.lbSCIDelivery = new Sci.Win.UI.Label();
-            this.lbBundleNo = new Sci.Win.UI.Label();
-            this.txtBundleNoStart = new Sci.Win.UI.TextBox();
-            this.txtBundleNoEnd = new Sci.Win.UI.TextBox();
-            this.label10 = new Sci.Win.UI.Label();
             this.txtM = new Sci.Production.Class.txtMdivision();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
@@ -67,8 +63,7 @@
             // 
             // lbFactory
             // 
-            this.lbFactory.Lines = 0;
-            this.lbFactory.Location = new System.Drawing.Point(13, 189);
+            this.lbFactory.Location = new System.Drawing.Point(13, 146);
             this.lbFactory.Name = "lbFactory";
             this.lbFactory.Size = new System.Drawing.Size(98, 23);
             this.lbFactory.TabIndex = 94;
@@ -76,8 +71,7 @@
             // 
             // lbArtworkType
             // 
-            this.lbArtworkType.Lines = 0;
-            this.lbArtworkType.Location = new System.Drawing.Point(13, 118);
+            this.lbArtworkType.Location = new System.Drawing.Point(13, 75);
             this.lbArtworkType.Name = "lbArtworkType";
             this.lbArtworkType.Size = new System.Drawing.Size(98, 23);
             this.lbArtworkType.TabIndex = 95;
@@ -85,7 +79,6 @@
             // 
             // lbFarmOutDate
             // 
-            this.lbFarmOutDate.Lines = 0;
             this.lbFarmOutDate.Location = new System.Drawing.Point(13, 12);
             this.lbFarmOutDate.Name = "lbFarmOutDate";
             this.lbFarmOutDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -94,14 +87,13 @@
             this.lbFarmOutDate.RectStyle.ExtBorderWidth = 1F;
             this.lbFarmOutDate.Size = new System.Drawing.Size(98, 23);
             this.lbFarmOutDate.TabIndex = 96;
-            this.lbFarmOutDate.Text = "Farm Out Date";
+            this.lbFarmOutDate.Text = "Issue Date";
             this.lbFarmOutDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbFarmOutDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbSupplier
             // 
-            this.lbSupplier.Lines = 0;
-            this.lbSupplier.Location = new System.Drawing.Point(13, 226);
+            this.lbSupplier.Location = new System.Drawing.Point(13, 183);
             this.lbSupplier.Name = "lbSupplier";
             this.lbSupplier.Size = new System.Drawing.Size(98, 23);
             this.lbSupplier.TabIndex = 98;
@@ -109,8 +101,7 @@
             // 
             // lbMasterSP
             // 
-            this.lbMasterSP.Lines = 0;
-            this.lbMasterSP.Location = new System.Drawing.Point(13, 262);
+            this.lbMasterSP.Location = new System.Drawing.Point(13, 219);
             this.lbMasterSP.Name = "lbMasterSP";
             this.lbMasterSP.Size = new System.Drawing.Size(98, 23);
             this.lbMasterSP.TabIndex = 99;
@@ -118,8 +109,7 @@
             // 
             // lbStyle
             // 
-            this.lbStyle.Lines = 0;
-            this.lbStyle.Location = new System.Drawing.Point(13, 298);
+            this.lbStyle.Location = new System.Drawing.Point(13, 255);
             this.lbStyle.Name = "lbStyle";
             this.lbStyle.Size = new System.Drawing.Size(98, 23);
             this.lbStyle.TabIndex = 100;
@@ -131,13 +121,27 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 188);
+            this.comboFactory.Location = new System.Drawing.Point(114, 145);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 6;
             // 
             // dateFarmOutDate
             // 
+            // 
+            // 
+            // 
+            this.dateFarmOutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFarmOutDate.DateBox1.Name = "";
+            this.dateFarmOutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFarmOutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFarmOutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFarmOutDate.DateBox2.Name = "";
+            this.dateFarmOutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFarmOutDate.DateBox2.TabIndex = 1;
             this.dateFarmOutDate.IsRequired = false;
             this.dateFarmOutDate.Location = new System.Drawing.Point(115, 12);
             this.dateFarmOutDate.Name = "dateFarmOutDate";
@@ -148,7 +152,7 @@
             // 
             this.txtMasterSPNo.BackColor = System.Drawing.Color.White;
             this.txtMasterSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMasterSPNo.Location = new System.Drawing.Point(115, 262);
+            this.txtMasterSPNo.Location = new System.Drawing.Point(115, 219);
             this.txtMasterSPNo.MaxLength = 13;
             this.txtMasterSPNo.Name = "txtMasterSPNo";
             this.txtMasterSPNo.Size = new System.Drawing.Size(130, 23);
@@ -156,8 +160,7 @@
             // 
             // lbM
             // 
-            this.lbM.Lines = 0;
-            this.lbM.Location = new System.Drawing.Point(13, 154);
+            this.lbM.Location = new System.Drawing.Point(13, 111);
             this.lbM.Name = "lbM";
             this.lbM.Size = new System.Drawing.Size(98, 23);
             this.lbM.TabIndex = 103;
@@ -165,62 +168,39 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(115, 84);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(115, 41);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 3;
             // 
             // lbSCIDelivery
             // 
-            this.lbSCIDelivery.Lines = 0;
-            this.lbSCIDelivery.Location = new System.Drawing.Point(13, 84);
+            this.lbSCIDelivery.Location = new System.Drawing.Point(13, 41);
             this.lbSCIDelivery.Name = "lbSCIDelivery";
             this.lbSCIDelivery.Size = new System.Drawing.Size(98, 23);
             this.lbSCIDelivery.TabIndex = 105;
             this.lbSCIDelivery.Text = "SCI Delivery";
             // 
-            // lbBundleNo
-            // 
-            this.lbBundleNo.Lines = 0;
-            this.lbBundleNo.Location = new System.Drawing.Point(13, 48);
-            this.lbBundleNo.Name = "lbBundleNo";
-            this.lbBundleNo.Size = new System.Drawing.Size(98, 23);
-            this.lbBundleNo.TabIndex = 106;
-            this.lbBundleNo.Text = "Bundle No";
-            // 
-            // txtBundleNoStart
-            // 
-            this.txtBundleNoStart.BackColor = System.Drawing.Color.White;
-            this.txtBundleNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleNoStart.Location = new System.Drawing.Point(115, 48);
-            this.txtBundleNoStart.Name = "txtBundleNoStart";
-            this.txtBundleNoStart.Size = new System.Drawing.Size(100, 23);
-            this.txtBundleNoStart.TabIndex = 1;
-            // 
-            // txtBundleNoEnd
-            // 
-            this.txtBundleNoEnd.BackColor = System.Drawing.Color.White;
-            this.txtBundleNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleNoEnd.Location = new System.Drawing.Point(238, 48);
-            this.txtBundleNoEnd.Name = "txtBundleNoEnd";
-            this.txtBundleNoEnd.Size = new System.Drawing.Size(100, 23);
-            this.txtBundleNoEnd.TabIndex = 2;
-            // 
-            // label10
-            // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(217, 47);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(18, 23);
-            this.label10.TabIndex = 109;
-            this.label10.Text = "～";
-            // 
             // txtM
             // 
             this.txtM.BackColor = System.Drawing.Color.White;
             this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtM.Location = new System.Drawing.Point(114, 154);
+            this.txtM.Location = new System.Drawing.Point(114, 111);
             this.txtM.Name = "txtM";
             this.txtM.Size = new System.Drawing.Size(66, 23);
             this.txtM.TabIndex = 5;
@@ -230,7 +210,7 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(115, 298);
+            this.txtstyle.Location = new System.Drawing.Point(115, 255);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 9;
@@ -239,7 +219,7 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 226);
+            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 183);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 7;
@@ -251,18 +231,14 @@
             this.txtartworktype_ftyArtworkType.cClassify = "";
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 118);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(114, 75);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
             // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(522, 367);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.txtBundleNoEnd);
-            this.Controls.Add(this.txtBundleNoStart);
-            this.Controls.Add(this.lbBundleNo);
+            this.ClientSize = new System.Drawing.Size(522, 310);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.lbSCIDelivery);
             this.Controls.Add(this.lbM);
@@ -283,7 +259,7 @@
             this.DefaultControlForEdit = "FarmOutDate";
             this.IsSupportToPrint = false;
             this.Name = "R06";
-            this.Text = "R06. Cutpart Farm Out Tracking List";
+            this.Text = "R06. Cutpart Farm Out  In Tracking List";
             this.Controls.SetChildIndex(this.lbFactory, 0);
             this.Controls.SetChildIndex(this.lbArtworkType, 0);
             this.Controls.SetChildIndex(this.lbFarmOutDate, 0);
@@ -303,10 +279,6 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.lbSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
-            this.Controls.SetChildIndex(this.lbBundleNo, 0);
-            this.Controls.SetChildIndex(this.txtBundleNoStart, 0);
-            this.Controls.SetChildIndex(this.txtBundleNoEnd, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -330,9 +302,5 @@
         private Win.UI.Label lbM;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Label lbSCIDelivery;
-        private Win.UI.Label lbBundleNo;
-        private Win.UI.TextBox txtBundleNoStart;
-        private Win.UI.TextBox txtBundleNoEnd;
-        private Win.UI.Label label10;
     }
 }
