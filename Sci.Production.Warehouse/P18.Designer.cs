@@ -45,6 +45,9 @@
             this.labelFromFactory = new Sci.Win.UI.Label();
             this.txtFromFactory = new Sci.Win.UI.TextBox();
             this.btnImport = new Sci.Win.UI.Button();
+            this.txtInvNo = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,6 +64,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtInvNo);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.txtFromFactory);
             this.masterpanel.Controls.Add(this.labelFromFactory);
@@ -95,6 +100,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelFromFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtInvNo, 0);
             // 
             // detailpanel
             // 
@@ -105,7 +112,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(837, 144);
-            this.gridicon.TabIndex = 8;
+            this.gridicon.TabIndex = 9;
             // 
             // refresh
             // 
@@ -212,8 +219,6 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(988, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
@@ -232,7 +237,7 @@
             this.btnFind.Location = new System.Drawing.Point(279, 144);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
-            this.btnFind.TabIndex = 6;
+            this.btnFind.TabIndex = 7;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
@@ -245,7 +250,7 @@
             this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
-            this.txtLocateForSP.TabIndex = 5;
+            this.txtLocateForSP.TabIndex = 6;
             // 
             // labelLocateForSP
             // 
@@ -261,7 +266,7 @@
             this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
-            this.btnClearQtyIsEmpty.TabIndex = 7;
+            this.btnClearQtyIsEmpty.TabIndex = 8;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
             this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
@@ -293,7 +298,7 @@
             this.btnAccumulatedQty.Location = new System.Drawing.Point(793, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
-            this.btnAccumulatedQty.TabIndex = 4;
+            this.btnAccumulatedQty.TabIndex = 5;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
@@ -326,11 +331,41 @@
             this.btnImport.Location = new System.Drawing.Point(845, 41);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
-            this.btnImport.TabIndex = 3;
+            this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Visible = false;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
+            // txtInvNo
+            // 
+            this.txtInvNo.BackColor = System.Drawing.Color.White;
+            this.txtInvNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
+            this.txtInvNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInvNo.Location = new System.Drawing.Point(383, 45);
+            this.txtInvNo.MaxLength = 25;
+            this.txtInvNo.Name = "txtInvNo";
+            this.txtInvNo.Size = new System.Drawing.Size(130, 23);
+            this.txtInvNo.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(272, 45);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(108, 23);
+            this.label1.TabIndex = 69;
+            this.label1.Text = "Invoice#";
+            // 
+            // shapeContainer2
+            // 
+            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape1});
+            this.shapeContainer2.Size = new System.Drawing.Size(988, 184);
+            this.shapeContainer2.TabIndex = 54;
+            this.shapeContainer2.TabStop = false;
             // 
             // P18
             // 
@@ -391,5 +426,8 @@
         private Win.UI.Label labelFromFactory;
         private Win.UI.TextBox txtFromFactory;
         private Win.UI.Button btnImport;
+        private Win.UI.TextBox txtInvNo;
+        private Win.UI.Label label1;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
     }
 }
