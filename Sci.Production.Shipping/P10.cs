@@ -619,7 +619,7 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
                 }
             }
 
-            if (!MyUtility.Check.Empty(msgReceDate) || msgReceDate.Length > 0)
+            if (msgReceDate.Length > 0)
             {
                 MyUtility.Msg.WarningBox("The CTNs were not received by CLog yet!! Cannot confirm!!\r\n" + msgReceDate.ToString());
                 return;
