@@ -228,16 +228,18 @@ order by RowNo",
 with tmpData as (
       select o.ID
              , oq.Article
-             , occ.ColorID
+             , Order_ColorCombo.ColorID
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
-                                                      and occ.Article = oq.Article
-                                                      and occ.Patternpanel = 'FA'
+      outer apply (
+			select top 1 ColorID
+			from Order_ColorCombo occ WITH (NOLOCK)
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+		) Order_ColorCombo	
       where o.POID = '{0}'
 ), 
 SubTotal as (
@@ -277,16 +279,18 @@ order by rnk",
 with tmpData as (
       select o.ID
              , oq.Article
-             , occ.ColorID
+             , Order_ColorCombo.ColorID
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
-                                                      and occ.Article = oq.Article
-                                                      and occ.Patternpanel = 'FA'
+      outer apply (
+			select top 1 ColorID
+			from Order_ColorCombo occ WITH (NOLOCK)
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+		) Order_ColorCombo	
       where o.POID = '{0}' 
 ),
 SubTotal as (
@@ -682,7 +686,7 @@ SET @sql = N'
 tmpData as (
       select o.ID
              , oq.Article
-             , occ.ColorID
+             , Order_ColorCombo.ColorID
              , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -691,9 +695,11 @@ tmpData as (
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
-      left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
-                                                      and occ.Article = oq.Article
-                                                      and occ.Patternpanel = ''FA''    
+      outer apply (
+			select top 1 ColorID
+			from Order_ColorCombo occ WITH (NOLOCK)
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+		) Order_ColorCombo	
       where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
@@ -951,7 +957,7 @@ SET @sql = N'
 tmpData as (
     select o.ID
            , oq.Article
-           , occ.ColorID
+           , Order_ColorCombo.ColorID
            , iif(o.junk = 1 , '''' ,oq.SizeCode) as SizeCode
            , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty 
            , DENSE_RANK() OVER (ORDER BY o.ID) as rnk
@@ -960,9 +966,11 @@ tmpData as (
     from Orders o WITH (NOLOCK) 
     inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
     inner join SortBy sb on oq.Article = sb.Article
-    left join Order_ColorCombo occ With (NoLock) on occ.ID = o.Poid
-                                                    and occ.Article = oq.Article
-                                                    and occ.Patternpanel = ''FA''   
+    outer apply (
+			select top 1 ColorID
+			from Order_ColorCombo occ WITH (NOLOCK)
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+		) Order_ColorCombo	
     where o.POID = '''+@ID+'''  
 ),
 SubTotal as (
