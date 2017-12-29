@@ -37,7 +37,13 @@ namespace Sci.Production.Subcon
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            
+            // Currency =USD, Exchange 只能為1
+            if (dr["currencyid"].ToString().ToUpper() == "USD" && numExchange.Value != 1)
+            {
+                MyUtility.Msg.WarningBox("If the currency is USD, then exchange must be 1 !!");
+                return ;
+            }
+
             if (!MyUtility.Tool.CursorUpdateTable(dtData, "localdebit", null))
             {
                 MyUtility.Msg.WarningBox("Save failed!");
