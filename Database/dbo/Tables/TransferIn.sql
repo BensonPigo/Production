@@ -10,6 +10,7 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_TransferIn_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
+    [InvNo] VARCHAR(25) NULL DEFAULT (''), 
     CONSTRAINT [PK_TransferIn] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
