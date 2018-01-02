@@ -43,60 +43,22 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlCmd = string.Format(
-                @"
-select p.ID
-, OrderID = STUFF((	
-	select CONCAT(',',cast(a.OrderID as nvarchar)) 
-	from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a 
-	for xml path('')),1,1,''
-)
-, BuyerDelivery = (
-	select oq.BuyerDelivery 
-	from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a
-	, Order_QtyShip oq WITH (NOLOCK) 
-	where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq
-)
-, p.Status
-, p.CTNQty
-, p.CBM
-, ClogCTNQty = (
-	select sum(CTNQty) 
-	from PackingList_Detail pd WITH (NOLOCK) 
-	where pd.ID = p.ID and pd.ReceiveDate is not null
-)
-, p.InspDate
-, p.InspStatus
-, p.PulloutDate
-, p.InvNo
-, p.MDivisionID
+                @"select p.ID,
+STUFF((select CONCAT(',',cast(a.OrderID as nvarchar)) from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),1,1,'') as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
+p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
 from PackingList p WITH (NOLOCK) 
-where {0} 
-order by p.ID", masterID);
+where {0} order by p.ID", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.plData);
 
             masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             this.DetailSelectCommand = string.Format(
-                @"
-select g.ID
-, g.BrandID
-, g.ShipModeID
-, Forwarder = (g.Forwarder+' - '+(select ls.Abb from LocalSupp ls WITH (NOLOCK) where ls.ID = g.Forwarder)) 
-, g.CYCFS
-, g.SONo
-, g.CutOffDate
-, g.ForwarderWhse_DetailUKey
-, WhseNo = isnull(fd.WhseNo,'')
-, Status = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed'))
-, g.TotalCTNQty
-, g.TotalCBM
-, ClogCTNQty = (
-	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
-	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
-)
+                @"select g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+(select ls.Abb from LocalSupp ls WITH (NOLOCK) where ls.ID = g.Forwarder)) as Forwarder,g.CYCFS,g.SONo,g.CutOffDate,g.ForwarderWhse_DetailUKey, isnull(fd.WhseNo,'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,g.TotalCTNQty,g.TotalCBM,
+(select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
 from GMTBooking g WITH (NOLOCK) 
 left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
-where {0} 
-order by g.ID", masterID);
+where {0} order by g.ID", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -598,34 +560,6 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                     return;
                 }
             }
-
-            #region 檢查PackingList_Detail.ReceiveDate欄位不可為空白
-            StringBuilder msgReceDate = new StringBuilder();
-            DataTable dtRec;
-            DBProxy.Current.Select(
-                null,
-                string.Format(
-                    @"
-select distinct p1.id 
-from PackingList p1
-inner join PackingList_Detail p2 on p1.ID=p2.ID
-where ShipPlanID='{0}'
-and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
-            if (!MyUtility.Check.Empty(dtRec) || dtRec.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dtRec.Rows)
-                {
-                    msgReceDate.Append(string.Format("Packing No:{0}\n\r", MyUtility.Convert.GetString(dr["ID"])));
-                }
-            }
-
-            if (msgReceDate.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("The CTNs were not received by CLog yet!! Cannot confirm!!\r\n" + msgReceDate.ToString());
-                return;
-            }
-
-            #endregion
 
             // Garment Booking還沒Confirm就不可以做Confirm
             sqlCmd = string.Format("select ID from GMTBooking WITH (NOLOCK) where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
