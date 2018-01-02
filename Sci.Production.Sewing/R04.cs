@@ -62,7 +62,7 @@ namespace Sci.Production.Sewing
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-         DBProxy.Current.DefaultTimeout = 7200;  // timeout時間改為2H
+         DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"--根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
