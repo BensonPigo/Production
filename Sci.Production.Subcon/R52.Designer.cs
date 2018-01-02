@@ -28,50 +28,61 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // print
-            // 
-            this.print.Location = new System.Drawing.Point(366, 18);
-            this.print.Visible = false;
-            // 
-            // toexcel
-            // 
-            this.toexcel.Location = new System.Drawing.Point(366, 18);
-            // 
-            // close
-            // 
-            this.close.Location = new System.Drawing.Point(366, 54);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 26F, System.Drawing.FontStyle.Bold);
-            this.label1.ForeColor = System.Drawing.Color.Blue;
-            this.label1.Location = new System.Drawing.Point(12, 36);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(349, 39);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Generate Style Data";
-            // 
-            // R52
-            // 
-            this.ClientSize = new System.Drawing.Size(458, 125);
-            this.Controls.Add(this.label1);
-            this.Name = "R52";
-            this.Text = "R52.Transfer Subcon Style Data To Printing System";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+         this.txtseason = new Sci.Production.Class.txtseason();
+         this.labelSeason = new Sci.Win.UI.Label();
+         this.SuspendLayout();
+         // 
+         // print
+         // 
+         this.print.Location = new System.Drawing.Point(319, 18);
+         this.print.Visible = false;
+         // 
+         // toexcel
+         // 
+         this.toexcel.Location = new System.Drawing.Point(319, 18);
+         // 
+         // close
+         // 
+         this.close.Location = new System.Drawing.Point(319, 54);
+         // 
+         // txtseason
+         // 
+         this.txtseason.BackColor = System.Drawing.Color.White;
+         this.txtseason.BrandObjectName = null;
+         this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+         this.txtseason.Location = new System.Drawing.Point(98, 25);
+         this.txtseason.Name = "txtseason";
+         this.txtseason.Size = new System.Drawing.Size(80, 23);
+         this.txtseason.TabIndex = 98;
+         // 
+         // labelSeason
+         // 
+         this.labelSeason.Location = new System.Drawing.Point(19, 25);
+         this.labelSeason.Name = "labelSeason";
+         this.labelSeason.Size = new System.Drawing.Size(67, 23);
+         this.labelSeason.TabIndex = 99;
+         this.labelSeason.Text = "Season";
+         // 
+         // R52
+         // 
+         this.ClientSize = new System.Drawing.Size(411, 137);
+         this.Controls.Add(this.txtseason);
+         this.Controls.Add(this.labelSeason);
+         this.Name = "R52";
+         this.Text = "R52.Transfer Subcon Style Data To Printing System";
+         this.Controls.SetChildIndex(this.print, 0);
+         this.Controls.SetChildIndex(this.toexcel, 0);
+         this.Controls.SetChildIndex(this.close, 0);
+         this.Controls.SetChildIndex(this.labelSeason, 0);
+         this.Controls.SetChildIndex(this.txtseason, 0);
+         this.ResumeLayout(false);
+         this.PerformLayout();
 
         }
 
-        #endregion
+      #endregion
 
-        private System.Windows.Forms.Label label1;
-    }
+      private Class.txtseason txtseason;
+      private Win.UI.Label labelSeason;
+   }
 }
