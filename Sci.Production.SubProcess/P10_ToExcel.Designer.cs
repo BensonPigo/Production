@@ -47,17 +47,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(393, 12);
+            this.print.Location = new System.Drawing.Point(394, 12);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(393, 48);
+            this.toexcel.Location = new System.Drawing.Point(394, 48);
             this.toexcel.TabIndex = 0;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(393, 84);
+            this.close.Location = new System.Drawing.Point(394, 84);
             this.close.TabIndex = 1;
             // 
             // radioPanel1
@@ -69,7 +69,7 @@
             this.radioPanel1.Controls.Add(this.radioBtnGroupFillRate);
             this.radioPanel1.Location = new System.Drawing.Point(12, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(375, 277);
+            this.radioPanel1.Size = new System.Drawing.Size(375, 209);
             this.radioPanel1.TabIndex = 94;
             // 
             // labelReport
@@ -162,14 +162,14 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(286, 277);
+            this.grid.Size = new System.Drawing.Size(209, 209);
             this.grid.TabIndex = 2;
             // 
             // P10_ToExcel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(773, 314);
+            this.ClientSize = new System.Drawing.Size(701, 249);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.radioPanel1);
             this.Name = "P10_ToExcel";

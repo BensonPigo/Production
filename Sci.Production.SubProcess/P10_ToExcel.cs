@@ -145,6 +145,8 @@ order by num";
             {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+
+            this.grid.Columns["CPU"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 
@@ -163,6 +165,8 @@ order by num";
             {
                 this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+
+            this.grid.Columns["Data"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 
@@ -290,6 +294,9 @@ from (
                             }
                         }
 
+                        mySheet.Rows.AutoFit();
+                        mySheet.Columns.AutoFit();
+
                         // 在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
                         myBook.Charts.Add(Type.Missing, Type.Missing, 1, Type.Missing);
 
@@ -400,11 +407,14 @@ from (
                     int intEndWeek = Convert.ToInt32(dtRightGroupByWeek.Rows[0][dtRightGroupByWeek.Columns.Count - 1]);
 
                     #region set Week, Eff, ManPower, DailyWorkingHour
+                    double doubleEff = Convert.ToDouble(((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[0]["Data"]);
+                    doubleEff = doubleEff.Empty() ? 0 : doubleEff / 100.0;
+
                     for (int i = intStartWeek; i <= intEndWeek; i++)
                     {
                         DataRow newRow = dtToExcel.NewRow();
                         newRow["Week"] = i;
-                        newRow["Eff"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[0]["Data"];
+                        newRow["Eff"] = doubleEff;
                         newRow["ManPower"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[1]["Data"];
                         newRow["DailyWorkingHour"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[2]["Data"];
                         dtToExcel.Rows.Add(newRow);
@@ -468,7 +478,6 @@ from (
 
                     var varStdTMS = MyUtility.GetValue.Lookup("select StdTMS from System");
                     int intStdTMS = 0;
-
                     intStdTMS = varStdTMS.Empty() ? 0 : Convert.ToInt32(varStdTMS);
 
                     for (int i = 0; i < dtToExcel.Rows.Count; i++)
@@ -481,7 +490,7 @@ from (
                         mySheet.Cells[i + 2][4] = dtToExcel.Rows[i]["Eff"];
                         mySheet.Cells[i + 2][5] = dtToExcel.Rows[i]["ManPower"];
                         mySheet.Cells[i + 2][6] = dtToExcel.Rows[i]["DailyWorkingHour"];
-                        mySheet.Cells[i + 2][7] = $"=ROUND(({strColumnName}{3} * {strColumnName}{4} * {strColumnName}{5} * {strColumnName}{6} / 3600 / {intStdTMS}), 0)";
+                        mySheet.Cells[i + 2][7] = $"=ROUND(({strColumnName}{3} * {strColumnName}{4} * {strColumnName}{5} * {strColumnName}{6} * 3600 / {intStdTMS}), 0)";
                         mySheet.Cells[i + 2][8] = dtToExcel.Rows[i]["WorkLoad"];
                         mySheet.Cells[i + 2][9] = $"=if({strColumnName}{8} = 0, 0, {strColumnName}{7} / {strColumnName}{8})";
 
@@ -491,6 +500,9 @@ from (
                         mySheet.Cells[i + 2][1].Interior.ColorIndex = 45;
                         mySheet.Cells[i + 2][9].Interior.ColorIndex = 36;
                     }
+
+                    mySheet.Rows.AutoFit();
+                    mySheet.Columns.AutoFit();
 
                     mySheet.Cells[1][1].Interior.ColorIndex = 45;
                     mySheet.Cells[1][9].Interior.ColorIndex = 36;

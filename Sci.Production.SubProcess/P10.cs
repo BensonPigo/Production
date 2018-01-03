@@ -58,7 +58,12 @@ namespace Sci.Production.SubProcess
             {
                 DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
                 string newGroup = e.FormattedValue.ToString();
-                this.PPAGroupValidating(dr, newGroup);
+                string oldGroup = dr["Group"].ToString();
+
+                if (newGroup.EqualString(oldGroup) == false)
+                {
+                    this.PPAGroupValidating(dr, newGroup);
+                }
             };
             #endregion
 
@@ -159,20 +164,29 @@ namespace Sci.Production.SubProcess
                 .Numeric("OrderQty", header: $"Order{Environment.NewLine}Qty", iseditingreadonly: true)
                 .Numeric("OutputQty", header: $"Output{Environment.NewLine}Qty", iseditingreadonly: true)
                 .Numeric("BalanceQty", header: $"Balance{Environment.NewLine}Qty", iseditingreadonly: true)
-                .Text("SewInLine", header: $"Sewing{Environment.NewLine}Inline", iseditingreadonly: true)
+                .Text("ShowSewInLine", header: $"Sewing{Environment.NewLine}Inline", iseditingreadonly: true)
                 .Numeric("TargetQty", header: $"Target{Environment.NewLine}Qty", settings: setTargetQty)
                 .EditText("Feature", header: $"PPA{Environment.NewLine}Feature", iseditingreadonly: true, settings: setPPAFeature)
                 .Numeric("SMV", header: $"PPA{Environment.NewLine}SMV", integer_places: 3, decimal_places: 4, maximum: (decimal)999.9999, settings: setSMV)
                 .Numeric("EarlyInline", header: $"Early{Environment.NewLine}Inline", settings: setEarlyInline)
                 .Text("SubProcessLearnCurveID", header: $"Learn{Environment.NewLine}Curve", settings: setLearnCurve)
-                .Date("Inline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true)
-                .Date("Offline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
+                .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true)
+                .Text("ShowOffline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
                 .Numeric("Manpower", header: $"PPA{Environment.NewLine}Manpower", iseditingreadonly: true);
 
             for (int i = 0; i < this.gridLeft.Columns.Count; i++)
             {
                 this.gridLeft.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridLeft.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
+
+            this.gridLeft.Columns["Group"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["SubProcessLineID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["TargetQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["SMV"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["SubProcessLearnCurveID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["Feature"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["TargetQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -268,7 +282,7 @@ from (
 	select Sel = 0
 		   , [Group] = ''
 		   , SubProcessLineID = ''
-		   , SewingLine = o.SewInLine
+		   , SewingLine = o.SewLine
 		   , StyleID = o.StyleID
 		   , OrderID = o.ID
 		   , OrderQty = o.Qty
@@ -306,7 +320,7 @@ from (
 	select Sel = 0
 		   , [Group] = ps.[Group]
 		   , SubProcessLineID = ps.SubProcessLineID
-		   , SewingLine = o.SewInLine
+		   , SewingLine = o.SewLine
 		   , StyleID = o.StyleID
 		   , OrderID = o.ID
 		   , OrderQty = o.Qty
@@ -332,6 +346,9 @@ from (
 ) tmp
 
 select *
+	   , ShowSewInLine = Right (CONVERT(varchar, SewInLine, 111), 5)
+	   , ShowInline = Right (CONVERT(varchar, Inline, 111), 5)
+	   , ShowOffline = Right (CONVERT(varchar, Offline, 111), 5)
 from #InfoTable
 Order by Ukey
 
@@ -341,27 +358,13 @@ begin
 	Declare @MinDate Date;
 	Declare @MaxDate Date;
 
-	select @MinDate = dbo.[CalculateWorkDate](Min ([Inline]), 0 - @EntendDetailDay, @FactoryID)
+	select @MaxDate = dbo.[CalculateWorkDate](Max ([SewInLine]), @EntendDetailDay, @FactoryID)
+           , @MinDate = dbo.[CalculateWorkDate](Min ([SewInLine]), 0 - @EntendDetailDay, @FactoryID)
 	from (
-		select Inline = SewInLine
-		from #InfoTable
-
-		union
-		select Inline
+		select SewInLine
 		from #InfoTable
 	) tmp
-	where Inline is not null
-
-	select @MaxDate = dbo.[CalculateWorkDate](Max ([Offline]), @EntendDetailDay, @FactoryID)
-	from (
-		select [Offline] = SewInLine
-		from #InfoTable
-
-		union
-		select [Offline]
-		from #InfoTable
-	) tmp
-	where [Offline] is not null
+	where [SewInLine] is not null
 
 	-- 展開日期區間 【必須排除假日】
 	create table #WorkDate (
@@ -463,7 +466,13 @@ begin
 
 	select *
 	from #OutputDateTable
-	order by OrderID, ID, Ukey'
+	where OrderID not in (''01'', ''02'')
+	order by OrderID, ID, Ukey
+
+	select *
+	from #OutputDateTable
+	where OrderID in (''01'', ''02'')
+	'
 
 	EXECUTE sp_executesql @DateSQLCommand
 
@@ -484,12 +493,13 @@ end
             #endregion
 
             /*
-             * dtGridData [0 - 3]
+             * dtGridData [0 - 4]
              * 0. Left Grid
              * 1. Date Range
              * 2. Date Range Join String
              * 3. Right Grid
-             * 4. Remark Data
+             * 4. Top Grid
+             * 5. Remark Data
              */
             DataTable[] dtGridData;
             DualResult result = DBProxy.Current.Select(null, strCmd, listSQLParameter, out dtGridData);
@@ -500,6 +510,7 @@ end
             }
             else if (dtGridData.Length == 1)
             {
+                this.listControlBindingSourceTop.DataSource = null;
                 this.listControlBindingSourceLeft.DataSource = null;
                 this.listControlBindingSourceDateRange.DataSource = null;
                 this.listControlBindingSourceRight.DataSource = null;
@@ -507,6 +518,7 @@ end
                 this.objStartDate = null;
                 this.objEndDate = null;
                 this.DrUpdateMutipleColumn = null;
+                this.gridTop.Columns.Clear();
                 this.gridRight.Columns.Clear();
                 MyUtility.Msg.InfoBox("Data not found.");
             }
@@ -527,11 +539,13 @@ end
 
                 // 動態設定 OutputDate Grid
                 #region Set Right Grid
+                dtGridData[3].PrimaryKey = new DataColumn[] { dtGridData[3].Columns["OrderID"] };
+
                 this.gridRight.Columns.Clear();
-                var gridGenerator = this.Helper.Controls.Grid.Generator(this.gridRight);
+                var gridRightGenerator = this.Helper.Controls.Grid.Generator(this.gridRight);
                 foreach (DataRow dr in dtGridData[1].Rows)
                 {
-                    gridGenerator.Numeric(dr["OutputDate"].ToString(), header: Convert.ToDateTime(dr["OutputDate"]).ToString("MM/dd"), iseditingreadonly: true);
+                    gridRightGenerator.Numeric(dr["OutputDate"].ToString(), header: Convert.ToDateTime(dr["OutputDate"]).ToString("MM/dd") + Environment.NewLine + dr["WeekNum"].ToString(), iseditingreadonly: true);
                 }
 
                 this.objStartDate = dtGridData[1].Rows[0]["OutputDate"];
@@ -539,7 +553,7 @@ end
 
                 for (int i = 0; i < this.gridRight.Columns.Count; i++)
                 {
-                    this.gridRight.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    this.gridRight.Columns[i].Width = 60;
                     this.gridRight.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 }
 
@@ -547,18 +561,35 @@ end
                 this.listControlBindingSourceRight.DataSource = dtGridData[3];
                 this.gridRight.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
                 this.gridRight.ClearSelection();
-                this.gridRight.Rows[1].HeaderCell.Value = "Daily CPU";
-                this.gridRight.Rows[1].Frozen = true;
 
-                if (this.gridRight.Rows.Count > 2)
-                {
-                    this.gridRight.Rows[2].Selected = true;
-                }
+                this.gridRight.Rows[0].Selected = true;
                 #endregion
 
-                #region set Remark DataSource
-                dtGridData[4].PrimaryKey = new DataColumn[] { dtGridData[4].Columns["Ukey"], dtGridData[4].Columns["OutputDate"] };
-                this.listControlBindingSourceRemark.DataSource = dtGridData[4];
+                // 動態設定 Daily CPU Grid
+                #region Set Top Grid
+                dtGridData[4].PrimaryKey = new DataColumn[] { dtGridData[4].Columns["OrderID"] };
+
+                this.gridTop.Columns.Clear();
+                var gridTopGenerator = this.Helper.Controls.Grid.Generator(this.gridTop);
+                foreach (DataRow dr in dtGridData[1].Rows)
+                {
+                    gridTopGenerator.Numeric(dr["OutputDate"].ToString(), header: Convert.ToDateTime(dr["OutputDate"]).ToString("MM/dd"), iseditingreadonly: true);
+                }
+
+                for (int i = 0; i < this.gridTop.Columns.Count; i++)
+                {
+                    this.gridTop.Columns[i].Width = 60;
+                }
+
+                this.listControlBindingSourceTop.DataSource = dtGridData[4];
+
+                this.gridTop.CurrentCell = null;
+                this.gridTop.Rows[0].Visible = false;
+                #endregion
+
+                #region Set Remark DataSource
+                dtGridData[5].PrimaryKey = new DataColumn[] { dtGridData[5].Columns["Ukey"], dtGridData[5].Columns["OutputDate"] };
+                this.listControlBindingSourceRemark.DataSource = dtGridData[5];
 
                 #region Set Remark Color
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
@@ -568,7 +599,7 @@ end
                 #endregion
                 #endregion
 
-                #region Comput Daily CPU
+                #region Compute Daily CPU
                 for (int i = this.intRightColumnHeaderCount; i < dtGridData[3].Columns.Count; i++)
                 {
                     this.ComputDailyCPU(i);
@@ -581,48 +612,46 @@ end
 
         private void GridRight_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex > 1)
+            DataRow drOutputInfo = this.gridRight.GetDataRow<DataRow>(e.RowIndex);
+
+            var orderID = drOutputInfo["OrderID"];
+            var outputDate = this.gridRight.Columns[e.ColumnIndex].Name;
+            var id = drOutputInfo["ID"];
+            var ukey = drOutputInfo["Ukey"];
+
+            DataRow[] drRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).Select($"Ukey = '{ukey}' and OutputDate = '{outputDate}'");
+
+            if (drRemark.Length == 0)
             {
-                DataRow drOutputInfo = this.gridRight.GetDataRow<DataRow>(e.RowIndex);
+                string strRemark = this.EditRemark(string.Empty);
 
-                var orderID = drOutputInfo["OrderID"];
-                var outputDate = this.gridRight.Columns[e.ColumnIndex].Name;
-                var id = drOutputInfo["ID"];
-                var ukey = drOutputInfo["Ukey"];
-
-                DataRow[] drRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).Select($"Ukey = '{ukey}' and OutputDate = '{outputDate}'");
-
-                if (drRemark.Length == 0)
+                if (strRemark.Empty() == false)
                 {
-                    string strRemark = this.EditRemark(string.Empty);
+                    DataRow newRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).NewRow();
+                    newRemark["OrderID"] = orderID;
+                    newRemark["OutputDate"] = outputDate;
+                    newRemark["ID"] = id;
+                    newRemark["Ukey"] = ukey;
+                    newRemark["Remark"] = strRemark;
+                    newRemark.EndEdit();
 
-                    if (strRemark.Empty() == false)
-                    {
-                        DataRow newRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).NewRow();
-                        newRemark["OrderID"] = orderID;
-                        newRemark["OutputDate"] = outputDate;
-                        newRemark["ID"] = id;
-                        newRemark["Ukey"] = ukey;
-                        newRemark["Remark"] = strRemark;
-                        newRemark.EndEdit();
+                    ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows.Add(newRemark);
+                    this.RemarkColorChange(newRemark);
+                }
+            }
+            else
+            {
+                string strRemark = this.EditRemark(drRemark[0]["Remark"].ToString());
 
-                        ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows.Add(newRemark);
-                    }
+                if (strRemark.Empty() == false)
+                {
+                    drRemark[0]["Remark"] = strRemark;
+                    this.RemarkColorChange(drRemark[0]);
                 }
                 else
                 {
-                    string strRemark = this.EditRemark(drRemark[0]["Remark"].ToString());
-
-                    if (strRemark.Empty() == false)
-                    {
-                        drRemark[0]["Remark"] = strRemark;
-                        this.RemarkColorChange(drRemark[0]);
-                    }
-                    else
-                    {
-                        this.RemarkColorChange(drRemark[0], true);
-                        drRemark[0].Delete();
-                    }
+                    this.RemarkColorChange(drRemark[0], true);
+                    drRemark[0].Delete();
                 }
             }
         }
@@ -644,217 +673,214 @@ end
         private void RemarkColorChange(DataRow dr, bool isDelete = false)
         {
             Color newColor = isDelete ? Color.White : Color.Yellow;
-            int intRowIndex = Convert.ToInt32(dr["Ukey"]) + 1;
+            int intRowIndex = Convert.ToInt32(dr["Ukey"]) - 1;
 
             this.gridRight.Rows[intRowIndex].Cells[dr["OutputDate"].ToString()].Style.BackColor = newColor;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            this.ShowWaitMessage("Data Processing ...");
-            if (((DataTable)this.listControlBindingSourceLeft.DataSource).AsEnumerable().Any(row => row["sel"].EqualDecimal(1)) == true)
+            if ((DataTable)this.listControlBindingSourceLeft.DataSource == null)
             {
-                DataTable dtTitle = ((DataTable)this.listControlBindingSourceLeft.DataSource).AsEnumerable().Where(row => row["sel"].EqualDecimal(1)).CopyToDataTable();
-                DataTable dtOutputDateQtyRemark;
+                return;
+            }
 
-                int intProcessCount = dtTitle.Rows.Count;
-                int intProcessIndex = 1;
+            this.ShowWaitMessage("Data Processing ...");
+            DataTable dtTitle = ((DataTable)this.listControlBindingSourceLeft.DataSource).AsEnumerable().CopyToDataTable();
+            DataTable dtOutputDateQtyRemark;
 
-                #region 合併 OutputDate Qty 與 Remark
-                DataTable dtOutputDateRemark;
-                dtOutputDateRemark = (DataTable)this.listControlBindingSourceRemark.DataSource;
+            int intProcessCount = dtTitle.Rows.Count;
+            int intProcessIndex = 1;
 
-                string strUnpivotSQL = $@"
+            #region 合併 OutputDate Qty 與 Remark
+            DataTable dtOutputDateRemark;
+            dtOutputDateRemark = (DataTable)this.listControlBindingSourceRemark.DataSource;
+
+            string strUnpivotSQL = $@"
 select OrderID
-       , ID
-       , Ukey
-       , OutputDate
-       , Qty
+    , ID
+    , Ukey
+    , OutputDate
+    , Qty
 from (
-	select *
-	from #tmp
-	where orderID not in ('01', '02')
+    select *
+    from #tmp
 ) a
 UNPIVOT (
-	Qty for OutputDate in ({((DataTable)this.listControlBindingSourceDateRange.DataSource).Rows[0][0]})
+    Qty for OutputDate in ({((DataTable)this.listControlBindingSourceDateRange.DataSource).Rows[0][0]})
 ) b
 where Qty is not null
       and Qty > 0";
 
-                DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSourceRight.DataSource, null, strUnpivotSQL, out dtOutputDateQtyRemark);
-                if (result == false)
-                {
-                    MyUtility.Msg.WarningBox(result.ToString());
-                    this.HideWaitMessage();
-                    return;
-                }
-                else
-                {
-                    dtOutputDateQtyRemark.PrimaryKey = new DataColumn[] { dtOutputDateQtyRemark.Columns["Ukey"], dtOutputDateQtyRemark.Columns["OutputDate"] };
-                    dtOutputDateQtyRemark.Merge(dtOutputDateRemark);
-                }
-                #endregion
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSourceRight.DataSource, null, strUnpivotSQL, out dtOutputDateQtyRemark);
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                this.HideWaitMessage();
+                return;
+            }
+            else
+            {
+                dtOutputDateQtyRemark.PrimaryKey = new DataColumn[] { dtOutputDateQtyRemark.Columns["Ukey"], dtOutputDateQtyRemark.Columns["OutputDate"] };
+                dtOutputDateQtyRemark.Merge(dtOutputDateRemark);
+            }
+            #endregion
 
-                TransactionScope transactionscope = new TransactionScope();
+            TransactionScope transactionscope = new TransactionScope();
 
-                using (transactionscope)
+            using (transactionscope)
+            {
+                try
                 {
-                    try
+                    foreach (DataRow drPPASchedule in dtTitle.Rows)
                     {
-                        foreach (DataRow drPPASchedule in dtTitle.Rows)
+                        this.ShowWaitMessage($"Data Processing ({intProcessIndex} / {intProcessCount}) ...", 500);
+
+                        List<SqlParameter> listSQLParameter = new List<SqlParameter>();
+                        listSQLParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserName));
+                        listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
+                        listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
+                        listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));
+
+                        DataTable dtPPASchedule_Detail = dtOutputDateQtyRemark.Clone();
+
+                        if (dtOutputDateQtyRemark.AsEnumerable().Any(row => row.RowState != DataRowState.Deleted
+                                                                            && row["Ukey"].EqualDecimal(drPPASchedule["Ukey"])))
                         {
-                            this.ShowWaitMessage($"Data Processing ({intProcessIndex} / {intProcessCount}) ...", 500);
+                            dtPPASchedule_Detail = dtOutputDateQtyRemark.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                                                        && row["Ukey"].EqualDecimal(drPPASchedule["Ukey"])).CopyToDataTable();
+                        }
 
-                            List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                            listSQLParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserName));
-                            listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
-                            listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
-                            listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));
-
-                            DataTable dtPPASchedule_Detail = dtOutputDateQtyRemark.Clone();
-
-                            if (dtOutputDateQtyRemark.AsEnumerable().Any(row => row.RowState != DataRowState.Deleted
-                                                                                && row["Ukey"].EqualDecimal(drPPASchedule["Ukey"])))
-                            {
-                                dtPPASchedule_Detail = dtOutputDateQtyRemark.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
-                                                                                                         && row["Ukey"].EqualDecimal(drPPASchedule["Ukey"])).CopyToDataTable();
-                            }
-
-                            DataTable dtPPAID;
-                            object objPPAID = null;
-                            #region PPASchedule
-                            string strUpdatePPASchedule = @"
+                        DataTable dtPPAID;
+                        object objPPAID = null;
+                        #region PPASchedule
+                        string strUpdatePPASchedule = @"
 Merge PPASchedule t
 Using (
-	select *
-	from #tmp
+select *
+from #tmp
 ) s on t.ID = s.ID
 when matched then 
-	update set
-		t.OrderID = s.OrderID
-		, t.[Group] = s.[Group]
-		, t.SubProcessLineID = s.SubProcessLineID
-		, t.OutputQty = s.OutputQty
-		, t.TargetQty = s.TargetQty
-		, t.Feature = s.Feature
-		, t.SMV = s.SMV
-		, t.EarlyInline = s.EarlyInline
-		, t.SubProcessLearnCurveID = s.SubProcessLearnCurveID
-		, t.Inline = s.Inline
-		, t.Offline = s.Offline
-		, t.EditDate = GETDATE()
-		, t.EditName = @UserName
+update set
+	t.OrderID = s.OrderID
+	, t.[Group] = s.[Group]
+	, t.SubProcessLineID = s.SubProcessLineID
+	, t.OutputQty = s.OutputQty
+	, t.TargetQty = s.TargetQty
+	, t.Feature = s.Feature
+	, t.SMV = s.SMV
+	, t.EarlyInline = s.EarlyInline
+	, t.SubProcessLearnCurveID = s.SubProcessLearnCurveID
+	, t.Inline = s.Inline
+	, t.Offline = s.Offline
+	, t.EditDate = GETDATE()
+	, t.EditName = @UserName
 when not matched by target then
-	insert (
-		OrderID		, [Group]	, SubProcessLineID		, OutputQty					, TargetQty
-		, Feature	, SMV		, EarlyInline			, SubProcessLearnCurveID	, Inline
-		, Offline	, AddDate	, AddName)
-	values (
-		s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
-		, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
-		, s.Offline	, GETDATE()	, @UserName);
+insert (
+	OrderID		, [Group]	, SubProcessLineID		, OutputQty					, TargetQty
+	, Feature	, SMV		, EarlyInline			, SubProcessLearnCurveID	, Inline
+	, Offline	, AddDate	, AddName)
+values (
+	s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
+	, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
+	, s.Offline	, GETDATE()	, @UserName);
 select @@IDENTITY";
-                            List<DataRow> listTmpTable = new List<DataRow>();
-                            listTmpTable.Add(drPPASchedule);
+                        List<DataRow> listTmpTable = new List<DataRow>();
+                        listTmpTable.Add(drPPASchedule);
 
-                            result = MyUtility.Tool.ProcessWithDatatable(listTmpTable.CopyToDataTable(), null, strUpdatePPASchedule, out dtPPAID, paramters: listSQLParameter);
+                        result = MyUtility.Tool.ProcessWithDatatable(listTmpTable.CopyToDataTable(), null, strUpdatePPASchedule, out dtPPAID, paramters: listSQLParameter);
 
-                            if (result == false)
-                            {
-                                MyUtility.Msg.WarningBox(result.ToString());
-                                transactionscope.Dispose();
-                                this.HideWaitMessage();
-                                return;
-                            }
-                            else if (dtPPAID.Rows.Count == 0)
-                            {
-                                MyUtility.Msg.WarningBox("PPASchedule can not get ID.");
-                            }
-                            else
-                            {
-                                objPPAID = dtPPAID.Rows[0][0];
-                            }
-                            #endregion
+                        if (result == false)
+                        {
+                            MyUtility.Msg.WarningBox(result.ToString());
+                            transactionscope.Dispose();
+                            this.HideWaitMessage();
+                            return;
+                        }
+                        else if (dtPPAID.Rows.Count == 0)
+                        {
+                            MyUtility.Msg.WarningBox("PPASchedule can not get ID.");
+                        }
+                        else
+                        {
+                            objPPAID = dtPPAID.Rows[0][0];
+                        }
+                        #endregion
 
-                            #region Update PPASchedule_Detail ID
-                            if (drPPASchedule["ID"] == DBNull.Value)
+                        #region Update PPASchedule_Detail ID
+                        if (drPPASchedule["ID"] == DBNull.Value)
+                        {
+                            foreach (DataRow dr in dtPPASchedule_Detail.Rows)
                             {
-                                foreach (DataRow dr in dtPPASchedule_Detail.Rows)
-                                {
-                                    dr["ID"] = objPPAID;
-                                }
+                                dr["ID"] = objPPAID;
                             }
-                            else
-                            {
-                                objPPAID = drPPASchedule["ID"];
-                            }
+                        }
+                        else
+                        {
+                            objPPAID = drPPASchedule["ID"];
+                        }
 
-                            listSQLParameter.Add(new SqlParameter("@ID", objPPAID));
-                            #endregion
+                        listSQLParameter.Add(new SqlParameter("@ID", objPPAID));
+                        #endregion
 
-                            #region PPASchedule_Detail
-                            string strUpdatePPASchedule_DetailSQL = @"
+                        #region PPASchedule_Detail
+                        string strUpdatePPASchedule_DetailSQL = @"
 Merge PPASchedule_Detail t
 Using (
 select *
 from #tmp
 ) s on t.ID = s.ID
-	and t.OrderID = s.OrderID
-	and t.OutputDate = s.OutputDate
+and t.OrderID = s.OrderID
+and t.OutputDate = s.OutputDate
 when matched then 
 update set
-	t.Qty = s.Qty
-	, t.Remark = s.Remark
+t.Qty = s.Qty
+, t.Remark = s.Remark
 when NOT MATCHED by Target then
 insert (
-	ID	, OrderID	, OutputDate	, WeekOfYear					, Qty
-	, Remark)
+ID	, OrderID	, OutputDate	, WeekOfYear					, Qty
+, Remark)
 values (
-	s.ID, s.OrderID	, s.OutputDate	, DATEPART(WEEK, s.OutputDate)	, s.Qty
-	, s.Remark);
+s.ID, s.OrderID	, s.OutputDate	, DATEPART(WEEK, s.OutputDate)	, s.Qty
+, s.Remark);
 
 delete t
 from PPASchedule_Detail t
 left join #tmp s on t.ID = s.ID
-				and t.OrderID = s.OrderID
-				and t.OutputDate = s.OutputDate
+			and t.OrderID = s.OrderID
+			and t.OutputDate = s.OutputDate
 where s.ID is null
-    and t.ID= @ID
-    and t.OrderID = @OrderID
-    and t.OutputDate between @StartDate and @EndDate";
+and t.ID= @ID
+and t.OrderID = @OrderID
+and t.OutputDate between @StartDate and @EndDate";
 
-                            result = MyUtility.Tool.ProcessWithDatatable(dtPPASchedule_Detail, null, strUpdatePPASchedule_DetailSQL, out dtPPAID, paramters: listSQLParameter);
+                        result = MyUtility.Tool.ProcessWithDatatable(dtPPASchedule_Detail, null, strUpdatePPASchedule_DetailSQL, out dtPPAID, paramters: listSQLParameter);
 
-                            if (result == false)
-                            {
-                                MyUtility.Msg.WarningBox(result.ToString());
-                                transactionscope.Dispose();
-                                this.HideWaitMessage();
-                                return;
-                            }
-                            #endregion
+                        if (result == false)
+                        {
+                            MyUtility.Msg.WarningBox(result.ToString());
+                            transactionscope.Dispose();
+                            this.HideWaitMessage();
+                            return;
                         }
-
-                        transactionscope.Complete();
-                    }
-                    catch (Exception ex)
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr("Commit transaction error.", ex);
-                        this.HideWaitMessage();
-                        return;
-                    }
-                    finally
-                    {
-                        transactionscope.Dispose();
+                        #endregion
                     }
 
-                    this.BtnQuery_Click(null, null);
+                    transactionscope.Complete();
                 }
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Please select data first.");
+                catch (Exception ex)
+                {
+                    transactionscope.Dispose();
+                    this.ShowErr("Commit transaction error.", ex);
+                    this.HideWaitMessage();
+                    return;
+                }
+                finally
+                {
+                    transactionscope.Dispose();
+                }
+
+                this.BtnQuery_Click(null, null);
             }
 
             this.HideWaitMessage();
@@ -958,10 +984,13 @@ where s.ID is null
             if (this.listControlBindingSourceRight.DataSource.Empty() == false
                 && this.listControlBindingSourceLeft.DataSource.Empty() == false)
             {
+                DataTable dtMerge_TopRight = ((DataTable)this.listControlBindingSourceTop.DataSource).AsEnumerable().CopyToDataTable();
+                dtMerge_TopRight.Merge((DataTable)this.listControlBindingSourceRight.DataSource);
+
                 P10_ToExcel frm = new P10_ToExcel(
                     this.objStartDate,
                     this.objEndDate,
-                    ((DataTable)this.listControlBindingSourceRight.DataSource).AsEnumerable().CopyToDataTable(),
+                    dtMerge_TopRight,
                     ((DataTable)this.listControlBindingSourceLeft.DataSource).AsEnumerable().CopyToDataTable());
 
                 frm.ShowDialog();
@@ -1030,6 +1059,12 @@ where Type = 'PPA'
                         dr.EndEdit();
                     }
                 }
+            }
+            else if (dr != null)
+            {
+                dr["Group"] = string.Empty;
+                dr["SubProcessLineID"] = string.Empty;
+                dr.EndEdit();
             }
         }
         #endregion
@@ -1119,7 +1154,7 @@ where Type = 'PPA'
             listSQLParameter.Add(new SqlParameter("@OrderID", dr["OrderID"]));
             string strGetFeatureSQL = @"
 select sf.Feature
-       , sf.SMV
+       , SMV = CONVERT(varchar, sf.SMV)
        , sf.Remark
 from Style_Feature sf
 inner join Orders o on sf.styleUkey = o.StyleUkey
@@ -1173,19 +1208,21 @@ order by Feature";
                 dr.EndEdit();
 
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                listSQLParameter.Add(new SqlParameter("@SewInLine", dr["SewingLine"]));
+                listSQLParameter.Add(new SqlParameter("@SewInLine", dr["SewInLine"]));
                 listSQLParameter.Add(new SqlParameter("@EarlyInline", dr["EarlyInline"]));
                 listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
 
                 #region Update PPA Inline
                 string strGetNewPPAInlineDateSQL = @"select Inline = dbo.[CalculateWorkDate](@SewInLine, 0 - @EarlyInline, @FactoryID)";
                 dr["Inline"] = MyUtility.GetValue.Lookup(strGetNewPPAInlineDateSQL, listSQLParameter);
+                dr["ShowInline"] = Convert.ToDateTime(dr["Inline"]).ToString("MM/dd");
                 #endregion
 
                 if (this.ReCalculateOutputDateQty(dr) == false)
                 {
                     dr["EarlyInline"] = oldEarlyInline;
                     dr["Inline"] = oldInline;
+                    dr["ShowInline"] = Convert.ToDateTime(dr["Inline"]).ToString("MM/dd");
 
                     // 回朔資料時必須連 Output 一併回朔
                     this.ReCalculateOutputDateQty(dr);
@@ -1412,6 +1449,7 @@ where DailyQty.value > 0";
             {
                 MyUtility.Msg.WarningBox(result.ToString());
                 dr["Offline"] = DBNull.Value;
+                dr["ShowOffline"] = DBNull.Value;
                 this.UpdateOutputDateGrid(null, dr["Ukey"].ToString(), null);
                 return false;
             }
@@ -1428,6 +1466,11 @@ where DailyQty.value > 0";
              */
             string strGetNewPPAOfflineDateSQL = @"select Inline = dbo.[CalculateWorkDate](@Inline, @CountOutputDate - 1, @FactoryID)";
             dr["Offline"] = MyUtility.GetValue.Lookup(strGetNewPPAOfflineDateSQL, listSQLParameter);
+
+            if (dr["Offline"].Empty() == false)
+            {
+                dr["ShowOffline"] = Convert.ToDateTime(dr["Offline"]).ToString("MM/dd");
+            }
             #endregion
 
             string strStartDate = ((DateTime)dr["Inline"]).ToString("yyyy/MM/dd");
@@ -1438,11 +1481,13 @@ where DailyQty.value > 0";
             {
                 // 若超出範圍 Offline 必須清除
                 dr["Offline"] = DBNull.Value;
+                dr["ShowOffline"] = DBNull.Value;
                 return false;
             }
             else if (strUpdateResult.EqualString("OutputEmpty"))
             {
                 dr["Offline"] = DBNull.Value;
+                dr["ShowOffline"] = DBNull.Value;
             }
 
             return true;
@@ -1536,12 +1581,13 @@ where DailyQty.value > 0";
         private void ComputDailyCPU(int columnIndex)
         {
             DataTable dtRightGrid = (DataTable)((BindingSource)this.gridRight.DataSource).DataSource;
+            DataTable dtTopGrid = (DataTable)((BindingSource)this.gridTop.DataSource).DataSource;
             var varStdTMS = MyUtility.GetValue.Lookup("select StdTMS from System");
             int intStdTMS = 0;
 
             intStdTMS = varStdTMS.Empty() ? 0 : Convert.ToInt32(varStdTMS);
 
-            if (dtRightGrid.Rows.Count > 2)
+            if (dtRightGrid.Rows.Count > 0)
             {
                 decimal computCPU = 0;
                 long returnCPU = 0;
@@ -1552,11 +1598,11 @@ where DailyQty.value > 0";
                 }
                 else
                 {
-                    for (int i = 2; i < dtRightGrid.Rows.Count; i++)
+                    for (int i = 0; i < dtRightGrid.Rows.Count; i++)
                     {
                         if (dtRightGrid.Rows[i][columnIndex].Empty() == false)
                         {
-                            DataRow drLeftGrid = ((DataTable)((BindingSource)this.gridLeft.DataSource).DataSource).Rows[i - 2];
+                            DataRow drLeftGrid = ((DataTable)((BindingSource)this.gridLeft.DataSource).DataSource).Rows[i];
 
                             decimal qty = Convert.ToDecimal(dtRightGrid.Rows[i][columnIndex]);
                             decimal smv = Convert.ToDecimal(drLeftGrid["SMV"]);
@@ -1571,40 +1617,71 @@ where DailyQty.value > 0";
                 switch (returnCPU)
                 {
                     case 0:
-                        dtRightGrid.Rows[1][columnIndex] = DBNull.Value;
+                        dtTopGrid.Rows[1][columnIndex] = DBNull.Value;
                         break;
                     default:
-                        dtRightGrid.Rows[1][columnIndex] = computCPU;
+                        dtTopGrid.Rows[1][columnIndex] = computCPU;
                         break;
                 }
 
-                dtRightGrid.Rows[1].EndEdit();
+                dtTopGrid.Rows[1].EndEdit();
             }
         }
 
         private void GridLeft_Scroll(object sender, ScrollEventArgs e)
         {
-            if (this.gridLeft.Rows.Count > 0)
+            if (this.gridLeft.Rows.Count > 0
+                && this.gridRight.Rows.Count > 0)
             {
-                this.gridRight.FirstDisplayedScrollingRowIndex = this.gridLeft.FirstDisplayedScrollingRowIndex + 2;
+                this.gridRight.FirstDisplayedScrollingRowIndex = this.gridLeft.FirstDisplayedScrollingRowIndex;
             }
         }
 
         private void GridRight_Scroll(object sender, ScrollEventArgs e)
         {
-            if (this.gridRight.Rows.Count > 2)
+            if (this.gridRight.Rows.Count > 0
+                && this.gridLeft.Rows.Count > 0)
             {
-                this.gridLeft.FirstDisplayedScrollingRowIndex = this.gridRight.FirstDisplayedScrollingRowIndex - 2;
+                this.gridLeft.FirstDisplayedScrollingRowIndex = this.gridRight.FirstDisplayedScrollingRowIndex;
+            }
+
+            if (this.gridRight.Columns.Count > 0
+                && this.gridTop.Columns.Count > 0)
+            {
+                this.gridTop.FirstDisplayedScrollingColumnIndex = this.gridRight.FirstDisplayedScrollingColumnIndex;
             }
         }
 
-        private void GridLeft_SelectionChanged(object sender, EventArgs e)
+        private void GridTop_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (this.gridRight.Columns.Count > 0
+                && this.gridTop.Columns.Count > 0)
+            {
+                this.gridRight.FirstDisplayedScrollingColumnIndex = this.gridTop.FirstDisplayedScrollingColumnIndex;
+            }
+        }
+
+        private void GridLeft_CurrentCellChanged(object sender, EventArgs e)
         {
             if (((BindingSource)this.gridLeft.DataSource).DataSource != null
-                && this.gridRight.Rows.Count > this.gridLeft.CurrentCell.RowIndex + 2)
+                && ((BindingSource)this.gridRight.DataSource).DataSource != null
+                && this.gridLeft.CurrentCell != null
+                && this.gridRight.Rows.Count > this.gridLeft.CurrentCell.RowIndex
+                && this.gridRight.CurrentCell.RowIndex != this.gridLeft.CurrentCell.RowIndex)
             {
-                this.gridRight.ClearSelection();
-                this.gridRight.Rows[this.gridLeft.CurrentCell.RowIndex + 2].Selected = true;
+                this.gridRight.CurrentCell = this.gridRight.Rows[this.gridLeft.CurrentCell.RowIndex].Cells[this.gridRight.FirstDisplayedScrollingColumnIndex];
+            }
+        }
+
+        private void GridRight_CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (((BindingSource)this.gridRight.DataSource).DataSource != null
+                && ((BindingSource)this.gridLeft.DataSource).DataSource != null
+                && this.gridRight.CurrentCell != null
+                && this.gridLeft.Rows.Count > this.gridRight.CurrentCell.RowIndex
+                && this.gridLeft.CurrentCell.RowIndex != this.gridRight.CurrentCell.RowIndex)
+            {
+                this.gridLeft.CurrentCell = this.gridLeft.Rows[this.gridRight.CurrentCell.RowIndex].Cells[this.gridLeft.FirstDisplayedScrollingColumnIndex];
             }
         }
     }
