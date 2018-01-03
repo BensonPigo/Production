@@ -1011,9 +1011,23 @@ into #tmpdis
 from #tmp t
 inner join @tempCombColor x on t.StyleUKey = x.StyleUkey and t.SizeCode = x.SizeCode and t.Category = x.Category and t.Article = SUBSTRING(x.Article,0, CHARINDEX(',',x.Article)) 
 
-select id ,NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
-, Waste = (select [dbo].[getWaste]( StyleID,BrandID,SeasonID,VNContractID,NLCode))
-from #tmpdis
+-- 取得計算waste的keyword
+select distinct StyleID,Brandid,SeasonID,VNContractID
+into #tmpWasteKey
+from @tempCombColor 
+
+-- 取得NLCode Waste最終計算唯一結果
+select b.NLCode,Waste = (select [dbo].[getWaste]( StyleID,BrandID,SeasonID,VNContractID, b.NLCode))
+into #tmpWaste
+from #tmpWasteKey a ,VNNLCodeDesc b
+inner join (select distinct NLCode from #tmp) c on b.NLCode=c.NLCode
+
+
+select id ,a.NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
+, b.waste
+from #tmpdis a
+inner join #tmpWaste b on a.NLCode=b.NLCode
+
 ";
             result = MyUtility.Tool.ProcessWithDatatable(
                 this.AllDetailData,
