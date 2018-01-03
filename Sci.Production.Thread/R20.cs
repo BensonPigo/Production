@@ -174,7 +174,7 @@ select distinct t.FactoryID
        , td.TotalQty
        , td.AllowanceQty
        , EstAllowance = CEILING (td.TotalQty * isnull(est.Allowance,0))
-	   , Balance= AllowanceQty-isnull(est.Allowance,0)
+	   , Balance= td.AllowanceQty - CEILING (td.TotalQty * est.Allowance)
        , td.UseStockQty
        , td.PurchaseQty
 from dbo.ThreadRequisition t WITH (NOLOCK) 
