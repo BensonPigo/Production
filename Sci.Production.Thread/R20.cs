@@ -173,12 +173,20 @@ select distinct t.FactoryID
        , tdc.OrderQty
        , td.TotalQty
        , td.AllowanceQty
+       , EstAllowance = CEILING (td.TotalQty * isnull(est.Allowance,0))
+	   , Balance= AllowanceQty-isnull(est.Allowance,0)
        , td.UseStockQty
        , td.PurchaseQty
 from dbo.ThreadRequisition t WITH (NOLOCK) 
 inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
 left join dbo.ThreadRequisition_Detail_Cons tdc WITH (NOLOCK) on td.Ukey = tdc.ThreadRequisition_DetailUkey
 left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID
+outer apply(
+	select Allowance
+	from ThreadAllowanceScale  tas
+	where tas.LowerBound <= td.TotalQty
+	and td.TotalQty <= tas.UpperBound
+)est
 {sqlWhere}
 {order}";
 
