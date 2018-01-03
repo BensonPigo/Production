@@ -698,7 +698,7 @@ tmpData as (
       outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
-			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = ''FA''
 		) Order_ColorCombo	
       where o.POID = '''+@ID+'''  
 ),
@@ -969,7 +969,7 @@ tmpData as (
     outer apply (
 			select top 1 ColorID
 			from Order_ColorCombo occ WITH (NOLOCK)
-			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = 'FA'
+			where occ.ID = o.Poid and occ.Article = oq.Article and occ.Patternpanel = ''FA''
 		) Order_ColorCombo	
     where o.POID = '''+@ID+'''  
 ),
