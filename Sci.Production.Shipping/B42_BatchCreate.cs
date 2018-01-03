@@ -1003,12 +1003,18 @@ select distinct id = ''
        , UserCreate = 0
        , x.StyleUkey
        , x.SizeCode
-       , t.Article
-       , Waste = (select [dbo].[getWaste]( x.StyleID,x.BrandID,x.SeasonID,x.VNContractID, t.NLCode))
+       , t.Article       
        , t.Category
        , Deleted = 0
+       , x.StyleID,x.BrandID,x.SeasonID,x.VNContractID
+into #tmpdis 
 from #tmp t
-inner join @tempCombColor x on t.StyleUKey = x.StyleUkey and t.SizeCode = x.SizeCode and t.Category = x.Category and t.Article = SUBSTRING(x.Article,0, CHARINDEX(',',x.Article)) ";
+inner join @tempCombColor x on t.StyleUKey = x.StyleUkey and t.SizeCode = x.SizeCode and t.Category = x.Category and t.Article = SUBSTRING(x.Article,0, CHARINDEX(',',x.Article)) 
+
+select id ,NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
+, Waste = (select [dbo].[getWaste]( StyleID,BrandID,SeasonID,VNContractID,NLCode))
+from #tmpdis
+";
             result = MyUtility.Tool.ProcessWithDatatable(
                 this.AllDetailData,
                 string.Empty,
