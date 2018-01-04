@@ -151,7 +151,7 @@ namespace Sci.Production.Thread
             #endregion
 
             this.cmd = $@"
-select distinct t.FactoryID
+select t.FactoryID
 	   , t.BrandID
 	   , t.StyleID
 	   , t.SeasonID
@@ -179,7 +179,6 @@ select distinct t.FactoryID
        , td.PurchaseQty
 from dbo.ThreadRequisition t WITH (NOLOCK) 
 inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
-left join dbo.ThreadRequisition_Detail_Cons tdc WITH (NOLOCK) on td.Ukey = tdc.ThreadRequisition_DetailUkey
 left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID
 outer apply(
 	select Allowance
@@ -187,6 +186,16 @@ outer apply(
 	where tas.LowerBound <= td.TotalQty
 	and td.TotalQty <= tas.UpperBound
 )est
+Outer apply
+(
+  select cast(sum(tdc.OrderQty)as float) as OrderQty
+  from(
+  select Article,OrderQty
+  from [Production].[dbo].[ThreadRequisition_Detail_Cons]
+  where ThreadRequisition_DetailUkey=td.Ukey
+  group by Article,OrderQty
+  ) as tdc
+) as tdc
 {sqlWhere}
 {order}";
 
