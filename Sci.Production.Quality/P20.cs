@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 using Sci.Data;
 using Ict;
 using System.Linq;
-
+using Sci.Production.Class;
 
 namespace Sci.Production.Quality
 {
@@ -426,60 +426,6 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
             return base.ClickSaveBefore();
         }
 
-        
-
-        //改在txtSewingScheduleLine自訂控制項中作
-        //        private void txtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        //        {
-        //            DataRow dr;
-        //            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-        //            if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
-        //            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
-        //SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
-        //FROM SewingSchedule SS WITH (NOLOCK)
-        //LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
-        //where SS.OrderID='{0}' and SL.FactoryID='{1}'", this.txtSP.Text,Sci.Env.User.Factory), "5,20,10", this.txtLine.Text);
-        //            DialogResult returnResult = item.ShowDialog();
-        //            if (returnResult == DialogResult.Cancel) { return; }
-        //            this.txtLine.Text = item.GetSelectedString();
-
-        //            if (MyUtility.Check.Seek(string.Format(
-        //@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", Sci.Env.User.Factory, item.GetSelectedString()), out dr))
-        //            {
-        //                this.displayCell.Text = dr["sewingcell"].ToString();
-        //            }
-        //            else
-        //            {
-        //                this.displayCell.Text = "";
-        //            }                 
-        //        }
-
-        private void txtLine_Validating(object sender, CancelEventArgs e)
-        {
-            string textValue = this.txtLine.Text;
-            if (MyUtility.Check.Empty(this.txtLine.Text)) this.displayCell.Text = "";
-            DataRow dr;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLine.OldValue)
-            {
-                if (!MyUtility.Check.Seek(string.Format(
-@"SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory,sl.SewingCell
-FROM SewingSchedule SS WITH (NOLOCK)
-LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
-where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID='{2}'", this.txtSP.Text, Sci.Env.User.Factory,this.txtLine.Text), out dr))
-                {
-                    this.txtLine.Text = "";
-                    this.displayCell.Text = "";
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
-                    return;
-                }
-                else
-                {
-                    this.displayCell.Text = dr["SewingCell"].ToString().Trim();
-                }
-            }
-        }
-
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
@@ -516,6 +462,11 @@ where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID='{2}'", this.t
             this.txtCPU.Text = "0";
             this.isNew = true;
             return base.ClickNew();
-        }        
+        }
+
+        private void txtLine_Validated(object sender, EventArgs e)
+        {
+            this.displayCell.Text = txtLine.cell;
+        }
     }
 }
