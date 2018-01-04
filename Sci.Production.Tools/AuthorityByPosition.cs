@@ -12,6 +12,8 @@ using Ict.Win;
 using Ict.Data;
 using Sci.Win;
 using Sci.Data;
+using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace Sci.Production.Tools
 {
@@ -579,6 +581,68 @@ namespace Sci.Production.Tools
             //{
             this.LockCheckBox(this.comboMenuFilter.SelectedValue.ToString());                
             //}
+        }
+
+        // Print
+        protected override bool ClickPrint()
+        {
+            DataTable dtExcel;
+            DualResult result;
+            string cmd = @"
+select b.ID
+,a.MenuName
+,BarPrompt
+,Used
+,[New] =		iif(CanNew=0,'','Y')
+,[Edit]=		iif(CanEdit=0,'','Y')
+,[Delete] =		iif(CanDelete=0,'','Y')
+,[Print] =		iif(CanPrint=0,'','Y')
+,[Confirm] =	iif(CanConfirm=0,'','Y')
+,[UnConfirm] =	iif(CanUnConfirm=0,'','Y')
+,[Send] =		iif(CanSend=0,'','Y')
+,[Recall] =		iif(CanRecall=0,'','Y')
+,[Check] =		iif(CanCheck=0,'','Y')
+,[UnCheck] =	iif(CanUnCheck=0,'','Y')
+,[Close] =		iif(CanClose=0,'','Y')
+,[UnClose] =	iif(CanUnClose=0,'','Y')
+,[Receive] =	iif(CanReceive=0,'','Y')
+,[Return] =		iif(CanReturn=0,'','Y')
+,[Junk] =		iif(CanJunk=0,'','Y')
+from Pass2 a
+inner join pass0 b on a.FKPass0=b.PKey
+order by b.pkey,a.MenuName,BarPrompt";
+            if (!(result = DBProxy.Current.Select(null, cmd, out dtExcel)))
+            {
+                return result;
+            }
+           
+            if (MyUtility.Check.Empty(dtExcel) || dtExcel.Rows.Count < 1)
+            {
+                MyUtility.Msg.WarningBox("Data not found!!");
+                return false;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "AuthorityByPosition.xltx");
+            Microsoft.Office.Interop.Excel._Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];
+
+            worksheet.Cells[1, 1] = "(" + DBProxy.Current.DefaultModuleName + ")" + " Authority By Position";
+            MyUtility.Excel.CopyToXls(dtExcel, string.Empty, "AuthorityByPosition.xltx", 2, false, null, objApp);
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("AuthorityByPosition");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
+
+
+            return base.ClickPrint();
         }
     }
 }
