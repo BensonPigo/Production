@@ -44,7 +44,7 @@ namespace Sci.Production.Class
             if (myForm.EditMode == false || this.ReadOnly == true) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(
                 @"
-SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
+SELECT ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
 FROM SewingSchedule SS WITH (NOLOCK)
 LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
 where SS.OrderID='{0}' and SL.FactoryID='{1}'
@@ -61,6 +61,47 @@ where sod.OrderId = '{0}' and so.FactoryID = '{1}'
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();           
+        }
+
+        protected override void OnValidating(CancelEventArgs e)
+        {
+            base.OnValidating(e);
+            string FactoryId;
+
+            if (Factorytxt != null)
+            {
+
+                FactoryId = Factorytxt.Text;
+            }
+            else
+            {
+                FactoryId = Sci.Env.User.Factory;
+            }
+
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || this.ReadOnly == true) return;
+            string chkline = string.Format(
+                @"
+SELECT ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
+FROM SewingSchedule SS WITH (NOLOCK)
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
+where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID = '{2}'
+union 
+select SewingLineID,[Description],so.FactoryID
+from SewingOutput_Detail sod WITH (NOLOCK)
+left join SewingOutput so WITH (NOLOCK) ON so.id =sod.id
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON so.FactoryID=SL.FactoryID AND so.SewingLineID=SL.ID 
+where sod.OrderId = '{0}' and so.FactoryID = '{1}' and SewingLineID = '{2}'
+",
+                SPtxt.Text,
+                FactoryId,
+                this.Text
+                );
+            if (!MyUtility.Check.Seek(chkline))
+            {
+                MyUtility.Msg.WarningBox(string.Format("Sewingline {0} not found", this.Text));
+                this.Text = string.Empty;
+            }
         }
     }
 }
