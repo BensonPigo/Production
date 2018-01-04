@@ -686,6 +686,32 @@ order by td.Seq", masterID);
                 return false;
             }
             #endregion
+            #region 檢查是否為套裝(Style.styleunit <> 'PCS')
+            if (MyUtility.Check.Seek(string.Format(
+                @"
+select 1 from Style 
+where styleunit='PCS' and id='{0}' 
+and BrandID='{1}' and SeasonID='{2}'",
+                this.CurrentMaintain["StyleID"],
+                this.CurrentMaintain["BrandID"],
+                this.CurrentMaintain["SeasonID"])))
+            {
+                if (MyUtility.Check.Seek(string.Format(
+                    @" 
+select 1 from TimeStudy 
+where id <> {0} and StyleID='{1}' 
+and BrandID='{2}' and SeasonID='{3}'",
+                    this.CurrentMaintain["ID"],
+                    this.CurrentMaintain["StyleID"],
+                    this.CurrentMaintain["BrandID"],
+                    this.CurrentMaintain["SeasonID"])))
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"The Stytle：{0}、Season：{1}、Brand：{2} styleunit is 'PCS', You can only create one data in P01. Factory GSD.", this.CurrentMaintain["StyleID"], this.CurrentMaintain["SeasonID"], this.CurrentMaintain["BrandID"]));
+                    return false;
+                }
+
+            }
+            #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer
             decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(SMV)", string.Empty));
