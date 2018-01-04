@@ -687,20 +687,17 @@ order by td.Seq", masterID);
             }
             #endregion
             #region 檢查是否為套裝(Style.styleunit <> 'PCS')
-            if (MyUtility.Check.Seek(string.Format(
-                @"
-select 1 from Style 
-where styleunit='PCS' and id='{0}' 
-and BrandID='{1}' and SeasonID='{2}'",
-                this.CurrentMaintain["StyleID"],
-                this.CurrentMaintain["BrandID"],
-                this.CurrentMaintain["SeasonID"])))
-            {
                 if (MyUtility.Check.Seek(string.Format(
                     @" 
-select 1 from TimeStudy 
-where id <> {0} and StyleID='{1}' 
-and BrandID='{2}' and SeasonID='{3}'",
+select 1
+from TimeStudy t
+inner join style s on t.styleid=s.ID 
+                  and t.BrandID=s.BrandID 
+                  and t.SeasonID=s.SeasonID
+where t.id <> {0} and t.StyleID='{1}' 
+and t.BrandID='{2}' and t.SeasonID='{3}'
+and s.StyleUnit='PCS'
+",
                     this.CurrentMaintain["ID"],
                     this.CurrentMaintain["StyleID"],
                     this.CurrentMaintain["BrandID"],
@@ -710,7 +707,6 @@ and BrandID='{2}' and SeasonID='{3}'",
                     return false;
                 }
 
-            }
             #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer
