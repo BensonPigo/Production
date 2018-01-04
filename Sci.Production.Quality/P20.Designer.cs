@@ -503,6 +503,7 @@
             // txtLine
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.cell = null;
             this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewinglineID", true));
             this.txtLine.Factorytxt = null;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -511,7 +512,7 @@
             this.txtLine.Size = new System.Drawing.Size(118, 23);
             this.txtLine.SPtxt = this.txtSP;
             this.txtLine.TabIndex = 4;
-            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
+            this.txtLine.Validated += new System.EventHandler(this.txtLine_Validated);
             // 
             // comboShift
             // 
