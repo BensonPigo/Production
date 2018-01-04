@@ -609,7 +609,8 @@ select b.ID
 ,[Return] =		iif(CanReturn=0,'','Y')
 ,[Junk] =		iif(CanJunk=0,'','Y')
 from Pass2 a
-inner join pass0 b on a.FKPass0=b.PKey ";
+inner join pass0 b on a.FKPass0=b.PKey
+order by b.pkey,a.MenuName,BarPrompt";
             if (!(result = DBProxy.Current.Select(null, cmd, out dtExcel)))
             {
                 return result;
