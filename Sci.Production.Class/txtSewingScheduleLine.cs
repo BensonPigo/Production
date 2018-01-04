@@ -102,6 +102,7 @@ where sod.OrderId = '{0}' and so.FactoryID = '{1}' and SewingLineID = '{2}'
                 );
             if (!MyUtility.Check.Seek(chkline,out dr))
             {
+                if(this.Text != string.Empty)
                 MyUtility.Msg.WarningBox(string.Format("Sewingline {0} not found", this.Text));
                 this.Text = string.Empty;
                 cell = string.Empty;
