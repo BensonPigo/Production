@@ -68,12 +68,11 @@ namespace PMSUploadDataToAPS.Daily
 
             mailTo = _mailTo.Rows[0];
         }
-        
+
         #region 接Sql Server 進度訊息用
         private void InfoMessage(object sender, SqlInfoMessageEventArgs e)
         {
-            BeginInvoke(() => { this.labelProgress.Text = e.Message;
-                sqlmsg.Append(e.Message); });
+            BeginInvoke(() => { this.labelProgress.Text = e.Message; });
         }
         #endregion
 
@@ -113,15 +112,15 @@ namespace PMSUploadDataToAPS.Daily
             SqlConnection conn;
 
             if (!Sci.SQL.GetConnection(out conn)) { return; }
-            
+
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             DualResult result = AsyncHelper.Current.DataProcess(this, () =>
             {
                 return AsyncUpdateExport(conn);
             });
-            
-            mymailTo();
+
+            mymailTo(result.ToSimpleString());
 
             if (!result)
             {
@@ -132,7 +131,7 @@ namespace PMSUploadDataToAPS.Daily
             issucess = true;
         }
 
-        private void mymailTo()
+        private void mymailTo(string msg)
         {
             String subject = "";
             String desc = "";
@@ -146,15 +145,15 @@ namespace PMSUploadDataToAPS.Daily
                    "Pls confirm and take notes." + Environment.NewLine +
                    "================================" +
                     Environment.NewLine + mailTo["Content"].ToString() + Environment.NewLine;
-            if (sqlmsg.ToString().Contains("ERROR"))
+            if (!MyUtility.Check.Empty(msg))
             {
                 desc += "Sql msg:" + Environment.NewLine +
-                    sqlmsg.ToString() + Environment.NewLine;
+                    msg + Environment.NewLine;
                 issucess = false;
-            }                    
+            }
             #endregion
 
-            subject = mailTo["Subject"].ToString().TrimEnd() +" - ["+ this.CurrentData["RgCode"].ToString() + "]";
+            subject = mailTo["Subject"].ToString().TrimEnd() + " - [" + this.CurrentData["RgCode"].ToString() + "]";
             if (issucess)
             {
                 subject += " Sucess";
