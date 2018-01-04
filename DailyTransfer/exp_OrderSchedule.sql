@@ -17,7 +17,7 @@ BEGIN
 DROP TABLE OrderSchedule
 END
 
-Select o.ID, o.SewInLine, o.SewOffLine, o.PulloutDate, o.InspDate, (select CutInLine from [Production].dbo.Cutting where ID = o.CuttingSP) as CutInLine, (select CutOffLine from [Production].dbo.Cutting where ID = o.CuttingSP) as CutOffLine
+Select o.ID, o.SewInLine, o.SewOffLine, o.PulloutDate, o.InspDate, (select CutInLine from [Production].dbo.Cutting where ID = o.CuttingSP) as CutInLine, (select CutOffLine from [Production].dbo.Cutting where ID = o.CuttingSP) as CutOffLine ,o.SewLine
 INTO OrderSchedule
 from [Production].dbo.Orders o
 where o.SCIDelivery <= EOMONTH(GETDATE(),3)

@@ -24,7 +24,8 @@ namespace Sci.Production.Class
         [Browsable(true)]
         public Sci.Win.UI.TextBox Factorytxt { set; get; }
 
-   
+        public string cell { set; get; }
+
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
@@ -42,29 +43,74 @@ namespace Sci.Production.Class
             
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || this.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
-SELECT Distinct ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(
+                @"
+SELECT ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory,sl.SewingCell
 FROM SewingSchedule SS WITH (NOLOCK)
 LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
-where SS.OrderID='{0}' and SL.FactoryID='{1}'", SPtxt.Text, FactoryId), "5,20,10", this.Text);
+where SS.OrderID='{0}' and SL.FactoryID='{1}'
+union 
+select SewingLineID,[Description],so.FactoryID,sl.SewingCell
+from SewingOutput_Detail sod WITH (NOLOCK)
+left join SewingOutput so WITH (NOLOCK) ON so.id =sod.id
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON so.FactoryID=SL.FactoryID AND so.SewingLineID=SL.ID 
+where sod.OrderId = '{0}' and so.FactoryID = '{1}'
+",
+                SPtxt.Text,
+                FactoryId),
+                "5,20,10", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            this.Text = item.GetSelectedString();
+            this.Text = item.GetSelectedString();           
+        }
 
-            
+        DataRow dr;
 
-//            if (displayCellbox != null) {
-//                if (MyUtility.Check.Seek(string.Format(
-//@"select SewingCell from SewingLine where FactoryID='{0}' and id='{1}'", FactoryId, item.GetSelectedString()), out dr))
-//                {
-//                    displayCellbox.Text = dr["sewingcell"].ToString();
-//                }
-//                else
-//                {
-//                    displayCellbox.Text = "";
-//                }
-//            }
-           
+        protected override void OnValidating(CancelEventArgs e)
+        {
+            base.OnValidating(e);
+            string FactoryId;
+
+            if (Factorytxt != null)
+            {
+
+                FactoryId = Factorytxt.Text;
+            }
+            else
+            {
+                FactoryId = Sci.Env.User.Factory;
+            }
+
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || this.ReadOnly == true) return;
+            string chkline = string.Format(
+                @"
+SELECT ss.SewingLineID as Line,SL.[Description] AS [Description], SL.FactoryID as Factory,sl.SewingCell
+FROM SewingSchedule SS WITH (NOLOCK)
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON SS.FactoryID=SL.FactoryID AND SS.SewingLineID=SL.ID 
+where SS.OrderID='{0}' and SL.FactoryID='{1}' and ss.SewingLineID = '{2}'
+union 
+select SewingLineID,[Description],so.FactoryID,sl.SewingCell
+from SewingOutput_Detail sod WITH (NOLOCK)
+left join SewingOutput so WITH (NOLOCK) ON so.id =sod.id
+LEFT JOIN SewingLine SL WITH (NOLOCK) ON so.FactoryID=SL.FactoryID AND so.SewingLineID=SL.ID 
+where sod.OrderId = '{0}' and so.FactoryID = '{1}' and SewingLineID = '{2}'
+",
+                SPtxt.Text,
+                FactoryId,
+                this.Text
+                );
+            if (!MyUtility.Check.Seek(chkline,out dr))
+            {
+                if(this.Text != string.Empty)
+                MyUtility.Msg.WarningBox(string.Format("Sewingline {0} not found", this.Text));
+                this.Text = string.Empty;
+                cell = string.Empty;
+            }
+            else
+            {
+                cell = MyUtility.Convert.GetString(dr["SewingCell"]);
+            }
         }
     }
 }
