@@ -588,7 +588,7 @@ namespace Sci.Production.Tools
         {
             DataTable dtExcel;
             DualResult result;
-            string cmd = string.Format(@"
+            string cmd = @"
 select b.ID
 ,a.MenuName
 ,BarPrompt
@@ -609,11 +609,7 @@ select b.ID
 ,[Return] =		iif(CanReturn=0,'','Y')
 ,[Junk] =		iif(CanJunk=0,'','Y')
 from Pass2 a
-inner join pass0 b on a.FKPass0=b.PKey
-where A.FKPass0 = {0}
-"
-, CurrentMaintain["Pkey"]
-);
+inner join pass0 b on a.FKPass0=b.PKey ";
             if (!(result = DBProxy.Current.Select(null, cmd, out dtExcel)))
             {
                 return result;
