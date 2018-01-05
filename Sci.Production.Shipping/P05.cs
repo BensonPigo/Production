@@ -1068,6 +1068,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     MyUtility.Msg.WarningBox("Pullout report already confirmed, can't be deleted!");
                     return;
                 }
+
+                if (!MyUtility.Check.Empty(this.CurrentDetailData["PulloutDate"]))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("Pullout Date of Pcaking No: {0} not empty, can't delete!", this.CurrentDetailData["id"]));
+                    return;
+                }
             }
 
             base.OnDetailGridDelete();
