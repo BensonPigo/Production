@@ -384,6 +384,8 @@ e.FormattedValue);
             .Date("ArtworkOffLine", header: "OffLine", width: Widths.AnsiChars(10))
             .Date("apvdate", header: "Approve Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("apvname", header: "Approve Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("EditDate", header: "Edit Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion
 
@@ -510,6 +512,17 @@ e.FormattedValue);
                                                             and artworktype.isSubprocess = 1;--", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        protected override DualResult ClickSave()
+        {
+            // 修改表身資料,不寫入表頭EditName and EditDate
+            ITableSchema pass1Schema;
+            var ok = DBProxy.Current.GetTableSchema(null, "Orders", out pass1Schema);
+            pass1Schema.IsSupportEditDate = false;
+            pass1Schema.IsSupportEditName = false;
+
+            return Result.True;
         }
     }
 }

@@ -16,6 +16,8 @@
     [AddDate]        DATETIME        NULL,
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME        NULL,
+    [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
+    [TPEEditDate] DATETIME NULL, 
     CONSTRAINT [PK_Order_TmsCost] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkTypeID] ASC)
 );
 
@@ -118,3 +120,22 @@ CREATE NONCLUSTERED INDEX [Index_Seq] ON [dbo].[Order_TmsCost]
 (
 	[Seq] ASC
 )
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北最後修改人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_TmsCost',
+    @level2type = N'COLUMN',
+    @level2name = N'TPEEditName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北最後修改時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Order_TmsCost',
+    @level2type = N'COLUMN',
+    @level2name = N'TPEEditDate'

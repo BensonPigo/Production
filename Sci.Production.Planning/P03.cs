@@ -663,6 +663,7 @@ where   a.Finished = 0
                 }
 
                 sqlcmd += string.Format(@",inhouseosp = '{0}',localsuppid='{1}'", item["inhouseosp"].ToString(), item["localsuppid"].ToString());
+                sqlcmd += string.Format(",EditName = '{0}' ,EditDate='{1}' ", Sci.Env.User.UserID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
                 sqlcmd += string.Format(@" where id ='{0}' and artworktypeid = '{1}';", item["ID"], item["artworktypeid"]);
             }
 
