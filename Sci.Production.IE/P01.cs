@@ -574,6 +574,7 @@ order by td.Seq", masterID);
             this.CurrentMaintain["BrandID"] = this.brandID;
             this.CurrentMaintain["ComboType"] = this.comboType;
             this.CurrentMaintain["Version"] = "01";
+            this.CurrentMaintain["ID"] = 0;
         }
 
         /// <summary>
@@ -698,7 +699,7 @@ where t.id <> {0} and t.StyleID='{1}'
 and t.BrandID='{2}' and t.SeasonID='{3}'
 and s.StyleUnit='PCS'
 ",
-                    this.CurrentMaintain["ID"],
+                    MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? 0 : this.CurrentMaintain["ID"],
                     this.CurrentMaintain["StyleID"],
                     this.CurrentMaintain["BrandID"],
                     this.CurrentMaintain["SeasonID"])))
