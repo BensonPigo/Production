@@ -574,6 +574,7 @@ order by td.Seq", masterID);
             this.CurrentMaintain["BrandID"] = this.brandID;
             this.CurrentMaintain["ComboType"] = this.comboType;
             this.CurrentMaintain["Version"] = "01";
+            this.CurrentMaintain["ID"] = 0;
         }
 
         /// <summary>
@@ -685,6 +686,28 @@ order by td.Seq", masterID);
                 MyUtility.Msg.WarningBox("Detail can't empty");
                 return false;
             }
+            #endregion
+            #region 檢查是否為套裝(Style.styleunit <> 'PCS')
+                if (MyUtility.Check.Seek(string.Format(
+                    @" 
+select 1
+from TimeStudy t
+inner join style s on t.styleid=s.ID 
+                  and t.BrandID=s.BrandID 
+                  and t.SeasonID=s.SeasonID
+where t.id <> {0} and t.StyleID='{1}' 
+and t.BrandID='{2}' and t.SeasonID='{3}'
+and s.StyleUnit='PCS'
+",
+                    MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? 0 : this.CurrentMaintain["ID"],
+                    this.CurrentMaintain["StyleID"],
+                    this.CurrentMaintain["BrandID"],
+                    this.CurrentMaintain["SeasonID"])))
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"The Stytle：{0}、Season：{1}、Brand：{2} styleunit is 'PCS', You can only create one data in P01. Factory GSD.", this.CurrentMaintain["StyleID"], this.CurrentMaintain["SeasonID"], this.CurrentMaintain["BrandID"]));
+                    return false;
+                }
+
             #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer
