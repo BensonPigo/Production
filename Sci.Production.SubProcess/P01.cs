@@ -954,6 +954,7 @@ group by t.orderid,t.StyleID,sd.SubprocessLineID,t.factoryid
 
 select
     empty = null,--Excel從B欄開始
+	o.factoryid,
 	o.sewline,
 	sd.SubprocessLineID,
 	o.styleid,
@@ -1020,8 +1021,8 @@ where s.id = '{0}'
 
             worksheet.Cells[1, 2] = ftyName;
             worksheet.Cells[2, 2] = secondrow;
-            worksheet.Cells[7, 13] = ttl.Rows[0]["ttlEFF"];
-            worksheet.Cells[7, 15] = ttl.Rows[0]["ttlpph"];
+            worksheet.Cells[7, 14] = ttl.Rows[0]["ttlEFF"];
+            worksheet.Cells[7, 16] = ttl.Rows[0]["ttlpph"];
 
             for (int i = 2; i < printData.Rows.Count; i++)
             {
