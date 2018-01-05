@@ -1023,10 +1023,17 @@ from #tmpWasteKey a ,VNNLCodeDesc b
 inner join (select distinct NLCode from #tmp) c on b.NLCode=c.NLCode
 
 
-select id ,a.NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
-, b.waste
-from #tmpdis a
-inner join #tmpWaste b on a.NLCode=b.NLCode
+-- 如遇相同NLCODE,SizeCode,StyleUkey,Article,Category  只取第一筆 
+;with a as
+(
+	select id ,a.NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
+	, b.waste , rnd = ROW_NUMBER() over (partition by a.NLCODE,SizeCode,StyleUkey,Article,Category order by a.NLCODE,SizeCode,StyleUkey,Article,Category)
+	from #tmpdis a
+	inner join #tmpWaste b on a.NLCode=b.NLCode
+)
+select id ,NLCode,HSCode, UnitID,Qty ,UserCreate,StyleUkey, SizeCode,Article,Category,Deleted
+	, waste
+from a where rnd=1
 
 ";
             result = MyUtility.Tool.ProcessWithDatatable(
