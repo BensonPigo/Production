@@ -610,6 +610,7 @@ select distinct p1.id
 from PackingList p1
 inner join PackingList_Detail p2 on p1.ID=p2.ID
 where ShipPlanID='{0}'
+and p1.Type='B'
 and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
             if (!MyUtility.Check.Empty(dtRec) || dtRec.Rows.Count > 0)
             {
