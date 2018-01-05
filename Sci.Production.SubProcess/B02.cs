@@ -170,12 +170,6 @@ namespace Sci.Production.SubProcess
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (this.DetailDatas.Count < 1)
-            {
-                MyUtility.Msg.WarningBox("detail cannot be empty!");
-                return false;
-            }
-
             foreach (DataRow row in this.DetailDatas)
             {
                 if (MyUtility.Check.Empty(row["Type"]) || MyUtility.Check.Empty(row["Feature"]) || MyUtility.Check.Empty(row["SMV"]))
