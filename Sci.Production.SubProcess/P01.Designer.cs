@@ -330,7 +330,7 @@
             this.txtdropdownlistShift.Name = "txtdropdownlistShift";
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlistShift.TabIndex = 2;
-            this.txtdropdownlistShift.Type = "PPAOutput_Shift";
+            this.txtdropdownlistShift.Type = "PMS_PPAOutput_Shift";
             // 
             // P01
             // 
