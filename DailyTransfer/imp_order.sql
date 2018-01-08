@@ -691,8 +691,8 @@ BEGIN
 				t.Price			= s.Price,
 				t.AddName		= s.AddName,
 				t.AddDate		= s.AddDate,
-				t.EditName		= s.EditName,
-				t.EditDate		= s.EditDate		
+				t.TPEEditName		= s.EditName,
+				t.TPEEditDate		= s.EditDate		
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -709,8 +709,8 @@ BEGIN
 			, LocalSuppID
 			, AddName
 			, AddDate
-			, EditName
-			, EditDate
+			, TPEEditName
+			, TPEEditDate
 		)
 		SELECT	A.ID
 				, A.ArtworkTypeID
