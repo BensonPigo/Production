@@ -2248,6 +2248,7 @@
     <Build Include="dbo\Tables\SubProcessOutput.sql" />
     <Build Include="dbo\Tables\SubProcessOutput_Detail.sql" />
     <Build Include="dbo\Stored Procedures\usp_GetErrorString.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_QtyBreakdown_PoCombbySPList_TableOfGoods.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
