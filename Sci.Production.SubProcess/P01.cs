@@ -261,7 +261,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA'",
                 }
 
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -317,7 +317,7 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}'",
                     }
 
                     this.SumQty_QA_Prod_Defect();
-                    this.Sum_Workinghours();
+                    this.SumWorkinghours_Manpower();
                 }
             };
             article.CellValidating += (s, e) =>
@@ -377,7 +377,7 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' a
                 }
 
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -394,7 +394,7 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' a
                      this.Caculate_PPH();
                      this.CurrentDetailData.EndEdit();
                      this.SumQty_QA_Prod_Defect();
-                     this.Sum_Workinghours();
+                     this.SumWorkinghours_Manpower();
                  }
              };
             #endregion
@@ -412,7 +412,7 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' a
                 this.Caculate_DefectQty();
                 this.CurrentDetailData.EndEdit();
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -452,7 +452,7 @@ Order by Feature",
                     this.Caculate_SMV();
                     this.CurrentDetailData.EndEdit();
                     this.SumQty_QA_Prod_Defect();
-                    this.Sum_Workinghours();
+                    this.SumWorkinghours_Manpower();
                 }
             };
             feature.CellValidating += (s, e) =>
@@ -512,7 +512,7 @@ Order by Feature",
                 this.Caculate_SMV();
                 this.CurrentDetailData.EndEdit();
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -530,7 +530,7 @@ Order by Feature",
                 this.Caculate_EFF();
                 this.CurrentDetailData.EndEdit();
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -547,7 +547,7 @@ Order by Feature",
                 this.Caculate_TTLWorkinghours();
                 this.CurrentDetailData.EndEdit();
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -564,7 +564,7 @@ Order by Feature",
                 this.Caculate_TTLWorkinghours();
                 this.CurrentDetailData.EndEdit();
                 this.SumQty_QA_Prod_Defect();
-                this.Sum_Workinghours();
+                this.SumWorkinghours_Manpower();
             };
             #endregion
 
@@ -613,7 +613,7 @@ Order by Feature",
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.Sum_Workinghours();
+            this.SumWorkinghours_Manpower();
         }
 
         /// <inheritdoc/>
@@ -627,7 +627,7 @@ Order by Feature",
             }
             #endregion
 
-            #region 表頭的[type][date][shift][team]為必填欄位 /[type]在New就帶入PPA此欄位唯讀
+            #region 表頭的[type][date][shift][team]為必填欄位 /[type]在New就帶入PPA此欄位唯讀, [W/Hours(Day)]不可為0。
             if (MyUtility.Check.Empty(this.CurrentMaintain["Typeid"]))
             {
                 this.txtTypeID.Focus();
@@ -653,6 +653,13 @@ Order by Feature",
             {
                 this.comboTeam.Focus();
                 MyUtility.Msg.WarningBox("Team can't empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["WHour"]))
+            {
+                this.numWHours.Focus();
+                MyUtility.Msg.WarningBox("WHour can't empty!!");
                 return false;
             }
             #endregion
@@ -687,7 +694,7 @@ Order by Feature",
             }
             #endregion
 
-            this.Sum_Workinghours();
+            this.SumWorkinghours_Manpower();
             this.SumQty_QA_Prod_Defect();
 
             #region GetID
@@ -1062,6 +1069,12 @@ where s.id = '{0}'
             }
         }
 
+        private void NumWHours_Validating(object sender, CancelEventArgs e)
+        {
+            this.CurrentMaintain["WHour"] = this.numWHours.Value;
+            this.SumWorkinghours_Manpower();
+        }
+
         private void DeleteSubDetailData(DataRow dr)
         {
             DataTable subDetailData;
@@ -1151,10 +1164,12 @@ order by a.OrderId,os.Seq
             this.CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("sum(DefectQty)", string.Empty);
         }
 
-        private void Sum_Workinghours()
+        private void SumWorkinghours_Manpower()
         {
             var ttl_Workinghours = ((DataTable)this.detailgridbs.DataSource).Compute("sum(TTLWorkinghours)", string.Empty);
             this.numTTLhours.Value = MyUtility.Convert.GetDecimal(ttl_Workinghours);
+
+            this.CurrentMaintain["Manpower"] = Math.Ceiling(MyUtility.Check.Empty(this.numWHours.Value) ? 0 : MyUtility.Convert.GetDecimal(ttl_Workinghours) / MyUtility.Convert.GetDecimal(this.numWHours.Value));
         }
 
         private void Caculate_DefectQty()
@@ -1237,5 +1252,6 @@ order by a.OrderId,os.Seq
 
             return true;
         }
+
     }
 }
