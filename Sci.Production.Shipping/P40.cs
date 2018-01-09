@@ -518,14 +518,11 @@ namespace Sci.Production.Shipping
                         {
                             if (MyUtility.Convert.GetString(export["Type"]) == "1")
                             {
-                                this.CurrentMaintain["WKNo"] = string.Empty;
-                                this.CurrentMaintain["ShipModeID"] = string.Empty;
-                                this.CurrentMaintain["FromSite"] = string.Empty;
-                                this.CurrentMaintain["IsSystemCalculate"] = 0;
-                                this.CurrentMaintain["IsLocalPO"] = 0;
-                                e.Cancel = true;
-                                MyUtility.Msg.WarningBox("The Fty WK No. is < 3rd Country>!!");
-                                return;
+                                this.CurrentMaintain["WKNo"] = this.txtWKNo.Text;
+                                this.CurrentMaintain["IsLocalPO"] = this.localPurchase ? 1 : 0;
+                                this.CurrentMaintain["ShipModeID"] = export["ShipModeID"];
+                                this.CurrentMaintain["FromSite"] = export["ExportCountry"];
+                                this.CurrentMaintain["IsSystemCalculate"] = 1;
                             }
 
                             if (MyUtility.Convert.GetString(export["Type"]) == "3")
