@@ -26,7 +26,7 @@ BEGIN
 	-- 撈出所有Cuttingid 的SP#
 	--Declare @sptable Table(id varchar(13))
 	Select id into #spTable 
-	from Orders WITH (NOLOCK) where cuttingsp = @Cuttingid
+	from Orders WITH (NOLOCK) where cuttingsp = @Cuttingid and junk=0
 	--撈取最細EachCons_Color_Article
 	Select a.ConsPC,a.CuttingWidth,a.FabricCode,a.FabricCombo,a.Id,a.FabricPanelCode,a.MarkerDownloadID,
 			a.MarkerLength,a.MarkerName,a.MarkerNo,a.MarkerVersion,a.Ukey,a.Width,
@@ -71,17 +71,17 @@ BEGIN
 	SET @POID = 'Im default'
 	Select distinct @POID = POID
 	From Orders  WITH (NOLOCK) 
-	Where Cuttingsp = @Cuttingid
+	Where Cuttingsp = @Cuttingid and junk=0
 
 	---------組每個SP#的Article,Size,Qty,PatternPanel,inline
 	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline
 	Into #_tmpdisQty
 	from Order_ColorCombo a  WITH (NOLOCK) ,Order_EachCons b  WITH (NOLOCK) ,
-	(Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid) c Where c.id = d.id) e
+	(Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and junk=0) c Where c.id = d.id) e
 	left join 
 	(Select a.inline,b.Article,b.SizeCode,a.OrderID 
 	from SewingSchedule a  WITH (NOLOCK) ,SewingSchedule_Detail b  WITH (NOLOCK) ,
-		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid) c 
+		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and junk=0) c 
 		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f 
 	on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
